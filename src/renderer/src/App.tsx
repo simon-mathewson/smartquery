@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState';
 import { Connection } from './types';
 import { TopBar } from './components/TopBar/TopBar';
@@ -16,25 +16,11 @@ function App(): JSX.Element {
     },
   ]);
 
-  const [tables, setTables] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!connections[0]) return;
-
-    window
-      .query(
-        `SELECT * FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema NOT IN ('pg_catalog', 'information_schema') ORDER BY table_name ASC`,
-      )
-      .then((data) => {
-        setTables(data.rows.map(({ table_name }) => table_name));
-      });
-  }, []);
-
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
 
   return (
     <GlobalContext.Provider
-      value={{ connections, setConnections, selectedTable, setSelectedTable, tables }}
+      value={{ connections, setConnections, selectedTable, setSelectedTable }}
     >
       <div className="grid h-full grid-rows-[max-content_1fr]">
         <TopBar />

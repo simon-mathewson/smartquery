@@ -1,11 +1,25 @@
 import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ExpandMore } from '@mui/icons-material';
 import classNames from 'classnames';
 
 export const TableList: React.FC = () => {
-  const { connections, selectedTable, setSelectedTable, tables } = useDefinedContext(GlobalContext);
+  const { connections, selectedTable, setSelectedTable } = useDefinedContext(GlobalContext);
+
+  const [tables, setTables] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!connections[0]) return;
+
+    window
+      .query(
+        `SELECT * FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema NOT IN ('pg_catalog', 'information_schema') ORDER BY table_name ASC`,
+      )
+      .then((data) => {
+        setTables(data.rows.map(({ table_name }) => table_name));
+      });
+  }, []);
 
   return (
     <div className="w-56 flex-0 bg-gray-50 grid grid-rows-[max-content_1fr]">
