@@ -14,7 +14,11 @@ export const TableList: React.FC = () => {
 
     window
       .query(
-        `SELECT * FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema NOT IN ('pg_catalog', 'information_schema') ORDER BY table_name ASC`,
+        `SELECT * FROM information_schema.tables
+        WHERE table_type = 'BASE TABLE'
+        AND table_schema NOT IN ('pg_catalog', 'information_schema')
+        AND table_catalog = '${connections[0].database}'
+        ORDER BY table_name ASC`,
       )
       .then((data) => {
         setTables(data.rows.map(({ table_name }) => table_name));
@@ -22,9 +26,9 @@ export const TableList: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-56 flex-0 bg-gray-50 grid grid-rows-[max-content_1fr]">
-      <div className="border-b-[1px] border-b-gray-200 mb-1 cursor-pointer hover:bg-gray-200 flex items-center justify-between gap-2 font-medium text-gray-900 text-xs px-4 py-2">
-        <div>{connections[0].database}</div>
+    <div className="w-56 flex-shrink-0 bg-gray-50/75 grid grid-rows-[max-content_1fr] shadow-2xl z-10 sticky left-0 top-0 backdrop-blur-md">
+      <div className="overflow-hidden h-10 border-b-[1px] border-b-gray-200 mb-1 cursor-pointer hover:bg-gray-200 flex items-center justify-between gap-2 font-medium text-gray-900 text-xs px-4">
+        <div className="text-ellipsis overflow-hidden">{connections[0].database}</div>
         <ExpandMore className="text-gray-400" />
       </div>
       <div className="p-2 overflow-auto">

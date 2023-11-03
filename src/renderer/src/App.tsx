@@ -5,11 +5,12 @@ import { TopBar } from './components/TopBar/TopBar';
 import { GlobalContext } from './contexts/GlobalContext';
 import './index.css';
 import { TableList } from './components/TableList/TableList';
+import { Table } from './components/Table/Table';
 
 function App(): JSX.Element {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
     {
-      database: 'mathewson_metals_dev',
+      database: 'mathewson_metals_development',
       host: 'localhost',
       name: 'Mathewson Metals',
       port: 5432,
@@ -24,8 +25,9 @@ function App(): JSX.Element {
     >
       <div className="grid h-full grid-rows-[max-content_1fr]">
         <TopBar />
-        <div className="flex overflow-hidden">
+        <div className="flex overflow-auto">
           <TableList />
+          <Table />
         </div>
       </div>
     </GlobalContext.Provider>
