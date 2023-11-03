@@ -4,5 +4,4 @@ services:
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: database
-    ports:
-      - '5432:5432'
+    network_mode: host

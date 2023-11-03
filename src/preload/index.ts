@@ -6,7 +6,7 @@ import { Client } from 'pg';
   const api = {};
 
   const client = new Client({
-    database: 'database',
+    database: 'mathewson_metals_development',
     password: 'password',
     user: 'postgres',
   });
