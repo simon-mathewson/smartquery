@@ -1,10 +1,11 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
-import { Client } from 'pg'
+import { ElectronAPI } from '@electron-toolkit/preload';
+import { Client } from 'pg';
 
 declare global {
   interface Window {
-    electron: ElectronAPI
-    api: unknown
-    query: Client['query']
+    api: unknown;
+    connectToDatabase: (database: string) => Promise<void>;
+    electron: ElectronAPI;
+    query: Client['query'];
   }
 }

@@ -23,6 +23,9 @@ dependencies:
   pg:
     specifier: ^8.11.3
     version: 8.11.3
+  react-merge-refs:
+    specifier: ^2.1.1
+    version: 2.1.1
 
 devDependencies:
   '@electron-toolkit/eslint-config-prettier':
@@ -4195,6 +4198,10 @@ packages:
 
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+    dev: false
+
+  /react-merge-refs@2.1.1:
+    resolution: {integrity: sha512-jLQXJ/URln51zskhgppGJ2ub7b2WFKGq3cl3NYKtlHoTG+dN2q7EzWrn3hN3EgPsTMvpR9tpq5ijdp7YwFZkag==}
     dev: false
 
   /react-refresh@0.14.0:
