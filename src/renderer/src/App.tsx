@@ -23,13 +23,11 @@ function App(): JSX.Element {
     <GlobalContext.Provider
       value={{ connections, setConnections, selectedTable, setSelectedTable }}
     >
-      <div className="grid h-full grid-rows-[max-content_1fr]">
+      <div className="grid h-full grid-rows-[max-content_1fr] bg-gray-200">
         <TopBar />
-        <div className="flex h-full overflow-hidden bg-gray-100">
+        <div className="flex h-full gap-4 overflow-hidden px-4 pb-4">
           <TableList />
-          <div className="px-4">
-            <Table />
-          </div>
+          <Table />
         </div>
       </div>
     </GlobalContext.Provider>

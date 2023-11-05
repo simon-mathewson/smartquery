@@ -55,7 +55,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
       {(ref) => (
         <div
           className={classNames(
-            'absolute rounded-lg bg-white/80 shadow-lg backdrop-blur-lg',
+            'absolute rounded-lg bg-white/80 shadow-xl backdrop-blur-lg',
             className,
           )}
           ref={mergeRefs([ref, cardRef])}
