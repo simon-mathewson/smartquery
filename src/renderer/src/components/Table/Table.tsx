@@ -21,7 +21,7 @@ export const Table: React.FC = () => {
   if (!selectedTable) return null;
 
   return (
-    <div className="grid h-max max-h-full grid-rows-[max-content_1fr] gap-4 rounded-xl p-4 shadow-xl">
+    <div className="grid h-max max-h-full grid-rows-[max-content_1fr] gap-4 rounded-xl bg-white p-4 shadow-xl">
       <div className="text-center text-lg font-medium text-gray-800">{selectedTable}</div>
       <div
         className="grid overflow-auto"

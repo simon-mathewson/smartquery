@@ -40,7 +40,7 @@ export const TableList: React.FC = () => {
   }, [selectedDatabase]);
 
   return (
-    <div className="sticky left-0 top-0 z-10 grid w-56 flex-shrink-0 grid-rows-[max-content_1fr] shadow-xl">
+    <div className="sticky left-0 top-0 z-10 grid w-56 flex-shrink-0 grid-rows-[max-content_1fr] rounded-tr-xl bg-white shadow-xl">
       <div className="overflow-hidden border-b-[1px] border-b-gray-200 p-2">
         <Select
           onChange={setSelectedDatabase}

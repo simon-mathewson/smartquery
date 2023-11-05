@@ -25,9 +25,9 @@ function App(): JSX.Element {
     >
       <div className="grid h-full grid-rows-[max-content_1fr]">
         <TopBar />
-        <div className="flex h-full overflow-hidden">
+        <div className="flex h-full overflow-hidden bg-gray-100">
           <TableList />
-          <div className="p-4">
+          <div className="px-4">
             <Table />
           </div>
         </div>

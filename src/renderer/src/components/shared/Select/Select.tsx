@@ -28,7 +28,7 @@ export const Select: React.FC<SelectProps> = (props) => {
         {(close) =>
           options.map(({ label, value }) => (
             <div
-              className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-4 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-200"
+              className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-200"
               key={label}
               onClick={() => {
                 onChange(value);
