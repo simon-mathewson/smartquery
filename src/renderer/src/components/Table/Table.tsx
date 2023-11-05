@@ -19,12 +19,11 @@ export const Table: React.FC = () => {
   }, [selectedTable]);
 
   return (
-    <div>
+    <div className="h-max max-h-full shadow-2xl rounded-xl p-4 grid gap-4 grid-rows-[max-content_1fr]">
+      <div className="text-lg text-center font-medium text-gray-800">{selectedTable}</div>
       <div
-        className="grid"
-        style={{
-          gridTemplateColumns: `repeat(${columns.length}, 1fr)`,
-        }}
+        className="overflow-auto grid"
+        style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
       >
         {columns.map((column) => (
           <Cell header key={column}>

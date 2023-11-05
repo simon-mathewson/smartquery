@@ -25,9 +25,11 @@ function App(): JSX.Element {
     >
       <div className="grid h-full grid-rows-[max-content_1fr]">
         <TopBar />
-        <div className="flex overflow-auto">
+        <div className="flex overflow-hidden h-full">
           <TableList />
-          <Table />
+          <div className="p-8">
+            <Table />
+          </div>
         </div>
       </div>
     </GlobalContext.Provider>

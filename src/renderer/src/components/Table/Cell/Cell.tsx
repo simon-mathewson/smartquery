@@ -10,13 +10,10 @@ export const Cell: React.FC<PropsWithChildren<CellProps>> = (props) => {
 
   return (
     <div
-      className={classNames(
-        'bg-white/75 border-b-[1px] border-b-gray-200 px-4 flex items-center max-w-xs',
-        {
-          'h-10 sticky top-0 backdrop-blur-md': header,
-          'border-b-gray-100 py-2': !header,
-        },
-      )}
+      className={classNames('border-b-[1px] border-b-gray-200 px-4 flex items-center max-w-xs', {
+        'h-10 sticky top-0 bg-white': header,
+        'border-b-gray-100 py-2': !header,
+      })}
     >
       <div
         className={classNames('text-xs text-ellipsis overflow-hidden whitespace-nowrap', {
