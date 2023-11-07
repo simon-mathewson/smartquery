@@ -1,6 +1,7 @@
 import { contextBridge } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
 import { Client } from 'pg';
+
 (async () => {
   // Custom APIs for renderer
   const api = {};
@@ -9,11 +10,16 @@ import { Client } from 'pg';
     current: null,
   };
 
-  const connectToDatabase = async (database: string) => {
-    clientRef.current?.end();
+  const connect = async (connection: { database: string; host: string; port: number }) => {
+    const { database, host, port } = connection;
+
+    await clientRef.current?.end();
+
     clientRef.current = new Client({
       database,
+      host,
       password: 'password',
+      port,
       user: 'postgres',
     });
 
@@ -26,7 +32,7 @@ import { Client } from 'pg';
   if (process.contextIsolated) {
     try {
       contextBridge.exposeInMainWorld('api', api);
-      contextBridge.exposeInMainWorld('connectToDatabase', connectToDatabase);
+      contextBridge.exposeInMainWorld('connect', connect);
       contextBridge.exposeInMainWorld('electron', electronAPI);
       contextBridge.exposeInMainWorld('query', (text: string) => clientRef.current!.query(text));
     } catch (error) {
@@ -34,12 +40,12 @@ import { Client } from 'pg';
     }
   } else {
     // @ts-ignore (define in dts)
-    window.connectToDatabase = connectToDatabase;
+    window.connect = connect;
     // @ts-ignore (define in dts)
     window.electron = electronAPI;
     // @ts-ignore (define in dts)
     window.api = api;
     // @ts-ignore (define in dts)
-    window.query = (text: string) => client.query(text);
+    window.query = (text: string) => clientRef.current!.query(text);
   }
 })();

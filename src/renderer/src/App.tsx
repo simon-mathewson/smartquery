@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState';
 import { Connection } from './types';
 import { TopBar } from './components/TopBar/TopBar';
@@ -15,13 +15,76 @@ function App(): JSX.Element {
       name: 'Mathewson Metals',
       port: 5432,
     },
+    {
+      database: 'dabase_test_1',
+      host: 'localhost',
+      name: 'Dabase Test 1',
+      port: 5433,
+    },
+    {
+      database: 'dabase_test_2',
+      host: 'localhost',
+      name: 'Dabase Test 2',
+      port: 5434,
+    },
+    {
+      database: 'dabase_test_3',
+      host: 'localhost',
+      name: 'Dabase Test 3',
+      port: 5435,
+    },
   ]);
+
+  const [selectedConnectionIndex, setSelectedConnectionIndex] = useState<number | null>(0);
+
+  const [isConnected, setIsConnected] = useState(false);
 
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
 
+  const [selectedDatabase, setSelectedDatabase] = useState<string | null>(null);
+
+  const connect = (connection: Connection) => {
+    setIsConnected(false);
+    setSelectedTable(null);
+    window
+      .connect(connection)
+      .then(() => {
+        setIsConnected(true);
+      })
+      .catch(() => {
+        setIsConnected(false);
+      });
+  };
+
+  useEffect(() => {
+    if (selectedConnectionIndex === null) return;
+
+    const selectedConnection = connections[selectedConnectionIndex];
+
+    setSelectedDatabase(selectedConnection.database);
+  }, [selectedConnectionIndex]);
+
+  useEffect(() => {
+    if (selectedConnectionIndex === null || !selectedDatabase) return;
+
+    const selectedConnection = connections[selectedConnectionIndex];
+
+    connect({ ...selectedConnection, database: selectedDatabase });
+  }, [selectedDatabase]);
+
   return (
     <GlobalContext.Provider
-      value={{ connections, setConnections, selectedTable, setSelectedTable }}
+      value={{
+        connections,
+        isConnected,
+        selectedConnectionIndex,
+        selectedDatabase,
+        selectedTable,
+        setConnections,
+        setSelectedConnectionIndex,
+        setSelectedDatabase,
+        setSelectedTable,
+      }}
     >
       <div className="grid h-full grid-rows-[max-content_1fr] bg-gray-200">
         <TopBar />

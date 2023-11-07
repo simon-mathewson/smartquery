@@ -4,7 +4,7 @@ import { Client } from 'pg';
 declare global {
   interface Window {
     api: unknown;
-    connectToDatabase: (database: string) => Promise<void>;
+    connect: (connection: { database: string; host: string; port: number }) => Promise<void>;
     electron: ElectronAPI;
     query: Client['query'];
   }

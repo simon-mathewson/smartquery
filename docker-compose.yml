@@ -1,7 +1,22 @@
 services:
-  db:
+  test_database_1:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: database
-    network_mode: host
+      POSTGRES_DB: dabase_test_1
+    ports:
+      - '5433:5432'
+  test_database_2:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dabase_test_2
+    ports:
+      - '5434:5432'
+  test_database_3:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dabase_test_3
+    ports:
+      - '5435:5432'

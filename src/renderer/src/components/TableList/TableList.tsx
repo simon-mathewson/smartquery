@@ -1,43 +1,37 @@
 import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import React, { useEffect, useState } from 'react';
-import classNames from 'classnames';
 import { Select } from '../shared/Select/Select';
+import { ListItem } from '../shared/ListItem/ListItem';
 
 export const TableList: React.FC = () => {
-  const { connections, selectedTable, setSelectedTable } = useDefinedContext(GlobalContext);
+  const { isConnected, selectedDatabase, selectedTable, setSelectedDatabase, setSelectedTable } =
+    useDefinedContext(GlobalContext);
 
   const [tables, setTables] = useState<string[]>([]);
   const [databases, setDatabases] = useState<string[]>([]);
-  const [selectedDatabase, setSelectedDatabase] = useState<string | null>(
-    connections[0]?.database ?? null,
-  );
 
   useEffect(() => {
-    if (!selectedDatabase) return;
+    if (!selectedDatabase || !isConnected) return;
 
-    window.connectToDatabase(selectedDatabase).then(() => {
-      window
-        .query(
-          `SELECT * FROM information_schema.tables
+    window
+      .query(
+        `SELECT * FROM information_schema.tables
         WHERE table_type = 'BASE TABLE'
         AND table_schema NOT IN ('pg_catalog', 'information_schema')
         AND table_catalog = '${selectedDatabase}'
         ORDER BY table_name ASC`,
-        )
-        .then((data) => {
-          setTables(data.rows.map(({ table_name }) => table_name));
+      )
+      .then((data) => {
+        setTables(data.rows.map(({ table_name }) => table_name));
 
-          window
-            .query(
-              `SELECT datname FROM pg_database WHERE datistemplate = FALSE ORDER BY datname ASC`,
-            )
-            .then((data) => {
-              setDatabases(data.rows.map(({ datname }) => datname));
-            });
-        });
-    });
-  }, [selectedDatabase]);
+        window
+          .query(`SELECT datname FROM pg_database WHERE datistemplate = FALSE ORDER BY datname ASC`)
+          .then((data) => {
+            setDatabases(data.rows.map(({ datname }) => datname));
+          });
+      });
+  }, [selectedDatabase, isConnected]);
 
   return (
     <div className="sticky left-0 top-0 z-10 grid h-max max-h-full w-56 flex-shrink-0 grid-rows-[max-content_1fr] rounded-xl bg-gray-100 shadow-lg">
@@ -53,20 +47,12 @@ export const TableList: React.FC = () => {
       </div>
       <div className="overflow-auto p-2">
         {tables.map((tableName) => (
-          <div
-            className={classNames(
-              'cursor-pointer rounded-md px-2 py-1.5 text-xs font-medium text-gray-600',
-              {
-                'bg-blue-500': tableName === selectedTable,
-                'text-white': tableName === selectedTable,
-                'hover:bg-gray-200': tableName !== selectedTable,
-              },
-            )}
+          <ListItem
             key={tableName}
+            label={tableName}
             onClick={() => setSelectedTable(tableName)}
-          >
-            {tableName}
-          </div>
+            selected={tableName === selectedTable}
+          />
         ))}
       </div>
     </div>

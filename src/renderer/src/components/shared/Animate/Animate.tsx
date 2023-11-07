@@ -25,21 +25,18 @@ export const Animate: React.FC<AnimateProps> = (props) => {
     content.style.transition = 'all 400ms cubic-bezier(0.16, 1, 0.3, 1)';
     content.style.display = 'initial';
 
-    const offStyles = {
-      opacity: '0',
-      transform: 'translateY(-16px)',
-    };
-
-    const onStyles = {
-      opacity: '1',
-      transform: 'translateY(0)',
-    };
+    const originalOpacity = content.style.opacity;
+    const originalTransform = content.style.transform;
+    const offOpacity = '0';
+    const offTransform = 'translateY(-16px)';
 
     if (show && isVisible) {
-      Object.assign(content.style, offStyles);
+      content.style.opacity = offOpacity;
+      content.style.transform = [originalTransform, offTransform].filter(Boolean).join(' ');
 
       const timeoutId = setTimeout(() => {
-        Object.assign(content.style, onStyles);
+        content.style.opacity = originalOpacity;
+        content.style.transform = originalTransform;
       });
 
       return () => {
@@ -48,7 +45,8 @@ export const Animate: React.FC<AnimateProps> = (props) => {
     }
 
     if (!show) {
-      Object.assign(content.style, offStyles);
+      content.style.opacity = offOpacity;
+      content.style.transform = [originalTransform, offTransform].filter(Boolean).join(' ');
 
       const timeoutId = setTimeout(() => {
         setIsVisible(false);
