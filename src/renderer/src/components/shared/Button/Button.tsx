@@ -6,21 +6,31 @@ export type ButtonProps = {
   icon?: React.ReactNode;
   label?: string;
   onClick?: () => void;
+  primary?: boolean;
+  type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
 };
 
 export const Button: React.FC<ButtonProps> = (props) => {
-  const { className, icon, label, onClick } = props;
+  const { className, icon, label, onClick, primary, type } = props;
 
   return (
-    <div
+    <button
       className={classNames(
-        'flex cursor-pointer items-center justify-center gap-2 rounded-lg p-2 hover:bg-blue-500/10 [&>svg]:text-[20px] [&>svg]:text-blue-500',
+        'flex h-[36px] w-full cursor-pointer items-center justify-center gap-2 rounded-lg p-2 hover:bg-blue-500/10 [&>svg]:text-[20px] [&>svg]:text-blue-500',
         className,
+        { 'bg-blue-500 hover:bg-blue-500/90': primary },
       )}
       onClick={onClick}
+      type={type}
     >
       {icon}
-      <div className="text-sm font-medium leading-none text-blue-500">{label}</div>
-    </div>
+      <div
+        className={classNames('text-sm font-medium leading-none text-blue-500', {
+          'text-white': primary,
+        })}
+      >
+        {label}
+      </div>
+    </button>
   );
 };
