@@ -9,6 +9,7 @@ export type OverlayCardProps = {
   children: (close: () => void) => React.ReactNode;
   className?: string;
   matchTriggerWidth?: boolean;
+  onOpen?: () => void;
   triggerRef: React.MutableRefObject<HTMLElement | null>;
   width?: number;
 };
@@ -18,6 +19,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   children,
   className,
   matchTriggerWidth,
+  onOpen,
   triggerRef,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,6 +86,12 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     handler: () => setIsOpen(false),
     refs: [cardRef, triggerRef],
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      onOpen?.();
+    }
+  }, [isOpen]);
 
   return (
     <Animate show={isOpen}>

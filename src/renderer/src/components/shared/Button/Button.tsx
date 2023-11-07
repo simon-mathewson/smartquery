@@ -18,7 +18,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
       className={classNames(
         'flex h-[36px] w-full cursor-pointer items-center justify-center gap-2 rounded-lg p-2 hover:bg-blue-500/10 [&>svg]:text-[20px] [&>svg]:text-blue-500',
         className,
-        { 'bg-blue-500 hover:bg-blue-500/90': primary },
+        { 'bg-blue-500 hover:bg-blue-500/90 [&>svg]:text-white': primary },
       )}
       onClick={onClick}
       type={type}

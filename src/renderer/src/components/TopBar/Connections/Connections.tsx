@@ -23,6 +23,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
     <OverlayCard
       align="center"
       className="w-full max-w-xs p-3 shadow-xl"
+      onOpen={() => setIsAdding(false)}
       triggerRef={triggerRef}
       width={192}
     >

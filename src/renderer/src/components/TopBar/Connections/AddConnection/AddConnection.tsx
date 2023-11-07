@@ -1,5 +1,6 @@
-import { ArrowBackIos } from '@mui/icons-material';
+import { Add, ArrowBackIos } from '@mui/icons-material';
 import { Button } from '@renderer/components/shared/Button/Button';
+import { Input } from '@renderer/components/shared/Input/Input';
 import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import React, { useState } from 'react';
@@ -13,14 +14,18 @@ export const AddConnection: React.FC<AddConnectionProps> = (props) => {
 
   const { setConnections } = useDefinedContext(GlobalContext);
 
-  const [name, setName] = useState('');
-  const [url, setUrl] = useState('');
+  const [name, setName] = useState<string | null>(null);
+  const [url, setUrl] = useState<string | null>(null);
 
   return (
     <>
       <form
-        className="mx-auto grid w-full max-w-sm gap-2"
-        onSubmit={() => {
+        className="mx-auto grid w-full max-w-sm gap-3"
+        onSubmit={(event) => {
+          event.preventDefault();
+
+          if (!name || !url) return;
+
           const [host, portAndDatabase] = url.split(':');
           const [port, database] = portAndDatabase.split('/');
           setConnections((connections) => [
@@ -30,25 +35,13 @@ export const AddConnection: React.FC<AddConnectionProps> = (props) => {
           setIsAdding(false);
         }}
       >
-        <Button icon={<ArrowBackIos />} label="Back" onClick={() => setIsAdding(false)} />
         <div className="text-md mt-1 text-center font-medium text-gray-700">Add Connection</div>
-        <label className="grid gap-1 text-gray-500 focus-within:text-blue-600">
-          <div className="pl-1 text-sm font-medium">Name</div>
-          <input
-            onChange={(event) => setName(event.target.value)}
-            value={name}
-            className="block w-full rounded-lg border-2 border-gray-300 p-2 text-gray-700 outline-none focus:border-blue-600"
-          />
-        </label>
-        <label className="grid gap-1 text-gray-500 focus-within:text-blue-600">
-          <div className="pl-1 text-sm font-medium">Connection URL</div>
-          <input
-            onChange={(event) => setUrl(event.target.value)}
-            value={url}
-            className="block w-full rounded-lg border-2 border-gray-300 p-2 text-gray-700 outline-none focus:border-blue-600"
-          />
-        </label>
-        <Button className="mt-2" label="Add" primary type="submit" />
+        <Input label="Name" onChange={setName} value={name} />
+        <Input label="Connection URL" onChange={setUrl} value={url} />
+        <div className="mt-2 flex items-center gap-2">
+          <Button icon={<ArrowBackIos />} label="Back" onClick={() => setIsAdding(false)} />
+          <Button icon={<Add />} label="Add" primary type="submit" />
+        </div>
       </form>
     </>
   );
