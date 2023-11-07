@@ -46,14 +46,18 @@ export const TableList: React.FC = () => {
         />
       </div>
       <div className="overflow-auto p-2">
-        {tables.map((tableName) => (
-          <ListItem
-            key={tableName}
-            label={tableName}
-            onClick={() => setSelectedTable(tableName)}
-            selected={tableName === selectedTable}
-          />
-        ))}
+        {tables.length > 0 ? (
+          tables.map((tableName) => (
+            <ListItem
+              key={tableName}
+              label={tableName}
+              onClick={() => setSelectedTable(tableName)}
+              selected={tableName === selectedTable}
+            />
+          ))
+        ) : (
+          <div className="py-2 text-center text-xs text-gray-500">This database is empty.</div>
+        )}
       </div>
     </div>
   );
