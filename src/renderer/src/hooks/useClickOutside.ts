@@ -12,7 +12,10 @@ export const useClickOutside = (props: {
 
     const listener = (event: MouseEvent | TouchEvent) => {
       const isClickInsideSomeRef = refs.some(
-        (ref) => !ref.current || ref.current.contains(event.target as HTMLElement),
+        (ref) =>
+          !ref.current ||
+          ref.current.contains(event.target as HTMLElement) ||
+          document.getElementById('overlay')!.contains(event.target as HTMLElement),
       );
 
       if (isClickInsideSomeRef) return;

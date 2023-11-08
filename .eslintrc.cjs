@@ -4,9 +4,10 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:react/jsx-runtime',
     '@electron-toolkit/eslint-config-ts/recommended',
-    '@electron-toolkit/eslint-config-prettier'
+    '@electron-toolkit/eslint-config-prettier',
   ],
   rules: {
-    '@typescript-eslint/explicit-function-return-type': 'off'
-  }
-}
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    'react/display-name': 'off',
+  },
+};

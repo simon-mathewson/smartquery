@@ -13,7 +13,7 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
 
   return (
     <div
-      className={classNames('cursor-pointer rounded-md px-2 py-1.5', {
+      className={classNames('w-full cursor-pointer rounded-md px-2 py-1.5', {
         'bg-blue-500': selected,
         'hover:bg-gray-200': !selected,
       })}

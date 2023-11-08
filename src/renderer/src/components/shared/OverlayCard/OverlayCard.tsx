@@ -3,6 +3,7 @@ import React, { CSSProperties, useEffect, useRef, useState } from 'react';
 import { Animate } from '../Animate/Animate';
 import { mergeRefs } from 'react-merge-refs';
 import classNames from 'classnames';
+import { OverlayPortal } from '../OverlayPortal/OverlayPortal';
 
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
@@ -30,10 +31,12 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     const trigger = triggerRef.current;
     if (!trigger) return;
 
+    const triggerRect = trigger.getBoundingClientRect();
+
     const left = {
-      left: trigger.offsetLeft,
-      center: trigger.offsetLeft + trigger.offsetWidth / 2,
-      right: trigger.offsetLeft + trigger.offsetWidth,
+      left: triggerRect.left,
+      center: triggerRect.left + triggerRect.width / 2,
+      right: triggerRect.left + triggerRect.width,
     }[align];
 
     const transform = {
@@ -42,7 +45,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
       right: 'translateX(-100%)',
     }[align];
 
-    const top = trigger.offsetTop + trigger.offsetHeight + 8;
+    const top = triggerRect.top + triggerRect.height + 8;
 
     setStyles({
       left: `${left}px`,
@@ -51,7 +54,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     });
 
     if (matchTriggerWidth) {
-      setWidth(`${trigger.offsetWidth}px`);
+      setWidth(`${triggerRect.width}px`);
     }
   };
 
@@ -94,19 +97,18 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   }, [isOpen]);
 
   return (
-    <Animate show={isOpen}>
-      {(ref) => (
-        <div
-          className={classNames(
-            'absolute z-10 rounded-lg bg-white/80 shadow-xl backdrop-blur-lg',
-            className,
-          )}
-          ref={mergeRefs([ref, cardRef])}
-          style={{ ...styles, width }}
-        >
-          {children(() => setIsOpen(false))}
-        </div>
-      )}
-    </Animate>
+    <OverlayPortal>
+      <Animate show={isOpen}>
+        {(ref) => (
+          <div
+            className={classNames('absolute z-10 rounded-lg bg-gray-50 shadow-xl', className)}
+            ref={mergeRefs([ref, cardRef])}
+            style={{ ...styles, width }}
+          >
+            {children(() => setIsOpen(false))}
+          </div>
+        )}
+      </Animate>
+    </OverlayPortal>
   );
 };
