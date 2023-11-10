@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState';
-import { Connection } from './types';
+import { Connection, Query as QueryType } from './types';
 import { TopBar } from './components/TopBar/TopBar';
 import { GlobalContext } from './contexts/GlobalContext';
 import './index.css';
 import { TableList } from './components/TableList/TableList';
-import { Table } from './components/Table/Table';
+import { Button } from './components/shared/Button/Button';
+import { Add } from '@mui/icons-material';
+import { Query } from './components/Query/Query';
 
-function App(): JSX.Element {
+export const App: React.FC = () => {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
     {
       database: 'mathewson_metals_development',
@@ -39,13 +41,11 @@ function App(): JSX.Element {
 
   const [isConnected, setIsConnected] = useState(false);
 
-  const [selectedTable, setSelectedTable] = useState<string | null>(null);
-
   const [selectedDatabase, setSelectedDatabase] = useState<string | null>(null);
 
   const connect = (connection: Connection) => {
     setIsConnected(false);
-    setSelectedTable(null);
+    setQueries([]);
     window
       .connect(connection)
       .then(() => {
@@ -72,29 +72,34 @@ function App(): JSX.Element {
     connect({ ...selectedConnection, database: selectedDatabase });
   }, [selectedDatabase]);
 
+  const [queries, setQueries] = useState<QueryType[]>([]);
+
   return (
     <GlobalContext.Provider
       value={{
         connections,
         isConnected,
+        queries,
         selectedConnectionIndex,
         selectedDatabase,
-        selectedTable,
+        setQueries,
         setConnections,
         setSelectedConnectionIndex,
         setSelectedDatabase,
-        setSelectedTable,
       }}
     >
       <div className="grid h-full grid-rows-[max-content_1fr] bg-gray-200">
         <TopBar />
-        <div className="flex h-full gap-4 overflow-hidden px-4 pb-4">
-          <TableList />
-          <Table />
+        <div className="flex h-full gap-6 overflow-hidden px-4 pb-4">
+          <div className="grid grid-rows-[max-content_1fr] gap-4">
+            <Button align="left" icon={<Add />} label="SQL Query" variant="primary" />
+            <TableList />
+          </div>
+          {queries.map((query, index) => (
+            <Query key={index} query={query} />
+          ))}
         </div>
       </div>
     </GlobalContext.Provider>
   );
-}
-
-export default App;
+};

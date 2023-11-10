@@ -5,7 +5,7 @@ import { Select } from '../shared/Select/Select';
 import { ListItem } from '../shared/ListItem/ListItem';
 
 export const TableList: React.FC = () => {
-  const { isConnected, selectedDatabase, selectedTable, setSelectedDatabase, setSelectedTable } =
+  const { isConnected, selectedDatabase, setSelectedDatabase, setQueries } =
     useDefinedContext(GlobalContext);
 
   const [tables, setTables] = useState<string[]>([]);
@@ -33,6 +33,15 @@ export const TableList: React.FC = () => {
       });
   }, [selectedDatabase, isConnected]);
 
+  const selectTable = (tableName: string) => {
+    setQueries([
+      {
+        label: tableName,
+        sql: `SELECT * FROM "${tableName}" LIMIT 50`,
+      },
+    ]);
+  };
+
   return (
     <div className="sticky left-0 top-0 z-10 grid h-max max-h-full w-56 flex-shrink-0 grid-rows-[max-content_1fr] rounded-xl bg-gray-100 shadow-lg">
       <div className="overflow-hidden border-b-[1px] border-b-gray-200 p-2">
@@ -51,8 +60,7 @@ export const TableList: React.FC = () => {
             <ListItem
               key={tableName}
               label={tableName}
-              onClick={() => setSelectedTable(tableName)}
-              selected={tableName === selectedTable}
+              onClick={() => selectTable(tableName)}
               selectedVariant="primary"
             />
           ))

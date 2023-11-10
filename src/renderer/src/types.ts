@@ -4,3 +4,8 @@ export type Connection = {
   name: string;
   port: number;
 };
+
+export type Query = {
+  label?: string;
+  sql: string;
+};
