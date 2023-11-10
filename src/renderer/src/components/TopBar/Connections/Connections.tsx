@@ -1,4 +1,4 @@
-import { Add, Edit } from '@mui/icons-material';
+import { AddCircleOutline, EditOutlined } from '@mui/icons-material';
 import { Button } from '@renderer/components/shared/Button/Button';
 import { ListItem } from '@renderer/components/shared/ListItem/ListItem';
 import { OverlayCard } from '@renderer/components/shared/OverlayCard/OverlayCard';
@@ -6,6 +6,7 @@ import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import React, { useState } from 'react';
 import { ConnectionForm } from './ConnectionForm/ConnectionForm';
+import { Header } from './Header/Header';
 
 export type ConnectionsProps = {
   triggerRef: React.MutableRefObject<HTMLElement | null>;
@@ -41,34 +42,33 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
             />
           ) : (
             <>
-              {connections.map((connection, index) =>
-                selectedConnectionIndex === index ? null : (
-                  <div className="flex items-center gap-2" key={index}>
-                    <ListItem
-                      label={connection.name}
-                      hint={[connection.host, connection.port].join(':')}
-                      onClick={() => {
-                        setSelectedConnectionIndex(index);
-                        close();
-                      }}
-                    />
-                    <Button
-                      className="sticky bottom-0 w-max"
-                      icon={<Edit />}
-                      onClick={() => {
-                        setConnectionToEditIndex(index);
-                        setIsAddingOrEditing(true);
-                      }}
-                    />
-                  </div>
-                ),
-              )}
-              <Button
-                className="sticky bottom-0 mt-2"
-                icon={<Add />}
-                label="Add"
-                onClick={() => setIsAddingOrEditing(true)}
+              <Header
+                title="Connections"
+                right={
+                  <Button icon={<AddCircleOutline />} onClick={() => setIsAddingOrEditing(true)} />
+                }
               />
+              {connections.map((connection, index) => (
+                <div className="flex items-center gap-2" key={index}>
+                  <ListItem
+                    label={connection.name}
+                    hint={[connection.host, connection.port].join(':')}
+                    onClick={() => {
+                      setSelectedConnectionIndex(index);
+                      close();
+                    }}
+                    selected={selectedConnectionIndex === index}
+                  />
+                  <Button
+                    className="sticky bottom-0 w-max"
+                    icon={<EditOutlined />}
+                    onClick={() => {
+                      setConnectionToEditIndex(index);
+                      setIsAddingOrEditing(true);
+                    }}
+                  />
+                </div>
+              ))}
             </>
           )}
         </>

@@ -53,6 +53,7 @@ export const TableList: React.FC = () => {
               label={tableName}
               onClick={() => setSelectedTable(tableName)}
               selected={tableName === selectedTable}
+              selectedVariant="primary"
             />
           ))
         ) : (
