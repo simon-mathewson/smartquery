@@ -13,15 +13,19 @@ export const Table: React.FC<TableProps> = (props) => {
   const [columns, setColumns] = useState<string[]>([]);
 
   useEffect(() => {
+    if (!query.sql) return;
+
     window.query(query.sql).then((data) => {
       setColumns(data.fields.map(({ name }) => name));
       setRows(data.rows);
     });
   }, [query.sql]);
 
+  if (!columns.length) return null;
+
   return (
     <div
-      className="grid overflow-auto"
+      className="relative grid min-w-[576px] overflow-auto p-2 pt-0"
       style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
     >
       {columns.map((column) => (

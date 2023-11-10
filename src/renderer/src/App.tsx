@@ -91,12 +91,18 @@ export const App: React.FC = () => {
       <div className="grid h-full grid-rows-[max-content_1fr] bg-gray-200">
         <TopBar />
         <div className="flex h-full gap-6 overflow-hidden px-4 pb-4">
-          <div className="grid grid-rows-[max-content_1fr] gap-4">
-            <Button align="left" icon={<Add />} label="SQL Query" variant="primary" />
+          <div className="grid h-full grid-rows-[max-content_minmax(auto,max-content)] gap-4">
+            <Button
+              align="left"
+              icon={<Add />}
+              label="Query"
+              onClick={() => setQueries([{}])}
+              variant="primary"
+            />
             <TableList />
           </div>
           {queries.map((query, index) => (
-            <Query key={index} query={query} />
+            <Query key={[query.sql ?? '', String(index)].join()} query={query} />
           ))}
         </div>
       </div>

@@ -21,10 +21,13 @@
     "build:linux": "electron-vite build && electron-builder --linux --config"
   },
   "dependencies": {
+    "@codemirror/lang-sql": "^6.5.4",
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^2.0.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.16",
+    "@uiw/codemirror-theme-github": "^4.21.20",
+    "@uiw/react-codemirror": "^4.21.20",
     "classnames": "^2.3.2",
     "pg": "^8.11.3",
     "react-merge-refs": "^2.1.1"

@@ -43,8 +43,8 @@ export const TableList: React.FC = () => {
   };
 
   return (
-    <div className="sticky left-0 top-0 z-10 grid h-max max-h-full w-56 flex-shrink-0 grid-rows-[max-content_1fr] rounded-xl bg-gray-100 shadow-lg">
-      <div className="overflow-hidden border-b-[1px] border-b-gray-200 p-2">
+    <div className="flex w-56 flex-shrink-0 flex-col overflow-hidden rounded-xl bg-gray-100 shadow-lg">
+      <div className="border-b-[1px] border-b-gray-200 p-2">
         <Select
           onChange={setSelectedDatabase}
           options={databases.map((database) => ({

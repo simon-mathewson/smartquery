@@ -7,6 +7,7 @@ export type ButtonProps = {
   icon?: React.ReactNode;
   label?: string;
   onClick?: () => void;
+  selected?: boolean;
   type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
   variant?: 'primary' | 'secondary' | 'danger';
 };
@@ -18,6 +19,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
     icon,
     label,
     onClick,
+    selected,
     type = 'button',
     variant = 'secondary',
   } = props;
@@ -25,7 +27,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
   return (
     <button
       className={classNames(
-        'flex h-[36px] w-full cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-blue-500/10 [&>svg]:text-[20px] [&>svg]:text-blue-500',
+        'flex h-[36px] cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-blue-500/10 [&>svg]:text-[20px] [&>svg]:text-blue-500',
         className,
         {
           'bg-blue-500 hover:bg-blue-500/90 [&>svg]:text-white': variant === 'primary',
@@ -34,6 +36,9 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'justify-start': align === 'left',
           'justify-center': align === 'center',
           'justify-end': align === 'right',
+          'bg-blue-500/5 hover:bg-blue-500/10': selected && variant === 'secondary',
+          'bg-red-500/5 hover:bg-red-500/10': selected && variant === 'danger',
+          'bg-blue-600/5 hover:bg-red-600/10': selected && variant === 'primary',
         },
       )}
       onClick={onClick}

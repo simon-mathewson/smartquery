@@ -7,5 +7,5 @@ export type Connection = {
 
 export type Query = {
   label?: string;
-  sql: string;
+  sql?: string;
 };
