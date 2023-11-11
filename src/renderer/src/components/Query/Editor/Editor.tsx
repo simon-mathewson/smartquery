@@ -9,11 +9,11 @@ import './styles.css';
 import { Send } from '@mui/icons-material';
 import { Query as QueryType } from '../../../types';
 
-export type TableProps = {
+export type EditorProps = {
   query: QueryType;
 };
 
-export const QueryEditor: React.FC<TableProps> = (props) => {
+export const Editor: React.FC<EditorProps> = (props) => {
   const { query } = props;
 
   const { setQueries } = useDefinedContext(GlobalContext);

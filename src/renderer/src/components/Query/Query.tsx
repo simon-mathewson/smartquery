@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Query as QueryType } from '../../types';
 import { Table } from './Table/Table';
-import { QueryEditor } from './QueryEditor/QueryEditor';
+import { Editor } from './Editor/Editor';
 import { Button } from '../shared/Button/Button';
 import { Close, Code } from '@mui/icons-material';
 import { Header } from '../shared/Header/Header';
@@ -34,7 +34,7 @@ export const Query: React.FC<QueryProps> = (props) => {
         right={<Button icon={<Close />} onClick={() => setQueries([])} />}
         title={query.label ?? query.sql?.replaceAll('\n', ' ') ?? 'New Query'}
       />
-      {showEditor && <QueryEditor query={query} />}
+      {showEditor && <Editor query={query} />}
       <Table query={query} />
     </div>
   );
