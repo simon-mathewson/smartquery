@@ -3,6 +3,7 @@ import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import React, { useEffect, useState } from 'react';
 import { Select } from '../shared/Select/Select';
 import { ListItem } from '../shared/ListItem/ListItem';
+import { uniqueId } from 'lodash';
 
 export const TableList: React.FC = () => {
   const { isConnected, selectedDatabase, setSelectedDatabase, setQueries } =
@@ -36,6 +37,7 @@ export const TableList: React.FC = () => {
   const selectTable = (tableName: string) => {
     setQueries([
       {
+        id: uniqueId(),
         label: tableName,
         sql: `SELECT * FROM "${tableName}" LIMIT 50`,
       },

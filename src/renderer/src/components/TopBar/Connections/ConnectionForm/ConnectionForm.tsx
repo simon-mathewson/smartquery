@@ -5,7 +5,7 @@ import { OverlayCard } from '@renderer/components/shared/OverlayCard/OverlayCard
 import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import React, { useRef, useState } from 'react';
-import { Header } from '../Header/Header';
+import { Header } from '../../../shared/Header/Header';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;

@@ -6,7 +6,7 @@ import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import React, { useState } from 'react';
 import { ConnectionForm } from './ConnectionForm/ConnectionForm';
-import { Header } from './Header/Header';
+import { Header } from '../../shared/Header/Header';
 
 export type ConnectionsProps = {
   triggerRef: React.MutableRefObject<HTMLElement | null>;

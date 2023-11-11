@@ -29,6 +29,7 @@
     "@uiw/codemirror-theme-github": "^4.21.20",
     "@uiw/react-codemirror": "^4.21.20",
     "classnames": "^2.3.2",
+    "lodash": "^4.17.21",
     "pg": "^8.11.3",
     "react-merge-refs": "^2.1.1"
   },
@@ -36,6 +37,7 @@
     "@electron-toolkit/eslint-config-prettier": "^1.0.1",
     "@electron-toolkit/eslint-config-ts": "^1.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@types/lodash": "^4.14.201",
     "@types/node": "^18.17.5",
     "@types/pg": "^8.10.7",
     "@types/react": "^18.2.20",

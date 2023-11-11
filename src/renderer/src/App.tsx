@@ -8,6 +8,7 @@ import { TableList } from './components/TableList/TableList';
 import { Button } from './components/shared/Button/Button';
 import { Add } from '@mui/icons-material';
 import { Query } from './components/Query/Query';
+import { uniqueId } from 'lodash';
 
 export const App: React.FC = () => {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
@@ -96,13 +97,13 @@ export const App: React.FC = () => {
               align="left"
               icon={<Add />}
               label="Query"
-              onClick={() => setQueries([{}])}
+              onClick={() => setQueries([{ id: uniqueId(), showEditor: true }])}
               variant="primary"
             />
             <TableList />
           </div>
-          {queries.map((query, index) => (
-            <Query key={[query.sql ?? '', String(index)].join()} query={query} />
+          {queries.map((query) => (
+            <Query key={query.id} query={query} />
           ))}
         </div>
       </div>

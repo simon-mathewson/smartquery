@@ -45,7 +45,7 @@ export const QueryEditor: React.FC<TableProps> = (props) => {
         icon={<Send />}
         label="Submit"
         onClick={() => {
-          setQueries([{ sql: value }]);
+          setQueries([{ id: query.id, sql: value }]);
         }}
         variant="primary"
       />
