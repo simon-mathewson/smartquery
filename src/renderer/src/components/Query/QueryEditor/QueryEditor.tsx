@@ -67,6 +67,7 @@ export const QueryEditor: React.FC<TableProps> = (props) => {
       />
       <Button
         className="ml-auto w-36"
+        disabled={!value}
         icon={<Send />}
         label="Submit"
         onClick={() => submitQuery()}

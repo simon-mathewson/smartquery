@@ -4,6 +4,7 @@ import React from 'react';
 export type ButtonProps = {
   align?: 'left' | 'center' | 'right';
   className?: string;
+  disabled?: boolean;
   icon?: React.ReactNode;
   label?: string;
   onClick?: () => void;
@@ -16,6 +17,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
   const {
     align = 'center',
     className,
+    disabled,
     icon,
     label,
     onClick,
@@ -39,6 +41,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'bg-blue-500/5 hover:bg-blue-500/10': selected && variant === 'secondary',
           'bg-red-500/5 hover:bg-red-500/10': selected && variant === 'danger',
           'bg-blue-600/5 hover:bg-red-600/10': selected && variant === 'primary',
+          'pointer-events-none opacity-50': disabled,
         },
       )}
       onClick={onClick}
