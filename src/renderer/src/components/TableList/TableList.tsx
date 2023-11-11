@@ -6,33 +6,31 @@ import { ListItem } from '../shared/ListItem/ListItem';
 import { uniqueId } from 'lodash';
 
 export const TableList: React.FC = () => {
-  const { isConnected, selectedDatabase, setSelectedDatabase, setQueries } =
+  const { selectedDatabase, sendQuery, setSelectedDatabase, setQueries } =
     useDefinedContext(GlobalContext);
 
   const [tables, setTables] = useState<string[]>([]);
   const [databases, setDatabases] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!selectedDatabase || !isConnected) return;
+    if (!selectedDatabase) return;
 
-    window
-      .query(
-        `SELECT * FROM information_schema.tables
+    sendQuery?.(
+      `SELECT * FROM information_schema.tables
         WHERE table_type = 'BASE TABLE'
         AND table_schema NOT IN ('pg_catalog', 'information_schema')
         AND table_catalog = '${selectedDatabase}'
         ORDER BY table_name ASC`,
-      )
-      .then((data) => {
-        setTables(data.rows.map(({ table_name }) => table_name));
+    ).then((data) => {
+      setTables(data.rows.map(({ table_name }) => table_name));
 
-        window
-          .query(`SELECT datname FROM pg_database WHERE datistemplate = FALSE ORDER BY datname ASC`)
-          .then((data) => {
-            setDatabases(data.rows.map(({ datname }) => datname));
-          });
+      sendQuery(
+        `SELECT datname FROM pg_database WHERE datistemplate = FALSE ORDER BY datname ASC`,
+      ).then((data) => {
+        setDatabases(data.rows.map(({ datname }) => datname));
       });
-  }, [selectedDatabase, isConnected]);
+    });
+  }, [selectedDatabase, sendQuery]);
 
   const selectTable = (tableName: string) => {
     setQueries([

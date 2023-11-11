@@ -1,74 +1,29 @@
-import { app, shell, BrowserWindow } from 'electron';
-import { join } from 'path';
-import { is } from '@electron-toolkit/utils';
-import icon from '../../resources/icon.png?asset';
+import { electronApp, optimizer } from '@electron-toolkit/utils';
+import { BrowserWindow, app } from 'electron';
+import { createMainWindow } from './mainWindow';
 
-function createWindow(): void {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    // frame: false,
-    titleBarStyle: 'hidden',
-    trafficLightPosition: { x: 14, y: 16 },
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
-    },
-  });
-
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show();
-  });
-
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url);
-    return { action: 'deny' };
-  });
-
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
-  }
-}
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  // Set app user model id for windows
-  // electronApp.setAppUserModelId('com.electron')
+  // Set app user model ID for Windows
+  // https://learn.microsoft.com/en-us/windows/win32/shell/appids
+  electronApp.setAppUserModelId('com.dabase');
 
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
-  // app.on('browser-window-created', (_, window) => {
-  //   optimizer.watchWindowShortcuts(window)
-  // })
+  app.on('browser-window-created', (_, window) => {
+    // Opens DevTools on F12 in development mode and ignroes Command/Control + R in production.
+    optimizer.watchWindowShortcuts(window);
+  });
 
-  createWindow();
+  createMainWindow();
 
-  app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  app.on('activate', () => {
+    // On macOS, re-create window when the dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
   });
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// Quit when all windows are closed, except on macOS, where the app will stay active until the user
+// quits it explicitly.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
-
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.

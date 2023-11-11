@@ -11,7 +11,7 @@ export type TableProps = {
 export const Table: React.FC<TableProps> = (props) => {
   const { query } = props;
 
-  const { setQueries } = useDefinedContext(GlobalContext);
+  const { sendQuery, setQueries } = useDefinedContext(GlobalContext);
 
   const [rows, setRows] = useState<Record<string, string | Date>[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
@@ -19,7 +19,7 @@ export const Table: React.FC<TableProps> = (props) => {
   useEffect(() => {
     if (!query.sql) return;
 
-    window.query(query.sql).then((data) => {
+    sendQuery?.(query.sql).then((data) => {
       setColumns(data.fields.map(({ name }) => name));
       setRows(data.rows);
       setQueries((queries) => queries.map((q) => (q === query ? { ...q, hasResults: true } : q)));

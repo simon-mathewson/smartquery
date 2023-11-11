@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState';
-import { Connection, Query as QueryType } from './types';
+import { Connection, Query as QueryType, SendQuery } from './types';
 import { TopBar } from './components/TopBar/TopBar';
 import { GlobalContext } from './contexts/GlobalContext';
 import './index.css';
@@ -40,20 +40,21 @@ export const App: React.FC = () => {
 
   const [selectedConnectionIndex, setSelectedConnectionIndex] = useState<number | null>(0);
 
-  const [isConnected, setIsConnected] = useState(false);
+  const [sendQuery, setSendQuery] = useState<SendQuery | null>(null);
 
   const [selectedDatabase, setSelectedDatabase] = useState<string | null>(null);
 
   const connect = (connection: Connection) => {
-    setIsConnected(false);
+    setSendQuery(null);
     setQueries([]);
-    window
-      .connect(connection)
-      .then(() => {
-        setIsConnected(true);
+
+    window.api
+      .connectDb(connection)
+      .then(({ query }) => {
+        setSendQuery(() => query);
       })
       .catch(() => {
-        setIsConnected(false);
+        setSendQuery(null);
       });
   };
 
@@ -79,10 +80,10 @@ export const App: React.FC = () => {
     <GlobalContext.Provider
       value={{
         connections,
-        isConnected,
         queries,
         selectedConnectionIndex,
         selectedDatabase,
+        sendQuery,
         setQueries,
         setConnections,
         setSelectedConnectionIndex,

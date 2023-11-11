@@ -12,3 +12,5 @@ export type Query = {
   sql?: string;
   showEditor?: boolean;
 };
+
+export type SendQuery = Awaited<ReturnType<typeof window.api.connectDb>>['query'];
