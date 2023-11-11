@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
+import React, { useEffect, useState } from 'react';
+import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { githubLightInit } from '@uiw/codemirror-theme-github';
 import { Button } from '@renderer/components/shared/Button/Button';
@@ -29,6 +29,30 @@ export const QueryEditor: React.FC<TableProps> = (props) => {
     },
   });
 
+  const editorRef = React.useRef<ReactCodeMirrorRef>(null);
+
+  const getContentEl = () => editorRef.current?.editor?.querySelector('.cm-content');
+
+  const submitQuery = () => {
+    setQueries([{ id: query.id, sql: getContentEl()?.textContent ?? undefined }]);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (document.activeElement === getContentEl() && event.metaKey && event.key === 'Enter') {
+        event.stopPropagation();
+        console.log('submit');
+        submitQuery();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
     <div className="grid max-w-xl gap-4">
       <CodeMirror
@@ -36,6 +60,7 @@ export const QueryEditor: React.FC<TableProps> = (props) => {
         basicSetup={{}}
         extensions={[sql()]}
         onChange={(sql) => setValue(sql)}
+        ref={editorRef}
         theme={theme}
         value={value}
         width="100%"
@@ -44,9 +69,7 @@ export const QueryEditor: React.FC<TableProps> = (props) => {
         className="ml-auto w-36"
         icon={<Send />}
         label="Submit"
-        onClick={() => {
-          setQueries([{ id: query.id, sql: value }]);
-        }}
+        onClick={() => submitQuery()}
         variant="primary"
       />
     </div>

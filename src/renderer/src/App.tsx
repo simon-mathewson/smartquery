@@ -97,7 +97,11 @@ export const App: React.FC = () => {
               align="left"
               icon={<Add />}
               label="Query"
-              onClick={() => setQueries([{ id: uniqueId(), showEditor: true }])}
+              onClick={() =>
+                setQueries([
+                  { id: uniqueId(), showEditor: true, sql: 'select * from "ProductPosition"' },
+                ])
+              }
               variant="primary"
             />
             <TableList />
