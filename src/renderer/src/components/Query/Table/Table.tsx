@@ -29,25 +29,29 @@ export const Table: React.FC<TableProps> = (props) => {
   if (!columns.length) return null;
 
   return (
-    <div
-      className="relative grid min-w-[576px] overflow-auto p-2 pt-0"
-      style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
-    >
-      {columns.map((column) => (
-        <Cell header key={column}>
-          {column}
-        </Cell>
-      ))}
-      {rows.map((row) =>
-        columns.map((column) => {
-          const value = row[column];
+    <div className="relative min-w-[576px] overflow-auto p-2 pt-0">
+      <div className="grid" style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}>
+        {columns.map((column) => (
+          <Cell header key={column}>
+            {column}
+          </Cell>
+        ))}
+        {rows.map((row) =>
+          columns.map((column) => {
+            const value = row[column];
 
-          return (
-            <Cell key={[row, column].join()}>
-              {value instanceof Date ? value.toDateString() : value}
-            </Cell>
-          );
-        }),
+            return (
+              <Cell key={[row, column].join()}>
+                {value instanceof Date ? value.toDateString() : value}
+              </Cell>
+            );
+          }),
+        )}
+      </div>
+      {rows.length === 0 && (
+        <div className="sticky left-0 w-full py-4 text-center text-xs text-gray-500">
+          This table is empty.
+        </div>
       )}
     </div>
   );
