@@ -67,7 +67,7 @@ export const Editor: React.FC<EditorProps> = (props) => {
       />
       <Button
         className="ml-auto w-36"
-        disabled={!value}
+        disabled={!value?.trim()}
         icon={<Send />}
         label="Submit"
         onClick={() => submitQuery()}
