@@ -20,6 +20,10 @@
   src: url(fonts/Inter-Medium.ttf);
 }
 
+html {
+  user-select: none;
+}
+
 html,
 body,
 #root {
