@@ -1,7 +1,21 @@
+.cm-theme {
+  overflow: hidden;
+}
+
 .cm-editor {
   font-size: 14px;
 }
 
 .cm-editor.cm-focused {
   outline: none;
+}
+
+.cm-content,
+.cm-gutter {
+  min-height: 80px !important;
+}
+
+.cm-editor:not(.cm-focused) .cm-activeLine,
+.cm-editor:not(.cm-focused) .cm-activeLineGutter {
+  background-color: transparent;
 }

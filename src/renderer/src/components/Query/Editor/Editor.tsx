@@ -8,6 +8,7 @@ import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import './styles.css';
 import { Send } from '@mui/icons-material';
 import { Query as QueryType } from '../../../types';
+import colors from 'tailwindcss/colors';
 
 export type EditorProps = {
   query: QueryType;
@@ -23,9 +24,12 @@ export const Editor: React.FC<EditorProps> = (props) => {
   const theme = githubLightInit({
     settings: {
       background: 'transparent',
-      gutterBackground: 'transparent',
       fontFamily: 'Fira Mono, monospace',
+      gutterBackground: colors.gray[100],
       gutterBorder: '#eee',
+      lineHighlight: `${colors.blue[500]}11`,
+      selection: colors.blue[200],
+      selectionMatch: colors.blue[100],
     },
   });
 
@@ -54,19 +58,20 @@ export const Editor: React.FC<EditorProps> = (props) => {
   }, []);
 
   return (
-    <div className="grid max-w-xl gap-4">
+    <div className="grid w-full gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
       <CodeMirror
         autoFocus
-        basicSetup={{}}
+        basicSetup={{
+          autocompletion: false,
+        }}
         extensions={[sql()]}
         onChange={(sql) => setValue(sql)}
         ref={editorRef}
         theme={theme}
         value={value}
-        width="100%"
       />
       <Button
-        className="ml-auto w-36"
+        className="mb-2 ml-auto mr-2 w-36"
         disabled={!value?.trim()}
         icon={<Send />}
         label="Submit"
