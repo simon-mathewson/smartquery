@@ -29,7 +29,7 @@ export const Table: React.FC<TableProps> = (props) => {
   if (!columns.length) return null;
 
   return (
-    <div className="relative min-w-[576px] overflow-auto p-2 pt-0">
+    <div className="relative overflow-auto p-2 pt-0">
       <div className="grid" style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}>
         {columns.map((column) => (
           <Cell header key={column}>

@@ -44,7 +44,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   return (
     <>
       <form
-        className="mx-auto grid w-full max-w-md gap-3"
+        className="mx-auto grid w-full max-w-md gap-2"
         onSubmit={(event) => {
           event.preventDefault();
 
@@ -66,7 +66,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                       <div className="p-2 text-center text-sm font-medium text-gray-600">
                         Delete this connection?
                       </div>
-                      <div className="flex gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         <Button icon={<Close />} label="No" onClick={close} />
                         <Button
                           icon={<Done />}

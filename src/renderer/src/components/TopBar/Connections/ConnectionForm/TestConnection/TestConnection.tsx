@@ -1,4 +1,4 @@
-import { CheckCircle, SettingsEthernet, WarningAmber } from '@mui/icons-material';
+import { CheckCircleOutline, SettingsEthernet, WarningAmber } from '@mui/icons-material';
 import { Button } from '@renderer/components/shared/Button/Button';
 import React, { useEffect, useState } from 'react';
 import { ConnectionSchema, FormSchema, isFormValid } from '../utils';
@@ -44,7 +44,7 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
         label: 'Testing connection...',
       })}
       {...(hasSucceeded && {
-        icon: <CheckCircle />,
+        icon: <CheckCircleOutline />,
         label: 'Connection succeeded',
         variant: 'success',
       })}
