@@ -1,4 +1,4 @@
-import { ArrowBack, Close, DeleteOutline, Done } from '@mui/icons-material';
+import { ArrowBack, Close, DeleteOutline, Done, SettingsEthernet } from '@mui/icons-material';
 import { Button } from '@renderer/components/shared/Button/Button';
 import { Input } from '@renderer/components/shared/Input/Input';
 import { OverlayCard } from '@renderer/components/shared/OverlayCard/OverlayCard';
@@ -21,11 +21,13 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const connectionToEdit =
     connectionToEditIndex !== null ? connections[connectionToEditIndex] : null;
 
-  const [name, setName] = useState<string | null>(connectionToEdit?.name ?? null);
-  const [host, setHost] = useState<string | null>(connectionToEdit?.host ?? null);
-  const [port, setPort] = useState<string | null>(connectionToEdit?.port.toString() ?? null);
-  const [defaultDatabase, setDefaultDatabase] = useState<string | null>(
-    connectionToEdit?.database ?? null,
+  const [name, setName] = useState<string>(connectionToEdit?.name ?? '');
+  const [host, setHost] = useState<string>(connectionToEdit?.host ?? '');
+  const [user, setUser] = useState<string>(connectionToEdit?.user ?? '');
+  const [password, setPassword] = useState<string>(connectionToEdit?.password ?? '');
+  const [port, setPort] = useState<string>(connectionToEdit?.port.toString() ?? '');
+  const [defaultDatabase, setDefaultDatabase] = useState<string>(
+    connectionToEdit?.defaultDatabase ?? '',
   );
 
   const deleteButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -33,15 +35,20 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   return (
     <>
       <form
-        className="mx-auto grid w-full max-w-sm gap-3"
+        className="mx-auto grid w-full max-w-md gap-3"
         onSubmit={(event) => {
           event.preventDefault();
 
-          if (!name || !host || !port || !defaultDatabase) return;
-
           setConnections((connections) => [
             ...connections,
-            { database: defaultDatabase, host, name, port: Number(port) },
+            {
+              defaultDatabase,
+              host,
+              name,
+              password,
+              port: Number(port),
+              user,
+            },
           ]);
           exit();
         }}
@@ -81,17 +88,18 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           title={`${mode === 'add' ? 'Add' : 'Edit'} Connection`}
         />
         <Input label="Name" onChange={setName} value={name} />
-        <Input label="Host" onChange={setHost} value={host} />
-        <Input label="Port" onChange={setPort} value={port} />
+        <div className="grid grid-cols-2 gap-2">
+          <Input label="Host" onChange={setHost} value={host} />
+          <Input label="Port" onChange={setPort} value={port} />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Input label="User" onChange={setUser} value={user} />
+          <Input label="Password" onChange={setPassword} type="password" value={password} />
+        </div>
         <Input label="Default Database" onChange={setDefaultDatabase} value={defaultDatabase} />
+        <Button icon={<SettingsEthernet />} label="Test Connection" />
 
-        <Button
-          className="mt-2"
-          icon={<Done />}
-          label={mode === 'add' ? 'Add' : 'Save'}
-          type="submit"
-          variant="primary"
-        />
+        <Button label={mode === 'add' ? 'Add' : 'Save'} type="submit" variant="primary" />
       </form>
     </>
   );

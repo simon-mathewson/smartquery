@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState';
-import { Connection, Query as QueryType, SendQuery } from './types';
+import { Query as QueryType } from './types';
 import { TopBar } from './components/TopBar/TopBar';
 import { GlobalContext } from './contexts/GlobalContext';
 import './index.css';
@@ -9,32 +9,41 @@ import { Button } from './components/shared/Button/Button';
 import { Add } from '@mui/icons-material';
 import { Query } from './components/Query/Query';
 import { uniqueId } from 'lodash';
+import type { Connection, SendQuery } from 'src/preload/index.d';
 
 export const App: React.FC = () => {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
     {
-      database: 'mathewson_metals_development',
+      defaultDatabase: 'mathewson_metals_development',
       host: 'localhost',
       name: 'Mathewson Metals',
+      password: 'password',
       port: 5432,
+      user: 'postgres',
     },
     {
-      database: 'dabase_test_1',
+      defaultDatabase: 'dabase_test_1',
       host: 'localhost',
       name: 'Dabase Test 1',
+      password: 'password',
       port: 5433,
+      user: 'postgres',
     },
     {
-      database: 'dabase_test_2',
+      defaultDatabase: 'dabase_test_2',
       host: 'localhost',
       name: 'Dabase Test 2',
+      password: 'password',
       port: 5434,
+      user: 'postgres',
     },
     {
-      database: 'dabase_test_3',
+      defaultDatabase: 'dabase_test_3',
       host: 'localhost',
       name: 'Dabase Test 3',
+      password: 'password',
       port: 5435,
+      user: 'postgres',
     },
   ]);
 
@@ -50,8 +59,8 @@ export const App: React.FC = () => {
 
     window.api
       .connectDb(connection)
-      .then(({ query }) => {
-        setSendQuery(() => query);
+      .then(({ sendQuery }) => {
+        setSendQuery(() => sendQuery);
       })
       .catch(() => {
         setSendQuery(null);
@@ -63,7 +72,7 @@ export const App: React.FC = () => {
 
     const selectedConnection = connections[selectedConnectionIndex];
 
-    setSelectedDatabase(selectedConnection.database);
+    setSelectedDatabase(selectedConnection.defaultDatabase);
   }, [selectedConnectionIndex]);
 
   useEffect(() => {
@@ -71,7 +80,7 @@ export const App: React.FC = () => {
 
     const selectedConnection = connections[selectedConnectionIndex];
 
-    connect({ ...selectedConnection, database: selectedDatabase });
+    connect({ ...selectedConnection, defaultDatabase: selectedDatabase });
   }, [selectedDatabase]);
 
   const [queries, setQueries] = useState<QueryType[]>([]);

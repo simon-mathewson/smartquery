@@ -6,21 +6,21 @@ const clientRef: { current: Client | null } = {
 };
 
 export const connectDb: Api['connectDb'] = async (connection) => {
-  const { database, host, port } = connection;
+  const { defaultDatabase, host, password, port, user } = connection;
 
   await clientRef.current?.end();
 
   clientRef.current = new Client({
-    database,
+    database: defaultDatabase,
     host,
-    password: 'password',
+    password,
     port,
-    user: 'postgres',
+    user,
   });
 
   await clientRef.current.connect();
 
   return {
-    query: (text: string) => clientRef.current!.query(text),
+    sendQuery: (text) => clientRef.current!.query(text),
   };
 };

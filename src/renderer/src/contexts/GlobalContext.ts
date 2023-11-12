@@ -1,5 +1,6 @@
 import React, { createContext } from 'react';
-import { Connection, Query, SendQuery } from '../types';
+import { Query } from '../types';
+import type { Connection, SendQuery } from 'src/preload/index.d';
 
 export const GlobalContext = createContext<{
   connections: Connection[];

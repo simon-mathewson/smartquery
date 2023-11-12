@@ -1,3 +1,7 @@
+.cm-editor {
+  font-size: 14px;
+}
+
 .cm-editor.cm-focused {
   outline: none;
 }
