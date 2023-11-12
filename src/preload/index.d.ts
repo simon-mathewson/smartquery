@@ -11,7 +11,7 @@ export type Api = {
 };
 
 export type Connection = {
-  defaultDatabase: string;
+  database: string;
   host: string;
   name: string;
   password: string;

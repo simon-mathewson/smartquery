@@ -1,4 +1,4 @@
-import { ArrowBack, Close, DeleteOutline, Done, SettingsEthernet } from '@mui/icons-material';
+import { ArrowBack, Close, DeleteOutline, Done } from '@mui/icons-material';
 import { Button } from '@renderer/components/shared/Button/Button';
 import { Input } from '@renderer/components/shared/Input/Input';
 import { OverlayCard } from '@renderer/components/shared/OverlayCard/OverlayCard';
@@ -6,6 +6,8 @@ import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import React, { useRef, useState } from 'react';
 import { Header } from '../../../shared/Header/Header';
+import { TestConnection } from './TestConnection/TestConnection';
+import { FormSchema, connectionSchema, isFormValid } from './utils';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;
@@ -21,14 +23,21 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const connectionToEdit =
     connectionToEditIndex !== null ? connections[connectionToEditIndex] : null;
 
-  const [name, setName] = useState<string>(connectionToEdit?.name ?? '');
-  const [host, setHost] = useState<string>(connectionToEdit?.host ?? '');
-  const [user, setUser] = useState<string>(connectionToEdit?.user ?? '');
-  const [password, setPassword] = useState<string>(connectionToEdit?.password ?? '');
-  const [port, setPort] = useState<string>(connectionToEdit?.port.toString() ?? '');
-  const [defaultDatabase, setDefaultDatabase] = useState<string>(
-    connectionToEdit?.defaultDatabase ?? '',
+  const [form, setForm] = useState<FormSchema>(
+    connectionToEdit ?? {
+      database: '',
+      host: '',
+      name: '',
+      password: '',
+      port: null,
+      user: '',
+    },
   );
+
+  const getChangeHandler =
+    (key: keyof FormSchema, convert?: (value: string) => unknown) => (value: string) => {
+      setForm((formValues) => ({ ...formValues, [key]: convert ? convert(value) : value }));
+    };
 
   const deleteButtonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -39,17 +48,9 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         onSubmit={(event) => {
           event.preventDefault();
 
-          setConnections((connections) => [
-            ...connections,
-            {
-              defaultDatabase,
-              host,
-              name,
-              password,
-              port: Number(port),
-              user,
-            },
-          ]);
+          const connection = connectionSchema.parse(form);
+
+          setConnections((connections) => [...connections, connection]);
           exit();
         }}
       >
@@ -87,19 +88,37 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           }
           title={`${mode === 'add' ? 'Add' : 'Edit'} Connection`}
         />
-        <Input label="Name" onChange={setName} value={name} />
+        <Input label="Name" onChange={getChangeHandler('name')} value={form.name} />
         <div className="grid grid-cols-2 gap-2">
-          <Input label="Host" onChange={setHost} value={host} />
-          <Input label="Port" onChange={setPort} value={port} />
+          <Input label="Host" onChange={getChangeHandler('host')} value={form.host} />
+          <Input
+            label="Port"
+            onChange={getChangeHandler('port', (value) => (value ? Number(value) : null))}
+            value={form.port === null ? '' : String(form.port)}
+          />
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <Input label="User" onChange={setUser} value={user} />
-          <Input label="Password" onChange={setPassword} type="password" value={password} />
+          <Input label="User" onChange={getChangeHandler('user')} value={form.user} />
+          <Input
+            label="Password"
+            onChange={getChangeHandler('password')}
+            type="password"
+            value={form.password}
+          />
         </div>
-        <Input label="Default Database" onChange={setDefaultDatabase} value={defaultDatabase} />
-        <Button icon={<SettingsEthernet />} label="Test Connection" />
-
-        <Button label={mode === 'add' ? 'Add' : 'Save'} type="submit" variant="primary" />
+        <Input
+          label="Default Database"
+          onChange={getChangeHandler('database')}
+          value={form.database}
+        />
+        <TestConnection form={form} />
+        <Button
+          disabled={!isFormValid(form)}
+          icon={<Done />}
+          label={mode === 'add' ? 'Add' : 'Save'}
+          type="submit"
+          variant="primary"
+        />
       </form>
     </>
   );

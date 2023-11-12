@@ -6,12 +6,12 @@ const clientRef: { current: Client | null } = {
 };
 
 export const connectDb: Api['connectDb'] = async (connection) => {
-  const { defaultDatabase, host, password, port, user } = connection;
+  const { database, host, password, port, user } = connection;
 
   await clientRef.current?.end();
 
   clientRef.current = new Client({
-    database: defaultDatabase,
+    database,
     host,
     password,
     port,
