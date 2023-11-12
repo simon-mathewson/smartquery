@@ -7,6 +7,7 @@ import { Close, Code } from '@mui/icons-material';
 import { Header } from '../shared/Header/Header';
 import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import { GlobalContext } from '@renderer/contexts/GlobalContext';
+import classNames from 'classnames';
 
 export type QueryProps = {
   query: QueryType;
@@ -18,12 +19,18 @@ export const Query: React.FC<QueryProps> = (props) => {
   const { setQueries } = useDefinedContext(GlobalContext);
 
   const [showEditor, setShowEditor] = useState(query.showEditor);
+  const [hasResults, setHasResults] = useState(false);
 
   return (
-    <div className="relative grid h-max max-h-full min-w-[560px] grid-rows-[max-content_1fr] gap-4 rounded-xl bg-gray-50 p-2 shadow-lg">
+    <div
+      className={classNames(
+        'relative grid h-max max-h-full min-w-[560px] grid-rows-[max-content_1fr] gap-4 overflow-hidden rounded-xl bg-gray-50 p-2 shadow-lg',
+        { 'grid-rows-[max-content_max-content_1fr]': showEditor },
+      )}
+    >
       <Header
         left={
-          query.hasResults ? (
+          hasResults ? (
             <Button
               icon={<Code />}
               onClick={() => setShowEditor((current) => !current)}
@@ -35,7 +42,7 @@ export const Query: React.FC<QueryProps> = (props) => {
         title={query.label ?? query.sql?.replaceAll('\n', ' ') ?? 'New Query'}
       />
       {showEditor && <Editor query={query} />}
-      <Table query={query} />
+      <Table onQuerySuccess={() => setHasResults(true)} query={query} />
     </div>
   );
 };

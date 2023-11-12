@@ -58,26 +58,28 @@ export const Editor: React.FC<EditorProps> = (props) => {
   }, []);
 
   return (
-    <div className="grid w-full gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
-      <CodeMirror
-        autoFocus
-        basicSetup={{
-          autocompletion: false,
-        }}
-        extensions={[sql()]}
-        onChange={(sql) => setValue(sql)}
-        ref={editorRef}
-        theme={theme}
-        value={value}
-      />
-      <Button
-        className="mb-2 ml-auto mr-2 w-36"
-        disabled={!value?.trim()}
-        icon={<Send />}
-        label="Submit"
-        onClick={() => submitQuery()}
-        variant="primary"
-      />
+    <div className="px-2">
+      <div className="grid w-full gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-100 pt-1">
+        <CodeMirror
+          autoFocus
+          basicSetup={{
+            autocompletion: false,
+          }}
+          extensions={[sql()]}
+          onChange={(sql) => setValue(sql)}
+          ref={editorRef}
+          theme={theme}
+          value={value}
+        />
+        <Button
+          className="mb-2 ml-auto mr-2 w-36"
+          disabled={!value?.trim()}
+          icon={<Send />}
+          label="Submit"
+          onClick={() => submitQuery()}
+          variant="primary"
+        />
+      </div>
     </div>
   );
 };

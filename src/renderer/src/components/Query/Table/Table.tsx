@@ -5,13 +5,14 @@ import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import { GlobalContext } from '@renderer/contexts/GlobalContext';
 
 export type TableProps = {
+  onQuerySuccess?: () => void;
   query: QueryType;
 };
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { query } = props;
+  const { onQuerySuccess, query } = props;
 
-  const { sendQuery, setQueries } = useDefinedContext(GlobalContext);
+  const { sendQuery } = useDefinedContext(GlobalContext);
 
   const [rows, setRows] = useState<Record<string, string | Date>[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
@@ -22,7 +23,7 @@ export const Table: React.FC<TableProps> = (props) => {
     sendQuery?.(query.sql).then((data) => {
       setColumns(data.fields.map(({ name }) => name));
       setRows(data.rows);
-      setQueries((queries) => queries.map((q) => (q === query ? { ...q, hasResults: true } : q)));
+      onQuerySuccess?.();
     });
   }, [query.sql]);
 
