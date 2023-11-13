@@ -27,7 +27,7 @@ export const TopBar: React.FC = () => {
           <>
             <div className="text-center font-medium leading-snug">{selectedConnection.name}</div>
             <div className="text-center text-xs text-gray-500">
-              {selectedConnection.host}:{selectedConnection.port}
+              {selectedConnection.user}@{selectedConnection.host}:{selectedConnection.port}
             </div>
           </>
         ) : (
