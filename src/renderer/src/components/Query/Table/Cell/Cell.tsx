@@ -10,9 +10,9 @@ export const Cell: React.FC<PropsWithChildren<CellProps>> = (props) => {
 
   return (
     <div
-      className={classNames('flex h-8 max-w-[176px] items-center border-b-gray-200 px-4', {
-        'sticky top-0 -mb-[1px] h-10 border-b-[1px] bg-gray-50': header,
-        'border-t-[1px] border-b-gray-200 py-2': !header,
+      className={classNames('flex h-8 max-w-[176px] items-center border-b border-b-gray-200 px-4', {
+        'sticky top-0 h-10 bg-gray-50': header,
+        ' border-b-gray-200 py-2': !header,
       })}
     >
       <div

@@ -5,12 +5,13 @@ import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import { GlobalContext } from '@renderer/contexts/GlobalContext';
 
 export type TableProps = {
-  onQuerySuccess?: () => void;
+  hasResults: boolean;
   query: QueryType;
+  setHasResults: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { onQuerySuccess, query } = props;
+  const { hasResults, query, setHasResults } = props;
 
   const { sendQuery } = useDefinedContext(GlobalContext);
 
@@ -23,15 +24,18 @@ export const Table: React.FC<TableProps> = (props) => {
     sendQuery?.(query.sql).then((data) => {
       setColumns(data.fields.map(({ name }) => name));
       setRows(data.rows);
-      onQuerySuccess?.();
+      setHasResults(true);
     });
   }, [query.sql]);
 
-  if (!columns.length) return null;
+  if (!hasResults) return null;
 
   return (
-    <div className="relative overflow-auto p-2 pt-0">
-      <div className="grid" style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}>
+    <div className="grid overflow-hidden p-2 pt-0">
+      <div
+        className="grid overflow-auto"
+        style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
+      >
         {columns.map((column) => (
           <Cell header key={column}>
             {column}

@@ -24,8 +24,8 @@ export const Query: React.FC<QueryProps> = (props) => {
   return (
     <div
       className={classNames(
-        'relative grid h-max max-h-full min-w-[560px] grid-rows-[max-content_1fr] gap-4 overflow-hidden rounded-xl bg-gray-50 p-2 shadow-lg',
-        { 'grid-rows-[max-content_max-content_1fr]': showEditor },
+        'relative grid h-max max-h-full min-w-[440px] grid-rows-[max-content_1fr] gap-2 overflow-hidden rounded-xl bg-gray-50 p-2 shadow-lg',
+        { 'grid-rows-[max-content_max-content_1fr]': showEditor && hasResults },
       )}
     >
       <Header
@@ -42,7 +42,7 @@ export const Query: React.FC<QueryProps> = (props) => {
         title={query.label ?? query.sql?.replaceAll('\n', ' ') ?? 'New Query'}
       />
       {showEditor && <Editor query={query} />}
-      <Table onQuerySuccess={() => setHasResults(true)} query={query} />
+      <Table hasResults={hasResults} query={query} setHasResults={setHasResults} />
     </div>
   );
 };

@@ -101,7 +101,7 @@ export const App: React.FC = () => {
     >
       <div className="grid h-full grid-rows-[max-content_1fr] bg-gray-200">
         <TopBar />
-        <div className="flex h-full gap-6 overflow-hidden px-4 pb-4">
+        <div className="flex h-full gap-5 overflow-hidden px-4 pb-4">
           <div className="grid h-full grid-rows-[max-content_minmax(auto,max-content)] gap-4">
             <Button
               align="left"
