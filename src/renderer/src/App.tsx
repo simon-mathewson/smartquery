@@ -106,8 +106,8 @@ export const App: React.FC = () => {
     >
       <div className="grid h-full grid-rows-[max-content_1fr] bg-gray-200">
         <TopBar />
-        <div className="flex h-full gap-4 overflow-hidden px-4 pb-4">
-          <div className="grid h-full grid-rows-[max-content_minmax(auto,max-content)] gap-4">
+        <div className="flex h-full gap-4 overflow-auto px-4 pb-4">
+          <div className="sticky left-0 top-0 z-10 grid h-full grid-rows-[max-content_minmax(auto,max-content)] gap-4">
             <Button
               align="left"
               icon={<Add />}

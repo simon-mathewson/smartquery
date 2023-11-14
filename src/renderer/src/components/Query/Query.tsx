@@ -24,7 +24,7 @@ export const Query: React.FC<QueryProps> = (props) => {
   return (
     <div
       className={classNames(
-        'relative grid h-max max-h-full min-w-[440px] grid-rows-[max-content_1fr] gap-2 overflow-hidden rounded-xl bg-gray-50 p-2 shadow-lg',
+        'relative grid h-max max-h-[50vh] min-w-[440px] grid-rows-[max-content_1fr] gap-2 overflow-hidden rounded-xl bg-gray-50 p-2 shadow-lg',
         { 'grid-rows-[max-content_max-content_1fr]': showEditor && hasResults },
       )}
     >
