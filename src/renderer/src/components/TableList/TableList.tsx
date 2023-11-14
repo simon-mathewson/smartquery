@@ -2,12 +2,10 @@ import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import React, { useEffect, useState } from 'react';
 import { Select } from '../shared/Select/Select';
-import { ListItem } from '../shared/ListItem/ListItem';
-import { uniqueId } from 'lodash';
+import { Item } from './Item/Item';
 
 export const TableList: React.FC = () => {
-  const { selectedDatabase, sendQuery, setSelectedDatabase, setQueries } =
-    useDefinedContext(GlobalContext);
+  const { selectedDatabase, sendQuery, setSelectedDatabase } = useDefinedContext(GlobalContext);
 
   const [tables, setTables] = useState<string[]>([]);
   const [databases, setDatabases] = useState<string[]>([]);
@@ -32,16 +30,6 @@ export const TableList: React.FC = () => {
     });
   }, [selectedDatabase, sendQuery]);
 
-  const selectTable = (tableName: string) => {
-    setQueries([
-      {
-        id: uniqueId(),
-        label: tableName,
-        sql: `SELECT * FROM "${tableName}" LIMIT 50`,
-      },
-    ]);
-  };
-
   return (
     <div className="flex w-56 flex-shrink-0 flex-col overflow-hidden rounded-xl bg-gray-100 shadow-lg">
       <div className="border-b-[1px] border-b-gray-200 p-2">
@@ -56,14 +44,7 @@ export const TableList: React.FC = () => {
       </div>
       <div className="overflow-auto p-2">
         {tables.length > 0 ? (
-          tables.map((tableName) => (
-            <ListItem
-              key={tableName}
-              label={tableName}
-              onClick={() => selectTable(tableName)}
-              selectedVariant="primary"
-            />
-          ))
+          tables.map((tableName) => <Item key={tableName} tableName={tableName} />)
         ) : (
           <div className="py-2 text-center text-xs text-gray-500">This database is empty.</div>
         )}

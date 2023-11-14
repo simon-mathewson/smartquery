@@ -38,7 +38,18 @@ export const Editor: React.FC<EditorProps> = (props) => {
   const getContentEl = () => editorRef.current?.editor?.querySelector('.cm-content');
 
   const submitQuery = () => {
-    setQueries([{ id: query.id, sql: getContentEl()?.textContent ?? undefined }]);
+    setQueries((columns) =>
+      columns.map((column) =>
+        column.map((q) =>
+          q.id === query.id
+            ? {
+                id: query.id,
+                sql: getContentEl()?.textContent ?? undefined,
+              }
+            : q,
+        ),
+      ),
+    );
   };
 
   useEffect(() => {

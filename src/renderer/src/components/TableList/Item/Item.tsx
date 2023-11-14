@@ -1,0 +1,34 @@
+import { ListItem } from '@renderer/components/shared/ListItem/ListItem';
+import { GlobalContext } from '@renderer/contexts/GlobalContext';
+import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
+import { useDrag } from '@renderer/hooks/useDrag/useDrag';
+import classNames from 'classnames';
+import { uniqueId } from 'lodash';
+import React, { useState } from 'react';
+
+export type ItemProps = { tableName: string };
+
+export const Item: React.FC<ItemProps> = (props) => {
+  const { tableName } = props;
+
+  const { setQueries } = useDefinedContext(GlobalContext);
+
+  const [query] = useState({
+    id: uniqueId(),
+    label: tableName,
+    sql: `SELECT * FROM "${tableName}" LIMIT 50`,
+  });
+
+  const { handleMouseDown, isDragging } = useDrag({ query });
+
+  return (
+    <ListItem
+      className={classNames({ '!opacity-50': isDragging })}
+      key={tableName}
+      label={tableName}
+      onClick={() => setQueries([[query]])}
+      onMouseDown={handleMouseDown}
+      selectedVariant="primary"
+    />
+  );
+};

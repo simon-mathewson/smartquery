@@ -38,7 +38,18 @@ export const Query: React.FC<QueryProps> = (props) => {
             />
           ) : null
         }
-        right={<Button icon={<Close />} onClick={() => setQueries([])} />}
+        right={
+          <Button
+            icon={<Close />}
+            onClick={() =>
+              setQueries((columns) =>
+                columns
+                  .map((column) => column.filter((q) => q.id !== query.id))
+                  .filter((column) => column.length),
+              )
+            }
+          />
+        }
         title={query.label ?? query.sql?.replaceAll('\n', ' ') ?? 'New Query'}
       />
       {showEditor && <Editor query={query} />}

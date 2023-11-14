@@ -9,5 +9,6 @@ module.exports = {
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
     'react/display-name': 'off',
+    'react/prop-types': 'off',
   },
 };

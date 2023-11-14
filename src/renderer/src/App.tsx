@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState';
-import { Query as QueryType } from './types';
+import { DropMarker as DropMarkerType, Query as QueryType } from './types';
 import { TopBar } from './components/TopBar/TopBar';
 import { GlobalContext } from './contexts/GlobalContext';
 import './index.css';
@@ -10,6 +10,7 @@ import { Add } from '@mui/icons-material';
 import { Query } from './components/Query/Query';
 import { uniqueId } from 'lodash';
 import type { Connection, SendQuery } from 'src/preload/index.d';
+import { DropMarker } from './components/DropMarker/DropMarker';
 
 export const App: React.FC = () => {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
@@ -83,38 +84,56 @@ export const App: React.FC = () => {
     connect({ ...selectedConnection, database: selectedDatabase });
   }, [selectedDatabase]);
 
-  const [queries, setQueries] = useState<QueryType[]>([]);
+  const [queries, setQueries] = useState<QueryType[][]>([]);
+
+  const [dropMarkers, setDropMarkers] = useState<DropMarkerType[]>([]);
 
   return (
     <GlobalContext.Provider
       value={{
         connections,
+        dropMarkers,
         queries,
         selectedConnectionIndex,
         selectedDatabase,
         sendQuery,
         setQueries,
         setConnections,
+        setDropMarkers,
         setSelectedConnectionIndex,
         setSelectedDatabase,
       }}
     >
       <div className="grid h-full grid-rows-[max-content_1fr] bg-gray-200">
         <TopBar />
-        <div className="flex h-full gap-5 overflow-hidden px-4 pb-4">
+        <div className="flex h-full gap-4 overflow-hidden px-4 pb-4">
           <div className="grid h-full grid-rows-[max-content_minmax(auto,max-content)] gap-4">
             <Button
               align="left"
               icon={<Add />}
               label="Query"
-              onClick={() => setQueries([{ id: uniqueId(), showEditor: true }])}
+              onClick={() => setQueries([[{ id: uniqueId(), showEditor: true }]])}
               variant="primary"
             />
             <TableList />
           </div>
-          {queries.map((query) => (
-            <Query key={query.id} query={query} />
-          ))}
+          <div className="grid-cols-min grid grid-flow-col gap-3">
+            <DropMarker column={0} row={0} />
+            {queries.map((column, columnIndex) => (
+              <React.Fragment key={columnIndex}>
+                <div className="grid-rows grid auto-rows-min gap-3">
+                  <DropMarker column={columnIndex} horizontal row={0} />
+                  {column.map((query, rowIndex) => (
+                    <React.Fragment key={query.id}>
+                      <Query query={query} />
+                      <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
+                    </React.Fragment>
+                  ))}
+                </div>
+                <DropMarker column={columnIndex + 1} row={0} />
+              </React.Fragment>
+            ))}
+          </div>
         </div>
       </div>
     </GlobalContext.Provider>

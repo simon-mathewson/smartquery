@@ -1,15 +1,17 @@
 import React, { createContext } from 'react';
-import { Query } from '../types';
+import { DropMarker, Query } from '../types';
 import type { Connection, SendQuery } from 'src/preload/index.d';
 
 export const GlobalContext = createContext<{
   connections: Connection[];
-  queries: Query[];
+  dropMarkers: DropMarker[];
+  queries: Query[][];
   selectedConnectionIndex: number | null;
   selectedDatabase: string | null;
   sendQuery: SendQuery | null;
-  setQueries: React.Dispatch<React.SetStateAction<Query[]>>;
   setConnections: React.Dispatch<React.SetStateAction<Connection[]>>;
-  setSelectedDatabase: React.Dispatch<React.SetStateAction<string | null>>;
+  setDropMarkers: React.Dispatch<React.SetStateAction<DropMarker[]>>;
+  setQueries: React.Dispatch<React.SetStateAction<Query[][]>>;
   setSelectedConnectionIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  setSelectedDatabase: React.Dispatch<React.SetStateAction<string | null>>;
 } | null>(null);

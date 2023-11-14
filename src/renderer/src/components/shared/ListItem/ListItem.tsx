@@ -1,25 +1,39 @@
 import classNames from 'classnames';
-import React from 'react';
 
 export type ListItemProps = {
+  className?: string;
   hint?: string;
   label?: string;
   onClick?: () => void;
+  onMouseDown?: React.MouseEventHandler<HTMLElement>;
   selected?: boolean;
   selectedVariant?: 'primary' | 'secondary';
 };
 
 export const ListItem: React.FC<ListItemProps> = (props) => {
-  const { hint, label, onClick, selected, selectedVariant = 'secondary' } = props;
+  const {
+    className,
+    hint,
+    label,
+    onClick,
+    onMouseDown,
+    selected,
+    selectedVariant = 'secondary',
+  } = props;
 
   return (
     <div
-      className={classNames('w-full cursor-pointer rounded-md px-2 py-1.5', {
-        'bg-blue-500': selectedVariant === 'primary' && selected,
-        'bg-gray-200': selectedVariant === 'secondary' && selected,
-        'hover:bg-gray-200': !selected,
-      })}
+      className={classNames(
+        'w-full cursor-pointer rounded-md px-2 py-1.5',
+        {
+          'bg-blue-500': selectedVariant === 'primary' && selected,
+          'bg-gray-200': selectedVariant === 'secondary' && selected,
+          'hover:bg-gray-200': !selected,
+        },
+        className,
+      )}
       onClick={onClick}
+      onMouseDown={onMouseDown}
     >
       <div
         className={classNames('text-xs font-medium text-gray-600', {
