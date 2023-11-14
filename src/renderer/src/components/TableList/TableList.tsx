@@ -31,8 +31,8 @@ export const TableList: React.FC = () => {
   }, [selectedDatabase, sendQuery]);
 
   return (
-    <div className="flex w-56 flex-shrink-0 flex-col overflow-hidden rounded-xl bg-gray-100 shadow-lg">
-      <div className="border-b-[1px] border-b-gray-200 p-2">
+    <div className="flex flex-col overflow-hidden">
+      <div className="border-b-[1px] border-b-gray-200 pb-2">
         <Select
           onChange={setSelectedDatabase}
           options={databases.map((database) => ({
@@ -42,7 +42,7 @@ export const TableList: React.FC = () => {
           value={selectedDatabase}
         />
       </div>
-      <div className="overflow-auto p-2">
+      <div className="overflow-auto py-2">
         {tables.length > 0 ? (
           tables.map((tableName) => <Item key={tableName} tableName={tableName} />)
         ) : (

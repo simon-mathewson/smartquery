@@ -35,6 +35,7 @@ export const useDrag = (props: {
     clone.style.width = `${rect.width}px`;
     clone.style.height = `${rect.height}px`;
     clone.style.cursor = 'grabbing';
+    clone.style.zIndex = '100';
 
     document.querySelector('#overlay')!.appendChild(clone);
 

@@ -10,7 +10,7 @@ export const createMainWindow = () => {
     icon: process.platform === 'linux' ? icon : undefined,
     show: false,
     titleBarStyle: 'hidden',
-    trafficLightPosition: { x: 14, y: 16 },
+    trafficLightPosition: { x: 16, y: 16 },
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,

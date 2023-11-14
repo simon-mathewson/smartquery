@@ -4,13 +4,10 @@ import { DropMarker as DropMarkerType, Query as QueryType } from './types';
 import { TopBar } from './components/TopBar/TopBar';
 import { GlobalContext } from './contexts/GlobalContext';
 import './index.css';
-import { TableList } from './components/TableList/TableList';
-import { Button } from './components/shared/Button/Button';
-import { Add } from '@mui/icons-material';
 import { Query } from './components/Query/Query';
-import { uniqueId } from 'lodash';
 import type { Connection, SendQuery } from 'src/preload/index.d';
 import { DropMarker } from './components/DropMarker/DropMarker';
+import { Sidebar } from './components/Sidebar/Sidebar';
 
 export const App: React.FC = () => {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
@@ -104,36 +101,25 @@ export const App: React.FC = () => {
         setSelectedDatabase,
       }}
     >
-      <div className="grid h-full grid-rows-[max-content_1fr] bg-gray-200">
-        <TopBar />
-        <div className="flex h-full gap-4 overflow-auto px-4 pb-4">
-          <div className="sticky left-0 top-0 z-10 grid h-full grid-rows-[max-content_minmax(auto,max-content)] gap-4">
-            <Button
-              align="left"
-              icon={<Add />}
-              label="Query"
-              onClick={() => setQueries([[{ id: uniqueId(), showEditor: true }]])}
-              variant="primary"
-            />
-            <TableList />
-          </div>
-          <div className="grid-cols-min grid grid-flow-col gap-3">
-            <DropMarker column={0} row={0} />
-            {queries.map((column, columnIndex) => (
-              <React.Fragment key={columnIndex}>
-                <div className="grid-rows grid auto-rows-min gap-3">
-                  <DropMarker column={columnIndex} horizontal row={0} />
-                  {column.map((query, rowIndex) => (
-                    <React.Fragment key={query.id}>
-                      <Query query={query} />
-                      <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
-                    </React.Fragment>
-                  ))}
-                </div>
-                <DropMarker column={columnIndex + 1} row={0} />
-              </React.Fragment>
-            ))}
-          </div>
+      <TopBar />
+      <div className="grid h-full grid-cols-[max-content_1fr] overflow-auto bg-gray-200">
+        <Sidebar />
+        <div className="grid-cols-min grid grid-flow-col justify-start gap-3 p-3">
+          <DropMarker column={0} row={0} />
+          {queries.map((column, columnIndex) => (
+            <React.Fragment key={columnIndex}>
+              <div className="grid-rows grid auto-rows-min justify-start gap-3">
+                <DropMarker column={columnIndex} horizontal row={0} />
+                {column.map((query, rowIndex) => (
+                  <React.Fragment key={query.id}>
+                    <Query query={query} />
+                    <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
+                  </React.Fragment>
+                ))}
+              </div>
+              <DropMarker column={columnIndex + 1} row={0} />
+            </React.Fragment>
+          ))}
         </div>
       </div>
     </GlobalContext.Provider>
