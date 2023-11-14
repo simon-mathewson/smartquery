@@ -18,7 +18,9 @@ export const useDrag = (props: {
 
   const cloneRef = useRef<HTMLElement | null>(null);
 
-  const cursorOffsetRef = useRef({ x: 0, y: 0 });
+  const startRef = useRef({ x: 0, y: 0 });
+
+  const isUnlocked = useRef(false);
 
   const createClone = useCallback((element?: HTMLElement) => {
     const dragEl = element ?? dragRef?.current;
@@ -41,7 +43,13 @@ export const useDrag = (props: {
 
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
-      if (event.offsetX < 10 || event.offsetY < 10) return;
+      const start = startRef.current;
+
+      const offsetX = Math.abs(start.x - event.clientX);
+      const offsetY = Math.abs(start.y - event.clientY);
+      if (offsetX < 5 && offsetY < 5 && !isUnlocked.current) return;
+
+      isUnlocked.current = true;
 
       setIsDragging(true);
 
@@ -65,10 +73,11 @@ export const useDrag = (props: {
 
       const clone = cloneRef.current!;
 
-      const cursorOffset = cursorOffsetRef.current;
+      const trigger = triggerRef.current!;
+      const triggerRect = trigger.getBoundingClientRect();
 
-      clone.style.top = `${Number(event.clientY - cursorOffset.y)}px`;
-      clone.style.left = `${Number(event.clientX - cursorOffset.x)}px`;
+      clone.style.top = `${Number(event.clientY - (start.y - triggerRect.y))}px`;
+      clone.style.left = `${Number(event.clientX - (start.x - triggerRect.x))}px`;
     },
     [createClone, dropMarkers],
   );
@@ -77,12 +86,7 @@ export const useDrag = (props: {
     (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
       triggerRef.current = event.currentTarget as HTMLElement | null;
 
-      const triggerRect = triggerRef.current!.getBoundingClientRect();
-
-      cursorOffsetRef.current = {
-        x: event.clientX - triggerRect.x,
-        y: event.clientY - triggerRect.y,
-      };
+      startRef.current = { x: event.clientX, y: event.clientY };
 
       document.addEventListener('mousemove', handleMouseMove, { passive: true });
 
@@ -99,8 +103,13 @@ export const useDrag = (props: {
           cloneRef.current = null;
           triggerRef.current = null;
           setIsDragging(false);
+          isUnlocked.current = false;
 
-          if (event.offsetX < 10 || event.offsetY < 10) return;
+          const start = startRef.current;
+
+          const offsetX = Math.abs(start.x - event.clientX);
+          const offsetY = Math.abs(start.y - event.clientY);
+          if (offsetX < 5 && offsetY < 5 && !isUnlocked.current) return;
 
           const targetMarker = getClosestDropMarker(dropMarkers, event.clientX, event.clientY)!;
           const { column, horizontal, row } = targetMarker;

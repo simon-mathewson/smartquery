@@ -5,7 +5,11 @@ export const getClosestDropMarker = (dropMarkers: DropMarker[], x: number, y: nu
     const rect = dropMarker.ref.current?.getBoundingClientRect();
     if (!rect) return { distance: Infinity, dropMarker };
 
-    const distance = dropMarker.horizontal ? Math.abs(y - rect.top) : Math.abs(x - rect.left);
+    const dx = Math.max(rect.left - x, 0, x - rect.right);
+    const dy = Math.max(rect.top - y, 0, y - rect.bottom);
+
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
     return { distance, dropMarker };
   });
 
