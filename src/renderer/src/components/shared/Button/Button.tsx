@@ -29,14 +29,14 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
   return (
     <button
       className={classNames(
-        'flex h-[36px] cursor-pointer items-center gap-2 rounded-lg p-2 hover:bg-blue-500/10 [&>svg]:text-[20px] [&>svg]:text-blue-500',
+        'flex h-[36px] cursor-pointer items-center gap-2 rounded-lg px-3 py-2 hover:bg-blue-500/10 [&>svg]:text-[20px] [&>svg]:text-blue-500',
         className,
         {
           'bg-blue-500 hover:bg-blue-500/90 [&>svg]:text-white': variant === 'primary',
           'hover:bg-red-500/10 [&>svg]:text-red-500': variant === 'danger',
           'hover:bg-green-500/10 [&>svg]:text-green-500': variant === 'success',
           'hover:bg-white/10 [&>svg]:text-white': variant === 'light',
-          'rounded-full': icon && !label,
+          'rounded-full !px-2': icon && !label,
           'justify-start': align === 'left',
           'justify-center': align === 'center',
           'justify-end': align === 'right',

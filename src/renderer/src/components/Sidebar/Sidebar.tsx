@@ -1,14 +1,11 @@
 import React, { useRef } from 'react';
-import { Button } from '../shared/Button/Button';
-import { Add } from '@mui/icons-material';
-import { uniqueId } from 'lodash';
 import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { TableList } from '../TableList/TableList';
 import { Connections } from './Connections/Connections';
 
 export const Sidebar: React.FC = () => {
-  const { connections, selectedConnectionIndex, selectedDatabase, setQueries } =
+  const { connections, selectedConnectionIndex, selectedDatabase } =
     useDefinedContext(GlobalContext);
 
   const connectionsTriggerRef = useRef<HTMLDivElement | null>(null);
@@ -17,9 +14,9 @@ export const Sidebar: React.FC = () => {
     selectedConnectionIndex !== null ? connections[selectedConnectionIndex] : null;
 
   return (
-    <div className="sticky left-0 top-0 z-10 grid h-screen w-[224px] grid-rows-[max-content_max-content_minmax(auto,max-content)] gap-2 bg-gray-50/90 px-2 pt-11 shadow-xl backdrop-blur-lg">
+    <div className="absolute left-0 top-0 z-10 grid h-screen w-[224px] grid-rows-[max-content_max-content_minmax(auto,max-content)] gap-2 border-r border-b-gray-200 bg-gray-50/80 px-2 pt-11 backdrop-blur-lg">
       <div
-        className="border-1 grid w-full cursor-pointer gap-2 rounded-lg border-gray-200 p-2 text-sm text-black hover:bg-gray-300"
+        className="border-1 grid w-full cursor-pointer gap-2 rounded-lg border-gray-300 p-2 text-sm text-black hover:bg-gray-300"
         ref={connectionsTriggerRef}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         style={{ WebkitAppRegion: 'no-drag' } as any}
@@ -41,14 +38,6 @@ export const Sidebar: React.FC = () => {
         )}
       </div>
       <Connections triggerRef={connectionsTriggerRef} />
-      <Button
-        align="left"
-        className="mx-1 mt-2"
-        icon={<Add />}
-        label="Query"
-        onClick={() => setQueries([[{ id: uniqueId(), showEditor: true }]])}
-        variant="primary"
-      />
       <TableList />
     </div>
   );

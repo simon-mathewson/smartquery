@@ -101,25 +101,27 @@ export const App: React.FC = () => {
         setSelectedDatabase,
       }}
     >
+      <Sidebar />
       <TopBar />
-      <div className="grid h-full grid-cols-[max-content_1fr] overflow-auto bg-gray-200">
-        <Sidebar />
-        <div className="grid-cols-min grid grid-flow-col justify-start gap-3 p-3">
-          <DropMarker column={0} row={0} />
-          {queries.map((column, columnIndex) => (
-            <React.Fragment key={columnIndex}>
-              <div className="grid-rows grid auto-rows-min justify-start gap-3">
-                <DropMarker column={columnIndex} horizontal row={0} />
-                {column.map((query, rowIndex) => (
-                  <React.Fragment key={query.id}>
-                    <Query query={query} />
-                    <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
-                  </React.Fragment>
-                ))}
-              </div>
-              <DropMarker column={columnIndex + 1} row={0} />
-            </React.Fragment>
-          ))}
+      <div className="grid h-full grid-cols-[max-content_1fr] grid-rows-[max-content_1fr] overflow-auto bg-gray-200 pl-[224px] pt-[52px]">
+        <div className="relative col-start-2 grid grid-rows-[max-content_1fr]">
+          <div className="grid-cols-min grid grid-flow-col justify-start gap-1 p-1">
+            <DropMarker column={0} row={0} />
+            {queries.map((column, columnIndex) => (
+              <React.Fragment key={columnIndex}>
+                <div className="grid-rows grid auto-rows-min justify-start gap-1">
+                  <DropMarker column={columnIndex} horizontal row={0} />
+                  {column.map((query, rowIndex) => (
+                    <React.Fragment key={query.id}>
+                      <Query query={query} />
+                      <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
+                    </React.Fragment>
+                  ))}
+                </div>
+                <DropMarker column={columnIndex + 1} row={0} />
+              </React.Fragment>
+            ))}
+          </div>
         </div>
       </div>
     </GlobalContext.Provider>

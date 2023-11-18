@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .window-drag-area {
+    -webkit-app-region: drag;
+  }
+
+  .window-drag-area * {
+    -webkit-app-region: no-drag;
+  }
+}
+
 @font-face {
   font-family: 'Fira Mono';
   font-weight: 400;

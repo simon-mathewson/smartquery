@@ -31,7 +31,7 @@ export const Table: React.FC<TableProps> = (props) => {
   if (!hasResults) return null;
 
   return (
-    <div className="grid overflow-hidden p-2 pt-0">
+    <div className="grid justify-start overflow-hidden p-2 pt-0">
       <div
         className="grid overflow-auto"
         style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
