@@ -7,10 +7,10 @@ export type ButtonProps = {
   disabled?: boolean;
   icon?: React.ReactNode;
   label?: string;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent) => void;
   selected?: boolean;
   type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
-  variant?: 'primary' | 'secondary' | 'danger' | 'success';
+  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'light';
 };
 
 export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((props, ref) => {
@@ -35,6 +35,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'bg-blue-500 hover:bg-blue-500/90 [&>svg]:text-white': variant === 'primary',
           'hover:bg-red-500/10 [&>svg]:text-red-500': variant === 'danger',
           'hover:bg-green-500/10 [&>svg]:text-green-500': variant === 'success',
+          'hover:bg-white/10 [&>svg]:text-white': variant === 'light',
           'rounded-full': icon && !label,
           'justify-start': align === 'left',
           'justify-center': align === 'center',
@@ -53,7 +54,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
       {label && (
         <div
           className={classNames('text-sm font-medium leading-none text-blue-500', {
-            'text-white': variant === 'primary',
+            'text-white': variant === 'primary' || variant === 'light',
             'text-red-500': variant === 'danger',
             'text-green-500': variant === 'success',
           })}

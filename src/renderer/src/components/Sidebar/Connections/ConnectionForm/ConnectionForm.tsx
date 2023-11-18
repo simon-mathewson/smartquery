@@ -50,7 +50,11 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
           const connection = connectionSchema.parse(form);
 
-          setConnections((connections) => [...connections, connection]);
+          setConnections((connections) =>
+            connectionToEdit
+              ? connections.map((c) => (c === connectionToEdit ? connection : c))
+              : [...connections, connection],
+          );
           exit();
         }}
       >
