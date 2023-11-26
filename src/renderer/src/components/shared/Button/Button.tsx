@@ -36,7 +36,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'hover:bg-red-500/10 [&>svg]:text-red-500': variant === 'danger',
           'hover:bg-green-500/10 [&>svg]:text-green-500': variant === 'success',
           'hover:bg-white/10 [&>svg]:text-white': variant === 'light',
-          'rounded-full !px-2': icon && !label,
+          '!rounded-full !px-2': icon && !label,
           'justify-start': align === 'left',
           'justify-center': align === 'center',
           'justify-end': align === 'right',

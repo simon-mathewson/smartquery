@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState';
-import { DropMarker as DropMarkerType, Query as QueryType } from './types';
-import { TopBar } from './components/TopBar/TopBar';
+import { DropMarker as DropMarkerType } from './types';
 import { GlobalContext } from './contexts/GlobalContext';
 import './index.css';
-import { Query } from './components/Query/Query';
+import { Query as QueryType } from './types';
 import type { Connection, SendQuery } from 'src/preload/index.d';
 import { DropMarker } from './components/DropMarker/DropMarker';
 import { Sidebar } from './components/Sidebar/Sidebar';
+import { QueryGroup } from './components/QueryGroup';
 
 export const App: React.FC = () => {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
@@ -53,7 +53,7 @@ export const App: React.FC = () => {
 
   const connect = (connection: Connection) => {
     setSendQuery(null);
-    setQueries([]);
+    setQueryGroups([]);
 
     window.api
       .connectDb(connection)
@@ -81,7 +81,7 @@ export const App: React.FC = () => {
     connect({ ...selectedConnection, database: selectedDatabase });
   }, [selectedDatabase]);
 
-  const [queries, setQueries] = useState<QueryType[][]>([]);
+  const [queryGroups, setQueryGroups] = useState<QueryType[][][]>([]);
 
   const [dropMarkers, setDropMarkers] = useState<DropMarkerType[]>([]);
 
@@ -90,38 +90,39 @@ export const App: React.FC = () => {
       value={{
         connections,
         dropMarkers,
-        queries,
+        queryGroups,
         selectedConnectionIndex,
         selectedDatabase,
         sendQuery,
-        setQueries,
         setConnections,
         setDropMarkers,
+        setQueryGroups,
         setSelectedConnectionIndex,
         setSelectedDatabase,
       }}
     >
       <Sidebar />
-      <TopBar />
-      <div className="grid h-full grid-cols-[max-content_1fr] grid-rows-[max-content_1fr] overflow-auto bg-gray-200 pl-[224px] pt-[52px]">
-        <div className="relative col-start-2 grid grid-rows-[max-content_1fr]">
-          <div className="grid-cols-min grid grid-flow-col justify-start gap-1 p-1">
-            <DropMarker column={0} row={0} />
-            {queries.map((column, columnIndex) => (
-              <React.Fragment key={columnIndex}>
-                <div className="grid-rows grid auto-rows-min justify-start gap-1">
-                  <DropMarker column={columnIndex} horizontal row={0} />
-                  {column.map((query, rowIndex) => (
-                    <React.Fragment key={query.id}>
-                      <Query query={query} />
-                      <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
-                    </React.Fragment>
-                  ))}
-                </div>
-                <DropMarker column={columnIndex + 1} row={0} />
-              </React.Fragment>
-            ))}
-          </div>
+      <div className="h-full overflow-hidden bg-gray-200 pl-[224px]">
+        <div className="flex h-full justify-start overflow-hidden">
+          <DropMarker column={0} row={0} />
+          {queryGroups.map((column, columnIndex) => (
+            <React.Fragment key={columnIndex}>
+              <div className="flex w-full flex-col justify-start overflow-hidden">
+                <DropMarker column={columnIndex} horizontal row={0} />
+                {column.map((queryGroup, rowIndex) => (
+                  <React.Fragment key={rowIndex}>
+                    <QueryGroup
+                      columnIndex={columnIndex}
+                      queries={queryGroup}
+                      rowIndex={rowIndex}
+                    />
+                    <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
+                  </React.Fragment>
+                ))}
+              </div>
+              <DropMarker column={columnIndex + 1} row={0} />
+            </React.Fragment>
+          ))}
         </div>
       </div>
     </GlobalContext.Provider>

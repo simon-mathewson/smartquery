@@ -3,10 +3,8 @@ import { Query as QueryType } from '../../types';
 import { Table } from './Table/Table';
 import { Editor } from './Editor/Editor';
 import { Button } from '../shared/Button/Button';
-import { Close, Code } from '@mui/icons-material';
+import { Code } from '@mui/icons-material';
 import { Header } from '../shared/Header/Header';
-import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
-import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import classNames from 'classnames';
 
 export type QueryProps = {
@@ -16,16 +14,13 @@ export type QueryProps = {
 export const Query: React.FC<QueryProps> = (props) => {
   const { query } = props;
 
-  const { setQueries } = useDefinedContext(GlobalContext);
-
   const [showEditor, setShowEditor] = useState(query.showEditor);
   const [hasResults, setHasResults] = useState(false);
 
   return (
     <div
       className={classNames(
-        'relative grid max-h-[80vh] w-fit min-w-[500px] grid-rows-[max-content_1fr] gap-2 overflow-hidden rounded-lg bg-gray-50 p-2 shadow-lg',
-        { 'grid-rows-[max-content_max-content_1fr]': showEditor && hasResults },
+        'relative flex w-full flex-grow flex-col gap-2 overflow-hidden bg-gray-50 p-2',
       )}
     >
       <Header
@@ -38,19 +33,7 @@ export const Query: React.FC<QueryProps> = (props) => {
             />
           ) : null
         }
-        right={
-          <Button
-            icon={<Close />}
-            onClick={() =>
-              setQueries((columns) =>
-                columns
-                  .map((column) => column.filter((q) => q.id !== query.id))
-                  .filter((column) => column.length),
-              )
-            }
-          />
-        }
-        title={query.label ?? query.sql?.replaceAll('\n', ' ') ?? 'New Query'}
+        title=""
       />
       {showEditor && <Editor query={query} />}
       <Table hasResults={hasResults} query={query} setHasResults={setHasResults} />
