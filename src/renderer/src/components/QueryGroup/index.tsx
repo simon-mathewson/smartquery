@@ -28,7 +28,7 @@ export const QueryGroup: React.FC<QueryGroupProps> = (props) => {
 
   return (
     <React.Fragment>
-      <div className="flex flex-grow flex-col justify-start">
+      <div className="flex flex-grow flex-col justify-start border-l border-l-gray-200 ">
         <Tabs
           activeQueryIndex={activeQueryIndex}
           columnIndex={columnIndex}
