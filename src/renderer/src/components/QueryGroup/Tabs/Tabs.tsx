@@ -5,6 +5,7 @@ import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { uniqueId } from 'lodash';
 import classNames from 'classnames';
 import { Query } from '@renderer/types';
+import { Corner } from './Corner/Corner';
 
 export type TabsProps = {
   activeQueryIndex: number | null;
@@ -23,38 +24,51 @@ export const Tabs: React.FC<TabsProps> = (props) => {
 
   return (
     <div className="window-drag-area flex h-10 w-full items-center bg-gray-200 px-3 pt-1">
-      {queries.map((query, index) => (
-        <div
-          className={classNames(
-            'flex h-9 w-48 cursor-pointer items-center gap-1 rounded-t-md pl-3 hover:bg-gray-100',
-            {
-              'bg-gray-50': index === activeQueryIndex,
-            },
-          )}
-          key={index}
-          onClick={() => setActiveQueryIndex(index)}
-        >
-          <div className="flex-grow truncate text-xs font-medium text-gray-800">
-            {query.label ?? query.sql?.replaceAll('\n', ' ') ?? 'New Query'}
+      {queries.map((query, index) => {
+        const active = index === activeQueryIndex;
+
+        return (
+          <div
+            className={classNames(
+              'relative flex h-9 w-48 items-center gap-1 rounded-t-lg pl-3 pr-1 ',
+              {
+                'bg-gray-50': active,
+                'cursor-pointer hover:bg-gray-100/50': !active,
+              },
+            )}
+            key={index}
+            onClick={() => setActiveQueryIndex(index)}
+          >
+            {active && (
+              <>
+                <Corner />
+                <Corner right />
+              </>
+            )}
+            <div className="flex-grow truncate text-xs font-medium text-gray-800">
+              {query.label ?? query.sql?.replaceAll('\n', ' ') ?? 'New Query'}
+            </div>
+            <Button
+              icon={<Close />}
+              onClick={() => {
+                setQueryGroups((queryGroupColumn) =>
+                  [
+                    ...queryGroupColumn
+                      .map((queryGroupRow) =>
+                        queryGroupRow
+                          .map((queryGroup) => queryGroup.filter((q) => q.id !== query.id))
+                          .filter((queryGroup) => queryGroup.length),
+                      )
+                      .filter((queryGroupRow) => queryGroupRow.length),
+                  ].filter((queryGroupColumn) => queryGroupColumn.length),
+                );
+              }}
+              size="small"
+              variant="tertiary"
+            />
           </div>
-          <Button
-            icon={<Close />}
-            onClick={() => {
-              setQueryGroups((queryGroupColumn) =>
-                [
-                  ...queryGroupColumn
-                    .map((queryGroupRow) =>
-                      queryGroupRow
-                        .map((queryGroup) => queryGroup.filter((q) => q.id !== query.id))
-                        .filter((queryGroup) => queryGroup.length),
-                    )
-                    .filter((queryGroupRow) => queryGroupRow.length),
-                ].filter((queryGroupColumn) => queryGroupColumn.length),
-              );
-            }}
-          />
-        </div>
-      ))}
+        );
+      })}
       <Button
         align="left"
         className="ml-1"
@@ -73,6 +87,7 @@ export const Tabs: React.FC<TabsProps> = (props) => {
           );
           setActiveQueryIndex(queries.length);
         }}
+        size="small"
       />
     </div>
   );

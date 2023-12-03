@@ -9,8 +9,9 @@ export type ButtonProps = {
   label?: string;
   onClick?: (event: React.MouseEvent) => void;
   selected?: boolean;
+  size?: 'small' | 'normal';
   type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
-  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'light';
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'success' | 'light';
 };
 
 export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((props, ref) => {
@@ -22,6 +23,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
     label,
     onClick,
     selected,
+    size = 'normal',
     type = 'button',
     variant = 'secondary',
   } = props;
@@ -32,11 +34,15 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
         'flex h-[36px] cursor-pointer items-center gap-2 rounded-lg px-3 py-2 hover:bg-blue-500/10 [&>svg]:text-[20px] [&>svg]:text-blue-500',
         className,
         {
+          '!h-[28px]': size === 'small',
           'bg-blue-500 hover:bg-blue-500/90 [&>svg]:text-white': variant === 'primary',
           'hover:bg-red-500/10 [&>svg]:text-red-500': variant === 'danger',
           'hover:bg-green-500/10 [&>svg]:text-green-500': variant === 'success',
           'hover:bg-white/10 [&>svg]:text-white': variant === 'light',
-          '!rounded-full !px-2': icon && !label,
+          'hover:bg-gray-400/10 [&>svg]:text-gray-400': variant === 'tertiary',
+          '!rounded-full': icon && !label,
+          '!px-2': icon && !label && size === 'normal',
+          '!p-1': icon && !label && size === 'small',
           'justify-start': align === 'left',
           'justify-center': align === 'center',
           'justify-end': align === 'right',
