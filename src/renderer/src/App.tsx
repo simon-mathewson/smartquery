@@ -110,7 +110,7 @@ export const App: React.FC = () => {
               <div className="flex w-full flex-col justify-start overflow-hidden">
                 <DropMarker column={columnIndex} horizontal row={0} />
                 {column.map((query, rowIndex) => (
-                  <React.Fragment key={rowIndex}>
+                  <React.Fragment key={query.id}>
                     <Query query={query} />
                     <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
                   </React.Fragment>

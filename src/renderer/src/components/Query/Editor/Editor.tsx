@@ -56,7 +56,6 @@ export const Editor: React.FC<EditorProps> = (props) => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (document.activeElement === getContentEl() && event.metaKey && event.key === 'Enter') {
         event.stopPropagation();
-        console.log('submit');
         submitQuery();
       }
     };

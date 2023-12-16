@@ -3,9 +3,12 @@ import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
 import { GlobalContext } from '@renderer/contexts/GlobalContext';
 import { TableList } from '../TableList/TableList';
 import { Connections } from './Connections/Connections';
+import { Button } from '../shared/Button/Button';
+import { Add } from '@mui/icons-material';
+import { uniqueId } from 'lodash';
 
 export const Sidebar: React.FC = () => {
-  const { connections, selectedConnectionIndex, selectedDatabase } =
+  const { connections, selectedConnectionIndex, selectedDatabase, setQueries } =
     useDefinedContext(GlobalContext);
 
   const connectionsTriggerRef = useRef<HTMLDivElement | null>(null);
@@ -38,6 +41,23 @@ export const Sidebar: React.FC = () => {
         )}
       </div>
       <Connections triggerRef={connectionsTriggerRef} />
+      <Button
+        align="left"
+        icon={<Add />}
+        label="Query"
+        onClick={() =>
+          setQueries([
+            [
+              {
+                id: uniqueId(),
+                label: 'New Query',
+                showEditor: true,
+              },
+            ],
+          ])
+        }
+        variant="primary"
+      />
       <TableList />
     </div>
   );
