@@ -43,6 +43,7 @@ export const Sidebar: React.FC = () => {
       <Connections triggerRef={connectionsTriggerRef} />
       <Button
         align="left"
+        className="mb-1"
         icon={<Add />}
         label="Query"
         onClick={() =>
