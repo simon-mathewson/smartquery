@@ -79,7 +79,8 @@ export const App: React.FC = () => {
     const selectedConnection = connections[selectedConnectionIndex];
 
     connect({ ...selectedConnection, database: selectedDatabase });
-  }, [connections, selectedConnectionIndex, selectedDatabase]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connections, selectedDatabase]);
 
   const [queries, setQueries] = useState<QueryType[][]>([]);
 
