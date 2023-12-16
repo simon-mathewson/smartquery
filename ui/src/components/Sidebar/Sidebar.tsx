@@ -17,7 +17,7 @@ export const Sidebar: React.FC = () => {
     selectedConnectionIndex !== null ? connections[selectedConnectionIndex] : null;
 
   return (
-    <div className="absolute left-0 top-0 z-10 grid h-screen w-[224px] grid-rows-[max-content_max-content_minmax(auto,max-content)] gap-2 bg-gray-50/80 px-2 pt-2 backdrop-blur-lg">
+    <div className="absolute left-0 top-0 z-10 grid h-screen w-[224px] grid-rows-[max-content_max-content_minmax(auto,max-content)] gap-2 border-r border-r-gray-200 bg-gray-50/80 px-2 pt-2 backdrop-blur-lg">
       <div
         className="border-1 grid w-full cursor-pointer gap-2 rounded-lg border-gray-300 p-2 text-sm text-black hover:bg-gray-300"
         ref={connectionsTriggerRef}

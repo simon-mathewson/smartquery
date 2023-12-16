@@ -102,7 +102,7 @@ export const App: React.FC = () => {
       }}
     >
       <Sidebar />
-      <div className="h-full overflow-hidden bg-gray-200 pl-[224px]">
+      <div className="h-full overflow-hidden bg-white pl-[224px]">
         <div className="flex h-full justify-start overflow-hidden">
           <DropMarker column={0} row={0} />
           {queries.map((column, columnIndex) => (
@@ -111,7 +111,7 @@ export const App: React.FC = () => {
                 <DropMarker column={columnIndex} horizontal row={0} />
                 {column.map((query, rowIndex) => (
                   <React.Fragment key={query.id}>
-                    <Query query={query} />
+                    <Query columnIndex={columnIndex} query={query} rowIndex={rowIndex} />
                     <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
                   </React.Fragment>
                 ))}

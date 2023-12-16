@@ -25,7 +25,7 @@ export const Editor: React.FC<EditorProps> = (props) => {
     settings: {
       background: 'transparent',
       fontFamily: 'Fira Mono, monospace',
-      gutterBackground: colors.gray[100],
+      gutterBackground: colors.gray[50],
       gutterBorder: '#eee',
       lineHighlight: `${colors.blue[500]}11`,
       selection: colors.blue[200],
@@ -69,7 +69,7 @@ export const Editor: React.FC<EditorProps> = (props) => {
 
   return (
     <div className="px-2 pb-2">
-      <div className="grid w-full gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-100 pt-1">
+      <div className="grid w-full gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pt-1">
         <CodeMirror
           autoFocus
           basicSetup={{

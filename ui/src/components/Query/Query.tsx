@@ -10,11 +10,13 @@ import { useDefinedContext } from '~/hooks/useDefinedContext';
 import { GlobalContext } from '~/contexts/GlobalContext';
 
 export type QueryProps = {
+  columnIndex: number;
   query: QueryType;
+  rowIndex: number;
 };
 
 export const Query: React.FC<QueryProps> = (props) => {
-  const { query } = props;
+  const { columnIndex, query, rowIndex } = props;
 
   const { setQueries } = useDefinedContext(GlobalContext);
 
@@ -24,7 +26,11 @@ export const Query: React.FC<QueryProps> = (props) => {
   return (
     <div
       className={classNames(
-        'relative flex w-full flex-grow flex-col justify-start gap-2 overflow-hidden border-l border-t border-l-gray-200 border-t-gray-200 bg-gray-50 p-2 first:border-t-0',
+        'relative flex w-full flex-grow flex-col justify-start gap-2 overflow-hidden border-l border-t border-l-gray-200 border-t-gray-200 p-2',
+        {
+          'border-l-0': columnIndex === 0,
+          'border-t-0': rowIndex === 0,
+        },
       )}
     >
       <Header
