@@ -58,7 +58,7 @@ export const Query: React.FC<QueryProps> = (props) => {
             variant="tertiary"
           />
         }
-        title=""
+        title={query.label ?? 'New query'}
       />
       {showEditor && <Editor query={query} />}
       <Table hasResults={hasResults} query={query} setHasResults={setHasResults} />
