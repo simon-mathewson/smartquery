@@ -10,7 +10,7 @@ export const useDrag = (props: {
 }) => {
   const { dragRef, query } = props;
 
-  const { dropMarkers, setDropMarkers, setQueryGroups } = useDefinedContext(GlobalContext);
+  const { dropMarkers, setDropMarkers, setQueries } = useDefinedContext(GlobalContext);
 
   const [isDragging, setIsDragging] = useState(false);
 
@@ -115,16 +115,16 @@ export const useDrag = (props: {
           const targetMarker = getClosestDropMarker(dropMarkers, event.clientX, event.clientY)!;
           const { column, horizontal, row } = targetMarker;
 
-          setQueryGroups((groups) => {
+          setQueries((groups) => {
             const newGroups = groups.map((column) => [...column]);
 
             if (!newGroups[column]) {
-              newGroups[column] = [[query]];
+              newGroups[column] = [query];
             } else {
               if (horizontal) {
-                newGroups[column].splice(row, 0, [query]);
+                newGroups[column].splice(row, 0, query);
               } else {
-                newGroups.splice(column, 0, [[query]]);
+                newGroups.splice(column, 0, [query]);
               }
             }
 

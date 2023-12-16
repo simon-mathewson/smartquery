@@ -5,13 +5,13 @@ import type { Connection, SendQuery } from 'src/preload/index.d';
 export const GlobalContext = createContext<{
   connections: Connection[];
   dropMarkers: DropMarker[];
-  queryGroups: Query[][][];
+  queries: Query[][];
   selectedConnectionIndex: number | null;
   selectedDatabase: string | null;
   sendQuery: SendQuery | null;
   setConnections: React.Dispatch<React.SetStateAction<Connection[]>>;
   setDropMarkers: React.Dispatch<React.SetStateAction<DropMarker[]>>;
-  setQueryGroups: React.Dispatch<React.SetStateAction<Query[][][]>>;
+  setQueries: React.Dispatch<React.SetStateAction<Query[][]>>;
   setSelectedConnectionIndex: React.Dispatch<React.SetStateAction<number | null>>;
   setSelectedDatabase: React.Dispatch<React.SetStateAction<string | null>>;
 } | null>(null);

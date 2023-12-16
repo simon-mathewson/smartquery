@@ -17,7 +17,7 @@ export type EditorProps = {
 export const Editor: React.FC<EditorProps> = (props) => {
   const { query } = props;
 
-  const { setQueryGroups } = useDefinedContext(GlobalContext);
+  const { setQueries } = useDefinedContext(GlobalContext);
 
   const [value, setValue] = useState(query.sql ?? '');
 
@@ -38,17 +38,15 @@ export const Editor: React.FC<EditorProps> = (props) => {
   const getContentEl = () => editorRef.current?.editor?.querySelector('.cm-content');
 
   const submitQuery = () => {
-    setQueryGroups((groupColumn) =>
-      groupColumn.map((groupRow) =>
-        groupRow.map((group) =>
-          group.map((q) =>
-            q.id === query.id
-              ? {
-                  id: query.id,
-                  sql: getContentEl()?.textContent ?? undefined,
-                }
-              : q,
-          ),
+    setQueries((column) =>
+      column.map((row) =>
+        row.map((q) =>
+          q.id === query.id
+            ? {
+                id: query.id,
+                sql: getContentEl()?.textContent ?? undefined,
+              }
+            : q,
         ),
       ),
     );

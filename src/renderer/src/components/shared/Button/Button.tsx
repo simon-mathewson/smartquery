@@ -39,7 +39,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'hover:bg-red-500/10 [&>svg]:text-red-500': variant === 'danger',
           'hover:bg-green-500/10 [&>svg]:text-green-500': variant === 'success',
           'hover:bg-white/10 [&>svg]:text-white': variant === 'light',
-          'hover:bg-gray-400/10 [&>svg]:text-gray-400': variant === 'tertiary',
+          'hover:bg-gray-500/10 [&>svg]:text-gray-500': variant === 'tertiary',
           '!rounded-full': icon && !label,
           '!px-2': icon && !label && size === 'normal',
           '!p-1': icon && !label && size === 'small',

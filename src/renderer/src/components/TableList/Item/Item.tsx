@@ -11,7 +11,7 @@ export type ItemProps = { tableName: string };
 export const Item: React.FC<ItemProps> = (props) => {
   const { tableName } = props;
 
-  const { setQueryGroups } = useDefinedContext(GlobalContext);
+  const { setQueries } = useDefinedContext(GlobalContext);
 
   const getQuery = () => ({
     id: uniqueId(),
@@ -26,7 +26,7 @@ export const Item: React.FC<ItemProps> = (props) => {
       className={classNames({ '!opacity-50': isDragging })}
       key={tableName}
       label={tableName}
-      onClick={() => setQueryGroups([[[getQuery()]]])}
+      onClick={() => setQueries([[getQuery()]])}
       onMouseDown={handleMouseDown}
       selectedVariant="primary"
     />

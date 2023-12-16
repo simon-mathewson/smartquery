@@ -3,9 +3,11 @@ import { Query as QueryType } from '../../types';
 import { Table } from './Table/Table';
 import { Editor } from './Editor/Editor';
 import { Button } from '../shared/Button/Button';
-import { Code } from '@mui/icons-material';
+import { Close, Code } from '@mui/icons-material';
 import { Header } from '../shared/Header/Header';
 import classNames from 'classnames';
+import { useDefinedContext } from '@renderer/hooks/useDefinedContext';
+import { GlobalContext } from '@renderer/contexts/GlobalContext';
 
 export type QueryProps = {
   query: QueryType;
@@ -14,13 +16,15 @@ export type QueryProps = {
 export const Query: React.FC<QueryProps> = (props) => {
   const { query } = props;
 
+  const { setQueries } = useDefinedContext(GlobalContext);
+
   const [showEditor, setShowEditor] = useState(query.showEditor);
   const [hasResults, setHasResults] = useState(false);
 
   return (
     <div
       className={classNames(
-        'relative flex w-full flex-grow flex-col gap-2 overflow-hidden bg-gray-50 p-2',
+        'relative flex w-full flex-grow flex-col justify-start gap-2 overflow-hidden border-l border-t border-l-gray-200 border-t-gray-200 bg-gray-50 p-2 first:border-t-0',
       )}
     >
       <Header
@@ -32,6 +36,21 @@ export const Query: React.FC<QueryProps> = (props) => {
               selected={showEditor}
             />
           ) : null
+        }
+        right={
+          <Button
+            icon={<Close />}
+            onClick={() => {
+              setQueries((column) =>
+                [
+                  ...column
+                    .map((row) => row.filter((q) => q.id !== query.id))
+                    .filter((row) => row.length),
+                ].filter((column) => column.length),
+              );
+            }}
+            variant="tertiary"
+          />
         }
         title=""
       />

@@ -7,7 +7,7 @@ import { Query as QueryType } from './types';
 import type { Connection, SendQuery } from 'src/preload/index.d';
 import { DropMarker } from './components/DropMarker/DropMarker';
 import { Sidebar } from './components/Sidebar/Sidebar';
-import { QueryGroup } from './components/QueryGroup';
+import { Query } from './components/Query/Query';
 
 export const App: React.FC = () => {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
@@ -53,7 +53,7 @@ export const App: React.FC = () => {
 
   const connect = (connection: Connection) => {
     setSendQuery(null);
-    setQueryGroups([]);
+    setQueries([]);
 
     window.api
       .connectDb(connection)
@@ -81,7 +81,7 @@ export const App: React.FC = () => {
     connect({ ...selectedConnection, database: selectedDatabase });
   }, [selectedDatabase]);
 
-  const [queryGroups, setQueryGroups] = useState<QueryType[][][]>([]);
+  const [queries, setQueries] = useState<QueryType[][]>([]);
 
   const [dropMarkers, setDropMarkers] = useState<DropMarkerType[]>([]);
 
@@ -90,13 +90,13 @@ export const App: React.FC = () => {
       value={{
         connections,
         dropMarkers,
-        queryGroups,
+        queries,
         selectedConnectionIndex,
         selectedDatabase,
         sendQuery,
         setConnections,
         setDropMarkers,
-        setQueryGroups,
+        setQueries,
         setSelectedConnectionIndex,
         setSelectedDatabase,
       }}
@@ -105,17 +105,13 @@ export const App: React.FC = () => {
       <div className="h-full overflow-hidden bg-gray-200 pl-[224px]">
         <div className="flex h-full justify-start overflow-hidden">
           <DropMarker column={0} row={0} />
-          {queryGroups.map((column, columnIndex) => (
+          {queries.map((column, columnIndex) => (
             <React.Fragment key={columnIndex}>
               <div className="flex w-full flex-col justify-start overflow-hidden">
                 <DropMarker column={columnIndex} horizontal row={0} />
-                {column.map((queryGroup, rowIndex) => (
+                {column.map((query, rowIndex) => (
                   <React.Fragment key={rowIndex}>
-                    <QueryGroup
-                      columnIndex={columnIndex}
-                      queries={queryGroup}
-                      rowIndex={rowIndex}
-                    />
+                    <Query query={query} />
                     <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
                   </React.Fragment>
                 ))}
