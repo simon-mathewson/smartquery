@@ -1,9 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { App } from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { App } from "./App";
+import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import type { AppRouter } from "../../link/src/main";
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+export const trpc = createTRPCProxyClient<AppRouter>({
+  links: [
+    httpBatchLink({
+      url: "http://localhost:3000",
+    }),
+  ],
+});
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
 );

@@ -13,6 +13,7 @@
     "@codemirror/lang-sql": "^6.5.4",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.16",
+    "@trpc/client": "^10.44.1",
     "@uiw/codemirror-theme-github": "^4.21.20",
     "@uiw/react-codemirror": "^4.21.20",
     "classnames": "^2.3.2",

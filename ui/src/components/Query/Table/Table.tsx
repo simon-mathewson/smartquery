@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Cell } from './Cell/Cell';
-import { Query as QueryType } from '../../../types';
-import { useDefinedContext } from '~/hooks/useDefinedContext';
-import { GlobalContext } from '~/contexts/GlobalContext';
+import React, { useEffect, useState } from "react";
+import { Cell } from "./Cell/Cell";
+import { Query as QueryType } from "../../../types";
+import { useDefinedContext } from "~/hooks/useDefinedContext";
+import { GlobalContext } from "~/contexts/GlobalContext";
+import { trpc } from "~/main";
 
 export type TableProps = {
   hasResults: boolean;
@@ -13,20 +14,20 @@ export type TableProps = {
 export const Table: React.FC<TableProps> = (props) => {
   const { hasResults, query, setHasResults } = props;
 
-  const { sendQuery } = useDefinedContext(GlobalContext);
+  const { isDbReady } = useDefinedContext(GlobalContext);
 
   const [rows, setRows] = useState<Record<string, string | Date>[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!query.sql) return;
+    if (!query.sql || !isDbReady) return;
 
-    sendQuery?.(query.sql).then((data) => {
+    trpc.sendQuery.query(query.sql).then((data) => {
       setColumns(data.fields.map(({ name }) => name));
       setRows(data.rows);
       setHasResults(true);
     });
-  }, [query.sql]);
+  }, [query.sql, isDbReady]);
 
   if (!hasResults) return null;
 
@@ -50,7 +51,7 @@ export const Table: React.FC<TableProps> = (props) => {
                 {value instanceof Date ? value.toDateString() : value}
               </Cell>
             );
-          }),
+          })
         )}
       </div>
       {rows.length === 0 && (

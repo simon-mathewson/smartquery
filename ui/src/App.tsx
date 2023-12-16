@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState';
-import { DropMarker as DropMarkerType } from './types';
+import { Connection, DropMarker as DropMarkerType } from './types';
 import { GlobalContext } from './contexts/GlobalContext';
 import './index.css';
 import { Query as QueryType } from './types';
-import type { Connection, SendQuery } from 'src/preload/index.d';
 import { DropMarker } from './components/DropMarker/DropMarker';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { Query } from './components/Query/Query';
+import { trpc } from './main';
 
 export const App: React.FC = () => {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
@@ -47,21 +47,21 @@ export const App: React.FC = () => {
 
   const [selectedConnectionIndex, setSelectedConnectionIndex] = useState<number | null>(0);
 
-  const [sendQuery, setSendQuery] = useState<SendQuery | null>(null);
+  const [isDbReady, setIsDbReady] = useState(false);
 
   const [selectedDatabase, setSelectedDatabase] = useState<string | null>(null);
 
   const connect = (connection: Connection) => {
-    setSendQuery(null);
+    setIsDbReady(false);
     setQueries([]);
 
-    window.api
-      .connectDb(connection)
-      .then(({ sendQuery }) => {
-        setSendQuery(() => sendQuery);
+    trpc.connectDb
+      .mutate(connection)
+      .then(() => {
+        setIsDbReady(true);
       })
       .catch(() => {
-        setSendQuery(null);
+        setIsDbReady(false);
       });
   };
 
@@ -90,10 +90,10 @@ export const App: React.FC = () => {
       value={{
         connections,
         dropMarkers,
+        isDbReady,
         queries,
         selectedConnectionIndex,
         selectedDatabase,
-        sendQuery,
         setConnections,
         setDropMarkers,
         setQueries,
