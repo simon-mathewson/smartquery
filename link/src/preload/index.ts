@@ -1,10 +1,7 @@
 import { contextBridge } from 'electron';
-import { connectDb } from './connectDb';
 
 try {
-  contextBridge.exposeInMainWorld('api', {
-    connectDb,
-  });
+  contextBridge.exposeInMainWorld('api', {});
 } catch (error) {
   console.error(error);
 }

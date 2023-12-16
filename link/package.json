@@ -27,12 +27,14 @@
     "cors": "^2.8.5",
     "lodash": "^4.17.21",
     "pg": "^8.11.3",
+    "superjson": "1.12.4",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^1.0.1",
     "@electron-toolkit/eslint-config-ts": "^1.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@types/cors": "^2.8.17",
     "@types/node": "^18.17.5",
     "@types/pg": "^8.10.7",
     "electron": "^25.9.2",

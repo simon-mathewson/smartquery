@@ -1,12 +1,12 @@
-import { Add, EditOutlined } from "@mui/icons-material";
-import { Button } from "~/components/shared/Button/Button";
-import { ListItem } from "~/components/shared/ListItem/ListItem";
-import { OverlayCard } from "~/components/shared/OverlayCard/OverlayCard";
-import { GlobalContext } from "~/contexts/GlobalContext";
-import { useDefinedContext } from "~/hooks/useDefinedContext";
-import React, { useEffect, useState } from "react";
-import { ConnectionForm } from "./ConnectionForm/ConnectionForm";
-import { trpc } from "~/main";
+import { Add, EditOutlined } from '@mui/icons-material';
+import { Button } from '~/components/shared/Button/Button';
+import { ListItem } from '~/components/shared/ListItem/ListItem';
+import { OverlayCard } from '~/components/shared/OverlayCard/OverlayCard';
+import { GlobalContext } from '~/contexts/GlobalContext';
+import { useDefinedContext } from '~/hooks/useDefinedContext';
+import React, { useEffect, useState } from 'react';
+import { ConnectionForm } from './ConnectionForm/ConnectionForm';
+import { trpc } from '~/main';
 
 export type ConnectionsProps = {
   triggerRef: React.MutableRefObject<HTMLElement | null>;
@@ -26,9 +26,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
 
   const [isAddingOrEditing, setIsAddingOrEditing] = React.useState(false);
 
-  const [connectionToEditIndex, setConnectionToEditIndex] = useState<
-    number | null
-  >(null);
+  const [connectionToEditIndex, setConnectionToEditIndex] = useState<number | null>(null);
 
   const [databases, setDatabases] = useState<string[]>([]);
 
@@ -36,11 +34,9 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
     if (!isDbReady) return;
 
     trpc.sendQuery
-      .query(
-        `SELECT datname FROM pg_database WHERE datistemplate = FALSE ORDER BY datname ASC`
-      )
-      .then((data) => {
-        setDatabases(data.rows.map(({ datname }) => datname));
+      .query(`SELECT datname FROM pg_database WHERE datistemplate = FALSE ORDER BY datname ASC`)
+      .then(({ rows }) => {
+        setDatabases(rows.map(({ datname }) => datname));
       });
   }, [isDbReady]);
 
@@ -68,11 +64,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                   <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-gray-800">
                     Connections
                   </div>
-                  <Button
-                    icon={<Add />}
-                    label="Add"
-                    onClick={() => setIsAddingOrEditing(true)}
-                  />
+                  <Button icon={<Add />} label="Add" onClick={() => setIsAddingOrEditing(true)} />
                 </div>
                 {connections.map((connection, index) => (
                   <div className="flex items-center gap-2" key={index}>

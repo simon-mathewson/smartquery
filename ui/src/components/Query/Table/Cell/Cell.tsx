@@ -1,12 +1,14 @@
 import classNames from 'classnames';
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
+import { DateTime } from 'luxon';
 
 export type CellProps = {
   header?: boolean;
+  value: string | Date;
 };
 
-export const Cell: React.FC<PropsWithChildren<CellProps>> = (props) => {
-  const { children, header } = props;
+export const Cell: React.FC<CellProps> = (props) => {
+  const { header, value } = props;
 
   return (
     <div
@@ -21,7 +23,9 @@ export const Cell: React.FC<PropsWithChildren<CellProps>> = (props) => {
           'text-gray-500': !header,
         })}
       >
-        {children}
+        {value instanceof Date
+          ? DateTime.fromJSDate(value).toFormat('yyyy-MM-dd HH:mm:ss.SSS')
+          : value}
       </div>
     </div>
   );

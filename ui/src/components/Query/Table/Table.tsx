@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Cell } from "./Cell/Cell";
-import { Query as QueryType } from "../../../types";
-import { useDefinedContext } from "~/hooks/useDefinedContext";
-import { GlobalContext } from "~/contexts/GlobalContext";
-import { trpc } from "~/main";
+import React, { useEffect, useState } from 'react';
+import { Cell } from './Cell/Cell';
+import { Query as QueryType } from '../../../types';
+import { useDefinedContext } from '~/hooks/useDefinedContext';
+import { GlobalContext } from '~/contexts/GlobalContext';
+import { trpc } from '~/main';
 
 export type TableProps = {
   hasResults: boolean;
@@ -22,12 +22,12 @@ export const Table: React.FC<TableProps> = (props) => {
   useEffect(() => {
     if (!query.sql || !isDbReady) return;
 
-    trpc.sendQuery.query(query.sql).then((data) => {
-      setColumns(data.fields.map(({ name }) => name));
-      setRows(data.rows);
+    trpc.sendQuery.query(query.sql).then(({ fields, rows }) => {
+      setColumns(fields.map(({ name }) => name));
+      setRows(rows);
       setHasResults(true);
     });
-  }, [query.sql, isDbReady]);
+  }, [query.sql, isDbReady, setHasResults]);
 
   if (!hasResults) return null;
 
@@ -38,20 +38,14 @@ export const Table: React.FC<TableProps> = (props) => {
         style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
       >
         {columns.map((column) => (
-          <Cell header key={column}>
-            {column}
-          </Cell>
+          <Cell header key={column} value={column} />
         ))}
         {rows.map((row) =>
           columns.map((column) => {
             const value = row[column];
 
-            return (
-              <Cell key={[row, column].join()}>
-                {value instanceof Date ? value.toDateString() : value}
-              </Cell>
-            );
-          })
+            return <Cell key={[row, column].join()} value={value} />;
+          }),
         )}
       </div>
       {rows.length === 0 && (
