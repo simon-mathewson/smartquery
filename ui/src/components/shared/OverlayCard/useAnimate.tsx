@@ -1,12 +1,11 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 
-export type AnimateProps = {
-  children: (ref: React.MutableRefObject<HTMLElement | null>) => React.ReactNode;
+export type UseAnimateProps = {
   show: boolean;
 };
 
-export const Animate: React.FC<AnimateProps> = (props) => {
-  const { children, show } = props;
+export const useAnimate = (props: UseAnimateProps) => {
+  const { show } = props;
 
   const contentRef = useRef<HTMLElement | null>(null);
 
@@ -24,6 +23,7 @@ export const Animate: React.FC<AnimateProps> = (props) => {
 
     content.style.transition = 'all 400ms cubic-bezier(0.16, 1, 0.3, 1)';
     content.style.display = 'initial';
+    content.style.pointerEvents = 'none';
 
     const originalOpacity = content.style.opacity;
     const originalTransform = content.style.transform;
@@ -36,6 +36,7 @@ export const Animate: React.FC<AnimateProps> = (props) => {
 
       const timeoutId = setTimeout(() => {
         content.style.opacity = originalOpacity;
+        content.style.pointerEvents = 'all';
         content.style.transform = originalTransform;
       });
 
@@ -46,6 +47,7 @@ export const Animate: React.FC<AnimateProps> = (props) => {
 
     if (!show) {
       content.style.opacity = offOpacity;
+      content.style.pointerEvents = 'none';
       content.style.transform = [originalTransform, offTransform].filter(Boolean).join(' ');
 
       const timeoutId = setTimeout(() => {
@@ -62,7 +64,5 @@ export const Animate: React.FC<AnimateProps> = (props) => {
     return () => {};
   }, [show, isVisible]);
 
-  if (!isVisible) return;
-
-  return children(contentRef);
+  return { contentRef, isVisible };
 };

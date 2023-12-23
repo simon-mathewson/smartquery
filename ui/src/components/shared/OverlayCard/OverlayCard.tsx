@@ -1,9 +1,11 @@
 import { useClickOutside } from '~/hooks/useClickOutside';
-import React, { CSSProperties, useEffect, useRef, useState } from 'react';
-import { Animate } from '../Animate/Animate';
+import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import { mergeRefs } from 'react-merge-refs';
 import classNames from 'classnames';
 import { OverlayPortal } from '../OverlayPortal/OverlayPortal';
+import { useDefinedContext } from '~/hooks/useDefinedContext';
+import { GlobalContext } from '~/contexts/GlobalContext';
+import { useAnimate } from './useAnimate';
 
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
@@ -23,11 +25,13 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   onOpen,
   triggerRef,
 }) => {
+  const { overlayCardRefs, setOverlayCardRefs } = useDefinedContext(GlobalContext);
+
   const [isOpen, setIsOpen] = useState(false);
   const [styles, setStyles] = useState<CSSProperties>();
   const [width, setWidth] = useState<string>();
 
-  const updateStyles = () => {
+  const updateStyles = useCallback(() => {
     const trigger = triggerRef.current;
     if (!trigger) return;
 
@@ -56,7 +60,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     if (matchTriggerWidth) {
       setWidth(`${triggerRect.width}px`);
     }
-  };
+  }, [align, matchTriggerWidth, triggerRef]);
 
   useEffect(() => {
     updateStyles();
@@ -66,7 +70,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     return () => {
       window.removeEventListener('resize', updateStyles);
     };
-  }, []);
+  }, [updateStyles]);
 
   useEffect(() => {
     const trigger = triggerRef.current;
@@ -81,34 +85,53 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     return () => {
       trigger.removeEventListener('click', handleClick);
     };
-  }, []);
+  }, [triggerRef]);
 
   const cardRef = useRef<HTMLDivElement | null>(null);
 
+  const { contentRef, isVisible } = useAnimate({ show: isOpen });
+
+  useEffect(() => {
+    const removeRef = () => setOverlayCardRefs((refs) => refs.filter((ref) => ref !== cardRef));
+
+    if (isVisible) {
+      setOverlayCardRefs((refs) => (refs.includes(cardRef) ? refs : [...refs, cardRef]));
+    } else {
+      removeRef();
+    }
+
+    return removeRef;
+  }, [isVisible, setOverlayCardRefs]);
+
+  const cardIndex = overlayCardRefs.indexOf(cardRef);
+  const childCards = overlayCardRefs.slice(cardIndex + 1);
+
   useClickOutside({
     handler: () => setIsOpen(false),
-    refs: [cardRef, triggerRef],
+    refs: [cardRef, triggerRef, ...childCards],
   });
 
   useEffect(() => {
     if (isOpen) {
       onOpen?.();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   return (
     <OverlayPortal>
-      <Animate show={isOpen}>
-        {(ref) => (
-          <div
-            className={classNames('absolute z-10 rounded-lg bg-gray-50 shadow-xl', className)}
-            ref={mergeRefs([ref, cardRef])}
-            style={{ ...styles, width }}
-          >
-            {children(() => setIsOpen(false))}
-          </div>
-        )}
-      </Animate>
+      {isVisible && (
+        <div
+          className={classNames(
+            'absolute z-10 rounded-lg border border-gray-200 bg-gray-50 shadow-xl',
+            className,
+          )}
+          ref={mergeRefs([contentRef, cardRef])}
+          style={{ ...styles, width }}
+        >
+          {children(() => setIsOpen(false))}
+        </div>
+      )}
     </OverlayPortal>
   );
 };

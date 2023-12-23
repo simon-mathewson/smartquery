@@ -1,3 +1,6 @@
+import { inferRouterInputs } from '@trpc/server';
+import type { AppRouter } from '../../link/src/main/router';
+
 export type Query = {
   id: string;
   label?: string;
@@ -13,11 +16,4 @@ export type DropMarker = {
   row: number;
 };
 
-export type Connection = {
-  database: string;
-  host: string;
-  name: string;
-  password: string;
-  port: number;
-  user: string;
-};
+export type Connection = inferRouterInputs<AppRouter>['connectDb'];

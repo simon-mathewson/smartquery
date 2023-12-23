@@ -13,6 +13,7 @@ export const App: React.FC = () => {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
     {
       database: 'mathewson_metals_development',
+      engine: 'postgres',
       host: 'localhost',
       name: 'Mathewson Metals',
       password: 'password',
@@ -21,6 +22,7 @@ export const App: React.FC = () => {
     },
     {
       database: 'dabase_test_1',
+      engine: 'postgres',
       host: 'localhost',
       name: 'Dabase Test 1',
       password: 'password',
@@ -29,6 +31,7 @@ export const App: React.FC = () => {
     },
     {
       database: 'dabase_test_2',
+      engine: 'postgres',
       host: 'localhost',
       name: 'Dabase Test 2',
       password: 'password',
@@ -37,6 +40,7 @@ export const App: React.FC = () => {
     },
     {
       database: 'dabase_test_3',
+      engine: 'postgres',
       host: 'localhost',
       name: 'Dabase Test 3',
       password: 'password',
@@ -86,17 +90,23 @@ export const App: React.FC = () => {
 
   const [dropMarkers, setDropMarkers] = useState<DropMarkerType[]>([]);
 
+  const [overlayCardRefs, setOverlayCardRefs] = useState<
+    Array<React.MutableRefObject<HTMLElement | null>>
+  >([]);
+
   return (
     <GlobalContext.Provider
       value={{
         connections,
         dropMarkers,
         isDbReady,
+        overlayCardRefs,
         queries,
         selectedConnectionIndex,
         selectedDatabase,
         setConnections,
         setDropMarkers,
+        setOverlayCardRefs,
         setQueries,
         setSelectedConnectionIndex,
         setSelectedDatabase,

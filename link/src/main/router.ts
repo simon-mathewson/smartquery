@@ -15,12 +15,13 @@ export const router = t.router({
   connectDb: t.procedure
     .input(
       z.object({
-        database: z.string(),
-        host: z.string(),
-        name: z.string(),
+        database: z.string().trim().min(1),
+        engine: z.union([z.literal('postgres'), z.literal('mysql')]),
+        host: z.string().trim().min(1),
+        name: z.string().trim().min(1),
         password: z.string(),
-        port: z.number().int(),
-        user: z.string(),
+        port: z.number(),
+        user: z.string().trim().min(1),
       }),
     )
     .mutation(async (props) => {

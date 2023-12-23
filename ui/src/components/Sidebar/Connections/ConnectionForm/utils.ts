@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const connectionSchema = z.object({
   database: z.string().trim().min(1),
+  engine: z.union([z.literal('postgres'), z.literal('mysql')]),
   host: z.string().trim().min(1),
   name: z.string().trim().min(1),
   password: z.string(),
@@ -12,7 +13,8 @@ export const connectionSchema = z.object({
 export type ConnectionSchema = z.infer<typeof connectionSchema>;
 
 export const formSchema = connectionSchema.extend({
-  port: z.number().nullable(),
+  engine: connectionSchema.shape.engine.nullable(),
+  port: connectionSchema.shape.port.nullable(),
 });
 
 export type FormSchema = z.infer<typeof formSchema>;

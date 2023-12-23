@@ -8,6 +8,7 @@ import React, { useRef, useState } from 'react';
 import { Header } from '../../../shared/Header/Header';
 import { TestConnection } from './TestConnection/TestConnection';
 import { FormSchema, connectionSchema, isFormValid } from './utils';
+import { Select } from '~/components/shared/Select/Select';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;
@@ -26,6 +27,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const [form, setForm] = useState<FormSchema>(
     connectionToEdit ?? {
       database: '',
+      engine: null,
       host: '',
       name: '',
       password: '',
@@ -91,6 +93,21 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             )
           }
           title={`${mode === 'add' ? 'Add' : 'Edit'} Connection`}
+        />
+        <Select
+          label="Engine"
+          onChange={getChangeHandler('engine')}
+          options={[
+            {
+              label: 'PostgreSQL',
+              value: 'postgres',
+            },
+            {
+              label: 'MySQL',
+              value: 'mysql',
+            },
+          ]}
+          value={form.engine}
         />
         <Input label="Name" onChange={getChangeHandler('name')} value={form.name} />
         <div className="grid grid-cols-2 gap-2">
