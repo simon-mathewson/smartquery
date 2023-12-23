@@ -2,10 +2,9 @@ import { Client } from 'pg';
 import { z } from 'zod';
 import { initTRPC } from '@trpc/server';
 import superjson from 'superjson';
+import { uniqueId } from 'lodash';
 
-const clientRef: { current: Client | null } = {
-  current: null,
-};
+const clients: { [connectionId: string]: Client } = {};
 
 const t = initTRPC.create({
   transformer: superjson,
@@ -27,9 +26,9 @@ export const router = t.router({
     .mutation(async (props) => {
       const { database, host, password, port, user } = props.input;
 
-      await clientRef.current?.end();
+      const clientId = uniqueId();
 
-      clientRef.current = new Client({
+      const client = new Client({
         database,
         host,
         password,
@@ -37,10 +36,24 @@ export const router = t.router({
         user,
       });
 
-      await clientRef.current.connect();
+      clients[clientId] = client;
+
+      await client.connect();
+
+      return clientId;
     }),
-  sendQuery: t.procedure.input(z.string()).query(async (props) => {
-    const { fields, rows } = await clientRef.current!.query(props.input);
+  disconnectDb: t.procedure.input(z.string()).mutation(async (props) => {
+    const clientId = props.input;
+
+    await clients[clientId]?.end();
+
+    delete clients[clientId];
+  }),
+  sendQuery: t.procedure.input(z.tuple([z.string(), z.string()])).query(async (props) => {
+    const [clientId, query] = props.input;
+
+    const { fields, rows } = await clients[clientId]!.query(query);
+
     return { fields, rows };
   }),
 });

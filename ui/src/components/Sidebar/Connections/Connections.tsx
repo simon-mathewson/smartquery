@@ -17,7 +17,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
 
   const {
     connections,
-    isDbReady,
+    clientId,
     selectedConnectionIndex,
     selectedDatabase,
     setSelectedConnectionIndex,
@@ -31,14 +31,17 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
   const [databases, setDatabases] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!isDbReady) return;
+    if (!clientId) return;
 
     trpc.sendQuery
-      .query(`SELECT datname FROM pg_database WHERE datistemplate = FALSE ORDER BY datname ASC`)
+      .query([
+        clientId,
+        `SELECT datname FROM pg_database WHERE datistemplate = FALSE ORDER BY datname ASC`,
+      ])
       .then(({ rows }) => {
         setDatabases(rows.map(({ datname }) => datname));
       });
-  }, [isDbReady]);
+  }, [clientId]);
 
   return (
     <OverlayCard

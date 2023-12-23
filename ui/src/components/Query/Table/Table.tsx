@@ -14,20 +14,20 @@ export type TableProps = {
 export const Table: React.FC<TableProps> = (props) => {
   const { hasResults, query, setHasResults } = props;
 
-  const { isDbReady } = useDefinedContext(GlobalContext);
+  const { clientId } = useDefinedContext(GlobalContext);
 
   const [rows, setRows] = useState<Record<string, string | Date>[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!query.sql || !isDbReady) return;
+    if (!query.sql || !clientId) return;
 
-    trpc.sendQuery.query(query.sql).then(({ fields, rows }) => {
+    trpc.sendQuery.query([clientId, query.sql]).then(({ fields, rows }) => {
       setColumns(fields.map(({ name }) => name));
       setRows(rows);
       setHasResults(true);
     });
-  }, [query.sql, isDbReady, setHasResults]);
+  }, [query.sql, clientId, setHasResults]);
 
   if (!hasResults) return null;
 

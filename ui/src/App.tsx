@@ -51,22 +51,24 @@ export const App: React.FC = () => {
 
   const [selectedConnectionIndex, setSelectedConnectionIndex] = useState<number | null>(0);
 
-  const [isDbReady, setIsDbReady] = useState(false);
+  const [clientId, setClientId] = useState<string | null>(null);
 
   const [selectedDatabase, setSelectedDatabase] = useState<string | null>(null);
 
-  const connect = (connection: Connection) => {
-    setIsDbReady(false);
+  const connect = async (connection: Connection) => {
+    if (clientId) {
+      await trpc.disconnectDb.mutate(clientId);
+    }
+
+    setClientId(null);
     setQueries([]);
 
-    trpc.connectDb
-      .mutate(connection)
-      .then(() => {
-        setIsDbReady(true);
-      })
-      .catch(() => {
-        setIsDbReady(false);
-      });
+    try {
+      const newClientId = await trpc.connectDb.mutate(connection);
+      setClientId(newClientId);
+    } catch {
+      setClientId(null);
+    }
   };
 
   useEffect(() => {
@@ -97,9 +99,9 @@ export const App: React.FC = () => {
   return (
     <GlobalContext.Provider
       value={{
+        clientId,
         connections,
         dropMarkers,
-        isDbReady,
         overlayCardRefs,
         queries,
         selectedConnectionIndex,

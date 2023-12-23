@@ -2,9 +2,9 @@ import React, { createContext } from 'react';
 import { Connection, DropMarker, Query } from '../types';
 
 export const GlobalContext = createContext<{
+  clientId: string | null;
   connections: Connection[];
   dropMarkers: DropMarker[];
-  isDbReady: boolean;
   overlayCardRefs: Array<React.MutableRefObject<HTMLElement | null>>;
   queries: Query[][];
   selectedConnectionIndex: number | null;
