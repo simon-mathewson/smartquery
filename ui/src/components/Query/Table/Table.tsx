@@ -14,20 +14,36 @@ export type TableProps = {
 export const Table: React.FC<TableProps> = (props) => {
   const { hasResults, query, setHasResults } = props;
 
-  const { clientId } = useDefinedContext(GlobalContext);
+  const { clientId, connections, selectedConnectionIndex, selectedDatabase } =
+    useDefinedContext(GlobalContext);
 
   const [rows, setRows] = useState<Record<string, string | Date>[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!query.sql || !clientId) return;
+    const connection =
+      selectedConnectionIndex !== null ? connections[selectedConnectionIndex] : null;
 
-    trpc.sendQuery.query([clientId, query.sql]).then(({ fields, rows }) => {
-      setColumns(fields.map(({ name }) => name));
+    if (!query.sql || !clientId || !connection) return;
+
+    const table = query.sql.match(/\sfrom\s*[\s"']([^,;"'\s]+)/i)?.[1];
+
+    if (!table) throw new Error('Could not find table name in query');
+
+    const columnsQuery =
+      connection.engine === 'postgres'
+        ? `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${table}' AND table_catalog = '${selectedDatabase}'`
+        : `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${table}' AND table_schema = '${selectedDatabase}'`;
+
+    Promise.all([
+      trpc.sendQuery.query([clientId, columnsQuery]),
+      trpc.sendQuery.query([clientId, query.sql]),
+    ]).then(([columns, rows]) => {
+      setColumns(columns.map(({ c }) => c as string));
       setRows(rows);
       setHasResults(true);
     });
-  }, [query.sql, clientId, setHasResults]);
+  }, [query.sql, clientId, setHasResults, selectedConnectionIndex, connections, selectedDatabase]);
 
   if (!hasResults) return null;
 

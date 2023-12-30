@@ -31,17 +31,20 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
   const [databases, setDatabases] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!clientId) return;
+    const connection =
+      selectedConnectionIndex !== null ? connections[selectedConnectionIndex] : null;
 
-    trpc.sendQuery
-      .query([
-        clientId,
-        `SELECT datname FROM pg_database WHERE datistemplate = FALSE ORDER BY datname ASC`,
-      ])
-      .then(({ rows }) => {
-        setDatabases(rows.map(({ datname }) => datname));
-      });
-  }, [clientId]);
+    if (!clientId || !connection) return;
+
+    const databasesQuery =
+      connection.engine === 'postgres'
+        ? 'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC'
+        : 'SELECT schema_name AS db FROM information_schema.schemata ORDER BY db ASC';
+
+    trpc.sendQuery.query([clientId, databasesQuery]).then((rows) => {
+      setDatabases(rows.map(({ db }) => db as string));
+    });
+  }, [clientId, connections, selectedConnectionIndex]);
 
   return (
     <OverlayCard

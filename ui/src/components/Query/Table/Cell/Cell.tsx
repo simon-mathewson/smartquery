@@ -23,9 +23,15 @@ export const Cell: React.FC<CellProps> = (props) => {
           'text-gray-500': !header,
         })}
       >
-        {value instanceof Date
-          ? DateTime.fromJSDate(value).toFormat('yyyy-MM-dd HH:mm:ss.SSS')
-          : value}
+        {(() => {
+          if (value instanceof Date) {
+            return DateTime.fromJSDate(value).toFormat('yyyy-MM-dd HH:mm:ss.SSS');
+          }
+          if (typeof value === 'object') {
+            return JSON.stringify(value);
+          }
+          return value;
+        })()}
       </div>
     </div>
   );

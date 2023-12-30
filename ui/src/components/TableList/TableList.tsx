@@ -5,25 +5,34 @@ import { Item } from './Item/Item';
 import { trpc } from '~/main';
 
 export const TableList: React.FC = () => {
-  const { clientId, selectedDatabase } = useDefinedContext(GlobalContext);
+  const { clientId, connections, selectedConnectionIndex, selectedDatabase } =
+    useDefinedContext(GlobalContext);
 
   const [tables, setTables] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!selectedDatabase || !clientId) return;
+    const connection =
+      selectedConnectionIndex !== null ? connections[selectedConnectionIndex] : null;
 
-    trpc.sendQuery
-      .query([
-        clientId,
-        `SELECT * FROM information_schema.tables
-        WHERE table_type = 'BASE TABLE'
-        AND table_schema NOT IN ('pg_catalog', 'information_schema')
-        AND table_catalog = '${selectedDatabase}'
-        ORDER BY table_name ASC`,
-      ])
-      .then(({ rows }) => {
-        setTables(rows.map(({ table_name }) => table_name));
-      });
+    if (!selectedDatabase || !clientId || !connection) return;
+
+    const tableNamesQuery =
+      connection.engine === 'postgres'
+        ? `SELECT table_name AS t FROM information_schema.tables
+          WHERE table_type = 'BASE TABLE'
+          AND table_schema NOT IN ('pg_catalog', 'information_schema')
+          AND table_catalog = '${selectedDatabase}'
+          ORDER BY t ASC`
+        : `SELECT table_name AS t FROM information_schema.tables
+          WHERE table_type = 'BASE TABLE'
+          AND table_schema = '${selectedDatabase}'
+          ORDER BY t ASC`;
+
+    trpc.sendQuery.query([clientId, tableNamesQuery]).then((rows) => {
+      console.log(tableNamesQuery, rows);
+      setTables(rows.map(({ t }) => t as string));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDatabase, clientId]);
 
   return (

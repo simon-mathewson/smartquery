@@ -11,13 +11,24 @@ export type ItemProps = { tableName: string };
 export const Item: React.FC<ItemProps> = (props) => {
   const { tableName } = props;
 
-  const { setQueries } = useDefinedContext(GlobalContext);
+  const { connections, selectedConnectionIndex, setQueries } = useDefinedContext(GlobalContext);
 
-  const getQuery = () => ({
-    id: uniqueId(),
-    label: tableName,
-    sql: `SELECT * FROM "${tableName}" LIMIT 50`,
-  });
+  const connection = selectedConnectionIndex !== null ? connections[selectedConnectionIndex] : null;
+
+  const getQuery = () => {
+    if (!connection) {
+      throw new Error('Not connected');
+    }
+
+    return {
+      id: uniqueId(),
+      label: tableName,
+      sql:
+        connection.engine === 'postgres'
+          ? `SELECT * FROM "${tableName}" LIMIT 50`
+          : `SELECT * FROM ${tableName} LIMIT 50`,
+    };
+  };
 
   const { handleMouseDown, isDragging } = useDrag({ query: getQuery() });
 
