@@ -41,9 +41,13 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
         ? 'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC'
         : 'SELECT schema_name AS db FROM information_schema.schemata ORDER BY db ASC';
 
-    trpc.sendQuery.query([clientId, databasesQuery]).then((rows) => {
+    const ac = new AbortController();
+
+    trpc.sendQuery.query([clientId, databasesQuery], { signal: ac.signal }).then((rows) => {
       setDatabases(rows.map(({ db }) => db as string));
     });
+
+    return () => ac.abort();
   }, [clientId, connections, selectedConnectionIndex]);
 
   return (
