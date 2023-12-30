@@ -29,7 +29,6 @@ export const TableList: React.FC = () => {
           ORDER BY t ASC`;
 
     trpc.sendQuery.query([clientId, tableNamesQuery]).then((rows) => {
-      console.log(tableNamesQuery, rows);
       setTables(rows.map(({ t }) => t as string));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
