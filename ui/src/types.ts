@@ -3,9 +3,9 @@ import type { AppRouter } from '../../link/src/main/router';
 
 export type Query = {
   id: string;
-  label?: string;
   sql?: string;
   showEditor?: boolean;
+  table?: string;
 };
 
 export type DropMarker = {

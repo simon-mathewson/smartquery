@@ -5,29 +5,33 @@ import { useDrag } from '~/hooks/useDrag/useDrag';
 import classNames from 'classnames';
 import { uniqueId } from 'lodash';
 import React from 'react';
+import { Query } from '~/types';
 
 export type ItemProps = { tableName: string };
 
 export const Item: React.FC<ItemProps> = (props) => {
   const { tableName } = props;
 
-  const { connections, selectedConnectionIndex, setQueries } = useDefinedContext(GlobalContext);
+  const { connections, queries, selectedConnectionIndex, setQueries } =
+    useDefinedContext(GlobalContext);
 
   const connection = selectedConnectionIndex !== null ? connections[selectedConnectionIndex] : null;
 
-  const getQuery = () => {
+  const isSelected = queries.some((query) => query.some((q) => q.table === tableName));
+
+  const getQuery = (): Query => {
     if (!connection) {
       throw new Error('Not connected');
     }
 
     return {
       id: uniqueId(),
-      label: tableName,
       sql: {
         mysql: `SELECT * FROM ${tableName} LIMIT 50`,
         postgresql: `SELECT * FROM "${tableName}" LIMIT 50`,
         sqlserver: `SELECT TOP 50 * FROM ${tableName}`,
       }[connection.engine],
+      table: tableName,
     };
   };
 
@@ -40,6 +44,7 @@ export const Item: React.FC<ItemProps> = (props) => {
       label={tableName}
       onClick={() => setQueries([[getQuery()]])}
       onMouseDown={handleMouseDown}
+      selected={isSelected}
       selectedVariant="primary"
     />
   );

@@ -26,24 +26,31 @@ export const Table: React.FC<TableProps> = (props) => {
 
     if (!query.sql || !clientId || !connection) return;
 
-    const table = query.sql.match(/\sfrom\s*[\s"']([^,;"'\s]+)/i)?.[1];
-
-    if (!table) throw new Error('Could not find table name in query');
-
-    const columnsQuery =
-      connection.engine === 'mysql'
-        ? `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${table}' AND table_schema = '${selectedDatabase}'`
-        : `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${table}' AND table_catalog = '${selectedDatabase}'`;
+    const columnsQuery = query.table
+      ? {
+          mysql: `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${query.table}' AND table_schema = '${selectedDatabase}'`,
+          postgresql: `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${query.table}' AND table_catalog = '${selectedDatabase}'`,
+          sqlserver: `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${query.table}' AND table_catalog = '${selectedDatabase}'`,
+        }[connection.engine]
+      : null;
 
     Promise.all([
-      trpc.sendQuery.query([clientId, columnsQuery]),
       trpc.sendQuery.query([clientId, query.sql]),
-    ]).then(([columns, rows]) => {
-      setColumns(columns.map(({ c }) => c as string));
+      columnsQuery ? trpc.sendQuery.query([clientId, columnsQuery]) : null,
+    ]).then(([rows, columns]) => {
       setRows(rows);
+      setColumns(columns?.map(({ c }) => c as string) ?? Object.keys(rows[0] ?? {}));
       setHasResults(true);
     });
-  }, [query.sql, clientId, setHasResults, selectedConnectionIndex, connections, selectedDatabase]);
+  }, [
+    query.sql,
+    clientId,
+    setHasResults,
+    selectedConnectionIndex,
+    connections,
+    selectedDatabase,
+    query.table,
+  ]);
 
   if (!hasResults) return null;
 

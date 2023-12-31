@@ -46,17 +46,7 @@ export const Sidebar: React.FC = () => {
         className="mb-1"
         icon={<Add />}
         label="Query"
-        onClick={() =>
-          setQueries([
-            [
-              {
-                id: uniqueId(),
-                label: 'New Query',
-                showEditor: true,
-              },
-            ],
-          ])
-        }
+        onClick={() => setQueries([[{ id: uniqueId(), showEditor: true }]])}
         variant="primary"
       />
       <TableList />
