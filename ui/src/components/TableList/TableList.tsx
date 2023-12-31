@@ -16,17 +16,21 @@ export const TableList: React.FC = () => {
 
     if (!selectedDatabase || !clientId || !connection) return;
 
-    const tableNamesQuery =
-      connection.engine === 'postgres'
-        ? `SELECT table_name AS t FROM information_schema.tables
-          WHERE table_type = 'BASE TABLE'
-          AND table_schema NOT IN ('pg_catalog', 'information_schema')
-          AND table_catalog = '${selectedDatabase}'
-          ORDER BY t ASC`
-        : `SELECT table_name AS t FROM information_schema.tables
-          WHERE table_type = 'BASE TABLE'
-          AND table_schema = '${selectedDatabase}'
-          ORDER BY t ASC`;
+    const tableNamesQuery = {
+      mysql: `SELECT table_name AS t FROM information_schema.tables
+        WHERE table_type = 'BASE TABLE'
+        AND table_schema = '${selectedDatabase}'
+        ORDER BY t ASC`,
+      postgresql: `SELECT table_name AS t FROM information_schema.tables
+        WHERE table_type = 'BASE TABLE'
+        AND table_schema NOT IN ('pg_catalog', 'information_schema')
+        AND table_catalog = '${selectedDatabase}'
+        ORDER BY t ASC`,
+      sqlserver: `SELECT table_name AS t FROM information_schema.tables
+        WHERE table_type = 'BASE TABLE'
+        AND table_catalog = '${selectedDatabase}'
+        ORDER BY t ASC`,
+    }[connection.engine];
 
     trpc.sendQuery.query([clientId, tableNamesQuery]).then((rows) => {
       setTables(rows.map(({ t }) => t as string));

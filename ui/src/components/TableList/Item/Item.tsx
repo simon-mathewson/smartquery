@@ -23,10 +23,11 @@ export const Item: React.FC<ItemProps> = (props) => {
     return {
       id: uniqueId(),
       label: tableName,
-      sql:
-        connection.engine === 'postgres'
-          ? `SELECT * FROM "${tableName}" LIMIT 50`
-          : `SELECT * FROM ${tableName} LIMIT 50`,
+      sql: {
+        mysql: `SELECT * FROM ${tableName} LIMIT 50`,
+        postgresql: `SELECT * FROM "${tableName}" LIMIT 50`,
+        sqlserver: `SELECT TOP 50 * FROM ${tableName}`,
+      }[connection.engine],
     };
   };
 

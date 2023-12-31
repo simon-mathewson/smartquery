@@ -11,6 +11,7 @@ app.whenReady().then(() => {
 
   const server = createHTTPServer({
     middleware: cors(),
+    onError: ({ error }) => console.error(error),
     router,
   });
 

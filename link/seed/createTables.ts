@@ -12,26 +12,38 @@ export const createTables = async (connection: Connection) => {
     `;
   }
 
+  const datetimeType = engine === 'sqlserver' ? 'DATETIME' : 'TIMESTAMP';
+
   await prisma.$queryRawUnsafe(`
     CREATE TABLE users (
-      id ${engine === 'postgresql' ? 'SERIAL' : 'INT NOT NULL AUTO_INCREMENT'},
+      id ${
+        {
+          mysql: 'INT NOT NULL AUTO_INCREMENT',
+          postgresql: 'SERIAL',
+          sqlserver: 'INT IDENTITY(1,1)',
+        }[engine]
+      },
       name VARCHAR(255) NOT NULL,
-      created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-      updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      created_at ${datetimeType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at ${datetimeType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
       role ${
-        engine === 'postgresql' ? 'user_role' : 'ENUM("USER", "ADMIN")'
+        {
+          mysql: 'ENUM("USER", "ADMIN")',
+          postgresql: 'user_role',
+          sqlserver: 'VARCHAR(50)',
+        }[engine]
       } NOT NULL DEFAULT 'USER',
-      attributes JSON NULL,
+      attributes ${engine === 'sqlserver' ? 'VARCHAR(255)' : 'JSON'} NULL,
       PRIMARY KEY (id)
     )
   `);
 
   await prisma.$queryRawUnsafe(`
     CREATE TABLE posts (
-      id VARCHAR(255) NOT NULL,
+      id VARCHAR(36) NOT NULL,
       text VARCHAR(255) NOT NULL,
-      created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-      updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      created_at ${datetimeType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at ${datetimeType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
       user_id INT NOT NULL,
       PRIMARY KEY (id),
       FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -43,7 +55,7 @@ export const createTables = async (connection: Connection) => {
       user_id INT NOT NULL,
       post_id VARCHAR(36) NOT NULL,
       PRIMARY KEY (user_id, post_id),
-      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
+      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
       FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE ON UPDATE CASCADE
     )
   `);

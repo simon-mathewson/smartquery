@@ -13,3 +13,11 @@ services:
       MYSQL_ROOT_PASSWORD: password
     ports:
       - "3307:3306"
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_PID: Developer
+      SA_PASSWORD: Password1!
+    ports:
+      - "1434:1433"

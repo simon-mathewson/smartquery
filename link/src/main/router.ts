@@ -2,10 +2,9 @@ import { z } from 'zod';
 import { initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 import { uniqueId } from 'lodash';
-import { PrismaClient as MySqlClient } from '../../prisma/client/mysql';
-import { PrismaClient as PostgresClient } from '../../prisma/client/postgres';
+import { MySqlClient, PostgresClient, SqlServerClient } from '../../prisma';
 
-const clients: { [connectionId: string]: PostgresClient | MySqlClient } = {};
+const clients: { [connectionId: string]: MySqlClient | PostgresClient | SqlServerClient } = {};
 
 const t = initTRPC.create({
   transformer: superjson,
@@ -16,7 +15,7 @@ export const router = t.router({
     .input(
       z.object({
         database: z.string().trim().min(1),
-        engine: z.union([z.literal('postgres'), z.literal('mysql')]),
+        engine: z.union([z.literal('mysql'), z.literal('postgresql'), z.literal('sqlserver')]),
         host: z.string().trim().min(1),
         name: z.string().trim().min(1),
         password: z.string(),
@@ -33,8 +32,11 @@ export const router = t.router({
         mysql: new MySqlClient({
           datasourceUrl: `mysql://${user}:${password}@${host}:${port}/${database}`,
         }),
-        postgres: new PostgresClient({
+        postgresql: new PostgresClient({
           datasourceUrl: `postgresql://${user}:${password}@${host}:${port}/${database}`,
+        }),
+        sqlserver: new SqlServerClient({
+          datasourceUrl: `sqlserver://${host}:${port};database=${database};user=${user};password=${password};encrypt=DANGER_PLAINTEXT`,
         }),
       }[engine];
 

@@ -99,12 +99,16 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           onChange={getChangeHandler('engine')}
           options={[
             {
+              label: 'MySQL',
+              value: 'mysql',
+            },
+            {
               label: 'PostgreSQL',
               value: 'postgres',
             },
             {
-              label: 'MySQL',
-              value: 'mysql',
+              label: 'SQL Server',
+              value: 'sqlserver',
             },
           ]}
           value={form.engine}

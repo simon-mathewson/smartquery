@@ -9,6 +9,7 @@ import { Connection } from './types';
       database: 'mysql_db',
       defaultDatabase: 'mysql',
       engine: 'mysql',
+      host: 'localhost',
       password: 'password',
       port: 3307,
       user: 'root',
@@ -17,9 +18,19 @@ import { Connection } from './types';
       database: 'postgresql_db',
       defaultDatabase: 'postgres',
       engine: 'postgresql',
+      host: 'localhost',
       password: 'password',
       port: 5433,
       user: 'postgres',
+    },
+    {
+      database: 'sqlserver_db',
+      defaultDatabase: 'master',
+      engine: 'sqlserver',
+      host: 'localhost',
+      password: 'Password1!',
+      port: 1434,
+      user: 'sa',
     },
   ];
 

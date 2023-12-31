@@ -13,7 +13,7 @@ export const App: React.FC = () => {
   const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
     {
       database: 'mathewson_metals_development',
-      engine: 'postgres',
+      engine: 'postgresql',
       host: 'localhost',
       name: 'Mathewson Metals',
       password: 'password',
@@ -22,7 +22,7 @@ export const App: React.FC = () => {
     },
     {
       database: 'postgresql_db',
-      engine: 'postgres',
+      engine: 'postgresql',
       host: 'localhost',
       name: 'PostgreSQL',
       password: 'password',
@@ -37,6 +37,15 @@ export const App: React.FC = () => {
       password: 'password',
       port: 3307,
       user: 'root',
+    },
+    {
+      database: 'sqlserver_db',
+      engine: 'sqlserver',
+      host: 'localhost',
+      name: 'SQL Server',
+      password: 'Password1!',
+      port: 1434,
+      user: 'sa',
     },
   ]);
 

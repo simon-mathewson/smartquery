@@ -31,9 +31,9 @@ export const Table: React.FC<TableProps> = (props) => {
     if (!table) throw new Error('Could not find table name in query');
 
     const columnsQuery =
-      connection.engine === 'postgres'
-        ? `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${table}' AND table_catalog = '${selectedDatabase}'`
-        : `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${table}' AND table_schema = '${selectedDatabase}'`;
+      connection.engine === 'mysql'
+        ? `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${table}' AND table_schema = '${selectedDatabase}'`
+        : `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${table}' AND table_catalog = '${selectedDatabase}'`;
 
     Promise.all([
       trpc.sendQuery.query([clientId, columnsQuery]),

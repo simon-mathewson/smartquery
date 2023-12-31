@@ -36,11 +36,14 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
 
     if (!clientId || !connection) return;
 
-    const databasesQuery =
-      connection.engine === 'postgres'
-        ? 'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC'
-        : 'SELECT schema_name AS db FROM information_schema.schemata ORDER BY db ASC';
-
+    const databasesQuery = {
+      mysql:
+        "SELECT schema_name AS db FROM information_schema.schemata WHERE schema_name NOT IN ('information_schema', 'performance_schema', 'sys') ORDER BY schema_name ASC",
+      postgresql:
+        'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC',
+      sqlserver:
+        "SELECT name AS db FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb') ORDER BY name ASC",
+    }[connection.engine];
     const ac = new AbortController();
 
     trpc.sendQuery.query([clientId, databasesQuery], { signal: ac.signal }).then((rows) => {

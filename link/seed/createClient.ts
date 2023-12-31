@@ -1,20 +1,24 @@
-import { MySqlClient, PostgresClient } from '../prisma';
+import { MySqlClient, PostgresClient, SqlServerClient } from '../prisma';
 import { Connection } from './types';
 
 export const createClient = async (
   connection: Connection,
   options?: { useDefaultDatabase: true },
 ) => {
-  const { engine, database, defaultDatabase, password, port, user } = connection;
+  const { engine, database, defaultDatabase, host, password, port, user } = connection;
 
   const Client = {
     mysql: MySqlClient,
     postgresql: PostgresClient,
+    sqlserver: SqlServerClient,
   }[engine];
 
-  return new Client({
-    datasourceUrl: `${engine}://${user}:${password}@localhost:${port}/${
-      options?.useDefaultDatabase ? defaultDatabase : database
-    }`,
-  });
+  const db = options?.useDefaultDatabase ? defaultDatabase : database;
+
+  const url =
+    engine === 'sqlserver'
+      ? `sqlserver://${host}:${port};database=${db};user=${user};password=${password};encrypt=DANGER_PLAINTEXT`
+      : `${engine}://${user}:${password}@${host}:${port}/${db}`;
+
+  return new Client({ datasourceUrl: url });
 };

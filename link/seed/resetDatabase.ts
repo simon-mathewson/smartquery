@@ -6,6 +6,12 @@ export const resetDatabase = async (connection: Connection) => {
 
   const prisma = await createClient(connection, { useDefaultDatabase: true });
 
+  if (engine === 'sqlserver') {
+    await prisma.$queryRawUnsafe(`
+      ALTER DATABASE ${database} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    `);
+  }
+
   await prisma.$queryRawUnsafe(`
     DROP DATABASE IF EXISTS ${database} ${engine === 'postgresql' ? 'WITH (FORCE)' : ''};
   `);
