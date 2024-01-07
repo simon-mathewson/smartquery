@@ -84,6 +84,8 @@ export const App: React.FC = () => {
 
     const selectedConnection = connections[selectedConnectionIndex];
 
+    window.document.title = `${selectedDatabase} – ${selectedConnection.name}`;
+
     connect({ ...selectedConnection, database: selectedDatabase });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connections, selectedDatabase]);
