@@ -1,148 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { useLocalStorageState } from './hooks/useLocalStorageState';
-import { Connection, DropMarker as DropMarkerType } from './types';
-import { GlobalContext } from './contexts/GlobalContext';
+import React from 'react';
+import { Sidebar } from './content/Sidebar/Sidebar';
+import { DropMarker } from './content/dragAndDrop/DropMarker';
+import { Query } from './content/queries/Query/Query';
 import './index.css';
-import { Query as QueryType } from './types';
-import { DropMarker } from './components/DropMarker/DropMarker';
-import { Sidebar } from './components/Sidebar/Sidebar';
-import { Query } from './components/Query/Query';
-import { trpc } from './main';
+import { useDefinedContext } from './shared/hooks/useDefinedContext';
+import { QueriesContext } from './content/queries/Context';
 
 export const App: React.FC = () => {
-  const [connections, setConnections] = useLocalStorageState<Connection[]>('connections', [
-    {
-      database: 'mathewson_metals_development',
-      engine: 'postgresql',
-      host: 'localhost',
-      name: 'Mathewson Metals',
-      password: 'password',
-      port: 5432,
-      user: 'postgres',
-    },
-    {
-      database: 'postgresql_db',
-      engine: 'postgresql',
-      host: 'localhost',
-      name: 'PostgreSQL',
-      password: 'password',
-      port: 5433,
-      user: 'postgres',
-    },
-    {
-      database: 'mysql_db',
-      engine: 'mysql',
-      host: 'localhost',
-      name: 'MySQL',
-      password: 'password',
-      port: 3307,
-      user: 'root',
-    },
-    {
-      database: 'sqlserver_db',
-      engine: 'sqlserver',
-      host: 'localhost',
-      name: 'SQL Server',
-      password: 'Password1!',
-      port: 1434,
-      user: 'sa',
-    },
-  ]);
-
-  const [selectedConnectionIndex, setSelectedConnectionIndex] = useState<number | null>(0);
-
-  const [clientId, setClientId] = useState<string | null>(null);
-
-  const [selectedDatabase, setSelectedDatabase] = useState<string | null>(null);
-
-  const connect = async (connection: Connection) => {
-    if (clientId) {
-      await trpc.disconnectDb.mutate(clientId);
-    }
-
-    setClientId(null);
-    setQueries([]);
-
-    try {
-      const newClientId = await trpc.connectDb.mutate(connection);
-      setClientId(newClientId);
-    } catch {
-      setClientId(null);
-    }
-  };
-
-  useEffect(() => {
-    if (selectedConnectionIndex === null) return;
-
-    const selectedConnection = connections[selectedConnectionIndex];
-
-    setSelectedDatabase(selectedConnection.database);
-  }, [connections, selectedConnectionIndex]);
-
-  useEffect(() => {
-    if (selectedConnectionIndex === null || !selectedDatabase) return;
-
-    const selectedConnection = connections[selectedConnectionIndex];
-
-    window.document.title = `${selectedDatabase} – ${selectedConnection.name}`;
-
-    connect({ ...selectedConnection, database: selectedDatabase });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connections, selectedDatabase]);
-
-  const [queries, setQueries] = useState<QueryType[][]>([]);
-
-  const [dropMarkers, setDropMarkers] = useState<DropMarkerType[]>([]);
-
-  const [overlayCardRefs, setOverlayCardRefs] = useState<
-    Array<React.MutableRefObject<HTMLElement | null>>
-  >([]);
+  const { queries } = useDefinedContext(QueriesContext);
 
   return (
-    <GlobalContext.Provider
-      value={{
-        clientId,
-        connections,
-        dropMarkers,
-        overlayCardRefs,
-        queries,
-        selectedConnectionIndex,
-        selectedDatabase,
-        setConnections,
-        setDropMarkers,
-        setOverlayCardRefs,
-        setQueries,
-        setSelectedConnectionIndex,
-        setSelectedDatabase,
-      }}
-    >
-      <div className="grid grid-cols-[224px_1fr]">
-        <Sidebar />
-        {queries.length === 0 && (
-          <div className="flex items-center justify-center">
-            <img className="w-50 h-max opacity-20" src="/LogoIcon.svg" />
-          </div>
-        )}
-        <div className="h-full overflow-hidden bg-white">
-          <div className="flex h-full justify-start overflow-hidden">
-            <DropMarker column={0} row={0} />
-            {queries.map((column, columnIndex) => (
-              <React.Fragment key={columnIndex}>
-                <div className="flex w-full flex-col justify-start overflow-hidden">
-                  <DropMarker column={columnIndex} horizontal row={0} />
-                  {column.map((query, rowIndex) => (
-                    <React.Fragment key={query.id}>
-                      <Query columnIndex={columnIndex} query={query} rowIndex={rowIndex} />
-                      <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
-                    </React.Fragment>
-                  ))}
-                </div>
-                <DropMarker column={columnIndex + 1} row={0} />
-              </React.Fragment>
-            ))}
-          </div>
+    <div className="grid grid-cols-[224px_1fr]">
+      <Sidebar />
+      {queries.length === 0 && (
+        <div className="flex items-center justify-center">
+          <img className="w-50 h-max opacity-20" src="/LogoIcon.svg" />
+        </div>
+      )}
+      <div className="h-full overflow-hidden bg-white">
+        <div className="flex h-full justify-start overflow-hidden">
+          <DropMarker column={0} row={0} />
+          {queries.map((column, columnIndex) => (
+            <React.Fragment key={columnIndex}>
+              <div className="flex w-full flex-col justify-start overflow-hidden">
+                <DropMarker column={columnIndex} horizontal row={0} />
+                {column.map((query, rowIndex) => (
+                  <React.Fragment key={query.id}>
+                    <Query columnIndex={columnIndex} query={query} rowIndex={rowIndex} />
+                    <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
+                  </React.Fragment>
+                ))}
+              </div>
+              <DropMarker column={columnIndex + 1} row={0} />
+            </React.Fragment>
+          ))}
         </div>
       </div>
-    </GlobalContext.Provider>
+    </div>
   );
 };

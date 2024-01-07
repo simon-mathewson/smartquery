@@ -17,6 +17,7 @@ export const router = t.router({
         database: z.string().trim().min(1),
         engine: z.union([z.literal('mysql'), z.literal('postgresql'), z.literal('sqlserver')]),
         host: z.string().trim().min(1),
+        id: z.string(),
         name: z.string().trim().min(1),
         password: z.string(),
         port: z.number(),
@@ -39,6 +40,9 @@ export const router = t.router({
           datasourceUrl: `sqlserver://${host}:${port};database=${database};user=${user};password=${password};encrypt=DANGER_PLAINTEXT`,
         }),
       }[engine];
+
+      // Connect right away so we get an error if connection is invalid
+      await client.$connect();
 
       clients[clientId] = client;
 
