@@ -45,7 +45,7 @@ export const Item: React.FC<ItemProps> = (props) => {
       onClick={() => setQueries([[getQuery()]])}
       onMouseDown={handleMouseDown}
       selected={isSelected}
-      selectedVariant="primary"
+      selectedVariant="secondary"
     />
   );
 };
