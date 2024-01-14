@@ -51,7 +51,7 @@ export const router = t.router({
   disconnectDb: t.procedure.input(z.string()).mutation(async (props) => {
     const clientId = props.input;
 
-    await clients[clientId]?.$disconnect();
+    await clients[clientId]!.$disconnect();
 
     delete clients[clientId];
   }),
