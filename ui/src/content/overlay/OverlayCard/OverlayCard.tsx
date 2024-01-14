@@ -78,6 +78,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     if (!trigger) return;
 
     const handleClick = () => {
+      updateStyles();
       setIsOpen((_isOpen) => !_isOpen);
     };
 
@@ -86,7 +87,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     return () => {
       trigger.removeEventListener('click', handleClick);
     };
-  }, [triggerRef]);
+  }, [triggerRef, updateStyles]);
 
   const cardRef = useRef<HTMLDivElement | null>(null);
 
