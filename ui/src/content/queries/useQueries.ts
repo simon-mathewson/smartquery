@@ -82,7 +82,9 @@ export const useQueries = () => {
   );
 
   const removeQuery = useCallback((id: string) => {
-    setQueries((currentQueries) => currentQueries.map((c) => c.filter((q) => q.id !== id)));
+    setQueries((currentQueries) =>
+      currentQueries.map((c) => c.filter((q) => q.id !== id)).filter((c) => c.length),
+    );
   }, []);
 
   const updateQuery = useCallback(

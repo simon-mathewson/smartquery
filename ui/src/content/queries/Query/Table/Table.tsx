@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Cell } from './Cell/Cell';
 import { Query as QueryType } from '../../types';
+import { useSelection } from './useSelection';
 
 export type TableProps = {
   query: QueryType;
@@ -11,22 +12,42 @@ export const Table: React.FC<TableProps> = (props) => {
     query: { columns, hasResults, rows },
   } = props;
 
+  const [hoverRowIndex, setHoverRowIndex] = useState<number>();
+
+  const { handleCellClick, selection, tableRef } = useSelection();
+
   if (!hasResults) return null;
 
   return (
     <div className="grid justify-start overflow-hidden p-2 pt-0">
       <div
         className="grid overflow-auto"
+        ref={tableRef}
         style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
       >
         {columns.map((column) => (
           <Cell header key={column} value={column} />
         ))}
-        {rows.map((row) =>
-          columns.map((column) => {
+        {rows.map((row, rowIndex) =>
+          columns.map((column, columnIndex) => {
             const value = row[column];
 
-            return <Cell key={[row, column].join()} value={value} />;
+            return (
+              <Cell
+                key={[row, column].join()}
+                hover={rowIndex === hoverRowIndex}
+                rootProps={{
+                  onClick: (event) => handleCellClick(event, rowIndex, columnIndex),
+                  onMouseEnter: () => setHoverRowIndex(rowIndex),
+                  onMouseLeave: () => setHoverRowIndex(undefined),
+                }}
+                selected={
+                  selection[rowIndex] &&
+                  (selection[rowIndex].length === 0 || selection[rowIndex].includes(columnIndex))
+                }
+                value={value}
+              />
+            );
           }),
         )}
       </div>
