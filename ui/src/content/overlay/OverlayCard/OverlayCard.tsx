@@ -93,19 +93,20 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   const { contentRef, isVisible } = useAnimate({ show: isOpen });
 
   useEffect(() => {
-    if (isVisible) {
+    if (isOpen) {
       addOverlayCardRef(cardRef);
     } else {
       removeOverlayCardRef(cardRef);
     }
 
     return () => removeOverlayCardRef(cardRef);
-  }, [addOverlayCardRef, isVisible, removeOverlayCardRef]);
+  }, [addOverlayCardRef, isOpen, removeOverlayCardRef]);
 
   const cardIndex = overlayCardRefs.indexOf(cardRef);
   const childCards = overlayCardRefs.slice(cardIndex + 1);
 
   useClickOutside({
+    disabled: childCards.length > 0,
     handler: () => setIsOpen(false),
     refs: [cardRef, triggerRef, ...childCards],
   });

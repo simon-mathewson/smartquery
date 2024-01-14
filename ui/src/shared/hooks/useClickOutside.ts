@@ -17,7 +17,6 @@ export const useClickOutside = (props: {
 
       if (isClickInsideSomeRef) return;
 
-      event.stopImmediatePropagation();
       handler();
     };
 
