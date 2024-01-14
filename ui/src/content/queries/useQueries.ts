@@ -95,7 +95,7 @@ export const useQueries = () => {
         currentQueries.map((currentColumn) =>
           currentColumn.map((q) => {
             if (q.id !== id) return q;
-            query = { ...q, sql };
+            query = { ...q, sql, table: null };
             return query;
           }),
         ),
