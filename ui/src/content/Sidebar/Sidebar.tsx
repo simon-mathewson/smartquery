@@ -2,14 +2,10 @@ import React, { useRef } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TableList } from '../TableList/TableList';
 import { Connections } from './Connections/Connections';
-import { Button } from '../../shared/components/Button/Button';
-import { Add } from '@mui/icons-material';
 import { ConnectionsContext } from '../connections/Context';
-import { QueriesContext } from '../queries/Context';
 
 export const Sidebar: React.FC = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
-  const { addQuery } = useDefinedContext(QueriesContext);
 
   const connectionsTriggerRef = useRef<HTMLDivElement | null>(null);
 
@@ -38,14 +34,6 @@ export const Sidebar: React.FC = () => {
         )}
       </div>
       <Connections triggerRef={connectionsTriggerRef} />
-      <Button
-        align="left"
-        className="mb-1"
-        icon={<Add />}
-        label="Query"
-        onClick={() => addQuery({ showEditor: true })}
-        variant="primary"
-      />
       <TableList />
     </div>
   );
