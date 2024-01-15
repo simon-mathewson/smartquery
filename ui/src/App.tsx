@@ -7,26 +7,30 @@ import { useDefinedContext } from './shared/hooks/useDefinedContext';
 import { QueriesContext } from './content/queries/Context';
 import { Button } from './shared/components/Button/Button';
 import { Add } from '@mui/icons-material';
+import { ConnectionsContext } from './content/connections/Context';
 
 export const App: React.FC = () => {
+  const { activeConnection } = useDefinedContext(ConnectionsContext);
   const { addQuery, queries } = useDefinedContext(QueriesContext);
 
   return (
     <div className="grid grid-cols-[224px_1fr]">
       <Sidebar />
-      <div className="grid h-full grid-rows-[max-content_1fr] overflow-hidden bg-white">
-        <div className="border-b border-b-gray-200 p-2">
-          <Button
-            align="left"
-            className="mb-1"
-            icon={<Add />}
-            label="Query"
-            onClick={() => addQuery({ showEditor: true })}
-            variant="primary"
-          />
-        </div>
+      <div className="flex h-full flex-col overflow-hidden bg-white">
+        {activeConnection && (
+          <div className="border-b border-b-gray-200 p-2">
+            <Button
+              align="left"
+              className="mb-1"
+              icon={<Add />}
+              label="Query"
+              onClick={() => addQuery({ showEditor: true })}
+              variant="primary"
+            />
+          </div>
+        )}
         {queries.length === 0 ? (
-          <div className="flex items-center justify-center">
+          <div className="flex grow items-center justify-center">
             <img className="w-50 h-max opacity-20" src="/LogoIcon.svg" />
           </div>
         ) : (

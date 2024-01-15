@@ -34,7 +34,7 @@ export const Sidebar: React.FC = () => {
         )}
       </div>
       <Connections triggerRef={connectionsTriggerRef} />
-      <TableList />
+      {activeConnection && <TableList />}
     </div>
   );
 };
