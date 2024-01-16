@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { useClickOutside } from '~/shared/hooks/useClickOutside';
 
-export const useSelection = () => {
+export const useCellSelection = () => {
   const [selection, setSelection] = useState<number[][]>([]);
 
   const tableRef = useRef<HTMLDivElement | null>(null);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Cell } from './Cell/Cell';
 import { Query as QueryType } from '../../types';
-import { useSelection } from './useSelection';
+import { useCellSelection } from './useCellSelection';
 
 export type TableProps = {
   query: QueryType;
@@ -14,7 +14,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
-  const { handleCellClick, selection, tableRef } = useSelection();
+  const { handleCellClick, selection, tableRef } = useCellSelection();
 
   if (!hasResults) return null;
 
