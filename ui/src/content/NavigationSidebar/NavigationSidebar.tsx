@@ -4,7 +4,7 @@ import { TableList } from '../TableList/TableList';
 import { Connections } from './Connections/Connections';
 import { ConnectionsContext } from '../connections/Context';
 
-export const Sidebar: React.FC = () => {
+export const NavigationSidebar: React.FC = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const connectionsTriggerRef = useRef<HTMLDivElement | null>(null);

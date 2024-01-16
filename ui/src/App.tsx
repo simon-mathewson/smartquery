@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sidebar } from './content/Sidebar/Sidebar';
+import { NavigationSidebar } from './content/NavigationSidebar/NavigationSidebar';
 import { DropMarker } from './content/dragAndDrop/DropMarker';
 import { Query } from './content/queries/Query/Query';
 import './index.css';
@@ -15,7 +15,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="grid grid-cols-[224px_1fr]">
-      <Sidebar />
+      <NavigationSidebar />
       <div className="flex h-full flex-col overflow-hidden bg-white">
         {activeConnection && (
           <div className="border-b border-b-gray-200 p-2">
