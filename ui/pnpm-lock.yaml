@@ -47,6 +47,9 @@ dependencies:
   superjson:
     specifier: 1.12.4
     version: 1.12.4
+  use-debounce:
+    specifier: ^10.0.0
+    version: 10.0.0(react@18.2.0)
   vite-plugin-svgr:
     specifier: ^4.2.0
     version: 4.2.0(typescript@5.3.3)(vite@5.0.10)
@@ -106,6 +109,9 @@ devDependencies:
   tailwindcss:
     specifier: ^3.3.3
     version: 3.3.6
+  tailwindcss-easing:
+    specifier: ^0.2.1
+    version: 0.2.1(tailwindcss@3.3.6)
   typescript:
     specifier: ^5.2.2
     version: 5.3.3
@@ -3086,6 +3092,14 @@ packages:
     resolution: {integrity: sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ==}
     dev: false
 
+  /tailwindcss-easing@0.2.1(tailwindcss@3.3.6):
+    resolution: {integrity: sha512-MfvXQGJOc3/o2ot98Baw7uc/yxon55AdIpC4eCG9H4dQsTzR8G4kvnzT5n6nYdRgixZhaovdPANSBlVHwYg0sA==}
+    peerDependencies:
+      tailwindcss: '>=2.0.0'
+    dependencies:
+      tailwindcss: 3.3.6
+    dev: true
+
   /tailwindcss@3.3.6:
     resolution: {integrity: sha512-AKjF7qbbLvLaPieoKeTjG1+FyNZT6KaJMJPFeQyLfIp7l82ggH1fbHJSsYIvnbTFQOlkh+gBYpyby5GT1LIdLw==}
     engines: {node: '>=14.0.0'}
@@ -3198,6 +3212,15 @@ packages:
     dependencies:
       punycode: 2.3.1
     dev: true
+
+  /use-debounce@10.0.0(react@18.2.0):
+    resolution: {integrity: sha512-XRjvlvCB46bah9IBXVnq/ACP2lxqXyZj0D9hj4K5OzNroMDpTEBg8Anuh1/UfRTRs7pLhQ+RiNxxwZu9+MVl1A==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}

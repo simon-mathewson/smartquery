@@ -5,7 +5,7 @@ import { DateTime } from 'luxon';
 export type CellProps = {
   header?: boolean;
   hover?: boolean;
-  rootProps?: React.HTMLAttributes<HTMLDivElement>;
+  rootProps?: React.HTMLAttributes<HTMLDivElement> & { [dataAttr: `data-${string}`]: string };
   selected?: boolean;
   value: string | Date;
 };
