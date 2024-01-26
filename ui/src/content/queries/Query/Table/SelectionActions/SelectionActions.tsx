@@ -2,7 +2,6 @@ import { DeleteOutlined, EditOutlined } from '@mui/icons-material';
 import React, { useMemo } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { OverlayPortal } from '~/shared/components/OverlayPortal/OverlayPortal';
-import { useDebounce } from 'use-debounce';
 
 export type SelectionActionsProps = {
   columnCount: number;
@@ -11,9 +10,7 @@ export type SelectionActionsProps = {
 };
 
 export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
-  const { columnCount, selection: selectionUndebounced, tableRef } = props;
-
-  const [selection] = useDebounce(selectionUndebounced, 300);
+  const { columnCount, selection, tableRef } = props;
 
   const rect = useMemo<{ left: number; top: number; width: number } | null>(() => {
     if (selection.length === 0 || !tableRef.current) return null;
@@ -31,7 +28,6 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
         return row.length === 0 ? columnCount - 1 : Math.max(max, Math.max(...row));
       }, 0);
 
-      console.log(tableRef.current, firstColumn, firstRow, lastColumn, lastRow);
       const topLeftCellRect = tableRef.current
         .querySelector(`[data-cell-column="${firstColumn}"][data-cell-row="${firstRow}"]`)
         ?.getBoundingClientRect();
@@ -47,7 +43,6 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
       return { bottom, left, right, top };
     })();
 
-    console.log({ selectionRect });
     if (!selectionRect) return null;
 
     return {

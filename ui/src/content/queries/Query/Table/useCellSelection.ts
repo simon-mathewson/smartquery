@@ -21,58 +21,33 @@ export const useCellSelection = () => {
     lastClickRef.current.rowIndex === row &&
     Date.now() - lastClickRef.current.timestamp < 300;
 
-  const previousSelectionRef = useRef<number[][] | null>(null);
   const lastSelectedCellIndicesRef = useRef<[number, number?][]>([]);
 
   const handleCellDoubleClick = useCallback(
-    (rowIndex: number, columnIndex: number, addSelection: boolean, addConsecutive: boolean) => {
-      const newRowSelections =
-        addSelection || addConsecutive ? [...(previousSelectionRef.current ?? [])] : [];
+    (rowIndex: number, addSelection: boolean, addConsecutive: boolean) => {
+      const newRowSelections = addSelection || addConsecutive ? [...selection] : [];
+
       lastSelectedCellIndicesRef.current.pop();
+      const lastSelectedCellIndices = lastSelectedCellIndicesRef.current.slice(-1).at(0);
 
-      const shouldUnselectCell = newRowSelections.at(rowIndex)?.includes(columnIndex);
+      if (addConsecutive && lastSelectedCellIndices) {
+        const lastSelectedRowIndex = lastSelectedCellIndices[0];
 
-      const addColumnToRow = (column: number, row: number) => [
-        ...(newRowSelections.at(row) ?? []),
-        column,
-      ];
+        const start = Math.min(lastSelectedRowIndex, rowIndex);
+        const end = Math.max(lastSelectedRowIndex, rowIndex);
 
-      if (shouldUnselectCell) {
-        newRowSelections[rowIndex] = newRowSelections[rowIndex].filter(
-          (column) => column !== columnIndex,
-        );
-        lastSelectedCellIndicesRef.current = lastSelectedCellIndicesRef.current.filter(
-          ([row, column]) => row !== rowIndex || column !== columnIndex,
-        );
-      } else {
-        const lastSelectedCellIndices = lastSelectedCellIndicesRef.current.slice(-1).at(0);
-
-        if (addConsecutive && lastSelectedCellIndices) {
-          const lastSelectedCellRowIndex = lastSelectedCellIndices[0];
-          const lastSelectedCellColumnIndex = lastSelectedCellIndices[1] ?? columnIndex;
-
-          const startRow = Math.min(lastSelectedCellRowIndex, rowIndex);
-          const endRow = Math.max(lastSelectedCellRowIndex, rowIndex);
-          const startColumn = Math.min(lastSelectedCellColumnIndex, columnIndex);
-          const endColumn = Math.max(lastSelectedCellColumnIndex, columnIndex);
-
-          for (let i = startRow; i <= endRow; i++) {
-            for (let j = startColumn; j <= endColumn; j++) {
-              if (!newRowSelections[i]?.includes(j)) {
-                newRowSelections[i] = addColumnToRow(j, i);
-              }
-            }
-          }
-        } else {
-          newRowSelections[rowIndex] = addColumnToRow(columnIndex, rowIndex);
+        for (let i = start; i <= end; i++) {
+          newRowSelections[i] = [];
         }
-
-        lastSelectedCellIndicesRef.current.push([rowIndex, columnIndex]);
+      } else {
+        newRowSelections[rowIndex] = [];
       }
+
+      lastSelectedCellIndicesRef.current.push([rowIndex]);
 
       setSelection(newRowSelections);
     },
-    [],
+    [selection],
   );
 
   const handleCellClick = useCallback(
@@ -81,47 +56,74 @@ export const useCellSelection = () => {
       const addConsecutive = event.shiftKey;
 
       if (isDoubleClick(rowIndex, columnIndex)) {
-        handleCellDoubleClick(rowIndex, columnIndex, addSelection, addConsecutive);
+        handleCellDoubleClick(rowIndex, addSelection, addConsecutive);
         return;
       }
 
       lastClickRef.current = { columnIndex, rowIndex, timestamp: Date.now() };
 
-      const shouldUnselectRow = (rowSelections: number[][], rowIndex: number) => {
-        const isEntireRowSelected = rowSelections.at(rowIndex)?.length === 0;
-        if (!isEntireRowSelected) return false;
-
-        if (addSelection || addConsecutive) return true;
-
-        const isOtherRowSelected = rowSelections.some((_, index) => index !== rowIndex);
-        return !isOtherRowSelected;
-      };
-
-      previousSelectionRef.current = selection;
-
       const newRowSelections = addSelection || addConsecutive ? [...selection] : [];
 
-      if (shouldUnselectRow(selection, rowIndex)) {
+      const shouldUnselectRow = newRowSelections.at(rowIndex)?.length === 0;
+
+      const isCellSelected = selection.at(rowIndex)?.includes(columnIndex);
+      const shouldUnselectCell = isCellSelected && (addSelection || addConsecutive);
+
+      const getRowWithTargetColumn = (column: number, row: number) => [
+        ...(newRowSelections.at(row) ?? []),
+        column,
+      ];
+
+      if (shouldUnselectRow) {
         delete newRowSelections[rowIndex];
         lastSelectedCellIndicesRef.current = lastSelectedCellIndicesRef.current.filter(
           ([index]) => index !== rowIndex,
         );
-      } else {
+      } else if (shouldUnselectCell) {
+        newRowSelections[rowIndex] = newRowSelections[rowIndex].filter(
+          (column) => column !== columnIndex,
+        );
+        if (newRowSelections[rowIndex].length === 0) {
+          delete newRowSelections[rowIndex];
+        }
+        lastSelectedCellIndicesRef.current = lastSelectedCellIndicesRef.current.filter(
+          ([row, column]) => row !== rowIndex || column !== columnIndex,
+        );
+      } else if (!isCellSelected) {
         const lastSelectedCellIndices = lastSelectedCellIndicesRef.current.slice(-1).at(0);
+
         if (addConsecutive && lastSelectedCellIndices) {
-          const lastSelectedRowIndex = lastSelectedCellIndices[0];
+          const lastSelectedCellRowIndex = lastSelectedCellIndices[0];
+          const lastSelectedCellColumnIndex = lastSelectedCellIndices[1];
 
-          const start = Math.min(lastSelectedRowIndex, rowIndex);
-          const end = Math.max(lastSelectedRowIndex, rowIndex);
+          const startRow = Math.min(lastSelectedCellRowIndex, rowIndex);
+          const endRow = Math.max(lastSelectedCellRowIndex, rowIndex);
 
-          for (let i = start; i <= end; i++) {
-            newRowSelections[i] = [];
+          for (let i = startRow; i <= endRow; i++) {
+            if (lastSelectedCellColumnIndex === undefined) {
+              newRowSelections[i] = [];
+              continue;
+            }
+
+            const startColumn = Math.min(lastSelectedCellColumnIndex, columnIndex);
+            const endColumn = Math.max(lastSelectedCellColumnIndex, columnIndex);
+
+            for (let j = startColumn; j <= endColumn; j++) {
+              if (!newRowSelections[i]?.includes(j)) {
+                newRowSelections[i] = getRowWithTargetColumn(j, i);
+              }
+            }
+          }
+
+          if (lastSelectedCellColumnIndex === undefined) {
+            lastSelectedCellIndicesRef.current.push([rowIndex]);
+          } else {
+            lastSelectedCellIndicesRef.current.push([rowIndex, columnIndex]);
           }
         } else {
-          newRowSelections[rowIndex] = [];
+          newRowSelections[rowIndex] = getRowWithTargetColumn(columnIndex, rowIndex);
+          lastSelectedCellIndicesRef.current.push([rowIndex, columnIndex]);
         }
-
-        lastSelectedCellIndicesRef.current.push([rowIndex]);
       }
 
       setSelection(newRowSelections);
