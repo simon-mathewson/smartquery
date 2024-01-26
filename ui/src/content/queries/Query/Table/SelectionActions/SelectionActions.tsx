@@ -100,21 +100,24 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
     resizeObserver.observe(tableRef.current);
   }, [handleTableResize, tableRef]);
 
-  if (!popoverRect) return null;
-
   return (
-    <div
-      className="ease-in-out-circ pointer-events-none absolute flex justify-center transition-all"
-      style={{
-        left: `${popoverRect.left}px`,
-        top: `${popoverRect.top}px`,
-        width: `${popoverRect.width}px`,
-      }}
-    >
-      <div className="pointer-events-auto flex rounded-full border border-gray-200 bg-white shadow-lg">
-        <Button icon={<EditOutlined />} />
-        <Button icon={<DeleteOutlined />} />
-      </div>
-    </div>
+    <>
+      {popoverRect && (
+        <div
+          className="ease-in-out-circ pointer-events-none absolute flex justify-center transition-all"
+          style={{
+            left: `${popoverRect.left}px`,
+            top: `${popoverRect.top}px`,
+            width: `${popoverRect.width}px`,
+          }}
+        >
+          <div className="pointer-events-auto flex rounded-full border border-gray-200 bg-white shadow-lg">
+            <Button icon={<EditOutlined />} />
+            <Button icon={<DeleteOutlined />} />
+          </div>
+        </div>
+      )}
+      <div className="h-[64px]" />
+    </>
   );
 };

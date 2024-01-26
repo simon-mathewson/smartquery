@@ -45,6 +45,14 @@ export const createTables = async (connection: Connection) => {
       created_at ${datetimeType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at ${datetimeType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
       user_id INT NOT NULL,
+      title VARCHAR(255) NOT NULL,
+      is_published ${engine === 'postgresql' ? 'BOOLEAN' : 'TINYINT'} NOT NULL DEFAULT ${
+        engine === 'postgresql' ? 'FALSE' : '0'
+      },
+      internal_note_1 VARCHAR(255) NULL,
+      internal_note_2 VARCHAR(255) NULL,
+      internal_note_3 VARCHAR(255) NULL,
+      internal_note_4 VARCHAR(255) NULL,
       PRIMARY KEY (id),
       FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
     )

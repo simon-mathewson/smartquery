@@ -62,7 +62,7 @@ export const Editor: React.FC<EditorProps> = (props) => {
 
   return (
     <div className="px-2 pb-2">
-      <div className="grid w-full gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pt-1">
+      <div className="grid w-full min-w-[560px] gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pt-1">
         <CodeMirror
           autoFocus
           basicSetup={{

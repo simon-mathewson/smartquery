@@ -21,7 +21,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   return (
     <>
-      <div className="grid grow justify-start overflow-hidden p-2 pt-0">
+      <div className="grid justify-start overflow-hidden p-2 pt-0">
         <div
           className="height-full relative grid auto-rows-max overflow-auto"
           ref={tableRef}

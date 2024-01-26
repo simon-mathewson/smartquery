@@ -25,7 +25,7 @@ export const Query: React.FC<QueryProps> = (props) => {
   return (
     <div
       className={classNames(
-        'border-gray-150 relative ml-2 mt-2 flex max-w-max grow flex-col justify-start gap-2 overflow-hidden rounded-xl border bg-white p-2',
+        'border-gray-150 relative ml-2 mt-2 flex min-h-[160px] max-w-max flex-col justify-start gap-2 overflow-hidden rounded-xl border bg-white p-2',
         {
           '!ml-0': columnIndex === 0,
           '!mt-0': rowIndex === 0,
