@@ -21,9 +21,9 @@ export const Table: React.FC<TableProps> = (props) => {
 
   return (
     <>
-      <div className="grid justify-start overflow-hidden p-2 pt-0">
+      <div className="grid grow justify-start overflow-hidden p-2 pt-0">
         <div
-          className="grid overflow-auto"
+          className="height-full relative grid auto-rows-max overflow-auto"
           ref={tableRef}
           style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
         >
@@ -54,6 +54,11 @@ export const Table: React.FC<TableProps> = (props) => {
               );
             }),
           )}
+          <SelectionActions
+            columnCount={columns.length}
+            selection={selection}
+            tableRef={tableRef}
+          />
         </div>
         {rows.length === 0 && (
           <div className="sticky left-0 w-full py-4 text-center text-xs text-gray-500">
@@ -61,7 +66,6 @@ export const Table: React.FC<TableProps> = (props) => {
           </div>
         )}
       </div>
-      <SelectionActions columnCount={columns.length} selection={selection} tableRef={tableRef} />
     </>
   );
 };

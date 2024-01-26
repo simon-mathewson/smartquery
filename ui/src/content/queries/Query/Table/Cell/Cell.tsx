@@ -18,7 +18,7 @@ export const Cell: React.FC<CellProps> = (props) => {
       className={classNames(
         'flex h-8 max-w-[176px] items-center border-b border-b-gray-200 px-4 transition-colors duration-100',
         {
-          'sticky top-0 h-10 bg-white': header,
+          'sticky top-0 z-10 h-10 bg-white': header,
           ' border-b-gray-200 py-2': !header,
           'bg-gray-50': hover,
           '!bg-blue-400': hover && selected,
