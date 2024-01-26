@@ -14,11 +14,11 @@ export const App: React.FC = () => {
   const { addQuery, queries } = useDefinedContext(QueriesContext);
 
   return (
-    <div className="grid h-full grid-cols-[224px_1fr]">
+    <div className="grid h-full grid-cols-[224px_1fr] bg-gray-50">
       <NavigationSidebar />
-      <div className="flex h-full flex-col overflow-hidden bg-white">
+      <div className="flex h-full flex-col overflow-hidden">
         {activeConnection && (
-          <div className="border-b border-b-gray-200 p-2">
+          <div className="py-2">
             <Button
               align="left"
               className="mb-1"
@@ -34,7 +34,7 @@ export const App: React.FC = () => {
             <img className="w-50 h-max opacity-20" src="/LogoIcon.svg" />
           </div>
         ) : (
-          <div className="flex h-full justify-start overflow-hidden">
+          <div className="flex h-full justify-start overflow-hidden pb-2 pr-2">
             <DropMarker column={0} row={0} />
             {queries.map((column, columnIndex) => (
               <React.Fragment key={columnIndex}>

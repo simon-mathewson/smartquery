@@ -25,10 +25,10 @@ export const Query: React.FC<QueryProps> = (props) => {
   return (
     <div
       className={classNames(
-        'relative flex max-w-max grow flex-col justify-start gap-2 overflow-hidden border-l border-t border-l-gray-200 border-t-gray-200 p-2',
+        'border-gray-150 relative ml-2 mt-2 flex max-w-max grow flex-col justify-start gap-2 overflow-hidden rounded-xl border bg-white p-2',
         {
-          'border-l-0': columnIndex === 0,
-          'border-t-0': rowIndex === 0,
+          '!ml-0': columnIndex === 0,
+          '!mt-0': rowIndex === 0,
         },
       )}
     >
