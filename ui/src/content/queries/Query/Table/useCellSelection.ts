@@ -1,17 +1,23 @@
 import { useCallback, useRef, useState } from 'react';
 import { useClickOutside } from '~/shared/hooks/useClickOutside';
 
-export const useCellSelection = () => {
+export const useCellSelection = (props: {
+  editModalRef: React.MutableRefObject<HTMLDivElement | null>;
+  isEditing: boolean;
+}) => {
+  const { editModalRef, isEditing } = props;
+
   const [selection, setSelection] = useState<number[][]>([]);
 
   const tableRef = useRef<HTMLDivElement | null>(null);
 
   useClickOutside({
+    disabled: isEditing,
     handler: () => {
       setSelection([]);
       lastSelectedCellIndicesRef.current = [];
     },
-    refs: [tableRef],
+    refs: [editModalRef, tableRef],
   });
 
   const lastClickRef = useRef<{ columnIndex: number; rowIndex: number; timestamp: number }>();

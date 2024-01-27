@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Cell } from './Cell/Cell';
 import { Query as QueryType } from '../../types';
 import { useCellSelection } from './useCellSelection';
 import { SelectionActions } from './SelectionActions/SelectionActions';
+import { EditModal } from './EditModal/EditModal';
 
 export type TableProps = {
   query: QueryType;
@@ -10,18 +11,23 @@ export type TableProps = {
 
 export const Table: React.FC<TableProps> = (props) => {
   const {
+    query,
     query: { columns, hasResults, rows },
   } = props;
 
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
-  const { handleCellClick, selection, tableRef } = useCellSelection();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const editModalRef = useRef<HTMLDivElement | null>(null);
+
+  const { handleCellClick, selection, tableRef } = useCellSelection({ editModalRef, isEditing });
 
   if (!hasResults) return null;
 
   return (
     <>
-      <div className="grid justify-start overflow-hidden p-2 pt-0">
+      <div className="relative grid justify-start overflow-hidden p-2 pt-0">
         <div
           className="height-full relative grid auto-rows-max overflow-auto"
           ref={tableRef}
@@ -56,7 +62,9 @@ export const Table: React.FC<TableProps> = (props) => {
           )}
           <SelectionActions
             columnCount={columns.length}
+            isEditing={isEditing}
             selection={selection}
+            setIsEditing={setIsEditing}
             tableRef={tableRef}
           />
         </div>
@@ -64,6 +72,14 @@ export const Table: React.FC<TableProps> = (props) => {
           <div className="sticky left-0 w-full py-4 text-center text-xs text-gray-500">
             This table is empty.
           </div>
+        )}
+        {isEditing && (
+          <EditModal
+            query={query}
+            ref={editModalRef}
+            selection={selection}
+            setIsEditing={setIsEditing}
+          />
         )}
       </div>
     </>

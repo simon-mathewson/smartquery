@@ -6,12 +6,14 @@ import { popoverHeight, popoverMargin } from './constants';
 
 export type SelectionActionsProps = {
   columnCount: number;
+  isEditing: boolean;
   selection: number[][];
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   tableRef: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
-  const { columnCount, selection, tableRef } = props;
+  const { columnCount, isEditing, selection, setIsEditing, tableRef } = props;
 
   const [tableWidth, setTableWidth] = useState<number>();
 
@@ -102,10 +104,10 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
 
   return (
     <>
-      {popoverStyles && (
+      {popoverStyles && !isEditing && (
         <div className="pointer-events-none absolute flex justify-center" style={popoverStyles}>
           <div className="pointer-events-auto flex rounded-full border border-gray-200 bg-white shadow-lg">
-            <Button icon={<EditOutlined />} />
+            <Button icon={<EditOutlined />} onClick={() => setIsEditing(true)} />
             <Button icon={<DeleteOutlined />} />
           </div>
         </div>
