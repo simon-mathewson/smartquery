@@ -1,9 +1,8 @@
 import { DeleteOutlined, EditOutlined } from '@mui/icons-material';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { useDebouncedCallback } from 'use-debounce';
 import { popoverHeight, popoverMargin } from './constants';
-import classNames from 'classnames';
 
 export type SelectionActionsProps = {
   columnCount: number;
@@ -17,9 +16,8 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
   const [tableWidth, setTableWidth] = useState<number>();
 
   const [scrollLeft, setScrollLeft] = useState(0);
-  const [scrollTop, setScrollTop] = useState(0);
 
-  const selectionRect = useMemo(() => {
+  const getSelectionRect = useCallback(() => {
     if (selection.length === 0 || !tableRef.current) return null;
 
     const firstRow = selection.findIndex(Boolean);
@@ -43,34 +41,20 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
 
     if (!topLeftCell || !bottomRightCell) return null;
 
-    const { left, top } = topLeftCell.getBoundingClientRect();
-    const { bottom, right } = bottomRightCell.getBoundingClientRect();
-    const tableRect = tableRef.current.getBoundingClientRect();
-
     return {
-      viewport: {
-        bottom,
-        left,
-        right,
-        top,
-      },
-      table: {
-        bottom: bottom - tableRect.top + scrollTop,
-        left: left - tableRect.left + scrollLeft,
-        right: right - tableRect.left + scrollLeft,
-        top: top - tableRect.top + scrollTop,
-      },
+      bottom: bottomRightCell.offsetTop + bottomRightCell.offsetHeight,
+      left: topLeftCell.offsetLeft,
+      right: bottomRightCell.offsetLeft + bottomRightCell.offsetWidth,
+      top: topLeftCell.offsetTop,
     };
-  }, [columnCount, selection, tableRef, scrollLeft, scrollTop]);
+  }, [columnCount, selection, tableRef]);
 
   const handleScroll = useDebouncedCallback(() => {
     if (!tableRef.current) {
       setScrollLeft(0);
-      setScrollTop(0);
       return;
     }
     setScrollLeft(tableRef.current.scrollLeft);
-    setScrollTop(tableRef.current.scrollTop);
   }, 10);
 
   useEffect(() => {
@@ -86,43 +70,20 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
   }, [handleScroll, tableRef]);
 
   const popoverStyles = useMemo(() => {
+    const selectionRect = getSelectionRect();
+
     if (!selectionRect || tableWidth === undefined || !tableRef.current) return null;
 
-    const tableRect = tableRef.current.getBoundingClientRect();
-
-    const minTop = selectionRect.table.top + popoverHeight + popoverMargin * 2;
-    const maxTop = selectionRect.table.bottom + popoverHeight + popoverMargin * 2;
-    const bottomBoundary = tableRef.current.offsetHeight + scrollTop;
-
-    if (bottomBoundary > minTop && bottomBoundary < maxTop) {
-      return {
-        bottom: `${window.innerHeight - tableRect.bottom + popoverMargin}px`,
-        position: 'fixed',
-        left: `${selectionRect.viewport.left + scrollLeft}px`,
-        width: `${Math.min(
-          selectionRect.viewport.right - selectionRect.viewport.left,
-          tableRect.width,
-        )}px`,
-      } as const;
-    }
-
-    const top =
-      bottomBoundary < maxTop
-        ? selectionRect.table.top + popoverMargin
-        : selectionRect.table.bottom + popoverMargin;
-    const width = Math.min(selectionRect.table.right - selectionRect.table.left, tableWidth);
-    const left = Math.min(
-      selectionRect.table.left + (scrollLeft ?? 0),
-      selectionRect.table.right - width,
-    );
+    const top = selectionRect.bottom + popoverMargin;
+    const width = Math.min(selectionRect.right - selectionRect.left, tableWidth);
 
     return {
+      left: `${Math.min(selectionRect.left + scrollLeft, selectionRect.right - width)}px`,
       position: 'absolute',
-      left: `${left}px`,
       top: `${top}px`,
       width: `${width}px`,
     } as const;
-  }, [scrollLeft, scrollTop, selectionRect, tableRef, tableWidth]);
+  }, [getSelectionRect, scrollLeft, tableRef, tableWidth]);
 
   const handleTableResize = useDebouncedCallback((entries: ResizeObserverEntry[]) => {
     const { width } = entries[0].contentRect;
@@ -139,31 +100,11 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
     resizeObserver.observe(tableRef.current);
   }, [handleTableResize, tableRef]);
 
-  const [isClickable, setIsClickable] = useState(false);
-
-  const isClickableTimeoutIdRef = React.useRef<number | null>(null);
-
-  useEffect(() => {
-    setIsClickable(false);
-
-    if (isClickableTimeoutIdRef.current !== null) {
-      clearTimeout(isClickableTimeoutIdRef.current);
-    }
-
-    isClickableTimeoutIdRef.current = window.setTimeout(() => {
-      setIsClickable(true);
-    }, 300);
-  }, [popoverStyles]);
-
   return (
     <>
       {popoverStyles && (
         <div className="pointer-events-none absolute flex justify-center" style={popoverStyles}>
-          <div
-            className={classNames('flex rounded-full border border-gray-200 bg-white shadow-lg', {
-              'pointer-events-auto': isClickable,
-            })}
-          >
+          <div className="pointer-events-auto flex rounded-full border border-gray-200 bg-white shadow-lg">
             <Button icon={<EditOutlined />} />
             <Button icon={<DeleteOutlined />} />
           </div>
