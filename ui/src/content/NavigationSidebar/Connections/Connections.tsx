@@ -1,7 +1,7 @@
 import { Add, EditOutlined } from '@mui/icons-material';
 import { Button } from '~/shared/components/Button/Button';
 import { ListItem } from '~/shared/components/ListItem/ListItem';
-import { OverlayCard } from '~/content/overlay/OverlayCard/OverlayCard';
+import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import React, { useEffect, useState } from 'react';
 import { ConnectionForm } from './ConnectionForm/ConnectionForm';

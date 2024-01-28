@@ -2,7 +2,7 @@ import { useClickOutside } from '~/shared/hooks/useClickOutside/useClickOutside'
 import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { mergeRefs } from 'react-merge-refs';
 import classNames from 'classnames';
-import { OverlayPortal } from '../../../shared/components/OverlayPortal/OverlayPortal';
+import { OverlayPortal } from '../OverlayPortal/OverlayPortal';
 import { useAnimate } from './useAnimate';
 
 export type OverlayCardProps = {

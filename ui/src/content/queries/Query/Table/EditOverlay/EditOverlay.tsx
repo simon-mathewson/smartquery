@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { OverlayCard } from '~/content/overlay/OverlayCard/OverlayCard';
+import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { Query } from '~/content/queries/types';
 import { Input } from '~/shared/components/Input/Input';
 

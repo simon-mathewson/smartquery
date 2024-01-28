@@ -1,7 +1,7 @@
 import { ArrowBack, Close, DeleteOutline, Done } from '@mui/icons-material';
 import { Button } from '~/shared/components/Button/Button';
 import { Input } from '~/shared/components/Input/Input';
-import { OverlayCard } from '~/content/overlay/OverlayCard/OverlayCard';
+import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import React, { useRef, useState } from 'react';
 import { Header } from '../../../../shared/components/Header/Header';

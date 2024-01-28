@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { OverlayCard } from '../../../content/overlay/OverlayCard/OverlayCard';
+import { OverlayCard } from '../OverlayCard/OverlayCard';
 import { ExpandMore } from '@mui/icons-material';
 import classNames from 'classnames';
 
