@@ -67,8 +67,11 @@ export const useCellSelection = () => {
 
       const shouldUnselectRow = newRowSelections.at(rowIndex)?.length === 0;
 
-      const isCellSelected = selection.at(rowIndex)?.includes(columnIndex);
-      const shouldUnselectCell = isCellSelected && (addSelection || addConsecutive);
+      const isOnlySelectedCell =
+        selection.length > 0 &&
+        selection.every(
+          (row, index) => row && index === rowIndex && row.length === 1 && row[0] === columnIndex,
+        );
 
       const getRowWithTargetColumn = (column: number, row: number) => [
         ...(newRowSelections.at(row) ?? []),
@@ -80,17 +83,20 @@ export const useCellSelection = () => {
         lastSelectedCellIndicesRef.current = lastSelectedCellIndicesRef.current.filter(
           ([index]) => index !== rowIndex,
         );
-      } else if (shouldUnselectCell) {
-        newRowSelections[rowIndex] = newRowSelections[rowIndex].filter(
-          (column) => column !== columnIndex,
-        );
-        if (newRowSelections[rowIndex].length === 0) {
-          delete newRowSelections[rowIndex];
+      } else if (isOnlySelectedCell) {
+        if (newRowSelections[rowIndex]) {
+          newRowSelections[rowIndex] = newRowSelections[rowIndex].filter(
+            (column) => column !== columnIndex,
+          );
+          if (newRowSelections[rowIndex].length === 0) {
+            delete newRowSelections[rowIndex];
+          }
         }
+
         lastSelectedCellIndicesRef.current = lastSelectedCellIndicesRef.current.filter(
           ([row, column]) => row !== rowIndex || column !== columnIndex,
         );
-      } else if (!isCellSelected) {
+      } else {
         const lastSelectedCellIndices = lastSelectedCellIndicesRef.current.slice(-1).at(0);
 
         if (addConsecutive && lastSelectedCellIndices) {

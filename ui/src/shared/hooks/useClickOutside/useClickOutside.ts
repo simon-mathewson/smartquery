@@ -17,7 +17,6 @@ export const useClickOutside = (props: {
     refs,
     removeRef: removeRefFromQueue,
   } = useDefinedContext(ClickOutsideQueueContext);
-  console.log(refs);
 
   useEffect(() => {
     if (active) {
