@@ -1,23 +1,26 @@
 import { DeleteOutlined, EditOutlined } from '@mui/icons-material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { useDebouncedCallback } from 'use-debounce';
 import { popoverHeight, popoverMargin } from './constants';
+import { EditOverlay } from '../EditOverlay/EditOverlay';
+import { Query } from '~/content/queries/types';
 
 export type SelectionActionsProps = {
   columnCount: number;
-  isEditing: boolean;
+  query: Query;
   selection: number[][];
-  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   tableRef: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
-  const { columnCount, isEditing, selection, setIsEditing, tableRef } = props;
+  const { columnCount, query, selection, tableRef } = props;
 
   const [tableWidth, setTableWidth] = useState<number>();
 
   const [scrollLeft, setScrollLeft] = useState(0);
+
+  const editButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const getSelectionRect = useCallback(() => {
     if (selection.length === 0 || !tableRef.current) return null;
@@ -102,17 +105,28 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
     resizeObserver.observe(tableRef.current);
   }, [handleTableResize, tableRef]);
 
+  const popoverRef = useRef<HTMLDivElement | null>(null);
+
   return (
     <>
-      {popoverStyles && !isEditing && (
+      {popoverStyles && (
         <div className="pointer-events-none absolute flex justify-center" style={popoverStyles}>
-          <div className="pointer-events-auto flex rounded-full border border-gray-200 bg-white shadow-lg">
-            <Button icon={<EditOutlined />} onClick={() => setIsEditing(true)} />
+          <div
+            className="pointer-events-auto flex rounded-full border border-gray-200 bg-white shadow-lg"
+            ref={popoverRef}
+          >
+            <Button icon={<EditOutlined />} ref={editButtonRef} />
             <Button icon={<DeleteOutlined />} />
           </div>
         </div>
       )}
       <div style={{ height: `${popoverHeight + popoverMargin * 4}px` }} />
+      <EditOverlay
+        selectionActionsPopoverRef={popoverRef}
+        query={query}
+        selection={selection}
+        editButtonRef={editButtonRef}
+      />
     </>
   );
 };

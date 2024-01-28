@@ -9,6 +9,7 @@ import { OverlayContext } from '../Context';
 
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
+  anchorRef?: React.MutableRefObject<HTMLElement | null>;
   children: (close: () => void) => React.ReactNode;
   className?: string;
   matchTriggerWidth?: boolean;
@@ -24,6 +25,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   matchTriggerWidth,
   onOpen,
   triggerRef,
+  anchorRef = triggerRef,
 }) => {
   const { addOverlayCardRef, overlayCardRefs, removeOverlayCardRef } =
     useDefinedContext(OverlayContext);
@@ -33,15 +35,15 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   const [width, setWidth] = useState<string>();
 
   const updateStyles = useCallback(() => {
-    const trigger = triggerRef.current;
-    if (!trigger) return;
+    const anchor = anchorRef.current;
+    if (!anchor) return;
 
-    const triggerRect = trigger.getBoundingClientRect();
+    const anchorRect = anchor.getBoundingClientRect();
 
     const left = {
-      left: triggerRect.left,
-      center: triggerRect.left + triggerRect.width / 2,
-      right: triggerRect.left + triggerRect.width,
+      left: anchorRect.left,
+      center: anchorRect.left + anchorRect.width / 2,
+      right: anchorRect.left + anchorRect.width,
     }[align];
 
     const transform = {
@@ -50,7 +52,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
       right: 'translateX(-100%)',
     }[align];
 
-    const top = triggerRect.top + triggerRect.height + 8;
+    const top = anchorRect.top + anchorRect.height + 8;
 
     setStyles({
       left: `${left}px`,
@@ -59,9 +61,9 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     });
 
     if (matchTriggerWidth) {
-      setWidth(`${triggerRect.width}px`);
+      setWidth(`${anchorRect.width}px`);
     }
-  }, [align, matchTriggerWidth, triggerRef]);
+  }, [align, anchorRef, matchTriggerWidth]);
 
   useEffect(() => {
     updateStyles();
