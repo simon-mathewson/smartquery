@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { useClickOutside } from '~/shared/hooks/useClickOutside';
+import { useClickOutside } from '~/shared/hooks/useClickOutside/useClickOutside';
 
 export const useCellSelection = () => {
   const [selection, setSelection] = useState<number[][]>([]);
@@ -7,11 +7,12 @@ export const useCellSelection = () => {
   const tableRef = useRef<HTMLDivElement | null>(null);
 
   useClickOutside({
+    active: selection.length > 0,
     handler: () => {
       setSelection([]);
       lastSelectedCellIndicesRef.current = [];
     },
-    refs: [tableRef],
+    ref: tableRef,
   });
 
   const lastClickRef = useRef<{ columnIndex: number; rowIndex: number; timestamp: number }>();

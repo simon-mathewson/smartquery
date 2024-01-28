@@ -1,11 +1,9 @@
-import { useClickOutside } from '~/shared/hooks/useClickOutside';
-import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
+import { useClickOutside } from '~/shared/hooks/useClickOutside/useClickOutside';
+import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { mergeRefs } from 'react-merge-refs';
 import classNames from 'classnames';
 import { OverlayPortal } from '../../../shared/components/OverlayPortal/OverlayPortal';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { useAnimate } from './useAnimate';
-import { OverlayContext } from '../Context';
 
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
@@ -27,9 +25,6 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   triggerRef,
   anchorRef = triggerRef,
 }) => {
-  const { addOverlayCardRef, overlayCardRefs, removeOverlayCardRef } =
-    useDefinedContext(OverlayContext);
-
   const [isOpen, setIsOpen] = useState(false);
   const [styles, setStyles] = useState<CSSProperties>();
   const [width, setWidth] = useState<string>();
@@ -95,23 +90,11 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
 
   const { contentRef, isVisible } = useAnimate({ show: isOpen });
 
-  useEffect(() => {
-    if (isOpen) {
-      addOverlayCardRef(cardRef);
-    } else {
-      removeOverlayCardRef(cardRef);
-    }
-
-    return () => removeOverlayCardRef(cardRef);
-  }, [addOverlayCardRef, isOpen, removeOverlayCardRef]);
-
-  const cardIndex = overlayCardRefs.indexOf(cardRef);
-  const childCards = overlayCardRefs.slice(cardIndex + 1);
-
   useClickOutside({
-    disabled: childCards.length > 0,
-    handler: () => setIsOpen(false),
-    refs: [cardRef, triggerRef, ...childCards],
+    active: isOpen,
+    handler: useCallback(() => setIsOpen(false), []),
+    ref: cardRef,
+    additionalRefs: useMemo(() => [cardRef, triggerRef], [triggerRef]),
   });
 
   useEffect(() => {

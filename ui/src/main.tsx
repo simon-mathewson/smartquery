@@ -7,7 +7,7 @@ import superjson from 'superjson';
 import { ConnectionsProvider } from './content/connections/Context';
 import { QueriesProvider } from './content/queries/Context';
 import { DragAndDropProvider } from './content/dragAndDrop/Context';
-import { OverlayProvider } from './content/overlay/Context';
+import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQueue/Context';
 
 export const trpc = createTRPCProxyClient<AppRouter>({
   transformer: superjson,
@@ -23,9 +23,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <ConnectionsProvider>
       <QueriesProvider>
         <DragAndDropProvider>
-          <OverlayProvider>
+          <ClickOutsideQueueProvider>
             <App />
-          </OverlayProvider>
+          </ClickOutsideQueueProvider>
         </DragAndDropProvider>
       </QueriesProvider>
     </ConnectionsProvider>
