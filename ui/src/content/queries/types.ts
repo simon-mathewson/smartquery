@@ -1,5 +1,11 @@
+export type Column = {
+  isForeignKey?: boolean;
+  isPrimaryKey?: boolean;
+  name: string;
+};
+
 export type Query = {
-  columns: string[];
+  columns: Column[];
   hasResults: boolean;
   id: string;
   rows: Array<Record<string, string | Date>>;

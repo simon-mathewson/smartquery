@@ -25,7 +25,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
     );
 
     const initialValues = selectedColumns.reduce(
-      (acc, column) => ({ ...acc, [column]: selectedRow[column] }),
+      (acc, column) => ({ ...acc, [column.name]: selectedRow[column.name] }),
       {},
     );
 
@@ -53,10 +53,10 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
           <div className="grid gap-2 overflow-auto">
             {selectedColumns?.map((column) => (
               <Input
-                key={column}
-                label={column}
-                value={formValues[column] ?? ''}
-                onChange={(newValue) => setFormValues({ ...formValues, [column]: newValue })}
+                key={column.name}
+                label={column.name}
+                value={formValues[column.name] ?? ''}
+                onChange={(newValue) => setFormValues({ ...formValues, [column.name]: newValue })}
               />
             ))}
           </div>

@@ -34,15 +34,15 @@ export const Table: React.FC<TableProps> = (props) => {
           style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
         >
           {columns.map((column) => (
-            <Cell header key={column} value={column} />
+            <Cell header key={column.name} value={column.name} />
           ))}
           {rows.map((row, rowIndex) =>
             columns.map((column, columnIndex) => {
-              const value = row[column];
+              const value = row[column.name];
 
               return (
                 <Cell
-                  key={[row, column].join()}
+                  key={[row, column.name].join()}
                   hover={rowIndex === hoverRowIndex}
                   rootProps={{
                     'data-cell-column': String(columnIndex),

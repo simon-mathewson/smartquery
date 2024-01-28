@@ -1,6 +1,6 @@
-import { uniqueId } from 'lodash';
+import { uniq, uniqueId } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
-import { Query, QueryToAdd } from './types';
+import { Column, Query, QueryToAdd } from './types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { trpc } from '~/main';
@@ -16,19 +16,51 @@ export const useQueries = () => {
 
       const { clientId, database, engine } = activeConnection;
 
-      const columnsQuery = query.table
-        ? {
-            mysql: `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${query.table}' AND table_schema = '${database}'`,
-            postgresql: `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${query.table}' AND table_catalog = '${database}'`,
-            sqlserver: `SELECT column_name AS c FROM information_schema.columns WHERE table_name = '${query.table}' AND table_catalog = '${database}'`,
-          }[engine]
-        : null;
+      const columnsQuery = (() => {
+        if (!query.table) return null;
+
+        const databaseColumn = engine === 'mysql' ? 'table_schema' : 'table_catalog';
+
+        return `
+          SELECT c.column_name as column_name, tc.constraint_type as constraint_type
+          FROM information_schema.columns AS c
+          LEFT JOIN information_schema.key_column_usage AS k
+            ON k.column_name = c.column_name
+            AND k.table_name = c.table_name
+            AND k.${databaseColumn} = c.${databaseColumn}
+          LEFT JOIN information_schema.table_constraints AS tc
+            ON tc.constraint_name = k.constraint_name
+            AND tc.table_name = k.table_name
+            AND tc.${databaseColumn} = k.${databaseColumn}
+          WHERE c.table_name = '${query.table}'
+          AND c.${databaseColumn} = '${database}'
+        `;
+      })();
 
       return Promise.all([
         trpc.sendQuery.query([clientId, query.sql]),
         columnsQuery ? trpc.sendQuery.query([clientId, columnsQuery]) : null,
       ]).then(([rows, rawColumns]) => {
-        const columns = rawColumns?.map(({ c }) => c as string) ?? Object.keys(rows[0] ?? {});
+        const columns: Column[] = (() => {
+          if (rawColumns) {
+            const columnNames = uniq(rawColumns.map(({ column_name }) => column_name as string));
+
+            return columnNames.map((name) => {
+              return {
+                isForeignKey: rawColumns.some(
+                  ({ column_name, constraint_type }) =>
+                    constraint_type === 'FOREIGN KEY' && column_name === name,
+                ),
+                isPrimaryKey: rawColumns.some(
+                  ({ column_name, constraint_type }) =>
+                    constraint_type === 'PRIMARY KEY' && column_name === name,
+                ),
+                name,
+              };
+            });
+          }
+          return Object.keys(rows[0] ?? {}).map((name) => ({ name }));
+        })();
 
         setQueries((currentQueries) =>
           currentQueries.map((currentColumn) =>
