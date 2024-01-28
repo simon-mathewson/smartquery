@@ -35,7 +35,7 @@ export const Select: React.FC<SelectProps> = (props) => {
         <ExpandMore className="text-gray-400" />
       </div>
       <OverlayCard className="py-2" matchTriggerWidth triggerRef={triggerRef}>
-        {(close) =>
+        {({ close }) =>
           options.map(({ label, value }) => (
             <div
               className={classNames(

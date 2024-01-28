@@ -4,14 +4,15 @@ import { Query } from '~/content/queries/types';
 import { Input } from '~/shared/components/Input/Input';
 
 export type EditModalProps = {
+  editButtonRef: React.MutableRefObject<HTMLElement | null>;
   query: Query;
   selection: number[][];
-  editButtonRef: React.MutableRefObject<HTMLElement | null>;
   selectionActionsPopoverRef: React.MutableRefObject<HTMLElement | null>;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const EditOverlay: React.FC<EditModalProps> = (props) => {
-  const { query, editButtonRef, selection, selectionActionsPopoverRef } = props;
+  const { query, editButtonRef, selection, selectionActionsPopoverRef, setIsEditing } = props;
 
   const { initialValues, selectedColumns } = useMemo(() => {
     const selectedRowIndex = selection.findIndex((row) => row);
@@ -40,7 +41,13 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
   if (selection.length === 0) return null;
 
   return (
-    <OverlayCard align="center" anchorRef={selectionActionsPopoverRef} triggerRef={editButtonRef}>
+    <OverlayCard
+      align="center"
+      anchorRef={selectionActionsPopoverRef}
+      onClose={() => setIsEditing(false)}
+      onOpen={() => setIsEditing(true)}
+      triggerRef={editButtonRef}
+    >
       {() => (
         <div className="w-full min-w-[280px] max-w-[360px] overflow-auto p-4">
           <div className="grid gap-2 overflow-auto">

@@ -24,7 +24,6 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     setIsTesting(true);
     setHasFailed(false);
     setHasSucceeded(false);
-    console.log(form);
 
     try {
       const clientId = await trpc.connectDb.mutate(form as ConnectionSchema);

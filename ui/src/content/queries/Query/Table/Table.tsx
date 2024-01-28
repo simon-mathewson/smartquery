@@ -3,6 +3,7 @@ import { Cell } from './Cell/Cell';
 import { Query as QueryType } from '../../types';
 import { useCellSelection } from './useCellSelection';
 import { SelectionActions } from './SelectionActions/SelectionActions';
+import classNames from 'classnames';
 
 export type TableProps = {
   query: QueryType;
@@ -16,6 +17,8 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const { handleCellClick, selection, tableRef } = useCellSelection();
 
   if (!hasResults) return null;
@@ -24,7 +27,9 @@ export const Table: React.FC<TableProps> = (props) => {
     <>
       <div className="relative grid justify-start overflow-hidden p-2 pt-0">
         <div
-          className="height-full relative grid auto-rows-max overflow-auto"
+          className={classNames('height-full relative grid auto-rows-max overflow-auto', {
+            'pointer-events-none overflow-hidden': isEditing,
+          })}
           ref={tableRef}
           style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
         >
@@ -59,6 +64,7 @@ export const Table: React.FC<TableProps> = (props) => {
             columnCount={columns.length}
             query={query}
             selection={selection}
+            setIsEditing={setIsEditing}
             tableRef={tableRef}
           />
         </div>

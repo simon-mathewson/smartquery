@@ -10,11 +10,12 @@ export type SelectionActionsProps = {
   columnCount: number;
   query: Query;
   selection: number[][];
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   tableRef: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
-  const { columnCount, query, selection, tableRef } = props;
+  const { columnCount, query, selection, setIsEditing, tableRef } = props;
 
   const [tableWidth, setTableWidth] = useState<number>();
 
@@ -122,10 +123,11 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
       )}
       <div style={{ height: `${popoverHeight + popoverMargin * 4}px` }} />
       <EditOverlay
-        selectionActionsPopoverRef={popoverRef}
+        editButtonRef={editButtonRef}
         query={query}
         selection={selection}
-        editButtonRef={editButtonRef}
+        selectionActionsPopoverRef={popoverRef}
+        setIsEditing={setIsEditing}
       />
     </>
   );

@@ -69,7 +69,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
               <>
                 <Button icon={<DeleteOutline />} ref={deleteButtonRef} variant="danger" />
                 <OverlayCard align="right" className="p-2" triggerRef={deleteButtonRef}>
-                  {(close) => (
+                  {({ close }) => (
                     <div className="grid gap-2">
                       <div className="p-2 text-center text-sm font-medium text-gray-600">
                         Delete this connection?

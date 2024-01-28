@@ -4,13 +4,15 @@ import { mergeRefs } from 'react-merge-refs';
 import classNames from 'classnames';
 import { OverlayPortal } from '../OverlayPortal/OverlayPortal';
 import { useAnimate } from './useAnimate';
+import { overlayCardMargin } from './constants';
 
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
   anchorRef?: React.MutableRefObject<HTMLElement | null>;
-  children: (close: () => void) => React.ReactNode;
+  children: (props: { close: () => void }) => React.ReactNode;
   className?: string;
   matchTriggerWidth?: boolean;
+  onClose?: () => void;
   onOpen?: () => void;
   triggerRef: React.MutableRefObject<HTMLElement | null>;
   width?: number;
@@ -21,13 +23,32 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   children,
   className,
   matchTriggerWidth,
+  onClose,
   onOpen,
   triggerRef,
   anchorRef = triggerRef,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [styles, setStyles] = useState<CSSProperties>();
-  const [width, setWidth] = useState<string>();
+
+  const [contentDimensions, setContentDimensions] = useState<{
+    height: number;
+    width: number;
+  } | null>(null);
+
+  const registerContent = useCallback((element: HTMLDivElement | null) => {
+    if (!element) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const { scrollHeight, scrollWidth } = entries[0].target;
+      setContentDimensions({
+        height: scrollHeight,
+        width: scrollWidth,
+      });
+    });
+
+    resizeObserver.observe(element);
+  }, []);
 
   const updateStyles = useCallback(() => {
     const anchor = anchorRef.current;
@@ -47,18 +68,26 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
       right: 'translateX(-100%)',
     }[align];
 
-    const top = anchorRect.top + anchorRect.height + 8;
+    const spaceBelow = window.innerHeight - anchorRect.bottom - overlayCardMargin * 2;
+    const spaceAbove = anchorRect.top - overlayCardMargin * 2;
+    const showAbove = (() => {
+      if (!contentDimensions || contentDimensions.height <= spaceBelow) return false;
+
+      return contentDimensions.height <= spaceAbove || spaceAbove > spaceBelow;
+    })();
+
+    const top = showAbove ? undefined : anchorRect.top + anchorRect.height + overlayCardMargin;
+    const bottom = showAbove ? window.innerHeight - anchorRect.top + overlayCardMargin : undefined;
 
     setStyles({
+      bottom: bottom ? `${bottom}px` : undefined,
       left: `${left}px`,
-      top: `${top}px`,
+      maxHeight: showAbove ? `${spaceAbove}px` : `${spaceBelow}px`,
+      top: top ? `${top}px` : undefined,
       transform,
+      width: matchTriggerWidth ? `${anchorRect.width}px` : undefined,
     });
-
-    if (matchTriggerWidth) {
-      setWidth(`${anchorRect.width}px`);
-    }
-  }, [align, anchorRef, matchTriggerWidth]);
+  }, [align, anchorRef, contentDimensions, matchTriggerWidth]);
 
   useEffect(() => {
     updateStyles();
@@ -86,21 +115,25 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     };
   }, [triggerRef, updateStyles]);
 
-  const cardRef = useRef<HTMLDivElement | null>(null);
+  const localRef = useRef<HTMLDivElement | null>(null);
 
-  const { contentRef, isVisible } = useAnimate({ show: isOpen });
+  const { contentRef: animateCardRef, isVisible } = useAnimate({ show: isOpen });
 
   useClickOutside({
     active: isOpen,
     handler: useCallback(() => setIsOpen(false), []),
-    ref: cardRef,
-    additionalRefs: useMemo(() => [cardRef, triggerRef], [triggerRef]),
+    ref: localRef,
+    additionalRefs: useMemo(() => [localRef, triggerRef], [triggerRef]),
   });
 
   useEffect(() => {
     if (isOpen) {
       onOpen?.();
+    } else {
+      onClose?.();
     }
+
+    return () => onClose?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
@@ -109,13 +142,13 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
       {isVisible && (
         <div
           className={classNames(
-            'absolute z-10 rounded-lg border border-gray-200 bg-gray-50 shadow-xl',
+            'absolute z-10 overflow-auto rounded-lg border border-gray-200 bg-gray-50 shadow-xl',
             className,
           )}
-          ref={mergeRefs([contentRef, cardRef])}
-          style={{ ...styles, width }}
+          ref={mergeRefs([animateCardRef, localRef, registerContent])}
+          style={styles}
         >
-          {children(() => setIsOpen(false))}
+          {children({ close: () => setIsOpen(false) })}
         </div>
       )}
     </OverlayPortal>
