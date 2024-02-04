@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Query as QueryType } from '../types';
 import { Table } from './Table/Table';
-import { Editor } from './Editor/Editor';
+import { Editor } from '../../../shared/components/Editor/Editor';
 import { Button } from '../../../shared/components/Button/Button';
 import { Close, Code } from '@mui/icons-material';
 import { Header } from '../../../shared/components/Header/Header';
@@ -18,7 +18,7 @@ export type QueryProps = {
 export const Query: React.FC<QueryProps> = (props) => {
   const { columnIndex, query, rowIndex } = props;
 
-  const { removeQuery } = useDefinedContext(QueriesContext);
+  const { removeQuery, updateQuery } = useDefinedContext(QueriesContext);
 
   const [showEditor, setShowEditor] = useState(query.showEditor);
 
@@ -45,7 +45,12 @@ export const Query: React.FC<QueryProps> = (props) => {
         right={<Button icon={<Close />} onClick={() => removeQuery(query.id)} variant="tertiary" />}
         title={query.table ?? 'New query'}
       />
-      {showEditor && <Editor query={query} />}
+      {showEditor && (
+        <div className="px-2 pb-2">
+          <Editor initialValue={query.sql ?? ''} onSubmit={(sql) => updateQuery(query.id, sql)} />
+        </div>
+      )}
+
       <Table query={query} />
     </div>
   );

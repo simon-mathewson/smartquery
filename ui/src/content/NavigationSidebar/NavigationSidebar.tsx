@@ -10,7 +10,7 @@ export const NavigationSidebar: React.FC = () => {
   const connectionsTriggerRef = useRef<HTMLDivElement | null>(null);
 
   return (
-    <div className="sticky top-0 grid h-screen grid-rows-[max-content_max-content_minmax(auto,max-content)] gap-2 px-2 pt-2">
+    <div className="sticky top-0 flex h-screen grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col gap-2 px-2 pt-2">
       <div
         className="border-1 grid w-full cursor-pointer gap-1 rounded-lg border-gray-300 p-2 text-sm text-black hover:bg-gray-300"
         ref={connectionsTriggerRef}

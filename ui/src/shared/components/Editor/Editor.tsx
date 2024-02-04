@@ -3,23 +3,23 @@ import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { githubLightInit } from '@uiw/codemirror-theme-github';
 import { Button } from '~/shared/components/Button/Button';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import './styles.css';
 import { Send } from '@mui/icons-material';
-import { Query as QueryType } from '../../types';
 import colors from 'tailwindcss/colors';
-import { QueriesContext } from '../../Context';
 
 export type EditorProps = {
-  query: QueryType;
+  initialValue?: string;
+  onSubmit?: (sql: string) => void;
 };
 
 export const Editor: React.FC<EditorProps> = (props) => {
-  const { query } = props;
+  const { initialValue, onSubmit } = props;
 
-  const { updateQuery } = useDefinedContext(QueriesContext);
+  const [value, setValue] = useState('');
 
-  const [value, setValue] = useState(query.sql ?? '');
+  useEffect(() => {
+    setValue(initialValue ?? '');
+  }, [initialValue]);
 
   const theme = githubLightInit({
     settings: {
@@ -42,8 +42,8 @@ export const Editor: React.FC<EditorProps> = (props) => {
 
     if (!sql) return;
 
-    updateQuery(query.id, sql);
-  }, [query.id, updateQuery]);
+    onSubmit?.(sql);
+  }, [onSubmit]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -61,28 +61,26 @@ export const Editor: React.FC<EditorProps> = (props) => {
   }, [submitQuery]);
 
   return (
-    <div className="px-2 pb-2">
-      <div className="grid w-full min-w-[560px] gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pt-1">
-        <CodeMirror
-          autoFocus
-          basicSetup={{
-            autocompletion: false,
-          }}
-          extensions={[sql()]}
-          onChange={(sql) => setValue(sql)}
-          ref={editorRef}
-          theme={theme}
-          value={value}
-        />
-        <Button
-          className="mb-2 ml-auto mr-2 w-36"
-          disabled={!value?.trim()}
-          icon={<Send />}
-          label="Submit"
-          onClick={() => submitQuery()}
-          variant="primary"
-        />
-      </div>
+    <div className="grid w-full min-w-[560px] gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pt-1">
+      <CodeMirror
+        autoFocus
+        basicSetup={{
+          autocompletion: false,
+        }}
+        extensions={[sql()]}
+        onChange={(sql) => setValue(sql)}
+        ref={editorRef}
+        theme={theme}
+        value={value}
+      />
+      <Button
+        className="mb-2 ml-auto mr-2 w-36"
+        disabled={!value?.trim()}
+        icon={<Send />}
+        label="Submit"
+        onClick={() => submitQuery()}
+        variant="primary"
+      />
     </div>
   );
 };

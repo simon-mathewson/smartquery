@@ -1,15 +1,15 @@
-import { ArrowBack, Close, DeleteOutline, Done } from '@mui/icons-material';
+import { ArrowBack, DeleteOutline, Done } from '@mui/icons-material';
+import { uniqueId } from 'lodash';
+import React, { useState } from 'react';
+import { ConnectionsContext } from '~/content/connections/Context';
 import { Button } from '~/shared/components/Button/Button';
+import { ConfirmDeletePopover } from '~/shared/components/ConfirmDeletePopover/ConfirmDeletePopover';
 import { Input } from '~/shared/components/Input/Input';
-import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
+import { Select } from '~/shared/components/Select/Select';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import React, { useRef, useState } from 'react';
 import { Header } from '../../../../shared/components/Header/Header';
 import { TestConnection } from './TestConnection/TestConnection';
 import { FormSchema, connectionSchema, isFormValid } from './utils';
-import { Select } from '~/shared/components/Select/Select';
-import { ConnectionsContext } from '~/content/connections/Context';
-import { uniqueId } from 'lodash';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;
@@ -44,8 +44,6 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
       setForm((formValues) => ({ ...formValues, [key]: convert ? convert(value) : value }));
     };
 
-  const deleteButtonRef = useRef<HTMLButtonElement | null>(null);
-
   return (
     <>
       <form
@@ -66,30 +64,16 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           left={<Button icon={<ArrowBack />} onClick={exit} />}
           right={
             connectionToEdit !== null && (
-              <>
-                <Button icon={<DeleteOutline />} ref={deleteButtonRef} variant="danger" />
-                <OverlayCard align="right" className="p-2" triggerRef={deleteButtonRef}>
-                  {({ close }) => (
-                    <div className="grid gap-2">
-                      <div className="p-2 text-center text-sm font-medium text-gray-600">
-                        Delete this connection?
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Button icon={<Close />} label="No" onClick={close} />
-                        <Button
-                          icon={<Done />}
-                          label="Yes"
-                          onClick={() => {
-                            removeConnection(connectionToEdit.id);
-                            exit();
-                          }}
-                          variant="danger"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </OverlayCard>
-              </>
+              <ConfirmDeletePopover
+                onConfirm={() => {
+                  removeConnection(connectionToEdit.id);
+                  exit();
+                }}
+                renderTrigger={({ ref }) => (
+                  <Button icon={<DeleteOutline />} ref={ref} variant="danger" />
+                )}
+                text="Delete connection"
+              />
             )
           }
           title={`${mode === 'add' ? 'Add' : 'Edit'} Connection`}

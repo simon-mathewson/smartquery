@@ -6,6 +6,7 @@ import React from 'react';
 import { QueryToAdd } from '../../queries/types';
 import { QueriesContext } from '~/content/queries/Context';
 import { ConnectionsContext } from '~/content/connections/Context';
+import { withQuotes } from '~/shared/utils/sql';
 
 export type ItemProps = { tableName: string };
 
@@ -22,9 +23,9 @@ export const Item: React.FC<ItemProps> = (props) => {
 
     return {
       sql: {
-        mysql: `SELECT * FROM ${tableName} LIMIT 50`,
-        postgresql: `SELECT * FROM "${tableName}" LIMIT 50`,
-        sqlserver: `SELECT TOP 50 * FROM ${tableName}`,
+        mysql: `SELECT * FROM ${withQuotes(activeConnection.engine, tableName)} LIMIT 50`,
+        postgresql: `SELECT * FROM ${withQuotes(activeConnection.engine, tableName)} LIMIT 50`,
+        sqlserver: `SELECT TOP 50 * FROM ${withQuotes(activeConnection.engine, tableName)}`,
       }[activeConnection.engine],
       table: tableName,
     };

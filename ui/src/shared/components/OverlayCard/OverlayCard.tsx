@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { OverlayPortal } from '../OverlayPortal/OverlayPortal';
 import { useAnimate } from './useAnimate';
 import { overlayCardMargin } from './constants';
+import { useDebouncedCallback } from 'use-debounce';
 
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
@@ -36,19 +37,32 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     width: number;
   } | null>(null);
 
-  const registerContent = useCallback((element: HTMLDivElement | null) => {
-    if (!element) return;
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      const { scrollHeight, scrollWidth } = entries[0].target;
-      setContentDimensions({
-        height: scrollHeight,
-        width: scrollWidth,
+  const handleResize = useDebouncedCallback((newDimensions: { height: number; width: number }) => {
+    setContentDimensions(newDimensions);
+  }, 10);
+
+  const registerContent = useCallback(
+    (element: HTMLDivElement | null) => {
+      if (!element) return;
+
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+      }
+
+      resizeObserverRef.current = new ResizeObserver((entries) => {
+        const { scrollHeight, scrollWidth } = entries[0].target;
+        handleResize({
+          height: scrollHeight,
+          width: scrollWidth,
+        });
       });
-    });
 
-    resizeObserver.observe(element);
-  }, []);
+      resizeObserverRef.current.observe(element);
+    },
+    [handleResize],
+  );
 
   const updateStyles = useCallback(() => {
     const anchor = anchorRef.current;
@@ -142,7 +156,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
       {isVisible && (
         <div
           className={classNames(
-            'absolute z-10 overflow-auto rounded-lg border border-gray-200 bg-gray-50 shadow-xl',
+            'absolute z-10 overflow-auto rounded-xl border border-gray-200 bg-white shadow-xl',
             className,
           )}
           ref={mergeRefs([animateCardRef, localRef, registerContent])}
