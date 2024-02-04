@@ -1,9 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
-import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
-import { Query } from '~/content/queries/types';
+import { range } from 'lodash';
+import { useMemo } from 'react';
+import { EditContext } from '~/content/edit/Context';
+import { PrimaryKey } from '~/content/edit/types';
+import { Column, Query, Value } from '~/content/queries/types';
 import { Input } from '~/shared/components/Input/Input';
+import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 
 export type EditModalProps = {
+  columnCount: number;
   editButtonRef: React.MutableRefObject<HTMLElement | null>;
   query: Query;
   selection: number[][];
@@ -12,31 +18,40 @@ export type EditModalProps = {
 };
 
 export const EditOverlay: React.FC<EditModalProps> = (props) => {
-  const { query, editButtonRef, selection, selectionActionsPopoverRef, setIsEditing } = props;
+  const { columnCount, query, editButtonRef, selection, selectionActionsPopoverRef, setIsEditing } =
+    props;
 
-  const { initialValues, selectedColumns } = useMemo(() => {
-    const selectedRowIndex = selection.findIndex((row) => row);
-    if (selectedRowIndex === -1) return {};
+  const { changes, handleChange } = useDefinedContext(EditContext);
 
-    const selectedColumnIndices = selection[selectedRowIndex];
-    const selectedRow = query.rows[selectedRowIndex];
-    const selectedColumns = query.columns.filter(
-      (_, index) => selectedColumnIndices.length === 0 || selectedColumnIndices.includes(index),
-    );
+  const columnsWithValues = useMemo(() => {
+    return selection.reduce<
+      Array<{ column: Column; rows: Array<{ primaryKeys: PrimaryKey[]; value: Value }> }>
+    >((allColumnsWithValues, _selectedColumnIndices, rowIndex) => {
+      const newColumnsWithValues = cloneArrayWithEmptyValues(allColumnsWithValues);
 
-    const initialValues = selectedColumns.reduce(
-      (acc, column) => ({ ...acc, [column.name]: selectedRow[column.name] }),
-      {},
-    );
+      const selectedColumnIndices =
+        _selectedColumnIndices.length === 0 ? range(columnCount) : _selectedColumnIndices;
 
-    return { initialValues, selectedColumns };
-  }, [query, selection]);
+      selectedColumnIndices.forEach((columnIndex) => {
+        const column = query.columns[columnIndex];
+        const value = query.rows[rowIndex][column.name];
 
-  const [formValues, setFormValues] = useState<{ [key: string]: string }>(initialValues ?? {});
+        if (!newColumnsWithValues[columnIndex]) {
+          newColumnsWithValues[columnIndex] = { column, rows: [] };
+        }
 
-  useEffect(() => {
-    setFormValues(initialValues ?? {});
-  }, [initialValues]);
+        const primaryKeys = query.columns
+          .filter((column) => column.isPrimaryKey)
+          .map((column) => ({
+            column: column.name,
+            value: query.rows[rowIndex][column.name] as string | number,
+          }));
+
+        newColumnsWithValues[columnIndex].rows.push({ primaryKeys, value });
+      });
+      return newColumnsWithValues;
+    }, []);
+  }, [columnCount, query.columns, query.rows, selection]);
 
   if (selection.length === 0) return null;
 
@@ -51,14 +66,49 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
       {() => (
         <div className="w-full min-w-[280px] max-w-[360px] overflow-auto p-4">
           <div className="grid gap-2 overflow-auto">
-            {selectedColumns?.map((column) => (
-              <Input
-                key={column.name}
-                label={column.name}
-                value={formValues[column.name] ?? ''}
-                onChange={(newValue) => setFormValues({ ...formValues, [column.name]: newValue })}
-              />
-            ))}
+            {columnsWithValues?.map(({ column, rows }) => {
+              const originalValues = rows.map(({ value }) => value);
+              const changedValues = changes
+                .filter(
+                  (change) =>
+                    change.column === column.name &&
+                    change.table === query.table &&
+                    change.rows.some((row) =>
+                      row.primaryKeys.every((key, index) =>
+                        rows.some(
+                          (row) =>
+                            row.primaryKeys[index].column === key.column &&
+                            row.primaryKeys[index].value === key.value,
+                        ),
+                      ),
+                    ),
+                )
+                .map((change) => change.value);
+
+              const values = changedValues.length > 0 ? changedValues : originalValues;
+              const allValuesAreEqual = values.every((value) => value === values[0]);
+              const valueString = allValuesAreEqual ? String(values[0]) || '' : '';
+
+              return (
+                <Input
+                  key={column.name}
+                  label={column.name}
+                  placeholder={!allValuesAreEqual ? 'Multiple values' : undefined}
+                  value={valueString}
+                  onChange={(newValue) =>
+                    handleChange(
+                      {
+                        column: column.name,
+                        rows,
+                        table: query.table!,
+                        value: newValue,
+                      },
+                      rows,
+                    )
+                  }
+                />
+              );
+            })}
           </div>
         </div>
       )}

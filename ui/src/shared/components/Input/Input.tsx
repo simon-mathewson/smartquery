@@ -3,12 +3,13 @@ import React from 'react';
 export type InputProps = {
   label?: string;
   onChange: (value: string) => void;
+  placeholder?: string;
   type?: React.InputHTMLAttributes<HTMLInputElement>['type'];
   value: string;
 };
 
 export const Input: React.FC<InputProps> = (props) => {
-  const { label, onChange, type, value } = props;
+  const { label, onChange, placeholder, type, value } = props;
 
   return (
     <label className="grid gap-1 text-gray-500 focus-within:text-blue-600">
@@ -16,6 +17,7 @@ export const Input: React.FC<InputProps> = (props) => {
       <input
         className="block w-full rounded-lg border border-gray-300 bg-white p-2 text-sm font-medium leading-none text-gray-700 outline-none focus:border-blue-600"
         onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
         type={type}
         value={value}
       />

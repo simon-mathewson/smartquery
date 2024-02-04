@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { useClickOutside } from '~/shared/hooks/useClickOutside/useClickOutside';
+import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 
 export const useCellSelection = () => {
   const [selection, setSelection] = useState<number[][]>([]);
@@ -26,7 +27,8 @@ export const useCellSelection = () => {
 
   const handleCellDoubleClick = useCallback(
     (rowIndex: number, addSelection: boolean, addConsecutive: boolean) => {
-      const newRowSelections = addSelection || addConsecutive ? [...selection] : [];
+      const newRowSelections =
+        addSelection || addConsecutive ? cloneArrayWithEmptyValues(selection) : [];
 
       lastSelectedCellIndicesRef.current.pop();
       const lastSelectedCellIndices = lastSelectedCellIndicesRef.current.slice(-1).at(0);
@@ -63,7 +65,8 @@ export const useCellSelection = () => {
 
       lastClickRef.current = { columnIndex, rowIndex, timestamp: Date.now() };
 
-      const newRowSelections = addSelection || addConsecutive ? [...selection] : [];
+      const newRowSelections =
+        addSelection || addConsecutive ? cloneArrayWithEmptyValues(selection) : [];
 
       const shouldUnselectRow = newRowSelections.at(rowIndex)?.length === 0;
 

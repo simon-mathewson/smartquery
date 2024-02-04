@@ -123,6 +123,7 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
       )}
       <div style={{ height: `${popoverHeight + popoverMargin * 4}px` }} />
       <EditOverlay
+        columnCount={columnCount}
         editButtonRef={editButtonRef}
         query={query}
         selection={selection}

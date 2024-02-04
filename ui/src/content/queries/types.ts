@@ -4,11 +4,13 @@ export type Column = {
   name: string;
 };
 
+export type Value = string | number | boolean | Date | null;
+
 export type Query = {
   columns: Column[];
   hasResults: boolean;
   id: string;
-  rows: Array<Record<string, string | Date>>;
+  rows: Array<Record<string, Value>>;
   showEditor: boolean;
   sql: string | null;
   table: string | null;
