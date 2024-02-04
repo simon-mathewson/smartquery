@@ -2,6 +2,7 @@ import { range } from 'lodash';
 import { useMemo } from 'react';
 import { EditContext } from '~/content/edit/Context';
 import { PrimaryKey } from '~/content/edit/types';
+import { doChangeLocationsOverlap } from '~/content/edit/utils';
 import { Column, Query, Value } from '~/content/queries/types';
 import { Input } from '~/shared/components/Input/Input';
 import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
@@ -67,22 +68,15 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
         <div className="w-full min-w-[280px] max-w-[360px] overflow-auto p-4">
           <div className="grid gap-2 overflow-auto">
             {columnsWithValues?.map(({ column, rows }) => {
+              const location = {
+                column: column.name,
+                rows,
+                table: query.table!,
+              };
+
               const originalValues = rows.map(({ value }) => value);
               const changedValues = changes
-                .filter(
-                  (change) =>
-                    change.column === column.name &&
-                    change.table === query.table &&
-                    change.rows.some((row) =>
-                      row.primaryKeys.every((key, index) =>
-                        rows.some(
-                          (row) =>
-                            row.primaryKeys[index].column === key.column &&
-                            row.primaryKeys[index].value === key.value,
-                        ),
-                      ),
-                    ),
-                )
+                .filter((change) => doChangeLocationsOverlap(change.location, location))
                 .map((change) => change.value);
 
               const values = changedValues.length > 0 ? changedValues : originalValues;
@@ -95,17 +89,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
                   label={column.name}
                   placeholder={!allValuesAreEqual ? 'Multiple values' : undefined}
                   value={valueString}
-                  onChange={(newValue) =>
-                    handleChange(
-                      {
-                        column: column.name,
-                        rows,
-                        table: query.table!,
-                        value: newValue,
-                      },
-                      rows,
-                    )
-                  }
+                  onChange={(newValue) => handleChange({ location, value: newValue }, rows)}
                 />
               );
             })}

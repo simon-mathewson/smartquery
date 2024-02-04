@@ -1,4 +1,4 @@
-import { Change, ChangeRow } from './types';
+import { ChangeLocation, ChangeRow } from './types';
 
 export const doRowsOverlap = (rows1: ChangeRow[], rows2: ChangeRow[]) =>
   rows1.some((row) =>
@@ -11,7 +11,7 @@ export const doRowsOverlap = (rows1: ChangeRow[], rows2: ChangeRow[]) =>
     ),
   );
 
-export const doChangesOverlap = (change1: Change, change2: Change) =>
+export const doChangeLocationsOverlap = (change1: ChangeLocation, change2: ChangeLocation) =>
   change1.column === change2.column &&
   change1.table === change2.table &&
   doRowsOverlap(change1.rows, change2.rows);

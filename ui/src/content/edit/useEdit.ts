@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Change, PrimaryKey } from './types';
 import { Value } from '../queries/types';
 import { isNotNull } from '~/shared/utils/typescript';
-import { doChangesOverlap, doRowsOverlap } from './utils';
+import { doChangeLocationsOverlap, doRowsOverlap } from './utils';
 
 export const useEdit = () => {
   const [changes, setChanges] = useState<Change[]>([]);
@@ -12,26 +12,35 @@ export const useEdit = () => {
       setChanges((changes) => {
         const newChanges = changes
           .map((existingChange) => {
-            if (!doChangesOverlap(existingChange, newChange)) return existingChange;
+            if (!doChangeLocationsOverlap(existingChange.location, newChange.location))
+              return existingChange;
 
             const withoutNewRows = {
               ...existingChange,
-              rows: existingChange.rows.filter((row) => !doRowsOverlap(newChange.rows, [row])),
-            };
+              location: {
+                ...existingChange.location,
+                rows: existingChange.location.rows.filter(
+                  (row) => !doRowsOverlap(newChange.location.rows, [row]),
+                ),
+              },
+            } satisfies Change;
 
-            return withoutNewRows.rows.length ? withoutNewRows : null;
+            return withoutNewRows.location.rows.length ? withoutNewRows : null;
           })
           .filter(isNotNull);
 
         const changeWithoutUnchangedRows = {
           ...newChange,
-          rows: newChange.rows.filter((newChangeRow) => {
-            const originalRow = originalRows.find((row) => doRowsOverlap([newChangeRow], [row]))!;
-            return originalRow.value !== newChange.value;
-          }),
-        };
+          location: {
+            ...newChange.location,
+            rows: newChange.location.rows.filter((newChangeRow) => {
+              const originalRow = originalRows.find((row) => doRowsOverlap([newChangeRow], [row]))!;
+              return originalRow.value !== newChange.value;
+            }),
+          },
+        } satisfies Change;
 
-        if (changeWithoutUnchangedRows.rows.length) {
+        if (changeWithoutUnchangedRows.location.rows.length) {
           return [...newChanges, changeWithoutUnchangedRows];
         }
 
