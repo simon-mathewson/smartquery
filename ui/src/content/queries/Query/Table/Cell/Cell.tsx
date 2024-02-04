@@ -1,17 +1,19 @@
 import classNames from 'classnames';
 import React from 'react';
 import { DateTime } from 'luxon';
+import { Value } from '~/content/queries/types';
 
 export type CellProps = {
   header?: boolean;
   hover?: boolean;
+  isChanged?: boolean;
   rootProps?: React.HTMLAttributes<HTMLDivElement> & { [dataAttr: `data-${string}`]: string };
   selected?: boolean;
-  value: string | Date;
+  value: Value;
 };
 
 export const Cell: React.FC<CellProps> = (props) => {
-  const { header, hover, rootProps, selected, value } = props;
+  const { header, hover, isChanged, rootProps, selected, value } = props;
 
   return (
     <div
@@ -20,9 +22,13 @@ export const Cell: React.FC<CellProps> = (props) => {
         {
           'sticky top-0 z-10 h-10 bg-white': header,
           ' border-b-gray-200 py-2': !header,
-          'bg-gray-50': hover,
-          '!bg-blue-400': hover && selected,
-          'bg-blue-500': selected,
+          'bg-gray-50': hover && !selected,
+          'bg-blue-400': selected && hover,
+          'bg-blue-500': selected && !hover,
+          'bg-amber-100 ': isChanged && !selected && !hover,
+          'bg-amber-50 ': isChanged && !selected && hover,
+          'bg-sky-500 ': isChanged && selected && !hover,
+          'bg-sky-400 ': isChanged && selected && hover,
         },
       )}
       {...rootProps}

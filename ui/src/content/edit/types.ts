@@ -1,16 +1,17 @@
+import { Value } from '../queries/types';
+
 export type PrimaryKey = { column: string; value: string | number };
 
 export type ChangeRow = {
   primaryKeys: PrimaryKey[];
+  value: Value;
 };
 
 export type ChangeLocation = {
   column: string;
-  rows: ChangeRow[];
+  row: ChangeRow;
   table: string;
 };
-
-export type Value = string | number | boolean | null;
 
 export type Change = {
   location: ChangeLocation;
