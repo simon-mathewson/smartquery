@@ -16,7 +16,7 @@ export const Input: React.FC<InputProps> = (props) => {
       {label && <div className="pl-1 text-xs font-medium">{label}</div>}
       <input
         {...inputProps}
-        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm font-medium leading-none text-gray-700 outline-none focus:border-blue-600"
+        className="block w-full rounded-lg border-[1.5px] border-gray-300 bg-gray-50 p-2 text-sm font-medium leading-none text-gray-700 outline-none focus:border-blue-600"
         onChange={(event) => onChange(event.target.value)}
       />
     </label>

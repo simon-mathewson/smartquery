@@ -1,6 +1,6 @@
 import { uniq, uniqueId } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
-import { Column, Query, QueryToAdd } from './types';
+import { Query, QueryToAdd } from './types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { trpc } from '~/main';
@@ -10,68 +10,75 @@ export const useQueries = () => {
 
   const [queries, setQueries] = useState<Query[][]>([]);
 
+  const getColumns = useCallback(
+    async (query: Query) => {
+      if (!query.table || !activeConnection) return null;
+
+      const { clientId, database, engine } = activeConnection;
+
+      const databaseColumn = engine === 'mysql' ? 'table_schema' : 'table_catalog';
+
+      const sql = `
+        SELECT c.column_name as column_name, c.is_nullable as is_nullable, tc.constraint_type as constraint_type
+        FROM information_schema.columns AS c
+        LEFT JOIN information_schema.key_column_usage AS k
+          ON k.column_name = c.column_name
+          AND k.table_name = c.table_name
+          AND k.${databaseColumn} = c.${databaseColumn}
+        LEFT JOIN information_schema.table_constraints AS tc
+          ON tc.constraint_name = k.constraint_name
+          AND tc.table_name = k.table_name
+          AND tc.${databaseColumn} = k.${databaseColumn}
+        WHERE c.table_name = '${query.table}'
+        AND c.${databaseColumn} = '${database}'
+      `;
+
+      const rawColumns = await trpc.sendQuery.query([clientId, sql]);
+
+      const columnNames = uniq(rawColumns.map(({ column_name }) => column_name as string));
+
+      return columnNames.map((name) => {
+        return {
+          isForeignKey: rawColumns.some(
+            ({ column_name, constraint_type }) =>
+              constraint_type === 'FOREIGN KEY' && column_name === name,
+          ),
+          isNullable: rawColumns.some(
+            ({ column_name, is_nullable }) => is_nullable === 'YES' && column_name === name,
+          ),
+          isPrimaryKey: rawColumns.some(
+            ({ column_name, constraint_type }) =>
+              constraint_type === 'PRIMARY KEY' && column_name === name,
+          ),
+          name,
+        };
+      });
+    },
+    [activeConnection],
+  );
+
   const runQuery = useCallback(
     (query: Query) => {
       if (!query?.sql || !activeConnection) return;
 
-      const { clientId, database, engine } = activeConnection;
+      const { clientId } = activeConnection;
 
-      const columnsQuery = (() => {
-        if (!query.table) return null;
+      return Promise.all([trpc.sendQuery.query([clientId, query.sql]), getColumns(query)]).then(
+        ([rows, columnsWithAttributes]) => {
+          const columns =
+            columnsWithAttributes ?? Object.keys(rows[0] ?? {}).map((name) => ({ name }));
 
-        const databaseColumn = engine === 'mysql' ? 'table_schema' : 'table_catalog';
-
-        return `
-          SELECT c.column_name as column_name, tc.constraint_type as constraint_type
-          FROM information_schema.columns AS c
-          LEFT JOIN information_schema.key_column_usage AS k
-            ON k.column_name = c.column_name
-            AND k.table_name = c.table_name
-            AND k.${databaseColumn} = c.${databaseColumn}
-          LEFT JOIN information_schema.table_constraints AS tc
-            ON tc.constraint_name = k.constraint_name
-            AND tc.table_name = k.table_name
-            AND tc.${databaseColumn} = k.${databaseColumn}
-          WHERE c.table_name = '${query.table}'
-          AND c.${databaseColumn} = '${database}'
-        `;
-      })();
-
-      return Promise.all([
-        trpc.sendQuery.query([clientId, query.sql]),
-        columnsQuery ? trpc.sendQuery.query([clientId, columnsQuery]) : null,
-      ]).then(([rows, rawColumns]) => {
-        const columns: Column[] = (() => {
-          if (rawColumns) {
-            const columnNames = uniq(rawColumns.map(({ column_name }) => column_name as string));
-
-            return columnNames.map((name) => {
-              return {
-                isForeignKey: rawColumns.some(
-                  ({ column_name, constraint_type }) =>
-                    constraint_type === 'FOREIGN KEY' && column_name === name,
-                ),
-                isPrimaryKey: rawColumns.some(
-                  ({ column_name, constraint_type }) =>
-                    constraint_type === 'PRIMARY KEY' && column_name === name,
-                ),
-                name,
-              };
-            });
-          }
-          return Object.keys(rows[0] ?? {}).map((name) => ({ name }));
-        })();
-
-        setQueries((currentQueries) =>
-          currentQueries.map((currentColumn) =>
-            currentColumn.map((q) =>
-              q.id === query.id ? { ...q, columns, hasResults: true, rows } : q,
+          setQueries((currentQueries) =>
+            currentQueries.map((currentColumn) =>
+              currentColumn.map((q) =>
+                q.id === query.id ? { ...q, columns, hasResults: true, rows } : q,
+              ),
             ),
-          ),
-        );
-      });
+          );
+        },
+      );
     },
-    [activeConnection],
+    [activeConnection, getColumns],
   );
 
   const addQuery = useCallback(
