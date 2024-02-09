@@ -139,7 +139,7 @@ export const useQueries = () => {
   );
 
   return useMemo(
-    () => ({ addQuery, queries, removeQuery, updateQuery }),
-    [addQuery, queries, removeQuery, updateQuery],
+    () => ({ addQuery, queries, removeQuery, runQuery, updateQuery }),
+    [addQuery, queries, removeQuery, runQuery, updateQuery],
   );
 };

@@ -15,7 +15,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   const { triggerRef } = props;
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
-  const { queries, updateQuery } = useDefinedContext(QueriesContext);
+  const { queries, runQuery } = useDefinedContext(QueriesContext);
   const { clearChanges, sql } = useDefinedContext(EditContext);
 
   return (
@@ -33,7 +33,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
 
               queries.flat().forEach((query) => {
                 if (query.sql) {
-                  updateQuery(query.id, query.sql);
+                  runQuery(query);
                 }
               });
             }}
