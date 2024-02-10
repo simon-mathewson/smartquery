@@ -21,7 +21,7 @@ export const Changes: React.FC = () => {
       <ConfirmDeletePopover
         onConfirm={clearChanges}
         renderTrigger={({ ref }) => <Button icon={<DeleteOutline />} ref={ref} variant="danger" />}
-        text={`Delete ${changes.length} pending change ${changes.length > 1 ? 's' : ''}`}
+        text={`Delete ${changes.length} pending change${changes.length > 1 ? 's' : ''}`}
       />
       <Button
         icon={<ArrowForward />}
