@@ -57,7 +57,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
       triggerRef={editButtonRef}
     >
       {() => (
-        <div className="w-full min-w-[280px] max-w-[360px] overflow-auto p-4">
+        <div className="w-full min-w-[320px] max-w-[360px] overflow-auto p-4">
           <div className="grid gap-2 overflow-auto">
             {columnFields?.map((fieldProps, index) => (
               <ColumnField

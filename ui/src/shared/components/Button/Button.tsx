@@ -6,6 +6,7 @@ export type ButtonProps = {
   className?: string;
   disabled?: boolean;
   icon?: React.ReactNode;
+  monospace?: boolean;
   label?: string;
   onClick?: (event: React.MouseEvent) => void;
   selected?: boolean;
@@ -21,6 +22,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
     disabled,
     icon,
     label,
+    monospace,
     onClick,
     selected,
     size = 'normal',
@@ -49,6 +51,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'bg-red-500/10 hover:bg-red-500/20': selected && variant === 'danger',
           'bg-blue-600/10 hover:bg-red-600/20': selected && variant === 'primary',
           'pointer-events-none opacity-50': disabled,
+          'font-mono font-medium': monospace,
         },
         className,
       )}

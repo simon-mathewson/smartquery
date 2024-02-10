@@ -77,6 +77,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
       />
       {column.isNullable && (
         <ButtonSelect
+          monospace
           onChange={(newValue) => {
             locations.forEach((location) =>
               handleChange({ location, value: newValue === null ? null : textValue ?? '' }),
