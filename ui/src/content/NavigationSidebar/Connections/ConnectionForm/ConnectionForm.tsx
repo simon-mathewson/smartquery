@@ -10,6 +10,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Header } from '../../../../shared/components/Header/Header';
 import { TestConnection } from './TestConnection/TestConnection';
 import { FormSchema, connectionSchema, isFormValid } from './utils';
+import { Field } from '~/shared/components/Field/Field';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;
@@ -78,48 +79,51 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           }
           title={`${mode === 'add' ? 'Add' : 'Edit'} Connection`}
         />
-        <Select
-          label="Engine"
-          onChange={getChangeHandler('engine')}
-          options={[
-            {
-              label: 'MySQL',
-              value: 'mysql',
-            },
-            {
-              label: 'PostgreSQL',
-              value: 'postgresql',
-            },
-            {
-              label: 'SQL Server',
-              value: 'sqlserver',
-            },
-          ]}
-          value={form.engine}
-        />
-        <Input label="Name" onChange={getChangeHandler('name')} value={form.name} />
-        <div className="grid grid-cols-2 gap-2">
-          <Input label="Host" onChange={getChangeHandler('host')} value={form.host} />
-          <Input
-            label="Port"
-            onChange={getChangeHandler('port', (value) => (value ? Number(value) : null))}
-            value={form.port === null ? '' : String(form.port)}
+        <Field label="Engine">
+          <Select
+            onChange={getChangeHandler('engine')}
+            options={[
+              {
+                label: 'MySQL',
+                value: 'mysql',
+              },
+              {
+                label: 'PostgreSQL',
+                value: 'postgresql',
+              },
+              {
+                label: 'SQL Server',
+                value: 'sqlserver',
+              },
+            ]}
+            value={form.engine}
           />
+        </Field>
+        <Field label="Name">
+          <Input onChange={getChangeHandler('name')} value={form.name} />
+        </Field>
+        <div className="grid grid-cols-2 gap-2">
+          <Field label="Host">
+            <Input onChange={getChangeHandler('host')} value={form.host} />
+          </Field>
+          <Field label="Port">
+            <Input
+              onChange={getChangeHandler('port', (value) => (value ? Number(value) : null))}
+              value={form.port === null ? '' : String(form.port)}
+            />
+          </Field>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <Input label="User" onChange={getChangeHandler('user')} value={form.user} />
-          <Input
-            label="Password"
-            onChange={getChangeHandler('password')}
-            type="password"
-            value={form.password}
-          />
+          <Field label="User">
+            <Input onChange={getChangeHandler('user')} value={form.user} />
+          </Field>
+          <Field label="Password">
+            <Input onChange={getChangeHandler('password')} type="password" value={form.password} />
+          </Field>
         </div>
-        <Input
-          label="Default Database"
-          onChange={getChangeHandler('database')}
-          value={form.database}
-        />
+        <Field label="Default Database">
+          <Input onChange={getChangeHandler('database')} value={form.database} />
+        </Field>
         <TestConnection form={form} />
         <Button
           disabled={!isFormValid(form)}

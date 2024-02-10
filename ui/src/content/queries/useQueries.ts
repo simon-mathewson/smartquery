@@ -33,7 +33,7 @@ export const useQueries = () => {
         AND c.${databaseColumn} = '${database}'
       `;
 
-      const rawColumns = await trpc.sendQuery.query([clientId, sql]);
+      const [rawColumns] = await trpc.sendQuery.query([clientId, sql]);
 
       const columnNames = uniq(rawColumns.map(({ column_name }) => column_name as string));
 
@@ -64,7 +64,7 @@ export const useQueries = () => {
       const { clientId } = activeConnection;
 
       return Promise.all([trpc.sendQuery.query([clientId, query.sql]), getColumns(query)]).then(
-        ([rows, columnsWithAttributes]) => {
+        ([[rows], columnsWithAttributes]) => {
           const columns =
             columnsWithAttributes ?? Object.keys(rows[0] ?? {}).map((name) => ({ name }));
 

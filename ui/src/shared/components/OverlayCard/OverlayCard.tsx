@@ -151,6 +151,15 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
+  const close = useCallback(() => setIsOpen(false), []);
+
+  const childrenProps = useMemo(() => ({ close }), [close]);
+
+  const refs = useMemo(
+    () => mergeRefs([localRef, animateCardRef, registerContent]),
+    [animateCardRef, localRef, registerContent],
+  );
+
   return (
     <OverlayPortal>
       {isVisible && (
@@ -159,10 +168,10 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
             'absolute z-10 overflow-auto rounded-xl border border-gray-200 bg-white shadow-xl',
             className,
           )}
-          ref={mergeRefs([animateCardRef, localRef, registerContent])}
+          ref={refs}
           style={styles}
         >
-          {children({ close: () => setIsOpen(false) })}
+          {children(childrenProps)}
         </div>
       )}
     </OverlayPortal>

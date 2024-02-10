@@ -29,6 +29,7 @@
     "@types/lodash": "^4.14.202",
     "cors": "^2.8.5",
     "lodash": "^4.17.21",
+    "node-sql-parser": "^4.18.0",
     "superjson": "1.12.4",
     "zod": "^3.22.4"
   },

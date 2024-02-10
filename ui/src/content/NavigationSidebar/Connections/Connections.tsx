@@ -38,7 +38,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
     }[engine];
     const ac = new AbortController();
 
-    trpc.sendQuery.query([clientId, databasesQuery], { signal: ac.signal }).then((rows) => {
+    trpc.sendQuery.query([clientId, databasesQuery], { signal: ac.signal }).then(([rows]) => {
       setDatabases(rows.map(({ db }) => db as string));
     });
 

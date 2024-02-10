@@ -30,7 +30,7 @@ export const TableList: React.FC = () => {
         ORDER BY t ASC`,
     }[engine];
 
-    trpc.sendQuery.query([clientId, tableNamesQuery]).then((rows) => {
+    trpc.sendQuery.query([clientId, tableNamesQuery]).then(([rows]) => {
       setTables(rows.map(({ t }) => t as string));
     });
   }, [activeConnection]);

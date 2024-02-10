@@ -38,7 +38,7 @@ export const Editor: React.FC<EditorProps> = (props) => {
   const getContentEl = () => editorRef.current?.editor?.querySelector('.cm-content');
 
   const submitQuery = useCallback(() => {
-    const sql = getContentEl()?.textContent;
+    const sql = editorRef.current?.state?.doc.toString();
 
     if (!sql) return;
 
