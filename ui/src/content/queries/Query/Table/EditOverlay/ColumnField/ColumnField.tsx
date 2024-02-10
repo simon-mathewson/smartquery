@@ -1,4 +1,6 @@
-import React, { useMemo } from 'react';
+import classNames from 'classnames';
+import React, { useMemo, useState } from 'react';
+import { isNil } from 'lodash';
 import { EditContext } from '~/content/edit/Context';
 import { PrimaryKey } from '~/content/edit/types';
 import { Column, Query, Value } from '~/content/queries/types';
@@ -19,41 +21,58 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
 
   const { getChangedValue, handleChange } = useDefinedContext(EditContext);
 
-  const { isNull, locations, textValue } = useMemo(() => {
-    const locations = rows.map((row) => ({
-      column: column.name,
-      row,
-      table: query.table!,
-    }));
+  const locations = useMemo(
+    () =>
+      rows.map((row) => ({
+        column: column.name,
+        row,
+        table: query.table!,
+      })),
+    [column.name, query.table, rows],
+  );
 
+  const [localTextValue, setLocalTextValue] = useState(() => {
+    const firstValueChanged = getChangedValue(locations[0]);
+
+    if (!isNil(firstValueChanged)) return String(firstValueChanged);
+
+    const firstValueOriginalValue = rows[0].value;
+    return firstValueOriginalValue ? String(firstValueOriginalValue) : '';
+  });
+
+  const { isNull, textValue } = useMemo(() => {
     const values = locations.map((location) => {
       const changedValue = getChangedValue(location);
       return changedValue === undefined ? location.row.value : changedValue;
     });
     const allValuesAreEqual = values.every((value) => value === values[0]);
     const firstValue = values[0];
-    const firstValueOriginalValue = locations[0].row.value;
-    const firstValueOriginalValueText = firstValueOriginalValue
-      ? String(firstValueOriginalValue)
-      : '';
-    const firstValueText = firstValue ? String(firstValue) : firstValueOriginalValueText;
+    const firstValueText = isNil(firstValue) ? localTextValue : String(firstValue);
 
     return {
       isNull: allValuesAreEqual && firstValue === null,
       locations,
       textValue: allValuesAreEqual ? firstValueText : undefined,
     };
-  }, [column.name, getChangedValue, query.table, rows]);
+  }, [getChangedValue, localTextValue, locations]);
 
   return (
     <Field label={column.name}>
       <Input
         autoFocus={autoFocus}
+        className={classNames({ 'cursor-pointer': isNull })}
         key={column.name}
-        onChange={(newValue) =>
-          locations.forEach((location) => handleChange({ location, value: newValue }))
-        }
+        onChange={(newValue) => {
+          setLocalTextValue(newValue);
+          locations.forEach((location) => handleChange({ location, value: newValue }));
+        }}
+        onClick={() => {
+          if (!isNull) return;
+
+          locations.forEach((location) => handleChange({ location, value: textValue ?? '' }));
+        }}
         placeholder={textValue === undefined ? 'Multiple values' : undefined}
+        readOnly={isNull}
         value={textValue ?? ''}
       />
       {column.isNullable && (

@@ -32,7 +32,6 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
     <button
       className={classNames(
         'flex h-[36px] cursor-pointer items-center gap-2 rounded-lg px-3 py-2 hover:bg-blue-500/10 [&>svg]:text-[20px] [&>svg]:text-blue-500',
-        className,
         {
           '!h-[28px]': size === 'small',
           'bg-blue-500 hover:bg-blue-500/90 [&>svg]:text-white': variant === 'primary',
@@ -46,11 +45,12 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'justify-start': align === 'left',
           'justify-center': align === 'center',
           'justify-end': align === 'right',
-          'bg-blue-500/5 hover:bg-blue-500/10': selected && variant === 'secondary',
-          'bg-red-500/5 hover:bg-red-500/10': selected && variant === 'danger',
-          'bg-blue-600/5 hover:bg-red-600/10': selected && variant === 'primary',
+          'bg-blue-500/10 hover:bg-blue-500/20': selected && variant === 'secondary',
+          'bg-red-500/10 hover:bg-red-500/20': selected && variant === 'danger',
+          'bg-blue-600/10 hover:bg-red-600/20': selected && variant === 'primary',
           'pointer-events-none opacity-50': disabled,
         },
+        className,
       )}
       onClick={onClick}
       ref={ref}
@@ -63,6 +63,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
             'text-white': variant === 'primary' || variant === 'light',
             'text-red-500': variant === 'danger',
             'text-green-500': variant === 'success',
+            'text-gray-500': variant === 'tertiary',
           })}
         >
           {label}

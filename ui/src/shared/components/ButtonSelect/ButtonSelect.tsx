@@ -16,7 +16,8 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
           key={index}
           label={label}
           onClick={() => onChange(value === selectedValue ? undefined : value)}
-          variant={value === selectedValue ? 'primary' : 'secondary'}
+          selected={value === selectedValue}
+          variant={value === selectedValue ? 'secondary' : 'tertiary'}
         />
       ))}
     </div>
