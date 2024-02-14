@@ -1,43 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
+import { isNil } from 'lodash';
 import { Input } from '~/shared/components/Input/Input';
 import classNames from 'classnames';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { EditContext } from '~/content/edit/Context';
+import { ChangeLocation } from '~/content/edit/types';
 
 export type AlphanumericProps = {
   autoFocus?: boolean;
-  isNull: boolean;
   isNullable?: boolean;
-  setLocalTextValue: (newValue: string) => void;
+  locations: ChangeLocation[];
+  multipleValues: boolean;
   setValue: (newValue: string | null) => void;
-  value: string | undefined;
+  value: string | null;
 };
 
 export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
-  const { autoFocus, isNull, isNullable, setLocalTextValue, setValue, value } = props;
+  const { autoFocus, isNullable, locations, multipleValues, setValue, value } = props;
+
+  const { getChangedValue } = useDefinedContext(EditContext);
+
+  const [localTextValue, setLocalTextValue] = useState(() => {
+    const firstValueChanged = getChangedValue(locations[0]);
+
+    if (!isNil(firstValueChanged)) return String(firstValueChanged);
+
+    const firstValueOriginalValue = locations[0].row.value;
+    return firstValueOriginalValue ? String(firstValueOriginalValue) : '';
+  });
+
+  const valueAsString = value === null ? localTextValue : String(value);
 
   return (
     <>
       <Input
         autoFocus={autoFocus}
-        className={classNames('grow', { 'cursor-pointer': isNull })}
+        className={classNames('grow', { 'cursor-pointer': !multipleValues && value === null })}
         onChange={(newValue) => {
           setLocalTextValue(newValue);
           setValue(newValue);
         }}
         onClick={() => {
-          if (!isNull) return;
-          setValue(value ?? '');
+          if (value !== null) return;
+          setValue(valueAsString);
         }}
         placeholder={value === undefined ? 'Multiple values' : undefined}
-        readOnly={isNull}
-        value={value ?? ''}
+        readOnly={!multipleValues && value === null}
+        value={multipleValues ? undefined : valueAsString}
       />
       {isNullable && (
         <ButtonSelect
           monospace
           onChange={(newValue) => setValue(newValue === null ? null : value ?? '')}
           options={[{ label: 'NULL', value: null }]}
-          value={isNull ? null : undefined}
+          value={!multipleValues && value === null ? null : undefined}
         />
       )}
     </>
