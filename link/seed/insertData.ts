@@ -32,6 +32,7 @@ export const insertData = async (connection: Connection) => {
       userId: faker.helpers.arrayElement(userIds),
       title: faker.lorem.sentence(),
       isPublished: faker.datatype.boolean(),
+      isDeleted: faker.helpers.arrayElement([true, false, null]),
       internalNote1: faker.helpers.maybe(() => faker.lorem.sentence()),
       internalNote2: faker.helpers.maybe(() => faker.lorem.sentence()),
       internalNote3: faker.helpers.maybe(() => faker.lorem.sentence()),
@@ -40,8 +41,14 @@ export const insertData = async (connection: Connection) => {
     { count: 200 },
   );
 
+  const getBooleanSqlValue = (value: boolean | null) => {
+    if (value === null) return 'NULL';
+
+    return engine === 'postgresql' ? value : Number(value);
+  };
+
   await prisma.$queryRawUnsafe(`
-    INSERT INTO posts (id, text, user_id, title, is_published, internal_note_1, internal_note_2, internal_note_3, internal_note_4)
+    INSERT INTO posts (id, text, user_id, title, is_published, is_deleted, internal_note_1, internal_note_2, internal_note_3, internal_note_4)
     VALUES
       ${posts
         .map(
@@ -51,18 +58,19 @@ export const insertData = async (connection: Connection) => {
             text,
             title,
             isPublished,
+            isDeleted,
             internalNote1,
             internalNote2,
             internalNote3,
             internalNote4,
           }) =>
-            `('${id}', '${text}', ${userId}, '${title}', ${
-              engine === 'postgresql' ? isPublished : Number(isPublished)
-            }, ${internalNote1 ? `'${internalNote1}'` : 'NULL'}, ${
-              internalNote2 ? `'${internalNote2}'` : 'NULL'
-            }, ${internalNote3 ? `'${internalNote3}'` : 'NULL'}, ${
-              internalNote4 ? `'${internalNote4}'` : 'NULL'
-            })`,
+            `('${id}', '${text}', ${userId}, '${title}', ${getBooleanSqlValue(
+              isPublished,
+            )}, ${getBooleanSqlValue(isDeleted)}, ${
+              internalNote1 ? `'${internalNote1}'` : 'NULL'
+            }, ${internalNote2 ? `'${internalNote2}'` : 'NULL'}, ${
+              internalNote3 ? `'${internalNote3}'` : 'NULL'
+            }, ${internalNote4 ? `'${internalNote4}'` : 'NULL'})`,
         )
         .join()}
   `);

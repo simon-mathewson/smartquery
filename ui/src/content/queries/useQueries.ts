@@ -1,6 +1,6 @@
 import { uniq, uniqueId } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
-import { Query, QueryToAdd } from './types';
+import { Column, DataType, Query, QueryToAdd } from './types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { trpc } from '~/main';
@@ -19,7 +19,11 @@ export const useQueries = () => {
       const databaseColumn = engine === 'mysql' ? 'table_schema' : 'table_catalog';
 
       const sql = `
-        SELECT c.column_name as column_name, c.is_nullable as is_nullable, tc.constraint_type as constraint_type
+        SELECT
+          c.column_name AS column_name,
+          c.data_type AS data_type,
+          c.is_nullable AS is_nullable,
+          tc.constraint_type AS constraint_type
         FROM information_schema.columns AS c
         LEFT JOIN information_schema.key_column_usage AS k
           ON k.column_name = c.column_name
@@ -39,6 +43,8 @@ export const useQueries = () => {
 
       return columnNames.map((name) => {
         return {
+          dataType: rawColumns.find(({ column_name }) => column_name === name)!
+            .data_type as DataType,
           isForeignKey: rawColumns.some(
             ({ column_name, constraint_type }) =>
               constraint_type === 'FOREIGN KEY' && column_name === name,
@@ -52,7 +58,7 @@ export const useQueries = () => {
           ),
           name,
         };
-      });
+      }) satisfies Column[];
     },
     [activeConnection],
   );

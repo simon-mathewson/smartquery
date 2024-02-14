@@ -35,10 +35,11 @@ export const Editor: React.FC<EditorProps> = (props) => {
 
   const editorRef = React.useRef<ReactCodeMirrorRef>(null);
 
-  const getContentEl = () => editorRef.current?.editor?.querySelector('.cm-content');
+  const getContentEl = () =>
+    editorRef.current?.editor?.querySelector<HTMLDivElement>('.cm-content');
 
   const submitQuery = useCallback(() => {
-    const sql = editorRef.current?.state?.doc.toString();
+    const sql = getContentEl()?.innerText;
 
     if (!sql) return;
 

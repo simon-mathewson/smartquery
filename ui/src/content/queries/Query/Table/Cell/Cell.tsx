@@ -38,7 +38,11 @@ export const Cell: React.FC<CellProps> = (props) => {
           'font-mono font-medium text-gray-800': header,
           'text-gray-500': !header,
           'text-white': selected,
-          'font-mono font-medium uppercase': value === null,
+          'font-mono font-medium uppercase':
+            value === null ||
+            typeof value === 'boolean' ||
+            typeof value === 'number' ||
+            value instanceof Date,
         })}
       >
         {(() => {

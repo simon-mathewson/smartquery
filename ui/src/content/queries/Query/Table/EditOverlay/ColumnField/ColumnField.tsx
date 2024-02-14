@@ -40,7 +40,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
     return firstValueOriginalValue ? String(firstValueOriginalValue) : '';
   });
 
-  const { isNull, textValue } = useMemo(() => {
+  const { isNull, textValue, value } = useMemo(() => {
     const values = locations.map((location) => {
       const changedValue = getChangedValue(location);
       return changedValue === undefined ? location.row.value : changedValue;
@@ -53,39 +53,63 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
       isNull: allValuesAreEqual && firstValue === null,
       locations,
       textValue: allValuesAreEqual ? firstValueText : undefined,
+      value: allValuesAreEqual ? firstValue : undefined,
     };
   }, [getChangedValue, localTextValue, locations]);
 
   return (
     <Field label={column.name}>
-      <Input
-        autoFocus={autoFocus}
-        className={classNames({ 'cursor-pointer': isNull })}
-        key={column.name}
-        onChange={(newValue) => {
-          setLocalTextValue(newValue);
-          locations.forEach((location) => handleChange({ location, value: newValue }));
-        }}
-        onClick={() => {
-          if (!isNull) return;
-
-          locations.forEach((location) => handleChange({ location, value: textValue ?? '' }));
-        }}
-        placeholder={textValue === undefined ? 'Multiple values' : undefined}
-        readOnly={isNull}
-        value={textValue ?? ''}
-      />
-      {column.isNullable && (
-        <ButtonSelect
+      {column.dataType === 'boolean' ? (
+        <ButtonSelect<boolean | null>
+          equalWidth
+          fullWidth
           monospace
           onChange={(newValue) => {
-            locations.forEach((location) =>
-              handleChange({ location, value: newValue === null ? null : textValue ?? '' }),
-            );
+            locations.forEach((location) => {
+              if (newValue === undefined && !column.isNullable) return;
+
+              handleChange({ location, value: isNil(newValue) ? null : newValue });
+            });
           }}
-          options={[{ label: 'NULL', value: null }]}
-          value={isNull ? null : undefined}
+          options={[
+            { label: 'TRUE', value: true },
+            { label: 'FALSE', value: false },
+            ...(column.isNullable ? [{ label: 'NULL', value: null }] : []),
+          ]}
+          value={value as boolean | null | undefined}
         />
+      ) : (
+        <>
+          <Input
+            autoFocus={autoFocus}
+            className={classNames('grow', { 'cursor-pointer': isNull })}
+            key={column.name}
+            onChange={(newValue) => {
+              setLocalTextValue(newValue);
+              locations.forEach((location) => handleChange({ location, value: newValue }));
+            }}
+            onClick={() => {
+              if (!isNull) return;
+
+              locations.forEach((location) => handleChange({ location, value: textValue ?? '' }));
+            }}
+            placeholder={textValue === undefined ? 'Multiple values' : undefined}
+            readOnly={isNull}
+            value={textValue ?? ''}
+          />
+          {column.isNullable && (
+            <ButtonSelect
+              monospace
+              onChange={(newValue) => {
+                locations.forEach((location) =>
+                  handleChange({ location, value: newValue === null ? null : textValue ?? '' }),
+                );
+              }}
+              options={[{ label: 'NULL', value: null }]}
+              value={isNull ? null : undefined}
+            />
+          )}
+        </>
       )}
     </Field>
   );

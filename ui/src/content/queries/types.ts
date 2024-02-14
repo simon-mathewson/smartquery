@@ -1,7 +1,26 @@
 import { inferProcedureOutput } from '@trpc/server';
 import { AppRouter } from '../../../../link/src/main/router';
 
+const dataTypes = [
+  'bigint',
+  'boolean',
+  'char',
+  'character varying',
+  'enum',
+  'int',
+  'integer',
+  'json',
+  'timestamp',
+  'timestamp without time zone',
+  'tinyint',
+  'user-defined',
+  'varchar',
+] as const;
+
+export type DataType = (typeof dataTypes)[number];
+
 export type Column = {
+  dataType?: DataType;
   isForeignKey?: boolean;
   isNullable?: boolean;
   isPrimaryKey?: boolean;

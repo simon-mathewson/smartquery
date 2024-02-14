@@ -50,6 +50,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'bg-blue-500/10 hover:bg-blue-500/20': selected && variant === 'secondary',
           'bg-red-500/10 hover:bg-red-500/20': selected && variant === 'danger',
           'bg-blue-600/10 hover:bg-red-600/20': selected && variant === 'primary',
+          'bg-gray-500/10 hover:bg-gray-500/20': selected && variant === 'tertiary',
           'pointer-events-none opacity-50': disabled,
           'font-mono font-medium': monospace,
         },
