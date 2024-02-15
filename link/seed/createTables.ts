@@ -8,12 +8,64 @@ export const createTables = async (connection: Connection) => {
 
   if (engine === 'postgresql') {
     await prisma.$queryRaw`
+      CREATE TYPE test_enum AS ENUM ('Alpha', 'Beta', 'Charlie');
+    `;
+    await prisma.$queryRaw`
       CREATE TYPE user_role AS ENUM ('USER', 'ADMIN');
     `;
   }
 
-  const datetimeType = engine === 'sqlserver' ? 'DATETIME' : 'TIMESTAMP';
   const booleanType = engine === 'postgresql' ? 'BOOLEAN' : 'TINYINT';
+  const datetimeType = engine === 'postgresql' ? 'TIMESTAMP' : 'DATETIME';
+  const datetimeWithTimeZoneType = {
+    mysql: 'DATETIME',
+    postgresql: 'TIMESTAMP WITH TIME ZONE',
+    sqlserver: 'DATETIMEOFFSET',
+  }[engine];
+  const intAutoIncrementType = {
+    mysql: 'INT NOT NULL AUTO_INCREMENT',
+    postgresql: 'SERIAL',
+    sqlserver: 'INT IDENTITY(1,1)',
+  }[engine];
+  const jsonType = engine === 'sqlserver' ? 'VARCHAR(255)' : 'JSON';
+  const textType = engine === 'sqlserver' ? 'VARCHAR(255)' : 'TEXT';
+
+  await prisma.$queryRawUnsafe(`
+    CREATE TABLE data_types (
+      id ${intAutoIncrementType},
+      text_column ${textType} NOT NULL,
+      text_column_nullable ${textType} NULL,
+      boolean_column ${booleanType} NOT NULL,
+      boolean_column_nullable ${booleanType} NULL,
+      datetime_column ${datetimeType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      datetime_column_nullable ${datetimeType} NULL,
+      datetime_with_time_zone_column ${datetimeWithTimeZoneType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      datetime_with_time_zone_column_nullable ${datetimeWithTimeZoneType} NULL,
+      time_column TIME NOT NULL,
+      time_column_nullable TIME NULL,
+      int_column INT NOT NULL,
+      int_column_nullable INT NULL,
+      decimal_column DECIMAL(5,2) NOT NULL,
+      decimal_column_nullable DECIMAL(5,2) NULL,
+      enum_column ${
+        {
+          mysql: 'ENUM("Alpha", "Beta", "Charlie")',
+          postgresql: 'test_enum',
+          sqlserver: 'VARCHAR(50)',
+        }[engine]
+      } NOT NULL,
+      enum_column_nullable ${
+        {
+          mysql: 'ENUM("Alpha", "Beta", "Charlie")',
+          postgresql: 'test_enum',
+          sqlserver: 'VARCHAR(50)',
+        }[engine]
+      } NULL,
+      json_column ${jsonType} NOT NULL,
+      json_column_nullable ${jsonType} NULL,
+      PRIMARY KEY (id)
+    )
+  `);
 
   await prisma.$queryRawUnsafe(`
     CREATE TABLE users (
@@ -34,7 +86,7 @@ export const createTables = async (connection: Connection) => {
           sqlserver: 'VARCHAR(50)',
         }[engine]
       } NOT NULL DEFAULT 'USER',
-      attributes ${engine === 'sqlserver' ? 'VARCHAR(255)' : 'JSON'} NULL,
+      attributes ${jsonType} NULL,
       PRIMARY KEY (id)
     )
   `);

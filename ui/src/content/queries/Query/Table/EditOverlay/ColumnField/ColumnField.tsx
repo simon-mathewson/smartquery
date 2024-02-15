@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { includes } from 'lodash';
 import { EditContext } from '~/content/edit/Context';
 import { ChangeLocation, PrimaryKey } from '~/content/edit/types';
 import { Column, Query, Value } from '~/content/queries/types';
@@ -7,7 +6,6 @@ import { Field } from '~/shared/components/Field/Field';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Boolean } from './Boolean/Boolean';
 import { Alphanumeric } from './Alphanumeric/Alphanumeric';
-import { DateField } from './Date/Date';
 
 export type ColumnFieldProps = {
   autoFocus?: boolean;
@@ -62,20 +60,10 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
             />
           );
         }
-        if (includes(['timestamp', 'timestamp without time zone'], column.dataType)) {
-          return (
-            <DateField
-              autoFocus={autoFocus}
-              multipleValues={multipleValues}
-              isNullable={column.isNullable}
-              setValue={setValue}
-              value={values[0] as Date | null}
-            />
-          );
-        }
         return (
           <Alphanumeric
             autoFocus={autoFocus}
+            dataType={column.dataType!}
             isNullable={column.isNullable}
             locations={locations}
             multipleValues={multipleValues}

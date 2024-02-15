@@ -42,9 +42,10 @@ export const useQueries = () => {
       const columnNames = uniq(rawColumns.map(({ column_name }) => column_name as string));
 
       return columnNames.map((name) => {
+        const dataTypeRaw = rawColumns.find(({ column_name }) => column_name === name)!
+          .data_type as string;
         return {
-          dataType: rawColumns.find(({ column_name }) => column_name === name)!
-            .data_type as DataType,
+          dataType: dataTypeRaw.toLowerCase() as DataType,
           isForeignKey: rawColumns.some(
             ({ column_name, constraint_type }) =>
               constraint_type === 'FOREIGN KEY' && column_name === name,

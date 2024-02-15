@@ -9,6 +9,54 @@ export const insertData = async (connection: Connection) => {
 
   const prisma = await createClient(connection);
 
+  const getBooleanSqlValue = (value: boolean | null) => {
+    if (value === null) return 'NULL';
+
+    return engine === 'postgresql' ? value : Number(value);
+  };
+
+  await prisma.$queryRawUnsafe(`
+    INSERT INTO data_types (
+      text_column,
+      text_column_nullable,
+      boolean_column,
+      boolean_column_nullable,
+      datetime_column,
+      datetime_column_nullable,
+      datetime_with_time_zone_column,
+      datetime_with_time_zone_column_nullable,
+      time_column,
+      time_column_nullable,
+      int_column,
+      int_column_nullable,
+      decimal_column,
+      decimal_column_nullable,
+      enum_column,
+      enum_column_nullable,
+      json_column,
+      json_column_nullable
+    ) VALUES (
+      'text',
+      NULL,
+      ${getBooleanSqlValue(true)},
+      NULL,
+      CURRENT_TIMESTAMP,
+      NULL,
+      CURRENT_TIMESTAMP,
+      NULL,
+      '12:34:56',
+      NULL,
+      123,
+      NULL,
+      123.45,
+      NULL,
+      'Alpha',
+      NULL,
+      '{"key": "value"}',
+      NULL
+    )
+  `);
+
   const users = faker.helpers.multiple(() => ({
     name: faker.person.fullName(),
     role: faker.helpers.arrayElement(['ADMIN', 'USER']),
@@ -40,12 +88,6 @@ export const insertData = async (connection: Connection) => {
     }),
     { count: 200 },
   );
-
-  const getBooleanSqlValue = (value: boolean | null) => {
-    if (value === null) return 'NULL';
-
-    return engine === 'postgresql' ? value : Number(value);
-  };
 
   await prisma.$queryRawUnsafe(`
     INSERT INTO posts (id, text, user_id, title, is_published, is_deleted, internal_note_1, internal_note_2, internal_note_3, internal_note_4)

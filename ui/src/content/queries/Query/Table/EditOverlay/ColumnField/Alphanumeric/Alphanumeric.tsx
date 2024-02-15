@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
 import { isNil } from 'lodash';
 import { Input } from '~/shared/components/Input/Input';
@@ -6,18 +6,29 @@ import classNames from 'classnames';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { EditContext } from '~/content/edit/Context';
 import { ChangeLocation } from '~/content/edit/types';
+import { DataType } from '~/content/queries/types';
+import { isDateTimeType, isIntegerType, isNumberType, isTimeType } from '../utils';
 
 export type AlphanumericProps = {
   autoFocus?: boolean;
+  dataType: DataType;
   isNullable?: boolean;
   locations: ChangeLocation[];
   multipleValues: boolean;
-  setValue: (newValue: string | null) => void;
-  value: string | null;
+  setValue: (newValue: Date | number | string | null) => void;
+  value: Date | number | string | null;
 };
 
 export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
-  const { autoFocus, isNullable, locations, multipleValues, setValue, value } = props;
+  const {
+    autoFocus,
+    dataType,
+    isNullable,
+    locations,
+    multipleValues,
+    setValue: setValueProp,
+    value,
+  } = props;
 
   const { getChangedValue } = useDefinedContext(EditContext);
 
@@ -30,7 +41,35 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
     return firstValueOriginalValue ? String(firstValueOriginalValue) : '';
   });
 
-  const valueAsString = value === null ? localTextValue : String(value);
+  const inputValue = useMemo(() => {
+    if (multipleValues || value === null) return localTextValue;
+
+    if (value instanceof Date) {
+      const date = new Date(value);
+      date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+      return date.toISOString().slice(0, 16);
+    }
+
+    return value === null ? localTextValue : String(value);
+  }, [localTextValue, multipleValues, value]);
+
+  const getType = () => {
+    if (isDateTimeType(dataType)) return 'datetime-local';
+    if (isTimeType(dataType)) return 'time';
+    if (isIntegerType(dataType)) return 'number';
+    return 'text';
+  };
+
+  const setValue = (newValue: string | null) => {
+    if (isDateTimeType(dataType)) {
+      if (newValue === null) return setValueProp(null);
+      setValueProp(newValue ? new Date(newValue) : new Date());
+    } else if (isNumberType(dataType)) {
+      setValueProp(newValue === null ? null : Number(newValue));
+    } else {
+      setValueProp(newValue);
+    }
+  };
 
   return (
     <>
@@ -43,16 +82,17 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
         }}
         onClick={() => {
           if (value !== null) return;
-          setValue(valueAsString);
+          setValue(inputValue);
         }}
         placeholder={value === undefined ? 'Multiple values' : undefined}
         readOnly={!multipleValues && value === null}
-        value={multipleValues ? undefined : valueAsString}
+        type={getType()}
+        value={multipleValues ? undefined : inputValue}
       />
       {isNullable && (
         <ButtonSelect
           monospace
-          onChange={(newValue) => setValue(newValue === null ? null : valueAsString)}
+          onChange={(newValue) => setValue(newValue === null ? null : inputValue)}
           options={[{ label: 'NULL', value: null }]}
           value={!multipleValues && value === null ? null : undefined}
         />

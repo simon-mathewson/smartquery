@@ -55,13 +55,13 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
     };
   }, [columnCount, selection, tableRef]);
 
-  const handleScroll = useDebouncedCallback(() => {
+  const handleScroll = useCallback(() => {
     if (!tableRef.current) {
       setScrollLeft(0);
       return;
     }
     setScrollLeft(tableRef.current.scrollLeft);
-  }, 10);
+  }, [tableRef]);
 
   useEffect(() => {
     const table = tableRef.current;
