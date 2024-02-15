@@ -52,7 +52,7 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
       {isNullable && (
         <ButtonSelect
           monospace
-          onChange={(newValue) => setValue(newValue === null ? null : value ?? '')}
+          onChange={(newValue) => setValue(newValue === null ? null : valueAsString)}
           options={[{ label: 'NULL', value: null }]}
           value={!multipleValues && value === null ? null : undefined}
         />
