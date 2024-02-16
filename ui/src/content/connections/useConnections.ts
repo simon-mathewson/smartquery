@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { initialConnections } from './initialConnections';
 import { useLocalStorageState } from '~/shared/hooks/useLocalStorageState';
 import type { ActiveConnection, Connection } from './types';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
 export const useConnections = () => {
   const [activeConnection, setActiveConnection] = useState<ActiveConnection | null>(null);
@@ -53,14 +54,27 @@ export const useConnections = () => {
     [activeConnection],
   );
 
-  useEffect(() => {
+  useEffectOnce(() => {
     const firstConnection = connections[0];
 
     if (!firstConnection) return;
 
     connect(firstConnection);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
+
+  useEffect(() => {
+    const handleBeforeUnload = async () => {
+      if (activeConnection) {
+        await trpc.disconnectDb.mutate(activeConnection.clientId);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [activeConnection]);
 
   return useMemo(
     () => ({

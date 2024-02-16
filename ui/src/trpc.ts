@@ -6,6 +6,12 @@ export const trpc = createTRPCProxyClient<AppRouter>({
   transformer: superjson,
   links: [
     httpBatchLink({
+      fetch: (input, init) =>
+        fetch(input, {
+          ...init,
+          // Keeps disconnect request on beforeonload alive when the user navigates away
+          keepalive: true,
+        }),
       url: 'http://localhost:3000',
     }),
   ],

@@ -61,6 +61,7 @@ export const router = t.router({
   }),
   disconnectDb: t.procedure.input(z.string()).mutation(async (props) => {
     const clientId = props.input;
+    if (!clients[clientId]) return;
 
     await clients[clientId]!.prisma.$disconnect();
 
