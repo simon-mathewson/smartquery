@@ -121,6 +121,9 @@ devDependencies:
   vite:
     specifier: ^5.0.8
     version: 5.0.10(@types/node@20.10.4)
+  vite-plugin-circular-dependency:
+    specifier: ^0.3.1
+    version: 0.3.1
 
 packages:
 
@@ -1057,7 +1060,6 @@ packages:
       '@types/estree': 1.0.5
       estree-walker: 2.0.2
       picomatch: 2.3.1
-    dev: false
 
   /@rollup/rollup-android-arm-eabi@4.9.0:
     resolution: {integrity: sha512-+1ge/xmaJpm1KVBuIH38Z94zj9fBD+hp+/5WLaHgyY8XLq1ibxk/zj6dTXaqM2cAbYKq8jYlhHd6k05If1W5xA==}
@@ -1412,7 +1414,6 @@ packages:
 
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
-    dev: false
 
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -2183,7 +2184,6 @@ packages:
 
   /estree-walker@2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
-    dev: false
 
   /esutils@2.0.3:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
@@ -3239,6 +3239,15 @@ packages:
     dependencies:
       inherits: 2.0.3
     dev: false
+
+  /vite-plugin-circular-dependency@0.3.1:
+    resolution: {integrity: sha512-87WQI+lYNPN6gnkJsdGvrMzgkAtfa0P0TSZjZ9y/AWcbt+EdZL27l3tB0k7QZJV6XoERniUlJmZs08LV/w4aRA==}
+    dependencies:
+      '@rollup/pluginutils': 5.1.0
+      chalk: 4.1.2
+    transitivePeerDependencies:
+      - rollup
+    dev: true
 
   /vite-plugin-svgr@4.2.0(typescript@5.3.3)(vite@5.0.10):
     resolution: {integrity: sha512-SC7+FfVtNQk7So0XMjrrtLAbEC8qjFPifyD7+fs/E6aaNdVde6umlVVh0QuwDLdOMu7vp5RiGFsB70nj5yo0XA==}

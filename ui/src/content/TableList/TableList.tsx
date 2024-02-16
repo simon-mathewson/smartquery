@@ -1,7 +1,7 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import React, { useEffect, useState } from 'react';
 import { Item } from './Item/Item';
-import { trpc } from '~/main';
+import { trpc } from '~/trpc';
 import { ConnectionsContext } from '../connections/Context';
 
 export const TableList: React.FC = () => {

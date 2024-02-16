@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import type { Column, DataType, Query, QueryToAdd } from './types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
-import { trpc } from '~/main';
+import { trpc } from '~/trpc';
 
 export const useQueries = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);

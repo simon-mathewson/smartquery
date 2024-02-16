@@ -5,7 +5,7 @@ import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import React, { useEffect, useState } from 'react';
 import { ConnectionForm } from './ConnectionForm/ConnectionForm';
-import { trpc } from '~/main';
+import { trpc } from '~/trpc';
 import { ConnectionsContext } from '~/content/connections/Context';
 
 export type ConnectionsProps = {

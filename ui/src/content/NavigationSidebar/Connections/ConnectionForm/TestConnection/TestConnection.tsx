@@ -1,9 +1,9 @@
 import { CheckCircleOutline, SettingsEthernet, WarningAmber } from '@mui/icons-material';
 import { Button } from '~/shared/components/Button/Button';
 import React, { useEffect, useState } from 'react';
-import type { ConnectionSchema, FormSchema} from '../utils';
+import type { ConnectionSchema, FormSchema } from '../utils';
 import { isFormValid } from '../utils';
-import { trpc } from '~/main';
+import { trpc } from '~/trpc';
 
 export type TestConnectionProps = {
   form: FormSchema;

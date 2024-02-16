@@ -1,4 +1,4 @@
-import { trpc } from '~/main';
+import { trpc } from '~/trpc';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { initialConnections } from './initialConnections';
 import { useLocalStorageState } from '~/shared/hooks/useLocalStorageState';

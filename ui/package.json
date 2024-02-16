@@ -49,6 +49,7 @@
     "tailwindcss": "^3.3.3",
     "tailwindcss-easing": "^0.2.1",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "vite-plugin-circular-dependency": "^0.3.1"
   }
 }
