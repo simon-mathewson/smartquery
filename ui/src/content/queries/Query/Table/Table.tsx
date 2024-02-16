@@ -39,7 +39,7 @@ export const Table: React.FC<TableProps> = (props) => {
           style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
         >
           {columns.map((column) => (
-            <Cell header key={column.name} value={column.name} />
+            <Cell column={column} header key={column.name} value={column.name} />
           ))}
           {rows.map((row, rowIndex) =>
             columns.map((column, columnIndex) => {
@@ -54,6 +54,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
               return (
                 <Cell
+                  column={column}
                   key={[row, column.name].join()}
                   hover={rowIndex === hoverRowIndex}
                   isChanged={changedValue !== undefined}

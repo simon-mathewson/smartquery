@@ -1,9 +1,11 @@
 import classNames from 'classnames';
 import React from 'react';
 import { DateTime } from 'luxon';
-import { Value } from '~/content/queries/types';
+import { Column, Value } from '~/content/queries/types';
+import { isTimeType } from '../EditOverlay/ColumnField/utils';
 
 export type CellProps = {
+  column: Column;
   header?: boolean;
   hover?: boolean;
   isChanged?: boolean;
@@ -13,7 +15,7 @@ export type CellProps = {
 };
 
 export const Cell: React.FC<CellProps> = (props) => {
-  const { header, hover, isChanged, rootProps, selected, value } = props;
+  const { column, header, hover, isChanged, rootProps, selected, value } = props;
 
   return (
     <div
@@ -46,6 +48,9 @@ export const Cell: React.FC<CellProps> = (props) => {
         })}
       >
         {(() => {
+          if (column.dataType && isTimeType(column.dataType) && value instanceof Date) {
+            return DateTime.fromJSDate(value).toFormat('HH:mm');
+          }
           if (value instanceof Date) {
             return DateTime.fromJSDate(value).toFormat('yyyy-MM-dd HH:mm:ss.SSS');
           }

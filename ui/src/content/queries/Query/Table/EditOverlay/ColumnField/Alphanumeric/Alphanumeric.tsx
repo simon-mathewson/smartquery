@@ -44,6 +44,12 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
   const inputValue = useMemo(() => {
     if (multipleValues || value === null) return localTextValue;
 
+    if (isTimeType(dataType)) {
+      if (value === null) return localTextValue;
+      if (value instanceof Date) return new Date(value).toISOString().slice(11, 16);
+      return value as string;
+    }
+
     if (value instanceof Date) {
       const date = new Date(value);
       date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
@@ -51,7 +57,7 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
     }
 
     return value === null ? localTextValue : String(value);
-  }, [localTextValue, multipleValues, value]);
+  }, [dataType, localTextValue, multipleValues, value]);
 
   const getType = () => {
     if (isDateTimeType(dataType)) return 'datetime-local';
@@ -61,7 +67,10 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
   };
 
   const setValue = (newValue: string | null) => {
-    if (isDateTimeType(dataType)) {
+    if (isTimeType(dataType)) {
+      if (newValue === null) return setValueProp(null);
+      setValueProp(newValue);
+    } else if (isDateTimeType(dataType)) {
       if (newValue === null) return setValueProp(null);
       setValueProp(newValue ? new Date(newValue) : new Date());
     } else if (isNumberType(dataType)) {
