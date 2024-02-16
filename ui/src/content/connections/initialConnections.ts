@@ -1,6 +1,6 @@
 import { uniqueId } from 'lodash';
 
-import { Connection } from './types';
+import type { Connection } from './types';
 
 export const initialConnections = [
   {

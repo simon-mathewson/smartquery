@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { getClosestDropMarker } from './utils';
 import { useDefinedContext } from '../../../shared/hooks/useDefinedContext';
-import { QueryToAdd } from '~/content/queries/types';
+import type { QueryToAdd } from '~/content/queries/types';
 import { DragAndDropContext } from '../Context';
 import { QueriesContext } from '~/content/queries/Context';
 

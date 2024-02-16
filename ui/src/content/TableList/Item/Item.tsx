@@ -3,7 +3,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { useDrag } from '~/content/dragAndDrop/useDrag/useDrag';
 import classNames from 'classnames';
 import React from 'react';
-import { QueryToAdd } from '../../queries/types';
+import type { QueryToAdd } from '../../queries/types';
 import { QueriesContext } from '~/content/queries/Context';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { withQuotes } from '~/shared/utils/sql';

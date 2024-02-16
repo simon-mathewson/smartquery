@@ -1,4 +1,4 @@
-import { DropMarker } from '../types';
+import type { DropMarker } from '../types';
 
 export const getClosestDropMarker = (dropMarkers: DropMarker[], x: number, y: number) => {
   const distances = dropMarkers.map((dropMarker) => {

@@ -1,5 +1,5 @@
-import { inferProcedureOutput } from '@trpc/server';
-import { AppRouter } from '../../../../link/src/main/router';
+import type { inferProcedureOutput } from '@trpc/server';
+import type { AppRouter } from '../../../../link/src/main/router';
 
 const dataTypes = [
   'bigint',

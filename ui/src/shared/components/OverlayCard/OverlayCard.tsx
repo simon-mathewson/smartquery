@@ -1,5 +1,6 @@
 import { useClickOutside } from '~/shared/hooks/useClickOutside/useClickOutside';
-import React, { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { mergeRefs } from 'react-merge-refs';
 import classNames from 'classnames';
 import { OverlayPortal } from '../OverlayPortal/OverlayPortal';

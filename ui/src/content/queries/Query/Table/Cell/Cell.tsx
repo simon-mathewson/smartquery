@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import { DateTime } from 'luxon';
-import { Column, Value } from '~/content/queries/types';
+import type { Column, Value } from '~/content/queries/types';
 import { isTimeType } from '../EditOverlay/ColumnField/utils';
 
 export type CellProps = {

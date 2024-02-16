@@ -1,4 +1,4 @@
-import { ChangeLocation, ChangeRow } from './types';
+import type { ChangeLocation, ChangeRow } from './types';
 
 export const doRowsMatch = (row1: ChangeRow, row2: ChangeRow) =>
   row1.primaryKeys.every(

@@ -1,5 +1,5 @@
 import { includes } from 'lodash';
-import { DataType } from '~/content/queries/types';
+import type { DataType } from '~/content/queries/types';
 
 export const isDateTimeType = (dataType: DataType) =>
   includes(

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Change, ChangeLocation, ChangeRow } from './types';
+import type { Change, ChangeLocation, ChangeRow } from './types';
 import { doChangeLocationsMatch } from './utils';
 import { useLocalStorageState } from '~/shared/hooks/useLocalStorageState';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';

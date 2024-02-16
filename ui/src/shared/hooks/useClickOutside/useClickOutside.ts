@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { HtmlRef } from '~/shared/types';
+import type { HtmlRef } from '~/shared/types';
 import { useDefinedContext } from '../useDefinedContext';
 import { ClickOutsideQueueContext } from './useQueue/Context';
 

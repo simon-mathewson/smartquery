@@ -1,10 +1,11 @@
 import { range } from 'lodash';
 import { useMemo } from 'react';
-import { Query } from '~/content/queries/types';
+import type { Query } from '~/content/queries/types';
 import { getPrimaryKeys } from '~/content/queries/utils';
 import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
-import { ColumnField, ColumnFieldProps } from './ColumnField/ColumnField';
+import type { ColumnFieldProps } from './ColumnField/ColumnField';
+import { ColumnField } from './ColumnField/ColumnField';
 
 export type EditModalProps = {
   columnCount: number;

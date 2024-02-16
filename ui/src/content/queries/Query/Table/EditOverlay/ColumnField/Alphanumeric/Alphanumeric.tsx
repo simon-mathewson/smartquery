@@ -5,8 +5,8 @@ import { Input } from '~/shared/components/Input/Input';
 import classNames from 'classnames';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { EditContext } from '~/content/edit/Context';
-import { ChangeLocation } from '~/content/edit/types';
-import { DataType } from '~/content/queries/types';
+import type { ChangeLocation } from '~/content/edit/types';
+import type { DataType } from '~/content/queries/types';
 import { isDateTimeType, isIntegerType, isNumberType, isTimeType } from '../utils';
 
 export type AlphanumericProps = {

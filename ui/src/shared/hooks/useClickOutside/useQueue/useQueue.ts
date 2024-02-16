@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { HtmlRef } from '~/shared/types';
+import type { HtmlRef } from '~/shared/types';
 
 export const useQueue = () => {
   const [refs, setRefs] = useState<HtmlRef[]>([]);

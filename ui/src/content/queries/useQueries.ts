@@ -1,6 +1,6 @@
 import { uniq, uniqueId } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
-import { Column, DataType, Query, QueryToAdd } from './types';
+import type { Column, DataType, Query, QueryToAdd } from './types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { trpc } from '~/main';

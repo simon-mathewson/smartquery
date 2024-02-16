@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { EditContext } from '~/content/edit/Context';
-import { ChangeLocation, PrimaryKey } from '~/content/edit/types';
-import { Column, Query, Value } from '~/content/queries/types';
+import type { ChangeLocation, PrimaryKey } from '~/content/edit/types';
+import type { Column, Query, Value } from '~/content/queries/types';
 import { Field } from '~/shared/components/Field/Field';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Boolean } from './Boolean/Boolean';

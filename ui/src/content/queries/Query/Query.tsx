@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Query as QueryType } from '../types';
+import type { Query as QueryType } from '../types';
 import { Table } from './Table/Table';
 import { Editor } from '../../../shared/components/Editor/Editor';
 import { Button } from '../../../shared/components/Button/Button';

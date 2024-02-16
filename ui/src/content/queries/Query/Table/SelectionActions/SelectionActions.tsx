@@ -4,7 +4,7 @@ import { Button } from '~/shared/components/Button/Button';
 import { useDebouncedCallback } from 'use-debounce';
 import { popoverHeight, popoverMargin } from './constants';
 import { EditOverlay } from '../EditOverlay/EditOverlay';
-import { Query } from '~/content/queries/types';
+import type { Query } from '~/content/queries/types';
 
 export type SelectionActionsProps = {
   columnCount: number;

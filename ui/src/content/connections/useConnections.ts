@@ -2,7 +2,7 @@ import { trpc } from '~/main';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { initialConnections } from './initialConnections';
 import { useLocalStorageState } from '~/shared/hooks/useLocalStorageState';
-import { ActiveConnection, Connection } from './types';
+import type { ActiveConnection, Connection } from './types';
 
 export const useConnections = () => {
   const [activeConnection, setActiveConnection] = useState<ActiveConnection | null>(null);

@@ -1,5 +1,6 @@
 import { createContext } from 'react';
-import React, { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
+import React from 'react';
 import { useQueue } from './useQueue';
 
 export const ClickOutsideQueueContext = createContext<ReturnType<typeof useQueue> | null>(null);

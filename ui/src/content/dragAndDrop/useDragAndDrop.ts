@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { DropMarker } from './types';
+import type { DropMarker } from './types';
 
 export const useDragAndDrop = () => {
   const [dropMarkers, setDropMarkers] = useState<DropMarker[]>([]);

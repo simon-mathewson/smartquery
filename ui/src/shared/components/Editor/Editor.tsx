@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
+import type { ReactCodeMirrorRef } from '@uiw/react-codemirror';
+import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { githubLightInit } from '@uiw/codemirror-theme-github';
 import { Button } from '~/shared/components/Button/Button';
