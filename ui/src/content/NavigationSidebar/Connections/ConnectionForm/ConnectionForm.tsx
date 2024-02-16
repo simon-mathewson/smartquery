@@ -9,7 +9,7 @@ import { Select } from '~/shared/components/Select/Select';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Header } from '../../../../shared/components/Header/Header';
 import { TestConnection } from './TestConnection/TestConnection';
-import type { FormSchema} from './utils';
+import type { FormSchema } from './utils';
 import { connectionSchema, isFormValid } from './utils';
 import { Field } from '~/shared/components/Field/Field';
 

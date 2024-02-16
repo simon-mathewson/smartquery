@@ -1,9 +1,7 @@
-import { createContext } from 'react';
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 import { useQueue } from './useQueue';
-
-export const ClickOutsideQueueContext = createContext<ReturnType<typeof useQueue> | null>(null);
+import { ClickOutsideQueueContext } from './Context';
 
 export const ClickOutsideQueueProvider: React.FC<PropsWithChildren> = (props) => {
   const { children } = props;

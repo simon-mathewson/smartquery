@@ -1,9 +1,7 @@
-import { createContext } from 'react';
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 import { useConnections } from './useConnections';
-
-export const ConnectionsContext = createContext<ReturnType<typeof useConnections> | null>(null);
+import { ConnectionsContext } from './Context';
 
 export const ConnectionsProvider: React.FC<PropsWithChildren> = (props) => {
   const { children } = props;
