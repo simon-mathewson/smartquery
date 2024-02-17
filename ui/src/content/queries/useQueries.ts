@@ -22,6 +22,7 @@ export const useQueries = () => {
       const sql = `
         SELECT
           c.column_name AS column_name,
+          c.ordinal_position AS ordinal_position,
           c.data_type AS data_type,
           c.is_nullable AS is_nullable,
           tc.constraint_type AS constraint_type
@@ -53,9 +54,10 @@ export const useQueries = () => {
         AND c.${databaseColumn} = '${database}'
         ${
           engine === 'postgresql'
-            ? `GROUP BY c.column_name, c.data_type, c.is_nullable, tc.constraint_type`
+            ? `GROUP BY c.column_name, c.ordinal_position, c.data_type, c.is_nullable, tc.constraint_type`
             : ''
         }
+        ORDER BY c.ordinal_position;
       `;
 
       const [rawColumns] = await trpc.sendQuery.query([clientId, sql]);
