@@ -24,7 +24,6 @@ export const Boolean: React.FC<BooleanProps> = (props) => {
       options={[
         { label: 'TRUE', value: true },
         { label: 'FALSE', value: false },
-        ...(isNullable ? [{ label: 'NULL', value: null }] : []),
       ]}
       value={multipleValues ? undefined : value}
     />

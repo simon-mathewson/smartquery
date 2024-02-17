@@ -6,6 +6,7 @@ import { Field } from '~/shared/components/Field/Field';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Boolean } from './Boolean/Boolean';
 import { Alphanumeric } from './Alphanumeric/Alphanumeric';
+import { NullButton } from './Null/Null';
 
 export type ColumnFieldProps = {
   autoFocus?: boolean;
@@ -47,6 +48,8 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
     locations.forEach((location) => handleChange({ location, value: newValue }));
   };
 
+  const value = values[0];
+
   return (
     <Field label={column.name}>
       {(() => {
@@ -56,7 +59,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
               multipleValues={multipleValues}
               isNullable={column.isNullable}
               setValue={setValue}
-              value={values[0] as boolean | null}
+              value={value as boolean | null}
             />
           );
         }
@@ -64,14 +67,19 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
           <Alphanumeric
             autoFocus={autoFocus}
             dataType={column.dataType!}
-            isNullable={column.isNullable}
             locations={locations}
             multipleValues={multipleValues}
             setValue={setValue}
-            value={values[0] as string | null}
+            value={value as string | null}
           />
         );
       })()}
+      <NullButton
+        isNullable={column.isNullable}
+        multipleValues={multipleValues}
+        setValue={setValue}
+        value={value}
+      />
     </Field>
   );
 };

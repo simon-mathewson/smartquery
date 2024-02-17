@@ -1,18 +1,16 @@
-import React, { useMemo, useState } from 'react';
-import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
-import { isNil } from 'lodash';
-import { Input } from '~/shared/components/Input/Input';
 import classNames from 'classnames';
+import { isNil } from 'lodash';
+import React, { useMemo, useState } from 'react';
+import type { DataType } from '~/content/queries/types';
+import { Input } from '~/shared/components/Input/Input';
+import { isDateTimeType, isIntegerType, isNumberType, isTimeType } from '../utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { EditContext } from '~/content/edit/Context';
 import type { ChangeLocation } from '~/content/edit/types';
-import type { DataType } from '~/content/queries/types';
-import { isDateTimeType, isIntegerType, isNumberType, isTimeType } from '../utils';
 
 export type AlphanumericProps = {
   autoFocus?: boolean;
   dataType: DataType;
-  isNullable?: boolean;
   locations: ChangeLocation[];
   multipleValues: boolean;
   setValue: (newValue: Date | number | string | null) => void;
@@ -20,15 +18,7 @@ export type AlphanumericProps = {
 };
 
 export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
-  const {
-    autoFocus,
-    dataType,
-    isNullable,
-    locations,
-    multipleValues,
-    setValue: setValueProp,
-    value,
-  } = props;
+  const { autoFocus, dataType, locations, multipleValues, setValue: setValueProp, value } = props;
 
   const { getChangedValue } = useDefinedContext(EditContext);
 
@@ -81,31 +71,21 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
   };
 
   return (
-    <>
-      <Input
-        autoFocus={autoFocus}
-        className={classNames('grow', { 'cursor-pointer': !multipleValues && value === null })}
-        onChange={(newValue) => {
-          setLocalTextValue(newValue);
-          setValue(newValue);
-        }}
-        onClick={() => {
-          if (value !== null) return;
-          setValue(inputValue);
-        }}
-        placeholder={value === undefined ? 'Multiple values' : undefined}
-        readOnly={!multipleValues && value === null}
-        type={getType()}
-        value={multipleValues ? undefined : inputValue}
-      />
-      {isNullable && (
-        <ButtonSelect
-          monospace
-          onChange={(newValue) => setValue(newValue === null ? null : inputValue)}
-          options={[{ label: 'NULL', value: null }]}
-          value={!multipleValues && value === null ? null : undefined}
-        />
-      )}
-    </>
+    <Input
+      autoFocus={autoFocus}
+      className={classNames('grow', { 'cursor-pointer': !multipleValues && value === null })}
+      onChange={(newValue) => {
+        setLocalTextValue(newValue);
+        setValue(newValue);
+      }}
+      onClick={() => {
+        if (value !== null) return;
+        setValue(inputValue);
+      }}
+      placeholder={value === undefined ? 'Multiple values' : undefined}
+      readOnly={!multipleValues && value === null}
+      type={getType()}
+      value={multipleValues ? undefined : inputValue}
+    />
   );
 };
