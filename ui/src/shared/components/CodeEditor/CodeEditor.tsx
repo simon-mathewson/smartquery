@@ -1,7 +1,7 @@
 import { sql } from '@codemirror/lang-sql';
 import { githubLightInit } from '@uiw/codemirror-theme-github';
 import type { ReactCodeMirrorRef } from '@uiw/react-codemirror';
-import CodeMirror from '@uiw/react-codemirror';
+import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import React from 'react';
 import colors from 'tailwindcss/colors';
@@ -13,11 +13,12 @@ export type CodeEditorProps = {
   onChange?: (value: string) => void;
   language: 'json' | 'sql';
   large?: boolean;
+  hideLineNumbers?: boolean;
   value: string | undefined;
 };
 
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
-  const { autoFocus, editorRef, onChange, language, large, value } = props;
+  const { autoFocus, editorRef, hideLineNumbers, onChange, language, large, value } = props;
 
   const theme = githubLightInit({
     settings: {
@@ -34,9 +35,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   return (
     <CodeMirror
       autoFocus={autoFocus}
-      basicSetup={{ autocompletion: false, lineNumbers: false, foldGutter: false }}
+      basicSetup={{
+        autocompletion: false,
+        foldGutter: false,
+        lineNumbers: !hideLineNumbers,
+      }}
       className={large ? 'cm-min-height-large' : 'cm-min-height-small'}
-      extensions={[language === 'sql' ? sql() : json()]}
+      extensions={[language === 'sql' ? sql() : json(), EditorView.lineWrapping]}
       onChange={(sql) => onChange?.(sql)}
       ref={editorRef}
       theme={theme}

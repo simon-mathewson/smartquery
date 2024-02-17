@@ -15,6 +15,11 @@
   background-color: transparent;
 }
 
+.cm-gutterElement {
+  padding-left: 7px !important;
+  padding-right: 7px !important;
+}
+
 .cm-min-height-small .cm-content,
 .cm-min-height-small .cm-gutter {
   min-height: 30px !important;

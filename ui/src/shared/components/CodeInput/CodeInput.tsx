@@ -23,7 +23,13 @@ export const CodeInput: React.FC<CodeInputProps> = (props) => {
       )}
       onClick={onClick}
     >
-      <CodeEditor autoFocus={autoFocus} language={language} onChange={onChange} value={value} />
+      <CodeEditor
+        autoFocus={autoFocus}
+        hideLineNumbers
+        language={language}
+        onChange={onChange}
+        value={value}
+      />
     </div>
   );
 };
