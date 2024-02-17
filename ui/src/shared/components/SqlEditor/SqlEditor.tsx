@@ -8,12 +8,12 @@ import './styles.css';
 import { Send } from '@mui/icons-material';
 import colors from 'tailwindcss/colors';
 
-export type EditorProps = {
+export type SqlEditorProps = {
   initialValue?: string;
   onSubmit?: (sql: string) => void;
 };
 
-export const Editor: React.FC<EditorProps> = (props) => {
+export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const { initialValue, onSubmit } = props;
 
   const [value, setValue] = useState('');

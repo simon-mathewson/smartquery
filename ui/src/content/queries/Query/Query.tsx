@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Query as QueryType } from '../types';
 import { Table } from './Table/Table';
-import { Editor } from '../../../shared/components/Editor/Editor';
+import { SqlEditor } from '../../../shared/components/SqlEditor/SqlEditor';
 import { Button } from '../../../shared/components/Button/Button';
 import { Close, Code } from '@mui/icons-material';
 import { Header } from '../../../shared/components/Header/Header';
@@ -47,7 +47,10 @@ export const Query: React.FC<QueryProps> = (props) => {
       />
       {showEditor && (
         <div className="px-2 pb-2">
-          <Editor initialValue={query.sql ?? ''} onSubmit={(sql) => updateQuery(query.id, sql)} />
+          <SqlEditor
+            initialValue={query.sql ?? ''}
+            onSubmit={(sql) => updateQuery(query.id, sql)}
+          />
         </div>
       )}
 

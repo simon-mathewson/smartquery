@@ -3,7 +3,7 @@ import { ConnectionsContext } from '~/content/connections/Context';
 import { EditContext } from '~/content/edit/Context';
 import { QueriesContext } from '~/content/queries/Context';
 import { trpc } from '~/trpc';
-import { Editor } from '~/shared/components/Editor/Editor';
+import { SqlEditor } from '~/shared/components/SqlEditor/SqlEditor';
 import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 
@@ -22,7 +22,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
     <OverlayCard align="right" triggerRef={triggerRef}>
       {() => (
         <div className="p-4">
-          <Editor
+          <SqlEditor
             initialValue={sql}
             onSubmit={async (sql) => {
               if (!activeConnection) return;
