@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
 import { ConnectionsProvider } from './content/connections/Provider';
-import { QueriesProvider } from './content/queries/Context';
+import { QueriesProvider } from './content/queries/Provider';
 import { DragAndDropProvider } from './content/dragAndDrop/Provider';
 import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQueue/Provider';
 import { EditProvider } from './content/edit/Provider';
