@@ -10,12 +10,17 @@
   outline: none;
 }
 
-.cm-content,
-.cm-gutter {
-  min-height: 80px !important;
-}
-
 .cm-editor:not(.cm-focused) .cm-activeLine,
 .cm-editor:not(.cm-focused) .cm-activeLineGutter {
   background-color: transparent;
+}
+
+.cm-min-height-small .cm-content,
+.cm-min-height-small .cm-gutter {
+  min-height: 30px !important;
+}
+
+.cm-min-height-large .cm-content,
+.cm-min-height-large .cm-gutter {
+  min-height: 80px !important;
 }

@@ -9,6 +9,7 @@ import { Alphanumeric } from './Alphanumeric/Alphanumeric';
 import { NullButton } from './Null/Null';
 import { isEnumType } from './utils';
 import { EnumField } from './EnumField/EnumField';
+import { CodeInput } from '~/shared/components/CodeInput/CodeInput';
 
 export type ColumnFieldProps = {
   autoFocus?: boolean;
@@ -73,6 +74,22 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
               multipleValues={multipleValues}
               setValue={setValue}
               value={value as string | null}
+            />
+          );
+        }
+        if (column.dataType === 'json') {
+          return (
+            <CodeInput
+              autoFocus={autoFocus}
+              language="sql"
+              onChange={(value) => setValue(JSON.parse(value))}
+              onClick={() => {
+                if (value !== null) return;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                setValue({} as any);
+              }}
+              readOnly={value === null}
+              value={value === null ? undefined : JSON.stringify(value)}
             />
           );
         }

@@ -1,12 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import type { ReactCodeMirrorRef } from '@uiw/react-codemirror';
-import CodeMirror from '@uiw/react-codemirror';
-import { sql } from '@codemirror/lang-sql';
-import { githubLightInit } from '@uiw/codemirror-theme-github';
-import { Button } from '~/shared/components/Button/Button';
-import './styles.css';
 import { Send } from '@mui/icons-material';
-import colors from 'tailwindcss/colors';
+import type { ReactCodeMirrorRef } from '@uiw/react-codemirror';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button } from '~/shared/components/Button/Button';
+import { CodeEditor } from '../CodeEditor/CodeEditor';
 
 export type SqlEditorProps = {
   initialValue?: string;
@@ -21,18 +17,6 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   useEffect(() => {
     setValue(initialValue ?? '');
   }, [initialValue]);
-
-  const theme = githubLightInit({
-    settings: {
-      background: 'transparent',
-      fontFamily: 'Fira Mono, monospace',
-      gutterBackground: colors.gray[50],
-      gutterBorder: '#eee',
-      lineHighlight: `${colors.blue[500]}11`,
-      selection: colors.blue[200],
-      selectionMatch: colors.blue[100],
-    },
-  });
 
   const editorRef = React.useRef<ReactCodeMirrorRef>(null);
 
@@ -64,15 +48,12 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   return (
     <div className="grid w-full min-w-[560px] gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pt-1">
-      <CodeMirror
+      <CodeEditor
         autoFocus
-        basicSetup={{
-          autocompletion: false,
-        }}
-        extensions={[sql()]}
+        editorRef={editorRef}
+        language="sql"
+        large
         onChange={(sql) => setValue(sql)}
-        ref={editorRef}
-        theme={theme}
         value={value}
       />
       <Button
