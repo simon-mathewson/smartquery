@@ -27,6 +27,7 @@ export type DataType = (typeof dataTypes)[number];
 
 export type Column = {
   dataType?: DataType;
+  enumValues?: string[] | null;
   isForeignKey?: boolean;
   isNullable?: boolean;
   isPrimaryKey?: boolean;

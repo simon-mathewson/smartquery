@@ -7,6 +7,8 @@ export const isDateTimeType = (dataType: DataType) =>
     dataType,
   );
 
+export const isEnumType = (dataType: DataType) => includes(['enum', 'user-defined'], dataType);
+
 export const isIntegerType = (dataType: DataType) => includes(['int', 'integer'], dataType);
 
 export const isNumberType = (dataType: DataType) =>

@@ -7,6 +7,8 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Boolean } from './Boolean/Boolean';
 import { Alphanumeric } from './Alphanumeric/Alphanumeric';
 import { NullButton } from './Null/Null';
+import { isEnumType } from './utils';
+import { EnumField } from './EnumField/EnumField';
 
 export type ColumnFieldProps = {
   autoFocus?: boolean;
@@ -60,6 +62,17 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
               isNullable={column.isNullable}
               setValue={setValue}
               value={value as boolean | null}
+            />
+          );
+        }
+        if (isEnumType(column.dataType!) && column.enumValues) {
+          return (
+            <EnumField
+              column={column}
+              isNullable={column.isNullable}
+              multipleValues={multipleValues}
+              setValue={setValue}
+              value={value as string | null}
             />
           );
         }
