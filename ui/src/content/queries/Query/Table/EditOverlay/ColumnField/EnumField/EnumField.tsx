@@ -1,14 +1,14 @@
 import { isNil } from 'lodash';
 import React from 'react';
-import type { Column } from '~/content/queries/types';
+import type { Column, Value } from '~/content/queries/types';
 import { Select } from '~/shared/components/Select/Select';
 
 export type EnumFieldProps = {
   column: Column;
   isNullable?: boolean;
   multipleValues: boolean;
-  setValue: (newValue: string | null) => void;
-  value: string | null;
+  setValue: (newValue: Value) => void;
+  value: Value;
 };
 
 export const EnumField: React.FC<EnumFieldProps> = (props) => {

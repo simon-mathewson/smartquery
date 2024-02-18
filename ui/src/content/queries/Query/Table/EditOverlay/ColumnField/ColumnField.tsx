@@ -4,7 +4,7 @@ import type { ChangeLocation, PrimaryKey } from '~/content/edit/types';
 import type { Column, Query, Value } from '~/content/queries/types';
 import { Field } from '~/shared/components/Field/Field';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { Boolean } from './Boolean/Boolean';
+import { BooleanField } from './Boolean/Boolean';
 import { Alphanumeric } from './Alphanumeric/Alphanumeric';
 import { NullButton } from './Null/Null';
 import { isEnumType } from './utils';
@@ -58,11 +58,11 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
       {(() => {
         if (column.dataType === 'boolean') {
           return (
-            <Boolean
+            <BooleanField
               multipleValues={multipleValues}
               isNullable={column.isNullable}
               setValue={setValue}
-              value={value as boolean | null}
+              value={value}
             />
           );
         }
@@ -82,14 +82,13 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
             <CodeInput
               autoFocus={autoFocus}
               language="sql"
-              onChange={(value) => setValue(JSON.parse(value))}
+              onChange={(value) => setValue(value)}
               onClick={() => {
                 if (value !== null) return;
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                setValue({} as any);
+                setValue('');
               }}
               readOnly={value === null}
-              value={value === null ? undefined : JSON.stringify(value)}
+              value={value === null ? undefined : value}
             />
           );
         }
@@ -100,7 +99,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
             locations={locations}
             multipleValues={multipleValues}
             setValue={setValue}
-            value={value as string | null}
+            value={value}
           />
         );
       })()}

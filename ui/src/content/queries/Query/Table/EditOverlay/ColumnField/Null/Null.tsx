@@ -5,8 +5,8 @@ import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
 export type NullButtonProps = {
   isNullable?: boolean;
   multipleValues: boolean;
-  setValue: (newValue: Date | number | string | null) => void;
-  value: Value | null;
+  setValue: (newValue: Value) => void;
+  value: Value;
 };
 
 export const NullButton: React.FC<NullButtonProps> = (props) => {

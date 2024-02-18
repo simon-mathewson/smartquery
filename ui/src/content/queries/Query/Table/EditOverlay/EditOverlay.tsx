@@ -29,7 +29,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
           _selectedColumnIndices.length === 0 ? range(columnCount) : _selectedColumnIndices;
 
         selectedColumnIndices.forEach((columnIndex) => {
-          const column = query.columns[columnIndex];
+          const column = query.columns![columnIndex];
           const value = query.rows[rowIndex][column.name];
 
           if (!newColumnsWithValues[columnIndex]) {
@@ -37,7 +37,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
           }
 
           newColumnsWithValues[columnIndex].rows.push({
-            primaryKeys: getPrimaryKeys(query, rowIndex),
+            primaryKeys: getPrimaryKeys(query.columns!, query.rows, rowIndex),
             value,
           });
         });

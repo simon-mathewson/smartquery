@@ -1,45 +1,20 @@
 import type { inferProcedureOutput } from '@trpc/server';
 import type { AppRouter } from '../../../../link/src/main/router';
 
-const dataTypes = [
-  'bigint',
-  'boolean',
-  'char',
-  'character varying',
-  'datetime',
-  'decimal',
-  'enum',
-  'int',
-  'integer',
-  'json',
-  'time with time zone',
-  'time without time zone',
-  'time',
-  'timestamp with time zone',
-  'timestamp without time zone',
-  'timestamp',
-  'tinyint',
-  'user-defined',
-  'varchar',
-] as const;
-
-export type DataType = (typeof dataTypes)[number];
-
-export type Column = {
-  dataType?: DataType;
-  enumValues?: string[] | null;
-  isForeignKey?: boolean;
-  isNullable?: boolean;
-  isPrimaryKey?: boolean;
-  name: string;
-};
-
-export type Value = inferProcedureOutput<
+export type SendQueryResponse = inferProcedureOutput<
   AppRouter['_def']['procedures']['sendQuery']
->[number][number][string];
+>[number];
+
+export type Row = SendQueryResponse['rows'][number];
+
+export type Value = Row[string];
+
+export type Column = NonNullable<SendQueryResponse['columns']>[number];
+
+export type DataType = Column['dataType'];
 
 export type Query = {
-  columns: Column[];
+  columns: Column[] | null;
   hasResults: boolean;
   id: string;
   rows: Array<Record<string, Value>>;

@@ -1,15 +1,16 @@
 import React from 'react';
 import { isNil } from 'lodash';
 import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
+import type { Value } from '~/content/queries/types';
 
-export type BooleanProps = {
+export type BooleanFieldProps = {
   isNullable?: boolean;
   multipleValues: boolean;
-  setValue: (newValue: boolean | null) => void;
-  value: boolean | null;
+  setValue: (newValue: Value) => void;
+  value: Value;
 };
 
-export const Boolean: React.FC<BooleanProps> = (props) => {
+export const BooleanField: React.FC<BooleanFieldProps> = (props) => {
   const { isNullable, multipleValues, setValue, value } = props;
 
   return (
@@ -19,13 +20,13 @@ export const Boolean: React.FC<BooleanProps> = (props) => {
       monospace
       onChange={(newValue) => {
         if (newValue === undefined && !isNullable) return;
-        setValue(isNil(newValue) ? null : newValue);
+        setValue(isNil(newValue) ? null : String(newValue).toUpperCase());
       }}
       options={[
         { label: 'TRUE', value: true },
         { label: 'FALSE', value: false },
       ]}
-      value={multipleValues ? undefined : value}
+      value={multipleValues || value === null ? undefined : value === 'TRUE'}
     />
   );
 };

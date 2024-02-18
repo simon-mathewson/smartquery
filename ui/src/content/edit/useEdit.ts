@@ -106,9 +106,7 @@ export const useEdit = () => {
         return `UPDATE ${withQuotes(engine, location.table)}\nSET ${withQuotes(
           engine,
           location.column,
-        )} = ${
-          value === null ? 'NULL' : `'${value instanceof Date ? value.toISOString() : value}'`
-        }\nWHERE ${primaryKeyConditions};`;
+        )} = ${value === null ? 'NULL' : `'${value}'`}\nWHERE ${primaryKeyConditions};`;
       })
       .join('\n\n');
   }, [activeConnection, changes]);

@@ -1,11 +1,10 @@
 import classNames from 'classnames';
 import React from 'react';
-import { DateTime } from 'luxon';
 import type { Column, Value } from '~/content/queries/types';
-import { isTimeType } from '../EditOverlay/ColumnField/utils';
+import { isDateTimeType, isNumberType, isTimeType } from '../EditOverlay/ColumnField/utils';
 
 export type CellProps = {
-  column: Column;
+  column: Column | string;
   header?: boolean;
   hover?: boolean;
   isChanged?: boolean;
@@ -40,25 +39,17 @@ export const Cell: React.FC<CellProps> = (props) => {
           'font-mono font-medium text-gray-800': header,
           'text-gray-500': !header,
           'text-white': selected,
-          'font-mono font-medium uppercase':
-            value === null ||
-            typeof value === 'boolean' ||
-            typeof value === 'number' ||
-            value instanceof Date,
+          'font-mono font-medium':
+            !header &&
+            (value === null ||
+              (typeof column === 'object' &&
+                (['boolean', 'json'].includes(column.dataType) ||
+                  isDateTimeType(column.dataType) ||
+                  isNumberType(column.dataType) ||
+                  isTimeType(column.dataType)))),
         })}
       >
-        {(() => {
-          if (column.dataType && isTimeType(column.dataType) && value instanceof Date) {
-            return DateTime.fromJSDate(value).toFormat('HH:mm');
-          }
-          if (value instanceof Date) {
-            return DateTime.fromJSDate(value).toFormat('yyyy-MM-dd HH:mm:ss.SSS');
-          }
-          if (typeof value === 'object') {
-            return JSON.stringify(value);
-          }
-          return String(value);
-        })()}
+        {value === null ? 'NULL' : value}
       </div>
     </div>
   );

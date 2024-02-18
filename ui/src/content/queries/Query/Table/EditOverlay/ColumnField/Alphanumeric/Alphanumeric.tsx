@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { isNil } from 'lodash';
 import React, { useMemo, useState } from 'react';
-import type { DataType } from '~/content/queries/types';
+import type { DataType, Value } from '~/content/queries/types';
 import { Input } from '~/shared/components/Input/Input';
-import { isDateTimeType, isIntegerType, isNumberType, isTimeType } from '../utils';
+import { isDateTimeType, isIntegerType, isTimeType } from '../utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { EditContext } from '~/content/edit/Context';
 import type { ChangeLocation } from '~/content/edit/types';
@@ -13,12 +13,12 @@ export type AlphanumericProps = {
   dataType: DataType;
   locations: ChangeLocation[];
   multipleValues: boolean;
-  setValue: (newValue: Date | number | string | null) => void;
-  value: Date | number | string | null;
+  setValue: (newValue: Value) => void;
+  value: Value;
 };
 
 export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
-  const { autoFocus, dataType, locations, multipleValues, setValue: setValueProp, value } = props;
+  const { autoFocus, dataType, locations, multipleValues, setValue, value } = props;
 
   const { getChangedValue } = useDefinedContext(EditContext);
 
@@ -34,19 +34,11 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
   const inputValue = useMemo(() => {
     if (multipleValues || value === null) return localTextValue;
 
-    if (isTimeType(dataType)) {
-      if (value === null) return localTextValue;
-      if (value instanceof Date) return new Date(value).toISOString().slice(11, 16);
-      return value as string;
-    }
+    if (isTimeType(dataType)) return value.slice(0, 5);
 
-    if (value instanceof Date) {
-      const date = new Date(value);
-      date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-      return date.toISOString().slice(0, 16);
-    }
+    if (isDateTimeType(dataType)) return value.slice(0, 16);
 
-    return value === null ? localTextValue : String(value);
+    return value === null ? localTextValue : value;
   }, [dataType, localTextValue, multipleValues, value]);
 
   const getType = () => {
@@ -54,20 +46,6 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
     if (isTimeType(dataType)) return 'time';
     if (isIntegerType(dataType)) return 'number';
     return 'text';
-  };
-
-  const setValue = (newValue: string | null) => {
-    if (isTimeType(dataType)) {
-      if (newValue === null) return setValueProp(null);
-      setValueProp(newValue);
-    } else if (isDateTimeType(dataType)) {
-      if (newValue === null) return setValueProp(null);
-      setValueProp(newValue ? new Date(newValue) : new Date());
-    } else if (isNumberType(dataType)) {
-      setValueProp(newValue === null ? null : Number(newValue));
-    } else {
-      setValueProp(newValue);
-    }
   };
 
   return (

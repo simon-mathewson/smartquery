@@ -1,5 +1,5 @@
 import { includes } from 'lodash';
-import type { DataType } from '~/content/queries/types';
+import type { DataType } from './types';
 
 export const isDateTimeType = (dataType: DataType) =>
   includes(
@@ -12,7 +12,10 @@ export const isEnumType = (dataType: DataType) => includes(['enum', 'user-define
 export const isIntegerType = (dataType: DataType) => includes(['int', 'integer'], dataType);
 
 export const isNumberType = (dataType: DataType) =>
-  isIntegerType(dataType) || includes(['decimal', 'numeric'], dataType);
+  isIntegerType(dataType) || includes(['decimal'], dataType);
+
+export const isTextType = (dataType: DataType) =>
+  includes(['char', 'character varying', 'varchar', 'text'], dataType);
 
 export const isTimeType = (dataType: DataType) =>
   includes(['time', 'time with time zone', 'time without time zone'], dataType);

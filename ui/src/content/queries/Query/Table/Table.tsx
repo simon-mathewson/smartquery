@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Cell } from './Cell/Cell';
-import type { Query as QueryType } from '../../types';
+import type { Column, Query as QueryType } from '../../types';
 import { useCellSelection } from './useCellSelection';
 import { SelectionActions } from './SelectionActions/SelectionActions';
 import classNames from 'classnames';
@@ -15,8 +15,10 @@ export type TableProps = {
 export const Table: React.FC<TableProps> = (props) => {
   const {
     query,
-    query: { columns, hasResults, rows },
+    query: { columns: columnsProp, hasResults, rows },
   } = props;
+
+  const columns = columnsProp ?? Object.keys(rows[0] ?? {});
 
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
@@ -38,24 +40,30 @@ export const Table: React.FC<TableProps> = (props) => {
           ref={tableRef}
           style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
         >
-          {columns.map((column) => (
-            <Cell column={column} header key={column.name} value={column.name} />
-          ))}
+          {columns.map((column) => {
+            const columnName = typeof column === 'object' ? column.name : column;
+            return <Cell column={column} header key={columnName} value={columnName} />;
+          })}
           {rows.map((row, rowIndex) =>
             columns.map((column, columnIndex) => {
-              const value = row[column.name];
-              const changedValue = query.table
-                ? getChangedValue({
-                    column: column.name,
-                    row: { primaryKeys: getPrimaryKeys(query, rowIndex), value },
-                    table: query.table,
-                  })
-                : undefined;
+              const columnName = typeof column === 'object' ? column.name : column;
+              const value = row[columnName];
+              const changedValue =
+                query.table && typeof column === 'object'
+                  ? getChangedValue({
+                      column: columnName,
+                      row: {
+                        primaryKeys: getPrimaryKeys(columns as Column[], rows, rowIndex),
+                        value,
+                      },
+                      table: query.table,
+                    })
+                  : undefined;
 
               return (
                 <Cell
                   column={column}
-                  key={[row, column.name].join()}
+                  key={[row, columnName].join()}
                   hover={rowIndex === hoverRowIndex}
                   isChanged={changedValue !== undefined}
                   rootProps={{

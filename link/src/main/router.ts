@@ -4,32 +4,18 @@ import superjson from 'superjson';
 import { castArray, uniqueId } from 'lodash';
 import { MySqlClient, PostgresClient, SqlServerClient } from '../../prisma';
 import NodeSqlParser from 'node-sql-parser';
+import type { PrismaValue } from './types';
+import { connectionSchema, type Client } from './types';
+import { getColumns } from './getColumns';
+import { convertPrismaValue } from './convertValueToString';
 
 const clients: {
-  [connectionId: string]: {
-    connection: Connection;
-    prisma: MySqlClient | PostgresClient | SqlServerClient;
-  };
+  [connectionId: string]: Client;
 } = {};
 
 const t = initTRPC.create({
   transformer: superjson,
 });
-
-type Value = string | number | boolean | Date | null;
-
-const connectionSchema = z.object({
-  database: z.string().trim().min(1),
-  engine: z.union([z.literal('mysql'), z.literal('postgresql'), z.literal('sqlserver')]),
-  host: z.string().trim().min(1),
-  id: z.string(),
-  name: z.string().trim().min(1),
-  password: z.string(),
-  port: z.number(),
-  user: z.string().trim().min(1),
-});
-
-type Connection = z.infer<typeof connectionSchema>;
 
 export const router = t.router({
   connectDb: t.procedure.input(connectionSchema).mutation(async (props) => {
@@ -70,7 +56,8 @@ export const router = t.router({
   sendQuery: t.procedure.input(z.tuple([z.string(), z.string()])).query(async (props) => {
     const [clientId, query] = props.input;
 
-    const { connection, prisma } = clients[clientId];
+    const client = clients[clientId];
+    const { connection, prisma } = client;
     const sqlParser = new NodeSqlParser.Parser();
     const parserOptions = {
       database: {
@@ -80,15 +67,51 @@ export const router = t.router({
       }[connection.engine],
     };
     const ast = sqlParser.astify(query, parserOptions);
-    const individualQueries = castArray(ast).map((ast) => sqlParser.sqlify(ast, parserOptions));
+    const parsedQueries = castArray(ast);
 
-    const result = await (prisma as PostgresClient).$transaction(
+    const individualQueries = parsedQueries.map((ast) => sqlParser.sqlify(ast, parserOptions));
+
+    const results = await (prisma as PostgresClient).$transaction(
       individualQueries.map((individualQuery) =>
-        prisma.$queryRawUnsafe<Array<Record<string, Value>>>(individualQuery),
+        prisma.$queryRawUnsafe<Array<Record<string, PrismaValue>>>(individualQuery),
       ),
     );
 
-    return result;
+    const rowsWithColumns = await Promise.all(
+      results.map(async (result, index) => {
+        const parsedQuery = parsedQueries[index];
+        const columns = await getColumns(parsedQuery, client);
+
+        const aliasToColumn =
+          parsedQuery.type === 'select'
+            ? parsedQuery.columns.reduce((acc, column) => {
+                if (column.expr.type === 'column_ref' && column.as) {
+                  acc[column.as] = column.expr.column;
+                }
+                return acc;
+              }, {})
+            : null;
+
+        const rows = result.map((row) =>
+          Object.fromEntries(
+            Object.entries(row).map(([columnName, value]) => {
+              const column = columns?.find(
+                (column) =>
+                  column.name === columnName || column.name === aliasToColumn?.[columnName],
+              );
+              return [columnName, convertPrismaValue(value, column?.dataType)];
+            }),
+          ),
+        );
+
+        return {
+          columns,
+          rows,
+        };
+      }),
+    );
+
+    return rowsWithColumns;
   }),
 });
 
