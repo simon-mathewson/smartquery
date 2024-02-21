@@ -4,13 +4,14 @@ import { ExpandMore } from '@mui/icons-material';
 import classNames from 'classnames';
 
 export type SelectProps = {
+  placeholder?: string;
   onChange: (value: string) => void;
   options: Array<{ label: string; value: string }>;
   value: string | null;
 };
 
 export const Select: React.FC<SelectProps> = (props) => {
-  const { onChange, options, value: selectedValue } = props;
+  const { onChange, options, placeholder, value: selectedValue } = props;
 
   const triggerRef = useRef<HTMLDivElement | null>(null);
 
@@ -28,7 +29,7 @@ export const Select: React.FC<SelectProps> = (props) => {
             '!text-gray-500': !selectedOption,
           })}
         >
-          {selectedOption?.label ?? 'Select'}
+          {selectedOption?.label ?? placeholder ?? 'Select'}
         </div>
         <ExpandMore className="text-gray-400" />
       </div>

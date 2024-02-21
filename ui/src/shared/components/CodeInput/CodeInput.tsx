@@ -6,12 +6,13 @@ type CodeInputProps = {
   language: 'sql' | 'json';
   onChange?: (value: string) => void;
   onClick?: () => void;
+  placeholder?: string;
   readOnly?: boolean;
   value: string | undefined;
 };
 
 export const CodeInput: React.FC<CodeInputProps> = (props) => {
-  const { autoFocus, language, onChange, onClick, readOnly, value } = props;
+  const { autoFocus, language, onChange, onClick, placeholder, readOnly, value } = props;
 
   return (
     <div
@@ -28,6 +29,7 @@ export const CodeInput: React.FC<CodeInputProps> = (props) => {
         hideLineNumbers
         language={language}
         onChange={onChange}
+        placeholder={placeholder}
         value={value}
       />
     </div>

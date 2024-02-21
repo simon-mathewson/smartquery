@@ -10,15 +10,17 @@ import './styles.css';
 export type CodeEditorProps = {
   autoFocus?: boolean;
   editorRef?: React.RefObject<ReactCodeMirrorRef>;
-  onChange?: (value: string) => void;
+  hideLineNumbers?: boolean;
   language: 'json' | 'sql';
   large?: boolean;
-  hideLineNumbers?: boolean;
+  onChange?: (value: string) => void;
+  placeholder?: string;
   value: string | undefined;
 };
 
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
-  const { autoFocus, editorRef, hideLineNumbers, onChange, language, large, value } = props;
+  const { autoFocus, editorRef, hideLineNumbers, language, large, onChange, placeholder, value } =
+    props;
 
   const theme = githubLightInit({
     settings: {
@@ -43,6 +45,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       className={large ? 'cm-min-height-large' : 'cm-min-height-small'}
       extensions={[language === 'sql' ? sql() : json(), EditorView.lineWrapping]}
       onChange={(sql) => onChange?.(sql)}
+      placeholder={placeholder}
       ref={editorRef}
       theme={theme}
       value={value}

@@ -4,14 +4,13 @@ import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
 import type { Value } from '~/content/queries/types';
 
 export type BooleanFieldProps = {
+  commonValue: Value | undefined;
   isNullable?: boolean;
-  multipleValues: boolean;
   setValue: (newValue: Value) => void;
-  value: Value;
 };
 
 export const BooleanField: React.FC<BooleanFieldProps> = (props) => {
-  const { isNullable, multipleValues, setValue, value } = props;
+  const { commonValue, isNullable, setValue } = props;
 
   return (
     <ButtonSelect<boolean | null>
@@ -26,7 +25,7 @@ export const BooleanField: React.FC<BooleanFieldProps> = (props) => {
         { label: 'TRUE', value: true },
         { label: 'FALSE', value: false },
       ]}
-      value={multipleValues || value === null ? undefined : value === 'TRUE'}
+      value={isNil(commonValue) ? undefined : commonValue === 'TRUE'}
     />
   );
 };

@@ -8,7 +8,7 @@ export type InputProps = {
   suffix?: ReactNode;
 } & Pick<
   React.InputHTMLAttributes<HTMLInputElement>,
-  'autoFocus' | 'onClick' | 'placeholder' | 'readOnly' | 'type' | 'value'
+  'autoFocus' | 'placeholder' | 'type' | 'value'
 >;
 
 export const Input: React.FC<InputProps> = (props) => {
@@ -19,9 +19,6 @@ export const Input: React.FC<InputProps> = (props) => {
       {...inputProps}
       className={classNames(
         'block h-[36px] w-full rounded-lg border-[1.5px] border-gray-300 bg-gray-50 p-2 text-sm font-medium leading-none text-gray-700 outline-none focus:border-blue-600',
-        {
-          'opacity-50': props.readOnly,
-        },
         className,
       )}
       onChange={(event) => onChange(event.target.value)}

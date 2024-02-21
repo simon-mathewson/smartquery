@@ -8,11 +8,11 @@ export type EnumFieldProps = {
   isNullable?: boolean;
   multipleValues: boolean;
   setValue: (newValue: Value) => void;
-  value: Value;
+  stringValue: Value;
 };
 
 export const EnumField: React.FC<EnumFieldProps> = (props) => {
-  const { column, isNullable, multipleValues, setValue, value } = props;
+  const { column, isNullable, multipleValues, setValue, stringValue } = props;
 
   return (
     <Select
@@ -20,8 +20,9 @@ export const EnumField: React.FC<EnumFieldProps> = (props) => {
         if (newValue === undefined && !isNullable) return;
         setValue(isNil(newValue) ? null : newValue);
       }}
+      placeholder={multipleValues ? 'Multiple values' : undefined}
       options={column.enumValues!.map((value) => ({ label: value, value }))}
-      value={multipleValues ? null : value}
+      value={stringValue}
     />
   );
 };

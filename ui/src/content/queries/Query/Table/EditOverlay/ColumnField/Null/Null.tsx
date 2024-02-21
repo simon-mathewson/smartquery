@@ -3,14 +3,13 @@ import type { Value } from '~/content/queries/types';
 import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
 
 export type NullButtonProps = {
+  commonValue: Value | undefined;
   isNullable?: boolean;
-  multipleValues: boolean;
   setValue: (newValue: Value) => void;
-  value: Value;
 };
 
 export const NullButton: React.FC<NullButtonProps> = (props) => {
-  const { isNullable, multipleValues, setValue, value } = props;
+  const { commonValue, isNullable, setValue } = props;
 
   if (!isNullable) return null;
 
@@ -22,7 +21,7 @@ export const NullButton: React.FC<NullButtonProps> = (props) => {
         setValue(null);
       }}
       options={[{ label: 'NULL', value: null }]}
-      value={!multipleValues && value === null ? null : undefined}
+      value={commonValue === null ? null : undefined}
     />
   );
 };
