@@ -19,7 +19,7 @@ export const App: React.FC = () => {
         {activeConnection && <Toolbar />}
         {queries.length === 0 ? (
           <div className="flex grow items-center justify-center">
-            <img className="w-50 h-max opacity-20" src="/LogoIcon.svg" />
+            <img className="w-50 h-max opacity-20" src="/logo.svg" />
           </div>
         ) : (
           <div className="flex h-full justify-start overflow-hidden pb-2">

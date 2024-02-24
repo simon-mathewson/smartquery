@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "generate-pwa-assets": "pwa-assets-generator -c pwa-assets-config.ts",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -39,6 +40,7 @@
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
+    "@vite-pwa/assets-generator": "^0.2.4",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.55.0",
@@ -52,6 +54,7 @@
     "tailwindcss-easing": "^0.2.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
-    "vite-plugin-circular-dependency": "^0.3.1"
+    "vite-plugin-circular-dependency": "^0.3.1",
+    "vite-plugin-pwa": "^0.19.0"
   }
 }
