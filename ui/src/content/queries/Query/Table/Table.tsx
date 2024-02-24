@@ -24,7 +24,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const { handleCellClick, selection, tableRef } = useCellSelection();
+  const { handleCellClick, selection, selectionActionsRef, tableRef } = useCellSelection();
 
   const { getChangedValue } = useDefinedContext(EditContext);
 
@@ -82,14 +82,15 @@ export const Table: React.FC<TableProps> = (props) => {
               );
             }),
           )}
-          <SelectionActions
-            columnCount={columns.length}
-            query={query}
-            selection={selection}
-            setIsEditing={setIsEditing}
-            tableRef={tableRef}
-          />
         </div>
+        <SelectionActions
+          columnCount={columns.length}
+          query={query}
+          ref={selectionActionsRef}
+          selection={selection}
+          setIsEditing={setIsEditing}
+          tableRef={tableRef}
+        />
         {rows.length === 0 && (
           <div className="sticky left-0 w-full py-4 text-center text-xs text-gray-500">
             This table is empty.

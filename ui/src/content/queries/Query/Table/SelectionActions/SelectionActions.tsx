@@ -1,10 +1,11 @@
 import { DeleteOutlined, EditOutlined } from '@mui/icons-material';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { useDebouncedCallback } from 'use-debounce';
 import { popoverHeight, popoverMargin } from './constants';
 import { EditOverlay } from '../EditOverlay/EditOverlay';
 import type { Query } from '~/content/queries/types';
+import { mergeRefs } from 'react-merge-refs';
 
 export type SelectionActionsProps = {
   columnCount: number;
@@ -14,7 +15,7 @@ export type SelectionActionsProps = {
   tableRef: React.MutableRefObject<HTMLDivElement | null>;
 };
 
-export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
+export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps>((props, ref) => {
   const { columnCount, query, selection, setIsEditing, tableRef } = props;
 
   const [tableWidth, setTableWidth] = useState<number>();
@@ -114,7 +115,7 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
         <div className="pointer-events-none absolute flex justify-center" style={popoverStyles}>
           <div
             className="pointer-events-auto flex rounded-full border border-gray-200 bg-white shadow-lg"
-            ref={popoverRef}
+            ref={mergeRefs([popoverRef, ref])}
           >
             <Button icon={<EditOutlined />} ref={editButtonRef} />
             <Button icon={<DeleteOutlined />} />
@@ -132,4 +133,4 @@ export const SelectionActions: React.FC<SelectionActionsProps> = (props) => {
       />
     </>
   );
-};
+});

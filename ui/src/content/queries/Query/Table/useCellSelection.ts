@@ -7,8 +7,11 @@ export const useCellSelection = () => {
 
   const tableRef = useRef<HTMLDivElement | null>(null);
 
+  const selectionActionsRef = useRef<HTMLDivElement | null>(null);
+
   useClickOutside({
     active: selection.length > 0,
+    additionalRefs: [selectionActionsRef],
     handler: () => {
       setSelection([]);
       lastSelectedCellIndicesRef.current = [];
@@ -141,5 +144,5 @@ export const useCellSelection = () => {
     [handleCellDoubleClick, selection],
   );
 
-  return { handleCellClick, handleCellDoubleClick, selection, tableRef };
+  return { handleCellClick, handleCellDoubleClick, selection, selectionActionsRef, tableRef };
 };
