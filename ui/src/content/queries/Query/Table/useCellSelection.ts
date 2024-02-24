@@ -73,6 +73,9 @@ export const useCellSelection = () => {
 
       const shouldUnselectRow = newRowSelections.at(rowIndex)?.length === 0;
 
+      const isSelectedCell = selection.some(
+        (row, index) => row && index === rowIndex && row.includes(columnIndex),
+      );
       const isOnlySelectedCell =
         selection.length > 0 &&
         selection.every(
@@ -89,7 +92,7 @@ export const useCellSelection = () => {
         lastSelectedCellIndicesRef.current = lastSelectedCellIndicesRef.current.filter(
           ([index]) => index !== rowIndex,
         );
-      } else if (isOnlySelectedCell) {
+      } else if (isOnlySelectedCell || ((addSelection || addConsecutive) && isSelectedCell)) {
         if (newRowSelections[rowIndex]) {
           newRowSelections[rowIndex] = newRowSelections[rowIndex].filter(
             (column) => column !== columnIndex,
