@@ -5,7 +5,7 @@ import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 export const useCellSelection = () => {
   const [selection, setSelection] = useState<number[][]>([]);
 
-  const tableRef = useRef<HTMLDivElement | null>(null);
+  const tableContentRef = useRef<HTMLDivElement | null>(null);
 
   const selectionActionsRef = useRef<HTMLDivElement | null>(null);
 
@@ -16,7 +16,7 @@ export const useCellSelection = () => {
       setSelection([]);
       lastSelectedCellIndicesRef.current = [];
     },
-    ref: tableRef,
+    ref: tableContentRef,
   });
 
   const lastClickRef = useRef<{ columnIndex: number; rowIndex: number; timestamp: number }>();
@@ -147,5 +147,11 @@ export const useCellSelection = () => {
     [handleCellDoubleClick, selection],
   );
 
-  return { handleCellClick, handleCellDoubleClick, selection, selectionActionsRef, tableRef };
+  return {
+    handleCellClick,
+    handleCellDoubleClick,
+    selection,
+    selectionActionsRef,
+    tableContentRef,
+  };
 };
