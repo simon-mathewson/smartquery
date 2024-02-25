@@ -10,8 +10,8 @@ export const themes = {
     card: colors.neutral[800],
 
     textPrimary: '#FFFFFFD9',
-    textSecondary: '#FFFFFFE0',
-    textTertiary: '#FFFFFFC0',
+    textSecondary: '#FFFFFFC0',
+    textTertiary: '#FFFFFF80',
 
     blackHighlight: '#0000001A',
     blackHighlightHover: '#0000002B',
