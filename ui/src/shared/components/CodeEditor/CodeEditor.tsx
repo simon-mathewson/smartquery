@@ -39,7 +39,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
             settings: {
               ...commonOptions,
               gutterBorder: themes.light.border,
-              lineHighlight: `${themes.light.primary}10`,
+              lineHighlight: '#0000000A',
               selection: `${themes.light.primary}50`,
               selectionMatch: `${themes.light.primary}25`,
             },
@@ -48,7 +48,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
             settings: {
               ...commonOptions,
               gutterBorder: themes.dark.border,
-              lineHighlight: `${themes.dark.primary}10`,
+              lineHighlight: '#FFFFFF0A',
               selection: `${themes.dark.primary}50`,
               selectionMatch: `${themes.dark.primary}25`,
             },

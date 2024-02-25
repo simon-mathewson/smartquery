@@ -9,7 +9,7 @@ export const themes = {
     border: colors.neutral[700],
     card: colors.neutral[800],
 
-    textPrimary: '#FFFFFFD9',
+    textPrimary: '#FFFFFFE9',
     textSecondary: '#FFFFFFC0',
     textTertiary: '#FFFFFF80',
 
