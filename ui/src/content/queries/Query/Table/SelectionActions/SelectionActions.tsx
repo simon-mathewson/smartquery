@@ -114,7 +114,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       {popoverStyles && (
         <div className="pointer-events-none absolute flex justify-center" style={popoverStyles}>
           <div
-            className="border-border bg-card pointer-events-auto flex rounded-full border shadow-lg"
+            className="border-border bg-card pointer-events-auto flex rounded-full border shadow-xl"
             ref={mergeRefs([popoverRef, ref])}
           >
             <Button icon={<EditOutlined />} ref={editButtonRef} />

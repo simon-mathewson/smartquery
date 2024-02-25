@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Cell } from './Cell/Cell';
 import type { Column, Query as QueryType } from '../../types';
 import { useCellSelection } from './useCellSelection';
@@ -28,6 +28,8 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const { getChangedValue } = useDefinedContext(EditContext);
 
+  const tableRef = useRef<HTMLDivElement | null>(null);
+
   if (!hasResults) return null;
 
   return (
@@ -37,6 +39,7 @@ export const Table: React.FC<TableProps> = (props) => {
           className={classNames('height-full relative overflow-auto', {
             'pointer-events-none overflow-hidden': isEditing,
           })}
+          ref={tableRef}
         >
           <div
             className="grid auto-rows-max"
@@ -93,7 +96,7 @@ export const Table: React.FC<TableProps> = (props) => {
             ref={selectionActionsRef}
             selection={selection}
             setIsEditing={setIsEditing}
-            tableRef={tableContentRef}
+            tableRef={tableRef}
           />
         </div>
         {rows.length === 0 && (
