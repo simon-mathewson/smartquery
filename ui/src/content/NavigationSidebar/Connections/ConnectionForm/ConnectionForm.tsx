@@ -72,7 +72,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                   exit();
                 }}
                 renderTrigger={({ ref }) => (
-                  <Button icon={<DeleteOutline />} ref={ref} variant="danger" />
+                  <Button color="danger" icon={<DeleteOutline />} ref={ref} />
                 )}
                 text="Delete connection"
               />
@@ -131,7 +131,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           icon={<Done />}
           label={mode === 'add' ? 'Add' : 'Save'}
           type="submit"
-          variant="primary"
+          variant="filled"
         />
       </form>
     </>

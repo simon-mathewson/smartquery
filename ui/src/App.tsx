@@ -7,13 +7,16 @@ import { Query } from './content/queries/Query/Query';
 import './index.css';
 import { useDefinedContext } from './shared/hooks/useDefinedContext';
 import { Toolbar } from './content/Toolbar/Toolbar';
+import { useTheme } from './content/theme/useTheme';
 
 export const App: React.FC = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
   const { queries } = useDefinedContext(QueriesContext);
 
+  useTheme();
+
   return (
-    <div className="grid h-full grid-cols-[224px_1fr] bg-gray-50">
+    <div className="bg-background grid h-full grid-cols-[224px_1fr]">
       <NavigationSidebar />
       <div className="flex h-full flex-col overflow-hidden pr-2">
         {activeConnection && <Toolbar />}

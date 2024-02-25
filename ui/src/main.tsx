@@ -6,19 +6,22 @@ import { QueriesProvider } from './content/queries/Provider';
 import { DragAndDropProvider } from './content/dragAndDrop/Provider';
 import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQueue/Provider';
 import { EditProvider } from './content/edit/Provider';
+import { ThemeProvider } from './content/theme/Provider';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <ConnectionsProvider>
-      <QueriesProvider>
-        <EditProvider>
-          <DragAndDropProvider>
-            <ClickOutsideQueueProvider>
-              <App />
-            </ClickOutsideQueueProvider>
-          </DragAndDropProvider>
-        </EditProvider>
-      </QueriesProvider>
-    </ConnectionsProvider>
+    <ThemeProvider>
+      <ConnectionsProvider>
+        <QueriesProvider>
+          <EditProvider>
+            <DragAndDropProvider>
+              <ClickOutsideQueueProvider>
+                <App />
+              </ClickOutsideQueueProvider>
+            </DragAndDropProvider>
+          </EditProvider>
+        </QueriesProvider>
+      </ConnectionsProvider>
+    </ThemeProvider>
   </React.StrictMode>,
 );

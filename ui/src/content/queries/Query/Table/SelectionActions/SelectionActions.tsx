@@ -114,7 +114,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       {popoverStyles && (
         <div className="pointer-events-none absolute flex justify-center" style={popoverStyles}>
           <div
-            className="pointer-events-auto flex rounded-full border border-gray-200 bg-white shadow-lg"
+            className="border-border bg-card pointer-events-auto flex rounded-full border shadow-lg"
             ref={mergeRefs([popoverRef, ref])}
           >
             <Button icon={<EditOutlined />} ref={editButtonRef} />
@@ -122,7 +122,9 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
           </div>
         </div>
       )}
-      <div style={{ height: `${popoverHeight + popoverMargin * 4}px` }} />
+      {query.rows.length > 0 && (
+        <div style={{ height: `${popoverHeight + popoverMargin * 4}px` }} />
+      )}
       <EditOverlay
         columnCount={columnCount}
         editButtonRef={editButtonRef}

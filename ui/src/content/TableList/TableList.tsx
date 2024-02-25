@@ -40,7 +40,7 @@ export const TableList: React.FC = () => {
       {tables.length > 0 ? (
         tables.map((tableName) => <Item key={tableName} tableName={tableName} />)
       ) : (
-        <div className="py-1 text-center text-xs text-gray-500">This database is empty.</div>
+        <div className="py-1 text-center text-xs">This database is empty.</div>
       )}
     </div>
   );

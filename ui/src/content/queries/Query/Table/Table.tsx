@@ -97,9 +97,7 @@ export const Table: React.FC<TableProps> = (props) => {
           />
         </div>
         {rows.length === 0 && (
-          <div className="sticky left-0 w-full py-4 text-center text-xs text-gray-500">
-            This table is empty.
-          </div>
+          <div className="sticky left-0 w-full py-4 text-center text-xs">This table is empty.</div>
         )}
       </div>
     </>

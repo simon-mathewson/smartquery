@@ -12,20 +12,18 @@ export const NavigationSidebar: React.FC = () => {
   return (
     <div className="sticky top-0 flex h-screen grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col gap-2 px-2 pt-2">
       <div
-        className="border-1 grid w-full cursor-pointer gap-1 rounded-lg border-gray-300 p-2 text-sm text-black hover:bg-gray-300"
+        className="hover:bg-secondaryHighlight grid w-full cursor-pointer gap-1 rounded-lg p-2 text-sm"
         ref={connectionsTriggerRef}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        style={{ WebkitAppRegion: 'no-drag' } as any}
       >
         {activeConnection ? (
           <>
-            <div className="text-md truncate font-medium leading-tight">
+            <div className="text-md text-textPrimary truncate font-medium leading-tight">
               {activeConnection.name}
             </div>
-            <div className="truncate text-xs leading-tight text-gray-500">
+            <div className="text-textSecondary truncate text-xs leading-tight">
               {activeConnection.user}@{activeConnection.host}:{activeConnection.port}
             </div>
-            <div className="truncate font-mono text-xs font-medium leading-tight text-gray-500">
+            <div className="text-textSecondary truncate font-mono text-xs font-medium leading-tight">
               {activeConnection.database}
             </div>
           </>

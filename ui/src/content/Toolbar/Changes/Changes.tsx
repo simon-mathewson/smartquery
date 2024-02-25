@@ -15,19 +15,19 @@ export const Changes: React.FC = () => {
 
   return (
     <div className="ml-auto flex items-center gap-2">
-      <div className="text-sm text-gray-500">
+      <div className="text-sm">
         {changes.length} pending change{changes.length > 1 ? 's' : ''}
       </div>
       <ConfirmDeletePopover
         onConfirm={clearChanges}
-        renderTrigger={({ ref }) => <Button icon={<DeleteOutline />} ref={ref} variant="danger" />}
+        renderTrigger={({ ref }) => <Button color="danger" icon={<DeleteOutline />} ref={ref} />}
         text={`Delete ${changes.length} pending change${changes.length > 1 ? 's' : ''}`}
       />
       <Button
         icon={<ArrowForward />}
         label="Review & Submit"
         ref={reviewChangesCardTriggerRef}
-        variant="primary"
+        variant="filled"
       />
       <ReviewChangesCard triggerRef={reviewChangesCardTriggerRef} />
     </div>

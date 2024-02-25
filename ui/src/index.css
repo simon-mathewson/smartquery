@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    @apply bg-background;
+    @apply text-textSecondary;
+
+    user-select: none;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  :focus {
+    outline: none;
+  }
+}
+
 @layer utilities {
   .window-drag-area {
     -webkit-app-region: drag;
@@ -34,18 +53,4 @@
   font-family: 'Inter';
   font-weight: 500;
   src: url(fonts/Inter-Medium.ttf);
-}
-
-html {
-  user-select: none;
-}
-
-html,
-body,
-#root {
-  height: 100%;
-}
-
-:focus {
-  outline: none;
 }

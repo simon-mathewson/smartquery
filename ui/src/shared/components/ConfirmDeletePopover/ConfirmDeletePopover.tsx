@@ -19,7 +19,7 @@ export const ConfirmDeletePopover: React.FC<ConfirmDeletePopoverProps> = (props)
       <OverlayCard align="right" className="p-2" triggerRef={triggerRef}>
         {() => (
           <div className="flex justify-end gap-2 whitespace-nowrap">
-            <Button label={text} onClick={onConfirm} variant="danger" />
+            <Button color="danger" label={text} onClick={onConfirm} />
           </div>
         )}
       </OverlayCard>

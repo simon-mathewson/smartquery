@@ -18,8 +18,6 @@ export default defineConfig({
       manifest: {
         name: 'Dabase',
         short_name: 'Dabase',
-        theme_color: '#f9fafb',
-        background_color: '#f9fafb',
         icons: [
           {
             src: 'pwa-64x64.png',

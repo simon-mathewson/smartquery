@@ -20,28 +20,31 @@ export const Select: React.FC<SelectProps> = (props) => {
   return (
     <>
       <div
-        className="flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-lg border-[1.5px] border-gray-300 bg-gray-50 px-2 outline-none hover:bg-gray-200 focus:border-blue-600"
+        className="border-border bg-background hover:bg-secondaryHighlight focus:border-primary flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-lg border-[1.5px] px-2 outline-none"
         ref={triggerRef}
         tabIndex={0}
       >
         <div
-          className={classNames('overflow-hidden text-ellipsis text-sm font-medium text-gray-700', {
-            '!text-gray-500': !selectedOption,
-          })}
+          className={classNames(
+            'text-textSecondary overflow-hidden text-ellipsis text-sm font-medium',
+            {
+              '!text-textTertiary': !selectedOption,
+            },
+          )}
         >
           {selectedOption?.label ?? placeholder ?? 'Select'}
         </div>
-        <ExpandMore className="text-gray-400" />
+        <ExpandMore className="text-secondary" />
       </div>
       <OverlayCard className="py-2" matchTriggerWidth triggerRef={triggerRef}>
         {({ close }) =>
           options.map(({ label, value }) => (
             <div
               className={classNames(
-                'cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-1.5 text-sm font-medium text-gray-600',
+                'text-textSecondary cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-1.5 text-sm font-medium',
                 {
-                  'bg-blue-500 text-white': value === selectedValue,
-                  'hover:bg-gray-200': value !== selectedValue,
+                  'bg-primary text-white': value === selectedValue,
+                  'hover:bg-secondaryHighlight': value !== selectedValue,
                 },
               )}
               key={label}

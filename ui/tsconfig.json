@@ -24,6 +24,6 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "tailwind.config.ts", "globals.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -25,7 +25,7 @@ export const Query: React.FC<QueryProps> = (props) => {
   return (
     <div
       className={classNames(
-        'border-gray-150 relative ml-2 mt-2 flex min-h-[240px] flex-col justify-start gap-2 overflow-hidden rounded-xl border bg-white p-2',
+        'border-border bg-card relative ml-2 mt-2 flex min-h-[240px] flex-col justify-start gap-2 overflow-hidden rounded-xl border p-2',
         {
           '!ml-0': columnIndex === 0,
           '!mt-0': rowIndex === 0,
@@ -38,11 +38,11 @@ export const Query: React.FC<QueryProps> = (props) => {
             <Button
               icon={<Code />}
               onClick={() => setShowEditor((current) => !current)}
-              selected={showEditor}
+              variant={showEditor ? 'selected' : 'default'}
             />
           ) : null
         }
-        right={<Button icon={<Close />} onClick={() => removeQuery(query.id)} variant="tertiary" />}
+        right={<Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />}
         title={query.table ?? 'New query'}
       />
       {showEditor && (

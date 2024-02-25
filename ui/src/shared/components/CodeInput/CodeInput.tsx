@@ -17,7 +17,7 @@ export const CodeInput: React.FC<CodeInputProps> = (props) => {
   return (
     <div
       className={classNames(
-        'min-h-[36px] w-full overflow-hidden rounded-lg border-[1.5px] border-gray-300 bg-gray-50 pt-[3px] focus:border-blue-600',
+        'border-border bg-background focus:border-primary min-h-[36px] w-full overflow-hidden rounded-lg border-[1.5px] pt-[3px]',
         {
           'cursor-pointer opacity-50': readOnly,
         },

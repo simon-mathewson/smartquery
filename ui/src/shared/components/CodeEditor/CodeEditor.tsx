@@ -1,11 +1,13 @@
 import { sql } from '@codemirror/lang-sql';
-import { githubLightInit } from '@uiw/codemirror-theme-github';
+import { githubLightInit, githubDarkInit } from '@uiw/codemirror-theme-github';
 import type { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
-import React from 'react';
-import colors from 'tailwindcss/colors';
+import React, { useMemo } from 'react';
 import './styles.css';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { ThemeContext } from '~/content/theme/Context';
+import { themes } from '../../../../tailwind.config';
 
 export type CodeEditorProps = {
   autoFocus?: boolean;
@@ -18,21 +20,41 @@ export type CodeEditorProps = {
   value: string | undefined;
 };
 
+const commonOptions = {
+  background: 'transparent',
+  fontFamily: 'Fira Mono, monospace',
+  gutterBackground: 'transparent',
+} as const;
+
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   const { autoFocus, editorRef, hideLineNumbers, language, large, onChange, placeholder, value } =
     props;
 
-  const theme = githubLightInit({
-    settings: {
-      background: 'transparent',
-      fontFamily: 'Fira Mono, monospace',
-      gutterBackground: colors.gray[50],
-      gutterBorder: '#eee',
-      lineHighlight: `${colors.blue[500]}11`,
-      selection: colors.blue[200],
-      selectionMatch: colors.blue[100],
-    },
-  });
+  const { mode } = useDefinedContext(ThemeContext);
+
+  const theme = useMemo(
+    () =>
+      mode === 'light'
+        ? githubLightInit({
+            settings: {
+              ...commonOptions,
+              gutterBorder: themes.light.border,
+              lineHighlight: `${themes.light.primary}10`,
+              selection: `${themes.light.primary}50`,
+              selectionMatch: `${themes.light.primary}25`,
+            },
+          })
+        : githubDarkInit({
+            settings: {
+              ...commonOptions,
+              gutterBorder: themes.dark.border,
+              lineHighlight: `${themes.dark.primary}10`,
+              selection: `${themes.dark.primary}50`,
+              selectionMatch: `${themes.dark.primary}25`,
+            },
+          }),
+    [mode],
+  );
 
   return (
     <CodeMirror

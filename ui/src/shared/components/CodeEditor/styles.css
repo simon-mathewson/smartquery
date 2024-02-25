@@ -15,6 +15,10 @@
   background-color: transparent;
 }
 
+.cm-gutters {
+  border-right-width: 1px;
+}
+
 .cm-gutterElement {
   padding-left: 7px !important;
   padding-right: 7px !important;

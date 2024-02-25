@@ -47,7 +47,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   }, [submitQuery]);
 
   return (
-    <div className="grid w-full min-w-[560px] gap-1 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 pt-1">
+    <div className="bg-background border-border grid w-full min-w-[560px] gap-1 overflow-hidden rounded-lg border pt-1">
       <CodeEditor
         autoFocus
         editorRef={editorRef}
@@ -62,7 +62,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         icon={<Send />}
         label="Submit"
         onClick={() => submitQuery()}
-        variant="primary"
+        variant="filled"
       />
     </div>
   );

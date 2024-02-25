@@ -22,12 +22,12 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
       {options.map(({ label, value }, index) => (
         <Button
           className={classNames({ 'grow basis-0': equalWidth })}
+          color={value === selectedValue ? 'primary' : 'secondary'}
           key={index}
           monospace={monospace}
           label={label}
           onClick={() => onChange(value === selectedValue ? undefined : value)}
-          selected
-          variant={value === selectedValue ? 'secondary' : 'tertiary'}
+          variant="selected"
         />
       ))}
     </div>

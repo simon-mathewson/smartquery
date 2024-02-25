@@ -30,9 +30,10 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
       className={classNames(
         'grid w-full cursor-pointer grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-1.5',
         {
-          'bg-blue-500': selectedVariant === 'primary' && selected,
-          'bg-gray-200': selectedVariant === 'secondary' && selected,
-          'hover:bg-gray-200': !selected,
+          'bg-primary hover:bg-primaryHover': selectedVariant === 'primary' && selected,
+          'bg-secondaryHighlight hover:bg-secondaryHighlightHover':
+            selectedVariant === 'secondary' && selected,
+          'hover:bg-secondaryHighlight': !selected,
         },
         className,
       )}
@@ -42,7 +43,7 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
       <div className="overflow-hidden">
         <div
           className={classNames(
-            'overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-gray-600',
+            'text-textSecondary overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium',
             {
               'text-white': selectedVariant === 'primary' && selected,
             },
@@ -53,9 +54,9 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
         {hint && (
           <div
             className={classNames(
-              'overflow-hidden text-ellipsis whitespace-nowrap text-xs text-gray-500',
+              'text-textTertiary overflow-hidden text-ellipsis whitespace-nowrap text-xs',
               {
-                'text-white/70': selectedVariant === 'primary' && selected,
+                'text-whiteHover': selectedVariant === 'primary' && selected,
               },
             )}
           >
@@ -71,7 +72,7 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
             event.stopPropagation();
             action.onClick();
           }}
-          variant={selected ? 'light' : 'secondary'}
+          color={selected ? 'white' : 'primary'}
         />
       ))}
     </div>

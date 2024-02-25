@@ -16,7 +16,7 @@ export const Toolbar: React.FC = () => {
         icon={<Add />}
         label="Query"
         onClick={() => addQuery({ showEditor: true })}
-        variant="primary"
+        variant="filled"
       />
       <Changes />
     </div>

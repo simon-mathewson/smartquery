@@ -47,14 +47,14 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
         label: 'Testing connection...',
       })}
       {...(hasSucceeded && {
+        color: 'success',
         icon: <CheckCircleOutline />,
         label: 'Connection succeeded',
-        variant: 'success',
       })}
       {...(hasFailed && {
+        color: 'danger',
         icon: <WarningAmber />,
         label: 'Connection failed',
-        variant: 'danger',
       })}
     />
   );
