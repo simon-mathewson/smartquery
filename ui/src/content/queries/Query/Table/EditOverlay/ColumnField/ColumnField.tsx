@@ -82,6 +82,12 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
           className={classNames('w-full', {
             'opacity-50': commonValue === null,
           })}
+          onClickCapture={(event) => {
+            if (commonValue === null && stringValue) {
+              setValue(stringValue);
+              event.stopPropagation();
+            }
+          }}
         >
           {(() => {
             if (isEnumType(column.dataType!) && column.enumValues) {
