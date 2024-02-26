@@ -12,7 +12,7 @@ export const trpc = createTRPCProxyClient<AppRouter>({
           // Keeps disconnect request on beforeonload alive when the user navigates away
           keepalive: true,
         }),
-      url: 'http://localhost:3000',
+      url: 'http://localhost:3500',
     }),
   ],
 });

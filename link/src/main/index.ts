@@ -15,6 +15,6 @@ app.whenReady().then(() => {
     router,
   });
 
-  server.listen(3000);
-  console.log('Link listening on port 3000');
+  server.listen(3500);
+  console.log('Link listening on port 3500');
 });
