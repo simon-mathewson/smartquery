@@ -66,7 +66,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
             <div className="grid grid-cols-[256px_max-content_192px] gap-3">
               <div>
                 <div className="flex items-center justify-between pb-2 pl-1">
-                  <div className="text-textPrimary overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">
+                  <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-textPrimary">
                     Connections
                   </div>
                   <Button icon={<Add />} label="Add" onClick={() => setIsAddingOrEditing(true)} />
@@ -92,10 +92,10 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                   </div>
                 ))}
               </div>
-              <div className="bg-border h-full w-px" />
+              <div className="h-full w-px bg-border" />
               <div>
                 <div className="flex h-[44px] items-center pb-2 pl-1">
-                  <div className="text-textPrimary overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">
+                  <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-textPrimary">
                     Databases
                   </div>
                 </div>

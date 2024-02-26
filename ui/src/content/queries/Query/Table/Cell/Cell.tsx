@@ -19,24 +19,27 @@ export const Cell: React.FC<CellProps> = (props) => {
   return (
     <div
       className={classNames(
-        'border-b-border flex h-8 max-w-[240px] items-center border-b px-4 transition-colors duration-100',
+        'flex h-8 max-w-[240px] items-center border-b px-4 transition-colors duration-100',
         {
-          'bg-card sticky top-0 z-10 h-10': header,
-          'border-b-border py-2': !header,
-          'bg-secondaryHighlight': !isChanged && hover && !selected,
+          'sticky top-0 z-10 h-10 bg-card': header,
+          'py-2': !header,
+          'border-b-border': header || (!selected && !isChanged),
+          'border-b-whiteHighlightHover': !header && selected,
+          'border-b-yellow-500/20': !header && !selected && isChanged,
+          'bg-secondaryHighlight': !isChanged && !selected && hover,
           'bg-primaryHover': !isChanged && selected && hover,
           'bg-primary': !isChanged && selected && !hover,
-          'bg-yellow-500/20 ': isChanged && !selected && !hover,
+          'bg-yellow-500/20': isChanged && !selected && !hover,
           'bg-yellow-500/30': isChanged && !selected && hover,
-          'bg-sky-500/80 ': isChanged && selected && !hover,
-          'bg-sky-500/90 ': isChanged && selected && hover,
+          'bg-blue-500/80': isChanged && selected && !hover,
+          'bg-blue-500/70': isChanged && selected && hover,
         },
       )}
       {...rootProps}
     >
       <div
         className={classNames('overflow-hidden text-ellipsis whitespace-nowrap text-xs', {
-          'text-textPrimary font-mono font-medium': header,
+          'font-mono font-medium text-textPrimary': header,
           'text-white': selected,
           'font-mono font-medium':
             !header &&

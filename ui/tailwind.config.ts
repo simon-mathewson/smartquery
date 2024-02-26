@@ -22,10 +22,10 @@ export const themes = {
     dangerHighlightHover: `${colors.red[500]}3C`,
     dangerHover: `${colors.red[500]}D9`,
 
-    primary: colors.blue[600],
-    primaryHighlight: `${colors.blue[600]}2B`,
-    primaryHighlightHover: `${colors.blue[600]}3C`,
-    primaryHover: `${colors.blue[600]}D9`,
+    primary: colors.blue[500],
+    primaryHighlight: `${colors.blue[500]}2B`,
+    primaryHighlightHover: `${colors.blue[500]}3C`,
+    primaryHover: `${colors.blue[500]}D9`,
 
     secondary: colors.neutral[400],
     secondaryHighlight: '#FFFFFF1A',
