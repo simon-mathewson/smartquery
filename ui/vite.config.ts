@@ -18,6 +18,7 @@ export default defineConfig({
       manifest: {
         name: 'Dabase',
         short_name: 'Dabase',
+        theme_color: 'transparent',
         icons: [
           {
             src: 'pwa-64x64.png',
@@ -31,15 +32,15 @@ export default defineConfig({
           },
           {
             src: 'pwa-512x512.png',
+            purpose: 'any',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any',
           },
           {
             src: 'maskable-icon-512x512.png',
+            purpose: 'maskable',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'maskable',
           },
         ],
       },
