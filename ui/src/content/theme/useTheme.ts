@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocalStorageState } from '~/shared/hooks/useLocalStorageState';
 import type { ThemeMode } from './types';
 import { themes } from '../../../tailwind.config';
@@ -8,15 +8,28 @@ const darkModeQuery = '(prefers-color-scheme: dark)';
 export const useTheme = () => {
   const [modePreference] = useLocalStorageState<ThemeMode | 'system'>('modePreference', 'system');
 
-  const [mode, setMode] = useLocalStorageState<ThemeMode>('mode', () =>
+  const [mode, setMode] = useState<ThemeMode>(() =>
     matchMedia(darkModeQuery).matches ? 'dark' : 'light',
   );
 
-  window.matchMedia(darkModeQuery).addEventListener('change', (event: MediaQueryListEvent) => {
-    if (modePreference === 'system') {
-      setMode(event.matches ? 'dark' : 'light');
-    }
-  });
+  const handleDarkModeChange = useCallback(
+    (event: MediaQueryListEvent) => {
+      if (modePreference === 'system') {
+        setMode(event.matches ? 'dark' : 'light');
+      }
+    },
+    [modePreference, setMode],
+  );
+
+  useEffect(() => {
+    const mediaQueryList = window.matchMedia(darkModeQuery);
+
+    mediaQueryList.addEventListener('change', handleDarkModeChange);
+
+    return () => {
+      mediaQueryList.removeEventListener('change', handleDarkModeChange);
+    };
+  }, [handleDarkModeChange]);
 
   const addOrCreateThemeColorMetaTag = useCallback((color: string) => {
     const themeColorMetaTag =
