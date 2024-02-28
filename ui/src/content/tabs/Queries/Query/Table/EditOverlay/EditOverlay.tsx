@@ -1,7 +1,7 @@
 import { range } from 'lodash';
 import { useMemo } from 'react';
-import type { Query } from '~/content/queries/types';
-import { getPrimaryKeys } from '~/content/queries/utils';
+import type { Query } from '~/content/tabs/types';
+import { getPrimaryKeys } from '~/content/tabs/Queries/utils';
 import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 import type { ColumnFieldProps } from './ColumnField/ColumnField';

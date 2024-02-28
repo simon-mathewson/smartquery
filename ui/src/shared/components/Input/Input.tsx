@@ -21,16 +21,11 @@ export const Input: React.FC<InputProps> = (props) => {
     <input
       {...inputProps}
       className={classNames(
-        'border-border bg-background text-textSecondary focus:border-primary block h-[36px] w-full rounded-lg border-[1.5px] p-2 text-sm font-medium leading-none outline-none',
+        'block h-[36px] w-full rounded-lg border-[1.5px] border-border bg-background p-2 text-sm font-medium leading-none text-textSecondary outline-none focus:border-primary',
         className,
       )}
       onChange={(event) => onChange(event.target.value)}
-      style={
-        {
-          'color-scheme': mode,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any
-      }
+      style={{ colorScheme: mode }}
     />
   );
 };

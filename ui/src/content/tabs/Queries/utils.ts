@@ -1,4 +1,4 @@
-import type { Column, Row } from './types';
+import type { Column, Row } from '~/shared/types';
 
 export const getPrimaryKeys = (columns: Column[], rows: Row[], rowIndex: number) =>
   columns

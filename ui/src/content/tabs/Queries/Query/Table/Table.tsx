@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Cell } from './Cell/Cell';
-import type { Column, Query as QueryType } from '../../types';
+import type { Column, Query as QueryType } from '../../../types';
 import { useCellSelection } from './useCellSelection';
 import { SelectionActions } from './SelectionActions/SelectionActions';
 import classNames from 'classnames';

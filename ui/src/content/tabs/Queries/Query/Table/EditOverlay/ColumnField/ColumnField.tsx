@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { isNil } from 'lodash';
 import { EditContext } from '~/content/edit/Context';
 import type { ChangeLocation, PrimaryKey } from '~/content/edit/types';
-import type { Column, Query, Value } from '~/content/queries/types';
+import type { Column, Query, Value } from '~/content/tabs/types';
 import { Field } from '~/shared/components/Field/Field';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { BooleanField } from './Boolean/Boolean';

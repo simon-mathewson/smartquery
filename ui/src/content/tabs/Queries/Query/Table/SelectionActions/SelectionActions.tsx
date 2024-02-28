@@ -4,7 +4,7 @@ import { Button } from '~/shared/components/Button/Button';
 import { useDebouncedCallback } from 'use-debounce';
 import { popoverHeight, popoverMargin } from './constants';
 import { EditOverlay } from '../EditOverlay/EditOverlay';
-import type { Query } from '~/content/queries/types';
+import type { Query } from '~/content/tabs/types';
 import { mergeRefs } from 'react-merge-refs';
 
 export type SelectionActionsProps = {
@@ -114,7 +114,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       {popoverStyles && (
         <div className="pointer-events-none absolute flex justify-center" style={popoverStyles}>
           <div
-            className="border-border bg-card pointer-events-auto flex rounded-full border shadow-xl"
+            className="pointer-events-auto flex rounded-full border border-border bg-card shadow-xl"
             ref={mergeRefs([popoverRef, ref])}
           >
             <Button icon={<EditOutlined />} ref={editButtonRef} />

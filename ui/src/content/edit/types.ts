@@ -1,4 +1,4 @@
-import type { Value } from '../queries/types';
+import type { Value } from '~/shared/types';
 
 export type PrimaryKey = { column: string; value: string | number };
 
