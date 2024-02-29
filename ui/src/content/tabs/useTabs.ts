@@ -1,23 +1,26 @@
-import { uniqueId } from 'lodash';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import * as uuid from 'uuid';
+import { useCallback, useMemo } from 'react';
 import type { Query, Tab } from '~/shared/types';
 import type { AddQueryOptions } from './types';
 import { getNewQuery } from './utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { trpc } from '~/trpc';
+import { useLocalStorageState } from '~/shared/hooks/useLocalStorageState';
 
 export const useTabs = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
-  const [tabs, _setTabs] = useState<Tab[]>([]);
-  const tabsRef = useRef(tabs);
-  const setTabs = useCallback((updateFn: (tabs: Tab[]) => Tab[]) => {
-    tabsRef.current = updateFn(tabsRef.current);
-    _setTabs(tabsRef.current);
-  }, []);
+  const localStorageSuffix = activeConnection
+    ? `${activeConnection.id}-${activeConnection.database}`
+    : '';
 
-  const [activeTabId, setActiveTabId] = useState<string | undefined>(undefined);
+  const [tabs, setTabs] = useLocalStorageState<Tab[]>(`tabs-${localStorageSuffix}`, []);
+
+  const [activeTabId, setActiveTabId] = useLocalStorageState<string | null>(
+    `activeTabId-${localStorageSuffix}`,
+    null,
+  );
 
   const activeTab = useMemo(() => tabs.find((t) => t.id === activeTabId), [tabs, activeTabId]);
 
@@ -33,10 +36,7 @@ export const useTabs = () => {
   );
 
   const runQuery = useCallback(
-    (id: string, tabId?: string) => {
-      const tab = tabsRef.current.find((t) => t.id === (tabId ?? activeTab?.id));
-      const query = tab?.queries.flat().find((q) => q.id === id);
-
+    (query: Query, tabId?: string) => {
       if (!query?.sql || !activeConnection) return;
 
       const { clientId } = activeConnection;
@@ -53,7 +53,7 @@ export const useTabs = () => {
         );
       });
     },
-    [activeConnection, activeTab?.id, setQueries],
+    [activeConnection, setQueries],
   );
 
   const addQuery = useCallback(
@@ -86,14 +86,41 @@ export const useTabs = () => {
         return newQueries;
       }, tabId);
 
-      await runQuery(newQuery.id, tabId);
+      await runQuery(newQuery, tabId);
+    },
+    [runQuery, setQueries],
+  );
+
+  const removeQuery = useCallback(
+    (id: string) => {
+      setQueries((currentQueries) =>
+        currentQueries.map((c) => c.filter((q) => q.id !== id)).filter((c) => c.length),
+      );
+    },
+    [setQueries],
+  );
+
+  const updateQuery = useCallback(
+    async (id: string, sql: string) => {
+      let query!: Query;
+
+      setQueries((currentQueries) =>
+        currentQueries.map((currentColumn) =>
+          currentColumn.map((q) => {
+            query = { ...q, sql, table: null };
+            return q.id === id ? query : q;
+          }),
+        ),
+      );
+
+      await runQuery(query);
     },
     [runQuery, setQueries],
   );
 
   const addTab = useCallback(
     (props: { query: AddQueryOptions }) => {
-      const id = uniqueId();
+      const id = uuid.v4();
 
       setTabs((currentTabs) => [
         ...currentTabs,
@@ -109,43 +136,40 @@ export const useTabs = () => {
         addQuery(props.query, { column: 0, row: 0 }, id);
       });
     },
-    [addQuery, setTabs],
+    [addQuery, setActiveTabId, setTabs],
   );
 
-  const removeQuery = useCallback(
+  const removeTab = useCallback(
     (id: string) => {
-      setQueries((currentQueries) =>
-        currentQueries.map((c) => c.filter((q) => q.id !== id)).filter((c) => c.length),
-      );
+      setTabs((currentTabs) => currentTabs.filter((t) => t.id !== id));
     },
-    [setQueries],
-  );
-
-  const updateQuery = useCallback(
-    async (id: string, sql: string) => {
-      setQueries((currentQueries) =>
-        currentQueries.map((currentColumn) =>
-          currentColumn.map((q) => (q.id === id ? { ...q, sql, table: null } : q)),
-        ),
-      );
-
-      await runQuery(id);
-    },
-    [runQuery, setQueries],
+    [setTabs],
   );
 
   return useMemo(
     () => ({
       activeTab,
       addQuery,
-      removeQuery,
-      runQuery,
-      updateQuery,
       addTab,
-      setTabs,
+      removeQuery,
+      removeTab,
+      runQuery,
       setActiveTabId,
+      setTabs,
       tabs,
+      updateQuery,
     }),
-    [activeTab, addQuery, addTab, removeQuery, runQuery, setTabs, tabs, updateQuery],
+    [
+      activeTab,
+      addQuery,
+      addTab,
+      removeQuery,
+      removeTab,
+      runQuery,
+      setActiveTabId,
+      setTabs,
+      tabs,
+      updateQuery,
+    ],
   );
 };

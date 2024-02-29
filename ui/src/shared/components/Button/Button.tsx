@@ -10,7 +10,11 @@ export type ButtonProps = {
   label?: string;
   monospace?: boolean;
   onClick?: (event: React.MouseEvent) => void;
+  onClickCapture?: (event: React.MouseEvent) => void;
+  showSuffixOnHover?: boolean;
   size?: 'small' | 'normal';
+  suffix?: React.ReactNode;
+  textSuffix?: string;
   type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
   variant?: 'default' | 'filled' | 'selected';
 };
@@ -25,7 +29,10 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
     label,
     monospace,
     onClick,
+    onClickCapture,
     size = 'normal',
+    suffix,
+    textSuffix,
     type = 'button',
     variant = 'default',
   } = props;
@@ -33,9 +40,9 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
   return (
     <button
       className={classNames(
-        'flex h-[36px] cursor-pointer items-center gap-2 rounded-lg px-3 py-2 [&>svg]:text-[20px]',
+        'group flex h-[36px] cursor-pointer items-center gap-1 rounded-lg px-2 py-2 [&>svg]:text-[20px]',
         {
-          '!h-[28px]': size === 'small',
+          '!h-[24px] [&>svg]:h-[16px] [&>svg]:w-[16px]': size === 'small',
           '!rounded-full': icon && !label,
           '!px-2': icon && !label && size === 'normal',
           '!p-1': icon && !label && size === 'small',
@@ -45,56 +52,59 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'pointer-events-none opacity-50': disabled,
           'font-mono font-medium': monospace,
 
-          'hover:bg-blackHighlight text-black [&>svg]:text-black':
+          'text-black hover:bg-blackHighlight [&>svg]:text-black':
             color === 'black' && variant === 'default',
-          'hover:bg-blackHover bg-black text-white [&>svg]:text-white':
+          'bg-black text-white hover:bg-blackHover [&>svg]:text-white':
             color === 'black' && variant === 'filled',
-          'bg-blackHighlight hover:bg-blackHighlightHover text-black':
+          'bg-blackHighlight text-black hover:bg-blackHighlightHover':
             color === 'black' && variant === 'selected',
 
-          'hover:bg-dangerHighlight [&>svg]:text-danger text-danger':
+          'text-danger hover:bg-dangerHighlight [&>svg]:text-danger':
             color === 'danger' && variant === 'default',
-          'bg-danger hover:bg-dangerHover text-white [&>svg]:text-white':
+          'bg-danger text-white hover:bg-dangerHover [&>svg]:text-white':
             color === 'danger' && variant === 'filled',
-          'bg-dangerHighlight hover:bg-dangerHighlightHover text-danger':
+          'bg-dangerHighlight text-danger hover:bg-dangerHighlightHover':
             color === 'danger' && variant === 'selected',
 
-          'hover:bg-primaryHighlight [&>svg]:text-primary text-primary':
+          'text-primary hover:bg-primaryHighlight [&>svg]:text-primary':
             color === 'primary' && variant === 'default',
-          'bg-primary hover:bg-primaryHover text-white [&>svg]:text-white':
+          'bg-primary text-white hover:bg-primaryHover [&>svg]:text-white':
             color === 'primary' && variant === 'filled',
-          'bg-primaryHighlight hover:bg-primaryHighlightHover text-primary':
+          'bg-primaryHighlight text-primary hover:bg-primaryHighlightHover':
             color === 'primary' && variant === 'selected',
 
-          'hover:bg-secondaryHighlight [&>svg]:text-secondary text-secondary':
+          'text-secondary hover:bg-secondaryHighlight [&>svg]:text-secondary':
             color === 'secondary' && variant === 'default',
-          'bg-secondary hover:bg-secondaryHover text-white [&>svg]:text-white':
+          'bg-secondary text-white hover:bg-secondaryHover [&>svg]:text-white':
             color === 'secondary' && variant === 'filled',
-          'bg-secondaryHighlight hover:bg-secondaryHighlightHover text-secondary':
+          'bg-secondaryHighlight text-secondary hover:bg-secondaryHighlightHover':
             color === 'secondary' && variant === 'selected',
 
-          'hover:bg-successHighlight [&>svg]:text-success text-success':
+          'text-success hover:bg-successHighlight [&>svg]:text-success':
             color === 'success' && variant === 'default',
-          'bg-success hover:bg-successHover text-white [&>svg]:text-white':
+          'bg-success text-white hover:bg-successHover [&>svg]:text-white':
             color === 'success' && variant === 'filled',
-          'bg-successHighlight hover:bg-successHighlightHover text-success':
+          'bg-successHighlight text-success hover:bg-successHighlightHover':
             color === 'success' && variant === 'selected',
 
-          'hover:bg-whiteHighlight text-white [&>svg]:text-white':
+          'text-white hover:bg-whiteHighlight [&>svg]:text-white':
             color === 'white' && variant === 'default',
-          'hover:bg-whiteHover bg-white text-black [&>svg]:text-black':
+          'bg-white text-black hover:bg-whiteHover [&>svg]:text-black':
             color === 'white' && variant === 'filled',
-          'bg-whiteHighlight hover:bg-whiteHighlightHover text-white':
+          'bg-whiteHighlight text-white hover:bg-whiteHighlightHover':
             color === 'white' && variant === 'selected',
         },
         className,
       )}
       onClick={onClick}
+      onClickCapture={onClickCapture}
       ref={ref}
       type={type}
     >
       {icon}
-      {label && <div className="text-sm font-medium leading-none">{label}</div>}
+      {label && <div className="truncate text-sm font-medium">{label}</div>}
+      {textSuffix && <div className="text-sm font-medium">{textSuffix}</div>}
+      {suffix}
     </button>
   );
 });

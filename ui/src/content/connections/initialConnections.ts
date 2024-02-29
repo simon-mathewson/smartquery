@@ -1,4 +1,4 @@
-import { uniqueId } from 'lodash';
+import * as uuid from 'uuid';
 
 import type { Connection } from './types';
 
@@ -7,7 +7,7 @@ export const initialConnections = [
     database: 'postgresql_db',
     engine: 'postgresql',
     host: 'localhost',
-    id: uniqueId(),
+    id: uuid.v4(),
     name: 'PostgreSQL',
     password: 'password',
     port: 5433,
@@ -17,7 +17,7 @@ export const initialConnections = [
     database: 'mysql_db',
     engine: 'mysql',
     host: 'localhost',
-    id: uniqueId(),
+    id: uuid.v4(),
     name: 'MySQL',
     password: 'password',
     port: 3307,
@@ -27,7 +27,7 @@ export const initialConnections = [
     database: 'sqlserver_db',
     engine: 'sqlserver',
     host: 'localhost',
-    id: uniqueId(),
+    id: uuid.v4(),
     name: 'SQL Server',
     password: 'Password1!',
     port: 1434,
@@ -37,7 +37,7 @@ export const initialConnections = [
     database: 'mathewson_metals_development',
     engine: 'postgresql',
     host: 'localhost',
-    id: uniqueId(),
+    id: uuid.v4(),
     name: 'Mathewson Metals',
     password: 'password',
     port: 5432,

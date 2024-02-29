@@ -1,5 +1,5 @@
 import { ArrowBack, DeleteOutline, Done } from '@mui/icons-material';
-import { uniqueId } from 'lodash';
+import * as uuid from 'uuid';
 import React, { useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { Button } from '~/shared/components/Button/Button';
@@ -33,7 +33,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
       database: '',
       engine: null,
       host: '',
-      id: uniqueId(),
+      id: uuid.v4(),
       name: '',
       password: '',
       port: null,

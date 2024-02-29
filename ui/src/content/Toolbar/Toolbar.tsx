@@ -4,16 +4,18 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Add } from '@mui/icons-material';
 import { Changes } from './Changes/Changes';
 import { TabsContext } from '../tabs/Context';
+import { Tabs } from './Tabs/Tabs';
 
 export const Toolbar: React.FC = () => {
-  const { addTab } = useDefinedContext(TabsContext);
+  const { addTab, tabs } = useDefinedContext(TabsContext);
 
   return (
-    <div className="flex items-center gap-2 py-2 ">
+    <div className="mb-1 flex items-center gap-2 py-2">
+      <Tabs />
       <Button
         align="left"
-        className="mb-1"
         icon={<Add />}
+        label={tabs.length ? undefined : 'New query'}
         onClick={() => addTab({ query: { showEditor: true } })}
       />
       <Changes />

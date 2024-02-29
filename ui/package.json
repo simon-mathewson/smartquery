@@ -18,6 +18,7 @@
     "@mui/icons-material": "^5.14.16",
     "@trpc/client": "^10.44.1",
     "@trpc/server": "^10.44.1",
+    "@types/uuid": "^9.0.8",
     "@uiw/codemirror-theme-github": "^4.21.20",
     "@uiw/react-codemirror": "^4.21.20",
     "classnames": "^2.3.2",
@@ -28,6 +29,7 @@
     "react-merge-refs": "^2.1.1",
     "superjson": "1.12.4",
     "use-debounce": "^10.0.0",
+    "uuid": "^9.0.1",
     "vite-plugin-svgr": "^4.2.0",
     "zod": "^3.22.4"
   },

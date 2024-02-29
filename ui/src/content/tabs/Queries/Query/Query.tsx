@@ -8,6 +8,7 @@ import { Header } from '../../../../shared/components/Header/Header';
 import classNames from 'classnames';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TabsContext } from '../../Context';
+import { getQueryTitle } from './utils';
 
 export type QueryProps = {
   columnIndex: number;
@@ -43,7 +44,7 @@ export const Query: React.FC<QueryProps> = (props) => {
           ) : null
         }
         right={<Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />}
-        title={query.table ?? 'New query'}
+        title={getQueryTitle(query)}
       />
       {showEditor && (
         <div className="px-2 pb-2">
