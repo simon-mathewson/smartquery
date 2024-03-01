@@ -40,10 +40,10 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
       onClick={onClick}
       onMouseDown={onMouseDown}
     >
-      <div className="overflow-hidden">
+      <div className="flex flex-col justify-center overflow-hidden">
         <div
           className={classNames(
-            'text-textSecondary overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium',
+            'overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-textSecondary',
             {
               'text-white': selectedVariant === 'primary' && selected,
             },
@@ -54,7 +54,7 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
         {hint && (
           <div
             className={classNames(
-              'text-textTertiary overflow-hidden text-ellipsis whitespace-nowrap text-xs',
+              'overflow-hidden text-ellipsis whitespace-nowrap text-xs text-textTertiary',
               {
                 'text-whiteHover': selectedVariant === 'primary' && selected,
               },
