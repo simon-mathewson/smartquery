@@ -16,7 +16,7 @@ export type ButtonProps = {
   suffix?: React.ReactNode;
   textSuffix?: string;
   type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
-  variant?: 'default' | 'filled' | 'selected';
+  variant?: 'default' | 'filled' | 'highlighted';
 };
 
 export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((props, ref) => {
@@ -40,7 +40,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
   return (
     <button
       className={classNames(
-        'group flex h-[36px] cursor-pointer items-center gap-1 rounded-lg px-2 py-2 [&>svg]:text-[20px]',
+        'flex h-[36px] cursor-pointer items-center gap-1 rounded-lg px-2 py-2 [&>svg]:text-[20px]',
         {
           '!h-[24px] [&>svg]:h-[16px] [&>svg]:w-[16px]': size === 'small',
           '!rounded-full': icon && !label,
@@ -57,42 +57,42 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'bg-black text-white hover:bg-blackHover [&>svg]:text-white':
             color === 'black' && variant === 'filled',
           'bg-blackHighlight text-black hover:bg-blackHighlightHover':
-            color === 'black' && variant === 'selected',
+            color === 'black' && variant === 'highlighted',
 
           'text-danger hover:bg-dangerHighlight [&>svg]:text-danger':
             color === 'danger' && variant === 'default',
           'bg-danger text-white hover:bg-dangerHover [&>svg]:text-white':
             color === 'danger' && variant === 'filled',
           'bg-dangerHighlight text-danger hover:bg-dangerHighlightHover':
-            color === 'danger' && variant === 'selected',
+            color === 'danger' && variant === 'highlighted',
 
           'text-primary hover:bg-primaryHighlight [&>svg]:text-primary':
             color === 'primary' && variant === 'default',
           'bg-primary text-white hover:bg-primaryHover [&>svg]:text-white':
             color === 'primary' && variant === 'filled',
           'bg-primaryHighlight text-primary hover:bg-primaryHighlightHover':
-            color === 'primary' && variant === 'selected',
+            color === 'primary' && variant === 'highlighted',
 
           'text-secondary hover:bg-secondaryHighlight [&>svg]:text-secondary':
             color === 'secondary' && variant === 'default',
           'bg-secondary text-white hover:bg-secondaryHover [&>svg]:text-white':
             color === 'secondary' && variant === 'filled',
           'bg-secondaryHighlight text-secondary hover:bg-secondaryHighlightHover':
-            color === 'secondary' && variant === 'selected',
+            color === 'secondary' && variant === 'highlighted',
 
           'text-success hover:bg-successHighlight [&>svg]:text-success':
             color === 'success' && variant === 'default',
           'bg-success text-white hover:bg-successHover [&>svg]:text-white':
             color === 'success' && variant === 'filled',
           'bg-successHighlight text-success hover:bg-successHighlightHover':
-            color === 'success' && variant === 'selected',
+            color === 'success' && variant === 'highlighted',
 
           'text-white hover:bg-whiteHighlight [&>svg]:text-white':
             color === 'white' && variant === 'default',
           'bg-white text-black hover:bg-whiteHover [&>svg]:text-black':
             color === 'white' && variant === 'filled',
           'bg-whiteHighlight text-white hover:bg-whiteHighlightHover':
-            color === 'white' && variant === 'selected',
+            color === 'white' && variant === 'highlighted',
         },
         className,
       )}

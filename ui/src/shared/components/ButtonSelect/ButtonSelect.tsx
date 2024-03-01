@@ -27,7 +27,7 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
           monospace={monospace}
           label={label}
           onClick={() => onChange(value === selectedValue ? undefined : value)}
-          variant="selected"
+          variant="highlighted"
         />
       ))}
     </div>

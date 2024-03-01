@@ -71,8 +71,8 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                   </div>
                   <Button icon={<Add />} label="Add" onClick={() => setIsAddingOrEditing(true)} />
                 </div>
-                {connections.map((connection, index) => (
-                  <div className="flex items-center gap-2" key={index}>
+                <div className="flex flex-col gap-1">
+                  {connections.map((connection, index) => (
                     <ListItem
                       actions={[
                         {
@@ -84,13 +84,14 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                         },
                       ]}
                       hint={`${connection.user}@${connection.host}:${connection.port}`}
+                      key={index}
                       label={connection.name}
                       onClick={() => connect(connection)}
                       selected={activeConnection?.id === connection.id}
                       selectedVariant="primary"
                     />
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
               <div className="h-full w-px bg-border" />
               <div>
@@ -99,9 +100,10 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                     Databases
                   </div>
                 </div>
-                {databases.map((database, index) => (
-                  <div className="flex items-center gap-2" key={index}>
+                <div className="flex flex-col gap-1">
+                  {databases.map((database, index) => (
                     <ListItem
+                      key={index}
                       label={database}
                       onClick={() => {
                         if (!activeConnection) return;
@@ -111,8 +113,8 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                       selected={activeConnection?.database === database}
                       selectedVariant="primary"
                     />
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           )}

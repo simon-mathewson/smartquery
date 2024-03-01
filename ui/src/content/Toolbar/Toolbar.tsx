@@ -10,7 +10,7 @@ export const Toolbar: React.FC = () => {
   const { addTab, tabs } = useDefinedContext(TabsContext);
 
   return (
-    <div className="mb-1 flex items-center gap-2 py-2">
+    <div className="mb-2 mt-1 flex items-center gap-2 py-2">
       <Tabs />
       <Button
         align="left"

@@ -15,7 +15,7 @@ export const App: React.FC = () => {
   return (
     <div className="grid h-full grid-cols-[224px_1fr] bg-background">
       <NavigationSidebar />
-      <div className="flex h-full flex-col overflow-hidden pr-2">
+      <div className="flex h-full flex-col overflow-hidden pl-1 pr-3">
         {activeConnection && <Toolbar />}
         <Queries />
       </div>

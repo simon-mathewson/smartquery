@@ -8,7 +8,9 @@ import { ConnectionsContext } from '~/content/connections/Context';
 import { withQuotes } from '~/shared/utils/sql';
 import { TabsContext } from '~/content/tabs/Context';
 
-export type ItemProps = { tableName: string };
+export type ItemProps = {
+  tableName: string;
+};
 
 export const Item: React.FC<ItemProps> = (props) => {
   const { tableName } = props;
@@ -35,7 +37,9 @@ export const Item: React.FC<ItemProps> = (props) => {
 
   return (
     <ListItem
-      className={classNames({ '!opacity-50': isDragging })}
+      className={classNames({
+        '!opacity-50': isDragging,
+      })}
       key={tableName}
       label={tableName}
       onClick={() => addTab({ query: getQuery() })}

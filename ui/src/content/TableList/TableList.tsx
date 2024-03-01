@@ -36,7 +36,7 @@ export const TableList: React.FC = () => {
   }, [activeConnection]);
 
   return (
-    <div className="overflow-auto py-2">
+    <div className="flex flex-col gap-1 overflow-auto py-2">
       {tables.length > 0 ? (
         tables.map((tableName) => <Item key={tableName} tableName={tableName} />)
       ) : (

@@ -4,7 +4,6 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { getTabTitle } from './utils';
 import { Button } from '~/shared/components/Button/Button';
 import { Close } from '@mui/icons-material';
-import classNames from 'classnames';
 
 export const Tabs: React.FC = () => {
   const { activeTab, removeTab, setActiveTabId, tabs } = useDefinedContext(TabsContext);
@@ -17,17 +16,15 @@ export const Tabs: React.FC = () => {
         return (
           <Button
             className="w-[180px]"
-            color="secondary"
+            color={activeTab?.id === tab.id ? 'primary' : 'secondary'}
             key={tab.id}
             label={getTabTitle(tab)}
             onClick={() => setActiveTabId(tab.id)}
             showSuffixOnHover
             suffix={
               <Button
-                className={classNames('ml-auto opacity-0 group-hover:opacity-100', {
-                  'opacity-100': activeTab?.id === tab.id,
-                })}
-                color="secondary"
+                className="ml-auto"
+                color={activeTab?.id === tab.id ? 'primary' : 'secondary'}
                 icon={<Close />}
                 onClickCapture={(event) => {
                   removeTab(tab.id);
@@ -37,7 +34,7 @@ export const Tabs: React.FC = () => {
               />
             }
             textSuffix={tab.queries.length > 1 ? `+${tab.queries.length - 1}` : undefined}
-            variant={activeTab?.id === tab.id ? 'selected' : 'default'}
+            variant="highlighted"
           />
         );
       })}

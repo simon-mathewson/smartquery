@@ -26,7 +26,7 @@ export const Query: React.FC<QueryProps> = (props) => {
   return (
     <div
       className={classNames(
-        'relative ml-2 mt-2 flex min-h-[240px] flex-col justify-start gap-2 overflow-hidden rounded-xl border border-border bg-card p-2',
+        'relative ml-3 mt-3 flex min-h-[240px] flex-col justify-start gap-2 overflow-hidden rounded-xl border border-border bg-card p-2',
         {
           '!ml-0': columnIndex === 0,
           '!mt-0': rowIndex === 0,
@@ -39,7 +39,7 @@ export const Query: React.FC<QueryProps> = (props) => {
             <Button
               icon={<Code />}
               onClick={() => setShowEditor((current) => !current)}
-              variant={showEditor ? 'selected' : 'default'}
+              variant={showEditor ? 'highlighted' : 'default'}
             />
           ) : null
         }
