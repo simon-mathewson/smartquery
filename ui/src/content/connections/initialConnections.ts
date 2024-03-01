@@ -43,4 +43,14 @@ export const initialConnections = [
     port: 5432,
     user: 'postgres',
   },
+  {
+    database: 'cosuno_development',
+    engine: 'mysql',
+    host: 'localhost',
+    id: uuid.v4(),
+    name: 'Cosuno Development',
+    password: 'root',
+    port: 3306,
+    user: 'root',
+  },
 ] satisfies Connection[];
