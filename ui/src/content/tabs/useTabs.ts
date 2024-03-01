@@ -6,7 +6,7 @@ import { getNewQuery } from './utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { trpc } from '~/trpc';
-import { useLocalStorageState } from '~/shared/hooks/useLocalStorageState';
+import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 
 export const useTabs = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -15,11 +15,12 @@ export const useTabs = () => {
     ? `${activeConnection.id}-${activeConnection.database}`
     : '';
 
-  const [tabs, setTabs] = useLocalStorageState<Tab[]>(`tabs-${localStorageSuffix}`, []);
+  const [tabs, setTabs] = useStoredState<Tab[]>(`tabs-${localStorageSuffix}`, [], sessionStorage);
 
-  const [activeTabId, setActiveTabId] = useLocalStorageState<string | null>(
+  const [activeTabId, setActiveTabId] = useStoredState<string | null>(
     `activeTabId-${localStorageSuffix}`,
     null,
+    sessionStorage,
   );
 
   const activeTab = useMemo(() => tabs.find((t) => t.id === activeTabId), [tabs, activeTabId]);

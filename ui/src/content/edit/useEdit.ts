@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import type { Change, ChangeLocation, ChangeRow } from './types';
 import { doChangeLocationsMatch } from './utils';
-import { useLocalStorageState } from '~/shared/hooks/useLocalStorageState';
+import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { withQuotes } from '~/shared/utils/sql';
@@ -9,7 +9,7 @@ import { withQuotes } from '~/shared/utils/sql';
 export const useEdit = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
-  const [changes, setChanges] = useLocalStorageState<Change[]>('changes', []);
+  const [changes, setChanges] = useStoredState<Change[]>('changes', [], sessionStorage);
 
   const clearChanges = useCallback(() => {
     setChanges([]);

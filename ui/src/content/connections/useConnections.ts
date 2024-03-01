@@ -1,23 +1,26 @@
 import { trpc } from '~/trpc';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { initialConnections } from './initialConnections';
-import { useLocalStorageState } from '~/shared/hooks/useLocalStorageState';
+import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import type { ActiveConnection, Connection } from './types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
 export const useConnections = () => {
-  const [connections, setConnections] = useLocalStorageState<Connection[]>(
+  const [connections, setConnections] = useStoredState<Connection[]>(
     'connections',
     initialConnections,
   );
 
   const [activeConnectionClientId, setActiveConnectionClientId] = useState<string | null>(null);
-  const [activeConnectionDatabase, setActiveConnectionDatabase] = useLocalStorageState<
-    string | null
-  >('activeConnectionDatabase', null);
-  const [activeConnectionId, setActiveConnectionId] = useLocalStorageState<string | null>(
+  const [activeConnectionDatabase, setActiveConnectionDatabase] = useStoredState<string | null>(
+    'activeConnectionDatabase',
+    null,
+    sessionStorage,
+  );
+  const [activeConnectionId, setActiveConnectionId] = useStoredState<string | null>(
     'activeConnectionId',
     null,
+    sessionStorage,
   );
 
   const activeConnection = useMemo(() => {

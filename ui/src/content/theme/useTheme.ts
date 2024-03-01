@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useLocalStorageState } from '~/shared/hooks/useLocalStorageState';
+import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import type { ThemeMode } from './types';
 
 const darkModeQuery = '(prefers-color-scheme: dark)';
 
 export const useTheme = () => {
-  const [modePreference] = useLocalStorageState<ThemeMode | 'system'>('modePreference', 'system');
+  const [modePreference] = useStoredState<ThemeMode | 'system'>('modePreference', 'system');
 
   const [mode, setMode] = useState<ThemeMode>(() =>
     matchMedia(darkModeQuery).matches ? 'dark' : 'light',
