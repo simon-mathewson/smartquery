@@ -1,5 +1,5 @@
 import * as uuid from 'uuid';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import type { Query, Tab } from '~/shared/types';
 import type { AddQueryOptions } from './types';
 import { getNewQuery } from './utils';
@@ -97,8 +97,9 @@ export const useTabs = () => {
       setQueries((currentQueries) =>
         currentQueries.map((c) => c.filter((q) => q.id !== id)).filter((c) => c.length),
       );
+      setTabs((currentTabs) => currentTabs.filter((t) => t.queries.length));
     },
-    [setQueries],
+    [setQueries, setTabs],
   );
 
   const updateQuery = useCallback(
@@ -146,6 +147,16 @@ export const useTabs = () => {
     },
     [setTabs],
   );
+
+  useEffect(() => {
+    const activeTab = tabs.find((t) => t.id === activeTabId);
+    if (!activeTab) {
+      setActiveTabId(null);
+    }
+    if (!activeTabId && tabs.length) {
+      setActiveTabId(tabs[0].id);
+    }
+  }, [activeTabId, setActiveTabId, tabs]);
 
   return useMemo(
     () => ({

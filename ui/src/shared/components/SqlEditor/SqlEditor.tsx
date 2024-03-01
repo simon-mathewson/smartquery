@@ -44,7 +44,14 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (document.activeElement === getContentEl() && event.metaKey && event.key === 'Enter') {
+      if (
+        document.activeElement === getContentEl() &&
+        event.metaKey &&
+        event.key === 'Enter' &&
+        !event.shiftKey &&
+        !event.altKey &&
+        !event.ctrlKey
+      ) {
         event.stopPropagation();
         void submitQuery();
       }
@@ -59,7 +66,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="bg-background border-border grid w-full min-w-[560px] gap-1 overflow-hidden rounded-lg border py-1">
+      <div className="grid w-full min-w-[560px] gap-1 overflow-hidden rounded-lg border border-border bg-background py-1">
         <CodeEditor
           autoFocus
           editorRef={editorRef}
@@ -71,7 +78,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       </div>
       <div className="flex items-start justify-between gap-3">
         {error && (
-          <div className="text-danger bg-dangerHighlight select-text rounded-lg px-2 py-1 text-xs font-medium leading-normal">
+          <div className="select-text rounded-lg bg-dangerHighlight px-2 py-1 text-xs font-medium leading-normal text-danger">
             {error}
           </div>
         )}

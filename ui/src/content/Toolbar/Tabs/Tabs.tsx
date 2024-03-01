@@ -8,7 +8,9 @@ import { Close } from '@mui/icons-material';
 export const Tabs: React.FC = () => {
   const { activeTab, removeTab, setActiveTabId, tabs } = useDefinedContext(TabsContext);
 
-  if (!tabs.length) return null;
+  if (!tabs.length) {
+    return null;
+  }
 
   return (
     <div className="no-scrollbar grid grid-flow-col items-center gap-2 overflow-auto">
