@@ -6,12 +6,32 @@ import type { ActiveConnection, Connection } from './types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
 export const useConnections = () => {
-  const [activeConnection, setActiveConnection] = useState<ActiveConnection | null>(null);
-
   const [connections, setConnections] = useLocalStorageState<Connection[]>(
     'connections',
     initialConnections,
   );
+
+  const [activeConnectionClientId, setActiveConnectionClientId] = useState<string | null>(null);
+  const [activeConnectionDatabase, setActiveConnectionDatabase] = useLocalStorageState<
+    string | null
+  >('activeConnectionDatabase', null);
+  const [activeConnectionId, setActiveConnectionId] = useLocalStorageState<string | null>(
+    'activeConnectionId',
+    null,
+  );
+
+  const activeConnection = useMemo(() => {
+    if (!activeConnectionClientId || !activeConnectionDatabase) return null;
+
+    const connection = connections.find((c) => c.id === activeConnectionId) ?? null;
+    if (!connection) return null;
+
+    return {
+      ...connection,
+      clientId: activeConnectionClientId,
+      database: activeConnectionDatabase,
+    } satisfies ActiveConnection;
+  }, [activeConnectionClientId, activeConnectionDatabase, activeConnectionId, connections]);
 
   const addConnection = useCallback(
     (connection: Connection) => {
@@ -35,31 +55,47 @@ export const useConnections = () => {
   );
 
   const connect = useCallback(
-    async (connection: Connection) => {
+    async (id: string, database?: string) => {
+      const connection = connections.find((c) => c.id === id);
+
+      if (!connection) {
+        throw new Error(`Connection with id ${id} not found`);
+      }
+
       if (activeConnection) {
         await trpc.disconnectDb.mutate(activeConnection.clientId);
       }
 
-      setActiveConnection(null);
+      setActiveConnectionClientId(null);
+      setActiveConnectionDatabase(null);
+      setActiveConnectionId(null);
 
-      const newClientId = await trpc.connectDb.mutate(connection);
+      const selectedDatabase = database ?? connection.database;
 
-      setActiveConnection({
+      const newClientId = await trpc.connectDb.mutate({
         ...connection,
-        clientId: newClientId,
+        database: selectedDatabase,
       });
 
-      window.document.title = `${connection.database} – ${connection.name}`;
+      setActiveConnectionClientId(newClientId);
+      setActiveConnectionDatabase(selectedDatabase);
+      setActiveConnectionId(connection.id);
+
+      window.document.title = `${selectedDatabase} – ${connection.name}`;
     },
-    [activeConnection],
+    [activeConnection, connections, setActiveConnectionDatabase, setActiveConnectionId],
   );
 
   useEffectOnce(() => {
-    const firstConnection = connections[0];
+    if (activeConnectionId && activeConnectionDatabase) {
+      connect(activeConnectionId, activeConnectionDatabase);
+      return;
+    }
 
-    if (!firstConnection) return;
+    const firstConnectionId = connections.at(0)?.id;
+    if (!firstConnectionId) return;
 
-    connect(firstConnection);
+    connect(firstConnectionId);
   });
 
   useEffect(() => {

@@ -86,7 +86,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                       hint={`${connection.user}@${connection.host}:${connection.port}`}
                       key={index}
                       label={connection.name}
-                      onClick={() => connect(connection)}
+                      onClick={() => connect(connection.id)}
                       selected={activeConnection?.id === connection.id}
                       selectedVariant="primary"
                     />
@@ -108,7 +108,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                       onClick={() => {
                         if (!activeConnection) return;
 
-                        return connect({ ...activeConnection, database });
+                        return connect(activeConnection.id, database);
                       }}
                       selected={activeConnection?.database === database}
                       selectedVariant="primary"
