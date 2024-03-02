@@ -1,24 +1,24 @@
 import React, { useRef, useState } from 'react';
 import { Cell } from './Cell/Cell';
-import type { Column, Query as QueryType } from '../../../types';
+import type { Column, Query as QueryType } from '../../../../../shared/types';
 import { useCellSelection } from './useCellSelection';
 import { SelectionActions } from './SelectionActions/SelectionActions';
 import classNames from 'classnames';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { EditContext } from '~/content/edit/Context';
 import { getPrimaryKeys } from '../../utils';
+import { TabsContext } from '~/content/tabs/Context';
 
 export type TableProps = {
   query: QueryType;
 };
 
 export const Table: React.FC<TableProps> = (props) => {
-  const {
-    query,
-    query: { columns: columnsProp, hasResults, rows },
-  } = props;
+  const { query } = props;
 
-  const columns = columnsProp ?? Object.keys(rows[0] ?? {});
+  const { queryResults } = useDefinedContext(TabsContext);
+
+  const queryResult = query.id in queryResults ? queryResults[query.id] : null;
 
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
@@ -30,7 +30,11 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const tableRef = useRef<HTMLDivElement | null>(null);
 
-  if (!hasResults) return null;
+  if (!queryResult) return null;
+
+  const { columns: columnsProp, rows } = queryResult;
+
+  const columns = columnsProp ?? Object.keys(rows[0] ?? {});
 
   return (
     <>

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import type { Column, Value } from '~/content/tabs/types';
+import type { Column, Value } from '~/shared/types';
 import { isDateTimeType, isNumberType, isTimeType } from '../EditOverlay/ColumnField/utils';
 
 export type CellProps = {

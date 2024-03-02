@@ -19,7 +19,9 @@ export type QueryProps = {
 export const Query: React.FC<QueryProps> = (props) => {
   const { columnIndex, query, rowIndex } = props;
 
-  const { removeQuery, updateQuery } = useDefinedContext(TabsContext);
+  const { queryResults, removeQuery, updateQuery } = useDefinedContext(TabsContext);
+
+  const queryResult = query.id in queryResults ? queryResults[query.id] : null;
 
   const [showEditor, setShowEditor] = useState(query.showEditor);
 
@@ -35,7 +37,7 @@ export const Query: React.FC<QueryProps> = (props) => {
     >
       <Header
         left={
-          query.hasResults ? (
+          queryResult ? (
             <Button
               icon={<Code />}
               onClick={() => setShowEditor((current) => !current)}

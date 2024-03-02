@@ -4,8 +4,10 @@ import { Button } from '~/shared/components/Button/Button';
 import { useDebouncedCallback } from 'use-debounce';
 import { popoverHeight, popoverMargin } from './constants';
 import { EditOverlay } from '../EditOverlay/EditOverlay';
-import type { Query } from '~/content/tabs/types';
+import type { Query } from '~/shared/types';
 import { mergeRefs } from 'react-merge-refs';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { TabsContext } from '~/content/tabs/Context';
 
 export type SelectionActionsProps = {
   columnCount: number;
@@ -17,6 +19,10 @@ export type SelectionActionsProps = {
 
 export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps>((props, ref) => {
   const { columnCount, query, selection, setIsEditing, tableRef } = props;
+
+  const { queryResults } = useDefinedContext(TabsContext);
+
+  const queryResult = query.id in queryResults ? queryResults[query.id] : null;
 
   const [tableWidth, setTableWidth] = useState<number>();
 
@@ -122,7 +128,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
           </div>
         </div>
       )}
-      {query.rows.length > 0 && (
+      {Boolean(queryResult?.rows.length) && (
         <div style={{ height: `${popoverHeight + popoverMargin * 4}px` }} />
       )}
       <EditOverlay

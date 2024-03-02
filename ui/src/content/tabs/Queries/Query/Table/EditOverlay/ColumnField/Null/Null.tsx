@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Value } from '~/content/tabs/types';
+import type { Value } from '~/shared/types';
 import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
 
 export type NullButtonProps = {

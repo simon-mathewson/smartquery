@@ -1,12 +1,13 @@
 import * as uuid from 'uuid';
-import { useCallback, useEffect, useMemo } from 'react';
-import type { Query, Tab } from '~/shared/types';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { Query, QueryResult, Tab } from '~/shared/types';
 import type { AddQueryOptions } from './types';
 import { getNewQuery } from './utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { trpc } from '~/trpc';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
 export const useTabs = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -25,6 +26,8 @@ export const useTabs = () => {
 
   const activeTab = useMemo(() => tabs.find((t) => t.id === activeTabId), [tabs, activeTabId]);
 
+  const [queryResults, setQueryResults] = useState<Record<string, QueryResult>>({});
+
   const setQueries = useCallback(
     (updateFn: (queries: Query[][]) => Query[][], tabId?: string) => {
       setTabs((currentTabs) =>
@@ -37,24 +40,19 @@ export const useTabs = () => {
   );
 
   const runQuery = useCallback(
-    (query: Query, tabId?: string) => {
+    (query: Query) => {
       if (!query?.sql || !activeConnection) return;
 
       const { clientId } = activeConnection;
 
       return trpc.sendQuery.query([clientId, query.sql]).then(([{ columns, rows }]) => {
-        setQueries(
-          (currentQueries) =>
-            currentQueries.map((currentColumn) =>
-              currentColumn.map((q) =>
-                q.id === query.id ? { ...q, columns, hasResults: true, rows } : q,
-              ),
-            ),
-          tabId,
-        );
+        setQueryResults((currentQueryResults) => ({
+          ...currentQueryResults,
+          [query.id]: { columns, rows },
+        }));
       });
     },
-    [activeConnection, setQueries],
+    [activeConnection],
   );
 
   const addQuery = useCallback(
@@ -87,7 +85,7 @@ export const useTabs = () => {
         return newQueries;
       }, tabId);
 
-      await runQuery(newQuery, tabId);
+      await runQuery(newQuery);
     },
     [runQuery, setQueries],
   );
@@ -109,7 +107,7 @@ export const useTabs = () => {
       setQueries((currentQueries) =>
         currentQueries.map((currentColumn) =>
           currentColumn.map((q) => {
-            query = { ...q, sql, table: null };
+            query = { ...q, sql };
             return q.id === id ? query : q;
           }),
         ),
@@ -124,14 +122,7 @@ export const useTabs = () => {
     (props: { query: AddQueryOptions }) => {
       const id = uuid.v4();
 
-      setTabs((currentTabs) => [
-        ...currentTabs,
-        {
-          id,
-          queries: [],
-        },
-      ]);
-
+      setTabs((currentTabs) => [...currentTabs, { id, queries: [] }]);
       setActiveTabId(id);
 
       setTimeout(() => {
@@ -158,11 +149,25 @@ export const useTabs = () => {
     }
   }, [activeTabId, setActiveTabId, tabs]);
 
+  useEffectOnce(
+    () => {
+      tabs.forEach((tab) => {
+        tab.queries.flat().forEach((query) => {
+          if (query.sql) {
+            runQuery(query);
+          }
+        });
+      });
+    },
+    { enabled: Boolean(tabs.length) },
+  );
+
   return useMemo(
     () => ({
       activeTab,
       addQuery,
       addTab,
+      queryResults,
       removeQuery,
       removeTab,
       runQuery,
@@ -175,6 +180,7 @@ export const useTabs = () => {
       activeTab,
       addQuery,
       addTab,
+      queryResults,
       removeQuery,
       removeTab,
       runQuery,

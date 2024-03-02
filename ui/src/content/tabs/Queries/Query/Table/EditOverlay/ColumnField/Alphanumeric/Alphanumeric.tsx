@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import type { DataType, Value } from '~/content/tabs/types';
+import type { DataType, Value } from '~/shared/types';
 import { Input } from '~/shared/components/Input/Input';
 import { isDateTimeType, isIntegerType, isTimeType } from '../utils';
 

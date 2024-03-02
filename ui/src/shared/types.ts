@@ -14,13 +14,15 @@ export type Column = NonNullable<SendQueryResponse['columns']>[number];
 export type DataType = Column['dataType'];
 
 export type Query = {
-  columns: Column[] | null;
-  hasResults: boolean;
   id: string;
-  rows: Array<Record<string, Value>>;
   showEditor: boolean;
   sql: string | null;
   table: string | null;
+};
+
+export type QueryResult = {
+  columns: Column[] | null;
+  rows: Array<Record<string, Value>>;
 };
 
 export type Tab = {

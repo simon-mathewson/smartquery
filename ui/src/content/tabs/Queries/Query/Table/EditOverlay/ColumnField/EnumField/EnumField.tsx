@@ -1,6 +1,6 @@
 import { isNil } from 'lodash';
 import React from 'react';
-import type { Column, Value } from '~/content/tabs/types';
+import type { Column, Value } from '~/shared/types';
 import { Select } from '~/shared/components/Select/Select';
 
 export type EnumFieldProps = {

@@ -1,11 +1,13 @@
 import { range } from 'lodash';
 import { useMemo } from 'react';
-import type { Query } from '~/content/tabs/types';
+import type { Query } from '~/shared/types';
 import { getPrimaryKeys } from '~/content/tabs/Queries/utils';
 import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 import type { ColumnFieldProps } from './ColumnField/ColumnField';
 import { ColumnField } from './ColumnField/ColumnField';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { TabsContext } from '~/content/tabs/Context';
 
 export type EditModalProps = {
   columnCount: number;
@@ -20,7 +22,13 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
   const { columnCount, query, editButtonRef, selection, selectionActionsPopoverRef, setIsEditing } =
     props;
 
+  const { queryResults } = useDefinedContext(TabsContext);
+
+  const queryResult = query.id in queryResults ? queryResults[query.id] : null;
+
   const columnFields = useMemo(() => {
+    if (!queryResult) return null;
+
     return selection.reduce<Array<Pick<ColumnFieldProps, 'column' | 'rows'>>>(
       (allColumnsWithValues, _selectedColumnIndices, rowIndex) => {
         const newColumnsWithValues = cloneArrayWithEmptyValues(allColumnsWithValues);
@@ -29,15 +37,15 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
           _selectedColumnIndices.length === 0 ? range(columnCount) : _selectedColumnIndices;
 
         selectedColumnIndices.forEach((columnIndex) => {
-          const column = query.columns![columnIndex];
-          const value = query.rows[rowIndex][column.name];
+          const column = queryResult.columns![columnIndex];
+          const value = queryResult.rows[rowIndex][column.name];
 
           if (!newColumnsWithValues[columnIndex]) {
             newColumnsWithValues[columnIndex] = { column, rows: [] };
           }
 
           newColumnsWithValues[columnIndex].rows.push({
-            primaryKeys: getPrimaryKeys(query.columns!, query.rows, rowIndex),
+            primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex),
             value,
           });
         });
@@ -45,7 +53,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
       },
       [],
     );
-  }, [columnCount, query, selection]);
+  }, [columnCount, queryResult, selection]);
 
   if (selection.length === 0) return null;
 
