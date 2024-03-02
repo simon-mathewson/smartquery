@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined } from '@mui/icons-material';
+import { EditOutlined } from '@mui/icons-material';
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { useDebouncedCallback } from 'use-debounce';
@@ -8,6 +8,7 @@ import type { Query } from '~/shared/types';
 import { mergeRefs } from 'react-merge-refs';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TabsContext } from '~/content/tabs/Context';
+import { Delete } from './Delete/Delete';
 
 export type SelectionActionsProps = {
   columnCount: number;
@@ -124,7 +125,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
             ref={mergeRefs([popoverRef, ref])}
           >
             <Button icon={<EditOutlined />} ref={editButtonRef} />
-            <Button icon={<DeleteOutlined />} />
+            <Delete query={query} selection={selection} />
           </div>
         </div>
       )}

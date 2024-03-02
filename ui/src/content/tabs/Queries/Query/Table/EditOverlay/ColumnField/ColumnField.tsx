@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { isNil } from 'lodash';
 import { EditContext } from '~/content/edit/Context';
-import type { ChangeLocation, PrimaryKey } from '~/content/edit/types';
+import type { UpdateLocation, PrimaryKey } from '~/content/edit/types';
 import type { Column, Query, Value } from '~/shared/types';
 import { Field } from '~/shared/components/Field/Field';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
@@ -23,7 +23,7 @@ export type ColumnFieldProps = {
 export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
   const { autoFocus, column, query, rows } = props;
 
-  const { getChangedValue, handleChange } = useDefinedContext(EditContext);
+  const { getChange, handleChange } = useDefinedContext(EditContext);
 
   const locations = useMemo(
     () =>
@@ -31,9 +31,10 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
         (row) =>
           ({
             column: column.name,
-            row,
+            originalValue: row.value,
+            primaryKeys: row.primaryKeys,
             table: query.table!,
-          }) satisfies ChangeLocation,
+          }) satisfies UpdateLocation,
       ),
     [column.name, query.table, rows],
   );
@@ -41,10 +42,11 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
   const values = useMemo(
     () =>
       locations.map((location) => {
-        const changedValue = getChangedValue(location);
-        return changedValue === undefined ? location.row.value : changedValue;
+        const change = getChange(location);
+        const changedValue = change?.type === 'update' ? change.value : undefined;
+        return changedValue === undefined ? location.originalValue : changedValue;
       }),
-    [getChangedValue, locations],
+    [getChange, locations],
   );
 
   const multipleValues = useMemo(() => !values.every((value) => value === values[0]), [values]);
@@ -55,18 +57,19 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
   const [stringValue, setStringValue] = useState(() => {
     if (multipleValues) return '';
 
-    const firstValueChanged = getChangedValue(locations[0]);
+    const change = getChange(locations[0]);
+    const firstValueChanged = change?.type === 'update' ? change.value : undefined;
 
     if (!isNil(firstValueChanged)) return firstValueChanged;
 
-    return locations[0].row.value ?? '';
+    return locations[0].originalValue ?? '';
   });
 
   const setValue = (newValue: Value) => {
     if (newValue !== null) {
       setStringValue(newValue);
     }
-    locations.forEach((location) => handleChange({ location, value: newValue }));
+    locations.forEach((location) => handleChange({ location, type: 'update', value: newValue }));
   };
 
   return (

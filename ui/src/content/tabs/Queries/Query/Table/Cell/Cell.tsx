@@ -8,31 +8,64 @@ export type CellProps = {
   header?: boolean;
   hover?: boolean;
   isChanged?: boolean;
+  isDeleted?: boolean;
   rootProps?: React.HTMLAttributes<HTMLDivElement> & { [dataAttr: `data-${string}`]: string };
   selected?: boolean;
   value: Value;
 };
 
 export const Cell: React.FC<CellProps> = (props) => {
-  const { column, header, hover, isChanged, rootProps, selected, value } = props;
+  const { column, header, hover, isChanged, isDeleted, rootProps, selected, value } = props;
 
   return (
     <div
       className={classNames(
         'flex h-8 max-w-[240px] items-center border-b px-4 transition-colors duration-100',
+        (() => {
+          if (header) return undefined;
+
+          if (isChanged) {
+            if (selected) {
+              if (hover) {
+                return 'bg-indigo-500/90';
+              }
+              return 'bg-indigo-500';
+            }
+            if (hover) {
+              return 'bg-yellow-500/40';
+            }
+            return 'bg-yellow-500/30';
+          }
+          if (isDeleted) {
+            if (selected) {
+              if (hover) {
+                return 'bg-violet-500/90';
+              }
+              return 'bg-violet-500';
+            }
+            if (hover) {
+              return 'bg-red-500/40';
+            }
+            return 'bg-red-500/30';
+          }
+          if (selected) {
+            if (hover) {
+              return 'bg-primaryHover';
+            }
+            return 'bg-primary';
+          }
+          if (hover) {
+            return 'bg-secondaryHighlight';
+          }
+          return undefined;
+        })(),
         {
           'sticky top-0 z-10 h-10 bg-card': header,
           'py-2': !header,
-          'border-b-border': header || (!selected && !isChanged),
           'border-b-whiteHighlightHover': !header && selected,
+          'border-b-border': header || (!selected && !isChanged && !isDeleted),
           'border-b-yellow-500/20': !header && !selected && isChanged,
-          'bg-secondaryHighlight': !isChanged && !selected && hover,
-          'bg-primaryHover': !isChanged && selected && hover,
-          'bg-primary': !isChanged && selected && !hover,
-          'bg-yellow-500/20': isChanged && !selected && !hover,
-          'bg-yellow-500/30': isChanged && !selected && hover,
-          'bg-blue-500/80': isChanged && selected && !hover,
-          'bg-blue-500/70': isChanged && selected && hover,
+          'border-b-red-500/20': !header && !selected && isDeleted,
         },
       )}
       {...rootProps}

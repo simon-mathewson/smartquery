@@ -26,7 +26,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const { handleCellClick, selection, selectionActionsRef, tableContentRef } = useCellSelection();
 
-  const { getChangedValue } = useDefinedContext(EditContext);
+  const { getChange } = useDefinedContext(EditContext);
 
   const tableRef = useRef<HTMLDivElement | null>(null);
 
@@ -58,17 +58,17 @@ export const Table: React.FC<TableProps> = (props) => {
               columns.map((column, columnIndex) => {
                 const columnName = typeof column === 'object' ? column.name : column;
                 const value = row[columnName];
-                const changedValue =
+                const change =
                   query.table && typeof column === 'object'
-                    ? getChangedValue({
+                    ? getChange({
                         column: columnName,
-                        row: {
-                          primaryKeys: getPrimaryKeys(columns as Column[], rows, rowIndex),
-                          value,
-                        },
+                        originalValue: value,
+                        primaryKeys: getPrimaryKeys(columns as Column[], rows, rowIndex),
                         table: query.table,
                       })
                     : undefined;
+                const changedValue = change?.type === 'update' ? change.value : undefined;
+                const isDeleted = change?.type === 'delete';
 
                 return (
                   <Cell
@@ -76,6 +76,7 @@ export const Table: React.FC<TableProps> = (props) => {
                     key={[row, columnName].join()}
                     hover={rowIndex === hoverRowIndex}
                     isChanged={changedValue !== undefined}
+                    isDeleted={isDeleted}
                     rootProps={{
                       'data-cell-column': String(columnIndex),
                       'data-cell-row': String(rowIndex),

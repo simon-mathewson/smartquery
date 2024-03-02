@@ -1,12 +1,14 @@
-import type { ChangeLocation, ChangeRow } from './types';
+import type { UpdateLocation, DeleteLocation } from './types';
 
-export const doRowsMatch = (row1: ChangeRow, row2: ChangeRow) =>
-  row1.primaryKeys.every(
-    (key, index) =>
-      row2.primaryKeys[index].column === key.column && row2.primaryKeys[index].value === key.value,
-  );
-
-export const doChangeLocationsMatch = (change1: ChangeLocation, change2: ChangeLocation) =>
-  change1.column === change2.column &&
+export const doChangeLocationsMatch = <Location extends UpdateLocation | DeleteLocation>(
+  change1: Location,
+  change2: Location,
+) =>
+  (('column' in change1 && 'column' in change2 && change1.column === change2.column) ||
+    !('column' in change1)) &&
   change1.table === change2.table &&
-  doRowsMatch(change1.row, change2.row);
+  change1.primaryKeys.every(
+    (key, index) =>
+      change2.primaryKeys[index].column === key.column &&
+      change2.primaryKeys[index].value === key.value,
+  );
