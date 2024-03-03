@@ -60,7 +60,7 @@ export const Cell: React.FC<CellProps> = (props) => {
           return undefined;
         })(),
         {
-          'sticky top-0 z-20 h-10 border-b bg-card': header,
+          'sticky top-0 z-30 h-10 border-b bg-card': header,
           '-mt-[1px] border-y py-2': !header,
           'z-10 border-y-whiteHighlightHover': !header && selected,
           'border-y-border': header || (!selected && !isChanged && !isDeleted),
