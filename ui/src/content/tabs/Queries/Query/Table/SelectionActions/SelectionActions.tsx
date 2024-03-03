@@ -1,4 +1,5 @@
-import { EditOutlined } from '@mui/icons-material';
+import { range } from 'lodash';
+import { EditOutlined, Undo } from '@mui/icons-material';
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { useDebouncedCallback } from 'use-debounce';
@@ -9,6 +10,10 @@ import { mergeRefs } from 'react-merge-refs';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TabsContext } from '~/content/tabs/Context';
 import { Delete } from './Delete/Delete';
+import { EditContext } from '~/content/edit/Context';
+import type { PrimaryKey } from '~/content/edit/types';
+import { getPrimaryKeys } from '../../../utils';
+import { doChangeLocationsMatch } from '~/content/edit/utils';
 
 export type SelectionActionsProps = {
   columnCount: number;
@@ -20,6 +25,8 @@ export type SelectionActionsProps = {
 
 export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps>((props, ref) => {
   const { columnCount, query, selection, setIsEditing, tableRef } = props;
+
+  const { changes, removeChange } = useDefinedContext(EditContext);
 
   const { queryResults } = useDefinedContext(TabsContext);
 
@@ -116,6 +123,46 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
 
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
+  const { isEntireSelectionDeleted, selectedChanges } = useMemo(() => {
+    if (!queryResult)
+      return {
+        isEntireSelectionDeleted: false,
+        selectedChanges: [],
+      };
+
+    const selectionLocations = selection.reduce<
+      Array<{ column: string; primaryKeys: PrimaryKey[]; table: string }>
+    >((locations, _selectedColumnIndices, rowIndex) => {
+      const selectedColumnIndices =
+        _selectedColumnIndices.length === 0 ? range(columnCount) : _selectedColumnIndices;
+
+      return [
+        ...locations,
+        ...selectedColumnIndices.map((columnIndex) => {
+          return {
+            column: queryResult.columns![columnIndex].name,
+            primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex),
+            table: query.table!,
+          };
+        }),
+      ];
+    }, []);
+
+    const selectedChanges = changes.filter((change) => {
+      return selectionLocations.some((location) => {
+        return doChangeLocationsMatch(location, change.location);
+      });
+    });
+
+    const isEntireSelectionDeleted = selectionLocations.every((location) => {
+      return selectedChanges.some((change) => {
+        return change.type === 'delete' && doChangeLocationsMatch(location, change.location);
+      });
+    });
+
+    return { isEntireSelectionDeleted, selectedChanges };
+  }, [changes, columnCount, query.table, queryResult, selection]);
+
   return (
     <>
       {popoverStyles && (
@@ -124,11 +171,24 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
           style={popoverStyles}
         >
           <div
-            className="pointer-events-auto flex rounded-full border border-border bg-card shadow-xl"
+            className="pointer-events-auto flex items-center rounded-full border border-border bg-card shadow-xl"
             ref={mergeRefs([popoverRef, ref])}
           >
             <Button icon={<EditOutlined />} ref={editButtonRef} />
-            <Delete query={query} selection={selection} />
+            {!isEntireSelectionDeleted && selection.every((row) => row.length === 0) && (
+              <Delete query={query} selection={selection} />
+            )}
+            {selectedChanges.length > 0 && (
+              <Button
+                color="secondary"
+                icon={<Undo />}
+                onClick={() => {
+                  selectedChanges.forEach((change) => {
+                    removeChange(change.location);
+                  });
+                }}
+              />
+            )}
           </div>
         </div>
       )}

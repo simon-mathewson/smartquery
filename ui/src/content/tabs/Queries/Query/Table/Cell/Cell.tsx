@@ -64,8 +64,7 @@ export const Cell: React.FC<CellProps> = (props) => {
           '-mt-[1px] border-y py-2': !header,
           'z-10 border-y-whiteHighlightHover': !header && selected,
           'border-y-border': header || (!selected && !isChanged && !isDeleted),
-          'z-10 border-y-yellow-500/20': !header && !selected && isChanged,
-          'z-10 border-y-red-500/20': !header && !selected && isDeleted,
+          'z-10 border-y-transparent': !header && !selected && (isChanged || isDeleted),
         },
       )}
       {...rootProps}

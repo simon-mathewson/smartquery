@@ -24,22 +24,20 @@ export const Delete: React.FC<DeleteProps> = (props) => {
   if (!queryResult) return null;
 
   return (
-    selection.every((row) => row.length === 0) && (
-      <Button
-        color="danger"
-        icon={<DeleteOutlined />}
-        onClick={() => {
-          selection.forEach((_, rowIndex) => {
-            handleChange({
-              location: {
-                primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex),
-                table: query.table!,
-              },
-              type: 'delete',
-            });
+    <Button
+      color="danger"
+      icon={<DeleteOutlined />}
+      onClick={() => {
+        selection.forEach((_, rowIndex) => {
+          handleChange({
+            location: {
+              primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex),
+              table: query.table!,
+            },
+            type: 'delete',
           });
-        }}
-      />
-    )
+        });
+      }}
+    />
   );
 };

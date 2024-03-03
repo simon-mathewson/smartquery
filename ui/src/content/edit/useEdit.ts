@@ -52,6 +52,15 @@ export const useEdit = () => {
     [setChanges],
   );
 
+  const removeChange = useCallback(
+    (location: UpdateLocation | DeleteLocation) => {
+      setChanges((changes) =>
+        changes.filter((change) => !doChangeLocationsMatch(change.location, location)),
+      );
+    },
+    [setChanges],
+  );
+
   const sql = useMemo(() => {
     if (!activeConnection) return '';
 
@@ -74,8 +83,8 @@ export const useEdit = () => {
           group.location.table === change.location.table &&
           ((change.type === 'update' &&
             group.type === 'update' &&
-            'column' in location &&
-            group.location.column === location.column &&
+            'column' in change.location &&
+            group.location.column === change.location.column &&
             group.value === change.value) ||
             (change.type === 'delete' && group.type === 'delete')),
       );
@@ -137,7 +146,7 @@ export const useEdit = () => {
   }, [activeConnection, changes]);
 
   return useMemo(
-    () => ({ changes, clearChanges, getChange, handleChange, sql }),
-    [changes, clearChanges, getChange, handleChange, sql],
+    () => ({ changes, clearChanges, getChange, handleChange, removeChange, sql }),
+    [changes, clearChanges, getChange, handleChange, removeChange, sql],
   );
 };
