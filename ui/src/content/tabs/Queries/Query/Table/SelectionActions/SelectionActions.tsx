@@ -119,7 +119,10 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
   return (
     <>
       {popoverStyles && (
-        <div className="pointer-events-none absolute flex justify-center" style={popoverStyles}>
+        <div
+          className="pointer-events-none absolute z-20 flex justify-center"
+          style={popoverStyles}
+        >
           <div
             className="pointer-events-auto flex rounded-full border border-border bg-card shadow-xl"
             ref={mergeRefs([popoverRef, ref])}

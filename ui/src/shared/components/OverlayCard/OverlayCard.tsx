@@ -166,7 +166,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
       {isVisible && (
         <div
           className={classNames(
-            'border-border bg-card absolute z-10 overflow-auto rounded-xl border shadow-xl',
+            'absolute z-30 overflow-auto rounded-xl border border-border bg-card shadow-xl',
             className,
           )}
           ref={refs}

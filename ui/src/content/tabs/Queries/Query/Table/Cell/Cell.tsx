@@ -20,7 +20,7 @@ export const Cell: React.FC<CellProps> = (props) => {
   return (
     <div
       className={classNames(
-        'flex h-8 max-w-[240px] items-center border-b px-4 transition-colors duration-100',
+        'flex h-8 max-w-[240px] items-center px-4 transition-colors duration-100',
         (() => {
           if (header) return undefined;
 
@@ -60,12 +60,12 @@ export const Cell: React.FC<CellProps> = (props) => {
           return undefined;
         })(),
         {
-          'sticky top-0 z-10 h-10 bg-card': header,
-          'py-2': !header,
-          'border-b-whiteHighlightHover': !header && selected,
-          'border-b-border': header || (!selected && !isChanged && !isDeleted),
-          'border-b-yellow-500/20': !header && !selected && isChanged,
-          'border-b-red-500/20': !header && !selected && isDeleted,
+          'sticky top-0 z-20 h-10 border-b bg-card': header,
+          '-mt-[1px] border-y py-2': !header,
+          'z-10 border-y-whiteHighlightHover': !header && selected,
+          'border-y-border': header || (!selected && !isChanged && !isDeleted),
+          'z-10 border-y-yellow-500/20': !header && !selected && isChanged,
+          'z-10 border-y-red-500/20': !header && !selected && isDeleted,
         },
       )}
       {...rootProps}
