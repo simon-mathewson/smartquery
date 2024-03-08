@@ -140,8 +140,8 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
         ...locations,
         ...selectedColumnIndices.map((columnIndex) => {
           return {
-            column: queryResult.columns![columnIndex].name,
-            primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex),
+            column: queryResult.columns!.filter(({ isVisible }) => isVisible)[columnIndex].name,
+            primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex)!,
             table: query.table!,
           };
         }),

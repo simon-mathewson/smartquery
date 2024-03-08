@@ -73,7 +73,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
   };
 
   return (
-    <Field label={column.name}>
+    <Field label={column.alias ?? column.name}>
       {column.dataType === 'boolean' ? (
         <BooleanField
           commonValue={commonValue}

@@ -83,22 +83,11 @@ export const router = t.router({
         const table = parsedQuery.type === 'select' ? parsedQuery.from?.at(0).table : null;
         const columns = await getColumns(parsedQuery, client);
 
-        const aliasToColumn =
-          parsedQuery.type === 'select'
-            ? parsedQuery.columns.reduce((acc, column) => {
-                if (column.expr.type === 'column_ref' && column.as) {
-                  acc[column.as] = column.expr.column;
-                }
-                return acc;
-              }, {})
-            : null;
-
         const rows = result.map((row) =>
           Object.fromEntries(
             Object.entries(row).map(([columnName, value]) => {
               const column = columns?.find(
-                (column) =>
-                  column.name === columnName || column.name === aliasToColumn?.[columnName],
+                (column) => (column.alias ?? column.name) === columnName,
               );
               return [columnName, convertPrismaValue(value, column?.dataType)];
             }),

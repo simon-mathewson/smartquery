@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Cell } from './Cell/Cell';
-import type { Column, Query as QueryType } from '../../../../../shared/types';
+import type { Query as QueryType } from '../../../../../shared/types';
 import { useCellSelection } from './useCellSelection';
 import { SelectionActions } from './SelectionActions/SelectionActions';
 import classNames from 'classnames';
@@ -30,9 +30,12 @@ export const Table: React.FC<TableProps> = (props) => {
 
   if (!queryResult) return null;
 
-  const { columns: columnsProp, rows } = queryResult;
+  const { columns, rows } = queryResult;
 
-  const columns = columnsProp ?? Object.keys(rows[0] ?? {});
+  const visibleColumns = columns
+    ? columns.filter(({ isVisible }) => isVisible)
+    : Object.keys(rows[0] ?? {});
+  const isEditable = columns ? getPrimaryKeys(columns, rows, 0) !== null : false;
 
   return (
     <>
@@ -46,25 +49,25 @@ export const Table: React.FC<TableProps> = (props) => {
           <div
             className="grid auto-rows-max"
             ref={tableContentRef}
-            style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
+            style={{ gridTemplateColumns: `repeat(${visibleColumns.length}, 1fr)` }}
           >
-            {columns.map((column) => {
-              const columnName = typeof column === 'object' ? column.name : column;
+            {visibleColumns.map((column) => {
+              const columnName = typeof column === 'object' ? column.alias ?? column.name : column;
               return <Cell column={column} header key={columnName} value={columnName} />;
             })}
-            {rows.map((row, rowIndex) =>
-              columns.map((column, columnIndex) => {
-                const columnName = typeof column === 'object' ? column.name : column;
+            {rows.map((row, rowIndex) => {
+              return visibleColumns.map((column, columnIndex) => {
+                const columnName =
+                  typeof column === 'object' ? column.alias ?? column.name : column;
                 const value = row[columnName];
-                const change =
-                  query.table && typeof column === 'object'
-                    ? getChange({
-                        column: columnName,
-                        originalValue: value,
-                        primaryKeys: getPrimaryKeys(columns as Column[], rows, rowIndex),
-                        table: query.table,
-                      })
-                    : undefined;
+                const change = isEditable
+                  ? getChange({
+                      column: columnName,
+                      originalValue: value,
+                      primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
+                      table: query.table!,
+                    })
+                  : undefined;
                 const changedValue = change?.type === 'update' ? change.value : undefined;
                 const isDeleted = change?.type === 'delete';
 
@@ -95,17 +98,19 @@ export const Table: React.FC<TableProps> = (props) => {
                     value={changedValue === undefined ? value : changedValue}
                   />
                 );
-              }),
-            )}
+              });
+            })}
           </div>
-          <SelectionActions
-            columnCount={columns.length}
-            query={query}
-            ref={selectionActionsRef}
-            selection={selection}
-            setIsEditing={setIsEditing}
-            tableRef={tableRef}
-          />
+          {isEditable && (
+            <SelectionActions
+              columnCount={visibleColumns!.length}
+              query={query}
+              ref={selectionActionsRef}
+              selection={selection}
+              setIsEditing={setIsEditing}
+              tableRef={tableRef}
+            />
+          )}
         </div>
         {rows.length === 0 && (
           <div className="sticky left-0 w-full py-4 text-center text-xs">This table is empty.</div>

@@ -1,6 +1,6 @@
 import type { Value } from '~/shared/types';
 
-export type PrimaryKey = { column: string; value: string | number };
+export type PrimaryKey = { column: string; value: string };
 
 export type UpdateLocation = {
   column: string;

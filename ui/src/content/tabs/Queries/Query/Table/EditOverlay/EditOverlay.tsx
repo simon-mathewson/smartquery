@@ -38,14 +38,14 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
 
         selectedColumnIndices.forEach((columnIndex) => {
           const column = queryResult.columns![columnIndex];
-          const value = queryResult.rows[rowIndex][column.name];
+          const value = queryResult.rows[rowIndex][column.alias ?? column.name];
 
           if (!newColumnsWithValues[columnIndex]) {
             newColumnsWithValues[columnIndex] = { column, rows: [] };
           }
 
           newColumnsWithValues[columnIndex].rows.push({
-            primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex),
+            primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex)!,
             value,
           });
         });
@@ -71,7 +71,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
             {columnFields?.map((fieldProps, index) => (
               <ColumnField
                 autoFocus={index === columnFields.findIndex((c) => c)}
-                key={fieldProps.column.name}
+                key={fieldProps.column.alias ?? fieldProps.column.name}
                 query={query}
                 {...fieldProps}
               />

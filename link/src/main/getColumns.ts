@@ -96,6 +96,9 @@ export const getColumns = async (parsedQuery: NodeSqlParser.AST, client: Client)
     const orderedEnumValues = sortBy(getEnumValues());
 
     return {
+      alias: parsedQuery.columns.find((column) => column.expr.column === name)?.as as
+        | string
+        | undefined,
       dataType: dataTypeRaw.toLowerCase() as DataType,
       enumValues: orderedEnumValues,
       isForeignKey: rawColumns.some(
@@ -106,6 +109,9 @@ export const getColumns = async (parsedQuery: NodeSqlParser.AST, client: Client)
       isPrimaryKey: rawColumns.some(
         ({ column_name, constraint_type }) =>
           constraint_type === 'PRIMARY KEY' && column_name === name,
+      ),
+      isVisible: parsedQuery.columns.some(
+        (column) => column.expr.column === '*' || column.expr.column === name,
       ),
       name,
     };
