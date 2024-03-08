@@ -6,7 +6,6 @@ import { isDateTimeType, isNumberType, isTimeType } from '../EditOverlay/ColumnF
 export type CellProps = {
   column: Column | string;
   header?: boolean;
-  hover?: boolean;
   isChanged?: boolean;
   isDeleted?: boolean;
   rootProps?: React.HTMLAttributes<HTMLDivElement> & { [dataAttr: `data-${string}`]: string };
@@ -15,7 +14,7 @@ export type CellProps = {
 };
 
 export const Cell: React.FC<CellProps> = (props) => {
-  const { column, header, hover, isChanged, isDeleted, rootProps, selected, value } = props;
+  const { column, header, isChanged, isDeleted, rootProps, selected, value } = props;
 
   return (
     <div
@@ -26,38 +25,20 @@ export const Cell: React.FC<CellProps> = (props) => {
 
           if (isChanged) {
             if (selected) {
-              if (hover) {
-                return 'bg-indigo-500/90';
-              }
-              return 'bg-indigo-500';
+              return 'bg-indigo-500 data-[row-hover=true]:bg-indigo-500/90';
             }
-            if (hover) {
-              return 'bg-yellow-500/40';
-            }
-            return 'bg-yellow-500/30';
+            return 'bg-yellow-500/30 data-[row-hover=true]:bg-yellow-500/40';
           }
           if (isDeleted) {
             if (selected) {
-              if (hover) {
-                return 'bg-violet-500/90';
-              }
-              return 'bg-violet-500';
+              return 'bg-violet-500 data-[row-hover=true]:bg-violet-500/90';
             }
-            if (hover) {
-              return 'bg-red-500/40';
-            }
-            return 'bg-red-500/30';
+            return 'bg-red-500/30 data-[row-hover=true]:bg-red-500/40';
           }
           if (selected) {
-            if (hover) {
-              return 'bg-primaryHover';
-            }
-            return 'bg-primary';
+            return 'bg-primary data-[row-hover=true]:bg-primary/90';
           }
-          if (hover) {
-            return 'bg-secondaryHighlight';
-          }
-          return undefined;
+          return 'data-[row-hover=true]:bg-secondaryHighlight ';
         })(),
         {
           'sticky top-0 z-30 h-10 border-b bg-card': header,

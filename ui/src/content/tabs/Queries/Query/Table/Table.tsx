@@ -20,8 +20,6 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const queryResult = query.id in queryResults ? queryResults[query.id] : null;
 
-  const [hoverRowIndex, setHoverRowIndex] = useState<number>();
-
   const [isEditing, setIsEditing] = useState(false);
 
   const { handleCellClick, selection, selectionActionsRef, tableContentRef } = useCellSelection();
@@ -74,15 +72,20 @@ export const Table: React.FC<TableProps> = (props) => {
                   <Cell
                     column={column}
                     key={[row, columnName].join()}
-                    hover={rowIndex === hoverRowIndex}
                     isChanged={changedValue !== undefined}
                     isDeleted={isDeleted}
                     rootProps={{
                       'data-cell-column': String(columnIndex),
                       'data-cell-row': String(rowIndex),
                       onClick: (event) => handleCellClick(event, rowIndex, columnIndex),
-                      onMouseEnter: () => setHoverRowIndex(rowIndex),
-                      onMouseLeave: () => setHoverRowIndex(undefined),
+                      onMouseEnter: () =>
+                        document.querySelectorAll(`[data-cell-row="${rowIndex}"]`).forEach((el) => {
+                          (el as HTMLElement).dataset.rowHover = 'true';
+                        }),
+                      onMouseLeave: () =>
+                        document.querySelectorAll(`[data-cell-row="${rowIndex}"]`).forEach((el) => {
+                          (el as HTMLElement).dataset.rowHover = 'false';
+                        }),
                     }}
                     selected={
                       selection[rowIndex] &&
