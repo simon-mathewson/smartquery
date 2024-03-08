@@ -80,6 +80,7 @@ export const router = t.router({
     const rowsWithColumns = await Promise.all(
       results.map(async (result, index) => {
         const parsedQuery = parsedQueries[index];
+        const table = parsedQuery.type === 'select' ? parsedQuery.from?.at(0).table : null;
         const columns = await getColumns(parsedQuery, client);
 
         const aliasToColumn =
@@ -107,6 +108,7 @@ export const router = t.router({
         return {
           columns,
           rows,
+          table,
         };
       }),
     );

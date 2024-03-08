@@ -45,14 +45,19 @@ export const useTabs = () => {
 
       const { clientId } = activeConnection;
 
-      return trpc.sendQuery.query([clientId, query.sql]).then(([{ columns, rows }]) => {
+      return trpc.sendQuery.query([clientId, query.sql]).then(([{ columns, rows, table }]) => {
         setQueryResults((currentQueryResults) => ({
           ...currentQueryResults,
           [query.id]: { columns, rows },
         }));
+        setQueries((currentQueries) =>
+          currentQueries.map((column) =>
+            column.map((q) => (q.id === query.id ? { ...q, table } : q)),
+          ),
+        );
       });
     },
-    [activeConnection],
+    [activeConnection, setQueries],
   );
 
   const addQuery = useCallback(
