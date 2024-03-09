@@ -15,12 +15,16 @@ export const NullButton: React.FC<NullButtonProps> = (props) => {
 
   return (
     <ButtonSelect
-      monospace
       onChange={(newValue) => {
         if (newValue === undefined) return;
         setValue(null);
       }}
-      options={[{ label: 'NULL', value: null }]}
+      options={[
+        {
+          button: { label: 'NULL', monospace: true },
+          value: null,
+        },
+      ]}
       value={commonValue === null ? null : undefined}
     />
   );

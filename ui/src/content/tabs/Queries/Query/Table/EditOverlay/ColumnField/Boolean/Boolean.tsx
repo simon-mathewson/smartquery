@@ -16,14 +16,13 @@ export const BooleanField: React.FC<BooleanFieldProps> = (props) => {
     <ButtonSelect<boolean | null>
       equalWidth
       fullWidth
-      monospace
       onChange={(newValue) => {
         if (newValue === undefined && !isNullable) return;
         setValue(isNil(newValue) ? null : String(newValue).toUpperCase());
       }}
       options={[
-        { label: 'TRUE', value: true },
-        { label: 'FALSE', value: false },
+        { button: { label: 'TRUE', monospace: true }, value: true },
+        { button: { label: 'FALSE', monospace: true }, value: false },
       ]}
       value={isNil(commonValue) ? undefined : commonValue === 'TRUE'}
     />

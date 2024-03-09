@@ -6,9 +6,9 @@ export const Header: React.FC<HeaderProps> = (props) => {
   const { left, right, title } = props;
 
   return (
-    <div className="mb-2 grid h-[36px] w-full grid-cols-[36px_1fr_36px] items-center gap-2">
+    <div className="mb-2 grid h-[36px] w-full grid-cols-[max-content_1fr_max-content] items-center gap-2">
       {left ?? <div />}
-      <div className="text-textPrimary overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium">
+      <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
         {title}
       </div>
       {right ?? <div />}
