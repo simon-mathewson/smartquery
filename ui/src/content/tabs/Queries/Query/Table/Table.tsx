@@ -39,7 +39,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   return (
     <>
-      <div className="relative grid justify-start overflow-hidden p-2 pt-0">
+      <div className="relative grid grow justify-start overflow-hidden px-2">
         <div
           className={classNames('height-full relative overflow-auto', {
             'pointer-events-none overflow-hidden': isEditing,
@@ -80,15 +80,24 @@ export const Table: React.FC<TableProps> = (props) => {
                     rootProps={{
                       'data-cell-column': String(columnIndex),
                       'data-cell-row': String(rowIndex),
+                      'data-cell-query': query.id,
                       onClick: (event) => handleCellClick(event, rowIndex, columnIndex),
                       onMouseEnter: () =>
-                        document.querySelectorAll(`[data-cell-row="${rowIndex}"]`).forEach((el) => {
-                          (el as HTMLElement).dataset.rowHover = 'true';
-                        }),
+                        document
+                          .querySelectorAll(
+                            `[data-cell-query="${query.id}"][data-cell-row="${rowIndex}"]`,
+                          )
+                          .forEach((el) => {
+                            (el as HTMLElement).dataset.rowHover = 'true';
+                          }),
                       onMouseLeave: () =>
-                        document.querySelectorAll(`[data-cell-row="${rowIndex}"]`).forEach((el) => {
-                          (el as HTMLElement).dataset.rowHover = 'false';
-                        }),
+                        document
+                          .querySelectorAll(
+                            `[data-cell-query="${query.id}"][data-cell-row="${rowIndex}"]`,
+                          )
+                          .forEach((el) => {
+                            (el as HTMLElement).dataset.rowHover = 'false';
+                          }),
                     }}
                     selected={
                       selection[rowIndex] &&

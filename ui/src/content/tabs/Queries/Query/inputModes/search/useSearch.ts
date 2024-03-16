@@ -3,9 +3,11 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '~/content/connections/Context';
 import type { Query } from '~/shared/types';
 import { TabsContext } from '~/content/tabs/Context';
-import { getParsedQuery, getParserOptions, getWhere } from './utils';
+import { getWhere } from './utils';
 import NodeSqlParser from 'node-sql-parser';
 import { get, isEqualWith } from 'lodash';
+import { getParsedQuery, getParserOptions } from '../../utils';
+import { getLimitAndOffset, setLimitAndOffset } from '../../../utils';
 
 export const useSearch = (query: Query) => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -31,6 +33,12 @@ export const useSearch = (query: Query) => {
             searchValue,
           })
         : null;
+
+      // Remove offset
+      const limitAndOffset = getLimitAndOffset(parsedQuery);
+      if (limitAndOffset?.limit) {
+        setLimitAndOffset(parsedQuery, limitAndOffset.limit);
+      }
 
       const newSql = new NodeSqlParser.Parser().sqlify(
         parsedQuery,

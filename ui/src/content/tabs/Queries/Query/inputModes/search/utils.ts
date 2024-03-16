@@ -1,24 +1,6 @@
-import { castArray } from 'lodash';
-import NodeSqlParser from 'node-sql-parser';
+import type NodeSqlParser from 'node-sql-parser';
 import type { Connection } from '~/content/connections/types';
-import type { Column, Query } from '~/shared/types';
-
-export const getParserOptions = (engine: Connection['engine']) => ({
-  database: {
-    mysql: 'mysql',
-    postgresql: 'postgresql',
-  }[engine],
-});
-
-export const getParsedQuery = (props: { engine: Connection['engine']; query: Query }) => {
-  const { engine, query } = props;
-
-  if (!query.sql) return null;
-
-  const sqlParser = new NodeSqlParser.Parser();
-  const ast = sqlParser.astify(query.sql, getParserOptions(engine));
-  return castArray(ast)[0];
-};
+import type { Column } from '~/shared/types';
 
 export const getWhere = (props: {
   columns: Column[];

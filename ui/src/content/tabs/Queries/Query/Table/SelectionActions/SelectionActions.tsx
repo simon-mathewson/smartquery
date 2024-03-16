@@ -193,7 +193,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
         </div>
       )}
       {Boolean(queryResult?.rows.length) && (
-        <div style={{ height: `${popoverHeight + popoverMargin * 4}px` }} />
+        <div style={{ height: `${popoverHeight + popoverMargin * 2}px` }} />
       )}
       <EditOverlay
         columnCount={columnCount}

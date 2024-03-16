@@ -12,6 +12,7 @@ import { getQueryTitle } from './utils';
 import { InputModesSelect } from './inputModes/Select';
 import { SearchProvider } from './inputModes/search/Provider';
 import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
+import { Pagination } from './pagination/Pagination';
 
 export type QueryProps = {
   columnIndex: number;
@@ -27,7 +28,7 @@ export const Query: React.FC<QueryProps> = (props) => {
   const queryResult = query.id in queryResults ? queryResults[query.id] : null;
 
   const [inputMode, setInputMode] = useState<InputMode | undefined>(
-    query.showEditor ? 'editor' : undefined,
+    !query.sql ? 'editor' : undefined,
   );
 
   return (
@@ -58,6 +59,7 @@ export const Query: React.FC<QueryProps> = (props) => {
         />
         <InputModes inputMode={inputMode} query={query} />
         <Table query={query} />
+        <Pagination query={query} />
       </div>
     </SearchProvider>
   );

@@ -20,7 +20,7 @@ export const Queries: React.FC = () => {
       <DropMarker column={0} row={0} />
       {activeTab.queries.map((column, columnIndex) => (
         <React.Fragment key={columnIndex}>
-          <div className="flex max-w-max grow basis-0 flex-col justify-start overflow-hidden">
+          <div className="flex grow basis-0 flex-col justify-start overflow-hidden">
             <DropMarker column={columnIndex} horizontal row={0} />
             {column.map((query, rowIndex) => (
               <React.Fragment key={query.id}>

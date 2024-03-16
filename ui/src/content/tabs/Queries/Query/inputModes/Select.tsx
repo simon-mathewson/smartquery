@@ -3,6 +3,7 @@ import { TabsContext } from '~/content/tabs/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import type { InputMode } from '../types';
 import type { Query } from '~/shared/types';
+import type { ButtonSelectProps } from '~/shared/components/ButtonSelect/ButtonSelect';
 import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
 import { Code, Search } from '@mui/icons-material';
 
@@ -21,27 +22,32 @@ export const InputModesSelect: React.FC<InputModesSelectProps> = (props) => {
 
   if (!queryResult) return null;
 
+  const options: ButtonSelectProps<'editor' | 'search'>['options'] = [
+    {
+      button: {
+        color: 'primary',
+        icon: <Code />,
+        variant: 'default',
+      },
+      value: 'editor',
+    },
+  ];
+
+  if (queryResult.columns) {
+    options.push({
+      button: {
+        color: 'primary',
+        icon: <Search />,
+        variant: 'default',
+      },
+      value: 'search',
+    });
+  }
+
   return (
     <ButtonSelect<'editor' | 'search'>
       onChange={(newValue) => setInputMode(newValue)}
-      options={[
-        {
-          button: {
-            color: 'primary',
-            icon: <Code />,
-            variant: 'default',
-          },
-          value: 'editor',
-        },
-        {
-          button: {
-            color: 'primary',
-            icon: <Search />,
-            variant: 'default',
-          },
-          value: 'search',
-        },
-      ]}
+      options={options}
       selectedButton={{ variant: 'highlighted' }}
       value={inputMode}
     />

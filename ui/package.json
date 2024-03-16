@@ -29,6 +29,7 @@
     "react-dom": "^18.2.0",
     "react-merge-refs": "^2.1.1",
     "superjson": "1.12.4",
+    "ts-essentials": "^9.4.1",
     "use-debounce": "^10.0.0",
     "uuid": "^9.0.1",
     "vite-plugin-svgr": "^4.2.0",

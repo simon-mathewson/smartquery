@@ -112,8 +112,11 @@ export const useTabs = () => {
       setQueries((currentQueries) =>
         currentQueries.map((currentColumn) =>
           currentColumn.map((q) => {
-            query = { ...q, sql };
-            return q.id === id ? query : q;
+            if (q.id === id) {
+              query = { ...q, sql };
+              return query;
+            }
+            return q;
           }),
         ),
       );

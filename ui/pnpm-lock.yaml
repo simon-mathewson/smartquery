@@ -56,6 +56,9 @@ dependencies:
   superjson:
     specifier: 1.12.4
     version: 1.12.4
+  ts-essentials:
+    specifier: ^9.4.1
+    version: 9.4.1(typescript@5.3.3)
   use-debounce:
     specifier: ^10.0.0
     version: 10.0.0(react@18.2.0)
@@ -5574,6 +5577,17 @@ packages:
     dependencies:
       typescript: 5.3.3
     dev: true
+
+  /ts-essentials@9.4.1(typescript@5.3.3):
+    resolution: {integrity: sha512-oke0rI2EN9pzHsesdmrOrnqv1eQODmJpd/noJjwj2ZPC3Z4N2wbjrOEqnsEgmvlO2+4fBb0a794DCna2elEVIQ==}
+    peerDependencies:
+      typescript: '>=4.1.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 5.3.3
+    dev: false
 
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
