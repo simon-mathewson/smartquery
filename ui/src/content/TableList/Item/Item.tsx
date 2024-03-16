@@ -27,7 +27,6 @@ export const Item: React.FC<ItemProps> = (props) => {
       sql: {
         mysql: `SELECT * FROM ${withQuotes(activeConnection.engine, tableName)} LIMIT 50`,
         postgresql: `SELECT * FROM ${withQuotes(activeConnection.engine, tableName)} LIMIT 50`,
-        sqlserver: `SELECT TOP 50 * FROM ${withQuotes(activeConnection.engine, tableName)}`,
       }[activeConnection.engine],
       table: tableName,
     };

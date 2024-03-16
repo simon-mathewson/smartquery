@@ -1,7 +1,7 @@
 import { createTables } from './createTables';
 import { insertData } from './insertData';
 import { resetDatabase } from './resetDatabase';
-import { Connection } from './types';
+import type { Connection } from './types';
 
 (async () => {
   const connections: Connection[] = [
@@ -22,15 +22,6 @@ import { Connection } from './types';
       password: 'password',
       port: 5433,
       user: 'postgres',
-    },
-    {
-      database: 'sqlserver_db',
-      defaultDatabase: 'master',
-      engine: 'sqlserver',
-      host: 'localhost',
-      password: 'Password1!',
-      port: 1434,
-      user: 'sa',
     },
   ];
 

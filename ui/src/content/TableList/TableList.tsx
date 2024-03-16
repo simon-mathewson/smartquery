@@ -24,10 +24,6 @@ export const TableList: React.FC = () => {
         AND table_schema NOT IN ('pg_catalog', 'information_schema')
         AND table_catalog = '${database}'
         ORDER BY t ASC`,
-      sqlserver: `SELECT table_name AS t FROM information_schema.tables
-        WHERE table_type = 'BASE TABLE'
-        AND table_catalog = '${database}'
-        ORDER BY t ASC`,
     }[engine];
 
     trpc.sendQuery.query([clientId, tableNamesQuery]).then(([{ rows }]) => {

@@ -1,10 +1,10 @@
 import type { Decimal } from 'decimal.js';
-import type { MySqlClient, PostgresClient, SqlServerClient } from '../../prisma';
+import type { MySqlClient, PostgresClient } from '../../prisma';
 import { z } from 'zod';
 
 export const connectionSchema = z.object({
   database: z.string().trim().min(1),
-  engine: z.union([z.literal('mysql'), z.literal('postgresql'), z.literal('sqlserver')]),
+  engine: z.union([z.literal('mysql'), z.literal('postgresql')]),
   host: z.string().trim().min(1),
   id: z.string(),
   name: z.string().trim().min(1),
@@ -17,7 +17,7 @@ type Connection = z.infer<typeof connectionSchema>;
 
 export type Client = {
   connection: Connection;
-  prisma: MySqlClient | PostgresClient | SqlServerClient;
+  prisma: MySqlClient | PostgresClient;
 };
 
 const dataTypes = [

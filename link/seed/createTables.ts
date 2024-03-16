@@ -1,5 +1,5 @@
 import { createClient } from './createClient';
-import { Connection } from './types';
+import type { Connection } from './types';
 
 export const createTables = async (connection: Connection) => {
   const { engine } = connection;
@@ -20,21 +20,17 @@ export const createTables = async (connection: Connection) => {
   const datetimeWithTimeZoneType = {
     mysql: 'DATETIME',
     postgresql: 'TIMESTAMP WITH TIME ZONE',
-    sqlserver: 'DATETIMEOFFSET',
   }[engine];
   const intAutoIncrementType = {
     mysql: 'INT NOT NULL AUTO_INCREMENT',
     postgresql: 'SERIAL',
-    sqlserver: 'INT IDENTITY(1,1)',
   }[engine];
-  const jsonType = engine === 'sqlserver' ? 'VARCHAR(255)' : 'JSON';
-  const textType = engine === 'sqlserver' ? 'VARCHAR(255)' : 'TEXT';
 
   await prisma.$queryRawUnsafe(`
     CREATE TABLE data_types (
       id ${intAutoIncrementType},
-      text_column ${textType} NOT NULL,
-      text_column_nullable ${textType} NULL,
+      text_column TEXT NOT NULL,
+      text_column_nullable TEXT NULL,
       boolean_column ${booleanType} NOT NULL,
       boolean_column_nullable ${booleanType} NULL,
       datetime_column ${datetimeType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -51,18 +47,16 @@ export const createTables = async (connection: Connection) => {
         {
           mysql: 'ENUM("Alpha", "Beta", "Charlie")',
           postgresql: 'test_enum',
-          sqlserver: 'VARCHAR(50)',
         }[engine]
       } NOT NULL,
       enum_column_nullable ${
         {
           mysql: 'ENUM("Alpha", "Beta", "Charlie")',
           postgresql: 'test_enum',
-          sqlserver: 'VARCHAR(50)',
         }[engine]
       } NULL,
-      json_column ${jsonType} NOT NULL,
-      json_column_nullable ${jsonType} NULL,
+      json_column JSON NOT NULL,
+      json_column_nullable JSON NULL,
       PRIMARY KEY (id)
     )
   `);
@@ -73,7 +67,6 @@ export const createTables = async (connection: Connection) => {
         {
           mysql: 'INT NOT NULL AUTO_INCREMENT',
           postgresql: 'SERIAL',
-          sqlserver: 'INT IDENTITY(1,1)',
         }[engine]
       },
       name VARCHAR(255) NOT NULL,
@@ -83,10 +76,9 @@ export const createTables = async (connection: Connection) => {
         {
           mysql: 'ENUM("USER", "ADMIN")',
           postgresql: 'user_role',
-          sqlserver: 'VARCHAR(50)',
         }[engine]
       } NOT NULL DEFAULT 'USER',
-      attributes ${jsonType} NULL,
+      attributes JSON NULL,
       PRIMARY KEY (id)
     )
   `);

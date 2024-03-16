@@ -96,10 +96,6 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 label: 'PostgreSQL',
                 value: 'postgresql',
               },
-              {
-                label: 'SQL Server',
-                value: 'sqlserver',
-              },
             ]}
             value={form.engine}
           />

@@ -31,7 +31,6 @@ export const getColumns = async (parsedQuery: NodeSqlParser.AST, client: Client)
         {
           mysql: ', c.column_type as mysql_column_type',
           postgresql: ', array_remove(array_agg(e.enumlabel), NULL) as postgres_enum_values',
-          sqlserver: '',
         }[engine]
       }
     FROM information_schema.columns AS c

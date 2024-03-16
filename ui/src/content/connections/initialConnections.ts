@@ -24,16 +24,6 @@ export const initialConnections = [
     user: 'root',
   },
   {
-    database: 'sqlserver_db',
-    engine: 'sqlserver',
-    host: 'localhost',
-    id: uuid.v4(),
-    name: 'SQL Server',
-    password: 'Password1!',
-    port: 1434,
-    user: 'sa',
-  },
-  {
     database: 'mathewson_metals_development',
     engine: 'postgresql',
     host: 'localhost',

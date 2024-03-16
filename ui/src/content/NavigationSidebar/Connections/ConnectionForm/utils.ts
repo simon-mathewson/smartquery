@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const connectionSchema = z.object({
   database: z.string().trim().min(1),
-  engine: z.union([z.literal('mysql'), z.literal('postgresql'), z.literal('sqlserver')]),
+  engine: z.union([z.literal('mysql'), z.literal('postgresql')]),
   host: z.string().trim().min(1),
   id: z.string(),
   name: z.string().trim().min(1),

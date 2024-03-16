@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 import { castArray, uniqueId } from 'lodash';
-import { MySqlClient, PostgresClient, SqlServerClient } from '../../prisma';
+import { MySqlClient, PostgresClient } from '../../prisma';
 import NodeSqlParser from 'node-sql-parser';
 import type { PrismaValue } from './types';
 import { connectionSchema, type Client } from './types';
@@ -29,9 +29,6 @@ export const router = t.router({
       }),
       postgresql: new PostgresClient({
         datasourceUrl: `postgresql://${user}:${password}@${host}:${port}/${database}`,
-      }),
-      sqlserver: new SqlServerClient({
-        datasourceUrl: `sqlserver://${host}:${port};database=${database};user=${user};password=${password};encrypt=DANGER_PLAINTEXT`,
       }),
     }[engine];
 
@@ -63,7 +60,6 @@ export const router = t.router({
       database: {
         mysql: 'mysql',
         postgresql: 'postgresql',
-        sqlserver: 'transactsql',
       }[connection.engine],
     };
     const ast = sqlParser.astify(query, parserOptions);
@@ -73,7 +69,9 @@ export const router = t.router({
 
     const results = await (prisma as PostgresClient).$transaction(
       individualQueries.map((individualQuery) =>
-        prisma.$queryRawUnsafe<Array<Record<string, PrismaValue>>>(individualQuery),
+        (prisma as PostgresClient).$queryRawUnsafe<Array<Record<string, PrismaValue>>>(
+          individualQuery,
+        ),
       ),
     );
 
