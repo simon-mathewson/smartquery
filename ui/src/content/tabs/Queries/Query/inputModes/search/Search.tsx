@@ -30,12 +30,12 @@ export const Search: React.FC<SearchProps> = (props) => {
     >
       <Input
         autoFocus
-        className="w-64"
+        className="w-56"
         onChange={(newValue) => {
           setValue(newValue);
           setIsChanged(true);
         }}
-        placeholder={`Search ${query.table}`}
+        placeholder={`Search ${query.table ?? 'results'}`}
         value={value}
       />
       {isChanged && (
