@@ -7,11 +7,11 @@ import { ConfirmDeletePopover } from '~/shared/components/ConfirmDeletePopover/C
 import { Input } from '~/shared/components/Input/Input';
 import { Select } from '~/shared/components/Select/Select';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { Header } from '../../../../shared/components/Header/Header';
 import { TestConnection } from './TestConnection/TestConnection';
 import type { FormSchema } from './utils';
 import { connectionSchema, isFormValid } from './utils';
 import { Field } from '~/shared/components/Field/Field';
+import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;
@@ -62,8 +62,13 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           exit();
         }}
       >
-        <Header
+        <ThreeColumns
           left={<Button icon={<ArrowBack />} onClick={exit} />}
+          middle={
+            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
+              {mode === 'add' ? 'Add' : 'Edit'} Connection
+            </div>
+          }
           right={
             connectionToEdit !== null && (
               <ConfirmDeletePopover
@@ -78,7 +83,6 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
               />
             )
           }
-          title={`${mode === 'add' ? 'Add' : 'Edit'} Connection`}
         />
         <Field label="Engine">
           <Select

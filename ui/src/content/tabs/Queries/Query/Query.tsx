@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import React, { useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Button } from '../../../../shared/components/Button/Button';
-import { Header } from '../../../../shared/components/Header/Header';
 import type { Query as QueryType } from '../../../../shared/types';
 import { TabsContext } from '../../Context';
 import { InputModes } from './inputModes/InputModes';
@@ -12,6 +11,7 @@ import type { InputMode } from './types';
 import { getQueryTitle } from './utils';
 import { InputModesSelect } from './inputModes/Select';
 import { SearchProvider } from './inputModes/search/Provider';
+import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
 
 export type QueryProps = {
   columnIndex: number;
@@ -41,16 +41,20 @@ export const Query: React.FC<QueryProps> = (props) => {
           },
         )}
       >
-        <Header
+        <ThreeColumns
           left={
             queryResult ? (
               <InputModesSelect inputMode={inputMode} query={query} setInputMode={setInputMode} />
             ) : null
           }
+          middle={
+            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
+              {getQueryTitle(query)}
+            </div>
+          }
           right={
             <Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />
           }
-          title={getQueryTitle(query)}
         />
         <InputModes inputMode={inputMode} query={query} />
         <Table query={query} />
