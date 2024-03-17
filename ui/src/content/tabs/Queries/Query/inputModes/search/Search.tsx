@@ -30,7 +30,7 @@ export const Search: React.FC<SearchProps> = (props) => {
     >
       <Input
         autoFocus
-        className="w-56"
+        className="!w-56"
         onChange={(newValue) => {
           setValue(newValue);
           setIsChanged(true);
