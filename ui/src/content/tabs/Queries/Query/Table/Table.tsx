@@ -66,6 +66,7 @@ export const Table: React.FC<TableProps> = (props) => {
                       originalValue: value,
                       primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
                       table: query.table!,
+                      type: 'update',
                     })
                   : undefined;
                 const changedValue = change?.type === 'update' ? change.value : undefined;

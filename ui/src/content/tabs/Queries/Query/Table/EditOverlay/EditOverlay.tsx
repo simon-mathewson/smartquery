@@ -29,7 +29,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
   const columnFields = useMemo(() => {
     if (!queryResult) return null;
 
-    return selection.reduce<Array<Pick<ColumnFieldProps, 'column' | 'rows'>>>(
+    return selection.reduce<Array<Pick<ColumnFieldProps, 'column' | 'locations'>>>(
       (allColumnsWithValues, _selectedColumnIndices, rowIndex) => {
         const newColumnsWithValues = cloneArrayWithEmptyValues(allColumnsWithValues);
 
@@ -38,22 +38,35 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
 
         selectedColumnIndices.forEach((columnIndex) => {
           const column = queryResult.columns![columnIndex];
-          const value = queryResult.rows[rowIndex][column.alias ?? column.name];
 
           if (!newColumnsWithValues[columnIndex]) {
-            newColumnsWithValues[columnIndex] = { column, rows: [] };
+            newColumnsWithValues[columnIndex] = { column, locations: [] };
           }
 
-          newColumnsWithValues[columnIndex].rows.push({
-            primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex)!,
-            value,
-          });
+          if (queryResult.rows[rowIndex]) {
+            const value = queryResult.rows[rowIndex][column.alias ?? column.name];
+
+            newColumnsWithValues[columnIndex].locations.push({
+              column: column.name,
+              originalValue: value,
+              primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex)!,
+              table: query.table!,
+              type: 'update',
+            });
+          } else {
+            newColumnsWithValues[columnIndex].locations.push({
+              column: column.name,
+              newRowId: String(rowIndex - queryResult.rows.length),
+              table: query.table!,
+              type: 'create',
+            });
+          }
         });
         return newColumnsWithValues;
       },
       [],
     );
-  }, [columnCount, queryResult, selection]);
+  }, [columnCount, query.table, queryResult, selection]);
 
   if (selection.length === 0) return null;
 
@@ -72,7 +85,6 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
               <ColumnField
                 autoFocus={index === columnFields.findIndex((c) => c)}
                 key={fieldProps.column.alias ?? fieldProps.column.name}
-                query={query}
                 {...fieldProps}
               />
             ))}

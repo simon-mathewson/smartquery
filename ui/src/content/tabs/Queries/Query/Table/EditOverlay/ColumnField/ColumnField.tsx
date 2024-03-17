@@ -1,8 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { isNil } from 'lodash';
 import { EditContext } from '~/content/edit/Context';
-import type { UpdateLocation, PrimaryKey } from '~/content/edit/types';
-import type { Column, Query, Value } from '~/shared/types';
+import type {
+  UpdateLocation,
+  CreateLocation,
+  CreateChange,
+  UpdateChange,
+} from '~/content/edit/types';
+import type { Column, Value } from '~/shared/types';
 import { Field } from '~/shared/components/Field/Field';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { BooleanField } from './Boolean/Boolean';
@@ -16,35 +21,22 @@ import classNames from 'classnames';
 export type ColumnFieldProps = {
   autoFocus?: boolean;
   column: Column;
-  query: Query;
-  rows: Array<{ primaryKeys: PrimaryKey[]; value: Value }>;
+  locations: Array<CreateLocation | UpdateLocation>;
 };
 
 export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
-  const { autoFocus, column, query, rows } = props;
+  const { autoFocus, column, locations } = props;
 
   const { getChange, handleChange } = useDefinedContext(EditContext);
-
-  const locations = useMemo(
-    () =>
-      rows.map(
-        (row) =>
-          ({
-            column: column.name,
-            originalValue: row.value,
-            primaryKeys: row.primaryKeys,
-            table: query.table!,
-          }) satisfies UpdateLocation,
-      ),
-    [column.name, query.table, rows],
-  );
 
   const values = useMemo(
     () =>
       locations.map((location) => {
-        const change = getChange(location);
-        const changedValue = change?.type === 'update' ? change.value : undefined;
-        return changedValue === undefined ? location.originalValue : changedValue;
+        const change = getChange(location) as CreateChange | UpdateChange | undefined;
+        if (!change) {
+          return location.type === 'update' ? location.originalValue : undefined;
+        }
+        return change.value;
       }),
     [getChange, locations],
   );
@@ -57,10 +49,12 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
   const [stringValue, setStringValue] = useState(() => {
     if (multipleValues) return '';
 
-    const change = getChange(locations[0]);
-    const firstValueChanged = change?.type === 'update' ? change.value : undefined;
+    const change = getChange(locations[0]) as CreateChange | UpdateChange | undefined;
+    const firstValueChanged = change?.value;
 
     if (!isNil(firstValueChanged)) return firstValueChanged;
+
+    if (locations[0].type === 'create') return '';
 
     return locations[0].originalValue ?? '';
   });
@@ -69,7 +63,13 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
     if (newValue !== null) {
       setStringValue(newValue);
     }
-    locations.forEach((location) => handleChange({ location, type: 'update', value: newValue }));
+    locations.forEach((location) => {
+      if (location.type === 'create') {
+        handleChange({ location, type: 'create', value: newValue });
+      } else {
+        handleChange({ location, type: 'update', value: newValue });
+      }
+    });
   };
 
   return (

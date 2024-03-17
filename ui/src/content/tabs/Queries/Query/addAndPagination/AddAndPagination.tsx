@@ -4,6 +4,7 @@ import { Button } from '~/shared/components/Button/Button';
 import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
 import type { Query } from '~/shared/types';
 import { usePagination } from './usePagination';
+import { Add } from './add/Add';
 
 export type PaginationProps = {
   query: Query;
@@ -26,6 +27,7 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
 
   return (
     <ThreeColumns
+      left={<Add query={query} />}
       middle={<div className="text-xs text-textSecondary">{paginationText}</div>}
       right={
         limit !== undefined &&

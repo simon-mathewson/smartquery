@@ -31,8 +31,9 @@ export const Delete: React.FC<DeleteProps> = (props) => {
         selection.forEach((_, rowIndex) => {
           handleChange({
             location: {
-              primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex),
+              primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex)!,
               table: query.table!,
+              type: 'delete',
             },
             type: 'delete',
           });

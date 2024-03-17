@@ -1,11 +1,20 @@
 import { useCallback, useMemo } from 'react';
-import type { Change, UpdateLocation, DeleteLocation, PrimaryKey } from './types';
+import type {
+  Change,
+  UpdateLocation,
+  DeleteLocation,
+  CreateLocation,
+  AggregatedCreateChanges,
+  AggregatedUpdateChanges,
+  AggregatedDeleteChanges,
+  Location,
+} from './types';
 import { doChangeLocationsMatch } from './utils';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { withQuotes } from '~/shared/utils/sql';
-import type { Value } from '~/shared/types';
+import { groupBy } from 'lodash';
 
 export const useEdit = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -17,7 +26,7 @@ export const useEdit = () => {
   }, [setChanges]);
 
   const getChange = useCallback(
-    (location: UpdateLocation) =>
+    (location: Location) =>
       changes.find((change) => doChangeLocationsMatch(change.location, location)),
     [changes],
   );
@@ -53,7 +62,7 @@ export const useEdit = () => {
   );
 
   const removeChange = useCallback(
-    (location: UpdateLocation | DeleteLocation) => {
+    (location: CreateLocation | UpdateLocation | DeleteLocation) => {
       setChanges((changes) =>
         changes.filter((change) => !doChangeLocationsMatch(change.location, location)),
       );
@@ -67,52 +76,78 @@ export const useEdit = () => {
     const { engine } = activeConnection;
 
     const changesGroupedByColumnAndValue = changes.reduce<
-      Array<
-        | ({ type: 'update'; value: Value } & {
-            location: Pick<UpdateLocation, 'column' | 'table'> & { primaryKeys: PrimaryKey[][] };
-          })
-        | ({ type: 'delete' } & {
-            location: Pick<DeleteLocation, 'table'> & { primaryKeys: PrimaryKey[][] };
-          })
-      >
+      Array<AggregatedCreateChanges | AggregatedUpdateChanges | AggregatedDeleteChanges>
     >((acc, change) => {
       const previousChanges = [...acc];
 
       const existingGroupIndex = previousChanges.findIndex(
         (group) =>
           group.location.table === change.location.table &&
-          ((change.type === 'update' &&
-            group.type === 'update' &&
-            'column' in change.location &&
-            group.location.column === change.location.column &&
-            group.value === change.value) ||
+          ((change.type === 'create' && group.type === 'create') ||
+            (change.type === 'update' &&
+              group.type === 'update' &&
+              'column' in change.location &&
+              group.location.column === change.location.column &&
+              group.value === change.value) ||
             (change.type === 'delete' && group.type === 'delete')),
       );
 
       if (existingGroupIndex === -1) {
-        return [
-          ...acc,
-          change.type === 'update'
-            ? {
-                location: {
-                  table: change.location.table,
-                  column: change.location.column,
-                  primaryKeys: [change.location.primaryKeys],
-                },
-                type: 'update',
+        if (change.type === 'create') {
+          previousChanges.push({
+            location: {
+              table: change.location.table,
+            },
+            type: 'create',
+            newValues: [
+              {
+                column: change.location.column,
+                rowId: change.location.newRowId,
                 value: change.value,
-              }
-            : {
-                location: {
-                  table: change.location.table,
-                  primaryKeys: [change.location.primaryKeys],
-                },
-                type: 'delete',
               },
-        ];
+            ],
+          });
+        }
+
+        if (change.type === 'update') {
+          previousChanges.push({
+            location: {
+              table: change.location.table,
+              column: change.location.column,
+              primaryKeys: [change.location.primaryKeys],
+            },
+            type: 'update',
+            value: change.value,
+          });
+        }
+
+        if (change.type === 'delete') {
+          previousChanges.push({
+            location: {
+              table: change.location.table,
+              primaryKeys: [change.location.primaryKeys],
+            },
+            type: 'delete',
+          });
+        }
+
+        return previousChanges;
       }
 
-      previousChanges[existingGroupIndex].location.primaryKeys.push(change.location.primaryKeys);
+      const existingChange = previousChanges[existingGroupIndex];
+      if (existingChange.type === 'update' || existingChange.type === 'delete') {
+        (
+          existingChange as AggregatedUpdateChanges | AggregatedDeleteChanges
+        ).location.primaryKeys.push(
+          (change.location as UpdateLocation | DeleteLocation).primaryKeys,
+        );
+      } else {
+        (existingChange as AggregatedCreateChanges).newValues.push({
+          column: (change.location as CreateLocation).column,
+          rowId: (change.location as CreateLocation).newRowId,
+          value: (change as Extract<Change, { type: 'create' }>).value,
+        });
+      }
 
       return previousChanges;
     }, []);
@@ -120,6 +155,20 @@ export const useEdit = () => {
     return changesGroupedByColumnAndValue
       .map((change) => {
         const { location, type } = change;
+
+        if (type === 'create') {
+          const valuesGroupedByRow = groupBy(change.newValues, 'rowId');
+
+          return Object.values(valuesGroupedByRow)
+            .map((rowChanges) => {
+              return `INSERT INTO ${withQuotes(engine, location.table)} (\n  ${rowChanges
+                .map((rowChange) => withQuotes(engine, rowChange.column))
+                .join(',\n  ')}\n) VALUES (\n${rowChanges
+                .map((rowChange) => (rowChange.value === null ? 'NULL' : `'${rowChange.value}'`))
+                .join(',\n  ')}\n);`;
+            })
+            .join('\n\n');
+        }
 
         const primaryKeyConditions = location.primaryKeys
           .map((primaryKeys) => {

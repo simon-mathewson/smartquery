@@ -12,7 +12,7 @@ import { getQueryTitle } from './utils';
 import { InputModesSelect } from './inputModes/Select';
 import { SearchProvider } from './inputModes/search/Provider';
 import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
-import { Pagination } from './pagination/Pagination';
+import { Pagination } from './addAndPagination/AddAndPagination';
 
 export type QueryProps = {
   columnIndex: number;
