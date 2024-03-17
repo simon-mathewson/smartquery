@@ -14,24 +14,33 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
 
   const { limit, next, offset, previous, total } = usePagination(query);
 
-  if ((!limit && !offset) || !total) return null;
+  if (!total) return null;
 
   const limitText = limit
     ? `${(offset ?? 0) + 1}–${Math.min((offset ?? 0) + limit, total ?? 0)}`
     : undefined;
   const paginationText = [limitText, total].filter(Boolean).join(' of ');
 
+  const previousDisabled = !offset;
+  const nextDisabled = total - ((offset ?? 0) + (limit ?? 0)) <= 0;
+
   return (
     <ThreeColumns
       middle={<div className="text-xs text-textSecondary">{paginationText}</div>}
       right={
         limit !== undefined &&
-        total !== undefined && (
+        total !== undefined &&
+        (!previousDisabled || !nextDisabled) && (
           <>
-            <Button color="primary" disabled={!offset} icon={<ArrowBack />} onClick={previous} />
             <Button
               color="primary"
-              disabled={total - ((offset ?? 0) + limit) <= 0}
+              disabled={previousDisabled}
+              icon={<ArrowBack />}
+              onClick={previous}
+            />
+            <Button
+              color="primary"
+              disabled={nextDisabled}
               icon={<ArrowForward />}
               onClick={next}
             />
