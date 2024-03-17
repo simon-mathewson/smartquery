@@ -69,6 +69,18 @@ export const useSearch = (query: Query) => {
 
     const hasSearchStructure = isEqualWith(parsedQuery.where, searchWhere, (a) => {
       if (get(a, 'type') === 'binary_expr' && get(a, 'operator') === 'LIKE') {
+        if (activeConnection.engine === 'postgresql') {
+          if (get(a, 'right.type') === 'function' && get(a, 'right.name') === 'LOWER') {
+            const value = get(a, 'right.args.value[0].value');
+            if (value.startsWith('%') && value.endsWith('%')) {
+              searchValues.push(value.slice(1, -1));
+              return true;
+            }
+          } else {
+            return false;
+          }
+        }
+
         const value = get(a, 'right.value');
         if (value.startsWith('%') && value.endsWith('%')) {
           searchValues.push(value.slice(1, -1));

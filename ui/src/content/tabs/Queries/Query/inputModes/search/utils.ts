@@ -18,11 +18,21 @@ export const getWhere = (props: {
         left:
           engine === 'postgresql'
             ? ({
-                type: 'cast',
-                keyword: 'cast',
-                expr: { type: 'double_quote_string', value: column.alias ?? column.name },
-                symbol: '::',
-                target: { dataType: 'TEXT' },
+                type: 'function',
+                name: 'LOWER',
+                args: {
+                  type: 'expr_list',
+                  value: [
+                    {
+                      type: 'cast',
+                      keyword: 'cast',
+                      expr: { type: 'double_quote_string', value: column.name },
+                      symbol: '::',
+                      target: { dataType: 'TEXT' },
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    } as any,
+                  ],
+                },
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any)
             : {
@@ -30,10 +40,26 @@ export const getWhere = (props: {
                 table: null,
                 column: column.alias ?? column.name,
               },
-        right: {
-          type: 'single_quote_string',
-          value: `%${searchValue}%`,
-        },
+        right:
+          engine === 'postgresql'
+            ? ({
+                type: 'function',
+                name: 'LOWER',
+                args: {
+                  type: 'expr_list',
+                  value: [
+                    {
+                      type: 'single_quote_string',
+                      value: `%${searchValue}%`,
+                    },
+                  ],
+                },
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              } as any)
+            : {
+                type: 'single_quote_string',
+                value: `%${searchValue}%`,
+              },
       };
 
       if (all?.type === 'binary_expr') {
