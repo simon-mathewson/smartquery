@@ -53,6 +53,8 @@ export const router = t.router({
   sendQuery: t.procedure.input(z.tuple([z.string(), z.string()])).query(async (props) => {
     const [clientId, query] = props.input;
 
+    console.info('Processing query', query);
+
     const client = clients[clientId];
     const { connection, prisma } = client;
     const sqlParser = new NodeSqlParser.Parser();
@@ -65,6 +67,8 @@ export const router = t.router({
     const ast = sqlParser.astify(query, parserOptions);
     const parsedQueries = castArray(ast);
 
+    console.info('Parsed queries', parsedQueries);
+
     const individualQueries = parsedQueries.map((ast) => sqlParser.sqlify(ast, parserOptions));
 
     const results = await (prisma as PostgresClient).$transaction(
@@ -74,6 +78,8 @@ export const router = t.router({
         ),
       ),
     );
+
+    console.info('Executed queries', results);
 
     const rowsWithColumns = await Promise.all(
       results.map(async (result, index) => {
@@ -99,6 +105,8 @@ export const router = t.router({
         };
       }),
     );
+
+    console.log('Processed query results', rowsWithColumns);
 
     return rowsWithColumns;
   }),
