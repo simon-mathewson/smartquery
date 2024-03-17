@@ -12,7 +12,8 @@ export const getColumns = async (parsedQuery: NodeSqlParser.AST, client: Client)
     parsedQuery.type !== 'select' ||
     !parsedQuery.from ||
     parsedQuery.from.length !== 1 ||
-    !parsedQuery.from[0].table
+    !parsedQuery.from[0].table ||
+    parsedQuery.columns.some((column) => column.expr.type !== 'column_ref')
   ) {
     return null;
   }
