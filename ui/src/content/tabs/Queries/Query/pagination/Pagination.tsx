@@ -14,7 +14,7 @@ export const Pagination: React.FC<PaginationProps> = (props) => {
 
   const { limit, next, offset, previous, total } = usePagination(query);
 
-  if (!limit && !offset && !total) return null;
+  if ((!limit && !offset) || !total) return null;
 
   const limitText = limit
     ? `${(offset ?? 0) + 1}–${Math.min((offset ?? 0) + limit, total ?? 0)}`
