@@ -39,9 +39,9 @@ export const Table: React.FC<TableProps> = (props) => {
 
   return (
     <>
-      <div className="relative grid grow justify-start overflow-hidden px-2">
+      <div className="relative flex grow flex-col items-start overflow-hidden px-2">
         <div
-          className={classNames('height-full relative overflow-auto', {
+          className={classNames('relative max-w-full overflow-auto', {
             'pointer-events-none overflow-hidden': isEditing,
           })}
           ref={tableRef}
@@ -122,7 +122,7 @@ export const Table: React.FC<TableProps> = (props) => {
           )}
         </div>
         {rows.length === 0 && (
-          <div className="sticky left-0 w-full py-4 text-center text-xs">This table is empty.</div>
+          <div className="sticky left-0 w-full py-4 pl-4 text-xs">This table is empty.</div>
         )}
       </div>
     </>
