@@ -1,28 +1,64 @@
+import type { XOR } from 'ts-essentials';
 import classNames from 'classnames';
 import React from 'react';
-import type { Column, Value } from '~/shared/types';
+import { type Column, type Query, type Value } from '~/shared/types';
 import { isDateTimeType, isNumberType, isTimeType } from '../EditOverlay/ColumnField/utils';
 
 export type CellProps = {
   column: Column | string;
-  header?: boolean;
-  isChanged?: boolean;
-  isDeleted?: boolean;
-  rootProps?: React.HTMLAttributes<HTMLDivElement> & { [dataAttr: `data-${string}`]: string };
-  selected?: boolean;
   value: Value;
-};
+} & XOR<
+  { type: 'header' },
+  {
+    columnIndex: number;
+    isChanged?: boolean;
+    isCreated?: boolean;
+    isDeleted?: boolean;
+    onClick?: (
+      event: React.MouseEvent<HTMLDivElement>,
+      rowIndex: number,
+      columnIndex: number,
+    ) => void;
+    rowIndex: number;
+    selection: number[][];
+    type: 'body';
+    query: Query;
+  }
+>;
 
 export const Cell: React.FC<CellProps> = (props) => {
-  const { column, header, isChanged, isDeleted, rootProps, selected, value } = props;
+  const {
+    column,
+    columnIndex,
+    isCreated,
+    isChanged,
+    isDeleted,
+    onClick,
+    query,
+    rowIndex,
+    selection,
+    type,
+    value,
+  } = props;
+
+  const selected =
+    type === 'body' &&
+    selection[rowIndex] &&
+    (selection[rowIndex].length === 0 || selection[rowIndex].includes(columnIndex));
 
   return (
     <div
       className={classNames(
         'flex h-8 max-w-[240px] items-center px-4 transition-colors duration-100',
         (() => {
-          if (header) return undefined;
+          if (type === 'header') return undefined;
 
+          if (isCreated) {
+            if (selected) {
+              return 'bg-teal-500 data-[row-hover=true]:bg-teal-500/90';
+            }
+            return 'bg-green-500/30 data-[row-hover=true]:bg-green-500/40';
+          }
           if (isChanged) {
             if (selected) {
               return 'bg-indigo-500 data-[row-hover=true]:bg-indigo-500/90';
@@ -41,22 +77,42 @@ export const Cell: React.FC<CellProps> = (props) => {
           return 'data-[row-hover=true]:bg-secondaryHighlight ';
         })(),
         {
-          'sticky top-0 z-30 h-10 border-b bg-card': header,
-          '-mt-[1px] border-y py-2': !header,
-          'z-10 border-y-whiteHighlightHover': !header && selected,
-          'border-y-border': header || (!selected && !isChanged && !isDeleted),
-          'z-10 border-y-transparent': !header && !selected && (isChanged || isDeleted),
+          'sticky top-0 z-30 h-10 border-b bg-card': type === 'header',
+          '-mt-[1px] border-y py-2': type === 'body',
+          'z-10 border-y-whiteHighlightHover': type === 'body' && selected,
+          'border-y-border':
+            type === 'header' || (!selected && !isChanged && !isDeleted && !isCreated),
+          'z-10 border-y-transparent':
+            type === 'body' && !selected && (isChanged || isDeleted || isCreated),
         },
       )}
-      {...rootProps}
+      {...(type === 'body' && {
+        'data-cell-column': String(columnIndex),
+        'data-cell-row': String(rowIndex),
+        'data-cell-query': query.id,
+        onClick: (event) => onClick?.(event, rowIndex, columnIndex),
+        onMouseEnter: () =>
+          document
+            .querySelectorAll(`[data-cell-query="${query.id}"][data-cell-row="${rowIndex}"]`)
+            .forEach((el) => {
+              (el as HTMLElement).dataset.rowHover = 'true';
+            }),
+        onMouseLeave: () =>
+          document
+            .querySelectorAll(`[data-cell-query="${query.id}"][data-cell-row="${rowIndex}"]`)
+            .forEach((el) => {
+              (el as HTMLElement).dataset.rowHover = 'false';
+            }),
+      })}
     >
       <div
         className={classNames('overflow-hidden text-ellipsis whitespace-nowrap text-xs', {
-          'font-mono font-medium text-textPrimary': header,
+          'font-mono font-medium text-textPrimary': type === 'header',
           'text-white': selected,
           'font-mono font-medium':
-            !header &&
+            type === 'body' &&
             (value === null ||
+              value === undefined ||
               (typeof column === 'object' &&
                 (['boolean', 'json'].includes(column.dataType) ||
                   isDateTimeType(column.dataType) ||
@@ -64,7 +120,15 @@ export const Cell: React.FC<CellProps> = (props) => {
                   isTimeType(column.dataType)))),
         })}
       >
-        {value === null ? 'NULL' : value}
+        {(() => {
+          if (value === null) {
+            return 'NULL';
+          }
+          if (value === undefined) {
+            return 'EMPTY';
+          }
+          return value;
+        })()}
       </div>
     </div>
   );

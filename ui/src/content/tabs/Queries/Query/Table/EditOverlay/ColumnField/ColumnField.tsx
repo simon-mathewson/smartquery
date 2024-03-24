@@ -7,7 +7,7 @@ import type {
   CreateChange,
   UpdateChange,
 } from '~/content/edit/types';
-import type { Column, Value } from '~/shared/types';
+import { type Column, type Value } from '~/shared/types';
 import { Field } from '~/shared/components/Field/Field';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { BooleanField } from './Boolean/Boolean';
@@ -36,9 +36,9 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
         if (!change) {
           return location.type === 'update' ? location.originalValue : undefined;
         }
-        return change.value;
+        return change.type === 'update' ? change.value : change.row[column.name];
       }),
-    [getChange, locations],
+    [column.name, getChange, locations],
   );
 
   const multipleValues = useMemo(() => !values.every((value) => value === values[0]), [values]);
@@ -50,7 +50,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
     if (multipleValues) return '';
 
     const change = getChange(locations[0]) as CreateChange | UpdateChange | undefined;
-    const firstValueChanged = change?.value;
+    const firstValueChanged = change?.type === 'update' ? change.value : change?.row[column.name];
 
     if (!isNil(firstValueChanged)) return firstValueChanged;
 
@@ -61,11 +61,19 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
 
   const setValue = (newValue: Value) => {
     if (newValue !== null) {
-      setStringValue(newValue);
+      setStringValue(newValue ?? '');
     }
     locations.forEach((location) => {
       if (location.type === 'create') {
-        handleChange({ location, type: 'create', value: newValue });
+        const createChange = getChange(location) as CreateChange;
+        handleChange({
+          location,
+          type: 'create',
+          row: {
+            ...createChange.row,
+            [column.name]: newValue,
+          },
+        });
       } else {
         handleChange({ location, type: 'update', value: newValue });
       }
@@ -111,7 +119,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
                   language="sql"
                   onChange={setValue}
                   placeholder={multipleValues ? 'Multiple values' : undefined}
-                  value={stringValue}
+                  value={stringValue === undefined ? '' : stringValue}
                 />
               );
             }
@@ -121,7 +129,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
                 dataType={column.dataType!}
                 multipleValues={multipleValues}
                 setValue={setValue}
-                stringValue={stringValue}
+                stringValue={stringValue === undefined ? '' : stringValue}
               />
             );
           })()}

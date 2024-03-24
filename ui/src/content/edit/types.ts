@@ -1,9 +1,8 @@
-import type { Value } from '~/shared/types';
+import type { Row, Value } from '~/shared/types';
 
 export type PrimaryKey = { column: string; value: string };
 
 export type CreateLocation = {
-  column: string;
   newRowId: string;
   table: string;
   type: 'create';
@@ -28,7 +27,7 @@ export type Location = CreateLocation | UpdateLocation | DeleteLocation;
 export type CreateChange = {
   location: CreateLocation;
   type: 'create';
-  value: Value;
+  row: Row;
 };
 
 export type UpdateChange = {
@@ -44,15 +43,19 @@ export type DeleteChange = {
 
 export type Change = CreateChange | UpdateChange | DeleteChange;
 
-export type AggregatedCreateChanges = { type: 'create' } & {
+export type AggregatedCreateChanges = {
   location: Pick<CreateLocation, 'table'>;
-  newValues: Array<{ column: string; rowId: string; value: Value }>;
+  rows: Row[];
+  type: 'create';
 };
 
-export type AggregatedUpdateChanges = { type: 'update'; value: Value } & {
+export type AggregatedUpdateChanges = {
   location: Pick<UpdateLocation, 'column' | 'table'> & { primaryKeys: PrimaryKey[][] };
+  type: 'update';
+  value: Value;
 };
 
-export type AggregatedDeleteChanges = { type: 'delete' } & {
+export type AggregatedDeleteChanges = {
   location: Pick<DeleteLocation, 'table'> & { primaryKeys: PrimaryKey[][] };
+  type: 'delete';
 };

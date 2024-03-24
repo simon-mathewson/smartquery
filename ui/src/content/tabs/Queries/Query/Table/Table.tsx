@@ -1,20 +1,22 @@
-import React, { useRef, useState } from 'react';
-import { Cell } from './Cell/Cell';
-import type { Query as QueryType } from '../../../../../shared/types';
-import { useCellSelection } from './useCellSelection';
-import { SelectionActions } from './SelectionActions/SelectionActions';
 import classNames from 'classnames';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { EditContext } from '~/content/edit/Context';
-import { getPrimaryKeys } from '../../utils';
+import type { CreateChange } from '~/content/edit/types';
 import { TabsContext } from '~/content/tabs/Context';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import type { Query as QueryType } from '../../../../../shared/types';
+import { getPrimaryKeys } from '../../utils';
+import { Cell } from './Cell/Cell';
+import { SelectionActions } from './SelectionActions/SelectionActions';
+import { useCellSelection } from './useCellSelection';
 
 export type TableProps = {
+  handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
   query: QueryType;
 };
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { query } = props;
+  const { handleRowCreationRef, query } = props;
 
   const { queryResults } = useDefinedContext(TabsContext);
 
@@ -22,11 +24,62 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const { handleCellClick, selection, selectionActionsRef, tableContentRef } = useCellSelection();
+  const { handleCellClick, selection, selectionActionsRef, setSelection, tableContentRef } =
+    useCellSelection();
 
-  const { getChange } = useDefinedContext(EditContext);
+  const { changes, getChange } = useDefinedContext(EditContext);
 
   const tableRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    handleRowCreationRef.current = () => {
+      if (!queryResult) return;
+
+      const latestCreateChange = changes.reduce<CreateChange | null>((latestChange, change) => {
+        if (
+          change.type === 'create' &&
+          change.location.table === query.table &&
+          (!latestChange ||
+            Number(change.location.newRowId) > Number(latestChange.location.newRowId))
+        ) {
+          return change;
+        }
+        return latestChange;
+      }, null);
+
+      if (!latestCreateChange) return;
+
+      const rowIndex = queryResult.rows.length + Number(latestCreateChange.location.newRowId);
+
+      const newSelection: number[][] = [];
+      newSelection[rowIndex] = [];
+      setSelection(newSelection);
+
+      document
+        .querySelector<HTMLDivElement>(
+          `div[data-cell-column="0"][data-cell-row="${rowIndex}"][data-cell-query="${query.id}"]`,
+        )
+        ?.scrollIntoView({
+          behavior: 'instant',
+        });
+
+      setTimeout(() => {
+        console.log(document.querySelector<HTMLButtonElement>('.edit-button'));
+        document.querySelector<HTMLButtonElement>('.edit-button')?.click();
+      }, 200);
+    };
+  }, [changes, handleRowCreationRef, query.id, query.table, queryResult, setSelection]);
+
+  const rowsToCreate = useMemo(
+    () =>
+      changes
+        .filter(
+          (change): change is CreateChange =>
+            change.type === 'create' && change.location.table === query.table,
+        )
+        .map((change) => change.row),
+    [changes, query.table],
+  );
 
   if (!queryResult) return null;
 
@@ -53,7 +106,7 @@ export const Table: React.FC<TableProps> = (props) => {
           >
             {visibleColumns.map((column) => {
               const columnName = typeof column === 'object' ? column.alias ?? column.name : column;
-              return <Cell column={column} header key={columnName} value={columnName} />;
+              return <Cell column={column} key={columnName} type="header" value={columnName} />;
             })}
             {rows.map((row, rowIndex) => {
               return visibleColumns.map((column, columnIndex) => {
@@ -69,43 +122,45 @@ export const Table: React.FC<TableProps> = (props) => {
                       type: 'update',
                     })
                   : undefined;
+
                 const changedValue = change?.type === 'update' ? change.value : undefined;
                 const isDeleted = change?.type === 'delete';
 
                 return (
                   <Cell
                     column={column}
-                    key={[row, columnName].join()}
+                    columnIndex={columnIndex}
                     isChanged={changedValue !== undefined}
                     isDeleted={isDeleted}
-                    rootProps={{
-                      'data-cell-column': String(columnIndex),
-                      'data-cell-row': String(rowIndex),
-                      'data-cell-query': query.id,
-                      onClick: (event) => handleCellClick(event, rowIndex, columnIndex),
-                      onMouseEnter: () =>
-                        document
-                          .querySelectorAll(
-                            `[data-cell-query="${query.id}"][data-cell-row="${rowIndex}"]`,
-                          )
-                          .forEach((el) => {
-                            (el as HTMLElement).dataset.rowHover = 'true';
-                          }),
-                      onMouseLeave: () =>
-                        document
-                          .querySelectorAll(
-                            `[data-cell-query="${query.id}"][data-cell-row="${rowIndex}"]`,
-                          )
-                          .forEach((el) => {
-                            (el as HTMLElement).dataset.rowHover = 'false';
-                          }),
-                    }}
-                    selected={
-                      selection[rowIndex] &&
-                      (selection[rowIndex].length === 0 ||
-                        selection[rowIndex].includes(columnIndex))
-                    }
+                    key={[row, columnName].join()}
+                    onClick={handleCellClick}
+                    query={query}
+                    rowIndex={rowIndex}
+                    selection={selection}
+                    type="body"
                     value={changedValue === undefined ? value : changedValue}
+                  />
+                );
+              });
+            })}
+            {rowsToCreate.map((row, rowIndex) => {
+              return visibleColumns.map((column, columnIndex) => {
+                const columnName =
+                  typeof column === 'object' ? column.alias ?? column.name : column;
+                const value = row[columnName];
+
+                return (
+                  <Cell
+                    column={column}
+                    columnIndex={columnIndex}
+                    isCreated
+                    key={[row, columnName].join()}
+                    onClick={handleCellClick}
+                    query={query}
+                    rowIndex={rows.length + rowIndex}
+                    selection={selection}
+                    type="body"
+                    value={value}
                   />
                 );
               });
@@ -114,15 +169,17 @@ export const Table: React.FC<TableProps> = (props) => {
           {isEditable && (
             <SelectionActions
               columnCount={visibleColumns!.length}
+              isEditing={isEditing}
               query={query}
               ref={selectionActionsRef}
               selection={selection}
               setIsEditing={setIsEditing}
+              setSelection={setSelection}
               tableRef={tableRef}
             />
           )}
         </div>
-        {rows.length === 0 && (
+        {rows.length === 0 && rowsToCreate.length === 0 && (
           <div className="sticky left-0 w-full py-4 pl-4 text-xs">This table is empty.</div>
         )}
       </div>

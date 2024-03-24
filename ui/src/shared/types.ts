@@ -5,7 +5,9 @@ export type SendQueryResponse = inferProcedureOutput<
   AppRouter['_def']['procedures']['sendQuery']
 >[number];
 
-export type Row = SendQueryResponse['rows'][number];
+export type Row = {
+  [column: string]: SendQueryResponse['rows'][number][string] | undefined;
+};
 
 export type Value = Row[string];
 
@@ -22,7 +24,7 @@ export type Query = {
 
 export type QueryResult = {
   columns: Column[] | null;
-  rows: Array<Record<string, Value>>;
+  rows: Row[];
 };
 
 export type Tab = {

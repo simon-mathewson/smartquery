@@ -13,7 +13,7 @@ export const connectionSchema = z.object({
   user: z.string().trim().min(1),
 });
 
-type Connection = z.infer<typeof connectionSchema>;
+export type Connection = z.infer<typeof connectionSchema>;
 
 export type Client = {
   connection: Connection;

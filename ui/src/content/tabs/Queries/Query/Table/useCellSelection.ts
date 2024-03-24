@@ -152,6 +152,7 @@ export const useCellSelection = () => {
     handleCellDoubleClick,
     selection,
     selectionActionsRef,
+    setSelection,
     tableContentRef,
   };
 };

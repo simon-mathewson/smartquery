@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import superjson from 'superjson';
 
 export const useStoredState = <T>(
   key: string,
@@ -8,7 +9,7 @@ export const useStoredState = <T>(
   const getInitialValue = () => {
     const storedValue = storage.getItem(key);
     if (storedValue) {
-      return JSON.parse(storedValue);
+      return superjson.parse<T>(storedValue);
     }
     return typeof defaultValue === 'function' ? (defaultValue as () => T)() : defaultValue;
   };
@@ -16,7 +17,7 @@ export const useStoredState = <T>(
   const [state, setState] = useState<T>(getInitialValue);
 
   useEffect(() => {
-    storage.setItem(key, JSON.stringify(state));
+    storage.setItem(key, superjson.stringify(state));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 

@@ -1,7 +1,7 @@
-import { sortBy, uniq } from 'lodash';
+import { castArray, sortBy, uniq } from 'lodash';
 import type { Client, Column, DataType } from './types';
 import { getMySqlEnumValuesFromColumnType } from './getMySqlEnumValuesFromColumnType';
-import type NodeSqlParser from 'node-sql-parser';
+import NodeSqlParser from 'node-sql-parser';
 import type { PostgresClient } from '../../prisma';
 
 export const getColumns = async (parsedQuery: NodeSqlParser.AST, client: Client) => {
@@ -116,4 +116,25 @@ export const getColumns = async (parsedQuery: NodeSqlParser.AST, client: Client)
       name,
     };
   }) satisfies Column[];
+};
+
+export const getMetadata = async (props: { client: Client; statement: string }) => {
+  const { client, statement } = props;
+
+  const sqlParser = new NodeSqlParser.Parser();
+  const parserOptions = {
+    database: {
+      mysql: 'mysql',
+      postgresql: 'postgresql',
+    }[client.connection.engine],
+  };
+
+  try {
+    const parsedQuery = castArray(sqlParser.astify(statement, parserOptions))[0];
+    const table = parsedQuery.type === 'select' ? parsedQuery.from?.at(0).table : null;
+    const columns = await getColumns(parsedQuery, client);
+    return { columns, table };
+  } catch {
+    return null;
+  }
 };

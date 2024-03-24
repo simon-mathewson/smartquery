@@ -1,30 +1,33 @@
-import { range } from 'lodash';
 import { EditOutlined, Undo } from '@mui/icons-material';
+import { range } from 'lodash';
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button } from '~/shared/components/Button/Button';
-import { useDebouncedCallback } from 'use-debounce';
-import { popoverHeight, popoverMargin } from './constants';
-import { EditOverlay } from '../EditOverlay/EditOverlay';
-import type { Query } from '~/shared/types';
 import { mergeRefs } from 'react-merge-refs';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { TabsContext } from '~/content/tabs/Context';
-import { Delete } from './Delete/Delete';
+import type { XOR } from 'ts-essentials';
+import { useDebouncedCallback } from 'use-debounce';
 import { EditContext } from '~/content/edit/Context';
 import type { PrimaryKey } from '~/content/edit/types';
-import { getPrimaryKeys } from '../../../utils';
 import { doChangeLocationsMatch } from '~/content/edit/utils';
+import { TabsContext } from '~/content/tabs/Context';
+import { Button } from '~/shared/components/Button/Button';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import type { Query } from '~/shared/types';
+import { getPrimaryKeys } from '../../../utils';
+import { EditOverlay } from '../EditOverlay/EditOverlay';
+import { Delete } from './Delete/Delete';
+import { popoverHeight, popoverMargin } from './constants';
 
 export type SelectionActionsProps = {
   columnCount: number;
+  isEditing: boolean;
   query: Query;
   selection: number[][];
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelection: React.Dispatch<React.SetStateAction<number[][]>>;
   tableRef: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps>((props, ref) => {
-  const { columnCount, query, selection, setIsEditing, tableRef } = props;
+  const { columnCount, query, selection, setIsEditing, setSelection, tableRef } = props;
 
   const { changes, removeChange } = useDefinedContext(EditContext);
 
@@ -131,7 +134,9 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       };
 
     const selectionLocations = selection.reduce<
-      Array<{ column: string; primaryKeys: PrimaryKey[]; table: string }>
+      Array<
+        { column: string; table: string } & XOR<{ primaryKeys: PrimaryKey[] }, { newRowId: string }>
+      >
     >((locations, _selectedColumnIndices, rowIndex) => {
       const selectedColumnIndices =
         _selectedColumnIndices.length === 0 ? range(columnCount) : _selectedColumnIndices;
@@ -139,11 +144,20 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       return [
         ...locations,
         ...selectedColumnIndices.map((columnIndex) => {
-          return {
-            column: queryResult.columns!.filter(({ isVisible }) => isVisible)[columnIndex].name,
-            primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex)!,
-            table: query.table!,
-          };
+          const column = queryResult.columns!.filter(({ isVisible }) => isVisible)[columnIndex]
+            .name;
+
+          return rowIndex < queryResult.rows.length
+            ? {
+                column,
+                primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex)!,
+                table: query.table!,
+              }
+            : {
+                column,
+                newRowId: String(rowIndex - queryResult.rows.length),
+                table: query.table!,
+              };
         }),
       ];
     }, []);
@@ -174,10 +188,12 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
             className="pointer-events-auto flex items-center rounded-full border border-border bg-card shadow-lg"
             ref={mergeRefs([popoverRef, ref])}
           >
-            <Button icon={<EditOutlined />} ref={editButtonRef} />
-            {!isEntireSelectionDeleted && selection.every((row) => row.length === 0) && (
-              <Delete query={query} selection={selection} />
-            )}
+            <Button className="edit-button" icon={<EditOutlined />} ref={editButtonRef} />
+            {!isEntireSelectionDeleted &&
+              selection.every((row) => row.length === 0) &&
+              !selectedChanges.some((change) => change.type === 'create') && (
+                <Delete query={query} selection={selection} />
+              )}
             {selectedChanges.length > 0 && (
               <Button
                 color="secondary"
@@ -186,6 +202,11 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
                   selectedChanges.forEach((change) => {
                     removeChange(change.location);
                   });
+
+                  // Remove rows to be created from selection
+                  setSelection((currentSelection) =>
+                    currentSelection.filter((_, rowIndex) => rowIndex < queryResult!.rows.length),
+                  );
                 }}
               />
             )}

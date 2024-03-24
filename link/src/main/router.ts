@@ -1,13 +1,12 @@
-import { z } from 'zod';
 import { initTRPC } from '@trpc/server';
+import { uniqueId } from 'lodash';
 import superjson from 'superjson';
-import { castArray, uniqueId } from 'lodash';
+import { z } from 'zod';
 import { MySqlClient, PostgresClient } from '../../prisma';
-import NodeSqlParser from 'node-sql-parser';
+import { convertPrismaValue } from './convertValueToString';
+import { getMetadata } from './getMetadata';
 import type { PrismaValue } from './types';
 import { connectionSchema, type Client } from './types';
-import { getColumns } from './getColumns';
-import { convertPrismaValue } from './convertValueToString';
 
 const clients: {
   [connectionId: string]: Client;
@@ -56,26 +55,22 @@ export const router = t.router({
     console.info('Processing query', query);
 
     const client = clients[clientId];
-    const { connection, prisma } = client;
-    const sqlParser = new NodeSqlParser.Parser();
-    const parserOptions = {
-      database: {
-        mysql: 'mysql',
-        postgresql: 'postgresql',
-      }[connection.engine],
-    };
-    const ast = sqlParser.astify(query, parserOptions);
-    const parsedQueries = castArray(ast);
+    const { prisma } = client;
 
-    console.info('Parsed queries', parsedQueries);
+    const statements = query
+      .match(/(?:".*"|'.*'|`.*`|[^;])*(?:;)?/g)
+      ?.map((statement) => statement.trim())
+      .filter(Boolean);
 
-    const individualQueries = parsedQueries.map((ast) => sqlParser.sqlify(ast, parserOptions));
+    if (!statements) {
+      throw new Error('No statements found in query');
+    }
+
+    console.info('Parsed statements', statements);
 
     const results = await (prisma as PostgresClient).$transaction(
-      individualQueries.map((individualQuery) =>
-        (prisma as PostgresClient).$queryRawUnsafe<Array<Record<string, PrismaValue>>>(
-          individualQuery,
-        ),
+      statements.map((statement) =>
+        (prisma as PostgresClient).$queryRawUnsafe<Array<Record<string, PrismaValue>>>(statement),
       ),
     );
 
@@ -83,14 +78,15 @@ export const router = t.router({
 
     const rowsWithColumns = await Promise.all(
       results.map(async (result, index) => {
-        const parsedQuery = parsedQueries[index];
-        const table = parsedQuery.type === 'select' ? parsedQuery.from?.at(0).table : null;
-        const columns = await getColumns(parsedQuery, client);
+        const metadata = await getMetadata({
+          client,
+          statement: statements[index],
+        });
 
         const rows = result.map((row) =>
           Object.fromEntries(
             Object.entries(row).map(([columnName, value]) => {
-              const column = columns?.find(
+              const column = metadata?.columns?.find(
                 (column) => (column.alias ?? column.name) === columnName,
               );
               return [columnName, convertPrismaValue(value, column?.dataType)];
@@ -99,9 +95,9 @@ export const router = t.router({
         );
 
         return {
-          columns,
+          columns: metadata?.columns ?? null,
           rows,
-          table,
+          table: metadata?.table ?? null,
         };
       }),
     );

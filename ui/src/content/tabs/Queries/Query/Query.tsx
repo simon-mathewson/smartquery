@@ -12,7 +12,7 @@ import { getQueryTitle } from './utils';
 import { InputModesSelect } from './inputModes/Select';
 import { SearchProvider } from './inputModes/search/Provider';
 import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
-import { Pagination } from './addAndPagination/AddAndPagination';
+import { BottomToolbar } from './bottomToolbar/BottomToolbar';
 
 export type QueryProps = {
   columnIndex: number;
@@ -30,6 +30,8 @@ export const Query: React.FC<QueryProps> = (props) => {
   const [inputMode, setInputMode] = useState<InputMode | undefined>(
     !query.sql ? 'editor' : undefined,
   );
+
+  const handleRowCreationRef = React.useRef<(() => void) | null>(null);
 
   return (
     <SearchProvider query={query}>
@@ -58,8 +60,8 @@ export const Query: React.FC<QueryProps> = (props) => {
           }
         />
         <InputModes inputMode={inputMode} query={query} />
-        <Table query={query} />
-        <Pagination query={query} />
+        <Table handleRowCreationRef={handleRowCreationRef} query={query} />
+        <BottomToolbar handleRowCreationRef={handleRowCreationRef} query={query} />
       </div>
     </SearchProvider>
   );

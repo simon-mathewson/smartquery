@@ -8,13 +8,13 @@ import type {
   AggregatedUpdateChanges,
   AggregatedDeleteChanges,
   Location,
+  CreateChange,
 } from './types';
-import { doChangeLocationsMatch } from './utils';
+import { doChangeLocationsMatch, getValueString } from './utils';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { withQuotes } from '~/shared/utils/sql';
-import { groupBy } from 'lodash';
 
 export const useEdit = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -99,13 +99,7 @@ export const useEdit = () => {
               table: change.location.table,
             },
             type: 'create',
-            newValues: [
-              {
-                column: change.location.column,
-                rowId: change.location.newRowId,
-                value: change.value,
-              },
-            ],
+            rows: [change.row],
           });
         }
 
@@ -142,11 +136,7 @@ export const useEdit = () => {
           (change.location as UpdateLocation | DeleteLocation).primaryKeys,
         );
       } else {
-        (existingChange as AggregatedCreateChanges).newValues.push({
-          column: (change.location as CreateLocation).column,
-          rowId: (change.location as CreateLocation).newRowId,
-          value: (change as Extract<Change, { type: 'create' }>).value,
-        });
+        (existingChange as AggregatedCreateChanges).rows.push((change as CreateChange).row);
       }
 
       return previousChanges;
@@ -157,17 +147,22 @@ export const useEdit = () => {
         const { location, type } = change;
 
         if (type === 'create') {
-          const valuesGroupedByRow = groupBy(change.newValues, 'rowId');
+          const columns = Object.keys(change.rows[0]);
+          const columnList = columns.map((column) => withQuotes(engine, column)).join(',\n  ');
 
-          return Object.values(valuesGroupedByRow)
-            .map((rowChanges) => {
-              return `INSERT INTO ${withQuotes(engine, location.table)} (\n  ${rowChanges
-                .map((rowChange) => withQuotes(engine, rowChange.column))
-                .join(',\n  ')}\n) VALUES (\n${rowChanges
-                .map((rowChange) => (rowChange.value === null ? 'NULL' : `'${rowChange.value}'`))
-                .join(',\n  ')}\n);`;
+          const valueRows = change.rows
+            .map((row) => {
+              const valueList = Object.values(row)
+                .map((value) => getValueString(value))
+                .join(', ');
+              return `  (${valueList})`;
             })
-            .join('\n\n');
+            .join(',\n');
+
+          return `INSERT INTO ${withQuotes(
+            engine,
+            location.table,
+          )} (\n  ${columnList}\n) VALUES\n${valueRows};`;
         }
 
         const primaryKeyConditions = location.primaryKeys
@@ -189,7 +184,7 @@ export const useEdit = () => {
         return `UPDATE ${withQuotes(engine, location.table)}\nSET ${withQuotes(
           engine,
           location.column,
-        )} = ${change.value === null ? 'NULL' : `'${change.value}'`}\n${where};`;
+        )} = ${getValueString(change.value)}\n${where};`;
       })
       .join('\n\n');
   }, [activeConnection, changes]);

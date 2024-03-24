@@ -1,6 +1,6 @@
 import { isNil } from 'lodash';
 import React from 'react';
-import type { Column, Value } from '~/shared/types';
+import { type Column, type Value } from '~/shared/types';
 import { Select } from '~/shared/components/Select/Select';
 
 export type EnumFieldProps = {
@@ -22,7 +22,7 @@ export const EnumField: React.FC<EnumFieldProps> = (props) => {
       }}
       placeholder={multipleValues ? 'Multiple values' : undefined}
       options={column.enumValues!.map((value) => ({ label: value, value }))}
-      value={stringValue}
+      value={stringValue === undefined ? null : stringValue}
     />
   );
 };

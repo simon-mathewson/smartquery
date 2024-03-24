@@ -19,7 +19,7 @@ export type EditModalProps = {
 };
 
 export const EditOverlay: React.FC<EditModalProps> = (props) => {
-  const { columnCount, query, editButtonRef, selection, selectionActionsPopoverRef, setIsEditing } =
+  const { columnCount, editButtonRef, query, selection, selectionActionsPopoverRef, setIsEditing } =
     props;
 
   const { queryResults } = useDefinedContext(TabsContext);
@@ -55,7 +55,6 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
             });
           } else {
             newColumnsWithValues[columnIndex].locations.push({
-              column: column.name,
               newRowId: String(rowIndex - queryResult.rows.length),
               table: query.table!,
               type: 'create',
