@@ -57,7 +57,7 @@ export const Cell: React.FC<CellProps> = (props) => {
 
           if (isCreated) {
             if (selected) {
-              return 'bg-teal-500 data-[row-hover=true]:bg-teal-500/90';
+              return 'bg-teal-600/80 data-[row-hover=true]:bg-teal-600/70';
             }
             return 'bg-green-500/30 data-[row-hover=true]:bg-green-500/40';
           }
@@ -91,17 +91,16 @@ export const Cell: React.FC<CellProps> = (props) => {
       {...(type === 'body' && {
         'data-cell-column': String(columnIndex),
         'data-cell-row': String(rowIndex),
-        'data-cell-query': query.id,
         onClick: (event) => onClick?.(event, rowIndex, columnIndex),
         onMouseEnter: () =>
           document
-            .querySelectorAll(`[data-cell-query="${query.id}"][data-cell-row="${rowIndex}"]`)
+            .querySelectorAll(`[data-query="${query.id}"] [data-cell-row="${rowIndex}"]`)
             .forEach((el) => {
               (el as HTMLElement).dataset.rowHover = 'true';
             }),
         onMouseLeave: () =>
           document
-            .querySelectorAll(`[data-cell-query="${query.id}"][data-cell-row="${rowIndex}"]`)
+            .querySelectorAll(`[data-query="${query.id}"] [data-cell-row="${rowIndex}"]`)
             .forEach((el) => {
               (el as HTMLElement).dataset.rowHover = 'false';
             }),

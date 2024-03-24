@@ -3,7 +3,7 @@ import type { Row, Value } from '~/shared/types';
 export type PrimaryKey = { column: string; value: string };
 
 export type CreateLocation = {
-  newRowId: string;
+  index: number;
   table: string;
   type: 'create';
 };

@@ -190,7 +190,7 @@ export const useEdit = () => {
   }, [activeConnection, changes]);
 
   return useMemo(
-    () => ({ changes, clearChanges, getChange, handleChange, removeChange, sql }),
-    [changes, clearChanges, getChange, handleChange, removeChange, sql],
+    () => ({ changes, clearChanges, getChange, handleChange, removeChange, setChanges, sql }),
+    [changes, clearChanges, getChange, handleChange, removeChange, setChanges, sql],
   );
 };

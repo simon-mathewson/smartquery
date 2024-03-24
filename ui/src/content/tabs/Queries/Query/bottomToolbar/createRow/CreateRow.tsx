@@ -29,10 +29,9 @@ export const Add: React.FC<AddProps> = (props) => {
       (change): change is CreateChange =>
         change.type === 'create' && change.location.table === table,
     );
-    const newRowId = String(existingCreateChanges.length);
     const createChange = {
       location: {
-        newRowId,
+        index: existingCreateChanges.length,
         table,
         type: 'create',
       },

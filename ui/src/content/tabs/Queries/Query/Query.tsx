@@ -35,6 +35,7 @@ export const Query: React.FC = () => {
           '!mt-0': rowIndex === 0,
         },
       )}
+      data-query={query.id}
     >
       <ThreeColumns
         left={

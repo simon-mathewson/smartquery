@@ -50,7 +50,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
             });
           } else {
             newColumnsWithValues[columnIndex].locations.push({
-              newRowId: String(rowIndex - rows.length),
+              index: rowIndex - rows.length,
               table: query.table!,
               type: 'create',
             });

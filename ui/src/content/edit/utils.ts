@@ -6,8 +6,8 @@ export const doChangeLocationsMatch = (
   change2: Omit<Location, 'originalValue' | 'type'>,
 ) =>
   change1.table === change2.table &&
-  ((!('newRowId' in change1) && !('newRowId' in change2)) ||
-    ('newRowId' in change1 && 'newRowId' in change2 && change1.newRowId === change2.newRowId)) &&
+  ((!('index' in change1) && !('index' in change2)) ||
+    ('index' in change1 && 'index' in change2 && change1.index === change2.index)) &&
   (!('primaryKeys' in change1) ||
     !('primaryKeys' in change2) ||
     (change1.primaryKeys as PrimaryKey[]).every(

@@ -35,8 +35,7 @@ export const Table: React.FC<TableProps> = (props) => {
         if (
           change.type === 'create' &&
           change.location.table === query.table &&
-          (!latestChange ||
-            Number(change.location.newRowId) > Number(latestChange.location.newRowId))
+          (!latestChange || change.location.index > latestChange.location.index)
         ) {
           return change;
         }
@@ -45,7 +44,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
       if (!latestCreateChange) return;
 
-      const rowIndex = rows.length + Number(latestCreateChange.location.newRowId);
+      const rowIndex = rows.length + latestCreateChange.location.index;
 
       const newSelection: number[][] = [];
       newSelection[rowIndex] = [];
@@ -53,15 +52,16 @@ export const Table: React.FC<TableProps> = (props) => {
 
       document
         .querySelector<HTMLDivElement>(
-          `div[data-cell-column="0"][data-cell-row="${rowIndex}"][data-cell-query="${query.id}"]`,
+          `[data-query="${query.id}"] [data-cell-column="0"][data-cell-row="${rowIndex}"]`,
         )
         ?.scrollIntoView({
           behavior: 'instant',
         });
 
       setTimeout(() => {
-        console.log(document.querySelector<HTMLButtonElement>('.edit-button'));
-        document.querySelector<HTMLButtonElement>('.edit-button')?.click();
+        document
+          .querySelector<HTMLButtonElement>(`[data-query="${query.id}"] .edit-button`)
+          ?.click();
       }, 200);
     };
   }, [changes, handleRowCreationRef, query.id, query.table, rows.length, setSelection]);
@@ -124,7 +124,7 @@ export const Table: React.FC<TableProps> = (props) => {
                     columnIndex={columnIndex}
                     isChanged={changedValue !== undefined}
                     isDeleted={isDeleted}
-                    key={[row, columnName].join()}
+                    key={[columnIndex, rowIndex].join()}
                     onClick={handleCellClick}
                     rowIndex={rowIndex}
                     selection={selection}
@@ -145,7 +145,7 @@ export const Table: React.FC<TableProps> = (props) => {
                     column={column}
                     columnIndex={columnIndex}
                     isCreated
-                    key={[row, columnName].join()}
+                    key={[columnIndex, rowIndex].join()}
                     onClick={handleCellClick}
                     rowIndex={rows.length + rowIndex}
                     selection={selection}

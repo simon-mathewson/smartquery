@@ -127,7 +127,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
   const { isEntireSelectionDeleted, selectedChanges } = useMemo(() => {
     const selectionLocations = selection.reduce<
       Array<
-        { column: string; table: string } & XOR<{ primaryKeys: PrimaryKey[] }, { newRowId: string }>
+        { column: string; table: string } & XOR<{ primaryKeys: PrimaryKey[] }, { index: number }>
       >
     >((locations, _selectedColumnIndices, rowIndex) => {
       const selectedColumnIndices =
@@ -146,7 +146,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
               }
             : {
                 column,
-                newRowId: String(rowIndex - rows.length),
+                index: rowIndex - rows.length,
                 table: query.table!,
               };
         }),
