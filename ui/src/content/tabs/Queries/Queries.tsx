@@ -3,6 +3,7 @@ import React from 'react';
 import { Query } from './Query/Query';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TabsContext } from '../Context';
+import { QueryProvider } from './Query/Provider';
 
 export const Queries: React.FC = () => {
   const { activeTab } = useDefinedContext(TabsContext);
@@ -24,8 +25,10 @@ export const Queries: React.FC = () => {
             <DropMarker column={columnIndex} horizontal row={0} />
             {column.map((query, rowIndex) => (
               <React.Fragment key={query.id}>
-                <Query columnIndex={columnIndex} query={query} rowIndex={rowIndex} />
-                <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
+                <QueryProvider columnIndex={columnIndex} query={query} rowIndex={rowIndex}>
+                  <Query />
+                  <DropMarker column={columnIndex} horizontal row={rowIndex + 1} />
+                </QueryProvider>
               </React.Fragment>
             ))}
           </div>

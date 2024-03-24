@@ -1,8 +1,10 @@
 import type { XOR } from 'ts-essentials';
 import classNames from 'classnames';
 import React from 'react';
-import { type Column, type Query, type Value } from '~/shared/types';
+import { type Column, type Value } from '~/shared/types';
 import { isDateTimeType, isNumberType, isTimeType } from '../EditOverlay/ColumnField/utils';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { QueryContext } from '../../Context';
 
 export type CellProps = {
   column: Column | string;
@@ -22,7 +24,6 @@ export type CellProps = {
     rowIndex: number;
     selection: number[][];
     type: 'body';
-    query: Query;
   }
 >;
 
@@ -34,12 +35,13 @@ export const Cell: React.FC<CellProps> = (props) => {
     isChanged,
     isDeleted,
     onClick,
-    query,
     rowIndex,
     selection,
     type,
     value,
   } = props;
+
+  const { query } = useDefinedContext(QueryContext);
 
   const selected =
     type === 'body' &&

@@ -1,34 +1,29 @@
 import { range } from 'lodash';
 import { useMemo } from 'react';
-import type { Query } from '~/shared/types';
 import { getPrimaryKeys } from '~/content/tabs/Queries/utils';
 import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 import type { ColumnFieldProps } from './ColumnField/ColumnField';
 import { ColumnField } from './ColumnField/ColumnField';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { TabsContext } from '~/content/tabs/Context';
+import { QueryContext, ResultContext } from '../../Context';
 
 export type EditModalProps = {
   columnCount: number;
   editButtonRef: React.MutableRefObject<HTMLElement | null>;
-  query: Query;
   selection: number[][];
   selectionActionsPopoverRef: React.MutableRefObject<HTMLElement | null>;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const EditOverlay: React.FC<EditModalProps> = (props) => {
-  const { columnCount, editButtonRef, query, selection, selectionActionsPopoverRef, setIsEditing } =
-    props;
+  const { columnCount, editButtonRef, selection, selectionActionsPopoverRef, setIsEditing } = props;
 
-  const { queryResults } = useDefinedContext(TabsContext);
+  const { query } = useDefinedContext(QueryContext);
 
-  const queryResult = query.id in queryResults ? queryResults[query.id] : null;
+  const { columns, rows } = useDefinedContext(ResultContext);
 
   const columnFields = useMemo(() => {
-    if (!queryResult) return null;
-
     return selection.reduce<Array<Pick<ColumnFieldProps, 'column' | 'locations'>>>(
       (allColumnsWithValues, _selectedColumnIndices, rowIndex) => {
         const newColumnsWithValues = cloneArrayWithEmptyValues(allColumnsWithValues);
@@ -37,25 +32,25 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
           _selectedColumnIndices.length === 0 ? range(columnCount) : _selectedColumnIndices;
 
         selectedColumnIndices.forEach((columnIndex) => {
-          const column = queryResult.columns![columnIndex];
+          const column = columns![columnIndex];
 
           if (!newColumnsWithValues[columnIndex]) {
             newColumnsWithValues[columnIndex] = { column, locations: [] };
           }
 
-          if (queryResult.rows[rowIndex]) {
-            const value = queryResult.rows[rowIndex][column.alias ?? column.name];
+          if (rows[rowIndex]) {
+            const value = rows[rowIndex][column.alias ?? column.name];
 
             newColumnsWithValues[columnIndex].locations.push({
               column: column.name,
               originalValue: value,
-              primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex)!,
+              primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
               table: query.table!,
               type: 'update',
             });
           } else {
             newColumnsWithValues[columnIndex].locations.push({
-              newRowId: String(rowIndex - queryResult.rows.length),
+              newRowId: String(rowIndex - rows.length),
               table: query.table!,
               type: 'create',
             });
@@ -65,7 +60,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
       },
       [],
     );
-  }, [columnCount, query.table, queryResult, selection]);
+  }, [columnCount, columns, query.table, rows, selection]);
 
   if (selection.length === 0) return null;
 

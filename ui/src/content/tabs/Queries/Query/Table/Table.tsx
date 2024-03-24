@@ -2,25 +2,23 @@ import classNames from 'classnames';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { EditContext } from '~/content/edit/Context';
 import type { CreateChange } from '~/content/edit/types';
-import { TabsContext } from '~/content/tabs/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import type { Query as QueryType } from '../../../../../shared/types';
 import { getPrimaryKeys } from '../../utils';
 import { Cell } from './Cell/Cell';
 import { SelectionActions } from './SelectionActions/SelectionActions';
 import { useCellSelection } from './useCellSelection';
+import { QueryContext, ResultContext } from '../Context';
 
 export type TableProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
-  query: QueryType;
 };
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { handleRowCreationRef, query } = props;
+  const { handleRowCreationRef } = props;
 
-  const { queryResults } = useDefinedContext(TabsContext);
+  const { query } = useDefinedContext(QueryContext);
 
-  const queryResult = query.id in queryResults ? queryResults[query.id] : null;
+  const { columns, rows } = useDefinedContext(ResultContext);
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -33,8 +31,6 @@ export const Table: React.FC<TableProps> = (props) => {
 
   useEffect(() => {
     handleRowCreationRef.current = () => {
-      if (!queryResult) return;
-
       const latestCreateChange = changes.reduce<CreateChange | null>((latestChange, change) => {
         if (
           change.type === 'create' &&
@@ -49,7 +45,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
       if (!latestCreateChange) return;
 
-      const rowIndex = queryResult.rows.length + Number(latestCreateChange.location.newRowId);
+      const rowIndex = rows.length + Number(latestCreateChange.location.newRowId);
 
       const newSelection: number[][] = [];
       newSelection[rowIndex] = [];
@@ -68,7 +64,7 @@ export const Table: React.FC<TableProps> = (props) => {
         document.querySelector<HTMLButtonElement>('.edit-button')?.click();
       }, 200);
     };
-  }, [changes, handleRowCreationRef, query.id, query.table, queryResult, setSelection]);
+  }, [changes, handleRowCreationRef, query.id, query.table, rows.length, setSelection]);
 
   const rowsToCreate = useMemo(
     () =>
@@ -80,10 +76,6 @@ export const Table: React.FC<TableProps> = (props) => {
         .map((change) => change.row),
     [changes, query.table],
   );
-
-  if (!queryResult) return null;
-
-  const { columns, rows } = queryResult;
 
   const visibleColumns = columns
     ? columns.filter(({ isVisible }) => isVisible)
@@ -134,7 +126,6 @@ export const Table: React.FC<TableProps> = (props) => {
                     isDeleted={isDeleted}
                     key={[row, columnName].join()}
                     onClick={handleCellClick}
-                    query={query}
                     rowIndex={rowIndex}
                     selection={selection}
                     type="body"
@@ -156,7 +147,6 @@ export const Table: React.FC<TableProps> = (props) => {
                     isCreated
                     key={[row, columnName].join()}
                     onClick={handleCellClick}
-                    query={query}
                     rowIndex={rows.length + rowIndex}
                     selection={selection}
                     type="body"
@@ -170,7 +160,6 @@ export const Table: React.FC<TableProps> = (props) => {
             <SelectionActions
               columnCount={visibleColumns!.length}
               isEditing={isEditing}
-              query={query}
               ref={selectionActionsRef}
               selection={selection}
               setIsEditing={setIsEditing}

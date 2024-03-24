@@ -1,20 +1,23 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TabsContext } from '~/content/tabs/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import type { Query } from '~/shared/types';
 import type { InputMode } from '../types';
 import { SqlEditor } from '~/shared/components/SqlEditor/SqlEditor';
 import { Search } from './search/Search';
+import { QueryContext, ResultContext } from '../Context';
 
 export type InputModesProps = {
   inputMode: InputMode | undefined;
-  query: Query;
 };
 
 export const InputModes: React.FC<InputModesProps> = (props) => {
-  const { inputMode, query } = props;
+  const { inputMode } = props;
 
   const { updateQuery } = useDefinedContext(TabsContext);
+
+  const { query } = useDefinedContext(QueryContext);
+
+  const result = useContext(ResultContext);
 
   if (inputMode === 'editor') {
     return (
@@ -24,8 +27,8 @@ export const InputModes: React.FC<InputModesProps> = (props) => {
     );
   }
 
-  if (inputMode === 'search') {
-    return <Search query={query} />;
+  if (inputMode === 'search' && result) {
+    return <Search />;
   }
 
   return null;

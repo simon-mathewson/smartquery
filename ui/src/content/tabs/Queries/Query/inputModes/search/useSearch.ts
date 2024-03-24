@@ -1,24 +1,26 @@
 import { useCallback, useMemo } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '~/content/connections/Context';
-import type { Query } from '~/shared/types';
 import { TabsContext } from '~/content/tabs/Context';
 import { getWhere } from './utils';
 import NodeSqlParser from 'node-sql-parser';
 import { get, isEqualWith } from 'lodash';
 import { getParsedQuery, getParserOptions } from '../../utils';
 import { getLimitAndOffset, setLimitAndOffset } from '../../../utils';
+import { QueryContext, ResultContext } from '../../Context';
 
-export const useSearch = (query: Query) => {
+export const useSearch = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
-  const { queryResults, updateQuery } = useDefinedContext(TabsContext);
+  const { updateQuery } = useDefinedContext(TabsContext);
 
-  const queryResult = query.id in queryResults ? queryResults[query.id] : null;
+  const { query } = useDefinedContext(QueryContext);
+
+  const { columns } = useDefinedContext(ResultContext);
 
   const search = useCallback(
     (searchValue: string) => {
-      if (!activeConnection || !queryResult?.columns) return;
+      if (!activeConnection || !columns) return;
 
       const parsedQuery = getParsedQuery({
         engine: activeConnection.engine,
@@ -28,7 +30,7 @@ export const useSearch = (query: Query) => {
 
       parsedQuery.where = searchValue
         ? getWhere({
-            columns: queryResult.columns,
+            columns,
             engine: activeConnection.engine,
             searchValue,
           })
@@ -46,11 +48,11 @@ export const useSearch = (query: Query) => {
       );
       updateQuery(query.id, newSql);
     },
-    [activeConnection, query, queryResult?.columns, updateQuery],
+    [activeConnection, columns, query, updateQuery],
   );
 
   const searchValue = useMemo(() => {
-    if (!activeConnection || !queryResult?.columns) return undefined;
+    if (!activeConnection || !columns) return undefined;
 
     const parsedQuery = getParsedQuery({
       engine: activeConnection.engine,
@@ -59,7 +61,7 @@ export const useSearch = (query: Query) => {
     if (!parsedQuery || parsedQuery.type !== 'select') return undefined;
 
     const searchWhere = getWhere({
-      columns: queryResult.columns,
+      columns,
       engine: activeConnection.engine,
       searchValue: '',
     });
@@ -93,7 +95,7 @@ export const useSearch = (query: Query) => {
 
     const areAllSearchValuesEqual = searchValues.every((value) => value === searchValues[0]);
     return areAllSearchValuesEqual ? searchValues[0] : undefined;
-  }, [activeConnection, query, queryResult?.columns]);
+  }, [activeConnection, columns, query]);
 
   return useMemo(() => ({ search, searchValue }), [search, searchValue]);
 };

@@ -1,31 +1,24 @@
 import { Close } from '@mui/icons-material';
 import classNames from 'classnames';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Button } from '../../../../shared/components/Button/Button';
-import type { Query as QueryType } from '../../../../shared/types';
 import { TabsContext } from '../../Context';
 import { InputModes } from './inputModes/InputModes';
 import { Table } from './Table/Table';
 import type { InputMode } from './types';
 import { getQueryTitle } from './utils';
 import { InputModesSelect } from './inputModes/Select';
-import { SearchProvider } from './inputModes/search/Provider';
 import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
 import { BottomToolbar } from './bottomToolbar/BottomToolbar';
+import { QueryContext, ResultContext } from './Context';
 
-export type QueryProps = {
-  columnIndex: number;
-  query: QueryType;
-  rowIndex: number;
-};
+export const Query: React.FC = () => {
+  const { removeQuery } = useDefinedContext(TabsContext);
 
-export const Query: React.FC<QueryProps> = (props) => {
-  const { columnIndex, query, rowIndex } = props;
+  const { columnIndex, query, rowIndex } = useDefinedContext(QueryContext);
 
-  const { queryResults, removeQuery } = useDefinedContext(TabsContext);
-
-  const queryResult = query.id in queryResults ? queryResults[query.id] : null;
+  const result = useContext(ResultContext);
 
   const [inputMode, setInputMode] = useState<InputMode | undefined>(
     !query.sql ? 'editor' : undefined,
@@ -34,35 +27,33 @@ export const Query: React.FC<QueryProps> = (props) => {
   const handleRowCreationRef = React.useRef<(() => void) | null>(null);
 
   return (
-    <SearchProvider query={query}>
-      <div
-        className={classNames(
-          'relative ml-3 mt-3 flex min-h-[240px] flex-col justify-start gap-2 overflow-hidden rounded-xl border border-border bg-card p-2',
-          {
-            '!ml-0': columnIndex === 0,
-            '!mt-0': rowIndex === 0,
-          },
-        )}
-      >
-        <ThreeColumns
-          left={
-            queryResult ? (
-              <InputModesSelect inputMode={inputMode} query={query} setInputMode={setInputMode} />
-            ) : null
-          }
-          middle={
-            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-              {getQueryTitle(query)}
-            </div>
-          }
-          right={
-            <Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />
-          }
-        />
-        <InputModes inputMode={inputMode} query={query} />
-        <Table handleRowCreationRef={handleRowCreationRef} query={query} />
-        <BottomToolbar handleRowCreationRef={handleRowCreationRef} query={query} />
-      </div>
-    </SearchProvider>
+    <div
+      className={classNames(
+        'relative ml-3 mt-3 flex min-h-[240px] flex-col justify-start gap-2 overflow-hidden rounded-xl border border-border bg-card p-2',
+        {
+          '!ml-0': columnIndex === 0,
+          '!mt-0': rowIndex === 0,
+        },
+      )}
+    >
+      <ThreeColumns
+        left={
+          result ? <InputModesSelect inputMode={inputMode} setInputMode={setInputMode} /> : null
+        }
+        middle={
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
+            {getQueryTitle(query)}
+          </div>
+        }
+        right={<Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />}
+      />
+      <InputModes inputMode={inputMode} />
+      {result && (
+        <>
+          <Table handleRowCreationRef={handleRowCreationRef} />
+          <BottomToolbar handleRowCreationRef={handleRowCreationRef} />
+        </>
+      )}
+    </div>
   );
 };

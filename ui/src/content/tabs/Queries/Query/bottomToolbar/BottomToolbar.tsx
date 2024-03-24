@@ -2,19 +2,17 @@ import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import React from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
-import type { Query } from '~/shared/types';
 import { usePagination } from './usePagination';
 import { Add } from './createRow/CreateRow';
 
 export type BottomToolbarProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
-  query: Query;
 };
 
 export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
-  const { handleRowCreationRef, query } = props;
+  const { handleRowCreationRef } = props;
 
-  const { limit, next, offset, previous, total } = usePagination(query);
+  const { limit, next, offset, previous, total } = usePagination();
 
   const limitText = limit
     ? `${(offset ?? 0) + 1}–${Math.min((offset ?? 0) + limit, total ?? 0)}`
@@ -26,7 +24,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
 
   return (
     <ThreeColumns
-      left={<Add handleRowCreationRef={handleRowCreationRef} query={query} />}
+      left={<Add handleRowCreationRef={handleRowCreationRef} />}
       middle={Boolean(total) && <div className="text-xs text-textSecondary">{paginationText}</div>}
       right={
         limit !== undefined &&

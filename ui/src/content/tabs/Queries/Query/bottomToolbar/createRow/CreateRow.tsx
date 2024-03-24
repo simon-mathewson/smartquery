@@ -1,31 +1,28 @@
 import React from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import type { Row } from '~/shared/types';
-import { type Query } from '~/shared/types';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { TabsContext } from '~/content/tabs/Context';
 import { EditContext } from '~/content/edit/Context';
 import type { CreateChange } from '~/content/edit/types';
+import { QueryContext, ResultContext } from '../../Context';
 
 export interface AddProps {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
-  query: Query;
 }
 
 export const Add: React.FC<AddProps> = (props) => {
-  const { handleRowCreationRef, query } = props;
+  const { handleRowCreationRef } = props;
 
   const { changes, handleChange } = useDefinedContext(EditContext);
 
-  const { queryResults } = useDefinedContext(TabsContext);
+  const {
+    query: { table },
+  } = useDefinedContext(QueryContext);
 
-  const queryResult = query.id in queryResults ? queryResults[query.id] : null;
+  const { columns } = useDefinedContext(ResultContext);
 
-  const columns = queryResult?.columns;
-  const table = query.table;
-
-  if (!columns || !table) return null;
+  if (!table || !columns) return null;
 
   const handleClick = () => {
     const existingCreateChanges = changes.filter(

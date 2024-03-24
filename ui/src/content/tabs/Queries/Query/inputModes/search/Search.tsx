@@ -2,18 +2,14 @@ import { ArrowForward } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { Input } from '~/shared/components/Input/Input';
+import { useSearch } from './useSearch';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import type { Query } from '~/shared/types';
-import { SearchContext } from './Context';
+import { QueryContext } from '../../Context';
 
-export type SearchProps = {
-  query: Query;
-};
+export const Search: React.FC = () => {
+  const { query } = useDefinedContext(QueryContext);
 
-export const Search: React.FC<SearchProps> = (props) => {
-  const { query } = props;
-
-  const { search, searchValue } = useDefinedContext(SearchContext);
+  const { search, searchValue } = useSearch();
 
   const [value, setValue] = useState<string>(searchValue ?? '');
   const [isChanged, setIsChanged] = useState(false);

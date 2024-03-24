@@ -7,11 +7,10 @@ import { useDebouncedCallback } from 'use-debounce';
 import { EditContext } from '~/content/edit/Context';
 import type { PrimaryKey } from '~/content/edit/types';
 import { doChangeLocationsMatch } from '~/content/edit/utils';
-import { TabsContext } from '~/content/tabs/Context';
 import { Button } from '~/shared/components/Button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import type { Query } from '~/shared/types';
 import { getPrimaryKeys } from '../../../utils';
+import { QueryContext, ResultContext } from '../../Context';
 import { EditOverlay } from '../EditOverlay/EditOverlay';
 import { Delete } from './Delete/Delete';
 import { popoverHeight, popoverMargin } from './constants';
@@ -19,7 +18,6 @@ import { popoverHeight, popoverMargin } from './constants';
 export type SelectionActionsProps = {
   columnCount: number;
   isEditing: boolean;
-  query: Query;
   selection: number[][];
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   setSelection: React.Dispatch<React.SetStateAction<number[][]>>;
@@ -27,13 +25,13 @@ export type SelectionActionsProps = {
 };
 
 export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps>((props, ref) => {
-  const { columnCount, query, selection, setIsEditing, setSelection, tableRef } = props;
+  const { columnCount, selection, setIsEditing, setSelection, tableRef } = props;
 
   const { changes, removeChange } = useDefinedContext(EditContext);
 
-  const { queryResults } = useDefinedContext(TabsContext);
+  const { query } = useDefinedContext(QueryContext);
 
-  const queryResult = query.id in queryResults ? queryResults[query.id] : null;
+  const { columns, rows } = useDefinedContext(ResultContext);
 
   const [tableWidth, setTableWidth] = useState<number>();
 
@@ -127,12 +125,6 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
   const { isEntireSelectionDeleted, selectedChanges } = useMemo(() => {
-    if (!queryResult)
-      return {
-        isEntireSelectionDeleted: false,
-        selectedChanges: [],
-      };
-
     const selectionLocations = selection.reduce<
       Array<
         { column: string; table: string } & XOR<{ primaryKeys: PrimaryKey[] }, { newRowId: string }>
@@ -144,18 +136,17 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       return [
         ...locations,
         ...selectedColumnIndices.map((columnIndex) => {
-          const column = queryResult.columns!.filter(({ isVisible }) => isVisible)[columnIndex]
-            .name;
+          const column = columns!.filter(({ isVisible }) => isVisible)[columnIndex].name;
 
-          return rowIndex < queryResult.rows.length
+          return rowIndex < rows.length
             ? {
                 column,
-                primaryKeys: getPrimaryKeys(queryResult.columns!, queryResult.rows, rowIndex)!,
+                primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
                 table: query.table!,
               }
             : {
                 column,
-                newRowId: String(rowIndex - queryResult.rows.length),
+                newRowId: String(rowIndex - rows.length),
                 table: query.table!,
               };
         }),
@@ -175,7 +166,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
     });
 
     return { isEntireSelectionDeleted, selectedChanges };
-  }, [changes, columnCount, query.table, queryResult, selection]);
+  }, [changes, columnCount, columns, query.table, rows, selection]);
 
   return (
     <>
@@ -192,7 +183,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
             {!isEntireSelectionDeleted &&
               selection.every((row) => row.length === 0) &&
               !selectedChanges.some((change) => change.type === 'create') && (
-                <Delete query={query} selection={selection} />
+                <Delete selection={selection} />
               )}
             {selectedChanges.length > 0 && (
               <Button
@@ -205,7 +196,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
 
                   // Remove rows to be created from selection
                   setSelection((currentSelection) =>
-                    currentSelection.filter((_, rowIndex) => rowIndex < queryResult!.rows.length),
+                    currentSelection.filter((_, rowIndex) => rowIndex < rows.length),
                   );
                 }}
               />
@@ -213,13 +204,10 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
           </div>
         </div>
       )}
-      {Boolean(queryResult?.rows.length) && (
-        <div style={{ height: `${popoverHeight + popoverMargin * 2}px` }} />
-      )}
+      {Boolean(rows.length) && <div style={{ height: `${popoverHeight + popoverMargin * 2}px` }} />}
       <EditOverlay
         columnCount={columnCount}
         editButtonRef={editButtonRef}
-        query={query}
         selection={selection}
         selectionActionsPopoverRef={popoverRef}
         setIsEditing={setIsEditing}
