@@ -43,11 +43,18 @@ export const useStyles = (props: UseStylesProps) => {
 
     const anchorRect = anchor.getBoundingClientRect();
 
-    const left = {
+    const cardWidth = card.offsetWidth;
+
+    const unboundedLeft = {
       left: anchorRect.left,
-      center: anchorRect.left + anchorRect.width / 2,
-      right: anchorRect.left + anchorRect.width,
+      center: anchorRect.left + anchorRect.width / 2 - cardWidth / 2,
+      right: anchorRect.right - cardWidth,
     }[align];
+
+    const left = Math.max(
+      overlayCardMargin,
+      Math.min(window.innerWidth - cardWidth - overlayCardMargin, unboundedLeft),
+    );
 
     const spaceBelow = window.innerHeight - anchorRect.bottom - overlayCardMargin * 2;
     const spaceAbove = anchorRect.top - overlayCardMargin * 2;

@@ -92,10 +92,6 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
             className={classNames(
               'overflow-auto rounded-xl border border-border bg-card shadow-xl [max-height:inherit]',
               className,
-              {
-                '-translate-x-1/2': align === 'center',
-                '-translate-x-full': align === 'right',
-              },
             )}
             ref={refs}
           >
