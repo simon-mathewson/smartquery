@@ -1,8 +1,12 @@
 import { useCallback, useRef, useState } from 'react';
 import { useClickOutside } from '~/shared/hooks/useClickOutside/useClickOutside';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
+import { ResultContext } from '../Context';
 
 export const useCellSelection = () => {
+  const { columns } = useDefinedContext(ResultContext);
+
   const [selection, setSelection] = useState<number[][]>([]);
 
   const tableContentRef = useRef<HTMLDivElement | null>(null);
@@ -82,10 +86,11 @@ export const useCellSelection = () => {
           (row, index) => row && index === rowIndex && row.length === 1 && row[0] === columnIndex,
         );
 
-      const getRowWithTargetColumn = (column: number, row: number) => [
-        ...(newRowSelections.at(row) ?? []),
-        column,
-      ];
+      const getRowWithTargetColumn = (column: number, row: number) => {
+        const newRow = [...(newRowSelections.at(row) ?? []), column];
+
+        return newRow.length === columns?.length ? [] : newRow;
+      };
 
       if (shouldUnselectRow) {
         delete newRowSelections[rowIndex];
@@ -106,7 +111,15 @@ export const useCellSelection = () => {
           ([row, column]) => row !== rowIndex || column !== columnIndex,
         );
       } else {
-        const lastSelectedCellIndices = lastSelectedCellIndicesRef.current.slice(-1).at(0);
+        const firstSelectedRowIndex = selection.findIndex(Boolean);
+        const selectedRowCount = selection.filter(Boolean).length;
+        const singleRowSelectionIndices =
+          selectedRowCount === 1 && selection[firstSelectedRowIndex].length === 0
+            ? [firstSelectedRowIndex]
+            : undefined;
+
+        const lastSelectedCellIndices =
+          lastSelectedCellIndicesRef.current.slice(-1).at(0) ?? singleRowSelectionIndices;
 
         if (addConsecutive && lastSelectedCellIndices) {
           const lastSelectedCellRowIndex = lastSelectedCellIndices[0];
@@ -125,7 +138,7 @@ export const useCellSelection = () => {
             const endColumn = Math.max(lastSelectedCellColumnIndex, columnIndex);
 
             for (let j = startColumn; j <= endColumn; j++) {
-              if (!newRowSelections[i]?.includes(j)) {
+              if (!newRowSelections[i]?.includes(j) && newRowSelections[i]?.length !== 0) {
                 newRowSelections[i] = getRowWithTargetColumn(j, i);
               }
             }
@@ -144,7 +157,7 @@ export const useCellSelection = () => {
 
       setSelection(newRowSelections);
     },
-    [handleCellDoubleClick, selection],
+    [columns?.length, handleCellDoubleClick, selection],
   );
 
   return {

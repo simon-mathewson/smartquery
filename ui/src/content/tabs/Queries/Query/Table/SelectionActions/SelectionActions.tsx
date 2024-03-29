@@ -211,7 +211,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
           </div>
         </div>
       )}
-      {Boolean(rows.length) && <div style={{ height: `${popoverHeight + popoverMargin * 2}px` }} />}
+      <div style={{ height: `${popoverHeight + popoverMargin * 3}px` }} />
       <EditOverlay
         columnCount={columnCount}
         editButtonRef={editButtonRef}

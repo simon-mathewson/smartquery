@@ -79,7 +79,11 @@ export const Table: React.FC<TableProps> = (props) => {
   const visibleColumns = columns
     ? columns.filter(({ isVisible }) => isVisible)
     : Object.keys(rows[0] ?? {});
-  const isEditable = columns ? getPrimaryKeys(columns, rows, 0) !== null : false;
+  const isEditable = columns
+    ? getPrimaryKeys(columns, rows, 0) !== null || rowsToCreate.length > 0
+    : false;
+
+  const isTableEmpty = rows.length === 0 && rowsToCreate.length === 0;
 
   return (
     <>
@@ -167,7 +171,7 @@ export const Table: React.FC<TableProps> = (props) => {
             />
           )}
         </div>
-        {rows.length === 0 && rowsToCreate.length === 0 && (
+        {isTableEmpty && (
           <div className="sticky left-0 w-full py-4 pl-4 text-xs">This table is empty.</div>
         )}
       </div>
