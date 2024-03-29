@@ -1,14 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import type {
-  Change,
-  UpdateLocation,
-  DeleteLocation,
-  CreateLocation,
   AggregatedCreateChanges,
   AggregatedUpdateChanges,
   AggregatedDeleteChanges,
   Location,
   CreateChange,
+  DeleteChange,
+  UpdateChange,
+  CreateChangeInput,
 } from './types';
 import { doChangeLocationsMatch, getValueString } from './utils';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
@@ -19,21 +18,91 @@ import { withQuotes } from '~/shared/utils/sql';
 export const useEdit = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
-  const [changes, setChanges] = useStoredState<Change[]>('changes', [], sessionStorage);
-
-  const clearChanges = useCallback(() => {
-    setChanges([]);
-  }, [setChanges]);
-
-  const getChange = useCallback(
-    (location: Location) =>
-      changes.find((change) => doChangeLocationsMatch(change.location, location)),
-    [changes],
+  const [createChanges, setCreateChanges] = useStoredState<CreateChange[]>(
+    'createChanges',
+    [],
+    sessionStorage,
+  );
+  const [deleteChanges, setDeleteChanges] = useStoredState<DeleteChange[]>(
+    'deleteChanges',
+    [],
+    sessionStorage,
+  );
+  const [updateChanges, setUpdateChanges] = useStoredState<UpdateChange[]>(
+    'updateChanges',
+    [],
+    sessionStorage,
   );
 
-  const handleChange = useCallback(
-    (newChange: Change) => {
-      setChanges((changes) => {
+  const clearChanges = useCallback(() => {
+    setCreateChanges([]);
+    setDeleteChanges([]);
+    setUpdateChanges([]);
+  }, [setCreateChanges, setDeleteChanges, setUpdateChanges]);
+
+  const getChangeAtLocation = useCallback(
+    (location: Location) =>
+      [...createChanges, ...deleteChanges, ...updateChanges].find((change) =>
+        doChangeLocationsMatch(change.location, location),
+      ),
+    [createChanges, deleteChanges, updateChanges],
+  );
+
+  const handleCreateChange = useCallback(
+    (newChange: CreateChangeInput) => {
+      setCreateChanges((changes) => {
+        const newChanges = [...changes];
+        const existingChangeIndex =
+          newChange.location.index !== undefined
+            ? newChanges.findIndex((existingChange) =>
+                doChangeLocationsMatch(existingChange.location, newChange.location),
+              )
+            : -1;
+
+        if (existingChangeIndex === -1) {
+          return [
+            ...changes,
+            {
+              ...newChange,
+              location: {
+                ...newChange.location,
+                index: changes.length,
+              },
+            },
+          ];
+        }
+
+        newChanges[existingChangeIndex] = newChange as CreateChange;
+
+        return newChanges;
+      });
+    },
+    [setCreateChanges],
+  );
+
+  const handleDeleteChange = useCallback(
+    (newChange: DeleteChange) => {
+      setDeleteChanges((changes) => {
+        const newChanges = [...changes];
+        const existingChangeIndex = newChanges.findIndex((existingChange) =>
+          doChangeLocationsMatch(existingChange.location, newChange.location),
+        );
+
+        if (existingChangeIndex === -1) {
+          return [...newChanges, newChange];
+        }
+
+        newChanges[existingChangeIndex] = newChange;
+
+        return newChanges;
+      });
+    },
+    [setDeleteChanges],
+  );
+
+  const handleUpdateChange = useCallback(
+    (newChange: UpdateChange) => {
+      setUpdateChanges((changes) => {
         const newChanges = [...changes];
 
         const existingChangeIndex = newChanges.findIndex((existingChange) =>
@@ -58,16 +127,34 @@ export const useEdit = () => {
         return newChanges;
       });
     },
-    [setChanges],
+    [setUpdateChanges],
   );
 
   const removeChange = useCallback(
-    (location: CreateLocation | UpdateLocation | DeleteLocation) => {
-      setChanges((changes) =>
-        changes.filter((change) => !doChangeLocationsMatch(change.location, location)),
-      );
+    (location: Location) => {
+      if (location.type === 'create') {
+        setCreateChanges((changes) =>
+          changes
+            .filter((change) => !doChangeLocationsMatch(change.location, location))
+            .map((change, index) => ({
+              ...change,
+              location: {
+                ...change.location,
+                index,
+              },
+            })),
+        );
+      } else if (location.type === 'delete') {
+        setDeleteChanges((changes) =>
+          changes.filter((change) => !doChangeLocationsMatch(change.location, location)),
+        );
+      } else {
+        setUpdateChanges((changes) =>
+          changes.filter((change) => !doChangeLocationsMatch(change.location, location)),
+        );
+      }
     },
-    [setChanges],
+    [setCreateChanges, setDeleteChanges, setUpdateChanges],
   );
 
   const sql = useMemo(() => {
@@ -75,122 +162,189 @@ export const useEdit = () => {
 
     const { engine } = activeConnection;
 
-    const changesGroupedByColumnAndValue = changes.reduce<
-      Array<AggregatedCreateChanges | AggregatedUpdateChanges | AggregatedDeleteChanges>
-    >((acc, change) => {
-      const previousChanges = [...acc];
+    const aggregatedCreateChanges = createChanges.reduce<AggregatedCreateChanges[]>(
+      (acc, change) => {
+        const previousChanges = [...acc];
 
-      const existingGroupIndex = previousChanges.findIndex(
-        (group) =>
-          group.location.table === change.location.table &&
-          ((change.type === 'create' && group.type === 'create') ||
-            (change.type === 'update' &&
-              group.type === 'update' &&
-              'column' in change.location &&
-              group.location.column === change.location.column &&
-              group.value === change.value) ||
-            (change.type === 'delete' && group.type === 'delete')),
-      );
+        const existingGroupIndex = previousChanges.findIndex(
+          (group) => group.location.table === change.location.table,
+        );
 
-      if (existingGroupIndex === -1) {
-        if (change.type === 'create') {
+        if (existingGroupIndex === -1) {
           previousChanges.push({
             location: {
               table: change.location.table,
             },
-            type: 'create',
             rows: [change.row],
           });
+
+          return previousChanges;
         }
 
-        if (change.type === 'update') {
+        previousChanges[existingGroupIndex].rows.push(change.row);
+
+        return previousChanges;
+      },
+      [],
+    );
+
+    const aggregatedDeleteChanges = deleteChanges.reduce<AggregatedDeleteChanges[]>(
+      (acc, change) => {
+        const previousChanges = [...acc];
+
+        const existingGroupIndex = previousChanges.findIndex(
+          (group) => group.location.table === change.location.table,
+        );
+
+        if (existingGroupIndex === -1) {
+          previousChanges.push({
+            location: {
+              table: change.location.table,
+              primaryKeys: [change.location.primaryKeys],
+            },
+          });
+
+          return previousChanges;
+        }
+
+        previousChanges[existingGroupIndex].location.primaryKeys.push(change.location.primaryKeys);
+
+        return previousChanges;
+      },
+      [],
+    );
+
+    const aggregatedUpdateChanges = updateChanges.reduce<AggregatedUpdateChanges[]>(
+      (acc, change) => {
+        const previousChanges = [...acc];
+
+        const existingGroupIndex = previousChanges.findIndex(
+          (group) =>
+            group.location.table === change.location.table &&
+            group.location.column === change.location.column &&
+            group.value === change.value,
+        );
+
+        if (existingGroupIndex === -1) {
           previousChanges.push({
             location: {
               table: change.location.table,
               column: change.location.column,
               primaryKeys: [change.location.primaryKeys],
             },
-            type: 'update',
             value: change.value,
           });
+
+          return previousChanges;
         }
 
-        if (change.type === 'delete') {
-          previousChanges.push({
-            location: {
-              table: change.location.table,
-              primaryKeys: [change.location.primaryKeys],
-            },
-            type: 'delete',
-          });
-        }
+        previousChanges[existingGroupIndex].location.primaryKeys.push(change.location.primaryKeys);
 
         return previousChanges;
-      }
+      },
+      [],
+    );
 
-      const existingChange = previousChanges[existingGroupIndex];
-      if (existingChange.type === 'update' || existingChange.type === 'delete') {
-        (
-          existingChange as AggregatedUpdateChanges | AggregatedDeleteChanges
-        ).location.primaryKeys.push(
-          (change.location as UpdateLocation | DeleteLocation).primaryKeys,
-        );
-      } else {
-        (existingChange as AggregatedCreateChanges).rows.push((change as CreateChange).row);
-      }
+    const createStatements = aggregatedCreateChanges.map((change) => {
+      const { location } = change;
 
-      return previousChanges;
-    }, []);
+      const columns = Object.keys(change.rows[0]);
+      const columnList = columns.map((column) => withQuotes(engine, column)).join(',\n  ');
 
-    return changesGroupedByColumnAndValue
-      .map((change) => {
-        const { location, type } = change;
+      const valueRows = change.rows
+        .map((row) => {
+          const valueList = Object.values(row)
+            .map((value) => getValueString(value))
+            .join(', ');
+          return `  (${valueList})`;
+        })
+        .join(',\n');
 
-        if (type === 'create') {
-          const columns = Object.keys(change.rows[0]);
-          const columnList = columns.map((column) => withQuotes(engine, column)).join(',\n  ');
+      return `INSERT INTO ${withQuotes(
+        engine,
+        location.table,
+      )} (\n  ${columnList}\n) VALUES\n${valueRows};`;
+    });
 
-          const valueRows = change.rows
-            .map((row) => {
-              const valueList = Object.values(row)
-                .map((value) => getValueString(value))
-                .join(', ');
-              return `  (${valueList})`;
+    const deleteStatements = aggregatedDeleteChanges.map((change) => {
+      const { location } = change;
+
+      const primaryKeyConditions = location.primaryKeys
+        .map((primaryKeys) => {
+          return primaryKeys
+            .map((primaryKey) => {
+              return `${withQuotes(engine, primaryKey.column)} = '${primaryKey.value}'`;
             })
-            .join(',\n');
+            .join(' AND ');
+        })
+        .join('\n   OR ');
 
-          return `INSERT INTO ${withQuotes(
-            engine,
-            location.table,
-          )} (\n  ${columnList}\n) VALUES\n${valueRows};`;
-        }
+      const where = `WHERE ${primaryKeyConditions}`;
 
-        const primaryKeyConditions = location.primaryKeys
-          .map((primaryKeys) => {
-            return primaryKeys
-              .map((primaryKey) => {
-                return `${withQuotes(engine, primaryKey.column)} = '${primaryKey.value}'`;
-              })
-              .join(' AND ');
-          })
-          .join('\n   OR ');
+      return `DELETE FROM ${withQuotes(engine, location.table)}\n${where};`;
+    });
 
-        const where = `WHERE ${primaryKeyConditions}`;
+    const updateStatements = aggregatedUpdateChanges.map((change) => {
+      const { location } = change;
 
-        if (type === 'delete') {
-          return `DELETE FROM ${withQuotes(engine, location.table)}\n${where};`;
-        }
+      const primaryKeyConditions = location.primaryKeys
+        .map((primaryKeys) => {
+          return primaryKeys
+            .map((primaryKey) => {
+              return `${withQuotes(engine, primaryKey.column)} = '${primaryKey.value}'`;
+            })
+            .join(' AND ');
+        })
+        .join('\n   OR ');
 
-        return `UPDATE ${withQuotes(engine, location.table)}\nSET ${withQuotes(
-          engine,
-          location.column,
-        )} = ${getValueString(change.value)}\n${where};`;
-      })
-      .join('\n\n');
-  }, [activeConnection, changes]);
+      const where = `WHERE ${primaryKeyConditions}`;
+
+      return `UPDATE ${withQuotes(engine, location.table)}\nSET ${withQuotes(
+        engine,
+        location.column,
+      )} = ${getValueString(change.value)}\n${where};`;
+    });
+
+    return [...deleteStatements, ...createStatements, ...updateStatements].join('\n\n');
+  }, [activeConnection, createChanges, deleteChanges, updateChanges]);
+
+  const allChanges = useMemo(
+    () => [...createChanges, ...deleteChanges, ...updateChanges],
+    [createChanges, deleteChanges, updateChanges],
+  );
 
   return useMemo(
-    () => ({ changes, clearChanges, getChange, handleChange, removeChange, setChanges, sql }),
-    [changes, clearChanges, getChange, handleChange, removeChange, setChanges, sql],
+    () => ({
+      allChanges,
+      clearChanges,
+      createChanges,
+      deleteChanges,
+      getChangeAtLocation,
+      handleCreateChange,
+      handleDeleteChange,
+      handleUpdateChange,
+      removeChange,
+      setCreateChanges,
+      setDeleteChanges,
+      setUpdateChanges,
+      sql,
+      updateChanges,
+    }),
+    [
+      allChanges,
+      clearChanges,
+      createChanges,
+      deleteChanges,
+      getChangeAtLocation,
+      handleCreateChange,
+      handleDeleteChange,
+      handleUpdateChange,
+      removeChange,
+      setCreateChanges,
+      setDeleteChanges,
+      setUpdateChanges,
+      sql,
+      updateChanges,
+    ],
   );
 };

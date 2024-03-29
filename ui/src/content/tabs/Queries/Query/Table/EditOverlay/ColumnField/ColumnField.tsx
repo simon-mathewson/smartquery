@@ -27,18 +27,19 @@ export type ColumnFieldProps = {
 export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
   const { autoFocus, column, locations } = props;
 
-  const { getChange, handleChange } = useDefinedContext(EditContext);
+  const { getChangeAtLocation, handleCreateChange, handleUpdateChange } =
+    useDefinedContext(EditContext);
 
   const values = useMemo(
     () =>
       locations.map((location) => {
-        const change = getChange(location) as CreateChange | UpdateChange | undefined;
+        const change = getChangeAtLocation(location) as CreateChange | UpdateChange | undefined;
         if (!change) {
           return location.type === 'update' ? location.originalValue : undefined;
         }
         return change.type === 'update' ? change.value : change.row[column.name];
       }),
-    [column.name, getChange, locations],
+    [column.name, getChangeAtLocation, locations],
   );
 
   const multipleValues = useMemo(() => !values.every((value) => value === values[0]), [values]);
@@ -49,7 +50,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
   const [stringValue, setStringValue] = useState(() => {
     if (multipleValues) return '';
 
-    const change = getChange(locations[0]) as CreateChange | UpdateChange | undefined;
+    const change = getChangeAtLocation(locations[0]) as CreateChange | UpdateChange | undefined;
     const firstValueChanged = change?.type === 'update' ? change.value : change?.row[column.name];
 
     if (!isNil(firstValueChanged)) return firstValueChanged;
@@ -65,8 +66,8 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
     }
     locations.forEach((location) => {
       if (location.type === 'create') {
-        const createChange = getChange(location) as CreateChange;
-        handleChange({
+        const createChange = getChangeAtLocation(location) as CreateChange;
+        handleCreateChange({
           location,
           type: 'create',
           row: {
@@ -75,7 +76,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
           },
         });
       } else {
-        handleChange({ location, type: 'update', value: newValue });
+        handleUpdateChange({ location, type: 'update', value: newValue });
       }
     });
   };

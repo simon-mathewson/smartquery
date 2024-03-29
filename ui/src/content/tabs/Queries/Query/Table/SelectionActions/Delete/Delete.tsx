@@ -13,7 +13,7 @@ export type DeleteProps = {
 export const Delete: React.FC<DeleteProps> = (props) => {
   const { selection } = props;
 
-  const { handleChange } = useDefinedContext(EditContext);
+  const { handleDeleteChange } = useDefinedContext(EditContext);
 
   const { query } = useDefinedContext(QueryContext);
 
@@ -25,7 +25,7 @@ export const Delete: React.FC<DeleteProps> = (props) => {
       icon={<DeleteOutlined />}
       onClick={() => {
         selection.forEach((_, rowIndex) => {
-          handleChange({
+          handleDeleteChange({
             location: {
               primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
               table: query.table!,

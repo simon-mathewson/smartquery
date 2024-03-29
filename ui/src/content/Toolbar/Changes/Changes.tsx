@@ -7,21 +7,23 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ReviewChangesCard } from './ReviewChangesCard/ReviewChangesCard';
 
 export const Changes: React.FC = () => {
-  const { changes, clearChanges } = useDefinedContext(EditContext);
+  const { allChanges, clearChanges } = useDefinedContext(EditContext);
 
-  if (!changes.length) return null;
+  const changeCount = allChanges.length;
+
+  if (!changeCount) return null;
 
   const reviewChangesCardTriggerRef = React.createRef<HTMLButtonElement>();
 
   return (
     <div className="ml-auto flex shrink-0 items-center gap-2">
       <div className="text-sm">
-        {changes.length} pending change{changes.length > 1 ? 's' : ''}
+        {changeCount} pending change{changeCount > 1 ? 's' : ''}
       </div>
       <ConfirmDeletePopover
         onConfirm={clearChanges}
         renderTrigger={({ ref }) => <Button color="danger" icon={<DeleteOutline />} ref={ref} />}
-        text={`Delete ${changes.length} pending change${changes.length > 1 ? 's' : ''}`}
+        text={`Delete ${changeCount} pending change${changeCount > 1 ? 's' : ''}`}
       />
       <Button
         icon={<ArrowForward />}

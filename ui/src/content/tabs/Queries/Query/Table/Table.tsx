@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { EditContext } from '~/content/edit/Context';
-import type { CreateChange } from '~/content/edit/types';
+import type { CreateChange, DeleteChange, UpdateChange } from '~/content/edit/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { getPrimaryKeys } from '../../utils';
 import { Cell } from './Cell/Cell';
@@ -25,22 +25,24 @@ export const Table: React.FC<TableProps> = (props) => {
   const { handleCellClick, selection, selectionActionsRef, setSelection, tableContentRef } =
     useCellSelection();
 
-  const { changes, getChange } = useDefinedContext(EditContext);
+  const { createChanges, getChangeAtLocation } = useDefinedContext(EditContext);
 
   const tableRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     handleRowCreationRef.current = () => {
-      const latestCreateChange = changes.reduce<CreateChange | null>((latestChange, change) => {
-        if (
-          change.type === 'create' &&
-          change.location.table === query.table &&
-          (!latestChange || change.location.index > latestChange.location.index)
-        ) {
-          return change;
-        }
-        return latestChange;
-      }, null);
+      const latestCreateChange = createChanges.reduce<CreateChange | null>(
+        (latestChange, change) => {
+          if (
+            change.location.table === query.table &&
+            (!latestChange || change.location.index > latestChange.location.index)
+          ) {
+            return change;
+          }
+          return latestChange;
+        },
+        null,
+      );
 
       if (!latestCreateChange) return;
 
@@ -64,17 +66,14 @@ export const Table: React.FC<TableProps> = (props) => {
           ?.click();
       }, 200);
     };
-  }, [changes, handleRowCreationRef, query.id, query.table, rows.length, setSelection]);
+  }, [createChanges, handleRowCreationRef, query.id, query.table, rows.length, setSelection]);
 
   const rowsToCreate = useMemo(
     () =>
-      changes
-        .filter(
-          (change): change is CreateChange =>
-            change.type === 'create' && change.location.table === query.table,
-        )
+      createChanges
+        .filter((change) => change.location.table === query.table)
         .map((change) => change.row),
-    [changes, query.table],
+    [createChanges, query.table],
   );
 
   const visibleColumns = columns
@@ -106,14 +105,14 @@ export const Table: React.FC<TableProps> = (props) => {
                   typeof column === 'object' ? column.alias ?? column.name : column;
                 const value = row[columnName];
                 const change = isEditable
-                  ? getChange({
+                  ? (getChangeAtLocation({
                       column: columnName,
                       originalValue: value,
                       primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
                       table: query.table!,
                       type: 'update',
-                    })
-                  : undefined;
+                    }) as DeleteChange | UpdateChange | undefined)
+                  : null;
 
                 const changedValue = change?.type === 'update' ? change.value : undefined;
                 const isDeleted = change?.type === 'delete';

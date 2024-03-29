@@ -14,6 +14,7 @@ import { QueryContext, ResultContext } from '../../Context';
 import { EditOverlay } from '../EditOverlay/EditOverlay';
 import { Delete } from './Delete/Delete';
 import { popoverHeight, popoverMargin } from './constants';
+import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 
 export type SelectionActionsProps = {
   columnCount: number;
@@ -27,7 +28,7 @@ export type SelectionActionsProps = {
 export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps>((props, ref) => {
   const { columnCount, selection, setIsEditing, setSelection, tableRef } = props;
 
-  const { changes, removeChange } = useDefinedContext(EditContext);
+  const { allChanges, removeChange } = useDefinedContext(EditContext);
 
   const { query } = useDefinedContext(QueryContext);
 
@@ -153,7 +154,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       ];
     }, []);
 
-    const selectedChanges = changes.filter((change) => {
+    const selectedChanges = allChanges.filter((change) => {
       return selectionLocations.some((location) => {
         return doChangeLocationsMatch(location, change.location);
       });
@@ -166,7 +167,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
     });
 
     return { isEntireSelectionDeleted, selectedChanges };
-  }, [changes, columnCount, columns, query.table, rows, selection]);
+  }, [allChanges, columnCount, columns, query.table, rows, selection]);
 
   return (
     <>
@@ -195,9 +196,15 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
                   });
 
                   // Remove rows to be created from selection
-                  setSelection((currentSelection) =>
-                    currentSelection.filter((_, rowIndex) => rowIndex < rows.length),
-                  );
+                  setSelection((currentSelection) => {
+                    const newSelection = cloneArrayWithEmptyValues(currentSelection);
+                    currentSelection.forEach((_, rowIndex) => {
+                      if (rowIndex >= rows.length) {
+                        delete newSelection[rowIndex];
+                      }
+                    });
+                    return newSelection;
+                  });
                 }}
               />
             )}

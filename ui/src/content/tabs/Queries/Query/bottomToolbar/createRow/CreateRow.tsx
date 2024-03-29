@@ -4,7 +4,7 @@ import type { Row } from '~/shared/types';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { EditContext } from '~/content/edit/Context';
-import type { CreateChange } from '~/content/edit/types';
+import type { CreateChangeInput } from '~/content/edit/types';
 import { QueryContext, ResultContext } from '../../Context';
 
 export interface AddProps {
@@ -14,7 +14,7 @@ export interface AddProps {
 export const Add: React.FC<AddProps> = (props) => {
   const { handleRowCreationRef } = props;
 
-  const { changes, handleChange } = useDefinedContext(EditContext);
+  const { handleCreateChange } = useDefinedContext(EditContext);
 
   const {
     query: { table },
@@ -25,13 +25,8 @@ export const Add: React.FC<AddProps> = (props) => {
   if (!table || !columns) return null;
 
   const handleClick = () => {
-    const existingCreateChanges = changes.filter(
-      (change): change is CreateChange =>
-        change.type === 'create' && change.location.table === table,
-    );
     const createChange = {
       location: {
-        index: existingCreateChanges.length,
         table,
         type: 'create',
       },
@@ -40,9 +35,9 @@ export const Add: React.FC<AddProps> = (props) => {
         row[column.name] = undefined;
         return row;
       }, {}),
-    } satisfies CreateChange;
+    } satisfies CreateChangeInput;
 
-    handleChange(createChange);
+    handleCreateChange(createChange);
 
     setTimeout(() => {
       handleRowCreationRef.current?.();

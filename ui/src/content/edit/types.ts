@@ -30,6 +30,10 @@ export type CreateChange = {
   row: Row;
 };
 
+export type CreateChangeInput = Omit<CreateChange, 'location'> & {
+  location: Omit<CreateLocation, 'index'> & { index?: number };
+};
+
 export type UpdateChange = {
   location: UpdateLocation;
   type: 'update';
@@ -46,16 +50,13 @@ export type Change = CreateChange | UpdateChange | DeleteChange;
 export type AggregatedCreateChanges = {
   location: Pick<CreateLocation, 'table'>;
   rows: Row[];
-  type: 'create';
 };
 
 export type AggregatedUpdateChanges = {
   location: Pick<UpdateLocation, 'column' | 'table'> & { primaryKeys: PrimaryKey[][] };
-  type: 'update';
   value: Value;
 };
 
 export type AggregatedDeleteChanges = {
   location: Pick<DeleteLocation, 'table'> & { primaryKeys: PrimaryKey[][] };
-  type: 'delete';
 };
