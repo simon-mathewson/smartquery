@@ -21,7 +21,7 @@ export const Query: React.FC = () => {
   const result = useContext(ResultContext);
 
   const [inputMode, setInputMode] = useState<InputMode | undefined>(
-    !query.sql || !result ? 'editor' : undefined,
+    !query.sql || !query.table ? 'editor' : undefined,
   );
 
   const handleRowCreationRef = React.useRef<(() => void) | null>(null);
