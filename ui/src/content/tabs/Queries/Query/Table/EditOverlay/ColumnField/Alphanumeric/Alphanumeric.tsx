@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import type { DataType, Value } from '~/shared/types';
+import type { Value } from '~/shared/types';
 import { Input } from '~/shared/components/Input/Input';
-import { isDateTimeType, isIntegerType, isTimeType } from '../utils';
+import { isDateTimeType, isIntegerType, isTimeType } from '~/shared/dataTypes/utils';
+import type { DataType } from '~/shared/dataTypes/types';
 
 export type AlphanumericProps = {
   autoFocus?: boolean;

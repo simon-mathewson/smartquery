@@ -3,8 +3,6 @@ import { uniqueId } from 'lodash';
 import superjson from 'superjson';
 import { z } from 'zod';
 import { MySqlClient, PostgresClient } from '../../prisma';
-import { convertPrismaValue } from './convertValueToString';
-import { getMetadata } from './getMetadata';
 import type { PrismaValue } from './types';
 import { connectionSchema, type Client } from './types';
 
@@ -49,63 +47,31 @@ export const router = t.router({
 
     delete clients[clientId];
   }),
-  sendQuery: t.procedure.input(z.tuple([z.string(), z.string()])).query(async (props) => {
-    const [clientId, query] = props.input;
-
-    console.info('Processing query', query);
-
-    const client = clients[clientId];
-    const { prisma } = client;
-
-    const statements = query
-      .match(/(?:".*"|'.*'|`.*`|[^;])*(?:;)?/g)
-      ?.map((statement) => statement.trim())
-      .filter(Boolean);
-
-    if (!statements) {
-      throw new Error('No statements found in query');
-    }
-
-    console.info('Parsed statements', statements);
-
-    const results = await (prisma as PostgresClient).$transaction(
-      statements.map((statement) =>
-        (prisma as PostgresClient).$queryRawUnsafe<Array<Record<string, PrismaValue>>>(statement),
-      ),
-    );
-
-    console.info('Executed queries', results);
-
-    const rowsWithColumns = await Promise.all(
-      results.map(async (result, index) => {
-        const metadata = await getMetadata({
-          client,
-          statement: statements[index],
-        });
-
-        const rows = result.map((row) =>
-          Object.fromEntries(
-            Object.entries(row).map(([columnName, value]) => {
-              const column = metadata?.columns?.find(
-                (column) => (column.alias ?? column.name) === columnName,
-              );
-              return [columnName, convertPrismaValue(value, column?.dataType)];
-            }),
-          ),
-        );
-
-        return {
-          columns: metadata?.columns ?? null,
-          rows,
-          table: metadata?.table ?? null,
-        };
+  sendQuery: t.procedure
+    .input(
+      z.object({
+        clientId: z.string(),
+        statements: z.array(z.string()),
       }),
-    );
+    )
+    .mutation(async (props) => {
+      const { clientId, statements } = props.input;
 
-    console.log('Processed query results', rowsWithColumns);
+      console.info('Processing query', statements);
 
-    return rowsWithColumns;
-  }),
+      const client = clients[clientId];
+      const { prisma } = client;
+
+      const results = await (prisma as PostgresClient).$transaction(
+        statements.map((statement) =>
+          (prisma as PostgresClient).$queryRawUnsafe<Array<Record<string, PrismaValue>>>(statement),
+        ),
+      );
+
+      console.info('Executed queries', results);
+
+      return results;
+    }),
 });
 
 export type AppRouter = typeof router;

@@ -1,5 +1,4 @@
-import type { Decimal } from 'decimal.js';
-import type { MySqlClient, PostgresClient } from '../../prisma';
+import type { MySqlClient, PostgresClient, Prisma } from '../../prisma';
 import { z } from 'zod';
 
 export const connectionSchema = z.object({
@@ -20,38 +19,4 @@ export type Client = {
   prisma: MySqlClient | PostgresClient;
 };
 
-const dataTypes = [
-  'bigint',
-  'boolean',
-  'char',
-  'character varying',
-  'datetime',
-  'decimal',
-  'enum',
-  'int',
-  'integer',
-  'json',
-  'numeric',
-  'time with time zone',
-  'time without time zone',
-  'time',
-  'timestamp with time zone',
-  'timestamp without time zone',
-  'timestamp',
-  'tinyint',
-  'user-defined',
-  'varchar',
-] as const;
-
-export type DataType = (typeof dataTypes)[number];
-
-export type Column = {
-  dataType?: DataType;
-  enumValues?: string[] | null;
-  isForeignKey?: boolean;
-  isNullable?: boolean;
-  isPrimaryKey?: boolean;
-  name: string;
-};
-
-export type PrismaValue = string | number | boolean | Date | Decimal | null;
+export type PrismaValue = string | number | boolean | Date | Prisma.Decimal | null;

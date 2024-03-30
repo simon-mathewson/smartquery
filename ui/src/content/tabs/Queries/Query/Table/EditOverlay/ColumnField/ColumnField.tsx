@@ -13,7 +13,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { BooleanField } from './Boolean/Boolean';
 import { Alphanumeric } from './Alphanumeric/Alphanumeric';
 import { NullButton } from './Null/Null';
-import { isEnumType } from './utils';
+import { isEnumType } from '~/shared/dataTypes/utils';
 import { EnumField } from './EnumField/EnumField';
 import { CodeInput } from '~/shared/components/CodeInput/CodeInput';
 import classNames from 'classnames';

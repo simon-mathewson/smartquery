@@ -2,7 +2,7 @@ import type { XOR } from 'ts-essentials';
 import classNames from 'classnames';
 import React from 'react';
 import { type Column, type Value } from '~/shared/types';
-import { isDateTimeType, isNumberType, isTimeType } from '../EditOverlay/ColumnField/utils';
+import { isDateTimeType, isNumberType, isTimeType } from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { QueryContext } from '../../Context';
 

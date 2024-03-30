@@ -19,7 +19,12 @@ export const getPrimaryKeys = (columns: Column[], rows: Row[], rowIndex: number)
 };
 
 export const getLimitAndOffset = (parsedQuery: Select) => {
-  if (!parsedQuery?.limit) return null;
+  if (
+    !parsedQuery?.limit ||
+    (parsedQuery.limit.seperator === 'offset' && parsedQuery.limit.value.length < 2)
+  ) {
+    return null;
+  }
 
   const limitIndex = parsedQuery.limit.seperator === ',' ? 1 : 0;
   const offsetIndex = parsedQuery.limit.seperator === ',' ? 0 : 1;

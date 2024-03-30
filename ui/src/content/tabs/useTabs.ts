@@ -1,13 +1,24 @@
 import * as uuid from 'uuid';
+import { castArray } from 'lodash';
+import NodeSqlParser from 'node-sql-parser';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { Query, QueryResult, Tab } from '~/shared/types';
+import type { Row } from '~/shared/types';
+import { type Query, type QueryResult, type Tab } from '~/shared/types';
 import type { AddQueryOptions } from './types';
-import { getNewQuery } from './utils';
+import {
+  convertPrismaValue,
+  getColumnsFromResult,
+  getColumnsStatement,
+  getNewQuery,
+} from './utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { trpc } from '~/trpc';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { getParserOptions } from './Queries/Query/utils';
+import { isNotNull } from '~/shared/utils/typescript';
+import { parseStatements } from '~/shared/utils/sql';
 
 export const useTabs = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -40,22 +51,105 @@ export const useTabs = () => {
   );
 
   const runQuery = useCallback(
-    (query: Query) => {
+    async (query: Query) => {
       if (!query?.sql || !activeConnection) return;
 
       const { clientId } = activeConnection;
 
-      return trpc.sendQuery.query([clientId, query.sql]).then(([{ columns, rows, table }]) => {
+      const userStatements = parseStatements(query.sql);
+
+      console.info('Query statements', userStatements);
+
+      const sqlParser = new NodeSqlParser.Parser();
+
+      const firstSelectStatement = userStatements.reduce<{
+        index: number;
+        parsed: NodeSqlParser.Select;
+        table: string;
+      } | null>((first, statement, index) => {
+        if (first) return first;
+
+        const parsed = castArray(
+          sqlParser.astify(statement, getParserOptions(activeConnection.engine)),
+        )[0];
+
+        if (
+          parsed.type !== 'select' ||
+          parsed.from?.length !== 1 ||
+          parsed.columns.some((column) => column.expr.type !== 'column_ref')
+        ) {
+          return null;
+        }
+
+        const table = parsed.from[0].table;
+        if (!table) return null;
+
+        return { index, parsed, table };
+      }, null);
+
+      console.info('First select statement', firstSelectStatement);
+
+      const columnsStatement = firstSelectStatement
+        ? getColumnsStatement({
+            connection: activeConnection,
+            table: firstSelectStatement.table,
+          })
+        : null;
+
+      const statements = [...userStatements, columnsStatement].filter(isNotNull);
+
+      const results = await trpc.sendQuery.mutate({ clientId, statements });
+
+      const firstSelectResult = firstSelectStatement ? results[firstSelectStatement.index] : null;
+      const columnsResult = columnsStatement ? results[results.length - 1] : null;
+
+      const columns = columnsResult
+        ? getColumnsFromResult({
+            connection: activeConnection,
+            parsedStatement: firstSelectStatement!.parsed,
+            result: columnsResult,
+          })
+        : null;
+
+      const rows =
+        firstSelectResult && columns
+          ? firstSelectResult.map<Row>((row) =>
+              Object.fromEntries(
+                Object.entries(row).map(([columnName, value]) => {
+                  const column = columns.find(
+                    (column) => (column.alias ?? column.name) === columnName,
+                  );
+                  return [columnName, convertPrismaValue(value, column?.dataType)];
+                }),
+              ),
+            )
+          : null;
+
+      if (rows) {
         setQueryResults((currentQueryResults) => ({
           ...currentQueryResults,
           [query.id]: { columns, rows },
         }));
-        setQueries((currentQueries) =>
-          currentQueries.map((column) =>
-            column.map((q) => (q.id === query.id ? { ...q, table } : q)),
+      } else {
+        setQueryResults((currentQueryResults) => {
+          const newQueryResults = { ...currentQueryResults };
+          delete newQueryResults[query.id];
+          return newQueryResults;
+        });
+      }
+
+      setQueries((currentQueries) =>
+        currentQueries.map((column) =>
+          column.map((q) =>
+            q.id === query.id
+              ? {
+                  ...q,
+                  table: firstSelectStatement?.table ?? null,
+                }
+              : q,
           ),
-        );
-      });
+        ),
+      );
     },
     [activeConnection, setQueries],
   );

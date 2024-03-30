@@ -14,7 +14,7 @@ export const TableList: React.FC = () => {
 
     const { clientId, database, engine } = activeConnection;
 
-    const tableNamesQuery = {
+    const tableNamesStatement = {
       mysql: `SELECT table_name AS t FROM information_schema.tables
         WHERE table_type = 'BASE TABLE'
         AND table_schema = '${database}'
@@ -26,8 +26,8 @@ export const TableList: React.FC = () => {
         ORDER BY t ASC`,
     }[engine];
 
-    trpc.sendQuery.query([clientId, tableNamesQuery]).then(([{ rows }]) => {
-      setTables(rows.map(({ t }) => t as string));
+    trpc.sendQuery.mutate({ clientId, statements: [tableNamesStatement] }).then(([rows]) => {
+      setTables(rows.map(({ t }) => String(t)));
     });
   }, [activeConnection]);
 

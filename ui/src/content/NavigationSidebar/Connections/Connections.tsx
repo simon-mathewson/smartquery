@@ -28,7 +28,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
 
     const { clientId, engine } = activeConnection;
 
-    const databasesQuery = {
+    const databasesStatement = {
       mysql:
         "SELECT schema_name AS db FROM information_schema.schemata WHERE schema_name NOT IN ('information_schema', 'performance_schema', 'sys') ORDER BY schema_name ASC",
       postgresql:
@@ -36,9 +36,11 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
     }[engine];
     const ac = new AbortController();
 
-    trpc.sendQuery.query([clientId, databasesQuery], { signal: ac.signal }).then(([{ rows }]) => {
-      setDatabases(rows.map(({ db }) => db as string));
-    });
+    trpc.sendQuery
+      .mutate({ clientId, statements: [databasesStatement] }, { signal: ac.signal })
+      .then(([rows]) => {
+        setDatabases(rows.map(({ db }) => String(db)));
+      });
 
     return () => ac.abort();
   }, [activeConnection]);

@@ -45,13 +45,14 @@ export const usePagination = () => {
       },
     ];
 
-    const sql = sqlParser.sqlify(totalQuery, getParserOptions(activeConnection?.engine));
+    const statement = sqlParser.sqlify(totalQuery, getParserOptions(activeConnection?.engine));
 
-    trpc.sendQuery.query([activeConnection.clientId, sql]).then((result) => {
-      const count = result[0].rows[0].count;
-
-      setTotal(count ? Number(count) : undefined);
-    });
+    trpc.sendQuery
+      .mutate({ clientId: activeConnection.clientId, statements: [statement] })
+      .then((results) => {
+        const count = results[0][0].count;
+        setTotal(count ? Number(count) : undefined);
+      });
   }, [activeConnection, parsedQuery]);
 
   const updateQueryOffset = useCallback(
@@ -82,10 +83,7 @@ export const usePagination = () => {
   const previous = useCallback(async () => {
     if (!limitAndOffset?.limit || !total) return;
 
-    const newOffset = (limitAndOffset.offset ?? 0) - limitAndOffset.limit;
-    if (newOffset < 0) {
-      throw new Error('Cannot go past the first page');
-    }
+    const newOffset = Math.max((limitAndOffset.offset ?? 0) - limitAndOffset.limit, 0);
 
     updateQueryOffset(newOffset);
   }, [limitAndOffset, total, updateQueryOffset]);

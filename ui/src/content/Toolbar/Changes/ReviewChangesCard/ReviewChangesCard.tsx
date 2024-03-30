@@ -6,6 +6,7 @@ import { SqlEditor } from '~/shared/components/SqlEditor/SqlEditor';
 import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TabsContext } from '~/content/tabs/Context';
+import { parseStatements } from '~/shared/utils/sql';
 
 export type ReviewChangesCardProps = {
   triggerRef: React.RefObject<HTMLButtonElement>;
@@ -27,7 +28,10 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
             onSubmit={async (sql) => {
               if (!activeConnection) return;
 
-              await trpc.sendQuery.query([activeConnection.clientId, sql]);
+              await trpc.sendQuery.mutate({
+                clientId: activeConnection.clientId,
+                statements: parseStatements(sql),
+              });
 
               clearChanges();
 

@@ -1,5 +1,5 @@
 import { includes } from 'lodash';
-import type { DataType } from '~/shared/types';
+import type { DataType } from './types';
 
 export const isDateTimeType = (dataType: DataType) =>
   includes(
@@ -14,6 +14,9 @@ export const isIntegerType = (dataType: DataType) =>
 
 export const isNumberType = (dataType: DataType) =>
   isIntegerType(dataType) || includes(['decimal', 'numeric'], dataType);
+
+export const isTextType = (dataType: DataType) =>
+  includes(['char', 'character varying', 'varchar', 'text'], dataType);
 
 export const isTimeType = (dataType: DataType) =>
   includes(['time', 'time with time zone', 'time without time zone'], dataType);

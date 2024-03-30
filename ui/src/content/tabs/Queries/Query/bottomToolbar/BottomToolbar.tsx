@@ -25,7 +25,9 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
   return (
     <ThreeColumns
       left={<Add handleRowCreationRef={handleRowCreationRef} />}
-      middle={Boolean(total) && <div className="text-xs text-textSecondary">{paginationText}</div>}
+      middle={
+        Boolean(total) && <div className="text-xs text-textSecondary">{paginationText} rows</div>
+      }
       right={
         limit !== undefined &&
         total !== undefined &&

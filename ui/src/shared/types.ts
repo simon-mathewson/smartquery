@@ -1,19 +1,24 @@
-import type { inferProcedureOutput } from '@trpc/server';
-import type { AppRouter } from '../../../link/src/main/router';
+import type { Prisma } from '../../../link/prisma';
+import type { DataType } from './dataTypes/types';
 
-export type SendQueryResponse = inferProcedureOutput<
-  AppRouter['_def']['procedures']['sendQuery']
->[number];
+export type PrismaValue = string | string[] | number | boolean | Date | Prisma.Decimal | null;
+
+export type Value = string | null | undefined;
 
 export type Row = {
-  [column: string]: SendQueryResponse['rows'][number][string] | undefined;
+  [column: string]: Value;
 };
 
-export type Value = Row[string];
-
-export type Column = NonNullable<SendQueryResponse['columns']>[number];
-
-export type DataType = Column['dataType'];
+export type Column = {
+  alias?: string;
+  dataType: DataType;
+  enumValues?: string[] | null;
+  isForeignKey?: boolean;
+  isNullable?: boolean;
+  isPrimaryKey?: boolean;
+  isVisible: boolean;
+  name: string;
+};
 
 export type Query = {
   id: string;
