@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import React, { useContext, useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Button } from '../../../../shared/components/Button/Button';
-import { TabsContext } from '../../Context';
 import { InputModes } from './inputModes/InputModes';
 import { Table } from './Table/Table';
 import type { InputMode } from './types';
@@ -12,9 +11,10 @@ import { InputModesSelect } from './inputModes/Select';
 import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
 import { BottomToolbar } from './bottomToolbar/BottomToolbar';
 import { QueryContext, ResultContext } from './Context';
+import { QueriesContext } from '../Context';
 
 export const Query: React.FC = () => {
-  const { removeQuery } = useDefinedContext(TabsContext);
+  const { removeQuery } = useDefinedContext(QueriesContext);
 
   const { columnIndex, query, rowIndex } = useDefinedContext(QueryContext);
 

@@ -1,5 +1,5 @@
 import NodeSqlParser from 'node-sql-parser';
-import type { Connection } from '~/content/connections/types';
+import type { Connection } from '~/shared/types';
 import { castArray } from 'lodash';
 
 export const sqlParser = new NodeSqlParser.Parser();

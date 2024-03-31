@@ -2,7 +2,7 @@ import { trpc } from '~/trpc';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { initialConnections } from './initialConnections';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
-import type { ActiveConnection, Connection } from './types';
+import type { ActiveConnection, Connection } from '~/shared/types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
 export const useConnections = () => {

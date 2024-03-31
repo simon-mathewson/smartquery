@@ -2,18 +2,18 @@ import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '~/content/connections/Context';
-import { TabsContext } from '~/content/tabs/Context';
 import { getWhere } from './utils';
 import NodeSqlParser from 'node-sql-parser';
 import { get, isEqualWith } from 'lodash';
 import { getParserOptions } from '~/shared/utils/parser';
 import { getLimitAndOffset, setLimitAndOffset } from '../../../utils';
 import { QueryContext, ResultContext } from '../../Context';
+import { QueriesContext } from '../../../Context';
 
 export const useSearch = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
-  const { updateQuery } = useDefinedContext(TabsContext);
+  const { updateQuery } = useDefinedContext(QueriesContext);
 
   const {
     query,

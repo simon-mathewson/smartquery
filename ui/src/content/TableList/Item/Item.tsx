@@ -3,10 +3,11 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { useDrag } from '~/content/dragAndDrop/useDrag/useDrag';
 import classNames from 'classnames';
 import React from 'react';
-import type { AddQueryOptions } from '../../tabs/types';
+import type { AddQueryOptions } from '../../tabs/Queries/types';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { withQuotes } from '~/shared/utils/sql';
 import { TabsContext } from '~/content/tabs/Context';
+import { QueriesContext } from '~/content/tabs/Queries/Context';
 
 export type ItemProps = {
   tableName: string;
@@ -16,7 +17,8 @@ export const Item: React.FC<ItemProps> = (props) => {
   const { tableName } = props;
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
-  const { activeTab, addTab, queryResults } = useDefinedContext(TabsContext);
+  const { activeTab } = useDefinedContext(TabsContext);
+  const { addQuery, queryResults } = useDefinedContext(QueriesContext);
 
   const isSelected = activeTab?.queries.some((query) =>
     query.some((q) => {
@@ -45,7 +47,7 @@ export const Item: React.FC<ItemProps> = (props) => {
       })}
       key={tableName}
       label={tableName}
-      onClick={() => addTab({ query: getQuery() })}
+      onClick={() => addQuery(getQuery())}
       onMouseDown={handleMouseDown}
       selected={isSelected}
       selectedVariant="secondary"

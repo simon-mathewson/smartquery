@@ -4,10 +4,11 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { getTabTitle } from './utils';
 import { Button } from '~/shared/components/Button/Button';
 import { Close } from '@mui/icons-material';
+import { QueriesContext } from '~/content/tabs/Queries/Context';
 
 export const Tabs: React.FC = () => {
-  const { activeTab, queryResults, removeTab, setActiveTabId, tabs } =
-    useDefinedContext(TabsContext);
+  const { activeTab, removeTab, setActiveTabId, tabs } = useDefinedContext(TabsContext);
+  const { queryResults } = useDefinedContext(QueriesContext);
 
   if (!tabs.length) {
     return null;

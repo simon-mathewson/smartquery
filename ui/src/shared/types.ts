@@ -1,6 +1,14 @@
-import type { FirstSelectStatement } from '~/content/tabs/types';
+import type { FirstSelectStatement } from '~/content/tabs/Queries/types';
 import type { Prisma } from '../../../link/prisma';
 import type { DataType } from './dataTypes/types';
+import type { inferRouterInputs } from '@trpc/server';
+import type { AppRouter } from '../../../link/src/main/router';
+
+export type Connection = inferRouterInputs<AppRouter>['connectDb'];
+
+export type ActiveConnection = Connection & {
+  clientId: string;
+};
 
 export type PrismaValue = string | string[] | number | boolean | Date | Prisma.Decimal | null;
 

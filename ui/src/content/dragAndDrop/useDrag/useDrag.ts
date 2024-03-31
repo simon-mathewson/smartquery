@@ -1,9 +1,10 @@
 import { useCallback, useRef, useState } from 'react';
 import { getClosestDropMarker } from './utils';
 import { useDefinedContext } from '../../../shared/hooks/useDefinedContext';
-import type { AddQueryOptions } from '~/content/tabs/types';
+import type { AddQueryOptions } from '~/content/tabs/Queries/types';
 import { DragAndDropContext } from '../Context';
 import { TabsContext } from '~/content/tabs/Context';
+import { QueriesContext } from '~/content/tabs/Queries/Context';
 
 export const useDrag = (props: {
   dragRef?: React.MutableRefObject<HTMLElement | null>;
@@ -11,7 +12,9 @@ export const useDrag = (props: {
 }) => {
   const { dragRef, query } = props;
 
-  const { activeTab, addQuery } = useDefinedContext(TabsContext);
+  const { activeTab } = useDefinedContext(TabsContext);
+  const { addQuery } = useDefinedContext(QueriesContext);
+
   const { dropMarkers, setActiveDropMarker } = useDefinedContext(DragAndDropContext);
 
   const [isDragging, setIsDragging] = useState(false);
@@ -111,7 +114,10 @@ export const useDrag = (props: {
           const targetMarker = getClosestDropMarker(dropMarkers, event.clientX, event.clientY)!;
           const { column, horizontal, row } = targetMarker;
 
-          addQuery(query, { column, row: horizontal ? row : undefined });
+          addQuery(query, {
+            position: { column, row: horizontal ? row : undefined },
+            tabId: activeTab.id,
+          });
         },
         { once: true },
       );

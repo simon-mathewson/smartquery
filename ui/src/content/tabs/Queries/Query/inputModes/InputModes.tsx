@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
-import { TabsContext } from '~/content/tabs/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import type { InputMode } from '../types';
 import { SqlEditor } from '~/shared/components/SqlEditor/SqlEditor';
 import { Search } from './search/Search';
 import { QueryContext, ResultContext } from '../Context';
+import { QueriesContext } from '../../Context';
 
 export type InputModesProps = {
   inputMode: InputMode | undefined;
@@ -13,7 +13,7 @@ export type InputModesProps = {
 export const InputModes: React.FC<InputModesProps> = (props) => {
   const { inputMode } = props;
 
-  const { runQuery, updateQuery } = useDefinedContext(TabsContext);
+  const { runQuery, updateQuery } = useDefinedContext(QueriesContext);
 
   const { query } = useDefinedContext(QueryContext);
 

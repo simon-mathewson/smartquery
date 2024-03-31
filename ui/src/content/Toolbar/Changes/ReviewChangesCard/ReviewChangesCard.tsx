@@ -7,6 +7,7 @@ import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TabsContext } from '~/content/tabs/Context';
 import { parseStatements } from '~/shared/utils/sql';
+import { QueriesContext } from '~/content/tabs/Queries/Context';
 
 export type ReviewChangesCardProps = {
   triggerRef: React.RefObject<HTMLButtonElement>;
@@ -16,7 +17,8 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   const { triggerRef } = props;
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
-  const { tabs, runQuery } = useDefinedContext(TabsContext);
+  const { tabs } = useDefinedContext(TabsContext);
+  const { runQuery } = useDefinedContext(QueriesContext);
   const { clearChanges, sql } = useDefinedContext(EditContext);
 
   const [userSql, setUserSql] = useState(sql);

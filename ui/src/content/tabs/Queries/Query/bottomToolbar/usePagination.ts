@@ -3,15 +3,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { trpc } from '~/trpc';
-import { TabsContext } from '~/content/tabs/Context';
 import { getLimitAndOffset, setLimitAndOffset } from '../../utils';
 import { QueryContext } from '../Context';
 import { getParserOptions, sqlParser } from '~/shared/utils/parser';
+import { QueriesContext } from '../../Context';
 
 export const usePagination = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
-  const { updateQuery } = useDefinedContext(TabsContext);
+  const { updateQuery } = useDefinedContext(QueriesContext);
 
   const {
     query,

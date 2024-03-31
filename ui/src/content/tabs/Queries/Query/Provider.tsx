@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 import { QueryContext, ResultContext } from './Context';
 import type { Query } from '~/shared/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { TabsContext } from '../../Context';
+import { QueriesContext } from '../Context';
 
 export type QueryContextValue = {
   columnIndex: number;
@@ -16,7 +16,7 @@ export const QueryProvider: React.FC<QueryProviderProps> = (props) => {
   const { children, ...contextValue } = props;
   const { query } = contextValue;
 
-  const { queryResults } = useDefinedContext(TabsContext);
+  const { queryResults } = useDefinedContext(QueriesContext);
 
   const result = query.id in queryResults ? queryResults[query.id] : null;
 
