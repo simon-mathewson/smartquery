@@ -7,6 +7,7 @@ import { TabsProvider } from './content/tabs/Provider';
 import { ThemeProvider } from './content/theme/Provider';
 import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQueue/Provider';
 import { EditProvider } from './content/edit/Provider';
+import { QueriesProvider } from './content/tabs/Queries/Provider';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -14,11 +15,13 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <ConnectionsProvider>
         <EditProvider>
           <TabsProvider>
-            <DragAndDropProvider>
-              <ClickOutsideQueueProvider>
-                <App />
-              </ClickOutsideQueueProvider>
-            </DragAndDropProvider>
+            <QueriesProvider>
+              <DragAndDropProvider>
+                <ClickOutsideQueueProvider>
+                  <App />
+                </ClickOutsideQueueProvider>
+              </DragAndDropProvider>
+            </QueriesProvider>
           </TabsProvider>
         </EditProvider>
       </ConnectionsProvider>
