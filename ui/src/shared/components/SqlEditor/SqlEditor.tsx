@@ -6,20 +6,15 @@ import { CodeEditor } from '../CodeEditor/CodeEditor';
 import { getErrorMessage } from './utils';
 
 export type SqlEditorProps = {
-  initialValue?: string;
-  onSubmit?: (sql: string) => Promise<void>;
+  onChange?: (sql: string) => void;
+  onSubmit?: () => Promise<void>;
+  value: string;
 };
 
 export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
-  const { initialValue, onSubmit } = props;
-
-  const [value, setValue] = useState('');
+  const { onChange, onSubmit, value } = props;
 
   const [error, setError] = useState<string | undefined>();
-
-  useEffect(() => {
-    setValue(initialValue ?? '');
-  }, [initialValue]);
 
   const editorRef = React.useRef<ReactCodeMirrorRef>(null);
 
@@ -34,7 +29,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     setError(undefined);
 
     try {
-      await onSubmit?.(sql);
+      await onSubmit?.();
     } catch (error) {
       if (error instanceof Error) {
         setError(getErrorMessage(error));
@@ -72,7 +67,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           editorRef={editorRef}
           language="sql"
           large
-          onChange={(sql) => setValue(sql)}
+          onChange={onChange}
           value={value}
         />
       </div>

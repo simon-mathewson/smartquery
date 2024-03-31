@@ -4,10 +4,10 @@ import { Button } from '~/shared/components/Button/Button';
 import { Input } from '~/shared/components/Input/Input';
 import { useSearch } from './useSearch';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { QueryContext } from '../../Context';
+import { ResultContext } from '../../Context';
 
 export const Search: React.FC = () => {
-  const { query } = useDefinedContext(QueryContext);
+  const result = useDefinedContext(ResultContext);
 
   const { search, searchValue } = useSearch();
 
@@ -31,7 +31,7 @@ export const Search: React.FC = () => {
           setValue(newValue);
           setIsChanged(true);
         }}
-        placeholder={`Search ${query.table ?? 'results'}`}
+        placeholder={`Search ${result.table ?? 'results'}`}
         value={value}
       />
       {isChanged && (

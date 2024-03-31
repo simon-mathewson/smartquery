@@ -16,9 +16,14 @@ export const Item: React.FC<ItemProps> = (props) => {
   const { tableName } = props;
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
-  const { activeTab, addTab } = useDefinedContext(TabsContext);
+  const { activeTab, addTab, queryResults } = useDefinedContext(TabsContext);
 
-  const isSelected = activeTab?.queries.some((query) => query.some((q) => q.table === tableName));
+  const isSelected = activeTab?.queries.some((query) =>
+    query.some((q) => {
+      const result = q.id in queryResults ? queryResults[q.id] : null;
+      return result?.table === tableName;
+    }),
+  );
 
   const getQuery = (): AddQueryOptions => {
     if (!activeConnection) return {};
@@ -28,7 +33,6 @@ export const Item: React.FC<ItemProps> = (props) => {
         mysql: `SELECT * FROM ${withQuotes(activeConnection.engine, tableName)} LIMIT 50`,
         postgresql: `SELECT * FROM ${withQuotes(activeConnection.engine, tableName)} LIMIT 50`,
       }[activeConnection.engine],
-      table: tableName,
     };
   };
 

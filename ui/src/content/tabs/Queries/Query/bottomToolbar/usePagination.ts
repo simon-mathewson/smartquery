@@ -1,42 +1,33 @@
 import { cloneDeep } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getParsedQuery, getParserOptions, sqlParser } from '../utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { trpc } from '~/trpc';
 import { TabsContext } from '~/content/tabs/Context';
 import { getLimitAndOffset, setLimitAndOffset } from '../../utils';
 import { QueryContext } from '../Context';
+import { getParserOptions, sqlParser } from '~/shared/utils/parser';
 
 export const usePagination = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const { updateQuery } = useDefinedContext(TabsContext);
 
-  const { query } = useDefinedContext(QueryContext);
-
-  const parsedQuery = useMemo(() => {
-    if (!activeConnection) return null;
-
-    const parsedQuery = getParsedQuery({
-      engine: activeConnection.engine,
-      query,
-    });
-    if (!parsedQuery || parsedQuery.type !== 'select' || !parsedQuery.limit) return null;
-
-    return parsedQuery;
-  }, [activeConnection, query]);
+  const {
+    query,
+    query: { firstSelectStatement },
+  } = useDefinedContext(QueryContext);
 
   const limitAndOffset = useMemo(
-    () => (parsedQuery ? getLimitAndOffset(parsedQuery) : null),
-    [parsedQuery],
+    () => (firstSelectStatement ? getLimitAndOffset(firstSelectStatement.parsed) : null),
+    [firstSelectStatement],
   );
 
   const [total, setTotal] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    if (!parsedQuery?.limit || !activeConnection) return;
-    const totalQuery = cloneDeep(parsedQuery);
+    if (!firstSelectStatement?.parsed.limit || !activeConnection) return;
+    const totalQuery = cloneDeep(firstSelectStatement.parsed);
     totalQuery.limit = null;
     totalQuery.columns = [
       {
@@ -53,20 +44,20 @@ export const usePagination = () => {
         const count = results[0][0].count;
         setTotal(count ? Number(count) : undefined);
       });
-  }, [activeConnection, parsedQuery]);
+  }, [activeConnection, firstSelectStatement?.parsed]);
 
   const updateQueryOffset = useCallback(
     async (newOffset: number) => {
-      if (!limitAndOffset?.limit || !parsedQuery || !activeConnection) return;
+      if (!limitAndOffset?.limit || !firstSelectStatement || !activeConnection) return;
 
-      const newQuery = cloneDeep(parsedQuery);
+      const newQuery = cloneDeep(firstSelectStatement.parsed);
       setLimitAndOffset(newQuery, limitAndOffset.limit, newOffset);
 
       const sql = sqlParser.sqlify(newQuery, getParserOptions(activeConnection.engine));
 
-      await updateQuery(query.id, sql);
+      await updateQuery({ id: query.id, run: true, sql });
     },
-    [activeConnection, limitAndOffset?.limit, parsedQuery, query.id, updateQuery],
+    [activeConnection, firstSelectStatement, limitAndOffset?.limit, query.id, updateQuery],
   );
 
   const next = useCallback(async () => {

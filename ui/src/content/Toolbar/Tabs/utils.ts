@@ -1,8 +1,14 @@
 import { getQueryTitle } from '~/content/tabs/Queries/Query/utils';
-import type { Tab } from '~/shared/types';
+import type { QueryResult, Tab } from '~/shared/types';
 
-export const getTabTitle = (tab: Tab) => {
+export const getTabTitle = (tab: Tab, queryResults: Record<string, QueryResult>) => {
   const queries = tab.queries.flat();
 
-  return !queries.length ? 'New tab' : getQueryTitle(queries[0]);
+  if (!queries.length) {
+    return 'New tab';
+  }
+
+  const result = queryResults[queries[0].id];
+
+  return getQueryTitle(result);
 };

@@ -1,24 +1,22 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { assert } from 'ts-essentials';
 import * as uuid from 'uuid';
-import { castArray } from 'lodash';
-import NodeSqlParser from 'node-sql-parser';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import type { Row } from '~/shared/types';
 import { type Query, type QueryResult, type Tab } from '~/shared/types';
+import { isNotNull } from '~/shared/utils/typescript';
+import { trpc } from '~/trpc';
+import { ConnectionsContext } from '../connections/Context';
 import type { AddQueryOptions } from './types';
 import {
   convertPrismaValue,
   getColumnsFromResult,
   getColumnsStatement,
   getNewQuery,
+  parseQuery,
 } from './utils';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { ConnectionsContext } from '../connections/Context';
-import { trpc } from '~/trpc';
-import { useStoredState } from '~/shared/hooks/useLocalStorageState';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { getParserOptions } from './Queries/Query/utils';
-import { isNotNull } from '~/shared/utils/typescript';
-import { parseStatements } from '~/shared/utils/sql';
 
 export const useTabs = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -39,55 +37,30 @@ export const useTabs = () => {
 
   const [queryResults, setQueryResults] = useState<Record<string, QueryResult>>({});
 
+  const queriesRef = useRef<Query[]>([]);
+  queriesRef.current = tabs.flatMap((t) => t.queries).flat();
+
   const setQueries = useCallback(
     (updateFn: (queries: Query[][]) => Query[][], tabId?: string) => {
-      setTabs((currentTabs) =>
-        currentTabs.map((t) =>
+      setTabs((currentTabs) => {
+        const newTabs = currentTabs.map((t) =>
           t.id === (tabId ?? activeTab?.id) ? { ...t, queries: updateFn(t.queries) } : t,
-        ),
-      );
+        );
+
+        return newTabs;
+      });
     },
-    [setTabs, activeTab],
+    [setTabs, activeTab?.id],
   );
 
   const runQuery = useCallback(
-    async (query: Query) => {
-      if (!query?.sql || !activeConnection) return;
+    async (id: string) => {
+      const query = queriesRef.current.find((q) => q.id === id);
+      assert(query);
 
-      const { clientId } = activeConnection;
+      const { firstSelectStatement, statements } = query;
 
-      const userStatements = parseStatements(query.sql);
-
-      console.info('Query statements', userStatements);
-
-      const sqlParser = new NodeSqlParser.Parser();
-
-      const firstSelectStatement = userStatements.reduce<{
-        index: number;
-        parsed: NodeSqlParser.Select;
-        table: string;
-      } | null>((first, statement, index) => {
-        if (first) return first;
-
-        const parsed = castArray(
-          sqlParser.astify(statement, getParserOptions(activeConnection.engine)),
-        )[0];
-
-        if (
-          parsed.type !== 'select' ||
-          parsed.from?.length !== 1 ||
-          parsed.columns.some((column) => column.expr.type !== 'column_ref')
-        ) {
-          return null;
-        }
-
-        const table = parsed.from[0].table;
-        if (!table) return null;
-
-        return { index, parsed, table };
-      }, null);
-
-      console.info('First select statement', firstSelectStatement);
+      if (!statements || !activeConnection) return;
 
       const columnsStatement = firstSelectStatement
         ? getColumnsStatement({
@@ -96,9 +69,11 @@ export const useTabs = () => {
           })
         : null;
 
-      const statements = [...userStatements, columnsStatement].filter(isNotNull);
+      const statementsWithColumns = [...statements, columnsStatement].filter(isNotNull);
 
-      const results = await trpc.sendQuery.mutate({ clientId, statements });
+      const { clientId } = activeConnection;
+
+      const results = await trpc.sendQuery.mutate({ clientId, statements: statementsWithColumns });
 
       const firstSelectResult = firstSelectStatement ? results[firstSelectStatement.index] : null;
       const columnsResult = columnsStatement ? results[results.length - 1] : null;
@@ -128,7 +103,11 @@ export const useTabs = () => {
       if (rows) {
         setQueryResults((currentQueryResults) => ({
           ...currentQueryResults,
-          [query.id]: { columns, rows },
+          [query.id]: {
+            columns,
+            rows,
+            table: firstSelectStatement!.table,
+          },
         }));
       } else {
         setQueryResults((currentQueryResults) => {
@@ -137,30 +116,19 @@ export const useTabs = () => {
           return newQueryResults;
         });
       }
-
-      setQueries((currentQueries) =>
-        currentQueries.map((column) =>
-          column.map((q) =>
-            q.id === query.id
-              ? {
-                  ...q,
-                  table: firstSelectStatement?.table ?? null,
-                }
-              : q,
-          ),
-        ),
-      );
     },
-    [activeConnection, setQueries],
+    [activeConnection],
   );
 
   const addQuery = useCallback(
-    async (
+    (
       addQueryOptions: AddQueryOptions,
       position?: { column: number; row?: number },
       tabId?: string,
     ) => {
-      const newQuery = getNewQuery(addQueryOptions);
+      assert(activeConnection);
+
+      const newQuery = getNewQuery({ addQueryOptions, engine: activeConnection.engine });
 
       setQueries((currentQueries) => {
         if (!position) {
@@ -184,9 +152,11 @@ export const useTabs = () => {
         return newQueries;
       }, tabId);
 
-      await runQuery(newQuery);
+      setTimeout(() => {
+        void runQuery(newQuery.id);
+      });
     },
-    [runQuery, setQueries],
+    [activeConnection, runQuery, setQueries],
   );
 
   const removeQuery = useCallback(
@@ -200,24 +170,35 @@ export const useTabs = () => {
   );
 
   const updateQuery = useCallback(
-    async (id: string, sql: string) => {
-      let query!: Query;
+    async (props: { id: string; run?: boolean; sql: string }) => {
+      const { id, run, sql } = props;
+
+      assert(activeConnection);
 
       setQueries((currentQueries) =>
         currentQueries.map((currentColumn) =>
-          currentColumn.map((q) => {
-            if (q.id === id) {
-              query = { ...q, sql };
-              return query;
-            }
-            return q;
-          }),
+          currentColumn.map((q) =>
+            q.id === id
+              ? {
+                  ...q,
+                  sql,
+                  ...parseQuery({
+                    engine: activeConnection.engine,
+                    sql,
+                  }),
+                }
+              : q,
+          ),
         ),
       );
 
-      await runQuery(query);
+      if (run) {
+        setTimeout(() => {
+          void runQuery(id);
+        });
+      }
     },
-    [runQuery, setQueries],
+    [activeConnection, runQuery, setQueries],
   );
 
   const addTab = useCallback(
@@ -256,7 +237,7 @@ export const useTabs = () => {
       tabs.forEach((tab) => {
         tab.queries.flat().forEach((query) => {
           if (query.sql) {
-            runQuery(query);
+            runQuery(query.id);
           }
         });
       });

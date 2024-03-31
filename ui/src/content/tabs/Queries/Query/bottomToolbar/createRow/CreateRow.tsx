@@ -5,7 +5,7 @@ import { Add as AddIcon } from '@mui/icons-material';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { EditContext } from '~/content/edit/Context';
 import type { CreateChangeInput } from '~/content/edit/types';
-import { QueryContext, ResultContext } from '../../Context';
+import { ResultContext } from '../../Context';
 
 export interface AddProps {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
@@ -16,13 +16,9 @@ export const Add: React.FC<AddProps> = (props) => {
 
   const { handleCreateChange } = useDefinedContext(EditContext);
 
-  const {
-    query: { table },
-  } = useDefinedContext(QueryContext);
+  const { columns, table } = useDefinedContext(ResultContext);
 
-  const { columns } = useDefinedContext(ResultContext);
-
-  if (!table || !columns) return null;
+  if (!columns) return null;
 
   const handleClick = () => {
     const createChange = {

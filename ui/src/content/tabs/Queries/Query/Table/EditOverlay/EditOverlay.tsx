@@ -6,7 +6,7 @@ import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 import type { ColumnFieldProps } from './ColumnField/ColumnField';
 import { ColumnField } from './ColumnField/ColumnField';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { QueryContext, ResultContext } from '../../Context';
+import { ResultContext } from '../../Context';
 
 export type EditModalProps = {
   columnCount: number;
@@ -19,9 +19,7 @@ export type EditModalProps = {
 export const EditOverlay: React.FC<EditModalProps> = (props) => {
   const { columnCount, editButtonRef, selection, selectionActionsPopoverRef, setIsEditing } = props;
 
-  const { query } = useDefinedContext(QueryContext);
-
-  const { columns, rows } = useDefinedContext(ResultContext);
+  const { columns, rows, table } = useDefinedContext(ResultContext);
 
   const columnFields = useMemo(() => {
     return selection.reduce<Array<Pick<ColumnFieldProps, 'column' | 'locations'>>>(
@@ -45,13 +43,13 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
               column: column.name,
               originalValue: value,
               primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
-              table: query.table!,
+              table,
               type: 'update',
             });
           } else {
             newColumnsWithValues[columnIndex].locations.push({
               index: rowIndex - rows.length,
-              table: query.table!,
+              table,
               type: 'create',
             });
           }
@@ -60,7 +58,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
       },
       [],
     );
-  }, [columnCount, columns, query.table, rows, selection]);
+  }, [columnCount, columns, rows, selection, table]);
 
   if (selection.length === 0) return null;
 

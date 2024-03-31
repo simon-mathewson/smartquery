@@ -1,20 +1,71 @@
 import type NodeSqlParser from 'node-sql-parser';
 import type { Column, PrismaValue, Query, Value } from '~/shared/types';
 import { sortBy, uniq } from 'lodash';
-import type { AddQueryOptions } from './types';
+import type { AddQueryOptions, FirstSelectStatement } from './types';
 import * as uuid from 'uuid';
 import type { Connection } from '../connections/types';
 import { isTimeType } from '../../shared/dataTypes/utils';
 import { Decimal } from 'decimal.js';
 import type { DataType } from '~/shared/dataTypes/types';
+import { parseStatements } from '~/shared/utils/sql';
+import { getParsedStatement } from '~/shared/utils/parser';
 
-export const getNewQuery = ({ showEditor, sql, table }: AddQueryOptions) =>
-  ({
+export const parseQuery = (props: {
+  engine: Connection['engine'];
+  sql: string;
+}): {
+  firstSelectStatement: FirstSelectStatement | null;
+  statements: string[] | null;
+} => {
+  const { engine, sql } = props;
+
+  const statements = parseStatements(sql);
+
+  const firstSelectStatement = statements.reduce<FirstSelectStatement | null>(
+    (first, statement, index) => {
+      if (first) return first;
+
+      const parsed = getParsedStatement({ engine, statement });
+
+      if (
+        !parsed ||
+        parsed.type !== 'select' ||
+        parsed.from?.length !== 1 ||
+        parsed.columns.some((column) => column.expr.type !== 'column_ref')
+      ) {
+        return null;
+      }
+
+      const table = parsed.from[0].table;
+      if (!table) return null;
+
+      return { index, parsed, table };
+    },
+    null,
+  );
+
+  return {
+    firstSelectStatement,
+    statements,
+  };
+};
+
+export const getNewQuery = (props: {
+  addQueryOptions: AddQueryOptions;
+  engine: Connection['engine'];
+}) => {
+  const {
+    addQueryOptions: { showEditor, sql },
+    engine,
+  } = props;
+
+  return {
     id: uuid.v4(),
     showEditor: showEditor === true,
     sql: sql ?? null,
-    table: table ?? null,
-  }) satisfies Query;
+    ...(sql ? parseQuery({ engine, sql }) : { firstSelectStatement: null, statements: null }),
+  } satisfies Query;
+};
 
 export const getMySqlEnumValuesFromColumnType = (columnType: string) => {
   if (!columnType.startsWith('enum(')) return null;

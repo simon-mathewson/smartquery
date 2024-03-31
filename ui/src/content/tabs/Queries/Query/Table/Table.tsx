@@ -18,7 +18,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const { query } = useDefinedContext(QueryContext);
 
-  const { columns, rows } = useDefinedContext(ResultContext);
+  const { columns, rows, table } = useDefinedContext(ResultContext);
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -34,7 +34,7 @@ export const Table: React.FC<TableProps> = (props) => {
       const latestCreateChange = createChanges.reduce<CreateChange | null>(
         (latestChange, change) => {
           if (
-            change.location.table === query.table &&
+            change.location.table === table &&
             (!latestChange || change.location.index > latestChange.location.index)
           ) {
             return change;
@@ -66,14 +66,12 @@ export const Table: React.FC<TableProps> = (props) => {
           ?.click();
       }, 200);
     };
-  }, [createChanges, handleRowCreationRef, query.id, query.table, rows.length, setSelection]);
+  }, [createChanges, handleRowCreationRef, query.id, rows.length, setSelection, table]);
 
   const rowsToCreate = useMemo(
     () =>
-      createChanges
-        .filter((change) => change.location.table === query.table)
-        .map((change) => change.row),
-    [createChanges, query.table],
+      createChanges.filter((change) => change.location.table === table).map((change) => change.row),
+    [createChanges, table],
   );
 
   const visibleColumns = columns
@@ -113,7 +111,7 @@ export const Table: React.FC<TableProps> = (props) => {
                       column: columnName,
                       originalValue: value,
                       primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
-                      table: query.table!,
+                      table,
                       type: 'update',
                     }) as DeleteChange | UpdateChange | undefined)
                   : null;

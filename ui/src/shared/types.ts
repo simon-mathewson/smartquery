@@ -1,3 +1,4 @@
+import type { FirstSelectStatement } from '~/content/tabs/types';
 import type { Prisma } from '../../../link/prisma';
 import type { DataType } from './dataTypes/types';
 
@@ -22,14 +23,16 @@ export type Column = {
 
 export type Query = {
   id: string;
+  firstSelectStatement: FirstSelectStatement | null;
   showEditor: boolean;
   sql: string | null;
-  table: string | null;
+  statements: string[] | null;
 };
 
 export type QueryResult = {
   columns: Column[] | null;
   rows: Row[];
+  table: string;
 };
 
 export type Tab = {

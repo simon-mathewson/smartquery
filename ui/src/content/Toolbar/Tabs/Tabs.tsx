@@ -6,7 +6,8 @@ import { Button } from '~/shared/components/Button/Button';
 import { Close } from '@mui/icons-material';
 
 export const Tabs: React.FC = () => {
-  const { activeTab, removeTab, setActiveTabId, tabs } = useDefinedContext(TabsContext);
+  const { activeTab, queryResults, removeTab, setActiveTabId, tabs } =
+    useDefinedContext(TabsContext);
 
   if (!tabs.length) {
     return null;
@@ -20,7 +21,7 @@ export const Tabs: React.FC = () => {
             className="w-[180px]"
             color={activeTab?.id === tab.id ? 'primary' : 'secondary'}
             key={tab.id}
-            label={getTabTitle(tab)}
+            label={getTabTitle(tab, queryResults)}
             onClick={() => setActiveTabId(tab.id)}
             showSuffixOnHover
             suffix={

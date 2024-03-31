@@ -1,5 +1,12 @@
+import type NodeSqlParser from 'node-sql-parser';
+
 export type AddQueryOptions = {
   showEditor?: boolean;
   sql?: string;
-  table?: string;
+};
+
+export type FirstSelectStatement = {
+  index: number;
+  parsed: NodeSqlParser.Select;
+  table: string;
 };

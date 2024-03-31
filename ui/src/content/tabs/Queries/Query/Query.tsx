@@ -21,7 +21,7 @@ export const Query: React.FC = () => {
   const result = useContext(ResultContext);
 
   const [inputMode, setInputMode] = useState<InputMode | undefined>(
-    !query.sql || !query.table ? 'editor' : undefined,
+    !query.firstSelectStatement ? 'editor' : undefined,
   );
 
   const handleRowCreationRef = React.useRef<(() => void) | null>(null);
@@ -43,7 +43,7 @@ export const Query: React.FC = () => {
         }
         middle={
           <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-            {getQueryTitle(query)}
+            {getQueryTitle(result)}
           </div>
         }
         right={<Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />}

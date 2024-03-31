@@ -10,7 +10,7 @@ import { doChangeLocationsMatch } from '~/content/edit/utils';
 import { Button } from '~/shared/components/Button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { getPrimaryKeys } from '../../../utils';
-import { QueryContext, ResultContext } from '../../Context';
+import { ResultContext } from '../../Context';
 import { EditOverlay } from '../EditOverlay/EditOverlay';
 import { Delete } from './Delete/Delete';
 import { popoverHeight, popoverMargin } from './constants';
@@ -30,9 +30,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
 
   const { allChanges, removeChange } = useDefinedContext(EditContext);
 
-  const { query } = useDefinedContext(QueryContext);
-
-  const { columns, rows } = useDefinedContext(ResultContext);
+  const { columns, rows, table } = useDefinedContext(ResultContext);
 
   const [tableWidth, setTableWidth] = useState<number>();
 
@@ -143,12 +141,12 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
             ? {
                 column,
                 primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
-                table: query.table!,
+                table,
               }
             : {
                 column,
                 index: rowIndex - rows.length,
-                table: query.table!,
+                table,
               };
         }),
       ];
@@ -167,7 +165,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
     });
 
     return { isEntireSelectionDeleted, selectedChanges };
-  }, [allChanges, columnCount, columns, query.table, rows, selection]);
+  }, [allChanges, columnCount, columns, rows, selection, table]);
 
   return (
     <>

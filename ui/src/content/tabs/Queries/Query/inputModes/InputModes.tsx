@@ -13,7 +13,7 @@ export type InputModesProps = {
 export const InputModes: React.FC<InputModesProps> = (props) => {
   const { inputMode } = props;
 
-  const { updateQuery } = useDefinedContext(TabsContext);
+  const { runQuery, updateQuery } = useDefinedContext(TabsContext);
 
   const { query } = useDefinedContext(QueryContext);
 
@@ -22,7 +22,11 @@ export const InputModes: React.FC<InputModesProps> = (props) => {
   if (inputMode === 'editor') {
     return (
       <div className="px-2 pb-2">
-        <SqlEditor initialValue={query.sql ?? ''} onSubmit={(sql) => updateQuery(query.id, sql)} />
+        <SqlEditor
+          onChange={(sql) => updateQuery({ id: query.id, sql })}
+          onSubmit={() => runQuery(query.id)}
+          value={query.sql ?? ''}
+        />
       </div>
     );
   }

@@ -4,7 +4,7 @@ import { EditContext } from '~/content/edit/Context';
 import { getPrimaryKeys } from '~/content/tabs/Queries/utils';
 import { Button } from '~/shared/components/Button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { QueryContext, ResultContext } from '../../../Context';
+import { ResultContext } from '../../../Context';
 
 export type DeleteProps = {
   selection: number[][];
@@ -15,9 +15,7 @@ export const Delete: React.FC<DeleteProps> = (props) => {
 
   const { handleDeleteChange } = useDefinedContext(EditContext);
 
-  const { query } = useDefinedContext(QueryContext);
-
-  const { columns, rows } = useDefinedContext(ResultContext);
+  const { columns, rows, table } = useDefinedContext(ResultContext);
 
   return (
     <Button
@@ -28,7 +26,7 @@ export const Delete: React.FC<DeleteProps> = (props) => {
           handleDeleteChange({
             location: {
               primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
-              table: query.table!,
+              table,
               type: 'delete',
             },
             type: 'delete',

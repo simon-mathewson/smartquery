@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '~/content/connections/Context';
@@ -5,7 +6,7 @@ import { TabsContext } from '~/content/tabs/Context';
 import { getWhere } from './utils';
 import NodeSqlParser from 'node-sql-parser';
 import { get, isEqualWith } from 'lodash';
-import { getParsedQuery, getParserOptions } from '../../utils';
+import { getParserOptions } from '~/shared/utils/parser';
 import { getLimitAndOffset, setLimitAndOffset } from '../../../utils';
 import { QueryContext, ResultContext } from '../../Context';
 
@@ -14,21 +15,20 @@ export const useSearch = () => {
 
   const { updateQuery } = useDefinedContext(TabsContext);
 
-  const { query } = useDefinedContext(QueryContext);
+  const {
+    query,
+    query: { firstSelectStatement },
+  } = useDefinedContext(QueryContext);
 
   const { columns } = useDefinedContext(ResultContext);
 
   const search = useCallback(
-    (searchValue: string) => {
-      if (!activeConnection || !columns) return;
+    async (searchValue: string) => {
+      if (!activeConnection || !columns || !firstSelectStatement) return;
 
-      const parsedQuery = getParsedQuery({
-        engine: activeConnection.engine,
-        query,
-      });
-      if (!parsedQuery || parsedQuery.type !== 'select') return;
+      const newStatement = cloneDeep(firstSelectStatement.parsed);
 
-      parsedQuery.where = searchValue
+      newStatement.where = searchValue
         ? getWhere({
             columns,
             engine: activeConnection.engine,
@@ -37,28 +37,22 @@ export const useSearch = () => {
         : null;
 
       // Remove offset
-      const limitAndOffset = getLimitAndOffset(parsedQuery);
+      const limitAndOffset = getLimitAndOffset(newStatement);
       if (limitAndOffset?.limit) {
-        setLimitAndOffset(parsedQuery, limitAndOffset.limit);
+        setLimitAndOffset(newStatement, limitAndOffset.limit);
       }
 
       const newSql = new NodeSqlParser.Parser().sqlify(
-        parsedQuery,
+        newStatement,
         getParserOptions(activeConnection.engine),
       );
-      updateQuery(query.id, newSql);
+      await updateQuery({ id: query.id, run: true, sql: newSql });
     },
-    [activeConnection, columns, query, updateQuery],
+    [activeConnection, columns, firstSelectStatement, query.id, updateQuery],
   );
 
   const searchValue = useMemo(() => {
-    if (!activeConnection || !columns) return undefined;
-
-    const parsedQuery = getParsedQuery({
-      engine: activeConnection.engine,
-      query,
-    });
-    if (!parsedQuery || parsedQuery.type !== 'select') return undefined;
+    if (!activeConnection || !columns || !firstSelectStatement) return undefined;
 
     const searchWhere = getWhere({
       columns,
@@ -69,7 +63,7 @@ export const useSearch = () => {
 
     const searchValues: string[] = [];
 
-    const hasSearchStructure = isEqualWith(parsedQuery.where, searchWhere, (a) => {
+    const hasSearchStructure = isEqualWith(firstSelectStatement.parsed.where, searchWhere, (a) => {
       if (get(a, 'type') === 'binary_expr' && get(a, 'operator') === 'LIKE') {
         if (activeConnection.engine === 'postgresql') {
           if (get(a, 'right.type') === 'function' && get(a, 'right.name') === 'LOWER') {
@@ -95,7 +89,7 @@ export const useSearch = () => {
 
     const areAllSearchValuesEqual = searchValues.every((value) => value === searchValues[0]);
     return areAllSearchValuesEqual ? searchValues[0] : undefined;
-  }, [activeConnection, columns, query]);
+  }, [activeConnection, columns, firstSelectStatement]);
 
   return useMemo(() => ({ search, searchValue }), [search, searchValue]);
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { EditContext } from '~/content/edit/Context';
 import { trpc } from '~/trpc';
@@ -19,32 +19,37 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   const { tabs, runQuery } = useDefinedContext(TabsContext);
   const { clearChanges, sql } = useDefinedContext(EditContext);
 
+  const [userSql, setUserSql] = useState(sql);
+
+  useEffect(() => {
+    setUserSql(sql);
+  }, [sql]);
+
+  const handleSubmit = useCallback(async () => {
+    if (!activeConnection) return;
+
+    await trpc.sendQuery.mutate({
+      clientId: activeConnection.clientId,
+      statements: parseStatements(userSql),
+    });
+
+    clearChanges();
+
+    tabs
+      .map((tab) => tab.queries)
+      .flat(2)
+      .forEach((query) => {
+        if (query.sql) {
+          runQuery(query.id);
+        }
+      });
+  }, [activeConnection, clearChanges, runQuery, tabs, userSql]);
+
   return (
     <OverlayCard align="right" triggerRef={triggerRef}>
       {() => (
         <div className="w-[592px] p-4">
-          <SqlEditor
-            initialValue={sql}
-            onSubmit={async (sql) => {
-              if (!activeConnection) return;
-
-              await trpc.sendQuery.mutate({
-                clientId: activeConnection.clientId,
-                statements: parseStatements(sql),
-              });
-
-              clearChanges();
-
-              tabs
-                .map((tab) => tab.queries)
-                .flat(2)
-                .forEach((query) => {
-                  if (query.sql) {
-                    runQuery(query);
-                  }
-                });
-            }}
-          />
+          <SqlEditor onChange={(sql) => setUserSql(sql)} onSubmit={handleSubmit} value={userSql} />
         </div>
       )}
     </OverlayCard>
