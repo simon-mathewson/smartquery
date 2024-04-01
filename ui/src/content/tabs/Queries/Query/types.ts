@@ -1,1 +1,1 @@
-export type InputMode = 'editor' | 'search';
+export type InputMode = 'editor' | 'filters' | 'search';

@@ -1,4 +1,4 @@
-import { Code, Search } from '@mui/icons-material';
+import { Code, Search, Tune } from '@mui/icons-material';
 import React from 'react';
 import type { ButtonSelectProps } from '~/shared/components/ButtonSelect/ButtonSelect';
 import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
@@ -16,7 +16,7 @@ export const InputModesSelect: React.FC<InputModesSelectProps> = (props) => {
 
   const { columns } = useDefinedContext(ResultContext);
 
-  const options: ButtonSelectProps<'editor' | 'search'>['options'] = [
+  const options: ButtonSelectProps<InputMode>['options'] = [
     {
       button: {
         color: 'primary',
@@ -28,18 +28,28 @@ export const InputModesSelect: React.FC<InputModesSelectProps> = (props) => {
   ];
 
   if (columns) {
-    options.push({
-      button: {
-        color: 'primary',
-        icon: <Search />,
-        variant: 'default',
+    options.push(
+      {
+        button: {
+          color: 'primary',
+          icon: <Search />,
+          variant: 'default',
+        },
+        value: 'search',
       },
-      value: 'search',
-    });
+      {
+        button: {
+          color: 'primary',
+          icon: <Tune />,
+          variant: 'default',
+        },
+        value: 'filters',
+      },
+    );
   }
 
   return (
-    <ButtonSelect<'editor' | 'search'>
+    <ButtonSelect<InputMode>
       onChange={(newValue) => setInputMode(newValue)}
       options={options}
       selectedButton={{ variant: 'highlighted' }}

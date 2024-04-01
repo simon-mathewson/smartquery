@@ -5,6 +5,7 @@ import { SqlEditor } from '~/shared/components/SqlEditor/SqlEditor';
 import { Search } from './search/Search';
 import { QueryContext, ResultContext } from '../Context';
 import { QueriesContext } from '../../Context';
+import { Filters } from './filters/Filters';
 
 export type InputModesProps = {
   inputMode: InputMode | undefined;
@@ -33,6 +34,10 @@ export const InputModes: React.FC<InputModesProps> = (props) => {
 
   if (inputMode === 'search' && result) {
     return <Search />;
+  }
+
+  if (inputMode === 'filters') {
+    return <Filters />;
   }
 
   return null;

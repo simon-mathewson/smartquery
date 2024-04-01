@@ -76,7 +76,7 @@ export const parseQuery = (props: {
         !parsed ||
         parsed.type !== 'select' ||
         parsed.from?.length !== 1 ||
-        parsed.columns.some((column) => column.expr.type !== 'column_ref')
+        parsed.columns.some((column) => column.expr.type !== 'column_ref' || column.as !== null)
       ) {
         return null;
       }
