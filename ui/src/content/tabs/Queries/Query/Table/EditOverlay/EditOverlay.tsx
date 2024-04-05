@@ -3,10 +3,10 @@ import { useMemo } from 'react';
 import { getPrimaryKeys } from '~/content/tabs/Queries/utils';
 import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
-import type { ColumnFieldProps } from './ColumnField/ColumnField';
-import { ColumnField } from './ColumnField/ColumnField';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ResultContext } from '../../Context';
+import type { EditOverlayFieldProps } from './field/Field';
+import { EditOverlayField } from './field/Field';
 
 export type EditModalProps = {
   columnCount: number;
@@ -22,7 +22,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
   const { columns, rows, table } = useDefinedContext(ResultContext);
 
   const columnFields = useMemo(() => {
-    return selection.reduce<Array<Pick<ColumnFieldProps, 'column' | 'locations'>>>(
+    return selection.reduce<Array<Pick<EditOverlayFieldProps, 'column' | 'locations'>>>(
       (allColumnsWithValues, _selectedColumnIndices, rowIndex) => {
         const newColumnsWithValues = cloneArrayWithEmptyValues(allColumnsWithValues);
 
@@ -74,7 +74,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
         <div className="w-full min-w-[320px] max-w-[360px] overflow-auto p-4">
           <div className="grid gap-2 overflow-auto">
             {columnFields?.map((fieldProps, index) => (
-              <ColumnField
+              <EditOverlayField
                 autoFocus={index === columnFields.findIndex((c) => c)}
                 key={fieldProps.column.alias ?? fieldProps.column.name}
                 {...fieldProps}

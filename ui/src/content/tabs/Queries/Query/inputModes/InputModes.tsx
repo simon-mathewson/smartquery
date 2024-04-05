@@ -20,6 +20,8 @@ export const InputModes: React.FC<InputModesProps> = (props) => {
 
   const result = useContext(ResultContext);
 
+  if (!inputMode) return null;
+
   if (inputMode === 'editor') {
     return (
       <div className="px-2 pb-2">
@@ -32,13 +34,11 @@ export const InputModes: React.FC<InputModesProps> = (props) => {
     );
   }
 
-  if (inputMode === 'search' && result) {
+  if (!result?.columns) return null;
+
+  if (inputMode === 'search') {
     return <Search />;
   }
 
-  if (inputMode === 'filters') {
-    return <Filters />;
-  }
-
-  return null;
+  return <Filters />;
 };

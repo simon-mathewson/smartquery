@@ -58,7 +58,8 @@ export const useFilters = () => {
     try {
       const filters = getFilters(firstSelectStatement.parsed.where);
       return filters;
-    } catch {
+    } catch (error) {
+      console.error(error, firstSelectStatement.parsed.where);
       return [];
     }
   }, [activeConnection, columns, firstSelectStatement]);

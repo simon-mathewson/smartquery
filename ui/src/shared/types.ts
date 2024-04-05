@@ -12,7 +12,7 @@ export type ActiveConnection = Connection & {
 
 export type PrismaValue = string | string[] | number | boolean | Date | Prisma.Decimal | null;
 
-export type Value = string | null | undefined;
+export type Value = string | null;
 
 export type Row = {
   [column: string]: Value;

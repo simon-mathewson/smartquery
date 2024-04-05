@@ -1,4 +1,4 @@
-import type { Row, Value } from '~/shared/types';
+import type { Value } from '~/shared/types';
 
 export type PrimaryKey = { column: string; value: string };
 
@@ -24,10 +24,16 @@ export type DeleteLocation = {
 
 export type Location = CreateLocation | UpdateLocation | DeleteLocation;
 
+export type CreateValue = Value | undefined;
+
+export type CreateRow = {
+  [column: string]: CreateValue;
+};
+
 export type CreateChange = {
   location: CreateLocation;
   type: 'create';
-  row: Row;
+  row: CreateRow;
 };
 
 export type CreateChangeInput = Omit<CreateChange, 'location'> & {
@@ -49,7 +55,7 @@ export type Change = CreateChange | UpdateChange | DeleteChange;
 
 export type AggregatedCreateChanges = {
   location: Pick<CreateLocation, 'table'>;
-  rows: Row[];
+  rows: CreateRow[];
 };
 
 export type AggregatedUpdateChanges = {

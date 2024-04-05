@@ -4,6 +4,7 @@ import { ExpandMore } from '@mui/icons-material';
 import classNames from 'classnames';
 
 export type SelectProps = {
+  className?: string;
   placeholder?: string;
   onChange: (value: string) => void;
   options: Array<{ label: string; value: string }>;
@@ -11,7 +12,7 @@ export type SelectProps = {
 };
 
 export const Select: React.FC<SelectProps> = (props) => {
-  const { onChange, options, placeholder, value: selectedValue } = props;
+  const { className, onChange, options, placeholder, value: selectedValue } = props;
 
   const triggerRef = useRef<HTMLDivElement | null>(null);
 
@@ -20,13 +21,16 @@ export const Select: React.FC<SelectProps> = (props) => {
   return (
     <>
       <div
-        className="border-border bg-background hover:bg-secondaryHighlight focus:border-primary flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-lg border-[1.5px] px-2 outline-none"
+        className={classNames(
+          'flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-lg border-[1.5px] border-border bg-background px-2 outline-none hover:bg-secondaryHighlight focus:border-primary',
+          className,
+        )}
         ref={triggerRef}
         tabIndex={0}
       >
         <div
           className={classNames(
-            'text-textSecondary overflow-hidden text-ellipsis text-sm font-medium',
+            'overflow-hidden text-ellipsis text-sm font-medium text-textSecondary',
             {
               '!text-textTertiary': !selectedOption,
             },
@@ -41,7 +45,7 @@ export const Select: React.FC<SelectProps> = (props) => {
           options.map(({ label, value }) => (
             <div
               className={classNames(
-                'text-textSecondary cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-1.5 text-sm font-medium',
+                'cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-1.5 text-sm font-medium text-textSecondary',
                 {
                   'bg-primary text-white': value === selectedValue,
                   'hover:bg-secondaryHighlight': value !== selectedValue,

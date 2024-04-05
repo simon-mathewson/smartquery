@@ -1,5 +1,5 @@
 import type { Value } from '~/shared/types';
-import type { Location, PrimaryKey } from './types';
+import type { CreateValue, Location, PrimaryKey } from './types';
 
 export const doChangeLocationsMatch = (
   change1: Omit<Location, 'originalValue' | 'type'>,
@@ -17,7 +17,7 @@ export const doChangeLocationsMatch = (
     )) &&
   (!('column' in change1) || !('column' in change2) || change1.column === change2.column);
 
-export const getValueString = (value: Value) => {
+export const getValueString = (value: Value | CreateValue) => {
   if (value === null) {
     return 'NULL';
   }

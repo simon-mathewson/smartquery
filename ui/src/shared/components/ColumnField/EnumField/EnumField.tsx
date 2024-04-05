@@ -6,21 +6,21 @@ import { Select } from '~/shared/components/Select/Select';
 export type EnumFieldProps = {
   column: Column;
   isNullable?: boolean;
-  multipleValues: boolean;
-  setValue: (newValue: Value) => void;
+  onChange: (newValue: Value) => void;
+  placeholder?: string;
   stringValue: Value;
 };
 
 export const EnumField: React.FC<EnumFieldProps> = (props) => {
-  const { column, isNullable, multipleValues, setValue, stringValue } = props;
+  const { column, isNullable, onChange, placeholder, stringValue } = props;
 
   return (
     <Select
       onChange={(newValue) => {
         if (newValue === undefined && !isNullable) return;
-        setValue(isNil(newValue) ? null : newValue);
+        onChange(isNil(newValue) ? null : newValue);
       }}
-      placeholder={multipleValues ? 'Multiple values' : undefined}
+      placeholder={placeholder}
       options={column.enumValues!.map((value) => ({ label: value, value }))}
       value={stringValue === undefined ? null : stringValue}
     />

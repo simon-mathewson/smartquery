@@ -7,7 +7,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ResultContext } from '../../Context';
 
 export const Search: React.FC = () => {
-  const result = useDefinedContext(ResultContext);
+  const { table } = useDefinedContext(ResultContext);
 
   const { search, searchValue } = useSearch();
 
@@ -31,7 +31,7 @@ export const Search: React.FC = () => {
           setValue(newValue);
           setIsChanged(true);
         }}
-        placeholder={`Search ${result.table ?? 'results'}`}
+        placeholder={`Search ${table}`}
         value={value}
       />
       {isChanged && (

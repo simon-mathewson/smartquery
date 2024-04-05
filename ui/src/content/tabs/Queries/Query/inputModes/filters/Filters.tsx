@@ -1,19 +1,16 @@
-import { includes } from 'lodash';
 import { Add, ArrowForward } from '@mui/icons-material';
+import { includes } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
-import { useFilters } from './useFilters';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { ResultContext } from '../../Context';
-import type { Filter } from './types';
 import { NULL_OPERATORS } from './constants';
+import { FilterControl } from './control/Control';
+import type { Filter, FormFilter } from './types';
+import { useFilters } from './useFilters';
 
 export const Filters: React.FC = () => {
-  const result = useDefinedContext(ResultContext);
-
   const { applyFilters, filters } = useFilters();
 
-  const [formFilters, setFormFilters] = useState<Array<Partial<Filter>>>(filters);
+  const [formFilters, setFormFilters] = useState<FormFilter[]>(filters);
   const [isChanged, setIsChanged] = useState(false);
 
   const isValid = formFilters.every(
@@ -24,7 +21,7 @@ export const Filters: React.FC = () => {
   );
 
   const addFilter = useCallback(() => {
-    setFormFilters([...formFilters, {}]);
+    setFormFilters([...formFilters, { column: null, operator: '=', value: '' }]);
     setIsChanged(true);
   }, [formFilters]);
 
@@ -48,6 +45,20 @@ export const Filters: React.FC = () => {
           type="button"
         />
       )}
+      {formFilters.map((filter, index) => (
+        <FilterControl
+          filter={filter}
+          key={index}
+          updateFilter={(getNewFilter) => {
+            setFormFilters((current) =>
+              current.map((currentFilter) =>
+                currentFilter === filter ? getNewFilter(currentFilter) : currentFilter,
+              ),
+            );
+            setIsChanged(true);
+          }}
+        />
+      ))}
       {isChanged && (
         <Button
           color="primary"

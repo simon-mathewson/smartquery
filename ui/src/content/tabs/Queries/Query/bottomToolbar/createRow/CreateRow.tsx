@@ -1,10 +1,9 @@
 import React from 'react';
 import { Button } from '~/shared/components/Button/Button';
-import type { Row } from '~/shared/types';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { EditContext } from '~/content/edit/Context';
-import type { CreateChangeInput } from '~/content/edit/types';
+import type { CreateChangeInput, CreateRow } from '~/content/edit/types';
 import { ResultContext } from '../../Context';
 
 export interface AddProps {
@@ -27,7 +26,7 @@ export const Add: React.FC<AddProps> = (props) => {
         type: 'create',
       },
       type: 'create',
-      row: columns.reduce<Row>((row, column) => {
+      row: columns.reduce<CreateRow>((row, column) => {
         row[column.name] = undefined;
         return row;
       }, {}),

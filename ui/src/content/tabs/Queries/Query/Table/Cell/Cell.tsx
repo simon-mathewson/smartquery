@@ -5,10 +5,11 @@ import { type Column, type Value } from '~/shared/types';
 import { isDateTimeType, isNumberType, isTimeType } from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { QueryContext } from '../../Context';
+import type { CreateValue } from '~/content/edit/types';
 
 export type CellProps = {
   column: Column | string;
-  value: Value;
+  value: Value | CreateValue;
 } & XOR<
   { type: 'header' },
   {
