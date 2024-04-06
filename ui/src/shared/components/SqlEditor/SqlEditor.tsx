@@ -45,7 +45,8 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         event.key === 'Enter' &&
         !event.shiftKey &&
         !event.altKey &&
-        !event.ctrlKey
+        !event.ctrlKey &&
+        !event.repeat
       ) {
         event.stopPropagation();
         void submitQuery();
