@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import type NodeSqlParser from 'node-sql-parser';
 import type { Column, PrismaValue, Query, Value, Row } from '~/shared/types';
 import { sortBy, uniq } from 'lodash';
@@ -8,7 +9,7 @@ import { isTimeType } from '~/shared/dataTypes/utils';
 import { Decimal } from 'decimal.js';
 import type { DataType } from '~/shared/dataTypes/types';
 import { parseStatements } from '~/shared/utils/sql';
-import { getParsedStatement } from '~/shared/utils/parser';
+import { getParsedStatement, getParserOptions, sqlParser } from '~/shared/utils/parser';
 import type { Select } from 'node-sql-parser';
 
 export const getPrimaryKeys = (columns: Column[], rows: Row[], rowIndex: number) => {
@@ -252,4 +253,31 @@ export const convertPrismaValue = (value: PrismaValue, dataType?: DataType): Val
   if (dataType === 'boolean') return String(value).toUpperCase();
 
   return String(value);
+};
+
+export const getTotalRowsStatement = (props: {
+  connection: Connection;
+  firstSelectStatement: FirstSelectStatement;
+}) => {
+  const { connection, firstSelectStatement } = props;
+
+  if (!firstSelectStatement.parsed.limit) return null;
+
+  const totalQuery = cloneDeep(firstSelectStatement.parsed);
+
+  totalQuery.limit = null;
+  totalQuery.columns = [
+    {
+      expr: { type: 'aggr_func', name: 'COUNT', args: { expr: { type: 'star', value: '*' } } },
+      as: 'count',
+    },
+  ];
+
+  try {
+    const statement = sqlParser.sqlify(totalQuery, getParserOptions(connection.engine));
+    return statement;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 };

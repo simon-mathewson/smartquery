@@ -12,25 +12,27 @@ export type BottomToolbarProps = {
 export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
   const { handleRowCreationRef } = props;
 
-  const { limit, next, offset, previous, total } = usePagination();
+  const { limit, next, offset, previous, totalRows } = usePagination();
 
   const limitText = limit
-    ? `${(offset ?? 0) + 1}–${Math.min((offset ?? 0) + limit, total ?? 0)}`
+    ? `${(offset ?? 0) + 1}–${Math.min((offset ?? 0) + limit, totalRows ?? 0)}`
     : undefined;
-  const paginationText = [limitText, total].filter(Boolean).join(' of ');
+  const paginationText = [limitText, totalRows].filter(Boolean).join(' of ');
 
   const previousDisabled = !offset;
-  const nextDisabled = total !== undefined && total - ((offset ?? 0) + (limit ?? 0)) <= 0;
+  const nextDisabled = totalRows !== undefined && totalRows - ((offset ?? 0) + (limit ?? 0)) <= 0;
 
   return (
     <ThreeColumns
       left={<Add handleRowCreationRef={handleRowCreationRef} />}
       middle={
-        Boolean(total) && <div className="text-xs text-textSecondary">{paginationText} rows</div>
+        Boolean(totalRows) && (
+          <div className="text-xs text-textSecondary">{paginationText} rows</div>
+        )
       }
       right={
         limit !== undefined &&
-        total !== undefined &&
+        totalRows !== undefined &&
         (!previousDisabled || !nextDisabled) && (
           <>
             <Button

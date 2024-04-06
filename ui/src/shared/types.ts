@@ -41,6 +41,7 @@ export type QueryResult = {
   columns: Column[] | null;
   rows: Row[];
   table: string;
+  totalRows?: number;
 };
 
 export type Tab = {

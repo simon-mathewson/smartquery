@@ -1,12 +1,11 @@
 import { cloneDeep } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useCallback, useMemo } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
-import { trpc } from '~/trpc';
-import { getLimitAndOffset, setLimitAndOffset } from '../../utils';
-import { QueryContext } from '../Context';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { getParserOptions, sqlParser } from '~/shared/utils/parser';
 import { QueriesContext } from '../../Context';
+import { getLimitAndOffset, setLimitAndOffset } from '../../utils';
+import { QueryContext, ResultContext } from '../Context';
 
 export const usePagination = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -18,33 +17,12 @@ export const usePagination = () => {
     query: { firstSelectStatement },
   } = useDefinedContext(QueryContext);
 
+  const { totalRows } = useDefinedContext(ResultContext);
+
   const limitAndOffset = useMemo(
     () => (firstSelectStatement ? getLimitAndOffset(firstSelectStatement.parsed) : null),
     [firstSelectStatement],
   );
-
-  const [total, setTotal] = useState<number | undefined>(undefined);
-
-  useEffect(() => {
-    if (!firstSelectStatement?.parsed.limit || !activeConnection) return;
-    const totalQuery = cloneDeep(firstSelectStatement.parsed);
-    totalQuery.limit = null;
-    totalQuery.columns = [
-      {
-        expr: { type: 'aggr_func', name: 'COUNT', args: { expr: { type: 'star', value: '*' } } },
-        as: 'count',
-      },
-    ];
-
-    const statement = sqlParser.sqlify(totalQuery, getParserOptions(activeConnection?.engine));
-
-    trpc.sendQuery
-      .mutate({ clientId: activeConnection.clientId, statements: [statement] })
-      .then((results) => {
-        const count = results[0][0].count;
-        setTotal(count ? Number(count) : undefined);
-      });
-  }, [activeConnection, firstSelectStatement?.parsed]);
 
   const updateQueryOffset = useCallback(
     async (newOffset: number) => {
@@ -61,23 +39,23 @@ export const usePagination = () => {
   );
 
   const next = useCallback(async () => {
-    if (!limitAndOffset?.limit || !total) return;
+    if (!limitAndOffset?.limit || !totalRows) return;
 
     const newOffset = (limitAndOffset.offset ?? 0) + limitAndOffset.limit;
-    if (newOffset >= total) {
+    if (newOffset >= totalRows) {
       throw new Error('Cannot go past the last page');
     }
 
     updateQueryOffset(newOffset);
-  }, [limitAndOffset, total, updateQueryOffset]);
+  }, [limitAndOffset, totalRows, updateQueryOffset]);
 
   const previous = useCallback(async () => {
-    if (!limitAndOffset?.limit || !total) return;
+    if (!limitAndOffset?.limit || !totalRows) return;
 
     const newOffset = Math.max((limitAndOffset.offset ?? 0) - limitAndOffset.limit, 0);
 
     updateQueryOffset(newOffset);
-  }, [limitAndOffset, total, updateQueryOffset]);
+  }, [limitAndOffset, totalRows, updateQueryOffset]);
 
   return useMemo(
     () => ({
@@ -85,8 +63,8 @@ export const usePagination = () => {
       next,
       offset: limitAndOffset?.offset,
       previous,
-      total,
+      totalRows,
     }),
-    [limitAndOffset, next, previous, total],
+    [limitAndOffset, next, previous, totalRows],
   );
 };

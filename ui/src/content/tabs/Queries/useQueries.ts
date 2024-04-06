@@ -14,6 +14,7 @@ import {
   getColumnsFromResult,
   getColumnsStatement,
   getNewQuery,
+  getTotalRowsStatement,
   parseQuery,
 } from './utils';
 
@@ -56,14 +57,24 @@ export const useQueries = () => {
           })
         : null;
 
-      const statementsWithColumns = [...statements, columnsStatement].filter(isNotNull);
+      const totalRowsStatement = firstSelectStatement
+        ? getTotalRowsStatement({
+            connection: activeConnection,
+            firstSelectStatement,
+          })
+        : null;
+
+      const statementsWithColumns = [...statements, columnsStatement, totalRowsStatement].filter(
+        isNotNull,
+      );
 
       const { clientId } = activeConnection;
 
       const results = await trpc.sendQuery.mutate({ clientId, statements: statementsWithColumns });
 
       const firstSelectResult = firstSelectStatement ? results[firstSelectStatement.index] : null;
-      const columnsResult = columnsStatement ? results[results.length - 1] : null;
+      const columnsResult = columnsStatement ? results[results.length - 2] : null;
+      const totalRowsResult = totalRowsStatement ? results[results.length - 1] : null;
 
       const columns = columnsResult
         ? getColumnsFromResult({
@@ -72,6 +83,9 @@ export const useQueries = () => {
             result: columnsResult,
           })
         : null;
+
+      const totalRowsRaw = totalRowsResult ? totalRowsResult[0].count : null;
+      const totalRows = totalRowsRaw ? Number(totalRowsRaw) : undefined;
 
       const rows =
         firstSelectResult && columns
@@ -94,6 +108,7 @@ export const useQueries = () => {
             columns,
             rows,
             table: firstSelectStatement!.table,
+            totalRows,
           },
         }));
       } else {
