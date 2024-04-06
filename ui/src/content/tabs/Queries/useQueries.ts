@@ -73,8 +73,16 @@ export const useQueries = () => {
       const results = await trpc.sendQuery.mutate({ clientId, statements: statementsWithColumns });
 
       const firstSelectResult = firstSelectStatement ? results[firstSelectStatement.index] : null;
-      const columnsResult = columnsStatement ? results[results.length - 2] : null;
-      const totalRowsResult = totalRowsStatement ? results[results.length - 1] : null;
+
+      const columnsIndex = columnsStatement
+        ? statementsWithColumns.indexOf(columnsStatement)
+        : null;
+      const columnsResult = columnsIndex !== null ? results[columnsIndex] : null;
+
+      const totalRowsIndex = totalRowsStatement
+        ? statementsWithColumns.indexOf(totalRowsStatement)
+        : null;
+      const totalRowsResult = totalRowsIndex !== null ? results[totalRowsIndex] : null;
 
       const columns = columnsResult
         ? getColumnsFromResult({
