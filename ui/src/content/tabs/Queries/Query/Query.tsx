@@ -1,4 +1,4 @@
-import { Close } from '@mui/icons-material';
+import { Close, Refresh } from '@mui/icons-material';
 import classNames from 'classnames';
 import React, { useContext } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
@@ -15,7 +15,7 @@ import { QueriesContext } from '../Context';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 
 export const Query: React.FC = () => {
-  const { removeQuery } = useDefinedContext(QueriesContext);
+  const { removeQuery, runQuery } = useDefinedContext(QueriesContext);
 
   const { columnIndex, query, rowIndex } = useDefinedContext(QueryContext);
 
@@ -50,7 +50,12 @@ export const Query: React.FC = () => {
             {getQueryTitle(result)}
           </div>
         }
-        right={<Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />}
+        right={
+          <>
+            {result && <Button icon={<Refresh />} onClick={() => runQuery(query.id)} />}
+            <Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />
+          </>
+        }
       />
       <InputModes inputMode={inputMode} />
       {result && (
