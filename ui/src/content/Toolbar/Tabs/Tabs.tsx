@@ -28,6 +28,7 @@ export const Tabs: React.FC = () => {
               <Button
                 className="ml-auto"
                 color={activeTab?.id === tab.id ? 'primary' : 'secondary'}
+                element="div"
                 icon={<Close />}
                 onClickCapture={(event) => {
                   removeTab(tab.id);

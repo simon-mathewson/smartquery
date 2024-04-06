@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import type { MutableRefObject } from 'react';
 import React from 'react';
 
 export type ButtonProps = {
@@ -6,6 +7,7 @@ export type ButtonProps = {
   className?: string;
   color?: 'black' | 'danger' | 'primary' | 'secondary' | 'success' | 'white';
   disabled?: boolean;
+  element?: 'button' | 'div';
   icon?: React.ReactNode;
   label?: string;
   monospace?: boolean;
@@ -24,6 +26,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
     className,
     color = 'primary',
     disabled,
+    element: Element = 'button',
     icon,
     label,
     monospace,
@@ -37,7 +40,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
   } = props;
 
   return (
-    <button
+    <Element
       className={classNames(
         'flex h-[36px] cursor-pointer items-center gap-2 rounded-lg px-2 py-2 [&>svg]:text-[20px]',
         {
@@ -97,13 +100,15 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
       )}
       onClick={onClick}
       onClickCapture={onClickCapture}
-      ref={ref}
+      ref={
+        ref as MutableRefObject<HTMLButtonElement | null> & MutableRefObject<HTMLDivElement | null>
+      }
       type={type}
     >
       {icon}
       {label && <div className="truncate text-sm font-medium">{label}</div>}
       {textSuffix && <div className="text-sm font-medium">{textSuffix}</div>}
       {suffix}
-    </button>
+    </Element>
   );
 });
