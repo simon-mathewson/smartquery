@@ -75,60 +75,34 @@ export const useQueries = () => {
         statements: statementsWithColumns,
       });
 
-      const firstSelectResult = select ? results[select.index] : null;
+      const [firstSelectResult, columnsResult, totalRowsResult] = results;
 
-      const columnsIndex = columnsStatement
-        ? statementsWithColumns.indexOf(columnsStatement)
-        : null;
-      const columnsResult = columnsIndex !== null ? results[columnsIndex] : null;
+      const columns = getColumnsFromResult({
+        connection: activeConnection,
+        parsedStatement: select!.parsed,
+        result: columnsResult,
+      });
 
-      const totalRowsIndex = totalRowsStatement
-        ? statementsWithColumns.indexOf(totalRowsStatement)
-        : null;
-      const totalRowsResult = totalRowsIndex !== null ? results[totalRowsIndex] : null;
+      const rows = firstSelectResult.map<Row>((row) =>
+        Object.fromEntries(
+          Object.entries(row).map(([columnName, value]) => {
+            const column = columns.find((column) => (column.alias ?? column.name) === columnName);
+            return [columnName, convertPrismaValue(value, column?.dataType)];
+          }),
+        ),
+      );
 
-      const columns = columnsResult
-        ? getColumnsFromResult({
-            connection: activeConnection,
-            parsedStatement: select!.parsed,
-            result: columnsResult,
-          })
-        : null;
+      const totalRows = Number(totalRowsResult[0].count);
 
-      const totalRowsRaw = totalRowsResult ? totalRowsResult[0].count : null;
-      const totalRows = totalRowsRaw ? Number(totalRowsRaw) : undefined;
-
-      const rows =
-        firstSelectResult && columns
-          ? firstSelectResult.map<Row>((row) =>
-              Object.fromEntries(
-                Object.entries(row).map(([columnName, value]) => {
-                  const column = columns.find(
-                    (column) => (column.alias ?? column.name) === columnName,
-                  );
-                  return [columnName, convertPrismaValue(value, column?.dataType)];
-                }),
-              ),
-            )
-          : null;
-
-      if (rows) {
-        setQueryResults((currentQueryResults) => ({
-          ...currentQueryResults,
-          [query.id]: {
-            columns,
-            rows,
-            table: select!.table,
-            totalRows,
-          },
-        }));
-      } else {
-        setQueryResults((currentQueryResults) => {
-          const newQueryResults = { ...currentQueryResults };
-          delete newQueryResults[query.id];
-          return newQueryResults;
-        });
-      }
+      setQueryResults((currentQueryResults) => ({
+        ...currentQueryResults,
+        [query.id]: {
+          columns,
+          rows,
+          table: select!.table,
+          totalRows,
+        },
+      }));
     },
     [activeConnection],
   );
@@ -251,14 +225,7 @@ export const useQueries = () => {
         currentQueries.map((currentColumn) =>
           currentColumn.map((q) =>
             q.id === id
-              ? {
-                  ...q,
-                  sql,
-                  ...parseQuery({
-                    engine: activeConnection.engine,
-                    sql,
-                  }),
-                }
+              ? { ...q, sql, ...parseQuery({ engine: activeConnection.engine, sql }) }
               : q,
           ),
         ),

@@ -6,7 +6,6 @@ export type AddQueryOptions = {
 };
 
 export type Select = {
-  index: number;
   parsed: NodeSqlParser.Select;
   table: string;
 };

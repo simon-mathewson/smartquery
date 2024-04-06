@@ -43,13 +43,13 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
               column: column.name,
               originalValue: value,
               primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
-              table,
+              table: table!,
               type: 'update',
             });
           } else {
             newColumnsWithValues[columnIndex].locations.push({
               index: rowIndex - rows.length,
-              table,
+              table: table!,
               type: 'create',
             });
           }

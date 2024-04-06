@@ -22,7 +22,7 @@ export const Add: React.FC<AddProps> = (props) => {
   const handleClick = () => {
     const createChange = {
       location: {
-        table,
+        table: table!,
         type: 'create',
       },
       type: 'create',

@@ -59,6 +59,29 @@ export const setLimitAndOffset = (
   parsedQuery.limit = { seperator: ' OFFSET', value };
 };
 
+const getSelectFromStatement = (props: {
+  engine: Connection['engine'];
+  statement: string;
+}): Select | null => {
+  const { engine, statement } = props;
+
+  const parsed = getParsedStatement({ engine, statement });
+
+  if (
+    !parsed ||
+    parsed.type !== 'select' ||
+    parsed.from?.length !== 1 ||
+    parsed.columns.some((column) => column.expr.type !== 'column_ref' || column.as !== null)
+  ) {
+    return null;
+  }
+
+  const table = parsed.from[0].table;
+  if (!table) return null;
+
+  return { parsed, table };
+};
+
 export const parseQuery = (props: {
   engine: Connection['engine'];
   sql: string;
@@ -70,25 +93,8 @@ export const parseQuery = (props: {
 
   const statements = parseStatements(sql);
 
-  const select = statements.reduce<Select | null>((first, statement, index) => {
-    if (first) return first;
-
-    const parsed = getParsedStatement({ engine, statement });
-
-    if (
-      !parsed ||
-      parsed.type !== 'select' ||
-      parsed.from?.length !== 1 ||
-      parsed.columns.some((column) => column.expr.type !== 'column_ref' || column.as !== null)
-    ) {
-      return null;
-    }
-
-    const table = parsed.from[0].table;
-    if (!table) return null;
-
-    return { index, parsed, table };
-  }, null);
+  const select =
+    statements.length === 1 ? getSelectFromStatement({ engine, statement: statements[0] }) : null;
 
   return {
     select,

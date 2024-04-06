@@ -141,12 +141,12 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
             ? {
                 column,
                 primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
-                table,
+                table: table!,
               }
             : {
                 column,
                 index: rowIndex - rows.length,
-                table,
+                table: table!,
               };
         }),
       ];

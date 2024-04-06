@@ -111,7 +111,7 @@ export const Table: React.FC<TableProps> = (props) => {
                       column: columnName,
                       originalValue: value,
                       primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
-                      table,
+                      table: table!,
                       type: 'update',
                     }) as DeleteChange | UpdateChange | undefined)
                   : null;

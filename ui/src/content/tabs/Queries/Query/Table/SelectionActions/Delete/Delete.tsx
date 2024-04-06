@@ -26,7 +26,7 @@ export const Delete: React.FC<DeleteProps> = (props) => {
           handleDeleteChange({
             location: {
               primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
-              table,
+              table: table!,
               type: 'delete',
             },
             type: 'delete',
