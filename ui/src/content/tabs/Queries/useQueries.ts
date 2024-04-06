@@ -41,36 +41,39 @@ export const useQueries = () => {
     [setTabs, activeTab?.id],
   );
 
-  const runQuery = useCallback(
+  const runSelectQuery = useCallback(
     async (id: string) => {
+      if (!activeConnection) {
+        throw new Error('No active connection');
+      }
+
       const query = queriesRef.current.find((q) => q.id === id);
       assert(query);
 
       const { firstSelectStatement, statements } = query;
+      assert(firstSelectStatement);
+      assert(statements?.length === 1);
 
-      if (!statements || !activeConnection) return;
+      const selectStatement = statements[0];
 
-      const columnsStatement = firstSelectStatement
-        ? getColumnsStatement({
-            connection: activeConnection,
-            table: firstSelectStatement.table,
-          })
-        : null;
+      const columnsStatement = getColumnsStatement({
+        connection: activeConnection,
+        table: firstSelectStatement.table,
+      });
 
-      const totalRowsStatement = firstSelectStatement
-        ? getTotalRowsStatement({
-            connection: activeConnection,
-            firstSelectStatement,
-          })
-        : null;
+      const totalRowsStatement = getTotalRowsStatement({
+        connection: activeConnection,
+        firstSelectStatement: firstSelectStatement,
+      });
 
-      const statementsWithColumns = [...statements, columnsStatement, totalRowsStatement].filter(
+      const statementsWithColumns = [selectStatement, columnsStatement, totalRowsStatement].filter(
         isNotNull,
       );
 
-      const { clientId } = activeConnection;
-
-      const results = await trpc.sendQuery.mutate({ clientId, statements: statementsWithColumns });
+      const results = await trpc.sendQuery.mutate({
+        clientId: activeConnection.clientId,
+        statements: statementsWithColumns,
+      });
 
       const firstSelectResult = firstSelectStatement ? results[firstSelectStatement.index] : null;
 
@@ -128,6 +131,57 @@ export const useQueries = () => {
       }
     },
     [activeConnection],
+  );
+
+  const runQuery = useCallback(
+    async (id: string) => {
+      if (!activeConnection) {
+        throw new Error('No active connection');
+      }
+
+      const query = queriesRef.current.find((q) => q.id === id);
+      assert(query);
+
+      const { firstSelectStatement, statements } = query;
+
+      if (!statements) {
+        throw new Error('No statements');
+      }
+
+      const { clientId } = activeConnection;
+
+      if (firstSelectStatement && statements.length === 1) {
+        return runSelectQuery(id);
+      }
+
+      const results = await trpc.sendQuery.mutate({ clientId, statements });
+
+      const rawRows = results.find((result) => result.length) ?? null;
+      const rows = rawRows
+        ? rawRows.map((row) =>
+            Object.fromEntries(
+              Object.entries(row).map(([key, value]) => [key, convertPrismaValue(value)]),
+            ),
+          )
+        : null;
+
+      if (rows) {
+        setQueryResults((currentQueryResults) => ({
+          ...currentQueryResults,
+          [query.id]: {
+            columns: null,
+            rows,
+          },
+        }));
+      } else {
+        setQueryResults((currentQueryResults) => {
+          const newQueryResults = { ...currentQueryResults };
+          delete newQueryResults[query.id];
+          return newQueryResults;
+        });
+      }
+    },
+    [activeConnection, runSelectQuery],
   );
 
   const addQuery = useCallback(

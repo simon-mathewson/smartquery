@@ -40,7 +40,7 @@ export type Query = {
 export type QueryResult = {
   columns: Column[] | null;
   rows: Row[];
-  table: string;
+  table?: string;
   totalRows?: number;
 };
 

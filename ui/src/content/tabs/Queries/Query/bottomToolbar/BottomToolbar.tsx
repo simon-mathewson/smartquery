@@ -4,6 +4,8 @@ import { Button } from '~/shared/components/Button/Button';
 import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
 import { usePagination } from './usePagination';
 import { Add } from './createRow/CreateRow';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { ResultContext } from '../Context';
 
 export type BottomToolbarProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
@@ -11,6 +13,8 @@ export type BottomToolbarProps = {
 
 export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
   const { handleRowCreationRef } = props;
+
+  const { rows } = useDefinedContext(ResultContext);
 
   const { limit, next, offset, previous, totalRows } = usePagination();
 
@@ -26,9 +30,9 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
     <ThreeColumns
       left={<Add handleRowCreationRef={handleRowCreationRef} />}
       middle={
-        Boolean(totalRows) && (
-          <div className="text-xs text-textSecondary">{paginationText} rows</div>
-        )
+        <div className="text-xs text-textSecondary">
+          {totalRows ? paginationText : rows.length} rows
+        </div>
       }
       right={
         limit !== undefined &&
