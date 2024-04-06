@@ -225,7 +225,11 @@ export const useQueries = () => {
         currentQueries.map((currentColumn) =>
           currentColumn.map((q) =>
             q.id === id
-              ? { ...q, sql, ...parseQuery({ engine: activeConnection.engine, sql }) }
+              ? {
+                  ...q,
+                  sql: sql.trim(),
+                  ...parseQuery({ engine: activeConnection.engine, sql }),
+                }
               : q,
           ),
         ),

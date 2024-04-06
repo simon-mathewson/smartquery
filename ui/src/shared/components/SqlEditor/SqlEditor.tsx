@@ -62,7 +62,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid w-full min-w-[560px] gap-1 overflow-hidden rounded-lg border border-border bg-background py-1">
+      <div className="grid max-h-[200px] w-full min-w-[560px] gap-1 overflow-auto rounded-lg border border-border bg-background py-1">
         <CodeEditor
           autoFocus
           editorRef={editorRef}
