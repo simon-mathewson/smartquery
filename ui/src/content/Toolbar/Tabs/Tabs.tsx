@@ -24,7 +24,6 @@ export const Tabs: React.FC = () => {
             key={tab.id}
             label={getTabTitle(tab, queryResults)}
             onClick={() => setActiveTabId(tab.id)}
-            showSuffixOnHover
             suffix={
               <Button
                 className="ml-auto"

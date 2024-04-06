@@ -11,7 +11,6 @@ export type ButtonProps = {
   monospace?: boolean;
   onClick?: (event: React.MouseEvent) => void;
   onClickCapture?: (event: React.MouseEvent) => void;
-  showSuffixOnHover?: boolean;
   size?: 'small' | 'normal';
   suffix?: React.ReactNode;
   textSuffix?: string;
@@ -42,7 +41,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
       className={classNames(
         'flex h-[36px] cursor-pointer items-center gap-2 rounded-lg px-2 py-2 [&>svg]:text-[20px]',
         {
-          '!h-[24px] [&>svg]:h-[16px] [&>svg]:w-[16px]': size === 'small',
+          '!h-[24px] !gap-1 [&>svg]:h-[16px] [&>svg]:w-[16px]': size === 'small',
           '!rounded-full': icon && !label,
           '!px-2': icon && !label && size === 'normal',
           '!p-1': icon && !label && size === 'small',

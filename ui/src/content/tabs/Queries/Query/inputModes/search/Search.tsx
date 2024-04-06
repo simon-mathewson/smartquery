@@ -1,4 +1,4 @@
-import { ArrowForward } from '@mui/icons-material';
+import { Send } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { Input } from '~/shared/components/Input/Input';
@@ -34,15 +34,7 @@ export const Search: React.FC = () => {
         placeholder={`Search ${table}`}
         value={value}
       />
-      {isChanged && (
-        <Button
-          color="primary"
-          icon={<ArrowForward />}
-          size="small"
-          type="submit"
-          variant="filled"
-        />
-      )}
+      {isChanged && <Button color="primary" icon={<Send />} type="submit" variant="filled" />}
     </form>
   );
 };

@@ -11,6 +11,7 @@ import { NullButton } from './Null/Null';
 
 export type ColumnFieldProps = {
   autoFocus?: boolean;
+  className?: string;
   column: Column;
   hideLabel?: boolean;
   onChange: (newValue: Value) => void;
@@ -19,7 +20,15 @@ export type ColumnFieldProps = {
 };
 
 export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
-  const { autoFocus, column, hideLabel, onChange: onChangeProp, placeholder, value } = props;
+  const {
+    autoFocus,
+    className,
+    column,
+    hideLabel,
+    onChange: onChangeProp,
+    placeholder,
+    value,
+  } = props;
 
   const [stringValue, setStringValue] = useState(value ?? '');
 
@@ -31,7 +40,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
   };
 
   return (
-    <Field label={hideLabel ? undefined : column.name}>
+    <Field className={className} label={hideLabel ? undefined : column.name}>
       {column.dataType === 'boolean' ? (
         <BooleanField isNullable={column.isNullable} onChange={onChange} value={value} />
       ) : (

@@ -1,4 +1,4 @@
-import { Add, ArrowForward } from '@mui/icons-material';
+import { Add, Send } from '@mui/icons-material';
 import { includes } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
@@ -6,11 +6,21 @@ import { NULL_OPERATORS } from './constants';
 import { FilterControl } from './control/Control';
 import type { Filter, FormFilter } from './types';
 import { useFilters } from './useFilters';
+import { useStoredState } from '~/shared/hooks/useLocalStorageState';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { QueryContext } from '../../Context';
 
 export const Filters: React.FC = () => {
   const { applyFilters, filters } = useFilters();
 
-  const [formFilters, setFormFilters] = useState<FormFilter[]>(filters);
+  const { query } = useDefinedContext(QueryContext);
+
+  const formFiltersStorageKey = `query-${query.id}-formFilters`;
+  const [formFilters, setFormFilters] = useStoredState<FormFilter[]>(
+    formFiltersStorageKey,
+    filters,
+    sessionStorage,
+  );
   const [isChanged, setIsChanged] = useState(false);
 
   const isValid = formFilters.every(
@@ -23,11 +33,11 @@ export const Filters: React.FC = () => {
   const addFilter = useCallback(() => {
     setFormFilters([...formFilters, { column: null, operator: '=', value: '' }]);
     setIsChanged(true);
-  }, [formFilters]);
+  }, [formFilters, setFormFilters]);
 
   return (
     <form
-      className="flex items-center gap-2 px-2 pb-2"
+      className="flex w-max flex-col gap-2 pb-2"
       onSubmit={(event) => {
         event.preventDefault();
 
@@ -35,40 +45,47 @@ export const Filters: React.FC = () => {
         setIsChanged(false);
       }}
     >
-      {formFilters.length === 0 && (
+      {formFilters.map((filter, index) => (
+        <div className="flex items-center gap-2" key={index}>
+          <FilterControl
+            filter={filter}
+            isFirst={index === 0}
+            removeFilter={() => {
+              setFormFilters((current) =>
+                current.filter((currentFilter) => currentFilter !== filter),
+              );
+              setIsChanged(true);
+            }}
+            updateFilter={(getNewFilter) => {
+              setFormFilters((current) =>
+                current.map((currentFilter) =>
+                  currentFilter === filter ? getNewFilter(currentFilter) : currentFilter,
+                ),
+              );
+              setIsChanged(true);
+            }}
+          />
+          {index === formFilters.length - 1 && isChanged && (
+            <Button
+              color="primary"
+              disabled={!isValid}
+              icon={<Send />}
+              type="submit"
+              variant="filled"
+            />
+          )}
+        </div>
+      ))}
+      <div>
         <Button
-          color="secondary"
           icon={<Add />}
-          label="WHERE"
+          label={formFilters.length === 0 ? 'WHERE' : 'AND'}
           onClick={addFilter}
           monospace
+          size="small"
           type="button"
         />
-      )}
-      {formFilters.map((filter, index) => (
-        <FilterControl
-          filter={filter}
-          key={index}
-          updateFilter={(getNewFilter) => {
-            setFormFilters((current) =>
-              current.map((currentFilter) =>
-                currentFilter === filter ? getNewFilter(currentFilter) : currentFilter,
-              ),
-            );
-            setIsChanged(true);
-          }}
-        />
-      ))}
-      {isChanged && (
-        <Button
-          color="primary"
-          disabled={!isValid}
-          icon={<ArrowForward />}
-          size="small"
-          type="submit"
-          variant="filled"
-        />
-      )}
+      </div>
     </form>
   );
 };

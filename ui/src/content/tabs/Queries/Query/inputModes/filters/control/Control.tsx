@@ -1,20 +1,24 @@
+import { includes } from 'lodash';
 import React from 'react';
-import type { FormFilter, NullOperator, OperatorWithValue } from '../types';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { ResultContext } from '../../../Context';
 import { assert } from 'ts-essentials';
 import { ColumnField } from '~/shared/components/ColumnField/ColumnField';
 import { Select } from '~/shared/components/Select/Select';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { ResultContext } from '../../../Context';
 import { NULL_OPERATORS, OPERATORS } from '../constants';
-import { includes } from 'lodash';
+import type { FormFilter, NullOperator, OperatorWithValue } from '../types';
+import { Close } from '@mui/icons-material';
+import { Button } from '~/shared/components/Button/Button';
 
 export interface FilterControlProps {
   filter: FormFilter;
+  isFirst: boolean;
+  removeFilter: () => void;
   updateFilter: (updateFn: (current: FormFilter) => FormFilter) => void;
 }
 
 export const FilterControl: React.FC<FilterControlProps> = (props) => {
-  const { filter, updateFilter } = props;
+  const { filter, isFirst, removeFilter, updateFilter } = props;
 
   const { columns } = useDefinedContext(ResultContext);
   assert(columns);
@@ -22,9 +26,12 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
   const column = filter.column ? columns.find((col) => col.name === filter.column) : null;
 
   return (
-    <div className="flex gap-2">
+    <div className="flex items-center gap-2 pl-2">
+      <div className="w-12 shrink-0 font-mono text-sm font-medium text-textTertiary">
+        {isFirst ? 'WHERE' : 'AND'}
+      </div>
       <Select
-        className="w-[160px] flex-shrink-0"
+        className="!w-[200px] shrink-0"
         onChange={(newColumn) => {
           updateFilter((current) => ({ ...current, column: newColumn }));
         }}
@@ -33,7 +40,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
         value={filter.column ?? null}
       />
       <Select
-        className="w-[144px]"
+        className="!w-[144px] shrink-0"
         onChange={(newOperator) => {
           updateFilter((current) =>
             includes(NULL_OPERATORS, newOperator)
@@ -50,6 +57,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
       />
       {'value' in filter && column && !includes(NULL_OPERATORS, filter.operator) && (
         <ColumnField
+          className="!w-[265px] shrink-0"
           column={column}
           hideLabel
           onChange={(newValue) => {
@@ -62,6 +70,13 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
           value={filter.value === undefined ? '' : filter.value}
         />
       )}
+      <Button
+        color="secondary"
+        icon={<Close />}
+        onClick={removeFilter}
+        size="small"
+        type="button"
+      />
     </div>
   );
 };

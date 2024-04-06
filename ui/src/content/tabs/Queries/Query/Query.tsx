@@ -1,6 +1,6 @@
 import { Close } from '@mui/icons-material';
 import classNames from 'classnames';
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Button } from '../../../../shared/components/Button/Button';
 import { InputModes } from './inputModes/InputModes';
@@ -12,6 +12,7 @@ import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
 import { BottomToolbar } from './bottomToolbar/BottomToolbar';
 import { QueryContext, ResultContext } from './Context';
 import { QueriesContext } from '../Context';
+import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 
 export const Query: React.FC = () => {
   const { removeQuery } = useDefinedContext(QueriesContext);
@@ -20,8 +21,11 @@ export const Query: React.FC = () => {
 
   const result = useContext(ResultContext);
 
-  const [inputMode, setInputMode] = useState<InputMode | undefined>(
+  const inputModeStorageKey = `query-${query.id}-inputMode`;
+  const [inputMode, setInputMode] = useStoredState<InputMode | undefined>(
+    inputModeStorageKey,
     !query.firstSelectStatement ? 'editor' : undefined,
+    sessionStorage,
   );
 
   const handleRowCreationRef = React.useRef<(() => void) | null>(null);
