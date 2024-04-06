@@ -6,7 +6,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { getPrimaryKeys } from '../../utils';
 import { Cell } from './Cell/Cell';
 import { SelectionActions } from './SelectionActions/SelectionActions';
-import { useCellSelection } from './useCellSelection';
+import { useSelection } from './useSelection';
 import { QueryContext, ResultContext } from '../Context';
 
 export type TableProps = {
@@ -23,7 +23,7 @@ export const Table: React.FC<TableProps> = (props) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const { handleCellClick, selection, selectionActionsRef, setSelection, tableContentRef } =
-    useCellSelection();
+    useSelection();
 
   const { createChanges, getChangeAtLocation } = useDefinedContext(EditContext);
 

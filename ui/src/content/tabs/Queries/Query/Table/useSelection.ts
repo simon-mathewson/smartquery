@@ -4,7 +4,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 import { ResultContext } from '../Context';
 
-export const useCellSelection = () => {
+export const useSelection = () => {
   const { columns } = useDefinedContext(ResultContext);
 
   const [selection, setSelection] = useState<number[][]>([]);
