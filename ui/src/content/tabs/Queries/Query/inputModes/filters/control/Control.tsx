@@ -27,7 +27,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
 
   return (
     <div className="flex items-center gap-2 pl-2">
-      <div className="w-12 shrink-0 font-mono text-sm font-medium text-textTertiary">
+      <div className="w-12 shrink-0 pl-1 font-mono text-sm font-medium text-textTertiary">
         {isFirst ? 'WHERE' : 'AND'}
       </div>
       <Select
@@ -57,7 +57,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
       />
       {'value' in filter && column && !includes(NULL_OPERATORS, filter.operator) && (
         <ColumnField
-          className="!w-[265px] shrink-0"
+          className="!w-[256px] shrink-0"
           column={column}
           hideLabel
           onChange={(newValue) => {
