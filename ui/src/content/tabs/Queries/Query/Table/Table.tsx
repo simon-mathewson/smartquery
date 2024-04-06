@@ -8,6 +8,7 @@ import { Cell } from './Cell/Cell';
 import { SelectionActions } from './SelectionActions/SelectionActions';
 import { useSelection } from './useSelection';
 import { QueryContext, ResultContext } from '../Context';
+import { useCopyPaste } from './copyPaste/useCopyPaste';
 
 export type TableProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
@@ -20,12 +21,14 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const { columns, rows, table } = useDefinedContext(ResultContext);
 
+  const { createChanges, getChangeAtLocation } = useDefinedContext(EditContext);
+
   const [isEditing, setIsEditing] = useState(false);
 
   const { handleCellClick, selection, selectionActionsRef, setSelection, tableContentRef } =
     useSelection();
 
-  const { createChanges, getChangeAtLocation } = useDefinedContext(EditContext);
+  useCopyPaste(selection);
 
   const tableRef = useRef<HTMLDivElement | null>(null);
 
