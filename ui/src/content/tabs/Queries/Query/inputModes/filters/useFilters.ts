@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '~/content/connections/Context';
-import { getFilters, getWhereAst } from './utils';
+import { getFiltersFromAst, getAstFromFilters } from './utils';
 import NodeSqlParser from 'node-sql-parser';
 import { getParserOptions } from '~/shared/utils/parser';
 import { getLimitAndOffset, setLimitAndOffset } from '../../../utils';
@@ -28,7 +28,7 @@ export const useFilters = () => {
 
       const newStatement = cloneDeep(firstSelectStatement.parsed);
 
-      newStatement.where = getWhereAst({ columns, filters });
+      newStatement.where = getAstFromFilters({ columns, filters });
 
       // Remove offset
       const limitAndOffset = getLimitAndOffset(newStatement);
@@ -56,7 +56,7 @@ export const useFilters = () => {
     }
 
     try {
-      const filters = getFilters(firstSelectStatement.parsed.where);
+      const filters = getFiltersFromAst(firstSelectStatement.parsed.where);
       return filters;
     } catch (error) {
       console.error(error, firstSelectStatement.parsed.where);

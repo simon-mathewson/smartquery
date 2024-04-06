@@ -11,3 +11,5 @@ export const OPERATORS = [
   'NOT LIKE',
   ...NULL_OPERATORS,
 ] as const;
+
+export const LOGICAL_OPERATORS = ['AND', 'OR'] as const;

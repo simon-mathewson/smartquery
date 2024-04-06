@@ -1,10 +1,10 @@
 import { Add, Send } from '@mui/icons-material';
 import { includes } from 'lodash';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { NULL_OPERATORS } from './constants';
 import { FilterControl } from './control/Control';
-import type { Filter, FormFilter } from './types';
+import type { Filter, FormFilter, LogicalOperator } from './types';
 import { useFilters } from './useFilters';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
@@ -21,7 +21,14 @@ export const Filters: React.FC = () => {
     filters,
     sessionStorage,
   );
-  const [isChanged, setIsChanged] = useState(false);
+
+  const isChangedStorageKey = `query-${query.id}-isChanged`;
+  const [isChanged, setIsChanged] = useStoredState(isChangedStorageKey, false, sessionStorage);
+
+  useEffect(() => {
+    if (isChanged) return;
+    setFormFilters(filters);
+  }, [filters, isChanged, setFormFilters]);
 
   const isValid = formFilters.every(
     (filter) =>
@@ -30,10 +37,21 @@ export const Filters: React.FC = () => {
       (includes(NULL_OPERATORS, filter.operator) || 'value' in filter),
   );
 
-  const addFilter = useCallback(() => {
-    setFormFilters([...formFilters, { column: null, operator: '=', value: '' }]);
-    setIsChanged(true);
-  }, [formFilters, setFormFilters]);
+  const addFilter = useCallback(
+    (logicalOperator: LogicalOperator) => {
+      setFormFilters([
+        ...formFilters,
+        {
+          column: null,
+          logicalOperator,
+          operator: '=',
+          value: '',
+        },
+      ]);
+      setIsChanged(true);
+    },
+    [formFilters, setFormFilters, setIsChanged],
+  );
 
   return (
     <form
@@ -76,15 +94,36 @@ export const Filters: React.FC = () => {
           )}
         </div>
       ))}
-      <div>
+      {formFilters.length === 0 && isChanged && (
+        <div className="pl-2">
+          <Button
+            color="primary"
+            disabled={!isValid}
+            icon={<Send />}
+            type="submit"
+            variant="filled"
+          />
+        </div>
+      )}
+      <div className="flex gap-2">
         <Button
           icon={<Add />}
           label={formFilters.length === 0 ? 'WHERE' : 'AND'}
-          onClick={addFilter}
+          onClick={() => addFilter('AND')}
           monospace
           size="small"
           type="button"
         />
+        {formFilters.length > 0 && (
+          <Button
+            icon={<Add />}
+            label="OR"
+            onClick={() => addFilter('OR')}
+            monospace
+            size="small"
+            type="button"
+          />
+        )}
       </div>
     </form>
   );

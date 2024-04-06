@@ -1,8 +1,7 @@
 import type NodeSqlParser from 'node-sql-parser';
 import type { Column } from '~/shared/types';
-import type { Filter, Operator } from './types';
-import { isNotNull } from '~/shared/utils/typescript';
-import { NULL_OPERATORS, OPERATORS } from './constants';
+import type { Filter, LogicalOperator, Operator } from './types';
+import { LOGICAL_OPERATORS, NULL_OPERATORS, OPERATORS } from './constants';
 import { includes } from 'lodash';
 import { assert } from 'ts-essentials';
 
@@ -21,75 +20,84 @@ export const getAstOperator = (operator: Operator, filter: Filter): string => {
   return operator;
 };
 
-export const getWhereAst = (props: { columns: Column[]; filters: Filter[] }) => {
+export const getAstFromFilters = (props: { columns: Column[]; filters: Filter[] }) => {
   const { columns, filters } = props;
 
-  return filters
-    .map((filter) => {
-      const column = columns.find((column) => column.name === filter.column);
-      return !column || !column.isVisible ? null : filter;
-    })
-    .filter(isNotNull)
-    .reduce<NodeSqlParser.Expr | null>((all, filter) => {
-      const valueExpression = (() => {
-        if (includes(NULL_OPERATORS, filter.operator)) {
-          return {
-            type: 'null',
-            value: null,
-          };
-        }
+  return filters.reduce<NodeSqlParser.Expr | null>((all, filter) => {
+    const column = columns.find((column) => column.name === filter.column);
 
-        assert('value' in filter);
+    if (!column || !column.isVisible) {
+      return all;
+    }
 
-        if (filter.value === null) {
-          return {
-            type: 'null',
-            value: null,
-          };
-        }
-
+    const valueExpression = (() => {
+      if (includes(NULL_OPERATORS, filter.operator)) {
         return {
-          type: 'single_quote_string',
-          value: filter.value,
-        };
-      })();
-
-      const filterExpression: NodeSqlParser.Expr = {
-        type: 'binary_expr',
-        operator: getAstOperator(filter.operator, filter),
-        left: {
-          type: 'column_ref',
-          table: null,
-          column: filter.column,
-        },
-        right: valueExpression,
-      };
-
-      if (all?.type === 'binary_expr') {
-        return {
-          type: 'binary_expr',
-          operator: 'AND',
-          left: all,
-          right: filterExpression,
+          type: 'null',
+          value: null,
         };
       }
 
-      return filterExpression;
-    }, null);
+      assert('value' in filter);
+
+      if (filter.value === null) {
+        return {
+          type: 'null',
+          value: null,
+        };
+      }
+
+      if (column.dataType === 'boolean') {
+        return {
+          type: 'bool',
+          value: filter.value.toLowerCase() === 'true',
+        };
+      }
+
+      return {
+        type: 'single_quote_string',
+        value: filter.value,
+      };
+    })();
+
+    const filterExpression: NodeSqlParser.Expr = {
+      type: 'binary_expr',
+      operator: getAstOperator(filter.operator, filter),
+      left: {
+        type: 'column_ref',
+        table: null,
+        column: filter.column,
+      },
+      right: valueExpression,
+    };
+
+    if (all?.type === 'binary_expr') {
+      return {
+        type: 'binary_expr',
+        operator: filter.logicalOperator,
+        left: all,
+        right: filterExpression,
+      };
+    }
+
+    return filterExpression;
+  }, null);
 };
 
-export const getFilter = (
+export const getFilterFromAst = (
   expression: Extract<NodeSqlParser.Expr, { operator: string }>,
+  logicalOperator: LogicalOperator,
 ): Filter => {
   const { operator } = expression;
 
-  if (
-    (expression.left.type !== 'column_ref' && expression.left.type !== 'double_quote_string') ||
-    expression.right.type === 'param' ||
-    expression.right.type === 'column_ref' ||
-    !includes(OPERATORS, operator)
-  ) {
-    throw new Error('Unsupported filter');
+  if (expression.left.type !== 'column_ref' && expression.left.type !== 'double_quote_string') {
+    throw new Error(`Left expression is not column: ${JSON.stringify(expression.left)}`);
+  }
+  if (expression.right.type === 'param' || expression.right.type === 'column_ref') {
+    throw new Error(`Right expression is not value: ${JSON.stringify(expression.right)}`);
+  }
+  if (!includes(OPERATORS, operator)) {
+    throw new Error(`Operator is not supported: ${JSON.stringify(operator)}`);
   }
 
   const left = expression.left as NodeSqlParser.ColumnRef | NodeSqlParser.Value;
@@ -99,42 +107,51 @@ export const getFilter = (
 
   if (operator === 'IS') {
     if (right.type !== 'null' || right.value !== null) {
-      throw new Error('Unsupported filter');
+      throw new Error(`IS operator used with non-null value: ${JSON.stringify(right)}`);
     }
 
-    return { column, operator: 'IS NULL' };
+    return { column, logicalOperator, operator: 'IS NULL' };
   }
 
   if (operator === 'IS NOT') {
     if (right.type !== 'null' || right.value !== null) {
-      throw new Error('Unsupported filter');
+      throw new Error(`IS NOT operator used with non-null value: ${JSON.stringify(right)}`);
     }
 
-    return { column, operator: 'IS NOT NULL' };
+    return { column, logicalOperator, operator: 'IS NOT NULL' };
   }
-
-  if (right.type !== 'single_quote_string') {
-    throw new Error('Unsupported filter');
+  if (!includes(['single_quote_string', 'bool'], right.type)) {
+    throw new Error(
+      `Right expression is not single_quote_string or bool: ${JSON.stringify(right)}`,
+    );
   }
 
   return {
     column,
+    logicalOperator,
     operator: operator as Operator,
     value: String(right.value),
   };
 };
 
-export const getFilters = (where: NodeSqlParser.Expr): Filter[] => {
+export const getFiltersFromAst = (
+  where: NodeSqlParser.Expr,
+  parentLogicalOperator: LogicalOperator = 'AND',
+): Filter[] => {
   if (where.type !== 'binary_expr') {
-    throw new Error('Unsupported filter');
+    throw new Error('Filter is not a binary_expr');
   }
 
-  if (where.operator === 'AND') {
+  if (includes(LOGICAL_OPERATORS, where.operator)) {
+    const logicalOperator = where.operator as LogicalOperator;
     const left = where.left as NodeSqlParser.Expr;
     const right = where.right as NodeSqlParser.Expr;
 
-    return [...getFilters(left), ...getFilters(right)];
+    return [
+      ...getFiltersFromAst(left, logicalOperator),
+      ...getFiltersFromAst(right, logicalOperator),
+    ];
   }
 
-  return [getFilter(where)];
+  return [getFilterFromAst(where, parentLogicalOperator)];
 };

@@ -7,15 +7,17 @@ export type Operator = (typeof OPERATORS)[number] | NullOperator;
 
 export type OperatorWithValue = Exclude<Operator, NullOperator>;
 
-export type FilterWithValue = {
-  column: string;
-  operator: OperatorWithValue;
-  value: Value;
-};
+export type LogicalOperator = 'AND' | 'OR';
 
 export type FilterWithoutValue = {
   column: string;
+  logicalOperator: LogicalOperator;
   operator: NullOperator;
+};
+
+export type FilterWithValue = Omit<FilterWithoutValue, 'operator'> & {
+  operator: OperatorWithValue;
+  value: Value;
 };
 
 export type Filter = FilterWithValue | FilterWithoutValue;

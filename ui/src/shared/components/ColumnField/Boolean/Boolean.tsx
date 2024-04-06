@@ -24,7 +24,7 @@ export const BooleanField: React.FC<BooleanFieldProps> = (props) => {
         { button: { label: 'TRUE', monospace: true }, value: true },
         { button: { label: 'FALSE', monospace: true }, value: false },
       ]}
-      value={isNil(value) ? undefined : value === 'TRUE'}
+      value={isNil(value) ? undefined : value.toLowerCase() === 'true' || value === '1'}
     />
   );
 };
