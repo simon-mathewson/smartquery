@@ -5,7 +5,7 @@ export type AddQueryOptions = {
   sql?: string;
 };
 
-export type FirstSelectStatement = {
+export type Select = {
   index: number;
   parsed: NodeSqlParser.Select;
   table: string;

@@ -1,4 +1,4 @@
-import type { FirstSelectStatement } from '~/content/tabs/Queries/types';
+import type { Select } from '~/content/tabs/Queries/types';
 import type { Prisma } from '../../../link/prisma';
 import type { DataType } from './dataTypes/types';
 import type { inferRouterInputs } from '@trpc/server';
@@ -31,7 +31,7 @@ export type Column = {
 
 export type Query = {
   id: string;
-  firstSelectStatement: FirstSelectStatement | null;
+  select: Select | null;
   showEditor: boolean;
   sql: string | null;
   statements: string[] | null;

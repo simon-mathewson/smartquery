@@ -24,7 +24,7 @@ export const Query: React.FC = () => {
   const inputModeStorageKey = `query-${query.id}-inputMode`;
   const [inputMode, setInputMode] = useStoredState<InputMode | undefined>(
     inputModeStorageKey,
-    !query.firstSelectStatement ? 'editor' : undefined,
+    !query.select ? 'editor' : undefined,
     sessionStorage,
   );
 

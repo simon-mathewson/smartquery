@@ -17,16 +17,16 @@ export const useFilters = () => {
 
   const {
     query,
-    query: { firstSelectStatement },
+    query: { select },
   } = useDefinedContext(QueryContext);
 
   const { columns } = useDefinedContext(ResultContext);
 
   const applyFilters = useCallback(
     async (filters: Filter[]) => {
-      if (!activeConnection || !columns || !firstSelectStatement) return;
+      if (!activeConnection || !columns || !select) return;
 
-      const newStatement = cloneDeep(firstSelectStatement.parsed);
+      const newStatement = cloneDeep(select.parsed);
 
       newStatement.where = getAstFromFilters({ columns, filters });
 
@@ -42,27 +42,22 @@ export const useFilters = () => {
       );
       await updateQuery({ id: query.id, run: true, sql: newSql });
     },
-    [activeConnection, columns, firstSelectStatement, query.id, updateQuery],
+    [activeConnection, columns, select, query.id, updateQuery],
   );
 
   const filters = useMemo<Filter[]>(() => {
-    if (
-      !activeConnection ||
-      !columns ||
-      !firstSelectStatement ||
-      firstSelectStatement.parsed.where?.type !== 'binary_expr'
-    ) {
+    if (!activeConnection || !columns || !select || select.parsed.where?.type !== 'binary_expr') {
       return [];
     }
 
     try {
-      const filters = getFiltersFromAst(firstSelectStatement.parsed.where);
+      const filters = getFiltersFromAst(select.parsed.where);
       return filters;
     } catch (error) {
-      console.error(error, firstSelectStatement.parsed.where);
+      console.error(error, select.parsed.where);
       return [];
     }
-  }, [activeConnection, columns, firstSelectStatement]);
+  }, [activeConnection, columns, select]);
 
   return useMemo(() => ({ applyFilters, filters }), [applyFilters, filters]);
 };

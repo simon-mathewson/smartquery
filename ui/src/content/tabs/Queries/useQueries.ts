@@ -50,20 +50,20 @@ export const useQueries = () => {
       const query = queriesRef.current.find((q) => q.id === id);
       assert(query);
 
-      const { firstSelectStatement, statements } = query;
-      assert(firstSelectStatement);
+      const { select, statements } = query;
+      assert(select);
       assert(statements?.length === 1);
 
       const selectStatement = statements[0];
 
       const columnsStatement = getColumnsStatement({
         connection: activeConnection,
-        table: firstSelectStatement.table,
+        table: select.table,
       });
 
       const totalRowsStatement = getTotalRowsStatement({
         connection: activeConnection,
-        firstSelectStatement: firstSelectStatement,
+        select,
       });
 
       const statementsWithColumns = [selectStatement, columnsStatement, totalRowsStatement].filter(
@@ -75,7 +75,7 @@ export const useQueries = () => {
         statements: statementsWithColumns,
       });
 
-      const firstSelectResult = firstSelectStatement ? results[firstSelectStatement.index] : null;
+      const firstSelectResult = select ? results[select.index] : null;
 
       const columnsIndex = columnsStatement
         ? statementsWithColumns.indexOf(columnsStatement)
@@ -90,7 +90,7 @@ export const useQueries = () => {
       const columns = columnsResult
         ? getColumnsFromResult({
             connection: activeConnection,
-            parsedStatement: firstSelectStatement!.parsed,
+            parsedStatement: select!.parsed,
             result: columnsResult,
           })
         : null;
@@ -118,7 +118,7 @@ export const useQueries = () => {
           [query.id]: {
             columns,
             rows,
-            table: firstSelectStatement!.table,
+            table: select!.table,
             totalRows,
           },
         }));
@@ -142,7 +142,7 @@ export const useQueries = () => {
       const query = queriesRef.current.find((q) => q.id === id);
       assert(query);
 
-      const { firstSelectStatement, statements } = query;
+      const { select, statements } = query;
 
       if (!statements) {
         throw new Error('No statements');
@@ -150,7 +150,7 @@ export const useQueries = () => {
 
       const { clientId } = activeConnection;
 
-      if (firstSelectStatement && statements.length === 1) {
+      if (select && statements.length === 1) {
         return runSelectQuery(id);
       }
 

@@ -14,28 +14,28 @@ export const usePagination = () => {
 
   const {
     query,
-    query: { firstSelectStatement },
+    query: { select },
   } = useDefinedContext(QueryContext);
 
   const { totalRows } = useDefinedContext(ResultContext);
 
   const limitAndOffset = useMemo(
-    () => (firstSelectStatement ? getLimitAndOffset(firstSelectStatement.parsed) : null),
-    [firstSelectStatement],
+    () => (select ? getLimitAndOffset(select.parsed) : null),
+    [select],
   );
 
   const updateQueryOffset = useCallback(
     async (newOffset: number) => {
-      if (!limitAndOffset?.limit || !firstSelectStatement || !activeConnection) return;
+      if (!limitAndOffset?.limit || !select || !activeConnection) return;
 
-      const newQuery = cloneDeep(firstSelectStatement.parsed);
+      const newQuery = cloneDeep(select.parsed);
       setLimitAndOffset(newQuery, limitAndOffset.limit, newOffset);
 
       const sql = sqlParser.sqlify(newQuery, getParserOptions(activeConnection.engine));
 
       await updateQuery({ id: query.id, run: true, sql });
     },
-    [activeConnection, firstSelectStatement, limitAndOffset?.limit, query.id, updateQuery],
+    [activeConnection, select, limitAndOffset?.limit, query.id, updateQuery],
   );
 
   const next = useCallback(async () => {

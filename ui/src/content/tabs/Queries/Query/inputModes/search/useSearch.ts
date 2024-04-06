@@ -17,16 +17,16 @@ export const useSearch = () => {
 
   const {
     query,
-    query: { firstSelectStatement },
+    query: { select },
   } = useDefinedContext(QueryContext);
 
   const { columns } = useDefinedContext(ResultContext);
 
   const search = useCallback(
     async (searchValue: string) => {
-      if (!activeConnection || !columns || !firstSelectStatement) return;
+      if (!activeConnection || !columns || !select) return;
 
-      const newStatement = cloneDeep(firstSelectStatement.parsed);
+      const newStatement = cloneDeep(select.parsed);
 
       newStatement.where = searchValue
         ? getWhere({
@@ -48,11 +48,11 @@ export const useSearch = () => {
       );
       await updateQuery({ id: query.id, run: true, sql: newSql });
     },
-    [activeConnection, columns, firstSelectStatement, query.id, updateQuery],
+    [activeConnection, columns, select, query.id, updateQuery],
   );
 
   const searchValue = useMemo(() => {
-    if (!activeConnection || !columns || !firstSelectStatement) return undefined;
+    if (!activeConnection || !columns || !select) return undefined;
 
     const searchWhere = getWhere({
       columns,
@@ -63,7 +63,7 @@ export const useSearch = () => {
 
     const searchValues: string[] = [];
 
-    const hasSearchStructure = isEqualWith(firstSelectStatement.parsed.where, searchWhere, (a) => {
+    const hasSearchStructure = isEqualWith(select.parsed.where, searchWhere, (a) => {
       if (get(a, 'type') === 'binary_expr' && get(a, 'operator') === 'LIKE') {
         if (activeConnection.engine === 'postgresql') {
           if (get(a, 'right.type') === 'function' && get(a, 'right.name') === 'LOWER') {
@@ -89,7 +89,7 @@ export const useSearch = () => {
 
     const areAllSearchValuesEqual = searchValues.every((value) => value === searchValues[0]);
     return areAllSearchValuesEqual ? searchValues[0] : undefined;
-  }, [activeConnection, columns, firstSelectStatement]);
+  }, [activeConnection, columns, select]);
 
   return useMemo(() => ({ search, searchValue }), [search, searchValue]);
 };

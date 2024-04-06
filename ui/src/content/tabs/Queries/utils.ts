@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import type NodeSqlParser from 'node-sql-parser';
 import type { Column, PrismaValue, Query, Value, Row } from '~/shared/types';
 import { sortBy, uniq } from 'lodash';
-import type { AddQueryOptions, FirstSelectStatement } from './types';
+import type { AddQueryOptions, Select } from './types';
 import * as uuid from 'uuid';
 import type { Connection } from '~/shared/types';
 import { isTimeType } from '~/shared/dataTypes/utils';
@@ -10,7 +10,6 @@ import { Decimal } from 'decimal.js';
 import type { DataType } from '~/shared/dataTypes/types';
 import { parseStatements } from '~/shared/utils/sql';
 import { getParsedStatement, getParserOptions, sqlParser } from '~/shared/utils/parser';
-import type { Select } from 'node-sql-parser';
 
 export const getPrimaryKeys = (columns: Column[], rows: Row[], rowIndex: number) => {
   const primaryKeyColumns = columns.filter((column) => column.isPrimaryKey);
@@ -29,7 +28,7 @@ export const getPrimaryKeys = (columns: Column[], rows: Row[], rowIndex: number)
   }));
 };
 
-export const getLimitAndOffset = (parsedQuery: Select) => {
+export const getLimitAndOffset = (parsedQuery: NodeSqlParser.Select) => {
   if (
     !parsedQuery?.limit ||
     (parsedQuery.limit.seperator === 'offset' && parsedQuery.limit.value.length < 2)
@@ -46,7 +45,11 @@ export const getLimitAndOffset = (parsedQuery: Select) => {
   };
 };
 
-export const setLimitAndOffset = (parsedQuery: Select, limit: number, offset?: number) => {
+export const setLimitAndOffset = (
+  parsedQuery: NodeSqlParser.Select,
+  limit: number,
+  offset?: number,
+) => {
   const value = [{ type: 'number', value: limit }];
 
   if (offset !== undefined) {
@@ -60,38 +63,35 @@ export const parseQuery = (props: {
   engine: Connection['engine'];
   sql: string;
 }): {
-  firstSelectStatement: FirstSelectStatement | null;
+  select: Select | null;
   statements: string[] | null;
 } => {
   const { engine, sql } = props;
 
   const statements = parseStatements(sql);
 
-  const firstSelectStatement = statements.reduce<FirstSelectStatement | null>(
-    (first, statement, index) => {
-      if (first) return first;
+  const select = statements.reduce<Select | null>((first, statement, index) => {
+    if (first) return first;
 
-      const parsed = getParsedStatement({ engine, statement });
+    const parsed = getParsedStatement({ engine, statement });
 
-      if (
-        !parsed ||
-        parsed.type !== 'select' ||
-        parsed.from?.length !== 1 ||
-        parsed.columns.some((column) => column.expr.type !== 'column_ref' || column.as !== null)
-      ) {
-        return null;
-      }
+    if (
+      !parsed ||
+      parsed.type !== 'select' ||
+      parsed.from?.length !== 1 ||
+      parsed.columns.some((column) => column.expr.type !== 'column_ref' || column.as !== null)
+    ) {
+      return null;
+    }
 
-      const table = parsed.from[0].table;
-      if (!table) return null;
+    const table = parsed.from[0].table;
+    if (!table) return null;
 
-      return { index, parsed, table };
-    },
-    null,
-  );
+    return { index, parsed, table };
+  }, null);
 
   return {
-    firstSelectStatement,
+    select,
     statements,
   };
 };
@@ -109,7 +109,7 @@ export const getNewQuery = (props: {
     id: uuid.v4(),
     showEditor: showEditor === true,
     sql: sql ?? null,
-    ...(sql ? parseQuery({ engine, sql }) : { firstSelectStatement: null, statements: null }),
+    ...(sql ? parseQuery({ engine, sql }) : { select: null, statements: null }),
   } satisfies Query;
 };
 
@@ -255,15 +255,12 @@ export const convertPrismaValue = (value: PrismaValue, dataType?: DataType): Val
   return String(value);
 };
 
-export const getTotalRowsStatement = (props: {
-  connection: Connection;
-  firstSelectStatement: FirstSelectStatement;
-}) => {
-  const { connection, firstSelectStatement } = props;
+export const getTotalRowsStatement = (props: { connection: Connection; select: Select }) => {
+  const { connection, select } = props;
 
-  if (!firstSelectStatement.parsed.limit) return null;
+  if (!select.parsed.limit) return null;
 
-  const totalQuery = cloneDeep(firstSelectStatement.parsed);
+  const totalQuery = cloneDeep(select.parsed);
 
   totalQuery.limit = null;
   totalQuery.columns = [
