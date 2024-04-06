@@ -232,9 +232,11 @@ export const useQueries = () => {
       );
 
       if (run) {
-        setTimeout(() => {
-          void runQuery(id);
-        });
+        return new Promise<void>((resolve) =>
+          setTimeout(() => {
+            resolve(runQuery(id));
+          }),
+        );
       }
     },
     [activeConnection, runQuery, setQueries],
