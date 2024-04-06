@@ -1,8 +1,8 @@
 import type NodeSqlParser from 'node-sql-parser';
 import type { Column } from '~/shared/types';
-import type { Filter, FilterWithValue, Operator } from './types';
+import type { Filter, Operator } from './types';
 import { isNotNull } from '~/shared/utils/typescript';
-import { LIST_OPERATORS, NULL_OPERATORS, OPERATORS } from './constants';
+import { NULL_OPERATORS, OPERATORS } from './constants';
 import { includes } from 'lodash';
 import { assert } from 'ts-essentials';
 
@@ -36,17 +36,6 @@ export const getWhereAst = (props: { columns: Column[]; filters: Filter[] }) => 
           return {
             type: 'null',
             value: null,
-          };
-        }
-
-        if (includes(LIST_OPERATORS, filter.operator)) {
-          return {
-            type: 'expr_list',
-            value:
-              (filter as FilterWithValue).value?.split(',').map((value) => ({
-                type: 'single_quote_string',
-                value: value.trim(),
-              })) ?? [],
           };
         }
 
@@ -122,26 +111,6 @@ export const getFilter = (
     }
 
     return { column, operator: 'IS NOT NULL' };
-  }
-
-  if (operator === 'IN' || operator === 'NOT IN') {
-    if (right.type !== 'expr_list') {
-      throw new Error('Unsupported filter');
-    }
-
-    const values = right.value.map((value: { type: string; value: string | number }) => {
-      if (value.type !== 'single_quote_string') {
-        throw new Error('Unsupported filter');
-      }
-
-      return `'${value.value as string}'`;
-    });
-
-    return {
-      column,
-      operator,
-      value: `${values.join(', ')}`,
-    };
   }
 
   if (right.type !== 'single_quote_string') {
