@@ -15,7 +15,7 @@ import { QueriesContext } from '../Context';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 
 export const Query: React.FC = () => {
-  const { removeQuery, runQuery } = useDefinedContext(QueriesContext);
+  const { removeQuery, runSelectQuery } = useDefinedContext(QueriesContext);
 
   const { columnIndex, query, rowIndex } = useDefinedContext(QueryContext);
 
@@ -52,7 +52,9 @@ export const Query: React.FC = () => {
         }
         right={
           <>
-            {result && <Button icon={<Refresh />} onClick={() => runQuery(query.id)} />}
+            {result && query.select && (
+              <Button icon={<Refresh />} onClick={() => runSelectQuery(query.id)} />
+            )}
             <Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />
           </>
         }

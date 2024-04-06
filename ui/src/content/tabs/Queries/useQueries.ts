@@ -66,13 +66,13 @@ export const useQueries = () => {
         select,
       });
 
-      const statementsWithColumns = [selectStatement, columnsStatement, totalRowsStatement].filter(
+      const statementsWithMetadata = [selectStatement, columnsStatement, totalRowsStatement].filter(
         isNotNull,
       );
 
       const results = await trpc.sendQuery.mutate({
         clientId: activeConnection.clientId,
-        statements: statementsWithColumns,
+        statements: statementsWithMetadata,
       });
 
       const [firstSelectResult, columnsResult, totalRowsResult] = results;
@@ -259,8 +259,9 @@ export const useQueries = () => {
       queryResults,
       removeQuery,
       runQuery,
+      runSelectQuery,
       updateQuery,
     }),
-    [addQuery, queryResults, removeQuery, runQuery, updateQuery],
+    [addQuery, queryResults, removeQuery, runQuery, runSelectQuery, updateQuery],
   );
 };

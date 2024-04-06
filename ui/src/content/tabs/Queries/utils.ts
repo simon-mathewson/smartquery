@@ -264,8 +264,6 @@ export const convertPrismaValue = (value: PrismaValue, dataType?: DataType): Val
 export const getTotalRowsStatement = (props: { connection: Connection; select: Select }) => {
   const { connection, select } = props;
 
-  if (!select.parsed.limit) return null;
-
   const totalQuery = cloneDeep(select.parsed);
 
   totalQuery.limit = null;
