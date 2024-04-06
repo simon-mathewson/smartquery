@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 export type SelectProps = {
   className?: string;
+  monospace?: boolean;
   placeholder?: string;
   onChange: (value: string) => void;
   options: Array<{ label: string; value: string }>;
@@ -12,7 +13,7 @@ export type SelectProps = {
 };
 
 export const Select: React.FC<SelectProps> = (props) => {
-  const { className, onChange, options, placeholder, value: selectedValue } = props;
+  const { className, monospace, onChange, options, placeholder, value: selectedValue } = props;
 
   const triggerRef = useRef<HTMLDivElement | null>(null);
 
@@ -33,6 +34,7 @@ export const Select: React.FC<SelectProps> = (props) => {
             'overflow-hidden text-ellipsis text-sm font-medium text-textSecondary',
             {
               '!text-textTertiary': !selectedOption,
+              'font-mono': monospace,
             },
           )}
         >
@@ -49,6 +51,7 @@ export const Select: React.FC<SelectProps> = (props) => {
                 {
                   'bg-primary text-white': value === selectedValue,
                   'hover:bg-secondaryHighlight': value !== selectedValue,
+                  'font-mono': monospace,
                 },
               )}
               key={label}

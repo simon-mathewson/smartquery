@@ -41,6 +41,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
       />
       <Select
         className="!w-[144px] shrink-0"
+        monospace
         onChange={(newOperator) => {
           updateFilter((current) =>
             includes(NULL_OPERATORS, newOperator)

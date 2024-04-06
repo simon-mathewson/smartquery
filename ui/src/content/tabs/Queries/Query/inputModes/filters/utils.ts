@@ -120,9 +120,9 @@ export const getFilterFromAst = (
 
     return { column, logicalOperator, operator: 'IS NOT NULL' };
   }
-  if (!includes(['single_quote_string', 'bool'], right.type)) {
+  if (!includes(['single_quote_string', 'bool', 'number'], right.type)) {
     throw new Error(
-      `Right expression is not single_quote_string or bool: ${JSON.stringify(right)}`,
+      `Right expression is not single_quote_string or bool or number: ${JSON.stringify(right)}`,
     );
   }
 
