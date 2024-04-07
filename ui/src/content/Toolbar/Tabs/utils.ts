@@ -10,5 +10,5 @@ export const getTabTitle = (tab: Tab, queryResults: Record<string, QueryResult>)
 
   const result = queryResults[queries[0].id];
 
-  return getQueryTitle(result);
+  return getQueryTitle(queries[0], result);
 };

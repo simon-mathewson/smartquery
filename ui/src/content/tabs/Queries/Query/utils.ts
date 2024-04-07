@@ -1,3 +1,4 @@
-import type { QueryResult } from '~/shared/types';
+import type { Query, QueryResult } from '~/shared/types';
 
-export const getQueryTitle = (result: QueryResult | null) => result?.table ?? 'New query';
+export const getQueryTitle = (query: Query, result: QueryResult | null) =>
+  query.select?.table ?? result?.table ?? 'New query';

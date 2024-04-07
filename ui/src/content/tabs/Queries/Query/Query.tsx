@@ -1,4 +1,5 @@
 import { Close, Refresh } from '@mui/icons-material';
+import CircularProgress from '@mui/material/CircularProgress';
 import classNames from 'classnames';
 import React, { useContext } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
@@ -15,7 +16,7 @@ import { QueriesContext } from '../Context';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 
 export const Query: React.FC = () => {
-  const { removeQuery, runSelectQuery } = useDefinedContext(QueriesContext);
+  const { removeQuery, runQuery } = useDefinedContext(QueriesContext);
 
   const { columnIndex, query, rowIndex } = useDefinedContext(QueryContext);
 
@@ -47,13 +48,21 @@ export const Query: React.FC = () => {
         }
         middle={
           <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-            {getQueryTitle(result)}
+            {getQueryTitle(query, result)}
           </div>
         }
         right={
           <>
             {result && query.select && (
-              <Button icon={<Refresh />} onClick={() => runSelectQuery(query.id)} />
+              <div className="relative h-fit w-fit">
+                <Button icon={<Refresh />} onClick={() => runQuery(query.id)} />
+                {query.isLoading && (
+                  <CircularProgress
+                    className="absolute left-[4px] top-[4px] !text-primary"
+                    size={28}
+                  />
+                )}
+              </div>
             )}
             <Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />
           </>
@@ -65,6 +74,11 @@ export const Query: React.FC = () => {
           <Table handleRowCreationRef={handleRowCreationRef} />
           <BottomToolbar handleRowCreationRef={handleRowCreationRef} />
         </>
+      )}
+      {!result && query.isLoading && (
+        <div className="flex h-full w-full items-center justify-center py-8">
+          <CircularProgress className="!text-primary" />
+        </div>
       )}
     </div>
   );

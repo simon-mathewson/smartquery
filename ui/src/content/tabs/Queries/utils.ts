@@ -111,6 +111,7 @@ export const getNewQuery = (props: {
 
   return {
     id: uuid.v4(),
+    isLoading: false,
     showEditor: showEditor === true,
     sql: sql ?? null,
     ...(sql ? parseQuery({ engine, sql }) : { select: null, statements: null }),

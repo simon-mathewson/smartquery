@@ -40,6 +40,28 @@ export const useQueries = () => {
     [setTabs, activeTab?.id],
   );
 
+  const onStartLoading = useCallback(
+    (id: string) => {
+      setQueries((currentQueries) =>
+        currentQueries.map((currentColumn) =>
+          currentColumn.map((q) => (q.id === id ? { ...q, isLoading: true } : q)),
+        ),
+      );
+    },
+    [setQueries],
+  );
+
+  const onFinishLoading = useCallback(
+    (id: string) => {
+      setQueries((currentQueries) =>
+        currentQueries.map((currentColumn) =>
+          currentColumn.map((q) => (q.id === id ? { ...q, isLoading: false } : q)),
+        ),
+      );
+    },
+    [setQueries],
+  );
+
   const runSelectQuery = useCallback(
     async (id: string) => {
       if (!activeConnection) {
@@ -69,10 +91,14 @@ export const useQueries = () => {
         isNotNull,
       );
 
+      onStartLoading(id);
+
       const results = await trpc.sendQuery.mutate({
         clientId: activeConnection.clientId,
         statements: statementsWithMetadata,
       });
+
+      onFinishLoading(id);
 
       const [firstSelectResult, columnsResult, totalRowsResult] = results;
 
@@ -103,7 +129,7 @@ export const useQueries = () => {
         },
       }));
     },
-    [activeConnection],
+    [activeConnection, onFinishLoading, onStartLoading],
   );
 
   const runQuery = useCallback(
@@ -125,7 +151,11 @@ export const useQueries = () => {
         return runSelectQuery(id);
       }
 
+      onStartLoading(id);
+
       const results = await trpc.sendQuery.mutate({ clientId, statements });
+
+      onFinishLoading(id);
 
       const rawRows = results.find((result) => result.length) ?? null;
       const rows = rawRows
@@ -152,7 +182,7 @@ export const useQueries = () => {
         });
       }
     },
-    [activeConnection, runSelectQuery],
+    [activeConnection, onFinishLoading, onStartLoading, runSelectQuery],
   );
 
   const addQuery = useCallback(
@@ -248,10 +278,11 @@ export const useQueries = () => {
 
     activeTab.queries.flat().forEach((query) => {
       if (query.select) {
-        runSelectQuery(query.id);
+        runQuery(query.id);
       }
     });
-  }, [activeTab, runSelectQuery]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab?.id, runQuery]);
 
   // Refetch select queries when active tab changes
   useEffect(() => {
@@ -266,17 +297,8 @@ export const useQueries = () => {
       refetchActiveTabSelectQueries,
       removeQuery,
       runQuery,
-      runSelectQuery,
       updateQuery,
     }),
-    [
-      addQuery,
-      queryResults,
-      refetchActiveTabSelectQueries,
-      removeQuery,
-      runQuery,
-      runSelectQuery,
-      updateQuery,
-    ],
+    [addQuery, queryResults, refetchActiveTabSelectQueries, removeQuery, runQuery, updateQuery],
   );
 };

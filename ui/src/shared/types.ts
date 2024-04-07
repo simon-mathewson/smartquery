@@ -30,6 +30,7 @@ export type Column = {
 
 export type Query = {
   id: string;
+  isLoading: boolean;
   select: Select | null;
   showEditor: boolean;
   sql: string | null;
