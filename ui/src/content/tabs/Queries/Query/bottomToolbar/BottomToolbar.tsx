@@ -30,9 +30,11 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
     <ThreeColumns
       left={<Add handleRowCreationRef={handleRowCreationRef} />}
       middle={
-        <div className="text-xs text-textSecondary">
-          {totalRows ? paginationText : rows.length} rows
-        </div>
+        ((totalRows !== undefined && totalRows > 0) || rows.length > 0) && (
+          <div className="text-xs text-textSecondary">
+            {totalRows ? paginationText : rows.length} rows
+          </div>
+        )
       }
       right={
         limit !== undefined &&
