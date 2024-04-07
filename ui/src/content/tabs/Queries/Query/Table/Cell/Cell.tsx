@@ -6,12 +6,17 @@ import { isDateTimeType, isNumberType, isTimeType } from '~/shared/dataTypes/uti
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { QueryContext } from '../../Context';
 import type { CreateValue } from '~/content/edit/types';
+import type { useSorting } from '../sorting/useSorting';
+import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 
 export type CellProps = {
   column: Column | string;
   value: Value | CreateValue;
 } & XOR<
-  { type: 'header' },
+  {
+    sorting: ReturnType<typeof useSorting>;
+    type: 'header';
+  },
   {
     columnIndex: number;
     isChanged?: boolean;
@@ -38,6 +43,7 @@ export const Cell: React.FC<CellProps> = (props) => {
     onClick,
     rowIndex,
     selection,
+    sorting,
     type,
     value,
   } = props;
@@ -52,7 +58,7 @@ export const Cell: React.FC<CellProps> = (props) => {
   return (
     <div
       className={classNames(
-        'flex h-8 max-w-[240px] items-center px-4 transition-colors duration-100',
+        'group flex h-8 max-w-[240px] items-center justify-between gap-2 px-4 transition-colors duration-100',
         (() => {
           if (type === 'header') return undefined;
 
@@ -81,6 +87,7 @@ export const Cell: React.FC<CellProps> = (props) => {
         })(),
         {
           'sticky top-0 z-30 h-10 border-b bg-card': type === 'header',
+          'cursor-pointer': query.select,
           '-mt-[1px] border-y py-2': type === 'body',
           'z-10 border-y-whiteHighlightHover': type === 'body' && selected,
           'border-y-border':
@@ -89,23 +96,30 @@ export const Cell: React.FC<CellProps> = (props) => {
             type === 'body' && !selected && (isChanged || isDeleted || isCreated),
         },
       )}
-      {...(type === 'body' && {
-        'data-cell-column': String(columnIndex),
-        'data-cell-row': String(rowIndex),
-        onClick: (event) => onClick?.(event, rowIndex, columnIndex),
-        onMouseEnter: () =>
-          document
-            .querySelectorAll(`[data-query="${query.id}"] [data-cell-row="${rowIndex}"]`)
-            .forEach((el) => {
-              (el as HTMLElement).dataset.rowHover = 'true';
-            }),
-        onMouseLeave: () =>
-          document
-            .querySelectorAll(`[data-query="${query.id}"] [data-cell-row="${rowIndex}"]`)
-            .forEach((el) => {
-              (el as HTMLElement).dataset.rowHover = 'false';
-            }),
-      })}
+      {...(type === 'body'
+        ? {
+            'data-cell-column': String(columnIndex),
+            'data-cell-row': String(rowIndex),
+            onClick: (event) => onClick?.(event, rowIndex, columnIndex),
+            onMouseEnter: () =>
+              document
+                .querySelectorAll(`[data-query="${query.id}"] [data-cell-row="${rowIndex}"]`)
+                .forEach((el) => {
+                  (el as HTMLElement).dataset.rowHover = 'true';
+                }),
+            onMouseLeave: () =>
+              document
+                .querySelectorAll(`[data-query="${query.id}"] [data-cell-row="${rowIndex}"]`)
+                .forEach((el) => {
+                  (el as HTMLElement).dataset.rowHover = 'false';
+                }),
+          }
+        : {
+            onClick: () => {
+              if (!query.select) return;
+              sorting.toggleSort((column as Column).name);
+            },
+          })}
     >
       <div
         className={classNames('overflow-hidden text-ellipsis whitespace-nowrap text-xs', {
@@ -132,6 +146,21 @@ export const Cell: React.FC<CellProps> = (props) => {
           return value;
         })()}
       </div>
+      {query.select && sorting && (
+        <>
+          {sorting.sortedColumn?.columnName !== (column as Column).name ||
+          sorting.sortedColumn.direction === 'ASC' ? (
+            <ArrowUpward
+              className={classNames('!h-4 !w-4 text-primary', {
+                'opacity-0 group-hover:opacity-50':
+                  sorting.sortedColumn?.columnName !== (column as Column).name,
+              })}
+            />
+          ) : (
+            <ArrowDownward className="!h-4 !w-4 text-primary" />
+          )}
+        </>
+      )}
     </div>
   );
 };

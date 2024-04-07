@@ -265,6 +265,7 @@ export const getTotalRowsStatement = (props: { connection: Connection; select: S
   const totalQuery = cloneDeep(select.parsed);
 
   totalQuery.limit = null;
+  totalQuery.orderby = null;
   totalQuery.columns = [
     {
       expr: { type: 'aggr_func', name: 'COUNT', args: { expr: { type: 'star', value: '*' } } },

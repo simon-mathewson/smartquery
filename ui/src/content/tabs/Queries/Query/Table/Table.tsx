@@ -9,6 +9,7 @@ import { SelectionActions } from './SelectionActions/SelectionActions';
 import { useSelection } from './useSelection';
 import { QueryContext, ResultContext } from '../Context';
 import { useCopyPaste } from './copyPaste/useCopyPaste';
+import { useSorting } from './sorting/useSorting';
 
 export type TableProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
@@ -35,6 +36,8 @@ export const Table: React.FC<TableProps> = (props) => {
   );
 
   useCopyPaste(selection, rowsToCreate);
+
+  const sorting = useSorting();
 
   const tableRef = useRef<HTMLDivElement | null>(null);
 
@@ -102,7 +105,15 @@ export const Table: React.FC<TableProps> = (props) => {
           >
             {visibleColumns.map((column) => {
               const columnName = typeof column === 'object' ? column.name : column;
-              return <Cell column={column} key={columnName} type="header" value={columnName} />;
+              return (
+                <Cell
+                  column={column}
+                  key={columnName}
+                  sorting={sorting}
+                  type="header"
+                  value={columnName}
+                />
+              );
             })}
             {rows.map((row, rowIndex) => {
               return visibleColumns.map((column, columnIndex) => {
