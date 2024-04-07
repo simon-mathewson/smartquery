@@ -87,7 +87,7 @@ export const Cell: React.FC<CellProps> = (props) => {
         })(),
         {
           'sticky top-0 z-30 h-10 border-b bg-card': type === 'header',
-          'cursor-pointer': query.select,
+          'cursor-pointer': type === 'header' && query.select,
           '-mt-[1px] border-y py-2': type === 'body',
           'z-10 border-y-whiteHighlightHover': type === 'body' && selected,
           'border-y-border':
@@ -146,9 +146,10 @@ export const Cell: React.FC<CellProps> = (props) => {
           return value;
         })()}
       </div>
-      {query.select && sorting && (
+      {query.select && type === 'header' && (
         <>
-          {sorting.sortedColumn?.columnName !== (column as Column).name ||
+          {!sorting.sortedColumn ||
+          sorting.sortedColumn.columnName !== (column as Column).name ||
           sorting.sortedColumn.direction === 'ASC' ? (
             <ArrowUpward
               className={classNames('!h-4 !w-4 text-primary', {
