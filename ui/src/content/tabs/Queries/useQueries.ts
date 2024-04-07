@@ -117,9 +117,7 @@ export const useQueries = () => {
 
       const { select, statements } = query;
 
-      if (!statements) {
-        throw new Error('No statements');
-      }
+      if (!statements) return;
 
       const { clientId } = activeConnection;
 
