@@ -82,6 +82,10 @@ export const useEdit = () => {
 
   const handleDeleteChange = useCallback(
     (newChange: DeleteChange) => {
+      setUpdateChanges((changes) =>
+        changes.filter((change) => !doChangeLocationsMatch(change.location, newChange.location)),
+      );
+
       setDeleteChanges((changes) => {
         const newChanges = [...changes];
         const existingChangeIndex = newChanges.findIndex((existingChange) =>
@@ -97,11 +101,15 @@ export const useEdit = () => {
         return newChanges;
       });
     },
-    [setDeleteChanges],
+    [setDeleteChanges, setUpdateChanges],
   );
 
   const handleUpdateChange = useCallback(
     (newChange: UpdateChange) => {
+      setDeleteChanges((changes) =>
+        changes.filter((change) => !doChangeLocationsMatch(change.location, newChange.location)),
+      );
+
       setUpdateChanges((changes) => {
         const newChanges = [...changes];
 
@@ -127,7 +135,7 @@ export const useEdit = () => {
         return newChanges;
       });
     },
-    [setUpdateChanges],
+    [setDeleteChanges, setUpdateChanges],
   );
 
   const removeChange = useCallback(

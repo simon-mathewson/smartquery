@@ -1,11 +1,6 @@
 import React, { useMemo } from 'react';
 import { EditContext } from '~/content/edit/Context';
-import type {
-  CreateChange,
-  CreateLocation,
-  UpdateChange,
-  UpdateLocation,
-} from '~/content/edit/types';
+import type { CreateChange, CreateLocation, UpdateLocation } from '~/content/edit/types';
 import { ColumnField } from '~/shared/components/ColumnField/ColumnField';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { type Column, type Value } from '~/shared/types';
@@ -25,8 +20,8 @@ export const EditOverlayField: React.FC<EditOverlayFieldProps> = (props) => {
   const values = useMemo(
     () =>
       locations.map((location) => {
-        const change = getChangeAtLocation(location) as CreateChange | UpdateChange | undefined;
-        if (!change) {
+        const change = getChangeAtLocation(location);
+        if (!change || change.type === 'delete') {
           return location.type === 'update' ? location.originalValue : undefined;
         }
         return change.type === 'update' ? change.value : change.row[column.name];
