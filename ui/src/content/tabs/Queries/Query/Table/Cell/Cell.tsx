@@ -2,7 +2,7 @@ import type { XOR } from 'ts-essentials';
 import classNames from 'classnames';
 import React from 'react';
 import { type Column, type Value } from '~/shared/types';
-import { isDateTimeType, isNumberType, isTimeType } from '~/shared/dataTypes/utils';
+import { isDateTimeType, isEnumType, isNumberType, isTimeType } from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { QueryContext } from '../../Context';
 import type { CreateValue } from '~/content/edit/types';
@@ -132,6 +132,7 @@ export const Cell: React.FC<CellProps> = (props) => {
               (typeof column === 'object' &&
                 (['boolean', 'json'].includes(column.dataType) ||
                   isDateTimeType(column.dataType) ||
+                  isEnumType(column.dataType) ||
                   isNumberType(column.dataType) ||
                   isTimeType(column.dataType)))),
         })}

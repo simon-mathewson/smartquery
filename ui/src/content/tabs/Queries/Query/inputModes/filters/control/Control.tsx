@@ -26,8 +26,8 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
   const column = filter.column ? columns.find((col) => col.name === filter.column) : null;
 
   return (
-    <div className="flex items-center gap-2 pl-2">
-      <div className="w-12 shrink-0 pl-1 font-mono text-sm font-medium text-textTertiary">
+    <div className="flex gap-2 pl-2">
+      <div className="w-12 shrink-0 pl-1 pt-2 font-mono text-sm font-medium text-textTertiary">
         {isFirst ? 'WHERE' : filter.logicalOperator}
       </div>
       <Select
@@ -72,6 +72,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
         />
       )}
       <Button
+        className="mr-1 mt-[6px]"
         color="secondary"
         icon={<Close />}
         onClick={removeFilter}

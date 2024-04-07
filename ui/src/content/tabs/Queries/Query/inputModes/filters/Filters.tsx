@@ -50,7 +50,7 @@ export const Filters: React.FC = () => {
       }}
     >
       {formFilters.map((filter, index) => (
-        <div className="flex items-center gap-2" key={index}>
+        <div className="flex gap-2" key={index}>
           <FilterControl
             filter={filter}
             isFirst={index === 0}

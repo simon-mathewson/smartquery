@@ -71,6 +71,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
               return (
                 <CodeInput
                   autoFocus={autoFocus}
+                  className="max-h-[200px]"
                   language="sql"
                   onChange={onChange}
                   placeholder={placeholder}

@@ -16,12 +16,13 @@ export const EnumField: React.FC<EnumFieldProps> = (props) => {
 
   return (
     <Select
+      monospace
       onChange={(newValue) => {
         if (newValue === undefined && !isNullable) return;
         onChange(isNil(newValue) ? null : newValue);
       }}
-      placeholder={placeholder}
       options={column.enumValues!.map((value) => ({ label: value, value }))}
+      placeholder={placeholder}
       value={stringValue === undefined ? null : stringValue}
     />
   );

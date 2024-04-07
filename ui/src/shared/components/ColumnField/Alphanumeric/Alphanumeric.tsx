@@ -33,6 +33,7 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
   return (
     <Input
       autoFocus={autoFocus}
+      element={getType() === 'text' ? 'textarea' : 'input'}
       onChange={onChange}
       placeholder={placeholder}
       type={getType()}
