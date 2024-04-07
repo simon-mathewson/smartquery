@@ -101,13 +101,12 @@ export const Table: React.FC<TableProps> = (props) => {
             style={{ gridTemplateColumns: `repeat(${visibleColumns.length}, 1fr)` }}
           >
             {visibleColumns.map((column) => {
-              const columnName = typeof column === 'object' ? column.alias ?? column.name : column;
+              const columnName = typeof column === 'object' ? column.name : column;
               return <Cell column={column} key={columnName} type="header" value={columnName} />;
             })}
             {rows.map((row, rowIndex) => {
               return visibleColumns.map((column, columnIndex) => {
-                const columnName =
-                  typeof column === 'object' ? column.alias ?? column.name : column;
+                const columnName = typeof column === 'object' ? column.name : column;
                 const value = row[columnName];
                 const change = isEditable
                   ? (getChangeAtLocation({
@@ -140,8 +139,7 @@ export const Table: React.FC<TableProps> = (props) => {
             })}
             {rowsToCreate.map((row, rowIndex) => {
               return visibleColumns.map((column, columnIndex) => {
-                const columnName =
-                  typeof column === 'object' ? column.alias ?? column.name : column;
+                const columnName = typeof column === 'object' ? column.name : column;
                 const value = row[columnName];
 
                 return (

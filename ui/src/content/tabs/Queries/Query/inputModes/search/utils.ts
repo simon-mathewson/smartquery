@@ -38,7 +38,7 @@ export const getWhere = (props: {
             : {
                 type: 'column_ref',
                 table: null,
-                column: column.alias ?? column.name,
+                column: column.name,
               },
         right:
           engine === 'postgresql'

@@ -85,7 +85,7 @@ export const useQueries = () => {
       const rows = firstSelectResult.map<Row>((row) =>
         Object.fromEntries(
           Object.entries(row).map(([columnName, value]) => {
-            const column = columns.find((column) => (column.alias ?? column.name) === columnName);
+            const column = columns.find((column) => column.name === columnName);
             return [columnName, convertPrismaValue(value, column?.dataType)];
           }),
         ),

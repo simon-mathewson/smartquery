@@ -17,14 +17,12 @@ export const getPrimaryKeys = (columns: Column[], rows: Row[], rowIndex: number)
   const row = rows.at(rowIndex);
   if (!row) return null;
 
-  const arePrimaryKeysAvailable = primaryKeyColumns.every(
-    (column) => (column.alias ?? column.name) in row,
-  );
+  const arePrimaryKeysAvailable = primaryKeyColumns.every((column) => column.name in row);
   if (!arePrimaryKeysAvailable) return null;
 
   return primaryKeyColumns.map((column) => ({
     column: column.name,
-    value: rows[rowIndex][column.alias ?? column.name] as string,
+    value: rows[rowIndex][column.name] as string,
   }));
 };
 

@@ -37,7 +37,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
           }
 
           if (rows[rowIndex]) {
-            const value = rows[rowIndex][column.alias ?? column.name];
+            const value = rows[rowIndex][column.name];
 
             newColumnsWithValues[columnIndex].locations.push({
               column: column.name,
@@ -76,7 +76,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
             {columnFields?.map((fieldProps, index) => (
               <EditOverlayField
                 autoFocus={index === columnFields.findIndex((c) => c)}
-                key={fieldProps.column.alias ?? fieldProps.column.name}
+                key={fieldProps.column.name}
                 {...fieldProps}
               />
             ))}

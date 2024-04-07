@@ -19,7 +19,6 @@ export type Row = {
 };
 
 export type Column = {
-  alias?: string;
   dataType: DataType;
   enumValues?: string[] | null;
   isForeignKey?: boolean;
