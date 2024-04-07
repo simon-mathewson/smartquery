@@ -143,6 +143,9 @@ export const Cell: React.FC<CellProps> = (props) => {
           if (value === undefined) {
             return 'EMPTY';
           }
+          if (typeof column === 'object' && isDateTimeType(column.dataType)) {
+            return value.replace('T', ' ');
+          }
           return value;
         })()}
       </div>

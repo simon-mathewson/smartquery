@@ -247,7 +247,16 @@ export const convertPrismaValue = (value: PrismaValue, dataType?: DataType): Val
     if (dataType && isTimeType(dataType)) {
       return value.toISOString().slice(11, 16);
     }
-    return value.toISOString().slice(0, 16);
+
+    const dateTimeString = value.toISOString().slice(0, 23);
+    const dateTimeStringWithoutEmptyMilliseconds = dateTimeString.replace('.000', '');
+    const dateTimeStringWithoutEmptySeconds = dateTimeStringWithoutEmptyMilliseconds.replace(
+      ':00',
+      '',
+    );
+    const dateTimeStringWithoutEmptyTime = dateTimeStringWithoutEmptySeconds.replace('T00:00', '');
+
+    return dateTimeStringWithoutEmptyTime;
   }
 
   if (Decimal.isDecimal(value)) return value.toString();
