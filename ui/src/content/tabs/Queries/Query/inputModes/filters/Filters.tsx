@@ -1,34 +1,22 @@
 import { Add, Send } from '@mui/icons-material';
-import { includes } from 'lodash';
-import React, { useCallback, useEffect } from 'react';
+import { includes, isEqual } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { NULL_OPERATORS } from './constants';
 import { FilterControl } from './control/Control';
 import type { Filter, FormFilter, LogicalOperator } from './types';
 import { useFilters } from './useFilters';
-import { useStoredState } from '~/shared/hooks/useLocalStorageState';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { QueryContext } from '../../Context';
 
 export const Filters: React.FC = () => {
   const { applyFilters, filters } = useFilters();
 
-  const { query } = useDefinedContext(QueryContext);
+  const [formFilters, setFormFilters] = useState<FormFilter[]>(filters);
 
-  const formFiltersStorageKey = `query-${query.id}-formFilters`;
-  const [formFilters, setFormFilters] = useStoredState<FormFilter[]>(
-    formFiltersStorageKey,
-    filters,
-    sessionStorage,
-  );
-
-  const isChangedStorageKey = `query-${query.id}-isChanged`;
-  const [isChanged, setIsChanged] = useStoredState(isChangedStorageKey, false, sessionStorage);
+  const isChanged = useMemo(() => !isEqual(filters, formFilters), [filters, formFilters]);
 
   useEffect(() => {
-    if (isChanged) return;
     setFormFilters(filters);
-  }, [filters, isChanged, setFormFilters]);
+  }, [filters, setFormFilters]);
 
   const isValid = formFilters.every(
     (filter) =>
@@ -48,9 +36,8 @@ export const Filters: React.FC = () => {
           value: '',
         },
       ]);
-      setIsChanged(true);
     },
-    [formFilters, setFormFilters, setIsChanged],
+    [formFilters, setFormFilters],
   );
 
   return (
@@ -60,7 +47,6 @@ export const Filters: React.FC = () => {
         event.preventDefault();
 
         applyFilters(formFilters as Filter[]);
-        setIsChanged(false);
       }}
     >
       {formFilters.map((filter, index) => (
@@ -72,7 +58,6 @@ export const Filters: React.FC = () => {
               setFormFilters((current) =>
                 current.filter((currentFilter) => currentFilter !== filter),
               );
-              setIsChanged(true);
             }}
             updateFilter={(getNewFilter) => {
               setFormFilters((current) =>
@@ -80,7 +65,6 @@ export const Filters: React.FC = () => {
                   currentFilter === filter ? getNewFilter(currentFilter) : currentFilter,
                 ),
               );
-              setIsChanged(true);
             }}
           />
           {index === formFilters.length - 1 && isChanged && (
