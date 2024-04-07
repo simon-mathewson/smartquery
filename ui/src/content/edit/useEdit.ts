@@ -19,17 +19,17 @@ export const useEdit = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const [createChanges, setCreateChanges] = useStoredState<CreateChange[]>(
-    'createChanges',
+    `createChanges-${activeConnection?.id}`,
     [],
     sessionStorage,
   );
   const [deleteChanges, setDeleteChanges] = useStoredState<DeleteChange[]>(
-    'deleteChanges',
+    `deleteChanges-${activeConnection?.id}`,
     [],
     sessionStorage,
   );
   const [updateChanges, setUpdateChanges] = useStoredState<UpdateChange[]>(
-    'updateChanges',
+    `updateChanges-${activeConnection?.id}`,
     [],
     sessionStorage,
   );
