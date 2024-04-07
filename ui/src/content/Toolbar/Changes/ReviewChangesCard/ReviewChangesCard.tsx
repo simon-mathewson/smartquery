@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { EditContext } from '~/content/edit/Context';
-import { trpc } from '~/trpc';
-import { SqlEditor } from '~/shared/components/SqlEditor/SqlEditor';
-import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { TabsContext } from '~/content/tabs/Context';
-import { parseStatements } from '~/shared/utils/sql';
 import { QueriesContext } from '~/content/tabs/Queries/Context';
+import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
+import { SqlEditor } from '~/shared/components/SqlEditor/SqlEditor';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { parseStatements } from '~/shared/utils/sql';
+import { trpc } from '~/trpc';
 
 export type ReviewChangesCardProps = {
   triggerRef: React.RefObject<HTMLButtonElement>;
@@ -17,8 +16,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   const { triggerRef } = props;
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
-  const { tabs } = useDefinedContext(TabsContext);
-  const { runQuery } = useDefinedContext(QueriesContext);
+  const { refetchActiveTabSelectQueries } = useDefinedContext(QueriesContext);
   const { clearChanges, sql } = useDefinedContext(EditContext);
 
   const [userSql, setUserSql] = useState(sql);
@@ -37,15 +35,8 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
 
     clearChanges();
 
-    tabs
-      .map((tab) => tab.queries)
-      .flat(2)
-      .forEach((query) => {
-        if (query.sql) {
-          runQuery(query.id);
-        }
-      });
-  }, [activeConnection, clearChanges, runQuery, tabs, userSql]);
+    refetchActiveTabSelectQueries();
+  }, [activeConnection, clearChanges, refetchActiveTabSelectQueries, userSql]);
 
   return (
     <OverlayCard align="right" triggerRef={triggerRef}>

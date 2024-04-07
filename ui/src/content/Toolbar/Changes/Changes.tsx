@@ -18,12 +18,12 @@ export const Changes: React.FC = () => {
   return (
     <div className="ml-auto flex shrink-0 items-center gap-2">
       <div className="text-sm">
-        {changeCount} pending change{changeCount > 1 ? 's' : ''}
+        {changeCount} change{changeCount > 1 ? 's' : ''}
       </div>
       <ConfirmDeletePopover
         onConfirm={clearChanges}
         renderTrigger={({ ref }) => <Button color="danger" icon={<DeleteOutline />} ref={ref} />}
-        text={`Delete ${changeCount} pending change${changeCount > 1 ? 's' : ''}`}
+        text={`Delete ${changeCount} change${changeCount > 1 ? 's' : ''}`}
       />
       <Button
         icon={<ArrowForward />}

@@ -245,8 +245,7 @@ export const useQueries = () => {
     [activeConnection, runQuery, setQueries],
   );
 
-  // Refetch select queries when active tab changes
-  useEffect(() => {
+  const refetchActiveTabSelectQueries = useCallback(() => {
     if (!activeTab) return;
 
     activeTab.queries.flat().forEach((query) => {
@@ -254,17 +253,32 @@ export const useQueries = () => {
         runSelectQuery(query.id);
       }
     });
-  }, [activeTab, runQuery, runSelectQuery]);
+  }, [activeTab, runSelectQuery]);
+
+  // Refetch select queries when active tab changes
+  useEffect(() => {
+    if (!activeConnection) return;
+    refetchActiveTabSelectQueries();
+  }, [activeConnection, refetchActiveTabSelectQueries]);
 
   return useMemo(
     () => ({
       addQuery,
       queryResults,
+      refetchActiveTabSelectQueries,
       removeQuery,
       runQuery,
       runSelectQuery,
       updateQuery,
     }),
-    [addQuery, queryResults, removeQuery, runQuery, runSelectQuery, updateQuery],
+    [
+      addQuery,
+      queryResults,
+      refetchActiveTabSelectQueries,
+      removeQuery,
+      runQuery,
+      runSelectQuery,
+      updateQuery,
+    ],
   );
 };
