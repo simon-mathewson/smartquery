@@ -93,41 +93,43 @@ export const useQueries = () => {
 
       onStartLoading(id);
 
-      const results = await trpc.sendQuery.mutate({
-        clientId: activeConnection.clientId,
-        statements: statementsWithMetadata,
-      });
+      try {
+        const results = await trpc.sendQuery.mutate({
+          clientId: activeConnection.clientId,
+          statements: statementsWithMetadata,
+        });
 
-      onFinishLoading(id);
+        const [firstSelectResult, columnsResult, totalRowsResult] = results;
 
-      const [firstSelectResult, columnsResult, totalRowsResult] = results;
+        const columns = getColumnsFromResult({
+          connection: activeConnection,
+          parsedStatement: select!.parsed,
+          result: columnsResult,
+        });
 
-      const columns = getColumnsFromResult({
-        connection: activeConnection,
-        parsedStatement: select!.parsed,
-        result: columnsResult,
-      });
+        const rows = firstSelectResult.map<Row>((row) =>
+          Object.fromEntries(
+            Object.entries(row).map(([columnName, value]) => {
+              const column = columns.find((column) => column.name === columnName);
+              return [columnName, convertPrismaValue(value, column?.dataType)];
+            }),
+          ),
+        );
 
-      const rows = firstSelectResult.map<Row>((row) =>
-        Object.fromEntries(
-          Object.entries(row).map(([columnName, value]) => {
-            const column = columns.find((column) => column.name === columnName);
-            return [columnName, convertPrismaValue(value, column?.dataType)];
-          }),
-        ),
-      );
+        const totalRows = Number(totalRowsResult[0].count);
 
-      const totalRows = Number(totalRowsResult[0].count);
-
-      setQueryResults((currentQueryResults) => ({
-        ...currentQueryResults,
-        [query.id]: {
-          columns,
-          rows,
-          table: select!.table,
-          totalRows,
-        },
-      }));
+        setQueryResults((currentQueryResults) => ({
+          ...currentQueryResults,
+          [query.id]: {
+            columns,
+            rows,
+            table: select!.table,
+            totalRows,
+          },
+        }));
+      } finally {
+        onFinishLoading(id);
+      }
     },
     [activeConnection, onFinishLoading, onStartLoading],
   );
@@ -153,33 +155,35 @@ export const useQueries = () => {
 
       onStartLoading(id);
 
-      const results = await trpc.sendQuery.mutate({ clientId, statements });
+      try {
+        const results = await trpc.sendQuery.mutate({ clientId, statements });
 
-      onFinishLoading(id);
+        const rawRows = results.find((result) => result.length) ?? null;
+        const rows = rawRows
+          ? rawRows.map((row) =>
+              Object.fromEntries(
+                Object.entries(row).map(([key, value]) => [key, convertPrismaValue(value)]),
+              ),
+            )
+          : null;
 
-      const rawRows = results.find((result) => result.length) ?? null;
-      const rows = rawRows
-        ? rawRows.map((row) =>
-            Object.fromEntries(
-              Object.entries(row).map(([key, value]) => [key, convertPrismaValue(value)]),
-            ),
-          )
-        : null;
-
-      if (rows) {
-        setQueryResults((currentQueryResults) => ({
-          ...currentQueryResults,
-          [query.id]: {
-            columns: null,
-            rows,
-          },
-        }));
-      } else {
-        setQueryResults((currentQueryResults) => {
-          const newQueryResults = { ...currentQueryResults };
-          delete newQueryResults[query.id];
-          return newQueryResults;
-        });
+        if (rows) {
+          setQueryResults((currentQueryResults) => ({
+            ...currentQueryResults,
+            [query.id]: {
+              columns: null,
+              rows,
+            },
+          }));
+        } else {
+          setQueryResults((currentQueryResults) => {
+            const newQueryResults = { ...currentQueryResults };
+            delete newQueryResults[query.id];
+            return newQueryResults;
+          });
+        }
+      } finally {
+        onFinishLoading(id);
       }
     },
     [activeConnection, onFinishLoading, onStartLoading, runSelectQuery],
