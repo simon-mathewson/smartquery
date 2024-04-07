@@ -1,8 +1,7 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import type { Row } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
 import { isNotNull } from '~/shared/utils/typescript';
@@ -246,18 +245,16 @@ export const useQueries = () => {
     [activeConnection, runQuery, setQueries],
   );
 
-  useEffectOnce(
-    () => {
-      tabs.forEach((tab) => {
-        tab.queries.flat().forEach((query) => {
-          if (query.sql) {
-            runQuery(query.id);
-          }
-        });
-      });
-    },
-    { enabled: Boolean(tabs.length) },
-  );
+  // Refetch select queries when active tab changes
+  useEffect(() => {
+    if (!activeTab) return;
+
+    activeTab.queries.flat().forEach((query) => {
+      if (query.select) {
+        runSelectQuery(query.id);
+      }
+    });
+  }, [activeTab, runQuery, runSelectQuery]);
 
   return useMemo(
     () => ({
