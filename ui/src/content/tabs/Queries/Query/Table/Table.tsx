@@ -28,7 +28,13 @@ export const Table: React.FC<TableProps> = (props) => {
   const { handleCellClick, selection, selectionActionsRef, setSelection, tableContentRef } =
     useSelection();
 
-  useCopyPaste(selection);
+  const rowsToCreate = useMemo(
+    () =>
+      createChanges.filter((change) => change.location.table === table).map((change) => change.row),
+    [createChanges, table],
+  );
+
+  useCopyPaste(selection, rowsToCreate);
 
   const tableRef = useRef<HTMLDivElement | null>(null);
 
@@ -70,12 +76,6 @@ export const Table: React.FC<TableProps> = (props) => {
       }, 200);
     };
   }, [createChanges, handleRowCreationRef, query.id, rows.length, setSelection, table]);
-
-  const rowsToCreate = useMemo(
-    () =>
-      createChanges.filter((change) => change.location.table === table).map((change) => change.row),
-    [createChanges, table],
-  );
 
   const visibleColumns = columns
     ? columns.filter(({ isVisible }) => isVisible)

@@ -1,8 +1,9 @@
+import type { CreateRow } from '~/content/edit/types';
 import type { Row } from '~/shared/types';
 
 const nullString = 'NULL';
 
-export const getTsvFromSelection = (selection: number[][], rows: Row[]) => {
+export const getTsvFromSelection = (selection: number[][], rows: Array<Row | CreateRow>) => {
   const minColumnIndex = Math.min(
     ...selection.flatMap((columnIndices) => (columnIndices.length === 0 ? [0] : columnIndices)),
   );
@@ -27,7 +28,7 @@ export const getTsvFromSelection = (selection: number[][], rows: Row[]) => {
           if (value === null) {
             return nullString;
           }
-          return value;
+          return value ?? '';
         })
         .slice(minColumnIndex, maxColumnIndex + 1);
     })
