@@ -4,24 +4,23 @@ import { initialConnections } from './initialConnections';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import type { ActiveConnection, Connection } from '~/shared/types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { useParams, useNavigate } from 'react-router-dom';
+import { routes } from '~/router/routes';
 
 export const useConnections = () => {
+  const navigate = useNavigate();
+
   const [connections, setConnections] = useStoredState<Connection[]>(
     'connections',
     initialConnections,
   );
 
   const [activeConnectionClientId, setActiveConnectionClientId] = useState<string | null>(null);
-  const [activeConnectionDatabase, setActiveConnectionDatabase] = useStoredState<string | null>(
-    'activeConnectionDatabase',
-    null,
-    sessionStorage,
-  );
-  const [activeConnectionId, setActiveConnectionId] = useStoredState<string | null>(
-    'activeConnectionId',
-    null,
-    sessionStorage,
-  );
+
+  const { connectionId: activeConnectionId, database: activeConnectionDatabase } = useParams<{
+    connectionId: string;
+    database: string;
+  }>();
 
   const activeConnection = useMemo(() => {
     if (!activeConnectionClientId || !activeConnectionDatabase) return null;
@@ -70,8 +69,6 @@ export const useConnections = () => {
       }
 
       setActiveConnectionClientId(null);
-      setActiveConnectionDatabase(null);
-      setActiveConnectionId(null);
 
       const selectedDatabase = database ?? connection.database;
 
@@ -81,12 +78,11 @@ export const useConnections = () => {
       });
 
       setActiveConnectionClientId(newClientId);
-      setActiveConnectionDatabase(selectedDatabase);
-      setActiveConnectionId(connection.id);
+      navigate(routes.database(connection.id, selectedDatabase));
 
       window.document.title = `${selectedDatabase} – ${connection.name}`;
     },
-    [activeConnection, connections, setActiveConnectionDatabase, setActiveConnectionId],
+    [connections, activeConnection, navigate],
   );
 
   useEffectOnce(() => {

@@ -1,24 +1,32 @@
 import React from 'react';
-import { NavigationSidebar } from './content/NavigationSidebar/NavigationSidebar';
-import { ConnectionsContext } from './content/connections/Context';
-import './index.css';
-import { useDefinedContext } from './shared/hooks/useDefinedContext';
-import { Toolbar } from './content/Toolbar/Toolbar';
+import { Outlet } from 'react-router-dom';
+import { ConnectionsProvider } from './content/connections/Provider';
+import { DragAndDropProvider } from './content/dragAndDrop/Provider';
+import { EditProvider } from './content/edit/Provider';
+import { TabsProvider } from './content/tabs/Provider';
+import { QueriesProvider } from './content/tabs/Queries/Provider';
 import { useTheme } from './content/theme/useTheme';
-import { Queries } from './content/tabs/Queries/Queries';
+import './index.css';
+import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQueue/Provider';
+import { Empty } from './content/empty/Empty';
 
 export const App: React.FC = () => {
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
-
   useTheme();
 
   return (
-    <div className="grid h-full grid-cols-[224px_1fr] bg-background">
-      <NavigationSidebar />
-      <div className="flex h-full flex-col overflow-hidden pl-1 pr-3">
-        {activeConnection && <Toolbar />}
-        <Queries />
-      </div>
-    </div>
+    <ConnectionsProvider>
+      <EditProvider>
+        <TabsProvider>
+          <QueriesProvider>
+            <DragAndDropProvider>
+              <ClickOutsideQueueProvider>
+                <Empty />
+                <Outlet />
+              </ClickOutsideQueueProvider>
+            </DragAndDropProvider>
+          </QueriesProvider>
+        </TabsProvider>
+      </EditProvider>
+    </ConnectionsProvider>
   );
 };
