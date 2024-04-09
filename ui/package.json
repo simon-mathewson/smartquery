@@ -60,7 +60,7 @@
     "tailwindcss-easing": "^0.2.1",
     "tw-colors": "^3.3.1",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8",
+    "vite": "^5.2.0",
     "vite-plugin-circular-dependency": "^0.3.1",
     "vite-plugin-pwa": "^0.19.0"
   }
