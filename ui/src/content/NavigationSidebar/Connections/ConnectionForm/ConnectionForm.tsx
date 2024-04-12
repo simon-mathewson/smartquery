@@ -1,5 +1,4 @@
 import { ArrowBack, DeleteOutline, Done } from '@mui/icons-material';
-import * as uuid from 'uuid';
 import React, { useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { Button } from '~/shared/components/Button/Button';
@@ -33,7 +32,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
       database: '',
       engine: null,
       host: '',
-      id: uuid.v4(),
+      id: '',
       name: '',
       password: '',
       port: null,

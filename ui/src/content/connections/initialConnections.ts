@@ -1,5 +1,3 @@
-import * as uuid from 'uuid';
-
 import type { Connection } from '~/shared/types';
 
 export const initialConnections = [
@@ -7,7 +5,7 @@ export const initialConnections = [
     database: 'postgresql_db',
     engine: 'postgresql',
     host: 'localhost',
-    id: uuid.v4(),
+    id: '0',
     name: 'PostgreSQL',
     password: 'password',
     port: 5433,
@@ -17,7 +15,7 @@ export const initialConnections = [
     database: 'mysql_db',
     engine: 'mysql',
     host: 'localhost',
-    id: uuid.v4(),
+    id: '1',
     name: 'MySQL',
     password: 'password',
     port: 3307,
@@ -27,7 +25,7 @@ export const initialConnections = [
     database: 'mathewson_metals_development',
     engine: 'postgresql',
     host: 'localhost',
-    id: uuid.v4(),
+    id: '2',
     name: 'Mathewson Metals',
     password: 'password',
     port: 5432,
@@ -37,7 +35,7 @@ export const initialConnections = [
     database: 'cosuno_development',
     engine: 'mysql',
     host: 'localhost',
-    id: uuid.v4(),
+    id: '3',
     name: 'Cosuno Development',
     password: 'root',
     port: 3306,

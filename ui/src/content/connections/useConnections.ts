@@ -36,8 +36,14 @@ export const useConnections = () => {
   }, [activeConnectionClientId, activeConnectionDatabase, activeConnectionId, connections]);
 
   const addConnection = useCallback(
-    (connection: Connection) => {
-      setConnections([...connections, connection]);
+    (connection: Omit<Connection, 'id'>) => {
+      setConnections([
+        ...connections,
+        {
+          ...connection,
+          id: String(connections.length),
+        },
+      ]);
     },
     [connections, setConnections],
   );
