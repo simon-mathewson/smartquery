@@ -2,15 +2,19 @@ import { ArrowBack, DeleteOutline, Done } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { Button } from '~/shared/components/Button/Button';
+import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
 import { ConfirmDeletePopover } from '~/shared/components/ConfirmDeletePopover/ConfirmDeletePopover';
+import { Field } from '~/shared/components/Field/Field';
 import { Input } from '~/shared/components/Input/Input';
 import { Select } from '~/shared/components/Select/Select';
+import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TestConnection } from './TestConnection/TestConnection';
 import type { FormSchema } from './utils';
-import { connectionSchema, isFormValid } from './utils';
-import { Field } from '~/shared/components/Field/Field';
-import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
+import { isFormValid } from './utils';
+import { connectionSchema } from '~/shared/types';
+import type { Connection } from '~/shared/types';
+import { getCredentialUsername } from '~/content/connections/utils';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;
@@ -28,21 +32,28 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
     connectionToEditIndex !== null ? connections[connectionToEditIndex] : null;
 
   const [form, setForm] = useState<FormSchema>(
-    connectionToEdit ?? {
-      database: '',
-      engine: null,
-      host: '',
-      id: '',
-      name: '',
-      password: '',
-      port: null,
-      user: '',
-    },
+    connectionToEdit
+      ? {
+          ...connectionToEdit,
+          password: connectionToEdit?.password ?? '',
+        }
+      : {
+          database: '',
+          engine: null,
+          host: '',
+          id: '',
+          name: '',
+          password: '',
+          passwordStorage: 'alwaysAsk',
+          port: null,
+          user: '',
+        },
   );
 
   const getChangeHandler =
-    (key: keyof FormSchema, convert?: (value: string) => unknown) => (value: string) => {
-      setForm((formValues) => ({ ...formValues, [key]: convert ? convert(value) : value }));
+    <K extends keyof FormSchema>(key: K) =>
+    (value: FormSchema[K]) => {
+      setForm((formValues) => ({ ...formValues, [key]: value }));
     };
 
   return (
@@ -53,6 +64,10 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           event.preventDefault();
 
           const connection = connectionSchema.parse(form);
+
+          if (form.passwordStorage !== 'localStorage') {
+            connection.password = null;
+          }
 
           connectionToEdit
             ? updateConnection(connectionToEdit.id, connection)
@@ -84,7 +99,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           }
         />
         <Field label="Engine">
-          <Select
+          <Select<Connection['engine']>
             onChange={getChangeHandler('engine')}
             options={[
               {
@@ -108,20 +123,46 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           </Field>
           <Field label="Port">
             <Input
-              onChange={getChangeHandler('port', (value) => (value ? Number(value) : null))}
+              onChange={(value) => getChangeHandler('port')(value ? Number(value) : null)}
               value={form.port === null ? '' : String(form.port)}
             />
           </Field>
         </div>
+        <Field label="Password storage">
+          <ButtonSelect<'alwaysAsk' | 'localStorage'>
+            equalWidth
+            fullWidth
+            onChange={getChangeHandler('passwordStorage')}
+            options={[
+              {
+                button: { label: 'Always ask / Keychain' },
+                value: 'alwaysAsk',
+              },
+              {
+                button: { label: 'Browser storage' },
+                value: 'localStorage',
+              },
+            ]}
+            required
+            value={form.passwordStorage}
+          />
+        </Field>
         <div className="grid grid-cols-2 gap-2">
           <Field label="User">
             <Input onChange={getChangeHandler('user')} value={form.user} />
           </Field>
           <Field label="Password">
-            <Input onChange={getChangeHandler('password')} type="password" value={form.password} />
+            <Input autoComplete="username" className="hidden" value={getCredentialUsername(form)} />
+            <Input
+              autoComplete="current-password"
+              disabled={form.passwordStorage === 'alwaysAsk'}
+              onChange={getChangeHandler('password')}
+              type="password"
+              value={form.passwordStorage === 'alwaysAsk' ? '' : form.password}
+            />
           </Field>
         </div>
-        <Field label="Default Database">
+        <Field label="Default database">
           <Input onChange={getChangeHandler('database')} value={form.database} />
         </Field>
         <TestConnection form={form} />

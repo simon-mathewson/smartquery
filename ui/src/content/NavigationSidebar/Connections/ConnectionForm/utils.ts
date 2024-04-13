@@ -1,20 +1,9 @@
-import { z } from 'zod';
-
-export const connectionSchema = z.object({
-  database: z.string().trim().min(1),
-  engine: z.union([z.literal('mysql'), z.literal('postgresql')]),
-  host: z.string().trim().min(1),
-  id: z.string(),
-  name: z.string().trim().min(1),
-  password: z.string(),
-  port: z.number(),
-  user: z.string().trim().min(1),
-});
-
-export type ConnectionSchema = z.infer<typeof connectionSchema>;
+import type { z } from 'zod';
+import { connectionSchema } from '~/shared/types';
 
 export const formSchema = connectionSchema.extend({
   engine: connectionSchema.shape.engine.nullable(),
+  password: connectionSchema.shape.password.unwrap(),
   port: connectionSchema.shape.port.nullable(),
 });
 

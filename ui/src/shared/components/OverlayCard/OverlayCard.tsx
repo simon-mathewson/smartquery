@@ -4,23 +4,30 @@ import { mergeRefs } from 'react-merge-refs';
 import classNames from 'classnames';
 import { OverlayPortal } from '../OverlayPortal/OverlayPortal';
 import { useStyles } from './useStyles';
+import { isNotUndefined } from '~/shared/utils/typescript';
 
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
   anchorRef?: React.MutableRefObject<HTMLElement | null>;
   children: (props: { close: () => void }) => React.ReactNode;
   className?: string;
+  closeOnOutsideClick?: boolean;
+  darkenBackground?: boolean;
+  isOpen?: boolean;
   matchTriggerWidth?: boolean;
   onClose?: () => void;
   onOpen?: () => void;
-  triggerRef: React.MutableRefObject<HTMLElement | null>;
+  triggerRef?: React.MutableRefObject<HTMLElement | null>;
   width?: number;
 };
 
 export const OverlayCard: React.FC<OverlayCardProps> = ({
-  align = 'left',
+  align,
   children,
   className,
+  closeOnOutsideClick = true,
+  darkenBackground,
+  isOpen: isOpenProp,
   matchTriggerWidth = false,
   onClose,
   onOpen,
@@ -51,7 +58,16 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   }, [animateIn, onOpen, updateStyles]);
 
   useEffect(() => {
-    const trigger = triggerRef.current;
+    if (isOpenProp === undefined) return;
+    if (isOpenProp) {
+      open();
+    } else {
+      close();
+    }
+  }, [close, isOpenProp, open]);
+
+  useEffect(() => {
+    const trigger = triggerRef?.current;
     if (!trigger) return;
 
     const handleClick = () => {
@@ -73,7 +89,8 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
 
   useClickOutside({
     active: isOpen,
-    additionalRefs: useMemo(() => [localRef, triggerRef], [triggerRef]),
+    disabled: !closeOnOutsideClick,
+    additionalRefs: useMemo(() => [localRef, triggerRef].filter(isNotUndefined), [triggerRef]),
     handler: useCallback(() => {
       close();
     }, [close]),
@@ -87,15 +104,21 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   return (
     <OverlayPortal>
       {isOpen && (
-        <div className={classNames('fixed z-30 opacity-0')} ref={wrapperRef}>
-          <div
-            className={classNames(
-              'overflow-auto rounded-xl border border-border bg-card shadow-xl [max-height:inherit]',
-              className,
-            )}
-            ref={refs}
-          >
-            {children(childrenProps)}
+        <div
+          className={classNames('pointer-events-none fixed left-0 top-0 z-30 h-screen w-screen', {
+            '!pointer-events-auto bg-black/75': darkenBackground,
+          })}
+        >
+          <div className="absolute opacity-0" ref={wrapperRef}>
+            <div
+              className={classNames(
+                'pointer-events-auto overflow-auto rounded-xl border border-border bg-card shadow-xl [max-height:inherit]',
+                className,
+              )}
+              ref={refs}
+            >
+              {children(childrenProps)}
+            </div>
           </div>
         </div>
       )}

@@ -1,10 +1,25 @@
 import type { Select } from '~/content/tabs/Queries/types';
 import type { Prisma } from '../../../link/prisma';
 import type { DataType } from './dataTypes/types';
+import { z } from 'zod';
 import type { inferRouterInputs } from '@trpc/server';
 import type { AppRouter } from '../../../link/src/main/router';
 
-export type Connection = inferRouterInputs<AppRouter>['connectDb'];
+export type ConnectInput = inferRouterInputs<AppRouter>['connectDb'];
+
+export const connectionSchema = z.object({
+  database: z.string().trim().min(1),
+  engine: z.union([z.literal('mysql'), z.literal('postgresql')]),
+  host: z.string().trim().min(1),
+  id: z.string(),
+  name: z.string().trim().min(1),
+  password: z.string().nullable(),
+  passwordStorage: z.union([z.literal('alwaysAsk'), z.literal('localStorage')]),
+  port: z.number(),
+  user: z.string().trim().min(1),
+});
+
+export type Connection = z.infer<typeof connectionSchema>;
 
 export type ActiveConnection = Connection & {
   clientId: string;

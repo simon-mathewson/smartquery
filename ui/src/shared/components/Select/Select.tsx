@@ -1,18 +1,18 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { OverlayCard } from '../OverlayCard/OverlayCard';
 import { ExpandMore } from '@mui/icons-material';
 import classNames from 'classnames';
 
-export type SelectProps = {
+export type SelectProps<T> = {
   className?: string;
   monospace?: boolean;
   placeholder?: string;
-  onChange: (value: string) => void;
-  options: Array<{ label: string; value: string }>;
-  value: string | null;
+  onChange: (value: T) => void;
+  options: Array<{ label: string; value: T }>;
+  value: T | null;
 };
 
-export const Select: React.FC<SelectProps> = (props) => {
+export function Select<T>(props: SelectProps<T>) {
   const { className, monospace, onChange, options, placeholder, value: selectedValue } = props;
 
   const triggerRef = useRef<HTMLDivElement | null>(null);
@@ -67,4 +67,4 @@ export const Select: React.FC<SelectProps> = (props) => {
       </OverlayCard>
     </>
   );
-};
+}

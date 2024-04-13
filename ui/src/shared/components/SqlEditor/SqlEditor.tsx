@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
 import { CodeEditor } from '../CodeEditor/CodeEditor';
 import { getErrorMessage } from './utils';
+import { ErrorMessage } from '../errorMessage/ErrorMessage';
 
 export type SqlEditorProps = {
   onChange?: (sql: string) => void;
@@ -73,11 +74,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         />
       </div>
       <div className="flex items-start justify-between gap-3">
-        {error && (
-          <div className="select-text rounded-lg bg-dangerHighlight px-2 py-1 text-xs font-medium leading-normal text-danger">
-            {error}
-          </div>
-        )}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <Button
           className="ml-auto w-36"
           disabled={!value?.trim()}

@@ -7,11 +7,11 @@ import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 export type InputProps = {
   className?: string;
   element?: 'input' | 'textarea';
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
   suffix?: ReactNode;
 } & Pick<
   React.InputHTMLAttributes<HTMLInputElement>,
-  'autoFocus' | 'placeholder' | 'type' | 'value'
+  'autoComplete' | 'autoFocus' | 'disabled' | 'placeholder' | 'type' | 'value'
 >;
 
 export const Input: React.FC<InputProps> = (props) => {
@@ -35,7 +35,7 @@ export const Input: React.FC<InputProps> = (props) => {
   const onChange = useCallback(
     (event: React.ChangeEvent) => {
       const element = event.target as HTMLInputElement | HTMLTextAreaElement;
-      onChangeProp(element.value);
+      onChangeProp?.(element.value);
       updateHeight(element);
     },
     [onChangeProp, updateHeight],
@@ -51,7 +51,7 @@ export const Input: React.FC<InputProps> = (props) => {
     <Element
       {...inputProps}
       className={classNames(
-        'block w-full rounded-lg border-[1.5px] border-border bg-background px-2 py-[6.5px] text-sm font-medium text-textSecondary outline-none focus:border-primary',
+        'block w-full rounded-lg border-[1.5px] border-border bg-background px-2 py-[6.5px] text-sm font-medium text-textSecondary outline-none focus:border-primary disabled:opacity-50',
         className,
         {
           'resize-none overflow-hidden focus:overflow-auto': Element === 'textarea',

@@ -3,10 +3,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import type { OverlayCardProps } from './OverlayCard';
 import { animationOptions, animationVerticalOffset, overlayCardMargin } from './constants';
 
-export type UseStylesProps = Pick<
-  Required<OverlayCardProps>,
-  'align' | 'anchorRef' | 'matchTriggerWidth'
->;
+export type UseStylesProps = Pick<OverlayCardProps, 'align' | 'anchorRef' | 'matchTriggerWidth'>;
 
 const getInStyles = () =>
   ({
@@ -23,7 +20,7 @@ const getOutStyles = (showAbove: boolean) =>
   }) as const;
 
 export const useStyles = (props: UseStylesProps) => {
-  const { align, anchorRef, matchTriggerWidth } = props;
+  const { align = 'left', anchorRef, matchTriggerWidth } = props;
 
   const showAboveRef = useRef(false);
 
@@ -36,50 +33,79 @@ export const useStyles = (props: UseStylesProps) => {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  const updateStyles = useCallback(() => {
-    const anchor = anchorRef.current;
-    const card = wrapperRef.current;
-    if (!anchor || !card) return;
+  const updateStylesBasedOnAnchor = useCallback(
+    (anchor: HTMLElement) => {
+      const card = wrapperRef.current;
+      if (!card) return;
 
-    const anchorRect = anchor.getBoundingClientRect();
+      const anchorRect = anchor.getBoundingClientRect();
+
+      const cardWidth = card.offsetWidth;
+
+      const unboundedLeft = {
+        left: anchorRect.left,
+        center: anchorRect.left + anchorRect.width / 2 - cardWidth / 2,
+        right: anchorRect.right - cardWidth,
+      }[align];
+
+      const left = Math.max(
+        overlayCardMargin,
+        Math.min(window.innerWidth - cardWidth - overlayCardMargin, unboundedLeft),
+      );
+
+      const spaceBelow = window.innerHeight - anchorRect.bottom - overlayCardMargin * 2;
+      const spaceAbove = anchorRect.top - overlayCardMargin * 2;
+      const scrollHeight = card.scrollHeight;
+
+      const newShowAbove = (() => {
+        if (!scrollHeight || scrollHeight <= spaceBelow) return false;
+        return scrollHeight <= spaceAbove || spaceAbove > spaceBelow;
+      })();
+
+      showAboveRef.current = newShowAbove;
+
+      const top = newShowAbove ? undefined : anchorRect.top + anchorRect.height + overlayCardMargin;
+      const bottom = newShowAbove
+        ? window.innerHeight - anchorRect.top + overlayCardMargin
+        : undefined;
+
+      Object.assign(card.style, {
+        bottom: bottom ? `${bottom}px` : '',
+        left: `${left}px`,
+        maxHeight: newShowAbove ? `${spaceAbove}px` : `${spaceBelow}px`,
+        top: top ? `${top}px` : '',
+        width: matchTriggerWidth ? `${anchorRect.width}px` : '',
+      });
+    },
+    [align, matchTriggerWidth],
+  );
+
+  const updateStylesBasedOnCenter = useCallback(() => {
+    const card = wrapperRef.current;
+    if (!card) return;
 
     const cardWidth = card.offsetWidth;
+    const cardHeight = card.offsetHeight;
 
-    const unboundedLeft = {
-      left: anchorRect.left,
-      center: anchorRect.left + anchorRect.width / 2 - cardWidth / 2,
-      right: anchorRect.right - cardWidth,
-    }[align];
-
-    const left = Math.max(
-      overlayCardMargin,
-      Math.min(window.innerWidth - cardWidth - overlayCardMargin, unboundedLeft),
-    );
-
-    const spaceBelow = window.innerHeight - anchorRect.bottom - overlayCardMargin * 2;
-    const spaceAbove = anchorRect.top - overlayCardMargin * 2;
-    const scrollHeight = card.scrollHeight;
-
-    const newShowAbove = (() => {
-      if (!scrollHeight || scrollHeight <= spaceBelow) return false;
-      return scrollHeight <= spaceAbove || spaceAbove > spaceBelow;
-    })();
-
-    showAboveRef.current = newShowAbove;
-
-    const top = newShowAbove ? undefined : anchorRect.top + anchorRect.height + overlayCardMargin;
-    const bottom = newShowAbove
-      ? window.innerHeight - anchorRect.top + overlayCardMargin
-      : undefined;
+    const left = window.innerWidth / 2 - cardWidth / 2;
+    const top = window.innerHeight / 2 - cardHeight / 2;
 
     Object.assign(card.style, {
-      bottom: bottom ? `${bottom}px` : '',
       left: `${left}px`,
-      maxHeight: newShowAbove ? `${spaceAbove}px` : `${spaceBelow}px`,
-      top: top ? `${top}px` : '',
-      width: matchTriggerWidth ? `${anchorRect.width}px` : '',
+      top: `${top}px`,
+      width: '',
     });
-  }, [align, anchorRef, matchTriggerWidth]);
+  }, []);
+
+  const updateStyles = useCallback(() => {
+    const anchor = anchorRef?.current;
+
+    if (anchor) {
+      updateStylesBasedOnAnchor(anchor);
+    } else {
+      updateStylesBasedOnCenter();
+    }
+  }, [anchorRef, updateStylesBasedOnAnchor, updateStylesBasedOnCenter]);
 
   const animateIn = useCallback(() => {
     const wrapper = wrapperRef.current;

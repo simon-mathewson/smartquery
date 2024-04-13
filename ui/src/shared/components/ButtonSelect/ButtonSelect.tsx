@@ -1,15 +1,24 @@
 import classNames from 'classnames';
 import type { ButtonProps } from '../Button/Button';
 import { Button } from '../Button/Button';
+import type { XOR } from 'ts-essentials';
 
 export type ButtonSelectProps<T> = {
   equalWidth?: boolean;
   fullWidth?: boolean;
-  onChange: (value: T | undefined) => void;
   options: Array<{ button: ButtonProps; value: T }>;
   selectedButton?: ButtonProps;
-  value: T | undefined;
-};
+} & XOR<
+  {
+    onChange: (value: T | undefined) => void;
+    value: T | undefined;
+  },
+  {
+    onChange: (value: T) => void;
+    required: true;
+    value: T;
+  }
+>;
 
 export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
   const {
@@ -17,6 +26,7 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
     fullWidth,
     onChange,
     options,
+    required,
     selectedButton = { color: 'primary' },
     value: selectedValue,
   } = props;
@@ -33,9 +43,15 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
           variant="highlighted"
           {...button}
           {...(value === selectedValue ? selectedButton : {})}
-          className={classNames({ 'grow basis-0': equalWidth })}
+          className={classNames({ 'grow basis-0': equalWidth, 'w-full': fullWidth })}
           key={index}
-          onClick={() => onChange(value === selectedValue ? undefined : value)}
+          onClick={() => {
+            if (required) {
+              onChange(value);
+              return;
+            }
+            onChange(value === selectedValue ? undefined : value);
+          }}
         />
       ))}
     </div>

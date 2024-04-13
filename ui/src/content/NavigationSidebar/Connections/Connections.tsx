@@ -108,7 +108,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                       onClick={() => {
                         if (!activeConnection) return;
 
-                        return connect(activeConnection.id, database);
+                        return connect(activeConnection.id, { database });
                       }}
                       selected={activeConnection?.database === database}
                       selectedVariant="primary"

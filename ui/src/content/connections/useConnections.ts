@@ -6,8 +6,12 @@ import type { ActiveConnection, Connection } from '~/shared/types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { useParams, useNavigate } from 'react-router-dom';
 import { routes } from '~/router/routes';
+import type { ModalControl } from '~/shared/components/modal/types';
+import type { SignInModalInput } from './signInModal/types';
 
-export const useConnections = () => {
+export const useConnections = (props: { signInModal: ModalControl<SignInModalInput> }) => {
+  const { signInModal } = props;
+
   const navigate = useNavigate();
 
   const [connections, setConnections] = useStoredState<Connection[]>(
@@ -63,11 +67,22 @@ export const useConnections = () => {
   );
 
   const connect = useCallback(
-    async (id: string, database?: string) => {
+    async (id: string, overrides?: { database?: string; password?: string }) => {
       const connection = connections.find((c) => c.id === id);
 
       if (!connection) {
         throw new Error(`Connection with id ${id} not found`);
+      }
+
+      const password = overrides?.password ?? connection.password;
+
+      if (password === null) {
+        await signInModal.open({
+          connection,
+          onSignIn: async (password: string) =>
+            connect(connection.id, { database: overrides?.database, password }),
+        });
+        return;
       }
 
       if (activeConnection) {
@@ -76,11 +91,12 @@ export const useConnections = () => {
 
       setActiveConnectionClientId(null);
 
-      const selectedDatabase = database ?? connection.database;
+      const selectedDatabase = overrides?.database ?? connection.database;
 
       const newClientId = await trpc.connectDb.mutate({
         ...connection,
         database: selectedDatabase,
+        password,
       });
 
       setActiveConnectionClientId(newClientId);
@@ -88,12 +104,12 @@ export const useConnections = () => {
 
       window.document.title = `${selectedDatabase} – ${connection.name}`;
     },
-    [connections, activeConnection, navigate],
+    [connections, activeConnection, navigate, signInModal],
   );
 
   useEffectOnce(() => {
     if (activeConnectionId && activeConnectionDatabase) {
-      connect(activeConnectionId, activeConnectionDatabase);
+      connect(activeConnectionId, { database: activeConnectionDatabase });
       return;
     }
 

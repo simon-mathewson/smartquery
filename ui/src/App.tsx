@@ -14,19 +14,19 @@ export const App: React.FC = () => {
   useTheme();
 
   return (
-    <ConnectionsProvider>
-      <EditProvider>
-        <TabsProvider>
-          <QueriesProvider>
-            <DragAndDropProvider>
-              <ClickOutsideQueueProvider>
+    <ClickOutsideQueueProvider>
+      <ConnectionsProvider>
+        <EditProvider>
+          <TabsProvider>
+            <QueriesProvider>
+              <DragAndDropProvider>
                 <Empty />
                 <Outlet />
-              </ClickOutsideQueueProvider>
-            </DragAndDropProvider>
-          </QueriesProvider>
-        </TabsProvider>
-      </EditProvider>
-    </ConnectionsProvider>
+              </DragAndDropProvider>
+            </QueriesProvider>
+          </TabsProvider>
+        </EditProvider>
+      </ConnectionsProvider>
+    </ClickOutsideQueueProvider>
   );
 };

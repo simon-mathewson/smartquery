@@ -2,11 +2,21 @@ import type { PropsWithChildren } from 'react';
 import React from 'react';
 import { useConnections } from './useConnections';
 import { ConnectionsContext } from './Context';
+import { ConnectionSignInModal } from './signInModal/SignInModal';
+import { useModal } from '~/shared/components/modal/useModal';
+import type { SignInModalInput } from './signInModal/types';
 
 export const ConnectionsProvider: React.FC<PropsWithChildren> = (props) => {
   const { children } = props;
 
-  const context = useConnections();
+  const signInModal = useModal<SignInModalInput>();
 
-  return <ConnectionsContext.Provider value={context}>{children}</ConnectionsContext.Provider>;
+  const context = useConnections({ signInModal });
+
+  return (
+    <>
+      <ConnectionsContext.Provider value={context}>{children}</ConnectionsContext.Provider>
+      <ConnectionSignInModal {...signInModal} />
+    </>
+  );
 };
