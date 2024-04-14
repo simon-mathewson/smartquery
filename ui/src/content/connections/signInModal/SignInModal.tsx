@@ -67,8 +67,14 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
           </Field>
           {showAuthFailed && <ErrorMessage>Authentication failed. Please try again.</ErrorMessage>}
           <div className="mt-2 grid grid-cols-2 gap-2">
-            <Button label="Cancel" onClick={() => close()} />
-            <Button label="Sign in" icon={<Key />} type="submit" variant="filled" />
+            <Button disabled={isConnecting} label="Cancel" onClick={() => close()} />
+            <Button
+              disabled={isConnecting}
+              label="Sign in"
+              icon={<Key />}
+              type="submit"
+              variant="filled"
+            />
           </div>
         </fieldset>
       </form>
