@@ -1,7 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { OverlayCard } from '../OverlayCard/OverlayCard';
 import type { ModalControl } from './types';
-import classNames from 'classnames';
 
 export type ModalProps = PropsWithChildren<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,7 +15,7 @@ export const Modal = (props: ModalProps) => {
 
   return (
     <OverlayCard
-      className={classNames('p-2', className)}
+      className={className}
       closeOnOutsideClick={false}
       darkenBackground
       isOpen={isOpen}
@@ -24,7 +23,7 @@ export const Modal = (props: ModalProps) => {
     >
       {() => (
         <>
-          {title && <div className="truncate pb-2 text-lg font-medium">{title}</div>}
+          {title && <div className="truncate px-1 pb-2 pt-1 text-lg font-medium">{title}</div>}
           {children}
         </>
       )}

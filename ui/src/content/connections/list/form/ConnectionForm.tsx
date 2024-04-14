@@ -9,7 +9,7 @@ import { Input } from '~/shared/components/Input/Input';
 import { Select } from '~/shared/components/Select/Select';
 import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { TestConnection } from './TestConnection/TestConnection';
+import { TestConnection } from './test/TestConnection';
 import type { FormSchema } from './utils';
 import { isFormValid } from './utils';
 import { connectionSchema } from '~/shared/types';

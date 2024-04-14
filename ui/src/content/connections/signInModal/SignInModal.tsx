@@ -49,10 +49,10 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
   const { connection } = input;
 
   return (
-    <Modal {...props} className="w-[256px]" title="Sign in">
+    <Modal {...props} className="w-[272px]" title="Sign in">
       <form onSubmit={onSubmit}>
         <fieldset disabled={isConnecting} className="flex flex-col gap-2">
-          <div className="truncate pb-1 text-xs text-textTertiary">{connection.name}</div>
+          <div className="truncate px-1 pb-1 text-xs text-textTertiary">{connection.name}</div>
           <Field label="User">
             <Input autoComplete="username" disabled value={getCredentialUsername(connection)} />
           </Field>

@@ -112,11 +112,6 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
       connect(activeConnectionId, { database: activeConnectionDatabase });
       return;
     }
-
-    const firstConnectionId = connections.at(0)?.id;
-    if (!firstConnectionId) return;
-
-    connect(firstConnectionId);
   });
 
   useEffect(() => {

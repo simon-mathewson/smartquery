@@ -4,6 +4,7 @@ import { Query } from './Query/Query';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TabsContext } from '../Context';
 import { QueryProvider } from './Query/Provider';
+import { Logo } from '~/shared/components/logo/Logo';
 
 export const Queries: React.FC = () => {
   const { activeTab } = useDefinedContext(TabsContext);
@@ -11,7 +12,7 @@ export const Queries: React.FC = () => {
   if (!activeTab) {
     return (
       <div className="flex grow items-center justify-center">
-        <img className="w-50 h-max opacity-10 grayscale" src="/logo.svg" />
+        <Logo className="w-50 opacity-10 grayscale" />
       </div>
     );
   }

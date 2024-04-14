@@ -8,7 +8,6 @@ import { QueriesProvider } from './content/tabs/Queries/Provider';
 import { useTheme } from './content/theme/useTheme';
 import './index.css';
 import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQueue/Provider';
-import { Empty } from './content/empty/Empty';
 
 export const App: React.FC = () => {
   useTheme();
@@ -20,7 +19,6 @@ export const App: React.FC = () => {
           <TabsProvider>
             <QueriesProvider>
               <DragAndDropProvider>
-                <Empty />
                 <Outlet />
               </DragAndDropProvider>
             </QueriesProvider>

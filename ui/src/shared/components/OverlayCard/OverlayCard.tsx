@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { OverlayPortal } from '../OverlayPortal/OverlayPortal';
 import { useStyles } from './useStyles';
 import { isNotNull, isNotUndefined } from '~/shared/utils/typescript';
+import { Card } from '../card/Card';
 
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
@@ -148,15 +149,15 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
               }
             }}
           >
-            <div
+            <Card
               className={classNames(
-                'pointer-events-auto overflow-auto rounded-xl border border-border bg-card shadow-xl [max-height:inherit]',
+                'pointer-events-auto shadow-xl [max-height:inherit]',
                 className,
               )}
               ref={refs}
             >
               {children(childrenProps)}
-            </div>
+            </Card>
           </div>
         </div>
       )}
