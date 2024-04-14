@@ -32,6 +32,7 @@ export const useStyles = (props: UseStylesProps) => {
 
   const cardRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const backgroundRef = useRef<HTMLDivElement | null>(null);
 
   const updateStylesBasedOnAnchor = useCallback(
     (anchor: HTMLElement) => {
@@ -107,12 +108,29 @@ export const useStyles = (props: UseStylesProps) => {
     }
   }, [anchorRef, updateStylesBasedOnAnchor, updateStylesBasedOnCenter]);
 
-  const animateIn = useCallback((wrapper: HTMLElement) => {
+  const animateInBackground = useCallback((background: HTMLElement) => {
+    return background.animate(
+      [{ backgroundColor: 'rgba(0, 0, 0, 0)' }, { backgroundColor: 'rgba(0, 0, 0, 0.75)' }],
+      animationOptions,
+    ).finished;
+  }, []);
+
+  const animateOutBackground = useCallback(() => {
+    const background = backgroundRef.current;
+    if (!background) return;
+
+    return background.animate(
+      [{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }, { backgroundColor: 'rgba(0, 0, 0, 0)' }],
+      animationOptions,
+    ).finished;
+  }, []);
+
+  const animateInWrapper = useCallback((wrapper: HTMLElement) => {
     return wrapper.animate([getOutStyles(showAboveRef.current), getInStyles()], animationOptions)
       .finished;
   }, []);
 
-  const animateOut = useCallback(() => {
+  const animateOutWrapper = useCallback(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
@@ -149,12 +167,22 @@ export const useStyles = (props: UseStylesProps) => {
 
   return useMemo(
     () => ({
-      animateIn,
-      animateOut,
+      animateInBackground,
+      animateInWrapper,
+      animateOutBackground,
+      animateOutWrapper,
+      backgroundRef,
       registerContent,
       updateStyles,
       wrapperRef,
     }),
-    [animateIn, animateOut, registerContent, updateStyles],
+    [
+      animateInBackground,
+      animateInWrapper,
+      animateOutBackground,
+      animateOutWrapper,
+      registerContent,
+      updateStyles,
+    ],
   );
 };

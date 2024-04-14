@@ -4,7 +4,7 @@ import { mergeRefs } from 'react-merge-refs';
 import classNames from 'classnames';
 import { OverlayPortal } from '../OverlayPortal/OverlayPortal';
 import { useStyles } from './useStyles';
-import { isNotUndefined } from '~/shared/utils/typescript';
+import { isNotNull, isNotUndefined } from '~/shared/utils/typescript';
 
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
@@ -36,18 +36,37 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { animateIn, animateOut, registerContent, updateStyles, wrapperRef } = useStyles({
+  const {
+    animateInBackground,
+    animateOutBackground,
+    animateInWrapper,
+    animateOutWrapper,
+    backgroundRef,
+    registerContent,
+    updateStyles,
+    wrapperRef,
+  } = useStyles({
     align,
     anchorRef,
     matchTriggerWidth,
   });
 
   const close = useCallback(async () => {
-    await animateOut();
+    await Promise.all(
+      [animateOutWrapper(), darkenBackground ? animateOutBackground() : null].filter(isNotNull),
+    );
     setIsOpen(false);
     onClose?.();
     wrapperRef.current = null;
-  }, [animateOut, onClose, wrapperRef]);
+    backgroundRef.current = null;
+  }, [
+    animateOutBackground,
+    animateOutWrapper,
+    backgroundRef,
+    darkenBackground,
+    onClose,
+    wrapperRef,
+  ]);
 
   const open = useCallback(async () => {
     setIsOpen(true);
@@ -83,7 +102,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     return () => {
       trigger.removeEventListener('click', handleClick);
     };
-  }, [animateIn, close, isOpen, open, triggerRef, updateStyles]);
+  }, [animateInWrapper, close, isOpen, open, triggerRef, updateStyles]);
 
   const localRef = useRef<HTMLDivElement | null>(null);
 
@@ -108,15 +127,23 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
           className={classNames(
             'pointer-events-none fixed left-0 top-0 z-30 h-screen w-screen overflow-hidden',
             {
-              '!pointer-events-auto bg-black/75': darkenBackground,
+              '!pointer-events-auto': darkenBackground,
             },
           )}
+          ref={(background) => {
+            if (background && !backgroundRef.current) {
+              if (darkenBackground) {
+                animateInBackground(background);
+              }
+              backgroundRef.current = background;
+            }
+          }}
         >
           <div
             className="absolute opacity-0"
             ref={(wrapper) => {
               if (wrapper && !wrapperRef.current) {
-                animateIn(wrapper);
+                animateInWrapper(wrapper);
                 wrapperRef.current = wrapper;
               }
             }}
