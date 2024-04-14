@@ -59,7 +59,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   return (
     <>
       <form
-        className="mx-auto grid w-full max-w-md gap-2"
+        className="mx-auto grid w-[400px] gap-2"
         onSubmit={(event) => {
           event.preventDefault();
 

@@ -46,16 +46,16 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     await animateOut();
     setIsOpen(false);
     onClose?.();
-  }, [animateOut, onClose]);
+    wrapperRef.current = null;
+  }, [animateOut, onClose, wrapperRef]);
 
   const open = useCallback(async () => {
     setIsOpen(true);
     onOpen?.();
     setTimeout(() => {
       updateStyles();
-      animateIn();
     });
-  }, [animateIn, onOpen, updateStyles]);
+  }, [onOpen, updateStyles]);
 
   useEffect(() => {
     if (isOpenProp === undefined) return;
@@ -105,11 +105,22 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     <OverlayPortal>
       {isOpen && (
         <div
-          className={classNames('pointer-events-none fixed left-0 top-0 z-30 h-screen w-screen', {
-            '!pointer-events-auto bg-black/75': darkenBackground,
-          })}
+          className={classNames(
+            'pointer-events-none fixed left-0 top-0 z-30 h-screen w-screen overflow-hidden',
+            {
+              '!pointer-events-auto bg-black/75': darkenBackground,
+            },
+          )}
         >
-          <div className="absolute opacity-0" ref={wrapperRef}>
+          <div
+            className="absolute opacity-0"
+            ref={(wrapper) => {
+              if (wrapper && !wrapperRef.current) {
+                animateIn(wrapper);
+                wrapperRef.current = wrapper;
+              }
+            }}
+          >
             <div
               className={classNames(
                 'pointer-events-auto overflow-auto rounded-xl border border-border bg-card shadow-xl [max-height:inherit]',

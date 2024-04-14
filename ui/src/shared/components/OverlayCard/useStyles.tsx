@@ -107,10 +107,7 @@ export const useStyles = (props: UseStylesProps) => {
     }
   }, [anchorRef, updateStylesBasedOnAnchor, updateStylesBasedOnCenter]);
 
-  const animateIn = useCallback(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-
+  const animateIn = useCallback((wrapper: HTMLElement) => {
     return wrapper.animate([getOutStyles(showAboveRef.current), getInStyles()], animationOptions)
       .finished;
   }, []);
