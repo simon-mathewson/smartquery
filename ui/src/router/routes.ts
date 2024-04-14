@@ -1,5 +1,5 @@
 export const routes = {
-  root: '/',
+  root: () => '/',
   database: (connectionId = ':connectionId', database = ':database') =>
     `/db/${connectionId}/${database}`,
 };

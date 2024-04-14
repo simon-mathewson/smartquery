@@ -41,7 +41,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   return (
     <OverlayCard align="right" triggerRef={triggerRef}>
       {() => (
-        <div className="w-[592px] p-4">
+        <div className="w-[592px]">
           <SqlEditor onChange={(sql) => setUserSql(sql)} onSubmit={handleSubmit} value={userSql} />
         </div>
       )}

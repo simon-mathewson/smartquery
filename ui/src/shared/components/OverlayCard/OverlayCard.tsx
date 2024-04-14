@@ -151,7 +151,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
           >
             <Card
               className={classNames(
-                'pointer-events-auto shadow-xl [max-height:inherit]',
+                'pointer-events-auto shadow-2xl [max-height:inherit]',
                 className,
               )}
               ref={refs}

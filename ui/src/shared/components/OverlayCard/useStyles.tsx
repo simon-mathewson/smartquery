@@ -110,7 +110,7 @@ export const useStyles = (props: UseStylesProps) => {
 
   const animateInBackground = useCallback((background: HTMLElement) => {
     return background.animate(
-      [{ backgroundColor: 'rgba(0, 0, 0, 0)' }, { backgroundColor: 'rgba(0, 0, 0, 0.75)' }],
+      [{ backgroundColor: 'rgba(0, 0, 0, 0)' }, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }],
       animationOptions,
     ).finished;
   }, []);
@@ -120,7 +120,7 @@ export const useStyles = (props: UseStylesProps) => {
     if (!background) return;
 
     return background.animate(
-      [{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }, { backgroundColor: 'rgba(0, 0, 0, 0)' }],
+      [{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }, { backgroundColor: 'rgba(0, 0, 0, 0)' }],
       animationOptions,
     ).finished;
   }, []);

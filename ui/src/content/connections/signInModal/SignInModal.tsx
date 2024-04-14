@@ -10,9 +10,17 @@ import { assert } from 'ts-essentials';
 import { getCredentialUsername } from '../utils';
 import { ErrorMessage } from '~/shared/components/errorMessage/ErrorMessage';
 import { isAuthError } from '~/shared/utils/prisma';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { ConnectionsContext } from '../Context';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '~/router/routes';
 
 export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (props) => {
   const { close, input } = props;
+
+  const navigate = useNavigate();
+
+  const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const [password, setPassword] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
@@ -67,7 +75,16 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
           </Field>
           {showAuthFailed && <ErrorMessage>Authentication failed. Please try again.</ErrorMessage>}
           <div className="mt-2 grid grid-cols-2 gap-2">
-            <Button disabled={isConnecting} label="Cancel" onClick={() => close()} />
+            <Button
+              disabled={isConnecting}
+              label="Cancel"
+              onClick={() => {
+                close();
+                if (!activeConnection) {
+                  navigate(routes.root());
+                }
+              }}
+            />
             <Button
               disabled={isConnecting}
               label="Sign in"

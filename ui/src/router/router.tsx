@@ -6,11 +6,11 @@ import { Home } from '~/content/home/Home';
 
 export const router = createBrowserRouter([
   {
-    path: routes.root,
+    path: routes.root(),
     element: <App />,
     children: [
       {
-        path: routes.root,
+        path: routes.root(),
         element: <Home />,
       },
       {

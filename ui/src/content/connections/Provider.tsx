@@ -15,8 +15,10 @@ export const ConnectionsProvider: React.FC<PropsWithChildren> = (props) => {
 
   return (
     <>
-      <ConnectionsContext.Provider value={context}>{children}</ConnectionsContext.Provider>
-      <ConnectionSignInModal {...signInModal} />
+      <ConnectionsContext.Provider value={context}>
+        <ConnectionSignInModal {...signInModal} />
+        {children}
+      </ConnectionsContext.Provider>
     </>
   );
 };
