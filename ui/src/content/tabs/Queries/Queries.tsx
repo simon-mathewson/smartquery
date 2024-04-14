@@ -11,7 +11,7 @@ export const Queries: React.FC = () => {
   if (!activeTab) {
     return (
       <div className="flex grow items-center justify-center">
-        <img className="w-50 h-max opacity-20" src="/logo.svg" />
+        <img className="w-50 h-max opacity-10 grayscale" src="/logo.svg" />
       </div>
     );
   }
