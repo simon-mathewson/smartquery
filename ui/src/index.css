@@ -22,14 +22,6 @@
 }
 
 @layer utilities {
-  .window-drag-area {
-    -webkit-app-region: drag;
-  }
-
-  .window-drag-area * {
-    -webkit-app-region: no-drag;
-  }
-
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;

@@ -66,21 +66,20 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
     <OverlayCard
       align="center"
       anchorRef={selectionActionsPopoverRef}
+      className="p-3"
       onClose={() => setIsEditing(false)}
       onOpen={() => setIsEditing(true)}
       triggerRef={editButtonRef}
     >
       {() => (
-        <div className="w-full min-w-[320px] max-w-[360px] overflow-auto p-4">
-          <div className="grid gap-2 overflow-auto">
-            {columnFields?.map((fieldProps, index) => (
-              <EditOverlayField
-                autoFocus={index === columnFields.findIndex((c) => c)}
-                key={fieldProps.column.name}
-                {...fieldProps}
-              />
-            ))}
-          </div>
+        <div className="no-scrollbar grid w-full min-w-[320px] max-w-[360px] gap-2">
+          {columnFields?.map((fieldProps, index) => (
+            <EditOverlayField
+              autoFocus={index === columnFields.findIndex((c) => c)}
+              key={fieldProps.column.name}
+              {...fieldProps}
+            />
+          ))}
         </div>
       )}
     </OverlayCard>

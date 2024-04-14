@@ -42,7 +42,7 @@ export function Select<T>(props: SelectProps<T>) {
         </div>
         <ExpandMore className="text-secondary" />
       </div>
-      <OverlayCard className="py-2" matchTriggerWidth triggerRef={triggerRef}>
+      <OverlayCard className="px-0 py-2" matchTriggerWidth triggerRef={triggerRef}>
         {({ close }) =>
           options.map(({ label, value }) => (
             <div
