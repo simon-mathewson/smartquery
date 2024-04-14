@@ -182,7 +182,7 @@ export const Table: React.FC<TableProps> = (props) => {
           )}
         </div>
         {isTableEmpty && (
-          <div className="sticky left-0 w-full py-4 pl-4 text-xs">This table is empty.</div>
+          <div className="sticky left-0 w-full py-4 pl-2 text-xs">This table is empty.</div>
         )}
       </div>
     </>
