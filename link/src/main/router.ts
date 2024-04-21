@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { MySqlClient, PostgresClient } from '../../prisma';
 import type { PrismaValue } from './types';
 import { connectionSchema, type Client } from './types';
+import { createSshTunnel } from './utils/createSshTunnel';
 
 const clients: {
   [connectionId: string]: Client;
@@ -16,9 +17,28 @@ const t = initTRPC.create({
 
 export const router = t.router({
   connectDb: t.procedure.input(connectionSchema).mutation(async (props) => {
-    const { database, engine, host, password, port, user } = props.input;
+    const {
+      database,
+      engine,
+      host: remoteHost,
+      password,
+      port: remotePort,
+      ssh,
+      user,
+    } = props.input;
 
     const clientId = uniqueId();
+
+    const { sshLocalHost, sshLocalPort, sshTunnel } = ssh
+      ? await createSshTunnel(props.input)
+      : {
+          sshLocalHost: undefined,
+          sshLocalPort: undefined,
+          sshTunnel: null,
+        };
+
+    const host = sshLocalHost ?? remoteHost;
+    const port = sshLocalPort ?? remotePort;
 
     const client = {
       mysql: new MySqlClient({
@@ -35,15 +55,19 @@ export const router = t.router({
     clients[clientId] = {
       connection: props.input,
       prisma: client,
+      sshTunnel,
     };
 
     return clientId;
   }),
   disconnectDb: t.procedure.input(z.string()).mutation(async (props) => {
     const clientId = props.input;
-    if (!clients[clientId]) return;
+    if (!(clientId in clients)) return;
 
-    await clients[clientId]!.prisma.$disconnect();
+    const client = clients[clientId];
+
+    await client.prisma.$disconnect();
+    client.sshTunnel?.dispose();
 
     delete clients[clientId];
   }),
