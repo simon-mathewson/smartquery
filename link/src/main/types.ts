@@ -14,11 +14,11 @@ export const connectionSchema = z.object({
     .object({
       host: z.string().trim().min(1),
       port: z.number(),
-      password: z.string().nullable(),
-      privateKey: z.string().nullable(),
+      password: z.string().optional(),
+      privateKey: z.string().optional(),
       user: z.string().trim().min(1),
     })
-    .nullable(),
+    .optional(),
   user: z.string().trim().min(1),
 });
 
