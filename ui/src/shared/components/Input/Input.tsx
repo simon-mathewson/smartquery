@@ -13,13 +13,7 @@ export type InputProps = {
 >;
 
 export const Input: React.FC<InputProps> = (props) => {
-  const {
-    className,
-    element: Element = 'input',
-    onChange: onChangeProp,
-    value: valueProp,
-    ...inputProps
-  } = props;
+  const { className, element: Element = 'input', onChange: onChangeProp, ...inputProps } = props;
 
   const { mode } = useTheme();
 

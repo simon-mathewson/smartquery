@@ -2,7 +2,6 @@ import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
 import { Field } from '~/shared/components/Field/Field';
 import type { FormSchema } from '../utils';
 import { Input } from '~/shared/components/Input/Input';
-import { isFileSystemApiSupported } from '~/shared/utils/fileSystemApi';
 import { getCredentialUsername } from '~/content/connections/utils';
 import { CredentialInput } from '~/shared/components/CredentialInput/CredentialInput';
 import { isNil } from 'lodash';
@@ -76,7 +75,6 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
                 },
                 {
                   button: {
-                    disabled: !isFileSystemApiSupported(),
                     label: 'Private key',
                   },
                   value: 'privateKey',
