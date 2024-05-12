@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import type { ReactNode } from 'react';
 import React, { useCallback, useRef } from 'react';
 import { useTheme } from '~/content/theme/useTheme';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
@@ -8,14 +7,19 @@ export type InputProps = {
   className?: string;
   element?: 'input' | 'textarea';
   onChange?: (value: string) => void;
-  suffix?: ReactNode;
 } & Pick<
   React.InputHTMLAttributes<HTMLInputElement>,
-  'autoComplete' | 'autoFocus' | 'disabled' | 'placeholder' | 'type' | 'value'
+  'autoComplete' | 'autoFocus' | 'disabled' | 'onPaste' | 'placeholder' | 'type' | 'value'
 >;
 
 export const Input: React.FC<InputProps> = (props) => {
-  const { className, element: Element = 'input', onChange: onChangeProp, ...inputProps } = props;
+  const {
+    className,
+    element: Element = 'input',
+    onChange: onChangeProp,
+    value: valueProp,
+    ...inputProps
+  } = props;
 
   const { mode } = useTheme();
 
@@ -49,7 +53,8 @@ export const Input: React.FC<InputProps> = (props) => {
 
   return (
     <Element
-      {...inputProps}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      {...(inputProps as any)}
       className={classNames(
         'block w-full rounded-lg border-[1.5px] border-border bg-background px-2 py-[6.5px] text-sm font-medium text-textSecondary outline-none focus:border-primary disabled:opacity-50',
         className,

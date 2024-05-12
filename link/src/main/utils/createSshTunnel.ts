@@ -1,25 +1,27 @@
-import { NodeSSH } from 'node-ssh';
+import { SSHConnection } from 'node-ssh-forward';
+import findFreePorts from 'find-free-ports';
 
-import { findAvailablePort } from './findAvailablePort';
 import type { Connection } from '../types';
 
 export const createSshTunnel = async (connection: Connection) => {
   const { host, port, ssh } = connection;
 
-  const sshTunnel = new NodeSSH();
-
   const sshLocalHost = 'localhost';
-  const sshLocalPort = await findAvailablePort();
+  const [sshLocalPort] = await findFreePorts(1, { startPort: 49152 });
 
-  await sshTunnel.connect({
-    host: ssh.host,
-    port: ssh.port,
-    username: ssh.user,
+  const sshTunnel = new SSHConnection({
+    endHost: ssh.host,
+    endPort: ssh.port,
     password: ssh.password,
     privateKey: ssh.privateKey,
+    username: ssh.user,
   });
 
-  await sshTunnel.forwardOut('localhost', sshLocalPort, host, port);
+  await sshTunnel.forward({
+    fromPort: sshLocalPort,
+    toHost: host,
+    toPort: port,
+  });
 
   return { sshLocalHost, sshLocalPort, sshTunnel };
 };

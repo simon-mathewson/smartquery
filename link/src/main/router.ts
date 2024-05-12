@@ -49,8 +49,15 @@ export const router = t.router({
       }),
     }[engine];
 
-    // Connect right away so we get an error if connection is invalid
-    await client.$connect();
+    try {
+      // Connect right away so we get an error if connection is invalid
+      await client.$connect();
+    } catch (error: unknown) {
+      if (sshTunnel) {
+        void sshTunnel.shutdown();
+      }
+      throw error;
+    }
 
     clients[clientId] = {
       connection: props.input,
@@ -67,7 +74,7 @@ export const router = t.router({
     const client = clients[clientId];
 
     await client.prisma.$disconnect();
-    client.sshTunnel?.dispose();
+    await client.sshTunnel?.shutdown();
 
     delete clients[clientId];
   }),

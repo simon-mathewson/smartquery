@@ -8,14 +8,24 @@ import type { AppRouter } from '../../../link/src/main/router';
 export type ConnectInput = inferRouterInputs<AppRouter>['connectDb'];
 
 export const connectionSchema = z.object({
+  credentialStorage: z.union([z.literal('alwaysAsk'), z.literal('localStorage')]),
   database: z.string().trim().min(1),
   engine: z.union([z.literal('mysql'), z.literal('postgresql')]),
   host: z.string().trim().min(1),
   id: z.string(),
   name: z.string().trim().min(1),
   password: z.string().nullable(),
-  passwordStorage: z.union([z.literal('alwaysAsk'), z.literal('localStorage')]),
   port: z.number(),
+  ssh: z
+    .object({
+      credentialStorage: z.union([z.literal('alwaysAsk'), z.literal('localStorage')]),
+      host: z.string().trim().min(1),
+      password: z.string().nullable().optional(),
+      port: z.number(),
+      privateKey: z.string().nullable().optional(),
+      user: z.string().trim().min(1),
+    })
+    .nullable(),
   user: z.string().trim().min(1),
 });
 

@@ -1,6 +1,8 @@
 import { ArrowBack, DeleteOutline, Done } from '@mui/icons-material';
+import { cloneDeep, set } from 'lodash';
 import React, { useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
+import { getCredentialUsername } from '~/content/connections/utils';
 import { Button } from '~/shared/components/Button/Button';
 import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
 import { ConfirmDeletePopover } from '~/shared/components/ConfirmDeletePopover/ConfirmDeletePopover';
@@ -9,12 +11,12 @@ import { Input } from '~/shared/components/Input/Input';
 import { Select } from '~/shared/components/Select/Select';
 import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import type { Connection } from '~/shared/types';
+import { SshFormSection } from './ssh/SshFormSection';
 import { TestConnection } from './test/TestConnection';
 import type { FormSchema } from './utils';
-import { isFormValid } from './utils';
-import { connectionSchema } from '~/shared/types';
-import type { Connection } from '~/shared/types';
-import { getCredentialUsername } from '~/content/connections/utils';
+import { getConnectionFromForm, getDefaultPort, isFormValid } from './utils';
+import { CredentialInput } from '~/shared/components/CredentialInput/CredentialInput';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;
@@ -36,46 +38,53 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
       ? {
           ...connectionToEdit,
           password: connectionToEdit?.password ?? '',
+          ssh: connectionToEdit?.ssh
+            ? {
+                ...connectionToEdit.ssh,
+                credentialType:
+                  connectionToEdit.ssh.password !== undefined ? 'password' : 'privateKey',
+                password: connectionToEdit.ssh.password ?? '',
+                privateKey: connectionToEdit.ssh.privateKey ?? '',
+              }
+            : null,
         }
       : {
+          credentialStorage: 'alwaysAsk',
           database: '',
           engine: null,
           host: '',
           id: '',
           name: '',
           password: '',
-          passwordStorage: 'alwaysAsk',
           port: null,
+          ssh: null,
           user: '',
         },
   );
 
-  const getChangeHandler =
-    <K extends keyof FormSchema>(key: K) =>
-    (value: FormSchema[K]) => {
-      setForm((formValues) => ({ ...formValues, [key]: value }));
-    };
+  const getChangeHandler = (key: string) => (value: unknown) => {
+    setForm((formValues) => {
+      const newValues = cloneDeep(formValues);
+      set(newValues, key, value);
+      return newValues;
+    });
+  };
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const connection = getConnectionFromForm(form);
+
+    connectionToEdit
+      ? updateConnection(connectionToEdit.id, connection)
+      : addConnection(connection);
+
+    exit();
+  };
 
   return (
     <>
-      <form
-        className="mx-auto grid w-[400px] gap-2"
-        onSubmit={(event) => {
-          event.preventDefault();
-
-          const connection = connectionSchema.parse(form);
-
-          if (form.passwordStorage !== 'localStorage') {
-            connection.password = null;
-          }
-
-          connectionToEdit
-            ? updateConnection(connectionToEdit.id, connection)
-            : addConnection(connection);
-
-          exit();
-        }}
-      >
+      <form className="mx-auto grid w-[320px] gap-2" onSubmit={onSubmit}>
         <ThreeColumns
           left={<Button icon={<ArrowBack />} onClick={exit} />}
           middle={
@@ -124,6 +133,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           <Field label="Port">
             <Input
               onChange={(value) => getChangeHandler('port')(value ? Number(value) : null)}
+              placeholder={String(getDefaultPort(form.engine) ?? '')}
               value={form.port === null ? '' : String(form.port)}
             />
           </Field>
@@ -132,10 +142,10 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           <ButtonSelect<'alwaysAsk' | 'localStorage'>
             equalWidth
             fullWidth
-            onChange={getChangeHandler('passwordStorage')}
+            onChange={getChangeHandler('credentialStorage')}
             options={[
               {
-                button: { label: 'Always ask / Keychain' },
+                button: { label: 'None / Keychain' },
                 value: 'alwaysAsk',
               },
               {
@@ -144,27 +154,25 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
               },
             ]}
             required
-            value={form.passwordStorage}
+            value={form.credentialStorage}
           />
         </Field>
-        <div className="grid grid-cols-2 gap-2">
-          <Field label="User">
-            <Input onChange={getChangeHandler('user')} value={form.user} />
-          </Field>
+        <Field label="User">
+          <Input onChange={getChangeHandler('user')} value={form.user} />
+        </Field>
+        {form.credentialStorage === 'localStorage' && (
           <Field label="Password">
-            <Input autoComplete="username" className="hidden" value={getCredentialUsername(form)} />
-            <Input
-              autoComplete="current-password"
-              disabled={form.passwordStorage === 'alwaysAsk'}
+            <CredentialInput
               onChange={getChangeHandler('password')}
-              type="password"
-              value={form.passwordStorage === 'alwaysAsk' ? '' : form.password}
+              username={getCredentialUsername(form)}
+              value={form.password}
             />
           </Field>
-        </div>
+        )}
         <Field label="Default database">
           <Input onChange={getChangeHandler('database')} value={form.database} />
         </Field>
+        <SshFormSection form={form} getChangeHandler={getChangeHandler} />
         <TestConnection form={form} />
         <Button
           disabled={!isFormValid(form)}

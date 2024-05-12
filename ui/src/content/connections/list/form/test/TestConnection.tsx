@@ -2,13 +2,14 @@ import { CheckCircleOutline, SettingsEthernet, WarningAmber } from '@mui/icons-m
 import { Button } from '~/shared/components/Button/Button';
 import React, { useEffect, useState } from 'react';
 import type { FormSchema } from '../utils';
-import { isFormValid } from '../utils';
+import { getConnectionFromForm, isFormValid } from '../utils';
 import { trpc } from '~/trpc';
-import type { ConnectInput, Connection } from '~/shared/types';
+import type { ConnectInput } from '~/shared/types';
 import type { SignInModalInput } from '~/content/connections/signInModal/types';
 import { useModal } from '~/shared/components/modal/useModal';
 import { ConnectionSignInModal } from '~/content/connections/signInModal/SignInModal';
 import { isAuthError } from '~/shared/utils/prisma';
+import { isNil } from 'lodash';
 
 export type TestConnectionProps = {
   form: FormSchema;
@@ -28,12 +29,20 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     setHasSucceeded(false);
   }, [form]);
 
-  const test = async (overridePassword?: string) => {
-    const password = overridePassword ?? form.password;
+  const test = async (credentials?: {
+    password?: string;
+    sshPassword?: string;
+    sshPrivateKey?: string;
+  }) => {
+    const connection = getConnectionFromForm(form);
 
-    if (form.passwordStorage === 'alwaysAsk' && !overridePassword) {
+    const password = credentials?.password ?? connection.password;
+    const sshPassword = credentials?.sshPassword ?? connection.ssh?.password;
+    const sshPrivateKey = credentials?.sshPrivateKey ?? connection.ssh?.privateKey;
+
+    if (isNil(password) || (connection.ssh && isNil(sshPassword) && isNil(sshPrivateKey))) {
       signInModal.open({
-        connection: form as Connection,
+        connection,
         onSignIn: test,
       });
       return;
@@ -44,7 +53,17 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     setHasSucceeded(false);
 
     try {
-      const clientId = await trpc.connectDb.mutate({ ...form, password } as ConnectInput);
+      const clientId = await trpc.connectDb.mutate({
+        ...connection,
+        password,
+        ssh: connection.ssh
+          ? {
+              ...connection.ssh,
+              password: sshPassword,
+              privateKey: sshPrivateKey,
+            }
+          : null,
+      } as ConnectInput);
       setHasSucceeded(true);
       await trpc.disconnectDb.mutate(clientId);
     } catch (error) {

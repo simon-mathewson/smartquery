@@ -1,5 +1,5 @@
 import { trpc } from '~/trpc';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { initialConnections } from './initialConnections';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import type { ActiveConnection, Connection } from '~/shared/types';
@@ -67,7 +67,15 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
   );
 
   const connect = useCallback(
-    async (id: string, overrides?: { database?: string; password?: string }) => {
+    async (
+      id: string,
+      overrides?: {
+        database?: string;
+        password?: string;
+        sshPassword?: string;
+        sshPrivateKey?: string;
+      },
+    ) => {
       const connection = connections.find((c) => c.id === id);
 
       if (!connection) {
@@ -75,12 +83,17 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
       }
 
       const password = overrides?.password ?? connection.password;
+      const sshPassword = overrides?.sshPassword ?? connection.ssh?.password;
+      const sshPrivateKey = overrides?.sshPrivateKey ?? connection.ssh?.privateKey;
 
-      if (password === null) {
+      if (password === null || sshPassword === null || sshPrivateKey === null) {
         await signInModal.open({
           connection,
-          onSignIn: async (password: string) =>
-            connect(connection.id, { database: overrides?.database, password }),
+          onSignIn: async (credentials) =>
+            connect(connection.id, {
+              database: overrides?.database,
+              ...credentials,
+            }),
         });
         return;
       }
@@ -97,6 +110,13 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
         ...connection,
         database: selectedDatabase,
         password,
+        ssh: connection.ssh
+          ? {
+              ...connection.ssh,
+              password: sshPassword,
+              privateKey: sshPrivateKey,
+            }
+          : null,
       });
 
       setActiveConnectionClientId(newClientId);
@@ -127,6 +147,29 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [activeConnection]);
+
+  const routeParams = useParams<{ connectionId?: string; database?: string }>();
+  const previousRouteParamsRef = useRef<typeof routeParams | undefined>(undefined);
+
+  useEffect(() => {
+    const previousRouteParams = previousRouteParamsRef.current;
+    previousRouteParamsRef.current = routeParams;
+
+    if (!previousRouteParams) return;
+
+    const { connectionId: previousConnectionId, database: previousDatabase } = previousRouteParams;
+    const { connectionId: nextConnectionId, database: nextDatabase } = routeParams;
+
+    if (
+      previousConnectionId &&
+      previousDatabase &&
+      (previousConnectionId !== nextConnectionId || previousDatabase !== nextDatabase)
+    ) {
+      if (activeConnection) {
+        trpc.disconnectDb.mutate(activeConnection.clientId);
+      }
+    }
+  }, [activeConnection, routeParams]);
 
   return useMemo(
     () => ({
