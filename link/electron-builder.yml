@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: dabase
+appId: dev.dabase.link
+productName: Dabase Link
 directories:
   buildResources: build
 files:
