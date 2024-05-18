@@ -17,9 +17,7 @@
     "postinstall": "electron-builder install-app-deps",
     "seed": "ts-node ./seed/seed.ts",
     "start": "electron-vite preview",
-    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
-    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
-    "typecheck": "npm run typecheck:node && npm run typecheck:web"
+    "typecheck": "tsc --noEmit --composite false"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^2.0.0",
@@ -40,12 +38,13 @@
     "@electron-toolkit/eslint-config-ts": "^1.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@faker-js/faker": "^8.4.0",
+    "@swc/core": "^1.5.7",
     "@types/cors": "^2.8.17",
     "@types/node": "^18.18.7",
     "@types/pg": "^8.10.7",
     "electron": "^25.9.2",
     "electron-builder": "^24.6.3",
-    "electron-vite": "^1.0.27",
+    "electron-vite": "^1.0.28",
     "eslint": "^8.47.0",
     "prisma": "^5.7.1",
     "ts-essentials": "^9.4.2",

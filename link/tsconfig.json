@@ -1,8 +1,9 @@
 {
   "include": ["electron.vite.config.*", "src", "prisma"],
   "compilerOptions": {
-    "target": "ES2021",
+    "allowSyntheticDefaultImports": true,
     "module": "ESNext",
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "target": "ES2021"
   }
 }
