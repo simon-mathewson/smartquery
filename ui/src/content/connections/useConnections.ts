@@ -21,23 +21,25 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
   const [activeConnectionClientId, setActiveConnectionClientId] = useState<string | null>(null);
 
-  const { connectionId: activeConnectionId, database: activeConnectionDatabase } = useParams<{
+  const { connectionId: connectionIdParam, database: databaseParam } = useParams<{
     connectionId: string;
     database: string;
   }>();
 
-  const activeConnection = useMemo(() => {
-    if (!activeConnectionClientId || !activeConnectionDatabase) return null;
+  const [activeConnection, setActiveConnection] = useState<ActiveConnection | null>(null);
 
-    const connection = connections.find((c) => c.id === activeConnectionId) ?? null;
-    if (!connection) return null;
+  useEffect(() => {
+    if (!activeConnectionClientId || !connectionIdParam || !databaseParam) return;
 
-    return {
+    const connection = connections.find((c) => c.id === connectionIdParam) ?? null;
+    if (!connection) return;
+
+    setActiveConnection({
       ...connection,
       clientId: activeConnectionClientId,
-      database: activeConnectionDatabase,
-    } satisfies ActiveConnection;
-  }, [activeConnectionClientId, activeConnectionDatabase, activeConnectionId, connections]);
+      database: databaseParam,
+    } satisfies ActiveConnection);
+  }, [activeConnectionClientId, databaseParam, connectionIdParam, connections]);
 
   const addConnection = useCallback(
     (connection: Omit<Connection, 'id'>) => {
@@ -65,6 +67,15 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
     },
     [connections, setConnections],
   );
+
+  const disconnect = useCallback(async () => {
+    if (!activeConnection) return;
+
+    await trpc.disconnectDb.mutate(activeConnection.clientId);
+
+    setActiveConnectionClientId(null);
+    setActiveConnection(null);
+  }, [activeConnection]);
 
   const connect = useCallback(
     async (
@@ -98,11 +109,7 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
         return;
       }
 
-      if (activeConnection) {
-        await trpc.disconnectDb.mutate(activeConnection.clientId);
-      }
-
-      setActiveConnectionClientId(null);
+      await disconnect();
 
       const selectedDatabase = overrides?.database ?? connection.database;
 
@@ -124,30 +131,24 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
       window.document.title = `${selectedDatabase} – ${connection.name}`;
     },
-    [connections, activeConnection, navigate, signInModal],
+    [connections, disconnect, navigate, signInModal],
   );
 
   useEffectOnce(() => {
-    if (activeConnectionId && activeConnectionDatabase) {
-      connect(activeConnectionId, { database: activeConnectionDatabase });
+    if (connectionIdParam && databaseParam) {
+      connect(connectionIdParam, { database: databaseParam });
       return;
     }
   });
 
   // Disconnect when closing tab
   useEffect(() => {
-    const handleBeforeUnload = async () => {
-      if (activeConnectionClientId) {
-        await trpc.disconnectDb.mutate(activeConnectionClientId);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('beforeunload', disconnect);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('beforeunload', disconnect);
     };
-  }, [activeConnectionClientId]);
+  }, [disconnect]);
 
   const routeParams = useParams<{ connectionId?: string; database?: string }>();
   const previousRouteParamsRef = useRef<typeof routeParams | undefined>(undefined);
@@ -167,11 +168,9 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
       previousDatabase &&
       (nextConnectionId === undefined || nextDatabase === undefined)
     ) {
-      if (activeConnectionClientId) {
-        trpc.disconnectDb.mutate(activeConnectionClientId);
-      }
+      void disconnect();
     }
-  }, [activeConnectionClientId, routeParams]);
+  }, [disconnect, routeParams]);
 
   return useMemo(
     () => ({

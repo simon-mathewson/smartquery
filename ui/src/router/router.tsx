@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { App } from '~/App';
-import { Database } from '~/content/database/Database';
 import { routes } from './routes';
 import { Home } from '~/content/home/Home';
+import { Database } from '~/content/database/Database';
 
 export const router = createBrowserRouter([
   {

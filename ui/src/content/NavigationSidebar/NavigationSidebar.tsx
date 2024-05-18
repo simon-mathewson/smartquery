@@ -3,13 +3,17 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TableList } from '../TableList/TableList';
 import { Connections } from './Connections/Connections';
 import { ConnectionsContext } from '../connections/Context';
-import { assert } from 'ts-essentials';
+import type { ActiveConnection } from '~/shared/types';
+import { usePrevious } from '~/shared/hooks/usePrevious';
 
 export const NavigationSidebar: React.FC = () => {
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
-  assert(activeConnection);
+  const { activeConnection: currentActiveConnection } = useDefinedContext(ConnectionsContext);
 
   const connectionsTriggerRef = useRef<HTMLDivElement | null>(null);
+
+  const previousActiveConnection = usePrevious<ActiveConnection | null>(currentActiveConnection);
+
+  const activeConnection = currentActiveConnection ?? previousActiveConnection;
 
   return (
     <div className="sticky top-0 flex h-screen grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col gap-2 px-2 pt-2">
@@ -18,17 +22,17 @@ export const NavigationSidebar: React.FC = () => {
         ref={connectionsTriggerRef}
       >
         <div className="text-md truncate font-medium leading-tight text-textPrimary">
-          {activeConnection.name}
+          {activeConnection?.name}
         </div>
         <div className="truncate text-xs leading-tight text-textSecondary">
-          {activeConnection.user}@{activeConnection.host}:{activeConnection.port}
+          {activeConnection?.user}@{activeConnection?.host}:{activeConnection?.port}
         </div>
         <div className="truncate font-mono text-xs font-medium leading-tight text-textSecondary">
-          {activeConnection.database}
+          {activeConnection?.database}
         </div>
       </div>
       <Connections triggerRef={connectionsTriggerRef} />
-      {activeConnection && <TableList />}
+      {currentActiveConnection && <TableList />}
     </div>
   );
 };
