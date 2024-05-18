@@ -113,23 +113,28 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
       const selectedDatabase = overrides?.database ?? connection.database;
 
-      const newClientId = await trpc.connectDb.mutate({
-        ...connection,
-        database: selectedDatabase,
-        password,
-        ssh: connection.ssh
-          ? {
-              ...connection.ssh,
-              password: sshPassword,
-              privateKey: sshPrivateKey,
-            }
-          : null,
-      });
+      try {
+        const newClientId = await trpc.connectDb.mutate({
+          ...connection,
+          database: selectedDatabase,
+          password,
+          ssh: connection.ssh
+            ? {
+                ...connection.ssh,
+                password: sshPassword,
+                privateKey: sshPrivateKey,
+              }
+            : null,
+        });
 
-      setActiveConnectionClientId(newClientId);
-      navigate(routes.database(connection.id, selectedDatabase));
+        setActiveConnectionClientId(newClientId);
+        navigate(routes.database(connection.id, selectedDatabase));
 
-      window.document.title = `${selectedDatabase} – ${connection.name}`;
+        window.document.title = `${selectedDatabase} – ${connection.name}`;
+      } catch (error) {
+        console.error(error);
+        navigate(routes.root());
+      }
     },
     [connections, disconnect, navigate, signInModal],
   );
