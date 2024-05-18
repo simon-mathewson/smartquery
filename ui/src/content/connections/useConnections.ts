@@ -134,10 +134,11 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
     }
   });
 
+  // Disconnect when closing tab
   useEffect(() => {
     const handleBeforeUnload = async () => {
-      if (activeConnection) {
-        await trpc.disconnectDb.mutate(activeConnection.clientId);
+      if (activeConnectionClientId) {
+        await trpc.disconnectDb.mutate(activeConnectionClientId);
       }
     };
 
@@ -146,11 +147,12 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [activeConnection]);
+  }, [activeConnectionClientId]);
 
   const routeParams = useParams<{ connectionId?: string; database?: string }>();
   const previousRouteParamsRef = useRef<typeof routeParams | undefined>(undefined);
 
+  // Disconnect when navigating to non-DB route
   useEffect(() => {
     const previousRouteParams = previousRouteParamsRef.current;
     previousRouteParamsRef.current = routeParams;
@@ -163,13 +165,13 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
     if (
       previousConnectionId &&
       previousDatabase &&
-      (previousConnectionId !== nextConnectionId || previousDatabase !== nextDatabase)
+      (nextConnectionId === undefined || nextDatabase === undefined)
     ) {
-      if (activeConnection) {
-        trpc.disconnectDb.mutate(activeConnection.clientId);
+      if (activeConnectionClientId) {
+        trpc.disconnectDb.mutate(activeConnectionClientId);
       }
     }
-  }, [activeConnection, routeParams]);
+  }, [activeConnectionClientId, routeParams]);
 
   return useMemo(
     () => ({
