@@ -1,7 +1,7 @@
 module.exports = {
   appId: 'dev.dabase.link',
   productName: 'Dabase Link',
-  directories: { buildResources: 'build' },
+  directories: { buildResources: 'buildResources' },
   asarUnpack: ['resources/**'],
   files: [
     '!**/.vscode/*',
@@ -13,7 +13,7 @@ module.exports = {
   ],
   win: { target: [{ target: 'nsis', arch: ['x64'] }] },
   nsis: {
-    artifactName: '${name}-${version}-${arch}-setup.${ext}',
+    artifactName: '${name}_${version}_${arch}_setup.${ext}',
     shortcutName: '${productName}',
     uninstallDisplayName: '${productName}',
     createDesktopShortcut: 'always',
@@ -29,7 +29,7 @@ module.exports = {
         "Application requests access to the user's Downloads folder.",
     },
   },
-  dmg: { artifactName: '${name}-${version}-${arch}.${ext}' },
+  dmg: { artifactName: '${name}_${version}_${arch}.${ext}' },
   linux: {
     target: [
       { target: 'deb', arch: ['x64', 'arm64'] },
@@ -39,7 +39,7 @@ module.exports = {
     maintainer: 'electronjs.org',
     category: 'Utility',
   },
-  appImage: { artifactName: '${name}-${version}-${arch}.${ext}' },
+  appImage: { artifactName: '${name}_${version}_${arch}.${ext}' },
   npmRebuild: false,
   publish: { provider: 'generic', url: 'https://example.com/auto-updates' },
 };

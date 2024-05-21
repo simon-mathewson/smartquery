@@ -1,6 +1,7 @@
 node_modules
 build
 dist
+distributables
 out
 *.log*
 prisma/client
