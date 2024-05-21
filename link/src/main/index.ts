@@ -20,13 +20,16 @@ app.whenReady().then(() => {
   createTray();
 
   const server = createHTTPServer({
-    middleware: cors(),
+    middleware: cors({
+      origin: [import.meta.env.VITE_UI_URL],
+    }),
     onError: ({ error }) => console.error(error),
     router,
   });
 
-  server.listen(3500);
-  console.log('Link listening on port 3500');
+  server.listen(parseInt(import.meta.env.VITE_PORT, 10));
+
+  console.log(`Link listening on port ${import.meta.env.VITE_PORT}`);
 });
 
 const createTray = () => {

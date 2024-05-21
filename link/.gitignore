@@ -5,3 +5,5 @@ distributables
 out
 *.log*
 prisma/client
+.env.local
+.env.*.local

@@ -1,8 +1,9 @@
-/// <reference types="vite-plugin-svgr/client" />
+/// <reference types="electron-vite/node" />
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_LINK_URL: string;
+  readonly VITE_PORT: string;
+  readonly VITE_UI_URL: string;
 }
 
 interface ImportMeta {
