@@ -1,10 +1,11 @@
 import { electronApp } from '@electron-toolkit/utils';
-import { app, Menu, Tray, nativeImage } from 'electron';
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
 import cors from 'cors';
-import { router } from './router';
+import type { MenuItemConstructorOptions } from 'electron';
+import { Menu, Tray, app, nativeImage } from 'electron';
 import settings from 'electron-settings';
 import iconPath from '../../resources/trayIconTemplate.png?asset';
+import { router } from './router';
 
 app.whenReady().then(() => {
   // Set app user model ID for Windows
@@ -35,26 +36,31 @@ const createTray = () => {
 
   tray.setToolTip('Dabase Link');
 
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'Start on Login',
-      type: 'checkbox',
-      checked: (settings.getSync('startOnLogin') as boolean | undefined) ?? false,
-      click: (menuItem) => {
-        const newValue = menuItem.checked;
-        settings.setSync('startOnLogin', newValue);
-        toggleAutoLaunch(newValue);
-
-        // The context menu closes by default, but we want to keep it open
-        tray.popUpContextMenu();
-      },
-    },
-    { type: 'separator' },
+  const contextMenuItems: MenuItemConstructorOptions[] = [
     {
       label: 'Quit',
       click: app.quit,
     },
-  ]);
+  ];
+
+  if (process.platform !== 'linux') {
+    contextMenuItems.unshift(
+      {
+        label: 'Start on Login',
+        type: 'checkbox',
+        checked: (settings.getSync('startOnLogin') as boolean | undefined) ?? false,
+        click: (menuItem) => {
+          const newValue = menuItem.checked;
+          settings.setSync('startOnLogin', newValue);
+          toggleAutoLaunch(newValue);
+        },
+      },
+      { type: 'separator' },
+    );
+  }
+
+  const contextMenu = Menu.buildFromTemplate(contextMenuItems);
+
   tray.setContextMenu(contextMenu);
 };
 
