@@ -96,9 +96,6 @@ importers:
       typescript:
         specifier: ^5.1.6
         version: 5.2.2
-      vite:
-        specifier: ^4.4.9
-        version: 4.5.0(@types/node@18.18.7)
 
 packages:
 

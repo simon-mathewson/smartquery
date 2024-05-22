@@ -103,6 +103,7 @@ export const router = t.router({
 
       return results;
     }),
+  status: t.procedure.query(() => true),
 });
 
 export type AppRouter = typeof router;

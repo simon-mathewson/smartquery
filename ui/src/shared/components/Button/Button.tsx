@@ -7,7 +7,8 @@ export type ButtonProps = {
   className?: string;
   color?: 'black' | 'danger' | 'primary' | 'secondary' | 'success' | 'white';
   disabled?: boolean;
-  element?: 'button' | 'div';
+  element?: 'a' | 'button' | 'div';
+  href?: string;
   icon?: React.ReactNode;
   label?: string;
   monospace?: boolean;
@@ -27,6 +28,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
     color = 'primary',
     disabled,
     element: Element = 'button',
+    href,
     icon,
     label,
     monospace,
@@ -98,10 +100,13 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
         },
         className,
       )}
+      href={href}
       onClick={onClick}
       onClickCapture={onClickCapture}
       ref={
-        ref as MutableRefObject<HTMLButtonElement | null> & MutableRefObject<HTMLDivElement | null>
+        ref as MutableRefObject<HTMLAnchorElement | null> &
+          MutableRefObject<HTMLButtonElement | null> &
+          MutableRefObject<HTMLDivElement | null>
       }
       type={type}
     >

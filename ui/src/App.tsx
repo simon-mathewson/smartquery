@@ -8,23 +8,26 @@ import { QueriesProvider } from './content/tabs/Queries/Provider';
 import { useTheme } from './content/theme/useTheme';
 import './index.css';
 import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQueue/Provider';
+import { LinkProvider } from './content/link/Provider';
 
 export const App: React.FC = () => {
   useTheme();
 
   return (
     <ClickOutsideQueueProvider>
-      <ConnectionsProvider>
-        <EditProvider>
-          <TabsProvider>
-            <QueriesProvider>
-              <DragAndDropProvider>
-                <Outlet />
-              </DragAndDropProvider>
-            </QueriesProvider>
-          </TabsProvider>
-        </EditProvider>
-      </ConnectionsProvider>
+      <LinkProvider>
+        <ConnectionsProvider>
+          <EditProvider>
+            <TabsProvider>
+              <QueriesProvider>
+                <DragAndDropProvider>
+                  <Outlet />
+                </DragAndDropProvider>
+              </QueriesProvider>
+            </TabsProvider>
+          </EditProvider>
+        </ConnectionsProvider>
+      </LinkProvider>
     </ClickOutsideQueueProvider>
   );
 };
