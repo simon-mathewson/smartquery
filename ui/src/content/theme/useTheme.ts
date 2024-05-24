@@ -1,27 +1,32 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
-import type { ThemeMode } from './types';
+import type { ThemeMode, ThemeModePreference } from './types';
 
-const darkModeQuery = '(prefers-color-scheme: dark)';
+const systemDarkModeQuery = '(prefers-color-scheme: dark)';
 
 export const useTheme = () => {
-  const [modePreference] = useStoredState<ThemeMode | 'system'>('modePreference', 'system');
-
-  const [mode, setMode] = useState<ThemeMode>(() =>
-    matchMedia(darkModeQuery).matches ? 'dark' : 'light',
+  const [modePreference, setModePreference] = useStoredState<ThemeModePreference>(
+    'modePreference',
+    'system',
   );
+
+  const [systemMode, setSystemMode] = useState<ThemeMode>(() =>
+    matchMedia(systemDarkModeQuery).matches ? 'dark' : 'light',
+  );
+
+  const mode = modePreference === 'system' ? systemMode : modePreference;
 
   const handleDarkModeChange = useCallback(
     (event: MediaQueryListEvent) => {
       if (modePreference === 'system') {
-        setMode(event.matches ? 'dark' : 'light');
+        setSystemMode(event.matches ? 'dark' : 'light');
       }
     },
-    [modePreference, setMode],
+    [modePreference, setSystemMode],
   );
 
   useEffect(() => {
-    const mediaQueryList = window.matchMedia(darkModeQuery);
+    const mediaQueryList = window.matchMedia(systemDarkModeQuery);
 
     mediaQueryList.addEventListener('change', handleDarkModeChange);
 
@@ -40,5 +45,5 @@ export const useTheme = () => {
     }
   }, [mode]);
 
-  return { mode };
+  return { mode, modePreference, setModePreference };
 };

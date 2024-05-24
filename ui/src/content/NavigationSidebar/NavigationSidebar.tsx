@@ -5,6 +5,7 @@ import { Connections } from './Connections/Connections';
 import { ConnectionsContext } from '../connections/Context';
 import type { ActiveConnection } from '~/shared/types';
 import { usePrevious } from '~/shared/hooks/usePrevious';
+import { Settings } from '../settings/Settings';
 
 export const NavigationSidebar: React.FC = () => {
   const { activeConnection: currentActiveConnection } = useDefinedContext(ConnectionsContext);
@@ -33,6 +34,9 @@ export const NavigationSidebar: React.FC = () => {
       </div>
       <Connections triggerRef={connectionsTriggerRef} />
       {currentActiveConnection && <TableList />}
+      <div className="mb-2 mt-auto">
+        <Settings />
+      </div>
     </div>
   );
 };

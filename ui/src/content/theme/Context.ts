@@ -1,6 +1,4 @@
 import { createContext } from 'react';
-import type { ThemeMode } from './types';
+import type { useTheme } from './useTheme';
 
-export const ThemeContext = createContext<{
-  mode: ThemeMode;
-} | null>(null);
+export const ThemeContext = createContext<ReturnType<typeof useTheme> | null>(null);
