@@ -9,6 +9,7 @@ import { useTheme } from './content/theme/useTheme';
 import './index.css';
 import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQueue/Provider';
 import { LinkProvider } from './content/link/Provider';
+import { SettingsOverlay } from './content/settings/Overlay';
 
 export const App: React.FC = () => {
   useTheme();
@@ -22,6 +23,7 @@ export const App: React.FC = () => {
               <QueriesProvider>
                 <DragAndDropProvider>
                   <Outlet />
+                  <SettingsOverlay />
                 </DragAndDropProvider>
               </QueriesProvider>
             </TabsProvider>
