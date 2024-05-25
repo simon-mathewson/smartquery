@@ -5,7 +5,6 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import type { Row } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
 import { isNotNull } from '~/shared/utils/typescript';
-import { trpc } from '~/trpc';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
 import {
@@ -16,8 +15,11 @@ import {
   getTotalRowsStatement,
   parseQuery,
 } from './utils';
+import { TrpcContext } from '~/content/trpc/Context';
 
 export const useQueries = () => {
+  const trpc = useDefinedContext(TrpcContext);
+
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const { activeTab, addTab, setTabs, tabs } = useDefinedContext(TabsContext);
@@ -131,7 +133,7 @@ export const useQueries = () => {
         onFinishLoading(id);
       }
     },
-    [activeConnection, onFinishLoading, onStartLoading],
+    [activeConnection, onFinishLoading, onStartLoading, trpc.sendQuery],
   );
 
   const runQuery = useCallback(
@@ -186,7 +188,7 @@ export const useQueries = () => {
         onFinishLoading(id);
       }
     },
-    [activeConnection, onFinishLoading, onStartLoading, runSelectQuery],
+    [activeConnection, onFinishLoading, onStartLoading, runSelectQuery, trpc.sendQuery],
   );
 
   const addQuery = useCallback(

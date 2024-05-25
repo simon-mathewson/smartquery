@@ -1,10 +1,12 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import React, { useEffect, useState } from 'react';
 import { Item } from './Item/Item';
-import { trpc } from '~/trpc';
 import { ConnectionsContext } from '../connections/Context';
+import { TrpcContext } from '../trpc/Context';
 
 export const TableList: React.FC = () => {
+  const trpc = useDefinedContext(TrpcContext);
+
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const [tables, setTables] = useState<string[]>([]);
@@ -29,7 +31,7 @@ export const TableList: React.FC = () => {
     trpc.sendQuery.mutate({ clientId, statements: [tableNamesStatement] }).then(([rows]) => {
       setTables(rows.map(({ t }) => String(t)));
     });
-  }, [activeConnection]);
+  }, [activeConnection, trpc.sendQuery]);
 
   return (
     <div className="flex flex-col gap-1 overflow-auto py-2">

@@ -3,13 +3,14 @@ import { Button } from '~/shared/components/Button/Button';
 import React, { useEffect, useState } from 'react';
 import type { FormSchema } from '../utils';
 import { getConnectionFromForm, isFormValid } from '../utils';
-import { trpc } from '~/trpc';
 import type { ConnectInput } from '~/shared/types';
 import type { SignInModalInput } from '~/content/connections/signInModal/types';
 import { useModal } from '~/shared/components/modal/useModal';
 import { ConnectionSignInModal } from '~/content/connections/signInModal/SignInModal';
 import { isAuthError } from '~/shared/utils/prisma';
 import { isNil } from 'lodash';
+import { TrpcContext } from '~/content/trpc/Context';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 
 export type TestConnectionProps = {
   form: FormSchema;
@@ -17,6 +18,8 @@ export type TestConnectionProps = {
 
 export const TestConnection: React.FC<TestConnectionProps> = (props) => {
   const { form } = props;
+
+  const trpc = useDefinedContext(TrpcContext);
 
   const [isTesting, setIsTesting] = useState(false);
   const [hasSucceeded, setHasSucceeded] = useState(false);

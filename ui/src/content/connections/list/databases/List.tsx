@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../../Context';
-import { trpc } from '~/trpc';
 import { ListItem } from '~/shared/components/ListItem/ListItem';
+import { TrpcContext } from '~/content/trpc/Context';
 
 export const DatabaseList: React.FC = () => {
+  const trpc = useDefinedContext(TrpcContext);
+
   const { activeConnection, connect } = useDefinedContext(ConnectionsContext);
 
   const [databases, setDatabases] = useState<string[]>([]);
@@ -29,7 +31,7 @@ export const DatabaseList: React.FC = () => {
       });
 
     return () => ac.abort();
-  }, [activeConnection]);
+  }, [activeConnection, trpc.sendQuery]);
 
   return (
     <div>

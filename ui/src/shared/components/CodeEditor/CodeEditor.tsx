@@ -13,10 +13,11 @@ export type CodeEditorProps = {
   autoFocus?: boolean;
   editorRef?: React.RefObject<ReactCodeMirrorRef>;
   hideLineNumbers?: boolean;
-  language: 'json' | 'sql';
+  language?: 'json' | 'sql';
   large?: boolean;
   onChange?: (value: string) => void;
   placeholder?: string;
+  readOnly?: boolean;
   value: string | undefined;
 };
 
@@ -27,8 +28,17 @@ const commonOptions = {
 } as const;
 
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
-  const { autoFocus, editorRef, hideLineNumbers, language, large, onChange, placeholder, value } =
-    props;
+  const {
+    autoFocus,
+    editorRef,
+    hideLineNumbers,
+    language,
+    large,
+    onChange,
+    placeholder,
+    readOnly,
+    value,
+  } = props;
 
   const { mode } = useDefinedContext(ThemeContext);
 
@@ -56,6 +66,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     [mode],
   );
 
+  const extensions = [EditorView.lineWrapping];
+  if (language === 'sql') {
+    extensions.push(sql());
+  } else if (language === 'json') {
+    extensions.push(json());
+  }
+
   return (
     <CodeMirror
       autoFocus={autoFocus}
@@ -65,9 +82,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         lineNumbers: !hideLineNumbers,
       }}
       className={large ? 'cm-min-height-large' : 'cm-min-height-small'}
-      extensions={[language === 'sql' ? sql() : json(), EditorView.lineWrapping]}
+      extensions={extensions}
       onChange={(sql) => onChange?.(sql)}
       placeholder={placeholder}
+      readOnly={readOnly}
       ref={editorRef}
       theme={theme}
       value={value}

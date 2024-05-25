@@ -1,4 +1,3 @@
-import { trpc } from '~/trpc';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { initialConnections } from './initialConnections';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
@@ -8,11 +7,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { routes } from '~/router/routes';
 import type { ModalControl } from '~/shared/components/modal/types';
 import type { SignInModalInput } from './signInModal/types';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { TrpcContext } from '../trpc/Context';
 
 export const useConnections = (props: { signInModal: ModalControl<SignInModalInput> }) => {
   const { signInModal } = props;
 
   const navigate = useNavigate();
+
+  const trpc = useDefinedContext(TrpcContext);
 
   const [connections, setConnections] = useStoredState<Connection[]>(
     'connections',
@@ -75,7 +78,7 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
     setActiveConnectionClientId(null);
     setActiveConnection(null);
-  }, [activeConnection]);
+  }, [activeConnection, trpc.disconnectDb]);
 
   const connect = useCallback(
     async (
@@ -113,30 +116,25 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
       const selectedDatabase = overrides?.database ?? connection.database;
 
-      try {
-        const newClientId = await trpc.connectDb.mutate({
-          ...connection,
-          database: selectedDatabase,
-          password,
-          ssh: connection.ssh
-            ? {
-                ...connection.ssh,
-                password: sshPassword,
-                privateKey: sshPrivateKey,
-              }
-            : null,
-        });
+      const newClientId = await trpc.connectDb.mutate({
+        ...connection,
+        database: selectedDatabase,
+        password,
+        ssh: connection.ssh
+          ? {
+              ...connection.ssh,
+              password: sshPassword,
+              privateKey: sshPrivateKey,
+            }
+          : null,
+      });
 
-        setActiveConnectionClientId(newClientId);
-        navigate(routes.database(connection.id, selectedDatabase));
+      setActiveConnectionClientId(newClientId);
+      navigate(routes.database(connection.id, selectedDatabase));
 
-        window.document.title = `${selectedDatabase} – ${connection.name}`;
-      } catch (error) {
-        console.error(error);
-        navigate(routes.root());
-      }
+      window.document.title = `${selectedDatabase} – ${connection.name}`;
     },
-    [connections, disconnect, navigate, signInModal],
+    [connections, disconnect, navigate, signInModal, trpc.connectDb],
   );
 
   useEffectOnce(() => {

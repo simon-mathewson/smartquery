@@ -1,11 +1,9 @@
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { routes } from '~/router/routes';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { trpc } from '~/trpc';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { TrpcContext } from '../trpc/Context';
 
 export const useLink = () => {
-  const navigate = useNavigate();
+  const trpc = useDefinedContext(TrpcContext);
 
   const getIsReady = useCallback(async () => {
     try {
@@ -14,21 +12,13 @@ export const useLink = () => {
     } catch {
       return false;
     }
-  }, []);
+  }, [trpc.status]);
 
   const waitUntilReady = useCallback(async () => {
     while (!(await getIsReady())) {
       await new Promise((resolve) => setTimeout(resolve, 3000));
     }
   }, [getIsReady]);
-
-  useEffectOnce(() => {
-    getIsReady().then((isReady) => {
-      if (!isReady) {
-        navigate(routes.setup());
-      }
-    });
-  });
 
   return {
     getIsReady,
