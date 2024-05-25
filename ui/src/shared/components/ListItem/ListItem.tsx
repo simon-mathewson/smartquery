@@ -28,7 +28,7 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
   return (
     <div
       className={classNames(
-        'grid w-full cursor-pointer grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-1.5',
+        'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-1.5',
         {
           'bg-primary hover:bg-primaryHover': selectedVariant === 'primary' && selected,
           'bg-secondaryHighlight hover:bg-secondaryHighlightHover':
