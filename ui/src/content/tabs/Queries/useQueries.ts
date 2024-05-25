@@ -133,7 +133,7 @@ export const useQueries = () => {
         onFinishLoading(id);
       }
     },
-    [activeConnection, onFinishLoading, onStartLoading, trpc.sendQuery],
+    [activeConnection, onFinishLoading, onStartLoading, trpc],
   );
 
   const runQuery = useCallback(
@@ -188,7 +188,7 @@ export const useQueries = () => {
         onFinishLoading(id);
       }
     },
-    [activeConnection, onFinishLoading, onStartLoading, runSelectQuery, trpc.sendQuery],
+    [activeConnection, onFinishLoading, onStartLoading, runSelectQuery, trpc],
   );
 
   const addQuery = useCallback(

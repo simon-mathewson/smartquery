@@ -12,7 +12,7 @@ export const useLink = () => {
     } catch {
       return false;
     }
-  }, [trpc.status]);
+  }, [trpc]);
 
   const waitUntilReady = useCallback(async () => {
     while (!(await getIsReady())) {

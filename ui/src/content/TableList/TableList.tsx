@@ -31,7 +31,7 @@ export const TableList: React.FC = () => {
     trpc.sendQuery.mutate({ clientId, statements: [tableNamesStatement] }).then(([rows]) => {
       setTables(rows.map(({ t }) => String(t)));
     });
-  }, [activeConnection, trpc.sendQuery]);
+  }, [activeConnection, trpc]);
 
   return (
     <div className="flex flex-col gap-1 overflow-auto py-2">

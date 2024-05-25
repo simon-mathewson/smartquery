@@ -78,7 +78,7 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
     setActiveConnectionClientId(null);
     setActiveConnection(null);
-  }, [activeConnection, trpc.disconnectDb]);
+  }, [activeConnection, trpc]);
 
   const connect = useCallback(
     async (
@@ -134,7 +134,7 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
       window.document.title = `${selectedDatabase} – ${connection.name}`;
     },
-    [connections, disconnect, navigate, signInModal, trpc.connectDb],
+    [connections, disconnect, navigate, signInModal, trpc],
   );
 
   useEffectOnce(() => {

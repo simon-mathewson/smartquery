@@ -31,7 +31,7 @@ export const DatabaseList: React.FC = () => {
       });
 
     return () => ac.abort();
-  }, [activeConnection, trpc.sendQuery]);
+  }, [activeConnection, trpc]);
 
   return (
     <div>

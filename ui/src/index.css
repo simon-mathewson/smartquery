@@ -6,8 +6,6 @@
   html {
     @apply bg-background;
     @apply text-textSecondary;
-
-    user-select: none;
   }
 
   html,

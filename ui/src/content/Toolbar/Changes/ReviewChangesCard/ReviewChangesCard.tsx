@@ -38,7 +38,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
     clearChanges();
 
     refetchActiveTabSelectQueries();
-  }, [activeConnection, clearChanges, refetchActiveTabSelectQueries, trpc.sendQuery, userSql]);
+  }, [activeConnection, clearChanges, refetchActiveTabSelectQueries, trpc, userSql]);
 
   return (
     <OverlayCard align="right" className="p-3" triggerRef={triggerRef}>
