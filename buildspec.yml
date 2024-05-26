@@ -23,8 +23,8 @@ artifacts:
     link:
       base-directory: link
       files:
-        - "dist/*"
+        - "link/dist/*"
     ui:
       base-directory: ui
       files:
-        - "dist/*"
+        - "ui/dist/*"
