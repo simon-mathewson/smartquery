@@ -17,6 +17,8 @@ phases:
       - cd ../ui
       - pnpm build
       - cd ..
+      - mkdir link/dist
+      - touch link/dist/bla
 artifacts:
   files:
     - "**/*"
