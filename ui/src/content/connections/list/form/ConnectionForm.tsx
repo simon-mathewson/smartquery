@@ -21,10 +21,11 @@ import { CredentialInput } from '~/shared/components/CredentialInput/CredentialI
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;
   exit: () => void;
+  hideBackButton: boolean;
 };
 
 export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
-  const { connectionToEditIndex, exit } = props;
+  const { connectionToEditIndex, exit, hideBackButton } = props;
 
   const mode = connectionToEditIndex === null ? 'add' : 'edit';
 
@@ -86,7 +87,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
     <>
       <form className="mx-auto grid w-[320px] gap-2" onSubmit={onSubmit}>
         <ThreeColumns
-          left={<Button icon={<ArrowBack />} onClick={exit} />}
+          left={!hideBackButton && <Button icon={<ArrowBack />} onClick={exit} />}
           middle={
             <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
               {mode === 'add' ? 'Add' : 'Edit'} Connection

@@ -4,6 +4,8 @@ import { Button } from '~/shared/components/Button/Button';
 import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ToastContext } from './Context';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { useRef } from 'react';
 
 export type ToastProps = {
   color?: 'danger' | 'primary' | 'success';
@@ -16,6 +18,15 @@ export const Toast: React.FC<ToastProps> = (props) => {
   const { color, description, id, title } = props;
 
   const toast = useDefinedContext(ToastContext);
+
+  const closeRef = useRef<(() => Promise<void>) | null>(null);
+
+  useEffectOnce(() => {
+    setTimeout(async () => {
+      await closeRef.current?.();
+      toast.remove(id);
+    }, 5000);
+  });
 
   return (
     <OverlayCard
@@ -30,15 +41,19 @@ export const Toast: React.FC<ToastProps> = (props) => {
       }}
       position={{ x: 'center', y: 'bottom' }}
     >
-      {({ close }) => (
-        <>
-          <div className="flex flex-col gap-2 p-2">
-            <div className="text-sm font-medium text-white">{title}</div>
-            {description && <div className="text-xs text-whiteHover">{description}</div>}
-          </div>
-          <Button color="white" icon={<Close />} onClick={close} />
-        </>
-      )}
+      {({ close }) => {
+        closeRef.current = close;
+
+        return (
+          <>
+            <div className="flex flex-col gap-2 p-2">
+              <div className="text-sm font-medium text-white">{title}</div>
+              {description && <div className="text-xs text-whiteHover">{description}</div>}
+            </div>
+            <Button color="white" icon={<Close />} onClick={close} />
+          </>
+        );
+      }}
     </OverlayCard>
   );
 };

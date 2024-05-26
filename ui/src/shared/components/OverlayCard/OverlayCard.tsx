@@ -10,7 +10,7 @@ import { Card } from '../card/Card';
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
   anchorRef?: React.MutableRefObject<HTMLElement | null>;
-  children: (props: { close: () => void }) => React.ReactNode;
+  children: (props: { close: () => Promise<void> }) => React.ReactNode;
   className?: string;
   closeOnOutsideClick?: boolean;
   darkenBackground?: boolean;

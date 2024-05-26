@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { initialConnections } from './initialConnections';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import type { ActiveConnection, Connection } from '~/shared/types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
@@ -20,10 +19,7 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
   const toast = useDefinedContext(ToastContext);
 
-  const [connections, setConnections] = useStoredState<Connection[]>(
-    'connections',
-    initialConnections,
-  );
+  const [connections, setConnections] = useStoredState<Connection[]>('connections', []);
 
   const [activeConnectionClientId, setActiveConnectionClientId] = useState<string | null>(null);
 
@@ -96,7 +92,9 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
       const connection = connections.find((c) => c.id === id);
 
       if (!connection) {
-        throw new Error(`Connection with id ${id} not found`);
+        toast.add({ color: 'danger', title: `Connection with id ${id} not found` });
+        navigate(routes.root());
+        return;
       }
 
       const password = overrides?.password ?? connection.password;

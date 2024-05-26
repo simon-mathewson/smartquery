@@ -10,14 +10,14 @@ import classNames from 'classnames';
 
 export type ConnectionListProps = {
   hideDatabases?: boolean;
-  isAddingOrEditing: boolean;
-  setIsAddingOrEditing: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const ConnectionList: React.FC<ConnectionListProps> = (props) => {
-  const { hideDatabases, isAddingOrEditing, setIsAddingOrEditing } = props;
+  const { hideDatabases } = props;
 
   const { activeConnection, connect, connections } = useDefinedContext(ConnectionsContext);
+
+  const [isAddingOrEditing, setIsAddingOrEditing] = useState(() => connections.length === 0);
 
   const [connectionToEditIndex, setConnectionToEditIndex] = useState<number | null>(null);
 
@@ -26,6 +26,7 @@ export const ConnectionList: React.FC<ConnectionListProps> = (props) => {
       {isAddingOrEditing ? (
         <ConnectionForm
           connectionToEditIndex={connectionToEditIndex}
+          hideBackButton={connections.length === 0}
           exit={() => {
             setConnectionToEditIndex(null);
             setIsAddingOrEditing(false);
