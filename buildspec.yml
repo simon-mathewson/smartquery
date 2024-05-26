@@ -5,7 +5,7 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - cd unit.js
+      - cd ui
       - pnpm install
   build:
     commands:
