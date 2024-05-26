@@ -19,3 +19,7 @@ phases:
 artifacts:
   files:
     - "**/*"
+  secondary-artifacts:
+    - name: Link
+      files:
+        - link/**
