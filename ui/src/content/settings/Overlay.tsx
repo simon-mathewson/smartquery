@@ -10,7 +10,7 @@ export const SettingsOverlay: React.FC = () => {
   return (
     <>
       <Button
-        className="absolute bottom-2 left-2"
+        className="fixed bottom-2 left-2"
         color="secondary"
         icon={<SettingsOutlined />}
         ref={triggerRef}

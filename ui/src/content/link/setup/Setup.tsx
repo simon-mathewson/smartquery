@@ -36,7 +36,7 @@ export const Setup: React.FC = () => {
   }, [link, navigate]);
 
   return (
-    <div className="flex flex-col items-center gap-6 pt-6">
+    <div className="flex flex-col items-center gap-6 py-6">
       <Logo className="w-16" />
       <Card className="flex w-[360px] flex-col gap-3 p-4">
         <div className="text-center text-lg font-medium text-textSecondary">Welcome to Dabase!</div>
@@ -71,11 +71,11 @@ export const Setup: React.FC = () => {
           </div>
         </div>
         <div className="text-sm leading-snug text-textSecondary">
-          Once Dabase Link is installed and running, click continue.
+          Once Link is installed and running, click continue.
         </div>
         {showLinkNotReady && (
           <ErrorMessage>
-            Unable to reach Dabase Link. Please make sure it is installed and running.
+            Unable to reach Link. Please make sure it is installed and running.
           </ErrorMessage>
         )}
         <Button
