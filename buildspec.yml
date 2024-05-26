@@ -17,6 +17,7 @@ phases:
       - cd ../ui
       - pnpm build
 artifacts:
+  base-directory: ui
   files:
     - "**/*"
   secondary-artifacts:
