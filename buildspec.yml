@@ -12,13 +12,11 @@ phases:
       - pnpm install
   build:
     commands:
-      # - cd ../link
-      # - pnpm build:all
+      - cd ../link
+      - pnpm build:all
       - cd ../ui
       - pnpm build
       - cd ..
-      - mkdir link/dist
-      - touch link/dist/bla
 artifacts:
   files:
     - "**/*"
