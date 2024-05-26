@@ -20,6 +20,7 @@ artifacts:
   files:
     - "**/*"
   secondary-artifacts:
-    - name: Link
+    Link:
+      base-directory: link
       files:
-        - link/**
+        - "**/*"
