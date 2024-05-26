@@ -18,7 +18,7 @@ export const NavigationSidebar: React.FC = () => {
   return (
     <div className="sticky top-0 flex h-screen grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col gap-2 px-2 pt-2">
       <div
-        className="grid w-full cursor-pointer gap-1 rounded-lg p-2 text-sm hover:bg-secondaryHighlight"
+        className="grid w-full cursor-pointer select-none gap-1 rounded-lg p-2 text-sm hover:bg-secondaryHighlight"
         ref={connectionsTriggerRef}
       >
         <div className="text-md truncate font-medium leading-tight text-textPrimary">
