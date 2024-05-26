@@ -16,3 +16,6 @@ phases:
       # - pnpm build:all
       - cd ../ui
       - pnpm build
+artifacts:
+  files:
+    - "**/*"
