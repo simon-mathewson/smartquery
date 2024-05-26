@@ -11,6 +11,7 @@
     "build:mac": "electron-builder --mac --config --arm64 && electron-builder --mac --config --x64",
     "build:win": "electron-builder --win --config",
     "build:all": "pnpm build:node && pnpm run build:linux && pnpm run build:mac && pnpm run build:win",
+    "postbuild:all": "./process-build.sh",
     "build:node": "pnpm run typecheck && electron-vite build",
     "dev": "electron-vite dev --inspect --sourcemap",
     "fix": "rm -rf node_modules/electron/dist && node node_modules/electron/install.js",
