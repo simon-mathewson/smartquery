@@ -5,6 +5,7 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      - sudo yum install libxcrypt-compat
       - corepack enable pnpm
       - cd link
       - pnpm install
