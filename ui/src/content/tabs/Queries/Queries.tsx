@@ -12,7 +12,7 @@ export const Queries: React.FC = () => {
   if (!activeTab) {
     return (
       <div className="flex grow items-center justify-center">
-        <Logo className="w-50 opacity-10 grayscale" />
+        <Logo className="w-50 pointer-events-none opacity-10 grayscale" />
       </div>
     );
   }
