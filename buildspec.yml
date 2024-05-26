@@ -21,6 +21,6 @@ artifacts:
     - "**/*"
   secondary-artifacts:
     ui:
-      base-directory: ui
+      base-directory: ui/dist
       files:
         - "**/*"
