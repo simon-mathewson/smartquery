@@ -6,8 +6,13 @@ phases:
       nodejs: 18
     commands:
       - corepack enable pnpm
-      - cd ui
+      - cd link
+      - pnpm install
+      - cd ../ui
       - pnpm install
   build:
     commands:
+      # - cd ../link
+      # - pnpm build:all
+      - cd ../ui
       - pnpm build
