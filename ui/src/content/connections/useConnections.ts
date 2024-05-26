@@ -139,11 +139,14 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
         window.document.title = `${selectedDatabase} – ${connection.name}`;
       } catch (error) {
         console.error(error);
+
         toast.add({
           color: 'danger',
           description: (error as Error).message,
           title: 'Failed to connect to database',
         });
+
+        navigate(routes.root());
       }
     },
     [connections, disconnect, navigate, signInModal, toast, trpc.connectDb],
