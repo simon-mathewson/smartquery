@@ -1,11 +1,12 @@
 import classNames from 'classnames';
 import type { MutableRefObject } from 'react';
 import React from 'react';
+import type { Color } from '~/content/theme/types';
 
 export type ButtonProps = {
   align?: 'left' | 'center' | 'right';
   className?: string;
-  color?: 'black' | 'danger' | 'primary' | 'secondary' | 'success' | 'white';
+  color?: Color;
   disabled?: boolean;
   element?: 'a' | 'button' | 'div';
   href?: string;

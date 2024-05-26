@@ -9,6 +9,7 @@ import type { ModalControl } from '~/shared/components/modal/types';
 import type { SignInModalInput } from './signInModal/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TrpcContext } from '../trpc/Context';
+import { ToastContext } from '../toast/Context';
 
 export const useConnections = (props: { signInModal: ModalControl<SignInModalInput> }) => {
   const { signInModal } = props;
@@ -16,6 +17,8 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
   const navigate = useNavigate();
 
   const trpc = useDefinedContext(TrpcContext);
+
+  const toast = useDefinedContext(ToastContext);
 
   const [connections, setConnections] = useStoredState<Connection[]>(
     'connections',
@@ -116,25 +119,34 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
       const selectedDatabase = overrides?.database ?? connection.database;
 
-      const newClientId = await trpc.connectDb.mutate({
-        ...connection,
-        database: selectedDatabase,
-        password,
-        ssh: connection.ssh
-          ? {
-              ...connection.ssh,
-              password: sshPassword,
-              privateKey: sshPrivateKey,
-            }
-          : null,
-      });
+      try {
+        const newClientId = await trpc.connectDb.mutate({
+          ...connection,
+          database: selectedDatabase,
+          password,
+          ssh: connection.ssh
+            ? {
+                ...connection.ssh,
+                password: sshPassword,
+                privateKey: sshPrivateKey,
+              }
+            : null,
+        });
 
-      setActiveConnectionClientId(newClientId);
-      navigate(routes.database(connection.id, selectedDatabase));
+        setActiveConnectionClientId(newClientId);
+        navigate(routes.database(connection.id, selectedDatabase));
 
-      window.document.title = `${selectedDatabase} – ${connection.name}`;
+        window.document.title = `${selectedDatabase} – ${connection.name}`;
+      } catch (error) {
+        console.error(error);
+        toast.add({
+          color: 'danger',
+          description: (error as Error).message,
+          title: 'Failed to connect to database',
+        });
+      }
     },
-    [connections, disconnect, navigate, signInModal, trpc],
+    [connections, disconnect, navigate, signInModal, toast, trpc.connectDb],
   );
 
   useEffectOnce(() => {

@@ -18,6 +18,10 @@ export type OverlayCardProps = {
   matchTriggerWidth?: boolean;
   onClose?: () => void;
   onOpen?: () => void;
+  position?: {
+    x: 'left' | 'center' | 'right';
+    y: 'top' | 'center' | 'bottom';
+  };
   triggerRef?: React.MutableRefObject<HTMLElement | null>;
   width?: number;
 };
@@ -32,6 +36,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
   matchTriggerWidth = false,
   onClose,
   onOpen,
+  position,
   triggerRef,
   anchorRef = triggerRef,
 }) => {
@@ -50,6 +55,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = ({
     align,
     anchorRef,
     matchTriggerWidth,
+    position,
   });
 
   const close = useCallback(async () => {

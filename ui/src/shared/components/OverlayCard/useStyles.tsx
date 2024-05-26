@@ -3,7 +3,10 @@ import { useDebouncedCallback } from 'use-debounce';
 import type { OverlayCardProps } from './OverlayCard';
 import { animationOptions, animationVerticalOffset, overlayCardMargin } from './constants';
 
-export type UseStylesProps = Pick<OverlayCardProps, 'align' | 'anchorRef' | 'matchTriggerWidth'>;
+export type UseStylesProps = Pick<
+  OverlayCardProps,
+  'align' | 'anchorRef' | 'matchTriggerWidth' | 'position'
+>;
 
 const getInStyles = () =>
   ({
@@ -11,18 +14,18 @@ const getInStyles = () =>
     transform: 'translateY(0)',
   }) as const;
 
-const getOutStyles = (showAbove: boolean) =>
+const getOutStyles = (animateFromBottom: boolean) =>
   ({
     opacity: '0',
-    transform: showAbove
+    transform: animateFromBottom
       ? `translateY(${animationVerticalOffset}px)`
       : `translateY(-${animationVerticalOffset}px)`,
   }) as const;
 
 export const useStyles = (props: UseStylesProps) => {
-  const { align = 'left', anchorRef, matchTriggerWidth } = props;
+  const { align = 'left', anchorRef, matchTriggerWidth, position } = props;
 
-  const showAboveRef = useRef(false);
+  const animateFromBottomRef = useRef(position?.y === 'bottom' ?? false);
 
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
@@ -63,7 +66,7 @@ export const useStyles = (props: UseStylesProps) => {
         return scrollHeight <= spaceAbove || spaceAbove > spaceBelow;
       })();
 
-      showAboveRef.current = newShowAbove;
+      animateFromBottomRef.current = newShowAbove;
 
       const top = newShowAbove ? undefined : anchorRect.top + anchorRect.height + overlayCardMargin;
       const bottom = newShowAbove
@@ -81,22 +84,34 @@ export const useStyles = (props: UseStylesProps) => {
     [align, matchTriggerWidth],
   );
 
-  const updateStylesBasedOnCenter = useCallback(() => {
+  const updateStylesBasedOnPosition = useCallback(() => {
     const card = wrapperRef.current;
     if (!card) return;
 
     const cardWidth = card.offsetWidth;
     const cardHeight = card.offsetHeight;
 
-    const left = window.innerWidth / 2 - cardWidth / 2;
-    const top = window.innerHeight / 2 - cardHeight / 2;
+    const positionX = position?.x ?? 'center';
+    const positionY = position?.y ?? 'center';
+
+    const left = {
+      left: overlayCardMargin,
+      center: window.innerWidth / 2 - cardWidth / 2,
+      right: window.innerWidth - cardWidth - overlayCardMargin,
+    }[positionX];
+
+    const top = {
+      top: overlayCardMargin,
+      center: window.innerHeight / 2 - cardHeight / 2,
+      bottom: window.innerHeight - cardHeight - overlayCardMargin,
+    }[positionY];
 
     Object.assign(card.style, {
       left: `${left}px`,
       top: `${top}px`,
       width: '',
     });
-  }, []);
+  }, [position]);
 
   const updateStyles = useCallback(() => {
     const anchor = anchorRef?.current;
@@ -104,9 +119,9 @@ export const useStyles = (props: UseStylesProps) => {
     if (anchor) {
       updateStylesBasedOnAnchor(anchor);
     } else {
-      updateStylesBasedOnCenter();
+      updateStylesBasedOnPosition();
     }
-  }, [anchorRef, updateStylesBasedOnAnchor, updateStylesBasedOnCenter]);
+  }, [anchorRef, updateStylesBasedOnAnchor, updateStylesBasedOnPosition]);
 
   const animateInBackground = useCallback((background: HTMLElement) => {
     return background.animate(
@@ -126,16 +141,20 @@ export const useStyles = (props: UseStylesProps) => {
   }, []);
 
   const animateInWrapper = useCallback((wrapper: HTMLElement) => {
-    return wrapper.animate([getOutStyles(showAboveRef.current), getInStyles()], animationOptions)
-      .finished;
+    return wrapper.animate(
+      [getOutStyles(animateFromBottomRef.current), getInStyles()],
+      animationOptions,
+    ).finished;
   }, []);
 
   const animateOutWrapper = useCallback(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
-    return wrapper.animate([getInStyles(), getOutStyles(showAboveRef.current)], animationOptions)
-      .finished;
+    return wrapper.animate(
+      [getInStyles(), getOutStyles(animateFromBottomRef.current)],
+      animationOptions,
+    ).finished;
   }, []);
 
   useEffect(() => {

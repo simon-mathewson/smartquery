@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TrpcContext } from '../trpc/Context';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
@@ -33,8 +33,11 @@ export const useLink = () => {
     });
   });
 
-  return {
-    getIsReady,
-    waitUntilReady,
-  };
+  return useMemo(
+    () => ({
+      getIsReady,
+      waitUntilReady,
+    }),
+    [getIsReady, waitUntilReady],
+  );
 };

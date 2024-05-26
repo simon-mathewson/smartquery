@@ -12,6 +12,7 @@ import './index.css';
 import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQueue/Provider';
 import { TrpcProvider } from './content/trpc/Provider';
 import { ErrorBoundary } from './content/errorBoundary/ErrorBoundary';
+import { ToastProvider } from './content/toast/Provider';
 
 export const App: React.FC = () => {
   useTheme();
@@ -19,22 +20,24 @@ export const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <ClickOutsideQueueProvider>
-        <TrpcProvider>
-          <LinkProvider>
-            <ConnectionsProvider>
-              <EditProvider>
-                <TabsProvider>
-                  <QueriesProvider>
-                    <DragAndDropProvider>
-                      <Outlet />
-                      <SettingsOverlay />
-                    </DragAndDropProvider>
-                  </QueriesProvider>
-                </TabsProvider>
-              </EditProvider>
-            </ConnectionsProvider>
-          </LinkProvider>
-        </TrpcProvider>
+        <ToastProvider>
+          <TrpcProvider>
+            <LinkProvider>
+              <ConnectionsProvider>
+                <EditProvider>
+                  <TabsProvider>
+                    <QueriesProvider>
+                      <DragAndDropProvider>
+                        <Outlet />
+                        <SettingsOverlay />
+                      </DragAndDropProvider>
+                    </QueriesProvider>
+                  </TabsProvider>
+                </EditProvider>
+              </ConnectionsProvider>
+            </LinkProvider>
+          </TrpcProvider>
+        </ToastProvider>
       </ClickOutsideQueueProvider>
     </ErrorBoundary>
   );
