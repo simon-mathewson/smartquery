@@ -25,7 +25,7 @@ const getOutStyles = (animateFromBottom: boolean) =>
 export const useStyles = (props: UseStylesProps) => {
   const { align = 'left', anchorRef, matchTriggerWidth, position } = props;
 
-  const animateFromBottomRef = useRef(position?.y === 'bottom' ?? false);
+  const animateFromBottomRef = useRef(position?.y === 'bottom');
 
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 

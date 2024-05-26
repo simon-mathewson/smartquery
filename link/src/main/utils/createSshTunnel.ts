@@ -2,9 +2,12 @@ import { SSHConnection } from 'node-ssh-forward';
 import findFreePorts from 'find-free-ports';
 
 import type { Connection } from '../types';
+import assert from 'assert';
 
 export const createSshTunnel = async (connection: Connection) => {
   const { host, port, ssh } = connection;
+
+  assert(ssh);
 
   const sshLocalHost = 'localhost';
   const [sshLocalPort] = await findFreePorts(1, { startPort: 49152 });

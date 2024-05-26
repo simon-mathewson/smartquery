@@ -1,0 +1,12 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - cd unit.js
+      - pnpm install
+  build:
+    commands:
+      - pnpm build
