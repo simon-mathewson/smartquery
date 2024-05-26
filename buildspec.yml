@@ -5,7 +5,6 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - sudo yum -y install libxcrypt-compat
       - corepack enable pnpm
       - cd link
       - pnpm install
@@ -15,8 +14,6 @@ phases:
   # https://docs.aws.amazon.com/codebuild/latest/userguide/view-build-details.html#view-build-details-phases:~:text=The%20UPLOAD_ARTIFACTS%20phase%20is%20always%20attempted%2C%20even%20if%20the%20BUILD%20phase%20fails.
   pre_build:
     commands:
-      - cd ../link
-      - pnpm build:all
       - cd ../ui
       - pnpm build
       - cd ..
@@ -24,10 +21,6 @@ artifacts:
   files:
     - "**/*"
   secondary-artifacts:
-    link:
-      base-directory: link
-      files:
-        - "dist/*"
     ui:
       base-directory: ui
       files:
