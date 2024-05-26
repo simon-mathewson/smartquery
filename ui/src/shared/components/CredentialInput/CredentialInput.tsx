@@ -11,12 +11,13 @@ import {
 
 export type CredentialInputProps = InputProps & {
   isExistingCredential?: boolean;
+  showAddToKeychain?: boolean;
   username: string;
   value: string;
 };
 
 export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
-  const { isExistingCredential, username, ...inputProps } = props;
+  const { isExistingCredential, showAddToKeychain, username, ...inputProps } = props;
 
   const storeInKeyChain = useCallback(() => {
     void navigator.credentials.store(
@@ -46,7 +47,7 @@ export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
           type="password"
           value={replaceLineBreaksWithPlaceholders(inputProps.value)}
         />
-        {getIsCredentialsApiAvailable() && (
+        {getIsCredentialsApiAvailable() && showAddToKeychain && (
           <Button icon={<EnhancedEncryptionOutlined />} onClick={storeInKeyChain} />
         )}
       </div>

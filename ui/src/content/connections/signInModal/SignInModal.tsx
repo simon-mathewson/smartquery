@@ -99,6 +99,7 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
                   autoFocus
                   isExistingCredential
                   onChange={setPassword}
+                  showAddToKeychain
                   username={username}
                   value={password}
                 />
@@ -120,6 +121,7 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
                     autoFocus={!showDbLogin}
                     isExistingCredential
                     onChange={setPassword}
+                    showAddToKeychain
                     username={sshUsername as string}
                     value={sshPassword}
                   />
@@ -131,6 +133,7 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
                     autoFocus={!showDbLogin}
                     isExistingCredential
                     onChange={setSshPrivateKey}
+                    showAddToKeychain
                     username={sshUsername as string}
                     value={sshPrivateKey}
                   />
