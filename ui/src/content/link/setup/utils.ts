@@ -9,6 +9,6 @@ export const getCurrentOs = (): Os => {
 };
 
 export const getDistributableUrl = ({ arch, fileExtension }: Distributable): string =>
-  `/link/dabase-link_${currentVersion}_${arch}${
+  `${import.meta.env.VITE_LINK_S3_URL}/dabase-link_${currentVersion}_${arch}${
     fileExtension === 'exe' ? '_setup.exe' : `.${fileExtension}`
   }`;

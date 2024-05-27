@@ -44,6 +44,8 @@ module.exports = {
     maintainer: 'electronjs.org',
     category: 'Utility',
   },
+  deb: { artifactName },
+  rpm: { artifactName },
   npmRebuild: false,
   publish: { provider: 'generic', url: 'https://example.com/auto-updates' },
 };
