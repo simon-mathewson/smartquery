@@ -17,12 +17,5 @@ phases:
       - pnpm build
   post_build:
     commands:
+      - aws s3 sync --delete dist s3://dabase-ui
       - aws cloudfront create-invalidation --distribution-id E3P9ENTEI8DLLN --paths '/*'
-artifacts:
-  files:
-    - "**/*"
-  secondary-artifacts:
-    ui:
-      base-directory: ui/dist
-      files:
-        - "**/*"
