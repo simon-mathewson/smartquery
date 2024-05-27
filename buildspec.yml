@@ -10,12 +10,14 @@ phases:
       - pnpm install
       - cd ../ui
       - pnpm install
-  # Use pre_build instead of build for building to avoid artifacts upload in case of failure
-  # https://docs.aws.amazon.com/codebuild/latest/userguide/view-build-details.html#view-build-details-phases:~:text=The%20UPLOAD_ARTIFACTS%20phase%20is%20always%20attempted%2C%20even%20if%20the%20BUILD%20phase%20fails.
-  pre_build:
+  build:
+    on-failure: ABORT
     commands:
       - cd ../ui
       - pnpm build
+  post_build:
+    commands:
+      - aws cloudfront create-invalidation --distribution-id E3P9ENTEI8DLLN --paths '/*'
 artifacts:
   files:
     - "**/*"
