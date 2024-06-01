@@ -4,7 +4,6 @@ import { ConnectionsProvider } from './content/connections/Provider';
 import { DragAndDropProvider } from './content/dragAndDrop/Provider';
 import { EditProvider } from './content/edit/Provider';
 import { LinkProvider } from './content/link/Provider';
-import { SettingsOverlay } from './content/settings/Overlay';
 import { TabsProvider } from './content/tabs/Provider';
 import { QueriesProvider } from './content/tabs/Queries/Provider';
 import { useTheme } from './content/theme/useTheme';
@@ -29,7 +28,6 @@ export const App: React.FC = () => {
                     <QueriesProvider>
                       <DragAndDropProvider>
                         <Outlet />
-                        <SettingsOverlay />
                       </DragAndDropProvider>
                     </QueriesProvider>
                   </TabsProvider>
