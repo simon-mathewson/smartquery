@@ -8,7 +8,9 @@
   "homepage": "https://www.electronjs.org",
   "scripts": {
     "build:linux": "electron-builder --linux --config",
-    "build:mac": "electron-builder --mac --config --arm64 && electron-builder --mac --config --x64",
+    "build:mac": "pnpm build:mac:arm64 && pnpm build:mac:x64",
+    "build:mac:arm64": "electron-builder --mac --config --arm64",
+    "build:mac:x64": "electron-builder --mac --config --x64",
     "build:win": "electron-builder --win --config",
     "build:all": "pnpm build:node && pnpm run build:linux && pnpm run build:mac && pnpm run build:win",
     "postbuild:all": "./process-build.sh",
@@ -42,6 +44,7 @@
     "@electron-toolkit/eslint-config-prettier": "^1.0.1",
     "@electron-toolkit/eslint-config-ts": "^1.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@electron/notarize": "^2.3.2",
     "@faker-js/faker": "^8.4.0",
     "@swc/core": "^1.5.7",
     "@types/cors": "^2.8.17",

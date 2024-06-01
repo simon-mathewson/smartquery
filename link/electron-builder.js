@@ -2,10 +2,11 @@ const artifactName = '${name}_${version}_${arch}.${ext}';
 const artifactNameWindows = '${name}_${version}_${arch}_setup.${ext}';
 
 module.exports = {
+  afterSign: 'buildResources/notarize.js',
   appId: 'dev.dabase.link',
-  productName: 'Dabase Link',
-  directories: { buildResources: 'buildResources' },
   asarUnpack: ['resources/**'],
+  directories: { buildResources: 'buildResources' },
+  productName: 'Dabase Link',
   files: [
     '!**/.vscode/*',
     '!src/*',
@@ -25,7 +26,8 @@ module.exports = {
   },
   mac: {
     artifactName,
-    entitlementsInherit: 'build/entitlements.mac.plist',
+    entitlements: 'buildResources/entitlements.mac.plist',
+    entitlementsInherit: 'buildResources/entitlements.mac.plist',
     extendInfo: {
       NSCameraUsageDescription: "Application requests access to the device's camera.",
       NSMicrophoneUsageDescription: "Application requests access to the device's microphone.",
@@ -34,8 +36,13 @@ module.exports = {
       NSDownloadsFolderUsageDescription:
         "Application requests access to the user's Downloads folder.",
     },
+    gatekeeperAssess: false,
+    hardenedRuntime: true,
   },
-  dmg: { artifactName },
+  dmg: {
+    artifactName,
+    sign: false,
+  },
   linux: {
     target: [
       { target: 'deb', arch: ['x64', 'arm64'] },
