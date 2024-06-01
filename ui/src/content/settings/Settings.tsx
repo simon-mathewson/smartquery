@@ -4,13 +4,14 @@ import { Field } from '~/shared/components/Field/Field';
 import type { ThemeModePreference } from '../theme/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ThemeContext } from '../theme/Context';
+import { AddToDesktop } from './addToDesktop/AddToDesktop';
 
 export const Settings: React.FC = () => {
   const { modePreference, setModePreference } = useDefinedContext(ThemeContext);
 
   return (
-    <div className="flex flex-col gap-1 pt-1">
-      <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center font-medium text-textPrimary">
+    <div className="flex flex-col gap-2">
+      <div className="overflow-hidden text-ellipsis whitespace-nowrap pt-1 text-center text-sm font-medium text-textPrimary">
         Settings
       </div>
       <Field label="Theme">
@@ -27,6 +28,7 @@ export const Settings: React.FC = () => {
           value={modePreference}
         />
       </Field>
+      <AddToDesktop />
     </div>
   );
 };
