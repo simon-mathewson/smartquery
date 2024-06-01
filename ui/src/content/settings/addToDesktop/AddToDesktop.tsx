@@ -4,7 +4,7 @@ import { Button } from '~/shared/components/Button/Button';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
 export const AddToDesktop: React.FC = () => {
-  const [promptFn, setPromptFn] = useState<(() => void) | null>(() => () => {});
+  const [promptFn, setPromptFn] = useState<(() => void) | null>(null);
 
   const [isInstalled, setIsInstalled] = useState(false);
 
