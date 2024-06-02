@@ -1,8 +1,9 @@
 {
-  "include": ["electron.vite.config.*", "src", "prisma"],
+  "include": ["electron.vite.config.*", "seed", "src", "prisma"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "module": "ESNext",
+    "esModuleInterop": true,
+    "module": "commonjs",
     "moduleResolution": "Node",
     "target": "ES2021"
   }

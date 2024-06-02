@@ -1,39 +1,12 @@
 import { InstallDesktopOutlined } from '@mui/icons-material';
-import { useState } from 'react';
 import { Button } from '~/shared/components/Button/Button';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { AddToDesktopContext } from './Context';
 
 export const AddToDesktop: React.FC = () => {
-  const [promptFn, setPromptFn] = useState<(() => void) | null>(null);
+  const { canBeInstalled, install } = useDefinedContext(AddToDesktopContext);
 
-  const [isInstalled, setIsInstalled] = useState(false);
-
-  useEffectOnce(() => {
-    const handleBeforeInstallPrompt = (event: BeforeInstallPromptEvent) => {
-      event.preventDefault();
-      setPromptFn(event.prompt);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
-    };
-  });
-
-  useEffectOnce(() => {
-    const handleAppInstalled = () => {
-      setIsInstalled(true);
-    };
-
-    window.addEventListener('appinstalled', handleAppInstalled);
-
-    return () => {
-      window.removeEventListener('appinstalled', handleAppInstalled);
-    };
-  });
-
-  if (!promptFn || isInstalled) {
+  if (!canBeInstalled) {
     return null;
   }
 
@@ -42,7 +15,7 @@ export const AddToDesktop: React.FC = () => {
       color="primary"
       icon={<InstallDesktopOutlined />}
       label="Add to Desktop"
-      onClick={promptFn}
+      onClick={install}
     />
   );
 };

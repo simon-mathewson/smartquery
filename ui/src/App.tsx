@@ -12,6 +12,7 @@ import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQue
 import { TrpcProvider } from './content/trpc/Provider';
 import { ErrorBoundary } from './content/errorBoundary/ErrorBoundary';
 import { ToastProvider } from './content/toast/Provider';
+import { AddToDesktopProvider } from './content/settings/addToDesktop/Provider';
 
 export const App: React.FC = () => {
   useTheme();
@@ -27,7 +28,9 @@ export const App: React.FC = () => {
                   <TabsProvider>
                     <QueriesProvider>
                       <DragAndDropProvider>
-                        <Outlet />
+                        <AddToDesktopProvider>
+                          <Outlet />
+                        </AddToDesktopProvider>
                       </DragAndDropProvider>
                     </QueriesProvider>
                   </TabsProvider>
