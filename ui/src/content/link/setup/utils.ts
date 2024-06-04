@@ -1,4 +1,3 @@
-import { currentVersion } from './constants';
 import type { Distributable, Os } from './types';
 
 export const getCurrentOs = (): Os => {
@@ -8,7 +7,5 @@ export const getCurrentOs = (): Os => {
   return 'linux';
 };
 
-export const getDistributableUrl = ({ arch, fileExtension }: Distributable): string =>
-  `${import.meta.env.VITE_LINK_S3_URL}/dabase-link_${currentVersion}_${arch}${
-    fileExtension === 'exe' ? '_setup.exe' : `.${fileExtension}`
-  }`;
+export const getDistributableUrl = ({ fileName }: Distributable): string =>
+  `${import.meta.env.VITE_LINK_S3_URL}/${fileName}`;
