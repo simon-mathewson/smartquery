@@ -1,10 +1,11 @@
 import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
 import { Field } from '~/shared/components/Field/Field';
-import type { FormSchema } from '../utils';
+import { type FormSchema } from '../utils';
 import { Input } from '~/shared/components/Input/Input';
 import { getCredentialUsername } from '~/content/connections/utils';
 import { CredentialInput } from '~/shared/components/CredentialInput/CredentialInput';
 import { isNil } from 'lodash';
+import { defaultSshPort } from '../constants';
 
 export type SshFormSectionProps = {
   form: FormSchema;
@@ -58,7 +59,7 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
             <Field label="Port">
               <Input
                 onChange={(value) => getChangeHandler('ssh.port')(value ? Number(value) : null)}
-                placeholder="22"
+                placeholder={String(defaultSshPort)}
                 value={isNil(form.ssh?.port) ? '' : String(form.ssh.port)}
               />
             </Field>
@@ -114,7 +115,10 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
             <Field label="Password">
               <CredentialInput
                 onChange={getChangeHandler('ssh.password')}
-                username={getCredentialUsername(form.ssh)}
+                username={getCredentialUsername({
+                  ...form.ssh,
+                  port: form.ssh.port ?? defaultSshPort,
+                })}
                 value={form.ssh.credentialStorage === 'alwaysAsk' ? '' : form.ssh.password}
               />
             </Field>
@@ -123,7 +127,10 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
             <Field label="Private key">
               <CredentialInput
                 onChange={getChangeHandler('ssh.privateKey')}
-                username={getCredentialUsername(form.ssh)}
+                username={getCredentialUsername({
+                  ...form.ssh,
+                  port: form.ssh.port ?? defaultSshPort,
+                })}
                 value={form.ssh.privateKey}
               />
             </Field>

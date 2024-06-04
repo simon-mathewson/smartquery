@@ -134,7 +134,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           <Field label="Port">
             <Input
               onChange={(value) => getChangeHandler('port')(value ? Number(value) : null)}
-              placeholder={String(getDefaultPort(form.engine) ?? '')}
+              placeholder={form.engine ? String(getDefaultPort(form.engine)) : ''}
               value={form.port === null ? '' : String(form.port)}
             />
           </Field>
@@ -165,7 +165,10 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           <Field label="Password">
             <CredentialInput
               onChange={getChangeHandler('password')}
-              username={getCredentialUsername(form)}
+              username={getCredentialUsername({
+                ...form,
+                port: form.port ?? (form.engine ? getDefaultPort(form.engine) : -1),
+              })}
               value={form.password}
             />
           </Field>

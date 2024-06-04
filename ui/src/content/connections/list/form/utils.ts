@@ -32,8 +32,10 @@ export const isFormValid = (form: FormSchema) => {
 export const getConnectionFromForm = (formArg: FormSchema) => {
   const form = cloneDeep(formArg);
 
+  assert(form.engine);
+
   if (!form.port) {
-    form.port = getDefaultPort(form.engine)!;
+    form.port = getDefaultPort(form.engine);
   }
 
   if (form.ssh && !form.ssh.port) {
@@ -67,11 +69,8 @@ export const getConnectionFromForm = (formArg: FormSchema) => {
   return connection;
 };
 
-export const getDefaultPort = (engine: FormSchema['engine']) => {
-  if (!engine) return undefined;
-
-  return {
+export const getDefaultPort = (engine: NonNullable<FormSchema['engine']>) =>
+  ({
     mysql: 3306,
     postgresql: 5432,
-  }[engine];
-};
+  })[engine];
