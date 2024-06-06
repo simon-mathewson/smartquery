@@ -5,10 +5,17 @@ module.exports = {
   afterSign: 'buildResources/notarize.js',
   appId: 'dev.dabase.link',
   asarUnpack: ['resources/**'],
+  extraResources: [
+    {
+      from: 'prisma/client/postgresql',
+      to: '.prisma/client',
+      filter: ['*.node'],
+    },
+  ],
   directories: { buildResources: 'buildResources' },
   productName: 'Dabase Link',
   files: [
-    '!**/.vscode/*',
+    '!**/.vscode/**',
     '!src/*',
     '!electron.vite.config.{js,ts,mjs,cjs}',
     '!{.eslintignore,.eslintrc.cjs,.prettierignore,prettier.config.js,dev-app-update.yml,CHANGELOG.md,README.md}',

@@ -1,7 +1,7 @@
 generator client {
   provider      = "prisma-client-js"
   output        = "./client/postgresql"
-  binaryTargets = ["darwin", "darwin-arm64", "windows", "debian-openssl-3.0.x", "debian-openssl-3.0.x", "rhel-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
+  binaryTargets = ["darwin", "darwin-arm64", "windows", "debian-openssl-3.0.x", "debian-openssl-3.0.x", "rhel-openssl-1.0.x", "rhel-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
