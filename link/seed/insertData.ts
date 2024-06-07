@@ -1,5 +1,5 @@
 import { createClient } from './createClient';
-import { Connection } from './types';
+import type { Connection } from './types';
 import { faker } from '@faker-js/faker';
 
 const isNotUndefined = <T>(value: T | undefined): value is T => value !== undefined;
