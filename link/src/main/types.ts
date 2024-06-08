@@ -30,4 +30,6 @@ export type Client = {
   sshTunnel: SSHConnection | null;
 };
 
+export type Clients = { [connectionId: string]: Client };
+
 export type PrismaValue = string | number | boolean | Date | Prisma.Decimal | null;

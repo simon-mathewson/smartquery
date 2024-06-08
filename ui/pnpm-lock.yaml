@@ -24,10 +24,10 @@ importers:
         specifier: 5.14.20
         version: 5.14.20(@emotion/react@11.11.1(@types/react@18.2.45)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.45)(react@18.2.0))(@types/react@18.2.45)(react@18.2.0))(@types/react@18.2.45)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@trpc/client':
-        specifier: ^10.44.1
+        specifier: 10.44.1
         version: 10.44.1(@trpc/server@10.44.1)
       '@trpc/server':
-        specifier: ^10.44.1
+        specifier: 10.44.1
         version: 10.44.1
       '@types/uuid':
         specifier: ^9.0.8

@@ -1,6 +1,8 @@
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
+/// <reference types="vitest" />
 
-export default defineConfig({
+import { externalizeDepsPlugin, type UserConfig } from 'electron-vite';
+
+export default {
   main: {
     build: {
       commonjsOptions: {
@@ -10,4 +12,4 @@ export default defineConfig({
     envPrefix: 'VITE_',
     plugins: [externalizeDepsPlugin()],
   },
-});
+} satisfies UserConfig;

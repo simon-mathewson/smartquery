@@ -1,7 +1,7 @@
 import type { MenuItemConstructorOptions } from 'electron';
 import { Menu, Tray, app, nativeImage } from 'electron';
 import settings from 'electron-settings';
-import iconPath from '../../resources/trayIconTemplate.png?asset';
+import iconPath from '../../../resources/trayIconTemplate.png?asset';
 
 /**
  * Create icon in OS tray and set up context menu

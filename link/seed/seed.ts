@@ -11,7 +11,7 @@ import type { Connection } from './types';
       engine: 'mysql',
       host: 'localhost',
       password: 'password',
-      port: 3307,
+      port: parseInt(process.env.MYSQL_PORT, 10),
       user: 'root',
     },
     {
@@ -20,7 +20,7 @@ import type { Connection } from './types';
       engine: 'postgresql',
       host: 'localhost',
       password: 'password',
-      port: 5433,
+      port: parseInt(process.env.POSTGRESQL_PORT, 10),
       user: 'postgres',
     },
   ];
