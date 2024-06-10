@@ -3,9 +3,9 @@ import type { Prisma } from '../../../link/prisma';
 import type { DataType } from './dataTypes/types';
 import { z } from 'zod';
 import type { inferRouterInputs } from '@trpc/server';
-import type { AppRouter } from '../../../link/src/main/content/RouterService/RouterService';
+import type { router } from '../../../link/src/main/content/router/router';
 
-export type ConnectInput = inferRouterInputs<AppRouter>['connectDb'];
+export type ConnectInput = inferRouterInputs<typeof router>['connectDb'];
 
 export const connectionSchema = z.object({
   credentialStorage: z.union([z.literal('alwaysAsk'), z.literal('localStorage')]),

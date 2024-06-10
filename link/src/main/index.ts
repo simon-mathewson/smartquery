@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { electronApp } from '@electron-toolkit/utils';
 import { app } from 'electron';
 import { createTray } from './utils/createTray';
-import { setUpServer } from './utils/setUpServer';
+import { setUpServer } from './utils/setUpServer/setUpServer';
 
 app.whenReady().then(() => {
   // Set app user model ID for Windows
