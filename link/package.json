@@ -31,7 +31,7 @@
     "test:db:up": "docker-compose -f docker-compose.yml -p dabase-link-test --env-file .env.test up -d",
     "test:db:down": "docker-compose -f docker-compose.yml -p dabase-link-test --env-file .env.test down",
     "test:seed": "pnpm dotenv -e .env.test -- ts-node -O '{\"module\":\"commonjs\"}' ./seed/seed.ts",
-    "test": "vitest --ui"
+    "test": "vitest"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^2.0.0",

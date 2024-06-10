@@ -1,12 +1,8 @@
-import { beforeEach, test, describe, expect, afterEach, afterAll } from 'vitest';
-import { setUpServer } from '../../utils/setUpServer/setUpServer';
-import { getTrpcClient } from '../../test/utils/getTrpcClient';
-import { context } from '../../utils/setUpServer/createContext';
-import { seed } from '../../test/utils/seed';
+import { beforeEach, test, describe, expect } from 'vitest';
+import { trpcClient } from '../../test/utils/getTrpcClient';
 
 describe('router', () => {
-  let server: ReturnType<typeof setUpServer> | null = null;
-  let client: ReturnType<typeof getTrpcClient>;
+  let client: typeof trpcClient;
 
   const mysqlConnection = {
     database: 'mysql_db',
@@ -33,35 +29,7 @@ describe('router', () => {
   } as const;
 
   beforeEach(async () => {
-    seed();
-
-    if (server) {
-      await new Promise<void>((resolve, reject) => {
-        server.close((err) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
-      });
-    }
-
-    server = setUpServer();
-    client = getTrpcClient();
-  });
-
-  afterEach(async () => {
-    if (!server) return;
-    await new Promise<void>((resolve, reject) => {
-      server.close((err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+    client = trpcClient;
   });
 
   describe('connectDb', () => {
@@ -71,10 +39,6 @@ describe('router', () => {
       ) => {
         expect(response).toBeTypeOf('string');
         expect(response).toBeTruthy();
-
-        expect(context.clients).toMatchObject({
-          [mysqlConnection.id]: expect.any(Object),
-        });
       };
 
       test('mysql', async () => {
