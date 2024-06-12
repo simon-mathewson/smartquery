@@ -2,10 +2,12 @@ import 'reflect-metadata';
 
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
 import cors from 'cors';
-import { router } from '../../content/router/router';
-import { createContext } from './createContext';
+import type { Context } from './context';
+import { router } from '../../router/router';
 
-export const setUpServer = () => {
+export const setUpServer = (props: { createContext: () => Context }) => {
+  const { createContext } = props;
+
   const server = createHTTPServer({
     createContext,
     middleware: cors({

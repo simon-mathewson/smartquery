@@ -4,6 +4,8 @@ import { electronApp } from '@electron-toolkit/utils';
 import { app } from 'electron';
 import { createTray } from './utils/createTray';
 import { setUpServer } from './utils/setUpServer/setUpServer';
+import { initialContext } from './utils/setUpServer/context';
+import { cloneDeep } from 'lodash';
 
 app.whenReady().then(() => {
   // Set app user model ID for Windows
@@ -17,5 +19,9 @@ app.whenReady().then(() => {
 
   createTray();
 
-  setUpServer();
+  const context = cloneDeep(initialContext);
+
+  setUpServer({
+    createContext: () => context,
+  });
 });

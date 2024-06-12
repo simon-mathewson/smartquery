@@ -1,12 +1,14 @@
+import { initTRPC } from '@trpc/server';
 import { uniqueId } from 'lodash';
+import superjson from 'superjson';
 import { z } from 'zod';
-import { MySqlClient, PostgresClient } from '../../../../prisma';
-import type { PrismaValue } from '../../types';
-import { connectionSchema } from '../../types';
-import { createSshTunnel } from '../../utils/createSshTunnel';
-import { getTrpc } from '../../utils/getTrpc';
+import { MySqlClient, PostgresClient } from '../../../prisma';
+import type { PrismaValue } from '../types';
+import { connectionSchema } from '../types';
+import { createSshTunnel } from '../utils/createSshTunnel';
+import type { Context } from '../utils/setUpServer/context';
 
-const trpc = getTrpc();
+const trpc = initTRPC.context<Context>().create({ transformer: superjson });
 
 export const router = trpc.router({
   connectDb: trpc.procedure.input(connectionSchema).mutation(async (props) => {
