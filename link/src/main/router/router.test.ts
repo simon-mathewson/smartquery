@@ -1,53 +1,29 @@
-import { beforeAll, describe, expect, test } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { MySqlClient, PostgresClient } from '../../../prisma';
 import { trpcClient } from '../test/utils/getTrpcClient';
 import type { Context } from '../utils/setUpServer/context';
 import { initialContext } from '../utils/setUpServer/context';
 import { setUpServer } from '../utils/setUpServer/setUpServer';
 import { cloneDeep } from 'lodash';
+import { mocks } from '../test/mocks';
+import type { Connection } from '../types';
 
 describe('router', () => {
-  const mysqlConnection = {
-    database: 'mysql_db',
-    engine: 'mysql',
-    id: 'mysql-connection',
-    host: 'localhost',
-    name: 'Test Connection',
-    password: 'password',
-    port: 3308,
-    ssh: null,
-    user: 'root',
-  } as const;
-
-  const postgresConnection = {
-    database: 'postgresql_db',
-    host: 'localhost',
-    id: 'postgres-connection',
-    engine: 'postgresql',
-    name: 'Test Connection',
-    password: 'password',
-    port: 5434,
-    ssh: null,
-    user: 'postgres',
-  } as const;
-
   let context: Context;
 
   beforeAll(() => {
-    setUpServer({
-      createContext: () => {
-        const newContext = cloneDeep(initialContext);
-        context = newContext;
-        return newContext;
-      },
-    });
+    setUpServer({ createContext: () => context });
+  });
+
+  beforeEach(() => {
+    context = cloneDeep(initialContext);
   });
 
   describe('connectDb', () => {
     describe('connects to the database', async () => {
       const expectSuccessfulConnection = async (
         response: Awaited<ReturnType<typeof trpcClient.connectDb.mutate>>,
-        connection: typeof mysqlConnection | typeof postgresConnection,
+        connection: Connection,
         PrismaClient: typeof MySqlClient | typeof PostgresClient,
       ) => {
         expect(response).toBeTypeOf('string');
@@ -69,13 +45,51 @@ describe('router', () => {
       };
 
       test('mysql', async () => {
-        const mysqlResponse = await trpcClient.connectDb.mutate(mysqlConnection);
-        await expectSuccessfulConnection(mysqlResponse, mysqlConnection, MySqlClient);
+        const mysqlResponse = await trpcClient.connectDb.mutate(mocks.connection.mysql);
+        await expectSuccessfulConnection(mysqlResponse, mocks.connection.mysql, MySqlClient);
       });
 
       test('postgres', async () => {
-        const postgresResponse = await trpcClient.connectDb.mutate(postgresConnection);
-        await expectSuccessfulConnection(postgresResponse, postgresConnection, PostgresClient);
+        const postgresResponse = await trpcClient.connectDb.mutate(mocks.connection.postgres);
+        await expectSuccessfulConnection(
+          postgresResponse,
+          mocks.connection.postgres,
+          PostgresClient,
+        );
+      });
+    });
+  });
+
+  describe('disconnectDb', () => {
+    describe('disconnects from the database', async () => {
+      const spyOnDisconnect = (clientId: string) => {
+        const client = context.clients[clientId];
+        return vi.spyOn(client.prisma, '$disconnect');
+      };
+
+      const expectSuccessfulDisconnect = async (spy: ReturnType<typeof spyOnDisconnect>) => {
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(Object.keys(context.clients)).toHaveLength(0);
+      };
+
+      test('mysql', async () => {
+        const mysqlClientId = await trpcClient.connectDb.mutate(mocks.connection.mysql);
+
+        const disconnectSpy = spyOnDisconnect(mysqlClientId);
+
+        await trpcClient.disconnectDb.mutate(mysqlClientId);
+
+        await expectSuccessfulDisconnect(disconnectSpy);
+      });
+
+      test('postgres', async () => {
+        const postgresClientId = await trpcClient.connectDb.mutate(mocks.connection.postgres);
+
+        const disconnectSpy = spyOnDisconnect(postgresClientId);
+
+        await trpcClient.disconnectDb.mutate(postgresClientId);
+
+        await expectSuccessfulDisconnect(disconnectSpy);
       });
     });
   });

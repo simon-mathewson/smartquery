@@ -5,11 +5,11 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgresql_db
     ports:
-      - '${POSTGRESQL_PORT}:5432'
+      - '${VITE_POSTGRESQL_PORT}:5432'
   mysql:
     image: mysql
     environment:
       MYSQL_DATABASE: mysql_db
       MYSQL_ROOT_PASSWORD: password
     ports:
-      - '${MYSQL_PORT}:3306'
+      - '${VITE_MYSQL_PORT}:3306'
