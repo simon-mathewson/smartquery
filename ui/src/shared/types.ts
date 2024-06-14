@@ -3,7 +3,7 @@ import type { Prisma } from '../../../link/prisma';
 import type { DataType } from './dataTypes/types';
 import { z } from 'zod';
 import type { inferRouterInputs } from '@trpc/server';
-import type { router } from '../../../link/src/main/content/router/router';
+import type { router } from '../../../link/src/main/router/router';
 
 export type ConnectInput = inferRouterInputs<typeof router>['connectDb'];
 

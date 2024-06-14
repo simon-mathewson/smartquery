@@ -14,8 +14,11 @@ phases:
     on-failure: ABORT
     commands:
       - cd ../ui
+      - pnpm typecheck
       - pnpm build
       - cd ../link
+      - pnpm typecheck
+      - pnpm build:node
       - pnpm test -- --reporter junit --outputFile=test-report.xml
   post_build:
     commands:
