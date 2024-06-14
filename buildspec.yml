@@ -19,6 +19,7 @@ phases:
       - cd ../link
       - pnpm typecheck
       - pnpm build:node
+      - pnpm test:db:up
       - pnpm test -- --reporter junit --outputFile test-report.xml --watch false
   post_build:
     commands:
@@ -29,5 +30,5 @@ phases:
 reports:
   link:
     files:
-      - "link/test-report.xml"
+      - "../link/test-report.xml"
     file-format: "JUNITXML"
