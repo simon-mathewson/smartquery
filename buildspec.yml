@@ -19,7 +19,7 @@ phases:
       - cd ../link
       - pnpm typecheck
       - pnpm build:node
-      - pnpm test -- --reporter junit --outputFile=test-report.xml
+      - pnpm test -- --reporter junit --outputFile test-report.xml --watch false
   post_build:
     commands:
       - cd ../ui
