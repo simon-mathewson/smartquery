@@ -30,5 +30,4 @@ phases:
 reports:
   link:
     files:
-      - "../link/test-report.xml"
-    file-format: "JUNITXML"
+      - "**/test-report.xml"
