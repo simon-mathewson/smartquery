@@ -20,7 +20,6 @@ phases:
       - pnpm typecheck
       - pnpm build:node
       - pnpm test:db:up
-      - pnpm test -- --reporter junit --outputFile test-report.xml --watch false
       - pnpm test -- --watch false
   post_build:
     commands:
@@ -32,3 +31,4 @@ reports:
   link:
     files:
       - "link/test-report.xml"
+    discard-paths: no
