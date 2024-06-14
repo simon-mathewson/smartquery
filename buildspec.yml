@@ -21,6 +21,7 @@ phases:
       - pnpm build:node
       - pnpm test:db:up
       - pnpm test -- --reporter junit --outputFile test-report.xml --watch false
+      - pnpm test -- --watch false
   post_build:
     commands:
       - cd ../ui
@@ -30,4 +31,4 @@ phases:
 reports:
   link:
     files:
-      - "**/test-report.xml"
+      - "link/test-report.xml"
