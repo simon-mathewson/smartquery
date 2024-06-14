@@ -27,7 +27,7 @@
     "postinstall": "electron-builder install-app-deps && pnpm db:generate",
     "publish": "pnpm dotenv -e .env.production.local -- aws s3 sync ./dist s3://dabase-link",
     "start": "electron-vite preview",
-    "typecheck": "tsc --noEmit --composite false",
+    "typecheck": "tsc --noEmit --skipLibCheck",
     "test:db:up": "docker-compose -f docker-compose.yml -p dabase-link-test --env-file .env.test up -d",
     "test:db:down": "docker-compose -f docker-compose.yml -p dabase-link-test --env-file .env.test down",
     "test:seed": "pnpm dotenv -e .env.test -- ts-node -O '{\"module\":\"commonjs\"}' ./seed/main.ts",

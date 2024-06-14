@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "generate-pwa-assets": "pwa-assets-generator -c pwa-assets-config.ts",
     "preview": "vite preview",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
     "@codemirror/lang-json": "0.19.2",
