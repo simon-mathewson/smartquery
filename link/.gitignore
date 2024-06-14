@@ -7,3 +7,4 @@ prisma/client
 .env.local
 .env.*.local
 electron-builder.env
+test-report.xml
