@@ -1,13 +1,13 @@
 import type { Connection } from '../types';
 
 export const mocks = {
-  connection: {
+  connections: {
     mysql: {
       database: 'mysql_db',
       engine: 'mysql',
       id: 'mysql-connection',
       host: 'localhost',
-      name: 'Test Connection',
+      name: 'MySQL',
       password: 'password',
       port: Number(import.meta.env.VITE_MYSQL_PORT),
       ssh: null,
@@ -18,7 +18,7 @@ export const mocks = {
       host: 'localhost',
       id: 'postgres-connection',
       engine: 'postgresql',
-      name: 'Test Connection',
+      name: 'Postgres',
       password: 'password',
       port: Number(import.meta.env.VITE_POSTGRESQL_PORT),
       ssh: null,

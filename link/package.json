@@ -19,7 +19,7 @@
     "db:generate": "prisma generate --schema=prisma/mysql.prisma && prisma generate --schema=prisma/postgresql.prisma",
     "dev:db:up": "docker-compose -f docker-compose.yml -p dabase-link-dev --env-file .env.development up -d",
     "dev:db:down": "docker-compose -f docker-compose.yml -p dabase-link-dev --env-file .env.development down",
-    "dev:seed": "pnpm dotenv -e .env.development -- ts-node -O '{\"module\":\"commonjs\"}' ./seed/seed.ts",
+    "dev:seed": "pnpm dotenv -e .env.development -- ts-node -O '{\"module\":\"commonjs\"}' ./seed/main.ts",
     "dev": "electron-vite dev --inspect --sourcemap",
     "fix": "rm -rf node_modules/electron/dist && node node_modules/electron/install.js",
     "format": "prettier --write .",
@@ -30,7 +30,7 @@
     "typecheck": "tsc --noEmit --composite false",
     "test:db:up": "docker-compose -f docker-compose.yml -p dabase-link-test --env-file .env.test up -d",
     "test:db:down": "docker-compose -f docker-compose.yml -p dabase-link-test --env-file .env.test down",
-    "test:seed": "pnpm dotenv -e .env.test -- ts-node -O '{\"module\":\"commonjs\"}' ./seed/seed.ts",
+    "test:seed": "pnpm dotenv -e .env.test -- ts-node -O '{\"module\":\"commonjs\"}' ./seed/main.ts",
     "test": "vitest"
   },
   "dependencies": {

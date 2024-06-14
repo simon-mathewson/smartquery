@@ -3,7 +3,9 @@ import { insertData } from './insertData';
 import { resetDatabase } from './resetDatabase';
 import type { Connection } from './types';
 
-(async () => {
+export const seed = async () => {
+  console.info('Seeding databases...');
+
   const connections: Connection[] = [
     {
       database: 'mysql_db',
@@ -11,7 +13,7 @@ import type { Connection } from './types';
       engine: 'mysql',
       host: 'localhost',
       password: 'password',
-      port: parseInt(process.env.MYSQL_PORT, 10),
+      port: Number(process.env.VITE_MYSQL_PORT),
       user: 'root',
     },
     {
@@ -20,7 +22,7 @@ import type { Connection } from './types';
       engine: 'postgresql',
       host: 'localhost',
       password: 'password',
-      port: parseInt(process.env.POSTGRESQL_PORT, 10),
+      port: Number(process.env.VITE_POSTGRESQL_PORT),
       user: 'postgres',
     },
   ];
@@ -30,4 +32,4 @@ import type { Connection } from './types';
     await createTables(connection);
     await insertData(connection);
   }
-})();
+};

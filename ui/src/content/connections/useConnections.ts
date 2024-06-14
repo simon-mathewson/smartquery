@@ -9,6 +9,7 @@ import type { SignInModalInput } from './signInModal/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TrpcContext } from '../trpc/Context';
 import { ToastContext } from '../toast/Context';
+import { getInitialConnections } from './utils';
 
 export const useConnections = (props: { signInModal: ModalControl<SignInModalInput> }) => {
   const { signInModal } = props;
@@ -19,7 +20,10 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
   const toast = useDefinedContext(ToastContext);
 
-  const [connections, setConnections] = useStoredState<Connection[]>('connections', []);
+  const [connections, setConnections] = useStoredState<Connection[]>(
+    'connections',
+    getInitialConnections,
+  );
 
   const [activeConnectionClientId, setActiveConnectionClientId] = useState<string | null>(null);
 

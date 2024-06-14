@@ -2,8 +2,6 @@ import { createClient } from './createClient';
 import type { Connection } from './types';
 import { faker } from '@faker-js/faker';
 
-const isNotUndefined = <T>(value: T | undefined): value is T => value !== undefined;
-
 export const insertData = async (connection: Connection) => {
   const { engine } = connection;
 
@@ -58,7 +56,7 @@ export const insertData = async (connection: Connection) => {
   `);
 
   const users = faker.helpers.multiple(() => ({
-    name: faker.person.fullName(),
+    name: faker.person.fullName().replace(/'/g, "''"),
     role: faker.helpers.arrayElement(['ADMIN', 'USER']),
     attributes: faker.helpers.arrayElement([
       `'{"favoriteNumber": ${faker.number.int()}, "favoriteColor": "${faker.color.human()}"}'`,
@@ -117,21 +115,27 @@ export const insertData = async (connection: Connection) => {
         .join()}
   `);
 
-  const userFavoritePosts = userIds
-    .flatMap((userId) =>
-      faker.helpers.maybe(() =>
-        faker.helpers.multiple(() => ({
-          userId,
-          postId: faker.helpers.arrayElement(posts).id,
-        })),
-      ),
-    )
-    .filter(isNotUndefined);
+  const userFavoritePosts = userIds.flatMap((userId) => [
+    {
+      userId,
+      postId: posts[0].id,
+    },
+    {
+      userId,
+      postId: posts[1].id,
+    },
+  ]);
 
   await prisma.$queryRawUnsafe(`
     INSERT INTO user_favorite_posts (user_id, post_id)
     VALUES
       ${userFavoritePosts.map(({ userId, postId }) => `(${userId}, '${postId}')`).join()}
+  `);
+
+  await prisma.$queryRawUnsafe(`
+    INSERT INTO simple (id)
+    VALUES
+      (1), (2), (3)
   `);
 
   await prisma.$disconnect();

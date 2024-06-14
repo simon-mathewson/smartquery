@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { MySqlClient, PostgresClient } from '../../../prisma';
 import { trpcClient } from '../test/utils/getTrpcClient';
 import type { Context } from '../utils/setUpServer/context';
@@ -6,10 +6,10 @@ import { initialContext } from '../utils/setUpServer/context';
 import { setUpServer } from '../utils/setUpServer/setUpServer';
 import { cloneDeep } from 'lodash';
 import { mocks } from '../test/mocks';
-import type { Connection } from '../types';
+import { seed } from '../../../seed/seed';
 
 describe('router', () => {
-  let context: Context;
+  let context: Context | null = null;
 
   beforeAll(() => {
     setUpServer({ createContext: () => context });
@@ -19,13 +19,23 @@ describe('router', () => {
     context = cloneDeep(initialContext);
   });
 
+  afterEach(async () => {
+    await Promise.all(
+      Object.values(context.clients).map((client) => {
+        client.prisma.$disconnect();
+        client.sshTunnel?.shutdown();
+      }),
+    );
+  });
+
   describe('connectDb', () => {
     describe('connects to the database', async () => {
-      const expectSuccessfulConnection = async (
-        response: Awaited<ReturnType<typeof trpcClient.connectDb.mutate>>,
-        connection: Connection,
-        PrismaClient: typeof MySqlClient | typeof PostgresClient,
-      ) => {
+      test.each([
+        { connection: mocks.connections.mysql, PrismaClient: MySqlClient },
+        { connection: mocks.connections.postgres, PrismaClient: PostgresClient },
+      ] as const)('$connection.engine', async ({ PrismaClient, connection }) => {
+        const response = await trpcClient.connectDb.mutate(connection);
+
         expect(response).toBeTypeOf('string');
         expect(response).toBeTruthy();
 
@@ -42,20 +52,6 @@ describe('router', () => {
         expect(client.connection).toMatchObject(connection);
         expect(client.prisma).toBeInstanceOf(PrismaClient);
         expect(client.sshTunnel).toBeNull();
-      };
-
-      test('mysql', async () => {
-        const mysqlResponse = await trpcClient.connectDb.mutate(mocks.connection.mysql);
-        await expectSuccessfulConnection(mysqlResponse, mocks.connection.mysql, MySqlClient);
-      });
-
-      test('postgres', async () => {
-        const postgresResponse = await trpcClient.connectDb.mutate(mocks.connection.postgres);
-        await expectSuccessfulConnection(
-          postgresResponse,
-          mocks.connection.postgres,
-          PostgresClient,
-        );
       });
     });
   });
@@ -67,30 +63,82 @@ describe('router', () => {
         return vi.spyOn(client.prisma, '$disconnect');
       };
 
-      const expectSuccessfulDisconnect = async (spy: ReturnType<typeof spyOnDisconnect>) => {
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(Object.keys(context.clients)).toHaveLength(0);
-      };
+      test.each([mocks.connections.mysql, mocks.connections.postgres])(
+        '$engine',
+        async (connection) => {
+          const clientId = await trpcClient.connectDb.mutate(connection);
 
-      test('mysql', async () => {
-        const mysqlClientId = await trpcClient.connectDb.mutate(mocks.connection.mysql);
+          const disconnectSpy = spyOnDisconnect(clientId);
 
-        const disconnectSpy = spyOnDisconnect(mysqlClientId);
+          await trpcClient.disconnectDb.mutate(clientId);
 
-        await trpcClient.disconnectDb.mutate(mysqlClientId);
+          expect(disconnectSpy).toHaveBeenCalledTimes(1);
+          expect(Object.keys(context.clients)).toHaveLength(0);
+        },
+      );
+    });
 
-        await expectSuccessfulDisconnect(disconnectSpy);
+    describe('sendQuery', () => {
+      beforeEach(async () => {
+        await seed();
       });
 
-      test('postgres', async () => {
-        const postgresClientId = await trpcClient.connectDb.mutate(mocks.connection.postgres);
+      describe('allows selecting, updating, deleting, and inserting rows', async () => {
+        test.each([mocks.connections.mysql, mocks.connections.postgres])(
+          '$engine',
+          async (connection) => {
+            const mysqlClientId = await trpcClient.connectDb.mutate(connection);
 
-        const disconnectSpy = spyOnDisconnect(postgresClientId);
+            const response = await trpcClient.sendQuery.mutate({
+              clientId: mysqlClientId,
+              statements: [
+                'SELECT * FROM simple',
+                'UPDATE simple SET id = 10 WHERE id = 3',
+                'DELETE FROM simple',
+                'INSERT INTO simple (id) VALUES (4)',
+              ],
+            });
 
-        await trpcClient.disconnectDb.mutate(postgresClientId);
-
-        await expectSuccessfulDisconnect(disconnectSpy);
+            expect(response).toHaveLength(4);
+            expect(response[0]).toHaveLength(3);
+            expect(response[1]).toHaveLength(0);
+            expect(response[2]).toHaveLength(0);
+            expect(response[3]).toHaveLength(0);
+          },
+        );
       });
+
+      describe('executes statements in transaction', async () => {
+        test.each([mocks.connections.mysql, mocks.connections.postgres])(
+          '$engine',
+          async (connection) => {
+            const mysqlClientId = await trpcClient.connectDb.mutate(connection);
+
+            const invalidQuery = trpcClient.sendQuery.mutate({
+              clientId: mysqlClientId,
+              statements: ['UPDATE simple SET id = 10 WHERE id = 3', 'Invalid Query'],
+            });
+
+            expect(invalidQuery).rejects.toThrowError();
+
+            const response = await trpcClient.sendQuery.mutate({
+              clientId: mysqlClientId,
+              statements: ['SELECT * FROM simple WHERE id = 10'],
+            });
+
+            expect(response).toHaveLength(1);
+            expect(response[0]).toHaveLength(0);
+          },
+        );
+      });
+    });
+  });
+
+  describe('status', () => {
+    test('returns true', async () => {
+      const response = await trpcClient.status.query();
+
+      expect(response).toBe(true);
     });
   });
 });
