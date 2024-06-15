@@ -20,7 +20,7 @@ phases:
       - pnpm typecheck
       - pnpm build:node
       - pnpm test:db:up
-      - sleep 5
+      - sleep 30
       - pnpm test -- --watch false
   post_build:
     commands:
