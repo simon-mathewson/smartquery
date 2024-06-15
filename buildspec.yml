@@ -20,6 +20,10 @@ phases:
       - pnpm typecheck
       - pnpm build:node
       - pnpm test:db:up
+      - echo "Testing PostgreSQL connection..."
+      - pg_isready -h localhost -p 5434 -U postgres
+      - echo "Testing MySQL connection..."
+      - mysqladmin ping -h localhost -P 3308 -u root -ppassword
       - pnpm test -- --watch false
   post_build:
     commands:
