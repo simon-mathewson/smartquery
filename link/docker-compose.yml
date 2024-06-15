@@ -4,6 +4,7 @@ services:
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgresql_db
+    network_mode: bridge
     ports:
       - '${VITE_POSTGRESQL_PORT}:5432'
   mysql:
@@ -11,5 +12,6 @@ services:
     environment:
       MYSQL_DATABASE: mysql_db
       MYSQL_ROOT_PASSWORD: password
+    network_mode: bridge
     ports:
       - '${VITE_MYSQL_PORT}:3306'

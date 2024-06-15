@@ -6,7 +6,7 @@ export const mocks = {
       database: 'mysql_db',
       engine: 'mysql',
       id: 'mysql-connection',
-      host: '0.0.0.0',
+      host: 'localhost',
       name: 'MySQL',
       password: 'password',
       port: Number(import.meta.env.VITE_MYSQL_PORT),
@@ -15,7 +15,7 @@ export const mocks = {
     } satisfies Connection,
     postgres: {
       database: 'postgresql_db',
-      host: '0.0.0.0',
+      host: 'localhost',
       id: 'postgres-connection',
       engine: 'postgresql',
       name: 'Postgres',
