@@ -19,9 +19,8 @@ phases:
       - cd ../link
       - pnpm typecheck
       - pnpm build:node
-      - pnpm test:db:up
       - pnpm db:generate
-      - DEBUG=* pnpm test -- --watch false
+      - docker-compose -f docker-compose.yml -p dabase-link-dev --env-file .env.development up & pnpm test -- --watch false
   post_build:
     commands:
       - cd ../ui
