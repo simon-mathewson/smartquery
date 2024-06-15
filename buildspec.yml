@@ -20,7 +20,7 @@ phases:
       - pnpm typecheck
       - pnpm build:node
       - pnpm db:generate
-      - docker-compose -f docker-compose.yml -p dabase-link-dev --env-file .env.development up & pnpm test -- --watch false
+      - docker-compose -f docker-compose.yml -p dabase-link-dev --env-file .env.development up & (sleep 30 && pnpm test -- --watch false)
   post_build:
     commands:
       - cd ../ui
