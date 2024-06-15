@@ -19,7 +19,7 @@ phases:
       - cd ../link
       - pnpm typecheck
       - pnpm build:node
-      - pnpm test:db:up
+      - docker-compose -f docker-compose.yml --env-file .env.test up -d
       - pnpm test -- --watch false
   post_build:
     commands:
