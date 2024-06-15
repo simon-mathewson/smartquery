@@ -7,6 +7,7 @@
   "author": "example.com",
   "homepage": "https://www.electronjs.org",
   "scripts": {
+    "prebuild:all": "pnpm run typecheck",
     "build:all": "pnpm build:node && pnpm run build:linux && pnpm run build:mac && pnpm run build:win",
     "postbuild:all": "./process-build.sh",
     "build:linux": "electron-builder --linux --config",
@@ -14,7 +15,7 @@
     "build:mac:x64": "electron-builder --mac --config --x64",
     "build:mac": "pnpm build:mac:arm64 && pnpm build:mac:x64",
     "prebuild:node": "pnpm db:generate",
-    "build:node": "pnpm run typecheck && electron-vite build",
+    "build:node": "electron-vite build",
     "build:win": "electron-builder --win --config",
     "db:generate": "prisma generate --schema=prisma/mysql.prisma && prisma generate --schema=prisma/postgresql.prisma",
     "dev:db:up": "docker-compose -f docker-compose.yml -p dabase-link-dev --env-file .env.development up -d",
