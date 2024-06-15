@@ -6,6 +6,7 @@ phases:
       nodejs: 18
     commands:
       - corepack enable pnpm
+      - pnpm config set store-dir .pnpm-store
       - cd link
       - pnpm install
       - cd ../ui
@@ -34,3 +35,7 @@ reports:
     files:
       - "link/test-report.xml"
     file-format: "JUNITXML"
+
+cache:
+  paths:
+    - ".pnpm-store/**/*"
