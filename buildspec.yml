@@ -25,7 +25,8 @@ phases:
       - pnpm test:db:up
       - ./wait-for localhost:$(pnpm dotenv -e .env.test -p VITE_MYSQL_PORT) -- echo "MySQL is up"
       - ./wait-for localhost:$(pnpm dotenv -e .env.test -p VITE_POSTGRESQL_PORT) -- echo "PostgreSQL is up"
-      - pnpm test -- --watch false --reporter=junit --outputFile=test-report.xml
+      - sleep 5
+      - pnpm test -- --watch false
   post_build:
     commands:
       # - cd ../ui
