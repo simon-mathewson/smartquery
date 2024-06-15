@@ -20,8 +20,6 @@ phases:
       - pnpm typecheck
       - pnpm build:node
       - pnpm test:db:up
-      - docker inspect dabase-link-test-mysql-1 --format='{{.NetworkSettings.Ports}}'
-      - docker inspect dabase-link-test-postgres-1 --format='{{.NetworkSettings.Ports}}'
       - pnpm test -- --watch false
   post_build:
     commands:
