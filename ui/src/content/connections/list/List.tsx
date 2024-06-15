@@ -4,9 +4,9 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../Context';
 import { useState } from 'react';
 import { DatabaseList } from './databases/List';
-import { ListItem } from '~/shared/components/ListItem/ListItem';
 import { ConnectionForm } from './form/ConnectionForm';
 import classNames from 'classnames';
+import { List } from '~/shared/components/List/List';
 
 export type ConnectionListProps = {
   hideDatabases?: boolean;
@@ -46,27 +46,24 @@ export const ConnectionList: React.FC<ConnectionListProps> = (props) => {
               </div>
               <Button icon={<Add />} label="Add" onClick={() => setIsAddingOrEditing(true)} />
             </div>
-            <div className="flex flex-col gap-1">
-              {connections.map((connection, index) => (
-                <ListItem
-                  actions={[
-                    {
-                      icon: <EditOutlined />,
-                      onClick: () => {
-                        setConnectionToEditIndex(index);
-                        setIsAddingOrEditing(true);
-                      },
+            <List
+              items={connections.map((connection, index) => ({
+                actions: [
+                  {
+                    icon: <EditOutlined />,
+                    onClick: () => {
+                      setConnectionToEditIndex(index);
+                      setIsAddingOrEditing(true);
                     },
-                  ]}
-                  hint={`${connection.user}@${connection.host}:${connection.port}`}
-                  key={index}
-                  label={connection.name}
-                  onClick={() => connect(connection.id)}
-                  selected={activeConnection?.id === connection.id}
-                  selectedVariant="primary"
-                />
-              ))}
-            </div>
+                  },
+                ],
+                hint: `${connection.user}@${connection.host}:${connection.port}`,
+                label: connection.name,
+                onClick: () => connect(connection.id),
+                selected: activeConnection?.id === connection.id,
+                selectedVariant: 'primary',
+              }))}
+            />
           </div>
           {!hideDatabases && (
             <>

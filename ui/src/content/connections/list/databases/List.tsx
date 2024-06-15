@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../../Context';
-import { ListItem } from '~/shared/components/ListItem/ListItem';
 import { TrpcContext } from '~/content/trpc/Context';
+import { List } from '~/shared/components/List/List';
 
 export const DatabaseList: React.FC = () => {
   const trpc = useDefinedContext(TrpcContext);
@@ -40,21 +40,18 @@ export const DatabaseList: React.FC = () => {
           Databases
         </div>
       </div>
-      <div className="flex flex-col gap-1">
-        {databases.map((database, index) => (
-          <ListItem
-            key={index}
-            label={database}
-            onClick={() => {
-              if (!activeConnection) return;
+      <List
+        items={databases.map((database) => ({
+          label: database,
+          onClick: () => {
+            if (!activeConnection) return;
 
-              return connect(activeConnection.id, { database });
-            }}
-            selected={activeConnection?.database === database}
-            selectedVariant="primary"
-          />
-        ))}
-      </div>
+            return connect(activeConnection.id, { database });
+          },
+          selected: activeConnection?.database === database,
+          selectedVariant: 'primary',
+        }))}
+      />
     </div>
   );
 };

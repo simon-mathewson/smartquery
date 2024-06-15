@@ -1,25 +1,24 @@
 import { useCallback, useRef, useState } from 'react';
 import { getClosestDropMarker } from './utils';
 import { useDefinedContext } from '../../../shared/hooks/useDefinedContext';
-import type { AddQueryOptions } from '~/content/tabs/Queries/types';
 import { DragAndDropContext } from '../Context';
 import { TabsContext } from '~/content/tabs/Context';
-import { QueriesContext } from '~/content/tabs/Queries/Context';
+import type { DropMarker } from '../types';
 
 export const useDrag = (props: {
   dragRef?: React.MutableRefObject<HTMLElement | null>;
-  query: AddQueryOptions;
+  onDrop: (props: { dropMarker: DropMarker; itemId: string; tabId: string }) => void;
 }) => {
-  const { dragRef, query } = props;
+  const { dragRef, onDrop } = props;
 
   const { activeTab } = useDefinedContext(TabsContext);
-  const { addQuery } = useDefinedContext(QueriesContext);
 
   const { dropMarkers, setActiveDropMarker } = useDefinedContext(DragAndDropContext);
 
   const [isDragging, setIsDragging] = useState(false);
 
   const triggerRef = useRef<HTMLElement | null>(null);
+  const currentItemIdRef = useRef<string | null>(null);
 
   const cloneRef = useRef<HTMLElement | null>(null);
 
@@ -80,12 +79,12 @@ export const useDrag = (props: {
     [createClone, dropMarkers, setActiveDropMarker],
   );
 
-  const handleMouseDown = useCallback(
-    (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const getHandleMouseDown = useCallback(
+    (itemId: string) => (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
       if (!activeTab) return;
 
       triggerRef.current = event.currentTarget as HTMLElement | null;
-
+      currentItemIdRef.current = itemId;
       startRef.current = { x: event.clientX, y: event.clientY };
 
       document.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -102,6 +101,7 @@ export const useDrag = (props: {
           setActiveDropMarker(null);
           cloneRef.current = null;
           triggerRef.current = null;
+          currentItemIdRef.current = null;
           setIsDragging(false);
           isUnlocked.current = false;
 
@@ -111,19 +111,19 @@ export const useDrag = (props: {
           const offsetY = Math.abs(start.y - event.clientY);
           if (offsetX < 5 && offsetY < 5 && !isUnlocked.current) return;
 
-          const targetMarker = getClosestDropMarker(dropMarkers, event.clientX, event.clientY)!;
-          const { column, horizontal, row } = targetMarker;
+          const dropMarker = getClosestDropMarker(dropMarkers, event.clientX, event.clientY)!;
 
-          addQuery(query, {
-            position: { column, row: horizontal ? row : undefined },
+          onDrop({
+            dropMarker,
+            itemId,
             tabId: activeTab.id,
           });
         },
         { once: true },
       );
     },
-    [activeTab, addQuery, dropMarkers, handleMouseMove, query, setActiveDropMarker],
+    [activeTab, dropMarkers, handleMouseMove, onDrop, setActiveDropMarker],
   );
 
-  return { handleMouseDown, isDragging };
+  return { getHandleMouseDown, isDragging };
 };
