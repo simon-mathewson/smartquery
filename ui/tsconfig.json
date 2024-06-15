@@ -24,6 +24,12 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src", "tailwind.config.ts", "globals.d.ts", "playwright.config.ts"],
+  "include": [
+    "globals.d.ts",
+    "playwright-ct.config.ts",
+    "playwright.config.ts",
+    "src",
+    "tailwind.config.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

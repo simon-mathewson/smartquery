@@ -7,7 +7,6 @@ import { LinkProvider } from './content/link/Provider';
 import { TabsProvider } from './content/tabs/Provider';
 import { QueriesProvider } from './content/tabs/Queries/Provider';
 import { useTheme } from './content/theme/useTheme';
-import './index.css';
 import { ClickOutsideQueueProvider } from './shared/hooks/useClickOutside/useQueue/Provider';
 import { TrpcProvider } from './content/trpc/Provider';
 import { ErrorBoundary } from './content/errorBoundary/ErrorBoundary';
