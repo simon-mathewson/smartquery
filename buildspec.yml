@@ -21,7 +21,7 @@ phases:
       - pnpm build:node
       - pnpm db:generate
       - pnpm test:db:up
-      - sleep 30
+      - sleep 15
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
   post_build:
     commands:
