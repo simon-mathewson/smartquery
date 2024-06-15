@@ -5,31 +5,29 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      # Install Netcat for wait-for script
-      - sudo yum install -y nc
       - corepack enable pnpm
       - cd link
       - pnpm install
-      # - cd ../ui
-      # - pnpm install
+      - cd ../ui
+      - pnpm install
   build:
     on-failure: ABORT
     commands:
-      # - cd ../ui
-      # - pnpm typecheck
-      # - pnpm build
-      # - cd ../link
-      # - pnpm typecheck
-      # - pnpm build:node
-      # - pnpm db:generate
+      - cd ../ui
+      - pnpm typecheck
+      - pnpm build
+      - cd ../link
+      - pnpm typecheck
+      - pnpm build:node
+      - pnpm db:generate
       - pnpm test:db:up
-      - sleep 45
+      - sleep 30
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
   post_build:
     commands:
-      # - cd ../ui
-      # - aws s3 sync --delete dist s3://dabase-ui
-      # - aws cloudfront create-invalidation --distribution-id E3P9ENTEI8DLLN --paths '/*'
+      - cd ../ui
+      - aws s3 sync --delete dist s3://dabase-ui
+      - aws cloudfront create-invalidation --distribution-id E3P9ENTEI8DLLN --paths '/*'
 
 reports:
   link:
