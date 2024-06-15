@@ -14,7 +14,6 @@
     "build:mac:arm64": "electron-builder --mac --config --arm64",
     "build:mac:x64": "electron-builder --mac --config --x64",
     "build:mac": "pnpm build:mac:arm64 && pnpm build:mac:x64",
-    "prebuild:node": "pnpm db:generate",
     "build:node": "electron-vite build",
     "build:win": "electron-builder --win --config",
     "db:generate": "prisma generate --schema=prisma/mysql.prisma && prisma generate --schema=prisma/postgresql.prisma",
