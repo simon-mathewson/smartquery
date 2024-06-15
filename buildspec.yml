@@ -5,6 +5,8 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      # Install Netcat for wait-for script
+      - sudo yum install nc
       - corepack enable pnpm
       - cd link
       - pnpm install
