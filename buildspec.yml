@@ -21,7 +21,7 @@ phases:
       - pnpm build:node
       - pnpm test:db:up
       - pnpm db:generate
-      - pnpm test -- --watch false
+      - DEBUG=* pnpm test -- --watch false
   post_build:
     commands:
       - cd ../ui
