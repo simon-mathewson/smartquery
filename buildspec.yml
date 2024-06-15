@@ -20,6 +20,10 @@ phases:
       - pnpm typecheck
       - pnpm build:node
       - pnpm test:db:up
+      - yum update -y
+      - amazon-linux-extras install postgresql10 -y
+      # Install MySQL client
+      - yum install -y mysql
       - echo "Testing PostgreSQL connection..."
       - pg_isready -h localhost -p 5434 -U postgres
       - echo "Testing MySQL connection..."
