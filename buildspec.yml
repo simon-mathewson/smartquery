@@ -28,7 +28,7 @@ phases:
     commands:
       - cd ../ui
       - aws s3 sync --delete dist s3://dabase-ui
-      - aws cloudfront create-invalidation --distribution-id E3P9ENTEI8DLLN --paths '/*'
+      - aws cloudfront create-invalidation --distribution-id CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
 
 reports:
   link:
