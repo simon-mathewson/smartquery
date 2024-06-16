@@ -85,8 +85,8 @@ export const TableList: React.FC = () => {
             '!opacity-50': isDragging,
           }),
           label: tableName,
-          onClick: () => addQuery(getQuery(tableName)),
           onMouseDown: getHandleMouseDown(tableName),
+          onSelect: () => addQuery(getQuery(tableName)),
           selected: getIsSelected(tableName),
           selectedVariant: 'secondary',
         }))}

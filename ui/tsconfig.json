@@ -28,6 +28,7 @@
     "globals.d.ts",
     "playwright-ct.config.ts",
     "playwright.config.ts",
+    "playwright",
     "src",
     "tailwind.config.ts"
   ],

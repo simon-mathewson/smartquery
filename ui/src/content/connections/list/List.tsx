@@ -59,7 +59,7 @@ export const ConnectionList: React.FC<ConnectionListProps> = (props) => {
                 ],
                 hint: `${connection.user}@${connection.host}:${connection.port}`,
                 label: connection.name,
-                onClick: () => connect(connection.id),
+                onSelect: () => connect(connection.id),
                 selected: activeConnection?.id === connection.id,
                 selectedVariant: 'primary',
               }))}

@@ -10,7 +10,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "generate-pwa-assets": "pwa-assets-generator -c pwa-assets-config.ts",
     "preview": "vite preview",
-    "test-ct": "playwright test -c playwright-ct.config.ts",
+    "test-ct": "playwright test -c playwright-ct.config.ts --ui",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {

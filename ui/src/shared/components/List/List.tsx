@@ -15,7 +15,7 @@ export const List: React.FC<ListProps> = (props) => {
   }
 
   return (
-    <div className={classNames('flex w-full flex-col gap-1', className)}>
+    <div className={classNames('flex w-full flex-col gap-1', className)} role="listbox">
       {items.map((item, index) => (
         <ListItem key={index} {...item} />
       ))}
