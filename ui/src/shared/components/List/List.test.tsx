@@ -5,20 +5,20 @@ import { Add } from '@mui/icons-material';
 import userEvent from '@testing-library/user-event';
 
 describe('List', () => {
-  test('should render empty placeholder when no items are provided', () => {
-    const placeholder = 'No items';
+  const emptyPlaceholder = 'No items';
 
-    render(<List emptyPlaceholder={placeholder} items={[]} />);
+  test('renders empty placeholder when no items are provided', () => {
+    render(<List emptyPlaceholder={emptyPlaceholder} items={[]} />);
 
-    screen.getByText(placeholder);
+    screen.getByText(emptyPlaceholder);
     expect(screen.queryByRole('option')).not.toBeInTheDocument();
   });
 
-  test('should render basic list and allow selecting items', async () => {
+  test('renders basic list and allow selecting items', async () => {
     const labels = ['Item 1', 'Item 2', 'Item 3'];
     const items = labels.map((label) => ({ label, onSelect: vi.fn() }));
 
-    render(<List items={items} />);
+    render(<List emptyPlaceholder={emptyPlaceholder} items={items} />);
 
     expect(screen.queryByText('No items')).not.toBeInTheDocument();
 
@@ -42,14 +42,14 @@ describe('List', () => {
       selected: index === 0,
     })) satisfies ListItemProps[];
 
-    render(<List items={itemsWithSelected} />);
+    render(<List emptyPlaceholder={emptyPlaceholder} items={itemsWithSelected} />);
 
     screen.getByRole('option', { selected: true });
 
     expect(screen.getAllByRole('option', { selected: false })).toHaveLength(2);
   });
 
-  test('should render list with item actions and hints', async () => {
+  test('renders list with item actions and hints', async () => {
     const items = [
       {
         actions: [{ icon: <Add />, onClick: vi.fn() }],
@@ -63,7 +63,7 @@ describe('List', () => {
       },
     ] satisfies ListItemProps[];
 
-    render(<List items={items} />);
+    render(<List emptyPlaceholder={emptyPlaceholder} items={items} />);
 
     expect(screen.queryByText('No items')).not.toBeInTheDocument();
 
