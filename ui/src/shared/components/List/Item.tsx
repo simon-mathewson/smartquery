@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Button } from '../Button/Button';
 
 export type ListItemProps = {
@@ -25,15 +25,6 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
     selectedVariant = 'secondary',
   } = props;
 
-  const onKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (['Enter', ' '].includes(event.key)) {
-        onSelect?.();
-      }
-    },
-    [onSelect],
-  );
-
   return (
     <div
       aria-selected={selected}
@@ -48,7 +39,6 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
         className,
       )}
       onClick={onSelect}
-      onKeyDown={onKeyDown}
       onMouseDown={onMouseDown}
       role="option"
       tabIndex={0}
