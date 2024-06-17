@@ -13,6 +13,16 @@ export const useKeyboardNavigation = () => {
     if (event.key === 'ArrowDown') {
       event.preventDefault();
 
+      if (event.target === event.currentTarget) {
+        const firstEl = event.currentTarget.firstElementChild;
+
+        if (firstEl && firstEl instanceof HTMLElement) {
+          firstEl.focus();
+        }
+
+        return;
+      }
+
       const nextEl = event.target.nextElementSibling;
 
       if (nextEl && nextEl instanceof HTMLElement) {
@@ -71,7 +81,7 @@ export const useKeyboardNavigation = () => {
           return false;
         }
 
-        return el.innerText.trim().toLowerCase().startsWith(event.key.toLowerCase());
+        return el.textContent?.trim().toLowerCase().startsWith(event.key.toLowerCase());
       });
 
       if (firstEl && firstEl instanceof HTMLElement) {

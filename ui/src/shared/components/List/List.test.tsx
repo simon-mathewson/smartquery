@@ -83,4 +83,70 @@ describe('List', () => {
       }),
     );
   });
+
+  describe('allows navigating via keyboard', async () => {
+    const items = [
+      { label: 'Some item', onSelect: vi.fn() },
+      { label: 'another', onSelect: vi.fn() },
+      { label: '5 guys', onSelect: vi.fn() },
+    ] satisfies ListItemProps[];
+
+    beforeEach(() => {
+      render(<List emptyPlaceholder={emptyPlaceholder} items={items} />);
+
+      screen.getByRole('listbox').focus();
+    });
+
+    test('up', async () => {
+      screen.getAllByRole('option')[2].focus();
+
+      userEvent.keyboard('{arrowup}');
+      await waitFor(() => expect(screen.getAllByRole('option')[1]).toHaveFocus());
+
+      userEvent.keyboard('{Shift>}{Tab}');
+      await waitFor(() => expect(screen.getAllByRole('option')[0]).toHaveFocus());
+    });
+
+    test('down', async () => {
+      userEvent.keyboard('{arrowdown}');
+      await waitFor(() => expect(screen.getAllByRole('option')[0]).toHaveFocus());
+
+      userEvent.keyboard('{Tab}');
+      await waitFor(() => expect(screen.getAllByRole('option')[1]).toHaveFocus());
+    });
+
+    test('first', async () => {
+      screen.getAllByRole('option')[2].focus();
+
+      userEvent.keyboard('{Home}');
+      await waitFor(() => expect(screen.getAllByRole('option')[0]).toHaveFocus());
+    });
+
+    test('last', async () => {
+      userEvent.keyboard('{End}');
+      await waitFor(() => expect(screen.getAllByRole('option')[2]).toHaveFocus());
+    });
+
+    test('select', async () => {
+      screen.getAllByRole('option')[1].focus();
+      userEvent.keyboard('{Enter}');
+      await waitFor(() => expect(items[1].onSelect).toHaveBeenCalled());
+
+      screen.getAllByRole('option')[2].focus();
+      userEvent.keyboard(' ');
+      await waitFor(() => expect(items[2].onSelect).toHaveBeenCalled());
+    });
+
+    test('blur', async () => {
+      userEvent.keyboard('{Escape}');
+      await waitFor(() => expect(screen.getByRole('listbox')).not.toHaveFocus());
+    });
+
+    test('focus item by first character', async () => {
+      for (const item of items) {
+        userEvent.keyboard(item.label[0].toLowerCase());
+        await waitFor(() => expect(screen.getByRole('option', { name: item.label })).toHaveFocus());
+      }
+    });
+  });
 });
