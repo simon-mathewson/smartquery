@@ -22,7 +22,9 @@
 
     "paths": {
       "~/*": ["./src/*"]
-    }
+    },
+
+    "types": ["vitest/globals"]
   },
   "include": [
     "globals.d.ts",
