@@ -1,7 +1,8 @@
-import { render, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Button } from './Button';
 import { Add, Edit } from '@mui/icons-material';
+import { render } from '~/test/render';
 
 describe('Button', () => {
   test('renders button with label', async () => {
@@ -13,6 +14,10 @@ describe('Button', () => {
     const button = screen.getByRole('button', { name: label });
 
     expect(button).toHaveTextContent(label);
+    expect(button).toHaveStyle({
+      cursor: 'pointer',
+      height: '36px',
+    });
 
     await userEvent.click(button);
 
@@ -28,6 +33,7 @@ describe('Button', () => {
     const button = screen.getByRole('button');
 
     expect(button.textContent).toBe('');
+    expect(button).toHaveStyle({ height: '36px' });
     within(button).getByTestId('AddIcon');
 
     await userEvent.click(button);
@@ -35,7 +41,7 @@ describe('Button', () => {
     expect(onClick).toHaveBeenCalled();
   });
 
-  test('renders disabled link with icon, long label, and suffix', async () => {
+  test('renders small disabled link with icon, long label, and suffix', async () => {
     const icon = <Add />;
     const label = 'Click this button even though it is disabled';
     const textSuffix = 'Suffix';
@@ -61,9 +67,5 @@ describe('Button', () => {
     expect(button).toHaveAttribute('href', '#');
     expect(button).toHaveAttribute('aria-disabled', 'true');
     within(button).getByTestId('AddIcon');
-
-    // await userEvent.click(button);
-
-    // expect(onClick).not.toHaveBeenCalled();
   });
 });
