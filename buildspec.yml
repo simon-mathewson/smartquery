@@ -16,14 +16,15 @@ phases:
     commands:
       - cd ../ui
       - pnpm typecheck
+      - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
       - pnpm build
       - cd ../link
       - pnpm typecheck
-      - pnpm build:node
       - pnpm db:generate
       - pnpm test:db:up
       - sleep 15
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
+      - pnpm build:node
   post_build:
     commands:
       - cd ../ui
@@ -34,6 +35,10 @@ reports:
   link:
     files:
       - "link/test-report.xml"
+    file-format: "JUNITXML"
+  ui:
+    files:
+      - "ui/test-report.xml"
     file-format: "JUNITXML"
 
 cache:
