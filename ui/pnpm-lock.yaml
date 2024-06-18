@@ -95,7 +95,7 @@ importers:
         version: 2.0.0(react@18.2.0)
       '@testing-library/jest-dom':
         specifier: ^6.4.6
-        version: 6.4.6(vitest@1.6.0(@types/node@20.10.4)(jsdom@24.1.0)(terser@5.28.1))
+        version: 6.4.6(vitest@1.6.0(@types/node@20.10.4)(happy-dom@14.12.0)(jsdom@24.1.0)(terser@5.28.1))
       '@testing-library/react':
         specifier: ^16.0.0
         version: 16.0.0(@testing-library/dom@10.1.0)(@types/react-dom@18.2.18)(@types/react@18.2.45)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -182,7 +182,7 @@ importers:
         version: 0.19.0(@vite-pwa/assets-generator@0.2.4)(vite@5.2.8(@types/node@20.10.4)(terser@5.28.1))(workbox-build@7.0.0(@types/babel__core@7.20.5))(workbox-window@7.0.0)
       vitest:
         specifier: ^1.6.0
-        version: 1.6.0(@types/node@20.10.4)(jsdom@24.1.0)(terser@5.28.1)
+        version: 1.6.0(@types/node@20.10.4)(happy-dom@14.12.0)(jsdom@24.1.0)(terser@5.28.1)
 
 packages:
 
@@ -2554,6 +2554,10 @@ packages:
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
+  happy-dom@14.12.0:
+    resolution: {integrity: sha512-dHcnlGFY2o2CdxfuYpqwSrBrpj/Kuzv4u4f3TU5yHW1GL24dKij4pv1BRjXnXc3uWo8qsCbToF9weaDsm/He8A==}
+    engines: {node: '>=16.0.0'}
+
   has-bigints@1.0.2:
     resolution: {integrity: sha512-tSvCKtBr9lkF0Ex0aQiP9N+OpV4zi2r/Nee5VkRDbaqv35RLYMzbwQfFSZZH0kR+Rd6302UJZ2p/bJCEoR3VoQ==}
 
@@ -3926,6 +3930,10 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+
+  whatwg-mimetype@3.0.0:
+    resolution: {integrity: sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==}
+    engines: {node: '>=12'}
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -5623,7 +5631,7 @@ snapshots:
       lz-string: 1.5.0
       pretty-format: 27.5.1
 
-  '@testing-library/jest-dom@6.4.6(vitest@1.6.0(@types/node@20.10.4)(jsdom@24.1.0)(terser@5.28.1))':
+  '@testing-library/jest-dom@6.4.6(vitest@1.6.0(@types/node@20.10.4)(happy-dom@14.12.0)(jsdom@24.1.0)(terser@5.28.1))':
     dependencies:
       '@adobe/css-tools': 4.4.0
       '@babel/runtime': 7.23.6
@@ -5634,7 +5642,7 @@ snapshots:
       lodash: 4.17.21
       redent: 3.0.0
     optionalDependencies:
-      vitest: 1.6.0(@types/node@20.10.4)(jsdom@24.1.0)(terser@5.28.1)
+      vitest: 1.6.0(@types/node@20.10.4)(happy-dom@14.12.0)(jsdom@24.1.0)(terser@5.28.1)
 
   '@testing-library/react@16.0.0(@testing-library/dom@10.1.0)(@types/react-dom@18.2.18)(@types/react@18.2.45)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -6737,6 +6745,13 @@ snapshots:
   graceful-fs@4.2.11: {}
 
   graphemer@1.4.0: {}
+
+  happy-dom@14.12.0:
+    dependencies:
+      entities: 4.5.0
+      webidl-conversions: 7.0.0
+      whatwg-mimetype: 3.0.0
+    optional: true
 
   has-bigints@1.0.2: {}
 
@@ -8057,7 +8072,7 @@ snapshots:
       fsevents: 2.3.3
       terser: 5.28.1
 
-  vitest@1.6.0(@types/node@20.10.4)(jsdom@24.1.0)(terser@5.28.1):
+  vitest@1.6.0(@types/node@20.10.4)(happy-dom@14.12.0)(jsdom@24.1.0)(terser@5.28.1):
     dependencies:
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
@@ -8081,6 +8096,7 @@ snapshots:
       why-is-node-running: 2.2.2
     optionalDependencies:
       '@types/node': 20.10.4
+      happy-dom: 14.12.0
       jsdom: 24.1.0
     transitivePeerDependencies:
       - less
@@ -8104,6 +8120,9 @@ snapshots:
   whatwg-encoding@3.1.1:
     dependencies:
       iconv-lite: 0.6.3
+
+  whatwg-mimetype@3.0.0:
+    optional: true
 
   whatwg-mimetype@4.0.0: {}
 

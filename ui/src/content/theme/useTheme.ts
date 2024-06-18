@@ -10,9 +10,11 @@ export const useTheme = () => {
     'system',
   );
 
-  const [systemMode, setSystemMode] = useState<ThemeMode>(() =>
-    matchMedia(systemDarkModeQuery).matches ? 'dark' : 'light',
-  );
+  const [systemMode, setSystemMode] = useState<ThemeMode>(() => {
+    if (typeof matchMedia === 'undefined') return 'light';
+
+    return matchMedia(systemDarkModeQuery).matches ? 'dark' : 'light';
+  });
 
   const mode = modePreference === 'system' ? systemMode : modePreference;
 
@@ -26,6 +28,8 @@ export const useTheme = () => {
   );
 
   useEffect(() => {
+    if (typeof matchMedia === 'undefined') return;
+
     const mediaQueryList = window.matchMedia(systemDarkModeQuery);
 
     mediaQueryList.addEventListener('change', handleDarkModeChange);

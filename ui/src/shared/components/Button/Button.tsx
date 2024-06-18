@@ -44,6 +44,8 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
 
   return (
     <Element
+      aria-disabled={disabled}
+      aria-label={label}
       className={classNames(
         'flex h-[36px] cursor-pointer select-none items-center gap-2 rounded-lg px-2 py-2 [&>svg]:text-[20px]',
         {
