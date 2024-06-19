@@ -5,6 +5,7 @@ import type { Color } from '~/content/theme/types';
 
 export type ButtonProps = {
   align?: 'left' | 'center' | 'right';
+  'aria-checked'?: boolean;
   className?: string;
   color?: Color;
   disabled?: boolean;
@@ -15,6 +16,7 @@ export type ButtonProps = {
   monospace?: boolean;
   onClick?: (event: React.MouseEvent) => void;
   onClickCapture?: (event: React.MouseEvent) => void;
+  role?: React.ButtonHTMLAttributes<HTMLButtonElement>['role'];
   size?: 'small' | 'normal';
   suffix?: React.ReactNode;
   textSuffix?: string;
@@ -35,6 +37,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
     monospace,
     onClick,
     onClickCapture,
+    role,
     size = 'normal',
     suffix,
     textSuffix,
@@ -44,6 +47,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
 
   return (
     <Element
+      aria-checked={props['aria-checked']}
       aria-disabled={disabled}
       aria-label={label}
       className={classNames(
@@ -111,6 +115,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           MutableRefObject<HTMLButtonElement | null> &
           MutableRefObject<HTMLDivElement | null>
       }
+      role={role}
       type={type}
     >
       {icon}

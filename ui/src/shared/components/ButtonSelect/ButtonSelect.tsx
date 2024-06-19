@@ -36,6 +36,7 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
       className={classNames('flex gap-2 rounded-lg', {
         'w-full': fullWidth,
       })}
+      role="radiogroup"
     >
       {options.map(({ button, value }, index) => (
         <Button
@@ -43,6 +44,7 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
           variant="highlighted"
           {...button}
           {...(value === selectedValue ? selectedButton : {})}
+          aria-checked={value === selectedValue}
           className={classNames({ 'grow basis-0': equalWidth, 'w-full': fullWidth })}
           key={index}
           onClick={() => {
@@ -52,6 +54,7 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
             }
             onChange(value === selectedValue ? undefined : value);
           }}
+          role="radio"
         />
       ))}
     </div>
