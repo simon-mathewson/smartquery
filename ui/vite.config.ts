@@ -1,5 +1,3 @@
-/// <reference types="vitest" />
-
 import circularDependencies from 'vite-plugin-circular-dependency';
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
@@ -52,11 +50,5 @@ export default defineConfig({
     alias: {
       '~': fileURLToPath(new URL('./src', import.meta.url)),
     },
-  },
-  test: {
-    css: true,
-    environment: 'happy-dom',
-    globals: true,
-    setupFiles: 'src/test/setup.ts',
   },
 });

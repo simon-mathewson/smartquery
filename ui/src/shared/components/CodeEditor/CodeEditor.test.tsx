@@ -1,48 +1,52 @@
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { render } from '~/test/render';
 import { CodeEditor } from './CodeEditor';
+import { expect, test } from '@playwright/experimental-ct-react';
+import { spy } from 'tinyspy';
 
-describe('CodeEditor', () => {
-  test('renders code editor with value and allows editing', async () => {
-    const value = 'a';
-    const onChange = vi.fn();
+test.describe('CodeEditor', () => {
+  test('renders code editor with value and allows editing', async ({ mount }) => {
+    const value = 'SELECT * FROM table;';
+    const onChange = spy();
 
-    const { container } = render(<CodeEditor onChange={onChange} value={value} />);
+    const $ = await mount(<CodeEditor onChange={onChange} value={value} />);
 
-    const editor = screen.getByRole('textbox');
+    const editor = $.getByRole('textbox');
+    await expect(editor).toHaveText(value);
 
-    expect(editor).toHaveTextContent(value);
-
-    await userEvent.click(editor);
+    await editor.click();
 
     const newValue = 'SELECT column FROM table;\nSELECT 1;';
-    await userEvent.keyboard(`{Delete}${newValue}`);
+    await editor.selectText();
+    await editor.press('Delete');
+    await editor.fill(newValue);
 
-    expect(onChange).toHaveBeenCalledWith(newValue);
+    expect(onChange.calls.at(-1)?.[0]).toBe(newValue);
 
-    const lineNumbers = container.querySelectorAll('.cm-gutterElement');
-    expect(lineNumbers).toHaveLength(3);
-    expect(lineNumbers[1]).toHaveTextContent('1');
-    expect(lineNumbers[2]).toHaveTextContent('2');
+    const lineNumbers = $.locator('.cm-gutterElement');
+    await expect(lineNumbers).toHaveCount(3);
+    await expect(lineNumbers.nth(1)).toHaveText('1');
+    await expect(lineNumbers.nth(2)).toHaveText('2');
   });
 
-  test('renders code editor with placeholder', async () => {
+  test('renders code editor with placeholder', async ({ mount }) => {
     const placeholder = 'Type your query here';
-    const onChange = vi.fn();
+    const onChange = spy();
 
-    render(<CodeEditor onChange={onChange} placeholder={placeholder} value="" />);
+    const $ = await mount(<CodeEditor onChange={onChange} placeholder={placeholder} value="" />);
 
-    const editor = screen.getByRole('textbox');
+    const editor = $.getByRole('textbox');
 
-    expect(editor).toHaveTextContent(placeholder);
+    await expect(editor).toHaveText(placeholder);
+
+    await editor.fill('a');
+
+    await expect(editor).toHaveText('a');
   });
 
-  test('renders code editor with line numbers hidden', async () => {
-    const { container } = render(<CodeEditor hideLineNumbers value="test" />);
+  test('renders code editor with line numbers hidden', async ({ mount }) => {
+    const $ = await mount(<CodeEditor hideLineNumbers value="test" />);
 
-    const lineNumbers = container.querySelectorAll('.cm-gutterElement');
+    const lineNumbers = $.locator('.cm-gutterElement');
 
-    expect(lineNumbers).toHaveLength(0);
+    expect(lineNumbers).toHaveCount(0);
   });
 });

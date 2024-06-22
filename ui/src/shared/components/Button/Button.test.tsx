@@ -1,53 +1,49 @@
-import { screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { expect, test } from '@playwright/experimental-ct-react';
+import { spy } from 'tinyspy';
+
 import { Button } from './Button';
 import { Add, Edit } from '@mui/icons-material';
-import { render } from '~/test/render';
 
-describe('Button', () => {
-  test('renders button with label', async () => {
+test.describe('Button', () => {
+  test('renders button with label', async ({ mount }) => {
     const label = 'Click me';
-    const onClick = vi.fn();
+    const onClick = spy();
 
-    render(<Button label={label} onClick={onClick} />);
+    const $ = await mount(<Button label={label} onClick={onClick} />);
 
-    const button = screen.getByRole('button', { name: label });
+    await expect($).toHaveRole('button');
+    await expect($).toHaveAccessibleName(label);
+    await expect($).toHaveText(label);
+    await expect($).toHaveCSS('cursor', 'pointer');
+    await expect($).toHaveCSS('height', '36px');
 
-    expect(button).toHaveTextContent(label);
-    expect(button).toHaveStyle({
-      cursor: 'pointer',
-      height: '36px',
-    });
+    await $.click();
 
-    await userEvent.click(button);
-
-    expect(onClick).toHaveBeenCalled();
+    expect(onClick.callCount).toBe(1);
   });
 
-  test('renders button with icon', async () => {
+  test('renders button with icon', async ({ mount }) => {
     const icon = <Add />;
-    const onClick = vi.fn();
+    const onClick = spy();
 
-    render(<Button icon={icon} onClick={onClick} />);
+    const $ = await mount(<Button icon={icon} onClick={onClick} />);
 
-    const button = screen.getByRole('button');
+    await expect($).toHaveText('');
+    await expect($).toHaveCSS('height', '36px');
+    await expect($.getByTestId('AddIcon')).toBeAttached();
 
-    expect(button.textContent).toBe('');
-    expect(button).toHaveStyle({ height: '36px' });
-    within(button).getByTestId('AddIcon');
+    await $.click();
 
-    await userEvent.click(button);
-
-    expect(onClick).toHaveBeenCalled();
+    expect(onClick.callCount).toBe(1);
   });
 
-  test('renders small disabled link with icon, long label, and suffix', async () => {
+  test('renders small disabled link with icon, long label, and suffix', async ({ mount }) => {
     const icon = <Add />;
     const label = 'Click this button even though it is disabled';
     const textSuffix = 'Suffix';
-    const onClick = vi.fn();
+    const onClick = spy();
 
-    render(
+    const $ = await mount(
       <Button
         className="w-100"
         disabled
@@ -61,11 +57,12 @@ describe('Button', () => {
       />,
     );
 
-    const button = screen.getByRole('link', { name: label });
+    await expect($).toHaveRole('link');
+    await expect($).toHaveAccessibleName(label);
 
-    expect(button).toHaveTextContent(label + textSuffix);
-    expect(button).toHaveAttribute('href', '#');
-    expect(button).toHaveAttribute('aria-disabled', 'true');
-    within(button).getByTestId('AddIcon');
+    await expect($).toHaveText(label + textSuffix);
+    await expect($).toHaveAttribute('href', '#');
+    await expect($).toHaveAttribute('aria-disabled', 'true');
+    await expect($.getByTestId('AddIcon')).toBeAttached();
   });
 });
