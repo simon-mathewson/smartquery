@@ -83,6 +83,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
               <Alphanumeric
                 autoFocus={autoFocus}
                 dataType={column.dataType!}
+                name={column.name}
                 onChange={onChange}
                 placeholder={placeholder}
                 stringValue={stringValue === undefined ? '' : stringValue}

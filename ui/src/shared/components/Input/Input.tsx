@@ -9,7 +9,14 @@ export type InputProps = {
   onChange?: (value: string) => void;
 } & Pick<
   React.InputHTMLAttributes<HTMLInputElement>,
-  'autoComplete' | 'autoFocus' | 'disabled' | 'onPaste' | 'placeholder' | 'type' | 'value'
+  | 'autoComplete'
+  | 'aria-label'
+  | 'autoFocus'
+  | 'disabled'
+  | 'onPaste'
+  | 'placeholder'
+  | 'type'
+  | 'value'
 >;
 
 export const Input: React.FC<InputProps> = (props) => {
