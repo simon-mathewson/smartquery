@@ -1,111 +1,134 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import type { ColumnFieldProps } from './ColumnField';
-import { ColumnField } from './ColumnField';
-import type { Column } from '~/shared/types';
 import { spy } from 'tinyspy';
+import { ColumnField } from './ColumnField';
+import { assert } from 'ts-essentials';
 
 test.describe('ColumnField', () => {
-  test.describe('Alphanumeric', () => {
-    const baseColumn = {
-      dataType: 'varchar',
-      isVisible: true,
-      name: 'alphanumeric_column',
-    } satisfies Column;
+  const dataTypes = ['boolean', 'enum', 'varchar'] as const;
 
-    const dataTypes = ['datetime', 'int', 'time', 'varchar'] as const;
+  const enumValues = ['foo', 'bar', 'baz'];
 
-    const getValue = (dataType: (typeof dataTypes)[number]) =>
+  const getProps = (dataType: (typeof dataTypes)[number]) =>
+    (
       ({
-        datetime: '2024-06-14T17:30',
-        int: '123',
-        time: '10:13',
-        varchar: 'Initial value\nwith newline',
-      })[dataType];
-
-    const getScenarios = (dataType: (typeof dataTypes)[number]) =>
-      [
-        {
-          column: { ...baseColumn, dataType, isNullable: false },
-          value: getValue(dataType),
+        boolean: {
+          column: { dataType: 'boolean', isNullable: false, name: 'boolean_column' },
+          dataType: 'boolean',
+          value: 'true',
         },
-        {
-          column: { ...baseColumn, dataType, isNullable: true },
-          value: getValue(dataType),
+        enum: {
+          column: {
+            dataType: 'enum',
+            enumValues,
+            isNullable: false,
+            name: 'enum_column',
+          },
+          value: 'foo',
         },
-        {
-          column: { ...baseColumn, dataType, isNullable: true },
-          value: null,
+        varchar: {
+          column: { dataType: 'varchar', isNullable: false, name: 'varchar_column' },
+          value: 'Initial value\nwith newline',
         },
-      ] satisfies Partial<ColumnFieldProps>[];
+      }) as const
+    )[dataType];
 
-    const scenarios = {
-      datetime: getScenarios('datetime'),
-      int: getScenarios('int'),
-      time: getScenarios('time'),
-      varchar: getScenarios('varchar'),
-    };
+  const getScenarios = (dataType: (typeof dataTypes)[number]) => {
+    const props = getProps(dataType);
 
-    dataTypes.forEach((dataType) => {
-      test.describe(dataType, () => {
-        scenarios[dataType].forEach((scenario) => {
-          const { column, value } = scenario;
+    return [
+      props,
+      { ...props, column: { ...props.column, isNullable: true } },
+      {
+        ...props,
+        column: { ...props.column, isNullable: true },
+        value: null,
+      },
+    ];
+  };
 
-          test(`${
-            column.isNullable
-              ? `nullable with initial value ${value === null ? 'null' : 'non-null'}`
-              : 'non-nullable'
-          }`, async ({ mount }) => {
-            const onChange = spy();
+  dataTypes.forEach((dataType) => {
+    const scenarios = getScenarios(dataType);
 
-            const $ = await mount(<ColumnField {...scenario} onChange={onChange} />);
+    test.describe(dataType, () => {
+      scenarios.forEach((scenario) => {
+        const { column, value } = scenario;
 
-            const inputRole = column.dataType === 'int' ? 'spinbutton' : 'textbox';
-            const input = $.getByRole(inputRole, { name: column.name });
-            const nullButton = $.getByRole('radiogroup').getByRole('radio', { name: 'NULL' });
+        test(`${
+          column.isNullable
+            ? `nullable with initial value ${value === null ? 'null' : 'non-null'}`
+            : 'non-nullable'
+        }`, async ({ mount }) => {
+          const onChange = spy();
 
-            const tagName = await input.evaluate((node) => node.tagName);
-            if (column.dataType === 'varchar') {
-              expect(tagName).toBe('TEXTAREA');
+          const props = {
+            ...scenario,
+            column: { ...scenario.column, isVisible: true },
+            onChange,
+          };
+
+          const $ = await mount(<ColumnField {...props} />);
+
+          const control = {
+            boolean: $.getByRole('radiogroup').first(),
+            enum: $.getByRole('button'),
+            varchar: $.getByRole('textbox'),
+          }[dataType];
+          const nullButton = $.getByRole('radiogroup').getByRole('radio', { name: 'NULL' });
+
+          assert(control);
+
+          await expect($.getByText(column.name)).toBeVisible();
+
+          if (value === null) {
+            if (dataType === 'boolean') {
+              await expect(control.getByRole('radio', { checked: true })).not.toBeAttached();
+            } else if (dataType === 'enum') {
+              await expect(control).toHaveText('Select');
             } else {
-              expect(tagName).toBe('INPUT');
-
-              if (column.dataType === 'datetime') {
-                await expect(input).toHaveAttribute('type', 'datetime-local');
-              } else if (column.dataType === 'time') {
-                await expect(input).toHaveAttribute('type', 'time');
-              } else {
-                await expect(input).toHaveAttribute('type', 'number');
-              }
+              await expect(control).toHaveValue('');
             }
 
-            await expect(input).toHaveAttribute('aria-label', column.name);
-            await expect($.getByText(column.name)).toBeVisible();
+            await expect(nullButton).toBeChecked();
 
-            if (value === null) {
-              await expect(input).toHaveValue('');
-              await expect(nullButton).toBeChecked();
-
-              const newValue = getValue(column.dataType);
-              await input.clear();
-              await input.fill(newValue);
-
-              expect(onChange.calls.at(-1)?.[0]).toBe(newValue);
+            if (dataType === 'boolean') {
+              await control.getByRole('radio').first().click();
+            } else if (dataType === 'enum') {
+              await control.click();
+              await $.page().getByRole('menuitemradio').first().click();
             } else {
-              await expect(input).toHaveValue(value);
-
-              if (column.isNullable) {
-                await expect(nullButton).not.toBeChecked();
-
-                await nullButton.click();
-                expect(onChange.calls.at(-1)?.[0]).toBe(null);
-              } else {
-                await expect(nullButton).not.toBeAttached();
-
-                await input.clear();
-                expect(onChange.calls.at(-1)?.[0]).toBe('');
-              }
+              await control.fill('test');
             }
-          });
+
+            expect(onChange.calls.at(-1)?.[0]).not.toBe(null);
+          } else {
+            if (dataType === 'boolean') {
+              await expect(control.getByRole('radio', { checked: true })).toBeAttached();
+            } else if (dataType === 'enum') {
+              await expect(control).not.toHaveText('Select');
+            } else {
+              await expect(control).not.toHaveValue('');
+            }
+
+            if (!column.isNullable) {
+              await expect(nullButton).not.toBeAttached();
+              return;
+            }
+
+            await expect(nullButton).not.toBeChecked();
+
+            // Control should retain value after null was selected
+            await $.update(<ColumnField {...props} value={null} />);
+
+            if (dataType === 'boolean') {
+              await expect(control.getByRole('radio', { checked: true })).not.toBeAttached();
+            } else if (dataType === 'enum') {
+              await expect(control).not.toHaveText('Select');
+            } else {
+              await expect(control).not.toHaveValue('');
+            }
+
+            await expect(nullButton).toBeChecked();
+          }
         });
       });
     });

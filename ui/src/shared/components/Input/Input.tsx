@@ -1,7 +1,9 @@
 import classNames from 'classnames';
-import React, { useCallback, useRef } from 'react';
+import { includes } from 'lodash';
+import React, { useCallback, useContext, useRef } from 'react';
 import { useTheme } from '~/content/theme/useTheme';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { FieldContext } from '../Field/FieldContext';
 
 export type InputProps = {
   className?: string;
@@ -23,6 +25,7 @@ export const Input: React.FC<InputProps> = (props) => {
   const { className, element: Element = 'input', onChange: onChangeProp, ...inputProps } = props;
 
   const { mode } = useTheme();
+  const fieldContext = useContext(FieldContext);
 
   const ref = useRef<HTMLTextAreaElement | null>(null);
 
@@ -52,8 +55,18 @@ export const Input: React.FC<InputProps> = (props) => {
     }, 50);
   });
 
+  const getRole = useCallback(() => {
+    if (includes(['datetime-local', 'time'], inputProps.type)) {
+      return 'textbox';
+    }
+
+    return undefined;
+  }, [inputProps.type]);
+
   return (
     <Element
+      id={fieldContext?.controlId}
+      role={getRole()}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {...(inputProps as any)}
       className={classNames(

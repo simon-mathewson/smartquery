@@ -2,6 +2,8 @@ import classNames from 'classnames';
 import type { ButtonProps } from '../Button/Button';
 import { Button } from '../Button/Button';
 import type { XOR } from 'ts-essentials';
+import { useContext } from 'react';
+import { FieldContext } from '../Field/FieldContext';
 
 export type ButtonSelectProps<T> = {
   equalWidth?: boolean;
@@ -31,11 +33,14 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
     value: selectedValue,
   } = props;
 
+  const fieldContext = useContext(FieldContext);
+
   return (
     <div
       className={classNames('flex gap-2 rounded-lg', {
         'w-full': fullWidth,
       })}
+      id={fieldContext?.controlId}
       role="radiogroup"
     >
       {options.map(({ button, value }, index) => (

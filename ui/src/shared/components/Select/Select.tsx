@@ -1,7 +1,9 @@
-import { useRef } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { OverlayCard } from '../OverlayCard/OverlayCard';
 import { ExpandMore } from '@mui/icons-material';
 import classNames from 'classnames';
+import { v4 as uuid } from 'uuid';
+import { FieldContext } from '../Field/FieldContext';
 
 export type SelectProps<T> = {
   className?: string;
@@ -15,19 +17,28 @@ export type SelectProps<T> = {
 export function Select<T>(props: SelectProps<T>) {
   const { className, monospace, onChange, options, placeholder, value: selectedValue } = props;
 
-  const triggerRef = useRef<HTMLDivElement | null>(null);
+  const fieldContext = useContext(FieldContext);
+
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const selectedOption = options.find(({ value }) => value === selectedValue);
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [menuId] = useState(uuid);
+
   return (
     <>
-      <div
+      <button
+        aria-controls={menuId}
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
         className={classNames(
           'flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-lg border-[1.5px] border-border bg-background px-2 outline-none hover:bg-secondaryHighlight focus:border-primary',
           className,
         )}
+        id={fieldContext?.controlId}
         ref={triggerRef}
-        tabIndex={0}
       >
         <div
           className={classNames(
@@ -41,8 +52,16 @@ export function Select<T>(props: SelectProps<T>) {
           {selectedOption?.label ?? placeholder ?? 'Select'}
         </div>
         <ExpandMore className="text-secondary" />
-      </div>
-      <OverlayCard className="px-0 py-2" matchTriggerWidth triggerRef={triggerRef}>
+      </button>
+      <OverlayCard
+        role="menu"
+        className="px-0 py-2"
+        id={menuId}
+        matchTriggerWidth
+        onClose={() => setIsOpen(false)}
+        onOpen={() => setIsOpen(true)}
+        triggerRef={triggerRef}
+      >
         {({ close }) =>
           options.map(({ label, value }) => (
             <div
@@ -59,6 +78,8 @@ export function Select<T>(props: SelectProps<T>) {
                 onChange(value);
                 close();
               }}
+              role="menuitemradio"
+              tabIndex={0}
             >
               {label}
             </div>

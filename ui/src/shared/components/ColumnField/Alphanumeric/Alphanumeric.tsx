@@ -7,14 +7,13 @@ import type { DataType } from '~/shared/dataTypes/types';
 export type AlphanumericProps = {
   autoFocus?: boolean;
   dataType: DataType;
-  name: string;
   onChange: (newValue: Value) => void;
   placeholder?: string;
   stringValue: string;
 };
 
 export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
-  const { autoFocus, dataType, name, onChange, placeholder, stringValue } = props;
+  const { autoFocus, dataType, onChange, placeholder, stringValue } = props;
 
   const inputValue = useMemo(() => {
     if (isTimeType(dataType)) return stringValue.slice(0, 5);
@@ -34,7 +33,6 @@ export const Alphanumeric: React.FC<AlphanumericProps> = (props) => {
   return (
     <Input
       autoFocus={autoFocus}
-      aria-label={name}
       element={getType() === 'text' ? 'textarea' : 'input'}
       onChange={onChange}
       placeholder={placeholder}
