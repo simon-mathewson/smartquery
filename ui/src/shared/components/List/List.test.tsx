@@ -43,14 +43,10 @@ test.describe('List', () => {
       selected: index === 0,
     }));
 
-    await $.unmount();
+    await $.update(<List emptyPlaceholder={emptyPlaceholder} items={itemsWithSelected} />);
 
-    const $withSelected = await mount(
-      <List emptyPlaceholder={emptyPlaceholder} items={itemsWithSelected} />,
-    );
-
-    await expect($withSelected.getByRole('option', { selected: true })).toHaveCount(1);
-    await expect($withSelected.getByRole('option', { selected: false })).toHaveCount(2);
+    await expect($.getByRole('option', { selected: true })).toHaveCount(1);
+    await expect($.getByRole('option', { selected: false })).toHaveCount(2);
   });
 
   test('renders list with item actions and hints', async ({ mount }) => {
