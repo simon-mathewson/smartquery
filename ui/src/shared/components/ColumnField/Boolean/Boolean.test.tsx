@@ -3,7 +3,7 @@ import type { BooleanFieldProps } from './Boolean';
 import { BooleanField } from './Boolean';
 import { spy } from 'tinyspy';
 
-test('ColumnField Boolean', async ({ mount }) => {
+test('Boolean', async ({ mount }) => {
   const onChange = spy();
 
   const props = { isNullable: true, onChange, value: 'true' } satisfies BooleanFieldProps;

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { EnumField, type EnumFieldProps } from './EnumField';
 import { spy } from 'tinyspy';
 
-test.describe('ColumnField Enum', () => {
+test.describe('Enum', () => {
   const onChange = spy();
 
   const postgresProps = {

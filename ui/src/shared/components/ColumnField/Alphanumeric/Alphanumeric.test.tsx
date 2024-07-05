@@ -3,7 +3,7 @@ import type { AlphanumericProps } from './Alphanumeric';
 import { Alphanumeric } from './Alphanumeric';
 import { spy } from 'tinyspy';
 
-test.describe('ColumnField Alphanumeric', () => {
+test.describe('Alphanumeric', () => {
   const scenarios = [
     { dataType: 'datetime', stringValue: '2024-06-14T17:30' },
     { dataType: 'int', stringValue: '123' },
