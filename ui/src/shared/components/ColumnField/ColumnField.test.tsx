@@ -94,7 +94,7 @@ test.describe('ColumnField', () => {
               await control.getByRole('radio').first().click();
             } else if (dataType === 'enum') {
               await control.click();
-              await $.page().getByRole('menuitemradio').first().click();
+              await $.page().getByRole('option').first().click();
             } else {
               await control.fill('test');
             }

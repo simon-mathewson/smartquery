@@ -49,18 +49,18 @@ test.describe('Enum', () => {
       await expect($).toHaveAccessibleName('Banana');
       await expect($).toHaveText('Banana');
       await expect($).toHaveAttribute('aria-expanded', 'false');
-      await expect($).toHaveAttribute('aria-haspopup', 'menu');
+      await expect($).toHaveAttribute('aria-haspopup', 'listbox');
       await expect($).toHaveAttribute('aria-controls', expect.any(String));
 
       await $.click();
       await expect($).toHaveAttribute('aria-expanded', 'true');
 
-      const menuId = (await $.getAttribute('aria-controls')) as string;
-      const menu = $.page().getByRole('menu');
-      await expect(menu).toHaveAttribute('id', menuId);
-      await expect(menu).toHaveAttribute('role', 'menu');
+      const listboxId = (await $.getAttribute('aria-controls')) as string;
+      const listbox = $.page().getByRole('listbox');
+      await expect(listbox).toHaveAttribute('id', listboxId);
+      await expect(listbox.getByRole('option', { selected: true })).toHaveText('Banana');
 
-      await menu.getByRole('menuitemradio', { name: 'Strawberry' }).click();
+      await listbox.getByRole('option', { name: 'Strawberry' }).click();
 
       expect(onChange.calls.at(-1)?.[0]).toBe('Strawberry');
 

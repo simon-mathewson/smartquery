@@ -25,14 +25,14 @@ export function Select<T>(props: SelectProps<T>) {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [menuId] = useState(uuid);
+  const [listboxId] = useState(uuid);
 
   return (
     <>
       <button
-        aria-controls={menuId}
+        aria-controls={listboxId}
         aria-expanded={isOpen}
-        aria-haspopup="menu"
+        aria-haspopup="listbox"
         className={classNames(
           'flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-lg border-[1.5px] border-border bg-background px-2 outline-none hover:bg-secondaryHighlight focus:border-primary',
           className,
@@ -54,9 +54,9 @@ export function Select<T>(props: SelectProps<T>) {
         <ExpandMore className="text-secondary" />
       </button>
       <OverlayCard
-        role="menu"
+        role="listbox"
         className="px-0 py-2"
-        id={menuId}
+        id={listboxId}
         matchTriggerWidth
         onClose={() => setIsOpen(false)}
         onOpen={() => setIsOpen(true)}
@@ -65,6 +65,7 @@ export function Select<T>(props: SelectProps<T>) {
         {({ close }) =>
           options.map(({ label, value }) => (
             <div
+              aria-selected={value === selectedValue}
               className={classNames(
                 'cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-1.5 text-sm font-medium text-textSecondary',
                 {
@@ -78,7 +79,7 @@ export function Select<T>(props: SelectProps<T>) {
                 onChange(value);
                 close();
               }}
-              role="menuitemradio"
+              role="option"
               tabIndex={0}
             >
               {label}

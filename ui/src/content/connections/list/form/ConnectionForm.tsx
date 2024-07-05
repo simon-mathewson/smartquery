@@ -100,8 +100,8 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                   removeConnection(connectionToEdit.id);
                   exit();
                 }}
-                renderTrigger={({ ref }) => (
-                  <Button color="danger" icon={<DeleteOutline />} ref={ref} />
+                renderTrigger={(props) => (
+                  <Button color="danger" icon={<DeleteOutline />} {...props} />
                 )}
                 text="Delete connection"
               />

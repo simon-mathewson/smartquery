@@ -6,6 +6,9 @@ import type { Color } from '~/content/theme/types';
 export type ButtonProps = {
   align?: 'left' | 'center' | 'right';
   'aria-checked'?: boolean;
+  'aria-controls'?: React.ButtonHTMLAttributes<HTMLButtonElement>['aria-controls'];
+  'aria-expanded'?: React.ButtonHTMLAttributes<HTMLButtonElement>['aria-expanded'];
+  'aria-haspopup'?: React.ButtonHTMLAttributes<HTMLButtonElement>['aria-haspopup'];
   className?: string;
   color?: Color;
   disabled?: boolean;
@@ -48,7 +51,10 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
   return (
     <Element
       aria-checked={props['aria-checked']}
+      aria-controls={props['aria-controls']}
       aria-disabled={disabled}
+      aria-expanded={props['aria-expanded']}
+      aria-haspopup={props['aria-haspopup']}
       aria-label={label}
       className={classNames(
         'flex h-[36px] cursor-pointer select-none items-center gap-2 rounded-lg px-2 py-2 [&>svg]:text-[20px]',

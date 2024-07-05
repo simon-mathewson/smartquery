@@ -22,7 +22,7 @@ export const Changes: React.FC = () => {
       </div>
       <ConfirmDeletePopover
         onConfirm={clearChanges}
-        renderTrigger={({ ref }) => <Button color="danger" icon={<DeleteOutline />} ref={ref} />}
+        renderTrigger={(props) => <Button color="danger" icon={<DeleteOutline />} {...props} />}
         text={`Delete ${changeCount} change${changeCount > 1 ? 's' : ''}`}
       />
       <Button
