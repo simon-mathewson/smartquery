@@ -32,6 +32,7 @@ export const CodeInput: React.FC<CodeInputProps> = (props) => {
         language={language}
         onChange={onChange}
         placeholder={placeholder}
+        readOnly={readOnly}
         value={value}
       />
     </div>
