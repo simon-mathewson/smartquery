@@ -1,10 +1,10 @@
 import { ArrowForward, DeleteOutline } from '@mui/icons-material';
 import React from 'react';
 import { EditContext } from '~/content/edit/Context';
-import { Button } from '~/shared/components/Button/Button';
-import { ConfirmDeletePopover } from '~/shared/components/ConfirmDeletePopover/ConfirmDeletePopover';
+import { Button } from '~/shared/components/button/Button';
+import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/ConfirmDeletePopover';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { ReviewChangesCard } from './ReviewChangesCard/ReviewChangesCard';
+import { ReviewChangesCard } from './reviewChangesCard/ReviewChangesCard';
 
 export const Changes: React.FC = () => {
   const { allChanges, clearChanges } = useDefinedContext(EditContext);

@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import { OverlayCard } from '../OverlayCard/OverlayCard';
+import { OverlayCard } from '../overlayCard/OverlayCard';
 import type { ModalControl } from './types';
 
 export type ModalProps = PropsWithChildren<

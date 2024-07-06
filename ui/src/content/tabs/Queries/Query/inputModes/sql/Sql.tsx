@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { SqlEditor } from '~/shared/components/SqlEditor/SqlEditor';
+import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { QueriesContext } from '../../../Context';
 import { QueryContext } from '../../Context';

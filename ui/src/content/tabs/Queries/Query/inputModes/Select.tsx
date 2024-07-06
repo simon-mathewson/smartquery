@@ -1,7 +1,7 @@
 import { Code, FilterListOutlined, Search } from '@mui/icons-material';
 import React from 'react';
-import type { ButtonSelectProps } from '~/shared/components/ButtonSelect/ButtonSelect';
-import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
+import type { ButtonSelectProps } from '~/shared/components/buttonSelect/ButtonSelect';
+import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ResultContext } from '../Context';
 import type { InputMode } from '../types';

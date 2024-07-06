@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { ConnectionsContext } from '../connections/Context';
 import { TrpcContext } from '../trpc/Context';
 import { TabsContext } from '../tabs/Context';
-import { QueriesContext } from '../tabs/Queries/Context';
+import { QueriesContext } from '../tabs/queries/Context';
 import { useDrag } from '../dragAndDrop/useDrag/useDrag';
 import { withQuotes } from '~/shared/utils/sql';
 import { assert } from 'ts-essentials';
 import classNames from 'classnames';
-import { List } from '~/shared/components/List/List';
+import { List } from '~/shared/components/list/List';
 
 export const TableList: React.FC = () => {
   const trpc = useDefinedContext(TrpcContext);

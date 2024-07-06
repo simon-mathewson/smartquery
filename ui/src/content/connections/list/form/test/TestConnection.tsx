@@ -1,5 +1,5 @@
 import { CheckCircleOutline, SettingsEthernet, WarningAmber } from '@mui/icons-material';
-import { Button } from '~/shared/components/Button/Button';
+import { Button } from '~/shared/components/button/Button';
 import React, { useEffect, useState } from 'react';
 import type { FormSchema } from '../utils';
 import { getConnectionFromForm, isFormValid } from '../utils';

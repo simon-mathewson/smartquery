@@ -1,4 +1,4 @@
-import { getQueryTitle } from '~/content/tabs/Queries/Query/utils';
+import { getQueryTitle } from '~/content/tabs/queries/query/utils';
 import type { QueryResult, Tab } from '~/shared/types';
 
 export const getTabTitle = (tab: Tab, queryResults: Record<string, QueryResult>) => {

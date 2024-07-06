@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
-import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
+import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Card } from '~/shared/components/card/Card';
 import { Logo } from '~/shared/components/logo/Logo';
 import type { Os } from './types';
 import { getCurrentOs, getDistributableUrl } from './utils';
 import { distributablesByOs } from './constants';
-import { Button } from '~/shared/components/Button/Button';
+import { Button } from '~/shared/components/button/Button';
 import { ArrowForward, FileDownloadOutlined } from '@mui/icons-material';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { LinkContext } from '../Context';

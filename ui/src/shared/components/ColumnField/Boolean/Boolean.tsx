@@ -1,6 +1,6 @@
 import React from 'react';
 import { isNil } from 'lodash';
-import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
+import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import type { Value } from '~/shared/types';
 
 export type BooleanFieldProps = {

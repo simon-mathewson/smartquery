@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { EditContext } from '~/content/edit/Context';
-import { QueriesContext } from '~/content/tabs/Queries/Context';
+import { QueriesContext } from '~/content/tabs/queries/Context';
 import { TrpcContext } from '~/content/trpc/Context';
-import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
-import { SqlEditor } from '~/shared/components/SqlEditor/SqlEditor';
+import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
+import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { parseStatements } from '~/shared/utils/sql';
 

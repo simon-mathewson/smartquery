@@ -1,14 +1,14 @@
 import { includes } from 'lodash';
 import React from 'react';
 import { assert } from 'ts-essentials';
-import { ColumnField } from '~/shared/components/ColumnField/ColumnField';
-import { Select } from '~/shared/components/Select/Select';
+import { ColumnField } from '~/shared/components/columnField/ColumnField';
+import { Select } from '~/shared/components/select/Select';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ResultContext } from '../../../Context';
 import { NULL_OPERATORS, OPERATORS } from '../constants';
 import type { FormFilter, NullOperator, OperatorWithValue } from '../types';
 import { Close } from '@mui/icons-material';
-import { Button } from '~/shared/components/Button/Button';
+import { Button } from '~/shared/components/button/Button';
 
 export interface FilterControlProps {
   filter: FormFilter;

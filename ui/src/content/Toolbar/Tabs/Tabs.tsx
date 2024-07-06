@@ -2,9 +2,9 @@ import React from 'react';
 import { TabsContext } from '~/content/tabs/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { getTabTitle } from './utils';
-import { Button } from '~/shared/components/Button/Button';
+import { Button } from '~/shared/components/button/Button';
 import { Close } from '@mui/icons-material';
-import { QueriesContext } from '~/content/tabs/Queries/Context';
+import { QueriesContext } from '~/content/tabs/queries/Context';
 
 export const Tabs: React.FC = () => {
   const { activeTab, removeTab, setActiveTabId, tabs } = useDefinedContext(TabsContext);

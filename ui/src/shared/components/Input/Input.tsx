@@ -3,7 +3,7 @@ import { includes } from 'lodash';
 import React, { useCallback, useContext, useRef } from 'react';
 import { useTheme } from '~/content/theme/useTheme';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { FieldContext } from '../Field/FieldContext';
+import { FieldContext } from '../field/FieldContext';
 
 export type InputProps = {
   className?: string;

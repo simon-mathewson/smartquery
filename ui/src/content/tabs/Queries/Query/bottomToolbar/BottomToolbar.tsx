@@ -1,7 +1,7 @@
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import React from 'react';
-import { Button } from '~/shared/components/Button/Button';
-import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
+import { Button } from '~/shared/components/button/Button';
+import { ThreeColumns } from '~/shared/components/threeColumns/ThreeColumns';
 import { usePagination } from './usePagination';
 import { Add } from './createRow/CreateRow';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';

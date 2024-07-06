@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '~/shared/components/Button/Button';
+import { Button } from '~/shared/components/button/Button';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { EditContext } from '~/content/edit/Context';

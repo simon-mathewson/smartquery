@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { CodeEditor } from '../CodeEditor/CodeEditor';
+import { CodeEditor } from '../codeEditor/CodeEditor';
 
 type CodeInputProps = {
   autoFocus?: boolean;

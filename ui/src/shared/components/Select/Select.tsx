@@ -1,9 +1,9 @@
 import { useContext, useRef, useState } from 'react';
-import { OverlayCard } from '../OverlayCard/OverlayCard';
+import { OverlayCard } from '../overlayCard/OverlayCard';
 import { ExpandMore } from '@mui/icons-material';
 import classNames from 'classnames';
 import { v4 as uuid } from 'uuid';
-import { FieldContext } from '../Field/FieldContext';
+import { FieldContext } from '../field/FieldContext';
 
 export type SelectProps<T> = {
   className?: string;

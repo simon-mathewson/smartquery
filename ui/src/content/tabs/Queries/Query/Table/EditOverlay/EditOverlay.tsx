@@ -1,7 +1,7 @@
 import { range } from 'lodash';
 import { useMemo } from 'react';
-import { getPrimaryKeys } from '~/content/tabs/Queries/utils';
-import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
+import { getPrimaryKeys } from '~/content/tabs/queries/utils';
+import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ResultContext } from '../../Context';

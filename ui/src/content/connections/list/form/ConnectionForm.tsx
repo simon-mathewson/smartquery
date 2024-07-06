@@ -3,20 +3,20 @@ import { cloneDeep, set } from 'lodash';
 import React, { useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { getCredentialUsername } from '~/content/connections/utils';
-import { Button } from '~/shared/components/Button/Button';
-import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
-import { ConfirmDeletePopover } from '~/shared/components/ConfirmDeletePopover/ConfirmDeletePopover';
-import { Field } from '~/shared/components/Field/Field';
-import { Input } from '~/shared/components/Input/Input';
-import { Select } from '~/shared/components/Select/Select';
-import { ThreeColumns } from '~/shared/components/ThreeColumns/ThreeColumns';
+import { Button } from '~/shared/components/button/Button';
+import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
+import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/ConfirmDeletePopover';
+import { Field } from '~/shared/components/field/Field';
+import { Input } from '~/shared/components/input/Input';
+import { Select } from '~/shared/components/select/Select';
+import { ThreeColumns } from '~/shared/components/threeColumns/ThreeColumns';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import type { Connection } from '~/shared/types';
 import { SshFormSection } from './ssh/SshFormSection';
 import { TestConnection } from './test/TestConnection';
 import type { FormSchema } from './utils';
 import { getConnectionFromForm, getDefaultPort, isFormValid } from './utils';
-import { CredentialInput } from '~/shared/components/CredentialInput/CredentialInput';
+import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;

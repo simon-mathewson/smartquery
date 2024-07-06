@@ -1,4 +1,4 @@
-import type { Select } from '~/content/tabs/Queries/types';
+import type { Select } from '~/content/tabs/queries/types';
 import type { Prisma } from '../../../link/prisma';
 import type { DataType } from './dataTypes/types';
 import { z } from 'zod';

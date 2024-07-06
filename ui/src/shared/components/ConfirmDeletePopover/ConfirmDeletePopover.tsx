@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { OverlayCard } from '../OverlayCard/OverlayCard';
+import { OverlayCard } from '../overlayCard/OverlayCard';
 import { v4 as uuid } from 'uuid';
-import { Button } from '../Button/Button';
+import { Button } from '../button/Button';
 
 export type ConfirmDeletePopoverProps = {
   onConfirm: () => void;

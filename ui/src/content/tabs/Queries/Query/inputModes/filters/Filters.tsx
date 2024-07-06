@@ -1,7 +1,7 @@
 import { Add, Send } from '@mui/icons-material';
 import { includes, isEqual } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button } from '~/shared/components/Button/Button';
+import { Button } from '~/shared/components/button/Button';
 import { NULL_OPERATORS } from './constants';
 import { FilterControl } from './control/Control';
 import type { Filter, FormFilter, LogicalOperator } from './types';

@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Value } from '~/shared/types';
-import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
+import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 
 export type NullButtonProps = {
   isNullable?: boolean;

@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assert } from 'ts-essentials';
 import { routes } from '~/router/routes';
-import { Button } from '~/shared/components/Button/Button';
-import { Field } from '~/shared/components/Field/Field';
-import { Input } from '~/shared/components/Input/Input';
+import { Button } from '~/shared/components/button/Button';
+import { Field } from '~/shared/components/field/Field';
+import { Input } from '~/shared/components/input/Input';
 import { ErrorMessage } from '~/shared/components/errorMessage/ErrorMessage';
 import { Modal } from '~/shared/components/modal/Modal';
 import type { ModalControl } from '~/shared/components/modal/types';
@@ -14,7 +14,7 @@ import { isAuthError } from '~/shared/utils/prisma';
 import { ConnectionsContext } from '../Context';
 import { getCredentialUsername } from '../utils';
 import type { SignInModalInput } from './types';
-import { CredentialInput } from '~/shared/components/CredentialInput/CredentialInput';
+import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
 
 export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (props) => {
   const { close, input } = props;

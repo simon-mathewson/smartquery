@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { TableList } from '../TableList/TableList';
-import { Connections } from './Connections/Connections';
+import { TableList } from '../tableList/TableList';
+import { Connections } from './connections/Connections';
 import { ConnectionsContext } from '../connections/Context';
 import type { ActiveConnection } from '~/shared/types';
 import { usePrevious } from '~/shared/hooks/usePrevious';

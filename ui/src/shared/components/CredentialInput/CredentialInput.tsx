@@ -1,7 +1,7 @@
 import { EnhancedEncryptionOutlined } from '@mui/icons-material';
-import { Button } from '../Button/Button';
-import type { InputProps } from '../Input/Input';
-import { Input } from '../Input/Input';
+import { Button } from '../button/Button';
+import type { InputProps } from '../input/Input';
+import { Input } from '../input/Input';
 import { useCallback } from 'react';
 import {
   getIsCredentialsApiAvailable,

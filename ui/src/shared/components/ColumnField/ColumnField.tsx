@@ -1,13 +1,13 @@
 import classNames from 'classnames';
 import React, { useState } from 'react';
-import { CodeInput } from '~/shared/components/CodeInput/CodeInput';
-import { Field } from '~/shared/components/Field/Field';
+import { CodeInput } from '~/shared/components/codeInput/CodeInput';
+import { Field } from '~/shared/components/field/Field';
 import { isEnumType } from '~/shared/dataTypes/utils';
 import { type Column, type Value } from '~/shared/types';
-import { Alphanumeric } from './Alphanumeric/Alphanumeric';
-import { BooleanField } from './Boolean/Boolean';
-import { EnumField } from './EnumField/EnumField';
-import { NullButton } from './Null/Null';
+import { Alphanumeric } from './alphanumeric/Alphanumeric';
+import { BooleanField } from './boolean/Boolean';
+import { EnumField } from './enumField/EnumField';
+import { NullButton } from './null/Null';
 
 export type ColumnFieldProps = {
   autoFocus?: boolean;
@@ -60,7 +60,6 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
               return (
                 <EnumField
                   column={column}
-                  isNullable={column.isNullable}
                   onChange={onChange}
                   placeholder={placeholder}
                   stringValue={stringValue}

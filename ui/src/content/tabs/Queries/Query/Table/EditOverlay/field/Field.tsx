@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { EditContext } from '~/content/edit/Context';
 import type { CreateChange, CreateLocation, UpdateLocation } from '~/content/edit/types';
-import { ColumnField } from '~/shared/components/ColumnField/ColumnField';
+import { ColumnField } from '~/shared/components/columnField/ColumnField';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { type Column, type Value } from '~/shared/types';
 

@@ -2,7 +2,7 @@ import { useClickOutside } from '~/shared/hooks/useClickOutside/useClickOutside'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { mergeRefs } from 'react-merge-refs';
 import classNames from 'classnames';
-import { OverlayPortal } from '../OverlayPortal/OverlayPortal';
+import { OverlayPortal } from '../overlayPortal/OverlayPortal';
 import { useStyles } from './useStyles';
 import { isNotNull, isNotUndefined } from '~/shared/utils/typescript';
 import { Card } from '../card/Card';

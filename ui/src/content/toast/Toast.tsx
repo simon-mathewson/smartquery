@@ -1,7 +1,7 @@
 import { Close } from '@mui/icons-material';
 import classNames from 'classnames';
-import { Button } from '~/shared/components/Button/Button';
-import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
+import { Button } from '~/shared/components/button/Button';
+import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ToastContext } from './Context';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';

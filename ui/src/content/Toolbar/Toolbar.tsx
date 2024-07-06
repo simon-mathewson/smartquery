@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button } from '~/shared/components/Button/Button';
+import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { Add } from '@mui/icons-material';
-import { Changes } from './Changes/Changes';
+import { Changes } from './changes/Changes';
 import { TabsContext } from '../tabs/Context';
-import { Tabs } from './Tabs/Tabs';
-import { QueriesContext } from '../tabs/Queries/Context';
+import { Tabs } from './tabs/Tabs';
+import { QueriesContext } from '../tabs/queries/Context';
 
 export const Toolbar: React.FC = () => {
   const { tabs } = useDefinedContext(TabsContext);

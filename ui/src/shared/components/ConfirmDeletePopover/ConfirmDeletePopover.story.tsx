@@ -1,4 +1,4 @@
-import { Button } from '../Button/Button';
+import { Button } from '../button/Button';
 import type { ConfirmDeletePopoverProps } from './ConfirmDeletePopover';
 import { ConfirmDeletePopover } from './ConfirmDeletePopover';
 

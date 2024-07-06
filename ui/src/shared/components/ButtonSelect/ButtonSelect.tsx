@@ -1,9 +1,9 @@
 import classNames from 'classnames';
-import type { ButtonProps } from '../Button/Button';
-import { Button } from '../Button/Button';
+import type { ButtonProps } from '../button/Button';
+import { Button } from '../button/Button';
 import type { XOR } from 'ts-essentials';
 import { useContext } from 'react';
-import { FieldContext } from '../Field/FieldContext';
+import { FieldContext } from '../field/FieldContext';
 
 export type ButtonSelectProps<T> = {
   equalWidth?: boolean;

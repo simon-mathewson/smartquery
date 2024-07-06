@@ -1,8 +1,8 @@
 import { DeleteOutlined } from '@mui/icons-material';
 import React from 'react';
 import { EditContext } from '~/content/edit/Context';
-import { getPrimaryKeys } from '~/content/tabs/Queries/utils';
-import { Button } from '~/shared/components/Button/Button';
+import { getPrimaryKeys } from '~/content/tabs/queries/utils';
+import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ResultContext } from '../../../Context';
 

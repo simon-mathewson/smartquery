@@ -1,7 +1,7 @@
 import { SettingsOutlined } from '@mui/icons-material';
 import { useRef } from 'react';
-import { Button } from '~/shared/components/Button/Button';
-import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
+import { Button } from '~/shared/components/button/Button';
+import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { Settings } from './Settings';
 
 export const SettingsOverlay: React.FC = () => {

@@ -1,5 +1,5 @@
 import { InstallDesktopOutlined } from '@mui/icons-material';
-import { Button } from '~/shared/components/Button/Button';
+import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { AddToDesktopContext } from './Context';
 

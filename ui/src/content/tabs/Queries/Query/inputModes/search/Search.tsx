@@ -1,7 +1,7 @@
 import { Send } from '@mui/icons-material';
 import React, { useState } from 'react';
-import { Button } from '~/shared/components/Button/Button';
-import { Input } from '~/shared/components/Input/Input';
+import { Button } from '~/shared/components/button/Button';
+import { Input } from '~/shared/components/input/Input';
 import { useSearch } from './useSearch';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ResultContext } from '../../Context';

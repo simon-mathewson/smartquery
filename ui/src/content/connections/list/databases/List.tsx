@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../../Context';
 import { TrpcContext } from '~/content/trpc/Context';
-import { List } from '~/shared/components/List/List';
+import { List } from '~/shared/components/list/List';
 
 export const DatabaseList: React.FC = () => {
   const trpc = useDefinedContext(TrpcContext);

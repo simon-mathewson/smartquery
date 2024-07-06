@@ -1,9 +1,9 @@
 import { DropMarker } from '~/content/dragAndDrop/DropMarker';
 import React from 'react';
-import { Query } from './Query/Query';
+import { Query } from './query/Query';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { TabsContext } from '../Context';
-import { QueryProvider } from './Query/Provider';
+import { QueryProvider } from './query/Provider';
 import { Logo } from '~/shared/components/logo/Logo';
 
 export const Queries: React.FC = () => {

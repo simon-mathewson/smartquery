@@ -1,9 +1,9 @@
-import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
-import { Field } from '~/shared/components/Field/Field';
+import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
+import { Field } from '~/shared/components/field/Field';
 import { type FormSchema } from '../utils';
-import { Input } from '~/shared/components/Input/Input';
+import { Input } from '~/shared/components/input/Input';
 import { getCredentialUsername } from '~/content/connections/utils';
-import { CredentialInput } from '~/shared/components/CredentialInput/CredentialInput';
+import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
 import { isNil } from 'lodash';
 import { defaultSshPort } from '../constants';
 

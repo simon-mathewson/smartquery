@@ -1,7 +1,7 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
-import { NavigationSidebar } from '../NavigationSidebar/NavigationSidebar';
-import { Toolbar } from '../Toolbar/Toolbar';
-import { Queries } from '../tabs/Queries/Queries';
+import { NavigationSidebar } from '../navigationSidebar/NavigationSidebar';
+import { Toolbar } from '../toolbar/Toolbar';
+import { Queries } from '../tabs/queries/Queries';
 import { ConnectionsContext } from '../connections/Context';
 
 export const Database: React.FC = () => {

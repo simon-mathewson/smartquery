@@ -1,8 +1,8 @@
 import { Send } from '@mui/icons-material';
 import type { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button } from '~/shared/components/Button/Button';
-import { CodeEditor } from '../CodeEditor/CodeEditor';
+import { Button } from '~/shared/components/button/Button';
+import { CodeEditor } from '../codeEditor/CodeEditor';
 import { getErrorMessage } from './utils';
 import { ErrorMessage } from '../errorMessage/ErrorMessage';
 

@@ -7,12 +7,12 @@ import { useDebouncedCallback } from 'use-debounce';
 import { EditContext } from '~/content/edit/Context';
 import type { PrimaryKey } from '~/content/edit/types';
 import { doChangeLocationsMatch } from '~/content/edit/utils';
-import { Button } from '~/shared/components/Button/Button';
+import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { getPrimaryKeys } from '../../../utils';
 import { ResultContext } from '../../Context';
-import { EditOverlay } from '../EditOverlay/EditOverlay';
-import { Delete } from './Delete/Delete';
+import { EditOverlay } from '../editOverlay/EditOverlay';
+import { Delete } from './delete/Delete';
 import { popoverHeight, popoverMargin } from './constants';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 

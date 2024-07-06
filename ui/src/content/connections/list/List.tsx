@@ -1,12 +1,12 @@
 import { Add, EditOutlined } from '@mui/icons-material';
-import { Button } from '~/shared/components/Button/Button';
+import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ConnectionsContext } from '../Context';
 import { useState } from 'react';
 import { DatabaseList } from './databases/List';
 import { ConnectionForm } from './form/ConnectionForm';
 import classNames from 'classnames';
-import { List } from '~/shared/components/List/List';
+import { List } from '~/shared/components/list/List';
 
 export type ConnectionListProps = {
   hideDatabases?: boolean;

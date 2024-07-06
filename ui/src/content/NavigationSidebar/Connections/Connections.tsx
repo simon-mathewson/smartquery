@@ -1,6 +1,6 @@
 import React from 'react';
 import { ConnectionList } from '~/content/connections/list/List';
-import { OverlayCard } from '~/shared/components/OverlayCard/OverlayCard';
+import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 
 export type ConnectionsProps = {
   triggerRef: React.MutableRefObject<HTMLElement | null>;

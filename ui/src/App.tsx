@@ -6,7 +6,7 @@ import { EditProvider } from './content/edit/Provider';
 import { LinkProvider } from './content/link/Provider';
 import { AddToDesktopProvider } from './content/settings/addToDesktop/Provider';
 import { TabsProvider } from './content/tabs/Provider';
-import { QueriesProvider } from './content/tabs/Queries/Provider';
+import { QueriesProvider } from './content/tabs/queries/Provider';
 import { TrpcProvider } from './content/trpc/Provider';
 import { BaseProviders } from './baseProviders/BaseProviders';
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import { ButtonSelect } from '~/shared/components/ButtonSelect/ButtonSelect';
-import { Field } from '~/shared/components/Field/Field';
+import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
+import { Field } from '~/shared/components/field/Field';
 import type { ThemeModePreference } from '../theme/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { ThemeContext } from '../theme/Context';

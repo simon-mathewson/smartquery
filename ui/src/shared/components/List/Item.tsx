@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import { Button } from '../Button/Button';
+import { Button } from '../button/Button';
 
 export type ListItemProps = {
   actions?: Array<{ icon: React.ReactNode; onClick: () => void }>;

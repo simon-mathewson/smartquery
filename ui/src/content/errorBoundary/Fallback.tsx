@@ -1,5 +1,5 @@
-import { Button } from '~/shared/components/Button/Button';
-import { CodeEditor } from '~/shared/components/CodeEditor/CodeEditor';
+import { Button } from '~/shared/components/button/Button';
+import { CodeEditor } from '~/shared/components/codeEditor/CodeEditor';
 
 export type ErrorBoundaryFallbackProps = {
   error: Error;
