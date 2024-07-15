@@ -1,9 +1,10 @@
 import classNames from 'classnames';
 import { includes } from 'lodash';
-import React, { useCallback, useContext, useRef } from 'react';
+import React, { forwardRef, useCallback, useContext, useRef } from 'react';
 import { useTheme } from '~/content/theme/useTheme';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { FieldContext } from '../field/FieldContext';
+import { mergeRefs } from 'react-merge-refs';
 
 export type InputProps = {
   className?: string;
@@ -21,7 +22,7 @@ export type InputProps = {
   | 'value'
 >;
 
-export const Input: React.FC<InputProps> = (props) => {
+export const Input = forwardRef<HTMLInputElement, InputProps>((props, outerRef) => {
   const { className, element: Element = 'input', onChange: onChangeProp, ...inputProps } = props;
 
   const { mode } = useTheme();
@@ -77,13 +78,12 @@ export const Input: React.FC<InputProps> = (props) => {
         },
       )}
       onChange={onChange}
-      ref={
-        Element === 'textarea'
-          ? (ref as React.RefObject<HTMLInputElement> & React.RefObject<HTMLTextAreaElement>)
-          : undefined
-      }
+      ref={mergeRefs([
+        ref as React.RefObject<HTMLInputElement> & React.RefObject<HTMLTextAreaElement>,
+        outerRef,
+      ])}
       rows={Element === 'textarea' ? 1 : undefined}
       style={{ colorScheme: mode }}
     />
   );
-};
+});

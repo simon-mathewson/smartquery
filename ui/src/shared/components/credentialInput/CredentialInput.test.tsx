@@ -1,63 +1,73 @@
-// import { expect, test } from '@playwright/experimental-ct-react';
-// import { CredentialInput, type CredentialInputProps } from './CredentialInput';
-// import type { Page } from '@playwright/test';
-// import { spy } from 'tinyspy';
+import { expect, test } from '@playwright/experimental-ct-react';
+import { CredentialInput, type CredentialInputProps } from './CredentialInput';
+import { mockStore, getStoreCalls } from './mockStore';
+import { spy } from 'tinyspy';
 
-// test.describe('CredentialInput', () => {
-//   const mockCredentialsStore = async (page: Page) => {
-//     const s = spy();
+test.describe('CredentialInput', () => {
+  const props = {
+    isExistingCredential: true,
+    username: 'user',
+    value: 'password\nwith line break',
+  } satisfies CredentialInputProps;
 
-//     page.addInitScript(() => {
-//       window.navigator = {
-//         ...window.navigator,
-//         credentials: {
-//           ...window.navigator.credentials,
-//           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//           store: s as any,
-//         },
-//       };
-//     });
+  const passwordWithReplacedLineBreaks = 'password<br />with line break';
 
-//     await page.reload();
+  test('shows credential input and hidden username input', async ({ mount }) => {
+    const onChange = spy();
 
-//     return s;
-//   };
+    const $ = await mount(<CredentialInput {...props} />);
 
-//   test('shows password input and hidden username input', async ({ mount }) => {
-//     const props = {
-//       isExistingCredential: true,
-//       showAddToKeychain: true,
-//       username: 'user',
-//       value: 'password',
-//     } satisfies CredentialInputProps;
+    const hiddenUsernameInput = $.locator('input').first();
+    await expect(hiddenUsernameInput).not.toBeVisible();
+    await expect(hiddenUsernameInput).toHaveAttribute('autocomplete', 'username');
+    await expect(hiddenUsernameInput).toHaveValue(props.username);
 
-//     const $ = await mount(<CredentialInput {...props} />);
+    const passwordInput = $.locator('input').last();
+    await expect(passwordInput).toHaveAttribute('autocomplete', 'current-password');
+    await expect(passwordInput).toHaveAttribute('type', 'password');
+    await expect(passwordInput).toHaveValue(passwordWithReplacedLineBreaks);
 
-//     const hiddenUsernameInput = $.locator('input').first();
-//     await expect(hiddenUsernameInput).not.toBeVisible();
-//     await expect(hiddenUsernameInput).toHaveAttribute('autocomplete', 'username');
-//     await expect(hiddenUsernameInput).toHaveValue('user');
+    await expect($.locator('button')).not.toBeAttached();
 
-//     const passwordInput = $.locator('input').last();
-//     await expect(passwordInput).toHaveAttribute('autocomplete', 'current-password');
-//     await expect(passwordInput).toHaveAttribute('type', 'password');
-//     await expect(passwordInput).toHaveValue('password');
-//   });
+    await $.update(<CredentialInput {...props} isExistingCredential={false} onChange={onChange} />);
 
-//   test.only('allows adding password to keychain', async ({ mount }) => {
-//     const props = {
-//       isExistingCredential: true,
-//       showAddToKeychain: true,
-//       username: 'user',
-//       value: 'password',
-//     } satisfies CredentialInputProps;
+    await expect(passwordInput).toHaveAttribute('autocomplete', 'new-password');
 
-//     const $ = await mount(<CredentialInput {...props} />);
-//     const s = await mockCredentialsStore($.page());
+    await passwordInput.press('p');
 
-//     const addToKeychainButton = $.locator('button').first();
-//     await addToKeychainButton.click();
+    expect(onChange.calls.at(-1)?.[0]).toBe('p' + props.value);
+  });
 
-//     expect(s.calls).toHaveLength(1);
-//   });
-// });
+  test('allows changing credential and adding it to keychain', async ({ mount }) => {
+    const $ = await mount(<CredentialInput {...props} showAddToKeychain />);
+    await mockStore($.page());
+
+    const addToKeychainButton = $.locator('button').first();
+    await addToKeychainButton.click();
+
+    const calls = await getStoreCalls($.page());
+    expect(calls).toEqual([[{ id: props.username, password: passwordWithReplacedLineBreaks }]]);
+  });
+
+  test('allows pasting credentials with line breaks', async ({ mount }) => {
+    const onChange = spy();
+
+    const $ = await mount(<CredentialInput {...props} onChange={onChange} value="" />);
+
+    await $.page().evaluate(async (value) => {
+      const clipboardImageHolder = document.querySelectorAll('input')[1];
+      clipboardImageHolder.focus();
+      const pasteEvent = new ClipboardEvent('paste', {
+        bubbles: true,
+        cancelable: true,
+        clipboardData: new DataTransfer(),
+      });
+
+      pasteEvent.clipboardData!.setData('text/plain', value);
+
+      clipboardImageHolder.dispatchEvent(pasteEvent);
+    }, props.value);
+
+    expect(onChange.calls.at(-1)?.[0]).toBe(props.value);
+  });
+});
