@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import type { OverlayCardProps } from './OverlayCard';
-import { animationOptions, animationVerticalOffset, overlayCardMargin } from './constants';
+import { animationVerticalOffset, overlayCardMargin } from './constants';
+import { animate } from './animate';
 
 export type UseStylesProps = Pick<
   OverlayCardProps,
@@ -123,38 +124,38 @@ export const useStyles = (props: UseStylesProps) => {
     }
   }, [anchorRef, updateStylesBasedOnAnchor, updateStylesBasedOnPosition]);
 
-  const animateInBackground = useCallback((background: HTMLElement) => {
-    return background.animate(
-      [{ backgroundColor: 'rgba(0, 0, 0, 0)' }, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }],
-      animationOptions,
-    ).finished;
-  }, []);
+  const animateInBackground = useCallback(
+    (background: HTMLElement) =>
+      animate(
+        background,
+        { backgroundColor: 'rgba(0, 0, 0, 0)' },
+        { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+      ),
+    [],
+  );
 
-  const animateOutBackground = useCallback(() => {
+  const animateOutBackground = useCallback(async () => {
     const background = backgroundRef.current;
     if (!background) return;
 
-    return background.animate(
-      [{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }, { backgroundColor: 'rgba(0, 0, 0, 0)' }],
-      animationOptions,
-    ).finished;
+    await animate(
+      background,
+      { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+      { backgroundColor: 'rgba(0, 0, 0, 0)' },
+    );
   }, []);
 
-  const animateInWrapper = useCallback((wrapper: HTMLElement) => {
-    return wrapper.animate(
-      [getOutStyles(animateFromBottomRef.current), getInStyles()],
-      animationOptions,
-    ).finished;
-  }, []);
+  const animateInWrapper = useCallback(
+    (wrapper: HTMLElement) =>
+      animate(wrapper, getOutStyles(animateFromBottomRef.current), getInStyles()),
+    [],
+  );
 
-  const animateOutWrapper = useCallback(() => {
+  const animateOutWrapper = useCallback(async () => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
-    return wrapper.animate(
-      [getInStyles(), getOutStyles(animateFromBottomRef.current)],
-      animationOptions,
-    ).finished;
+    await animate(wrapper, getInStyles(), getOutStyles(animateFromBottomRef.current));
   }, []);
 
   useEffect(() => {

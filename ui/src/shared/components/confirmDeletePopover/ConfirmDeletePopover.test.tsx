@@ -24,6 +24,7 @@ test('ConfirmDeletePopover', async ({ mount }) => {
 
   const menuId = (await $.getAttribute('aria-controls')) as string;
   const menu = $.page().getByRole('menu');
+  await expect(menu).toBeVisible();
   await expect(menu).toHaveAttribute('id', menuId);
   await expect(menu).toHaveAttribute('role', 'menu');
 
