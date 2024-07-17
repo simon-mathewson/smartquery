@@ -12,9 +12,9 @@ declare global {
 export const mockStore = async (page: Page) => {
   await page.evaluate(() => {
     window.navigatorCredentialsStoreCalls = [];
-    navigator.credentials.store = function (...args: unknown[]) {
-      window.navigatorCredentialsStoreCalls.push(args);
-      return Promise.resolve();
+    navigator.credentials.store = function (credential: PasswordCredential) {
+      window.navigatorCredentialsStoreCalls.push(credential);
+      return Promise.resolve(credential);
     };
 
     window.PasswordCredential = class {

@@ -45,7 +45,7 @@ test('allows changing credential and adding it to keychain', async ({ mount }) =
   await addToKeychainButton.click();
 
   const calls = await getStoreCalls($.page());
-  expect(calls).toEqual([[{ id: props.username, password: passwordWithReplacedLineBreaks }]]);
+  expect(calls).toEqual([{ id: props.username, password: passwordWithReplacedLineBreaks }]);
 });
 
 test('allows pasting credentials with line breaks', async ({ mount }) => {

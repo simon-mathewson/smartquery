@@ -1,8 +1,7 @@
 import classNames from 'classnames';
 import { includes } from 'lodash';
-import React, { forwardRef, useCallback, useContext, useRef } from 'react';
+import React, { forwardRef, useCallback, useContext } from 'react';
 import { useTheme } from '~/content/theme/useTheme';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { FieldContext } from '../field/FieldContext';
 import { mergeRefs } from 'react-merge-refs';
 
@@ -12,14 +11,7 @@ export type InputProps = {
   onChange?: (value: string) => void;
 } & Pick<
   React.InputHTMLAttributes<HTMLInputElement>,
-  | 'autoComplete'
-  | 'aria-label'
-  | 'autoFocus'
-  | 'disabled'
-  | 'onPaste'
-  | 'placeholder'
-  | 'type'
-  | 'value'
+  'autoComplete' | 'autoFocus' | 'disabled' | 'onPaste' | 'placeholder' | 'type' | 'value'
 >;
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, outerRef) => {
@@ -27,8 +19,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, outerRef) 
 
   const { mode } = useTheme();
   const fieldContext = useContext(FieldContext);
-
-  const ref = useRef<HTMLTextAreaElement | null>(null);
 
   const updateHeight = useCallback(
     (element: HTMLInputElement | HTMLTextAreaElement) => {
@@ -50,12 +40,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, outerRef) 
     [onChangeProp, updateHeight],
   );
 
-  useEffectOnce(() => {
-    setTimeout(() => {
-      updateHeight(ref.current!);
-    }, 50);
-  });
-
   const getRole = useCallback(() => {
     if (includes(['datetime-local', 'time'], inputProps.type)) {
       return 'textbox';
@@ -63,6 +47,38 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, outerRef) 
 
     return undefined;
   }, [inputProps.type]);
+
+  // Select value on focus
+  const onFocus = useCallback((event: React.FocusEvent) => {
+    const element = event.target as HTMLInputElement | HTMLTextAreaElement;
+    element.select();
+  }, []);
+
+  // Prevent changing the value on scroll
+  const onWheel = useCallback((event: WheelEvent) => {
+    if (
+      event.target === document.activeElement &&
+      event.target instanceof HTMLInputElement &&
+      event.target.type === 'number'
+    ) {
+      event.target.blur();
+    }
+  }, []);
+
+  const registerElement = useCallback(
+    (el: (HTMLInputElement & HTMLTextAreaElement) | null) => {
+      if (!el) return;
+
+      el.addEventListener('wheel', onWheel);
+
+      if (Element !== 'textarea') {
+        return;
+      }
+
+      updateHeight(el);
+    },
+    [Element, onWheel, updateHeight],
+  );
 
   return (
     <Element
@@ -78,10 +94,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, outerRef) 
         },
       )}
       onChange={onChange}
-      ref={mergeRefs([
-        ref as React.RefObject<HTMLInputElement> & React.RefObject<HTMLTextAreaElement>,
-        outerRef,
-      ])}
+      onFocus={onFocus}
+      ref={mergeRefs([registerElement, outerRef])}
       rows={Element === 'textarea' ? 1 : undefined}
       style={{ colorScheme: mode }}
     />
