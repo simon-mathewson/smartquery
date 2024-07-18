@@ -15,7 +15,12 @@ export const SettingsOverlay: React.FC = () => {
         icon={<SettingsOutlined />}
         ref={triggerRef}
       />
-      <OverlayCard align="center" className="w-[340px]" darkenBackground triggerRef={triggerRef}>
+      <OverlayCard
+        align="center"
+        htmlProps={{ className: 'w-[340px]' }}
+        darkenBackground
+        triggerRef={triggerRef}
+      >
         {() => <Settings />}
       </OverlayCard>
     </>

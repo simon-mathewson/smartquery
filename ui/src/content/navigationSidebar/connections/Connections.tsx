@@ -10,7 +10,11 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
   const { triggerRef } = props;
 
   return (
-    <OverlayCard align="left" className="w-max p-2 shadow-2xl" triggerRef={triggerRef}>
+    <OverlayCard
+      align="left"
+      htmlProps={{ className: 'w-max p-2 shadow-2xl' }}
+      triggerRef={triggerRef}
+    >
       {() => <ConnectionList />}
     </OverlayCard>
   );

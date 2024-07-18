@@ -7,7 +7,7 @@ export const Home: React.FC = () => {
   return (
     <div className="flex flex-col items-center gap-2 pt-6">
       <Logo className="mb-4 w-16" />
-      <Card className="w-max">
+      <Card htmlProps={{ className: 'w-max' }}>
         <ConnectionList hideDatabases />
       </Card>
     </div>

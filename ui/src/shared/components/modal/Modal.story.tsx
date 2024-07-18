@@ -8,5 +8,5 @@ export type ModalStoryProps = Partial<ModalProps>;
 export const ModalStory: React.FC<ModalStoryProps> = (props) => {
   const modal = useModal();
 
-  return <Modal className="w-[200px]" {...modal} isOpen {...props} />;
+  return <Modal htmlProps={{ className: 'w-[200px]' }} {...modal} isOpen {...props} />;
 };

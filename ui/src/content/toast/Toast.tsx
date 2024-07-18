@@ -30,11 +30,13 @@ export const Toast: React.FC<ToastProps> = (props) => {
 
   return (
     <OverlayCard
-      className={classNames('grid w-72 grid-cols-[1fr_max-content] gap-2 p-1 align-top', {
-        'bg-danger': color === 'danger',
-        'bg-primary': color === 'primary',
-        'bg-success': color === 'success',
-      })}
+      htmlProps={{
+        className: classNames('grid w-72 grid-cols-[1fr_max-content] gap-2 p-1 align-top', {
+          'bg-danger': color === 'danger',
+          'bg-primary': color === 'primary',
+          'bg-success': color === 'success',
+        }),
+      }}
       isOpen
       onClose={() => {
         toast.remove(id);

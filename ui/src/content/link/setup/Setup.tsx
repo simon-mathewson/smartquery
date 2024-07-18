@@ -38,7 +38,7 @@ export const Setup: React.FC = () => {
   return (
     <div className="flex flex-col items-center gap-6 py-6">
       <Logo className="w-16" />
-      <Card className="flex w-[360px] flex-col gap-3 p-4">
+      <Card htmlProps={{ className: 'flex w-[360px] flex-col gap-3 p-4' }}>
         <div className="text-center text-lg font-medium text-textSecondary">Welcome to Dabase!</div>
         <div className="text-sm leading-snug text-textSecondary">
           To use Dabase, you need to install Dabase Link, a background service that allows Dabase to

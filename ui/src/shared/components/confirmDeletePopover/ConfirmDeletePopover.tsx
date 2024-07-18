@@ -38,10 +38,12 @@ export const ConfirmDeletePopover: React.FC<ConfirmDeletePopoverProps> = (props)
       {renderTrigger(triggerProps)}
       <OverlayCard
         align="right"
-        id={menuId}
+        htmlProps={{
+          id: menuId,
+          role: 'menu',
+        }}
         onClose={() => setIsOpen(false)}
         onOpen={() => setIsOpen(true)}
-        role="menu"
         triggerRef={triggerRef}
       >
         {() => <Button color="danger" label={text} onClick={onConfirm} role="menuitem" />}

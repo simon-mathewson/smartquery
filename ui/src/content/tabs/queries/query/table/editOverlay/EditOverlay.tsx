@@ -66,7 +66,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
     <OverlayCard
       align="center"
       anchorRef={selectionActionsPopoverRef}
-      className="p-3"
+      htmlProps={{ className: 'p-3' }}
       onClose={() => setIsEditing(false)}
       onOpen={() => setIsEditing(true)}
       triggerRef={editButtonRef}

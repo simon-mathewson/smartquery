@@ -86,7 +86,12 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
   const showDbLogin = connection.credentialStorage === 'alwaysAsk';
 
   return (
-    <Modal {...props} className="w-[320px]" subtitle={connection.name} title="Sign in">
+    <Modal
+      {...props}
+      htmlProps={{ className: 'w-[320px]' }}
+      subtitle={connection.name}
+      title="Sign in"
+    >
       <div className="flex flex-col gap-4">
         {showDbLogin && (
           <form onSubmit={onSubmit}>

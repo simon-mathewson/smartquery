@@ -11,10 +11,9 @@ export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
   anchorRef?: React.MutableRefObject<HTMLElement | null>;
   children: (props: { close: () => Promise<void> }) => React.ReactNode;
-  className?: string;
   closeOnOutsideClick?: boolean;
   darkenBackground?: boolean;
-  id?: string;
+  htmlProps?: React.HTMLProps<HTMLDivElement>;
   isOpen?: boolean;
   matchTriggerWidth?: boolean;
   onClose?: () => void;
@@ -23,7 +22,6 @@ export type OverlayCardProps = {
     x: 'left' | 'center' | 'right';
     y: 'top' | 'center' | 'bottom';
   };
-  role?: string;
   triggerRef?: React.MutableRefObject<HTMLElement | null>;
   width?: number;
 };
@@ -32,16 +30,14 @@ export const OverlayCard: React.FC<OverlayCardProps> = (props) => {
   const {
     align,
     children,
-    className,
     closeOnOutsideClick = true,
     darkenBackground,
-    id,
+    htmlProps,
     isOpen: isOpenProp,
     matchTriggerWidth = false,
     onClose,
     onOpen,
     position,
-    role,
     triggerRef,
     anchorRef = triggerRef,
   } = props;
@@ -162,13 +158,14 @@ export const OverlayCard: React.FC<OverlayCardProps> = (props) => {
             }}
           >
             <Card
-              className={classNames(
-                'pointer-events-auto shadow-2xl [max-height:inherit]',
-                className,
-              )}
-              id={id}
-              ref={refs}
-              role={role}
+              htmlProps={{
+                ...htmlProps,
+                className: classNames(
+                  'pointer-events-auto shadow-2xl [max-height:inherit]',
+                  htmlProps?.className,
+                ),
+                ref: refs,
+              }}
             >
               {children(childrenProps)}
             </Card>

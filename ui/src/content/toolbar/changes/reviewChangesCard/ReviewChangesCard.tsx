@@ -41,7 +41,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   }, [activeConnection, clearChanges, refetchActiveTabSelectQueries, trpc, userSql]);
 
   return (
-    <OverlayCard align="right" className="p-3" triggerRef={triggerRef}>
+    <OverlayCard align="right" htmlProps={{ className: 'p-3' }} triggerRef={triggerRef}>
       {() => (
         <div className="w-[592px]">
           <SqlEditor onChange={(sql) => setUserSql(sql)} onSubmit={handleSubmit} value={userSql} />
