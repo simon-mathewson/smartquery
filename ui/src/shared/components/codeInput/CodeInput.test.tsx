@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/experimental-ct-react';
+import type { CodeInputProps } from './CodeInput';
 import { CodeInput } from './CodeInput';
 import { spy } from 'tinyspy';
 
@@ -7,13 +8,15 @@ test('CodeInput', async ({ mount }) => {
   const onClick = spy();
 
   const props = {
-    autoFocus: true,
     language: 'sql',
     onChange,
-    onClick,
-    placeholder: 'Type your query here',
-    value: 'SELECT * FROM TABLE;',
-  } as const;
+    editorProps: {
+      autoFocus: true,
+      onClick,
+      placeholder: 'Type your query here',
+      value: 'SELECT * FROM TABLE;',
+    },
+  } satisfies CodeInputProps;
 
   const $ = await mount(<CodeInput {...props} />);
 
@@ -28,11 +31,11 @@ test('CodeInput', async ({ mount }) => {
   await content.click();
   expect(onClick.calls).toHaveLength(1);
 
-  await $.update(<CodeInput {...props} value="" />);
+  await $.update(<CodeInput {...props} editorProps={{ ...props.editorProps, value: '' }} />);
 
   await expect(content).toContainText('Type your query here');
 
-  await $.update(<CodeInput {...props} readOnly />);
+  await $.update(<CodeInput {...props} editorProps={{ ...props.editorProps, readOnly: true }} />);
 
   onChange.reset();
 

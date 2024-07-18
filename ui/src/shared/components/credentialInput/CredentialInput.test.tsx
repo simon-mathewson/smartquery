@@ -4,9 +4,9 @@ import { mockStore, getStoreCalls } from './mockStore';
 import { spy } from 'tinyspy';
 
 const props = {
+  htmlProps: { value: 'password\nwith line break' },
   isExistingCredential: true,
   username: 'user',
-  value: 'password\nwith line break',
 } satisfies CredentialInputProps;
 
 const passwordWithReplacedLineBreaks = 'password<br />with line break';
@@ -34,7 +34,7 @@ test('shows credential input and hidden username input', async ({ mount }) => {
 
   await passwordInput.press('p');
 
-  expect(onChange.calls.at(-1)?.[0]).toBe('p' + props.value);
+  expect(onChange.calls.at(-1)?.[0]).toBe('p' + props.htmlProps.value);
 });
 
 test('allows changing credential and adding it to keychain', async ({ mount }) => {
@@ -51,7 +51,13 @@ test('allows changing credential and adding it to keychain', async ({ mount }) =
 test('allows pasting credentials with line breaks', async ({ mount }) => {
   const onChange = spy();
 
-  const $ = await mount(<CredentialInput {...props} onChange={onChange} value="" />);
+  const $ = await mount(
+    <CredentialInput
+      {...props}
+      htmlProps={{ ...props.htmlProps, value: '' }}
+      onChange={onChange}
+    />,
+  );
 
   await $.page().evaluate(async (value) => {
     const clipboardImageHolder = document.querySelectorAll('input')[1];
@@ -65,7 +71,7 @@ test('allows pasting credentials with line breaks', async ({ mount }) => {
     pasteEvent.clipboardData!.setData('text/plain', value);
 
     clipboardImageHolder.dispatchEvent(pasteEvent);
-  }, props.value);
+  }, props.htmlProps.value);
 
-  expect(onChange.calls.at(-1)?.[0]).toBe(props.value);
+  expect(onChange.calls.at(-1)?.[0]).toBe(props.htmlProps.value);
 });

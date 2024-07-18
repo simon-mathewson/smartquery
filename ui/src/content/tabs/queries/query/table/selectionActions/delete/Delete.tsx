@@ -20,19 +20,21 @@ export const Delete: React.FC<DeleteProps> = (props) => {
   return (
     <Button
       color="danger"
-      icon={<DeleteOutlined />}
-      onClick={() => {
-        selection.forEach((_, rowIndex) => {
-          handleDeleteChange({
-            location: {
-              primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
-              table: table!,
+      htmlProps={{
+        onClick: () => {
+          selection.forEach((_, rowIndex) => {
+            handleDeleteChange({
+              location: {
+                primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
+                table: table!,
+                type: 'delete',
+              },
               type: 'delete',
-            },
-            type: 'delete',
+            });
           });
-        });
+        },
       }}
+      icon={<DeleteOutlined />}
     />
   );
 };

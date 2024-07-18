@@ -11,16 +11,18 @@ test('Input renders and allows changing text', async ({ mount }) => {
   const onChange = spy();
 
   const props = {
-    autoFocus: true,
+    htmlProps: {
+      autoFocus: true,
+      placeholder: 'Placeholder',
+      value: 'Test',
+    },
     onChange,
-    placeholder: 'Placeholder',
-    value: 'Test',
   } satisfies InputProps;
 
   const $ = await mount(<Input {...props} />);
 
   await expect($).toHaveRole('textbox');
-  await expect($).toHaveValue(props.value);
+  await expect($).toHaveValue(props.htmlProps.value);
   await expect($).toBeFocused();
 
   // Expect value to be selected
@@ -31,13 +33,13 @@ test('Input renders and allows changing text', async ({ mount }) => {
     () => (document.activeElement as HTMLInputElement).selectionEnd,
   );
   expect(selectionStart).toBe(0);
-  expect(selectionEnd).toBe(props.value.length);
+  expect(selectionEnd).toBe(props.htmlProps.value.length);
 
   const newValue = 'New text';
   await $.fill(newValue);
   expect(onChange.calls.at(-1)?.[0]).toBe(newValue);
 
-  await $.update(<Input {...props} value="" />);
+  await $.update(<Input {...props} htmlProps={{ ...props.htmlProps, value: '' }} />);
 
   await expect($.page().getByPlaceholder('Placeholder')).toBeAttached();
 });
@@ -47,21 +49,21 @@ test('Textarea resizes', async ({ mount }) => {
 
   const props = {
     element: 'textarea',
+    htmlProps: { value: 'Test' },
     onChange,
-    value: 'Test',
   } satisfies InputProps;
 
   const $ = await mount(<Input {...props} />);
 
   expect($).toHaveRole('textbox');
-  expect($).toHaveValue(props.value);
+  expect($).toHaveValue(props.htmlProps.value);
 
   expect(await getHeight($.page())).toBe(36);
 
   const valueWithLineBreaks =
     'New text\nNew line\nNew text\nNew line\nNew line\nNew line\nNew line\nNew text\nNew line\nNew text\nNew line\nNew line';
 
-  await $.update(<Input {...props} value={valueWithLineBreaks} />);
+  await $.update(<Input {...props} htmlProps={{ value: valueWithLineBreaks }} />);
   // Trigger onChange
   await $.fill(valueWithLineBreaks);
 
@@ -69,7 +71,7 @@ test('Textarea resizes', async ({ mount }) => {
 
   const shorterValueWithLineBreaks = valueWithLineBreaks.slice(0, 30);
 
-  await $.update(<Input {...props} value={shorterValueWithLineBreaks} />);
+  await $.update(<Input {...props} htmlProps={{ value: shorterValueWithLineBreaks }} />);
   // Trigger onChange
   await $.fill(shorterValueWithLineBreaks);
 

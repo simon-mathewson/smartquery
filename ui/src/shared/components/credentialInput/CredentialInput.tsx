@@ -1,6 +1,5 @@
 import { EnhancedEncryptionOutlined } from '@mui/icons-material';
 import { Button } from '../button/Button';
-import type { InputProps } from '../input/Input';
 import { Input } from '../input/Input';
 import { useCallback, useRef } from 'react';
 import {
@@ -10,15 +9,16 @@ import {
 } from './utils';
 import { assert } from 'ts-essentials';
 
-export type CredentialInputProps = InputProps & {
+export type CredentialInputProps = {
+  htmlProps?: React.HTMLProps<HTMLInputElement>;
   isExistingCredential?: boolean;
+  onChange?: (newValue: string) => void;
   showAddToKeychain?: boolean;
   username: string;
-  value: string;
 };
 
 export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
-  const { isExistingCredential, showAddToKeychain, username, ...inputProps } = props;
+  const { htmlProps, isExistingCredential, onChange, showAddToKeychain, username } = props;
 
   const ref = useRef<HTMLInputElement>(null);
 
@@ -36,26 +36,29 @@ export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
 
   return (
     <>
-      <Input autoComplete="username" className="hidden" value={username} />
+      <Input htmlProps={{ autoComplete: 'username', className: 'hidden', value: username }} />
       <div className="flex w-full items-center gap-2">
         <Input
-          {...inputProps}
-          autoComplete={isExistingCredential ? 'current-password' : 'new-password'}
-          onChange={(newValue) =>
-            inputProps.onChange?.(replacePlaceholdersWithLineBreaks(newValue))
-          }
-          onPaste={(event) => {
-            // Listen to paste event to preserve line breaks
-            event.preventDefault();
-            const newValue = event.clipboardData.getData('text/plain');
-            inputProps.onChange?.(replacePlaceholdersWithLineBreaks(newValue));
+          htmlProps={{
+            ...htmlProps,
+            autoComplete: isExistingCredential ? 'current-password' : 'new-password',
+            onPaste: (event) => {
+              // Listen to paste event to preserve line breaks
+              event.preventDefault();
+              const newValue = event.clipboardData.getData('text/plain');
+              onChange?.(replacePlaceholdersWithLineBreaks(newValue));
+            },
+            ref,
+            type: 'password',
+            value:
+              typeof htmlProps?.value === 'string'
+                ? replaceLineBreaksWithPlaceholders(htmlProps.value)
+                : undefined,
           }}
-          ref={ref}
-          type="password"
-          value={replaceLineBreaksWithPlaceholders(inputProps.value)}
+          onChange={(newValue) => onChange?.(replacePlaceholdersWithLineBreaks(newValue))}
         />
         {getIsCredentialsApiAvailable() && showAddToKeychain && (
-          <Button icon={<EnhancedEncryptionOutlined />} onClick={storeInKeyChain} />
+          <Button htmlProps={{ onClick: storeInKeyChain }} icon={<EnhancedEncryptionOutlined />} />
         )}
       </div>
     </>

@@ -10,10 +10,9 @@ export const SettingsOverlay: React.FC = () => {
   return (
     <>
       <Button
-        className="sticky bottom-0 left-2 mb-2 mt-auto"
         color="secondary"
+        htmlProps={{ className: 'sticky bottom-0 left-2 mb-2 mt-auto', ref: triggerRef }}
         icon={<SettingsOutlined />}
-        ref={triggerRef}
       />
       <OverlayCard
         align="center"

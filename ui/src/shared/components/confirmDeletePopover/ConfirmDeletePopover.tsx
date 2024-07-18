@@ -5,12 +5,7 @@ import { Button } from '../button/Button';
 
 export type ConfirmDeletePopoverProps = {
   onConfirm: () => void;
-  renderTrigger: (props: {
-    'aria-controls': string;
-    'aria-expanded': boolean;
-    'aria-haspopup': 'menu';
-    ref: React.RefObject<HTMLButtonElement | null>;
-  }) => React.ReactNode;
+  renderTrigger: (props: React.HTMLProps<HTMLButtonElement>) => React.ReactNode;
   text: string;
 };
 
@@ -46,7 +41,13 @@ export const ConfirmDeletePopover: React.FC<ConfirmDeletePopoverProps> = (props)
         onOpen={() => setIsOpen(true)}
         triggerRef={triggerRef}
       >
-        {() => <Button color="danger" label={text} onClick={onConfirm} role="menuitem" />}
+        {() => (
+          <Button
+            color="danger"
+            htmlProps={{ onClick: onConfirm, role: 'menuitem' }}
+            label={text}
+          />
+        )}
       </OverlayCard>
     </>
   );

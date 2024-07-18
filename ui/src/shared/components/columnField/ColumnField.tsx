@@ -11,9 +11,9 @@ import { NullButton } from './null/Null';
 
 export type ColumnFieldProps = {
   autoFocus?: boolean;
-  className?: string;
   column: Column;
   hideLabel?: boolean;
+  htmlProps?: React.HTMLProps<HTMLDivElement>;
   onChange: (newValue: Value) => void;
   placeholder?: string;
   value: Value;
@@ -22,9 +22,9 @@ export type ColumnFieldProps = {
 export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
   const {
     autoFocus,
-    className,
     column,
     hideLabel,
+    htmlProps,
     onChange: onChangeProp,
     placeholder,
     value,
@@ -40,7 +40,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
   };
 
   return (
-    <Field className={className} label={hideLabel ? undefined : column.name}>
+    <Field htmlProps={htmlProps} label={hideLabel ? undefined : column.name}>
       {column.dataType === 'boolean' ? (
         <BooleanField isNullable={column.isNullable} onChange={onChange} value={value} />
       ) : (
@@ -69,12 +69,14 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
             if (column.dataType === 'json') {
               return (
                 <CodeInput
-                  autoFocus={autoFocus}
-                  className="max-h-[200px]"
+                  editorProps={{
+                    autoFocus,
+                    placeholder,
+                    value: stringValue === undefined ? '' : stringValue,
+                  }}
+                  htmlProps={{ className: 'max-h-[200px]' }}
                   language="sql"
                   onChange={onChange}
-                  placeholder={placeholder}
-                  value={stringValue === undefined ? '' : stringValue}
                 />
               );
             }

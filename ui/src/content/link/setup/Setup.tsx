@@ -37,7 +37,7 @@ export const Setup: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center gap-6 py-6">
-      <Logo className="w-16" />
+      <Logo htmlProps={{ className: 'w-16' }} />
       <Card htmlProps={{ className: 'flex w-[360px] flex-col gap-3 p-4' }}>
         <div className="text-center text-lg font-medium text-textSecondary">Welcome to Dabase!</div>
         <div className="text-sm leading-snug text-textSecondary">
@@ -60,9 +60,8 @@ export const Setup: React.FC = () => {
           <div className="flex flex-col gap-2">
             {distributablesByOs[os].map((distributable) => (
               <Button
-                className="grow basis-0"
                 element="a"
-                href={getDistributableUrl(distributable)}
+                htmlProps={{ className: 'grow basis-0', href: getDistributableUrl(distributable) }}
                 icon={<FileDownloadOutlined />}
                 key={getDistributableUrl(distributable)}
                 label={`.${distributable.fileExtension} (${distributable.arch})`}
@@ -79,10 +78,9 @@ export const Setup: React.FC = () => {
           </ErrorMessage>
         )}
         <Button
-          disabled={checkingLinkStatus}
+          htmlProps={{ disabled: checkingLinkStatus, onClick: handleContinue }}
           icon={<ArrowForward />}
           label="Continue"
-          onClick={handleContinue}
           variant="filled"
         />
       </Card>

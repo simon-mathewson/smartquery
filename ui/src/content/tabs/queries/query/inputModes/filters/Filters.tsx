@@ -70,9 +70,8 @@ export const Filters: React.FC = () => {
           {index === formFilters.length - 1 && isChanged && (
             <Button
               color="primary"
-              disabled={!isValid}
+              htmlProps={{ disabled: !isValid, type: 'submit' }}
               icon={<Send />}
-              type="submit"
               variant="filled"
             />
           )}
@@ -82,30 +81,33 @@ export const Filters: React.FC = () => {
         <div className="pl-2">
           <Button
             color="primary"
-            disabled={!isValid}
+            htmlProps={{ disabled: !isValid, type: 'submit' }}
             icon={<Send />}
-            type="submit"
             variant="filled"
           />
         </div>
       )}
       <div className="flex gap-2">
         <Button
+          htmlProps={{
+            onClick: () => addFilter('AND'),
+            type: 'button',
+          }}
           icon={<Add />}
           label={formFilters.length === 0 ? 'WHERE' : 'AND'}
-          onClick={() => addFilter('AND')}
           monospace
           size="small"
-          type="button"
         />
         {formFilters.length > 0 && (
           <Button
+            htmlProps={{
+              onClick: () => addFilter('OR'),
+              type: 'button',
+            }}
             icon={<Add />}
             label="OR"
-            onClick={() => addFilter('OR')}
             monospace
             size="small"
-            type="button"
           />
         )}
       </div>

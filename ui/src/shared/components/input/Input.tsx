@@ -1,21 +1,26 @@
 import classNames from 'classnames';
 import { includes } from 'lodash';
-import React, { forwardRef, useCallback, useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { useTheme } from '~/content/theme/useTheme';
 import { FieldContext } from '../field/FieldContext';
 import { mergeRefs } from 'react-merge-refs';
+import { isNotUndefined } from '~/shared/utils/typescript';
 
 export type InputProps = {
-  className?: string;
-  element?: 'input' | 'textarea';
   onChange?: (value: string) => void;
-} & Pick<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  'autoComplete' | 'autoFocus' | 'disabled' | 'onPaste' | 'placeholder' | 'type' | 'value'
->;
+} & (
+  | {
+      element?: 'input';
+      htmlProps?: React.HTMLProps<HTMLInputElement>;
+    }
+  | {
+      element: 'textarea';
+      htmlProps?: React.HTMLProps<HTMLTextAreaElement>;
+    }
+);
 
-export const Input = forwardRef<HTMLInputElement, InputProps>((props, outerRef) => {
-  const { className, element: Element = 'input', onChange: onChangeProp, ...inputProps } = props;
+export const Input: React.FC<InputProps> = (props) => {
+  const { element: Element = 'input', htmlProps, onChange: onChangeProp } = props;
 
   const { mode } = useTheme();
   const fieldContext = useContext(FieldContext);
@@ -40,13 +45,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, outerRef) 
     [onChangeProp, updateHeight],
   );
 
+  const inputType = htmlProps && 'type' in htmlProps ? htmlProps.type : undefined;
+
   const getRole = useCallback(() => {
-    if (includes(['datetime-local', 'time'], inputProps.type)) {
+    if (includes(['datetime-local', 'time'], inputType)) {
       return 'textbox';
     }
 
     return undefined;
-  }, [inputProps.type]);
+  }, [inputType]);
 
   // Select value on focus
   const onFocus = useCallback((event: React.FocusEvent) => {
@@ -82,22 +89,27 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, outerRef) 
 
   return (
     <Element
-      id={fieldContext?.controlId}
       role={getRole()}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      {...(inputProps as any)}
+      {...(htmlProps as any)}
       className={classNames(
         'block w-full rounded-lg border-[1.5px] border-border bg-background px-2 py-[6.5px] text-sm font-medium text-textSecondary outline-none focus:border-primary disabled:opacity-50',
-        className,
+        htmlProps?.className,
         {
           'resize-none overflow-hidden focus:overflow-auto': Element === 'textarea',
         },
       )}
+      id={fieldContext?.controlId}
       onChange={onChange}
       onFocus={onFocus}
-      ref={mergeRefs([registerElement, outerRef])}
+      ref={mergeRefs(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        [registerElement, htmlProps?.ref as React.RefObject<any> | undefined].filter(
+          isNotUndefined,
+        ),
+      )}
       rows={Element === 'textarea' ? 1 : undefined}
       style={{ colorScheme: mode }}
     />
   );
-});
+};

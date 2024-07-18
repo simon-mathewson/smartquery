@@ -6,7 +6,7 @@ test('renders code editor with value and allows editing', async ({ mount }) => {
   const value = 'SELECT * FROM table;';
   const onChange = spy();
 
-  const $ = await mount(<CodeEditor onChange={onChange} value={value} />);
+  const $ = await mount(<CodeEditor editorProps={{ value }} onChange={onChange} />);
 
   const editor = $.getByRole('textbox');
   await expect(editor).toHaveText(value);
@@ -30,7 +30,9 @@ test('renders code editor with placeholder', async ({ mount }) => {
   const placeholder = 'Type your query here';
   const onChange = spy();
 
-  const $ = await mount(<CodeEditor onChange={onChange} placeholder={placeholder} value="" />);
+  const $ = await mount(
+    <CodeEditor editorProps={{ placeholder, value: '' }} onChange={onChange} />,
+  );
 
   const editor = $.getByRole('textbox');
 
@@ -42,7 +44,7 @@ test('renders code editor with placeholder', async ({ mount }) => {
 });
 
 test('renders code editor with line numbers hidden', async ({ mount }) => {
-  const $ = await mount(<CodeEditor hideLineNumbers value="test" />);
+  const $ = await mount(<CodeEditor hideLineNumbers editorProps={{ value: 'test' }} />);
 
   const lineNumbers = $.locator('.cm-gutterElement');
 

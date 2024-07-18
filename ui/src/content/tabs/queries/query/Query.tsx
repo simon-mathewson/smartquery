@@ -55,7 +55,7 @@ export const Query: React.FC = () => {
           <>
             {result && query.select && (
               <div className="relative h-fit w-fit">
-                <Button icon={<Refresh />} onClick={() => runQuery(query.id)} />
+                <Button htmlProps={{ onClick: () => runQuery(query.id) }} icon={<Refresh />} />
                 {query.isLoading && (
                   <CircularProgress
                     className="absolute left-[4px] top-[4px] !text-primary"
@@ -64,7 +64,11 @@ export const Query: React.FC = () => {
                 )}
               </div>
             )}
-            <Button color="secondary" icon={<Close />} onClick={() => removeQuery(query.id)} />
+            <Button
+              color="secondary"
+              htmlProps={{ onClick: () => removeQuery(query.id) }}
+              icon={<Close />}
+            />
           </>
         }
       />

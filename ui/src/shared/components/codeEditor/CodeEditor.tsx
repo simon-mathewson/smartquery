@@ -1,6 +1,6 @@
 import { sql } from '@codemirror/lang-sql';
 import { githubLightInit, githubDarkInit } from '@uiw/codemirror-theme-github';
-import type { ReactCodeMirrorRef } from '@uiw/react-codemirror';
+import type { ReactCodeMirrorProps, ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import React, { useMemo } from 'react';
@@ -10,15 +10,12 @@ import { ThemeContext } from '~/content/theme/Context';
 import { themes } from '../../../../tailwind.config';
 
 export type CodeEditorProps = {
-  autoFocus?: boolean;
+  editorProps?: ReactCodeMirrorProps;
   editorRef?: React.RefObject<ReactCodeMirrorRef>;
   hideLineNumbers?: boolean;
   language?: 'json' | 'sql';
   large?: boolean;
   onChange?: (value: string) => void;
-  placeholder?: string;
-  readOnly?: boolean;
-  value: string | undefined;
 };
 
 const commonOptions = {
@@ -28,17 +25,7 @@ const commonOptions = {
 } as const;
 
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
-  const {
-    autoFocus,
-    editorRef,
-    hideLineNumbers,
-    language,
-    large,
-    onChange,
-    placeholder,
-    readOnly,
-    value,
-  } = props;
+  const { editorProps, editorRef, hideLineNumbers, language, large, onChange } = props;
 
   const { mode } = useDefinedContext(ThemeContext);
 
@@ -75,7 +62,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
 
   return (
     <CodeMirror
-      autoFocus={autoFocus}
+      {...editorProps}
       basicSetup={{
         autocompletion: false,
         foldGutter: false,
@@ -84,11 +71,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       className={large ? 'cm-min-height-large' : 'cm-min-height-small'}
       extensions={extensions}
       onChange={(sql) => onChange?.(sql)}
-      placeholder={placeholder}
-      readOnly={readOnly}
       ref={editorRef}
       theme={theme}
-      value={value}
     />
   );
 };

@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { FieldContext } from '../field/FieldContext';
 
 export type SelectProps<T> = {
-  className?: string;
+  htmlProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
   monospace?: boolean;
   placeholder?: string;
   onChange: (value: T) => void;
@@ -15,7 +15,7 @@ export type SelectProps<T> = {
 };
 
 export function Select<T>(props: SelectProps<T>) {
-  const { className, monospace, onChange, options, placeholder, value: selectedValue } = props;
+  const { htmlProps, monospace, onChange, options, placeholder, value: selectedValue } = props;
 
   const fieldContext = useContext(FieldContext);
 
@@ -35,7 +35,7 @@ export function Select<T>(props: SelectProps<T>) {
         aria-haspopup="listbox"
         className={classNames(
           'flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-lg border-[1.5px] border-border bg-background px-2 outline-none hover:bg-secondaryHighlight focus:border-primary',
-          className,
+          htmlProps?.className,
         )}
         id={fieldContext?.controlId}
         ref={triggerRef}
@@ -54,9 +54,11 @@ export function Select<T>(props: SelectProps<T>) {
         <ExpandMore className="text-secondary" />
       </button>
       <OverlayCard
-        role="listbox"
-        className="px-0 py-2"
-        id={listboxId}
+        htmlProps={{
+          className: 'px-0 py-2',
+          id: listboxId,
+          role: 'listbox',
+        }}
         matchTriggerWidth
         onClose={() => setIsOpen(false)}
         onOpen={() => setIsOpen(true)}

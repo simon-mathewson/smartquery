@@ -49,17 +49,19 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
           variant="highlighted"
           {...button}
           {...(value === selectedValue ? selectedButton : {})}
-          aria-checked={value === selectedValue}
-          className={classNames({ 'grow basis-0': equalWidth, 'w-full': fullWidth })}
-          key={index}
-          onClick={() => {
-            if (required) {
-              onChange(value);
-              return;
-            }
-            onChange(value === selectedValue ? undefined : value);
+          htmlProps={{
+            'aria-checked': value === selectedValue,
+            className: classNames({ 'grow basis-0': equalWidth, 'w-full': fullWidth }),
+            onClick: () => {
+              if (required) {
+                onChange(value);
+                return;
+              }
+              onChange(value === selectedValue ? undefined : value);
+            },
+            role: 'radio',
           }}
-          role="radio"
+          key={index}
         />
       ))}
     </div>

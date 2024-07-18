@@ -43,15 +43,13 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
           <>
             <Button
               color="primary"
-              disabled={previousDisabled}
+              htmlProps={{ disabled: previousDisabled, onClick: previous }}
               icon={<ArrowBack />}
-              onClick={previous}
             />
             <Button
               color="primary"
-              disabled={nextDisabled}
+              htmlProps={{ disabled: nextDisabled, onClick: next }}
               icon={<ArrowForward />}
-              onClick={next}
             />
           </>
         )

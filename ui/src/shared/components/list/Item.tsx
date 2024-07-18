@@ -69,13 +69,15 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
       </div>
       {actions?.map((action, index) => (
         <Button
+          color={selected ? 'white' : 'primary'}
+          htmlProps={{
+            onClick: (event) => {
+              event.stopPropagation();
+              action.onClick();
+            },
+          }}
           icon={action.icon}
           key={index}
-          onClick={(event) => {
-            event.stopPropagation();
-            action.onClick();
-          }}
-          color={selected ? 'white' : 'primary'}
         />
       ))}
     </div>

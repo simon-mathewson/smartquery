@@ -1,39 +1,33 @@
 import classNames from 'classnames';
 import { CodeEditor } from '../codeEditor/CodeEditor';
+import type { ReactCodeMirrorProps } from '@uiw/react-codemirror';
 
-type CodeInputProps = {
-  autoFocus?: boolean;
-  className?: string;
+export type CodeInputProps = {
+  editorProps?: ReactCodeMirrorProps;
+  htmlProps?: React.HTMLProps<HTMLDivElement>;
   language: 'sql' | 'json';
   onChange?: (value: string) => void;
-  onClick?: () => void;
-  placeholder?: string;
-  readOnly?: boolean;
-  value: string | undefined;
 };
 
 export const CodeInput: React.FC<CodeInputProps> = (props) => {
-  const { autoFocus, className, language, onChange, onClick, placeholder, readOnly, value } = props;
+  const { editorProps, htmlProps, language, onChange } = props;
 
   return (
     <div
+      {...htmlProps}
       className={classNames(
         'min-h-[36px] w-full overflow-hidden rounded-lg border-[1.5px] border-border bg-background pt-[3px] focus-within:overflow-auto focus:border-primary',
         {
-          'cursor-pointer opacity-50': readOnly,
+          'cursor-pointer opacity-50': editorProps?.readOnly,
         },
-        className,
+        htmlProps?.className,
       )}
-      onClick={onClick}
     >
       <CodeEditor
-        autoFocus={autoFocus}
+        editorProps={editorProps}
         hideLineNumbers
         language={language}
         onChange={onChange}
-        placeholder={placeholder}
-        readOnly={readOnly}
-        value={value}
       />
     </div>
   );

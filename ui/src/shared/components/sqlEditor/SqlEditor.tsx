@@ -65,22 +65,23 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     <div className="flex flex-col gap-3">
       <div className="grid max-h-[200px] w-full min-w-[560px] gap-1 overflow-auto rounded-lg border border-border bg-background py-1">
         <CodeEditor
-          autoFocus
+          editorProps={{ autoFocus: true, value }}
           editorRef={editorRef}
           language="sql"
           large
           onChange={onChange}
-          value={value}
         />
       </div>
       <div className="flex items-start justify-between gap-3">
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <Button
-          className="ml-auto w-36"
-          disabled={!value?.trim()}
+          htmlProps={{
+            className: 'ml-auto w-36',
+            disabled: !value?.trim(),
+            onClick: () => void submitQuery(),
+          }}
           icon={<Send />}
           label="Submit"
-          onClick={() => void submitQuery()}
           variant="filled"
         />
       </div>

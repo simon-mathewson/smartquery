@@ -178,7 +178,10 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
             className="pointer-events-auto flex items-center rounded-full border border-border bg-card shadow-lg"
             ref={mergeRefs([popoverRef, ref])}
           >
-            <Button className="edit-button" icon={<EditOutlined />} ref={editButtonRef} />
+            <Button
+              htmlProps={{ className: 'edit-button', ref: editButtonRef }}
+              icon={<EditOutlined />}
+            />
             {!isEntireSelectionDeleted &&
               selection.every((row) => row.length === 0) &&
               !selectedChanges.some((change) => change.type === 'create') && (
@@ -187,23 +190,25 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
             {selectedChanges.length > 0 && (
               <Button
                 color="secondary"
-                icon={<Undo />}
-                onClick={() => {
-                  selectedChanges.forEach((change) => {
-                    removeChange(change.location);
-                  });
-
-                  // Remove rows to be created from selection
-                  setSelection((currentSelection) => {
-                    const newSelection = cloneArrayWithEmptyValues(currentSelection);
-                    currentSelection.forEach((_, rowIndex) => {
-                      if (rowIndex >= rows.length) {
-                        delete newSelection[rowIndex];
-                      }
+                htmlProps={{
+                  onClick: () => {
+                    selectedChanges.forEach((change) => {
+                      removeChange(change.location);
                     });
-                    return newSelection;
-                  });
+
+                    // Remove rows to be created from selection
+                    setSelection((currentSelection) => {
+                      const newSelection = cloneArrayWithEmptyValues(currentSelection);
+                      currentSelection.forEach((_, rowIndex) => {
+                        if (rowIndex >= rows.length) {
+                          delete newSelection[rowIndex];
+                        }
+                      });
+                      return newSelection;
+                    });
+                  },
                 }}
+                icon={<Undo />}
               />
             )}
           </div>

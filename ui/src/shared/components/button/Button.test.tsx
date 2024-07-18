@@ -8,7 +8,7 @@ test('renders button with label', async ({ mount }) => {
   const label = 'Click me';
   const onClick = spy();
 
-  const $ = await mount(<Button label={label} onClick={onClick} />);
+  const $ = await mount(<Button htmlProps={{ onClick }} label={label} />);
 
   await expect($).toHaveRole('button');
   await expect($).toHaveAccessibleName(label);
@@ -25,7 +25,7 @@ test('renders button with icon', async ({ mount }) => {
   const icon = <Add />;
   const onClick = spy();
 
-  const $ = await mount(<Button icon={icon} onClick={onClick} />);
+  const $ = await mount(<Button htmlProps={{ onClick }} icon={icon} />);
 
   await expect($).toHaveText('');
   await expect($).toHaveCSS('height', '36px');
@@ -44,13 +44,15 @@ test('renders small disabled link with icon, long label, and suffix', async ({ m
 
   const $ = await mount(
     <Button
-      className="w-100"
-      disabled
+      htmlProps={{
+        className: 'w-100',
+        disabled: true,
+        href: '#',
+        onClick,
+      }}
       element="a"
-      href="#"
       icon={icon}
       label={label}
-      onClick={onClick}
       suffix={<Edit />}
       textSuffix={textSuffix}
     />,

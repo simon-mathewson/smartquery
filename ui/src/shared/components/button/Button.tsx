@@ -1,61 +1,56 @@
 import classNames from 'classnames';
-import type { MutableRefObject } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 import type { Color } from '~/content/theme/types';
+import { v4 as uuid } from 'uuid';
 
 export type ButtonProps = {
   align?: 'left' | 'center' | 'right';
-  'aria-checked'?: boolean;
-  'aria-controls'?: React.ButtonHTMLAttributes<HTMLButtonElement>['aria-controls'];
-  'aria-expanded'?: React.ButtonHTMLAttributes<HTMLButtonElement>['aria-expanded'];
-  'aria-haspopup'?: React.ButtonHTMLAttributes<HTMLButtonElement>['aria-haspopup'];
-  className?: string;
   color?: Color;
-  disabled?: boolean;
-  element?: 'a' | 'button' | 'div';
-  href?: string;
   icon?: React.ReactNode;
   label?: string;
   monospace?: boolean;
-  onClick?: (event: React.MouseEvent) => void;
-  onClickCapture?: (event: React.MouseEvent) => void;
-  role?: React.ButtonHTMLAttributes<HTMLButtonElement>['role'];
   size?: 'small' | 'normal';
   suffix?: React.ReactNode;
   textSuffix?: string;
-  type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
   variant?: 'default' | 'filled' | 'highlighted';
-};
+} & (
+  | {
+      element: 'a';
+      htmlProps?: React.HTMLProps<HTMLAnchorElement>;
+    }
+  | {
+      element?: 'button';
+      htmlProps?: React.HTMLProps<HTMLButtonElement>;
+    }
+  | {
+      element: 'div';
+      htmlProps?: React.HTMLProps<HTMLDivElement>;
+    }
+);
 
-export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((props, ref) => {
+export const Button: React.FC<ButtonProps> = (props) => {
   const {
     align = 'center',
-    className,
     color = 'primary',
-    disabled,
     element: Element = 'button',
-    href,
+    htmlProps,
     icon,
     label,
     monospace,
-    onClick,
-    onClickCapture,
-    role,
     size = 'normal',
     suffix,
     textSuffix,
-    type = 'button',
     variant = 'default',
   } = props;
 
+  const [labelId] = useState(() => uuid());
+
   return (
     <Element
-      aria-checked={props['aria-checked']}
-      aria-controls={props['aria-controls']}
-      aria-disabled={disabled}
-      aria-expanded={props['aria-expanded']}
-      aria-haspopup={props['aria-haspopup']}
-      aria-label={label}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      {...(props.htmlProps as any)}
+      aria-disabled={props.htmlProps?.disabled}
+      aria-labelledby={label ? labelId : undefined}
       className={classNames(
         'flex h-[36px] cursor-pointer select-none items-center gap-2 rounded-lg px-2 py-2 [&>svg]:text-[20px]',
         {
@@ -66,7 +61,7 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'justify-start': align === 'left',
           'justify-center': align === 'center',
           'justify-end': align === 'right',
-          'pointer-events-none opacity-50': disabled,
+          'pointer-events-none opacity-50': htmlProps?.disabled,
           'font-mono font-medium': monospace,
 
           'text-black hover:bg-blackHighlight [&>svg]:text-black':
@@ -111,23 +106,17 @@ export const Button = React.forwardRef<HTMLButtonElement | null, ButtonProps>((p
           'bg-whiteHighlight text-white hover:bg-whiteHighlightHover':
             color === 'white' && variant === 'highlighted',
         },
-        className,
+        htmlProps?.className,
       )}
-      href={href}
-      onClick={onClick}
-      onClickCapture={onClickCapture}
-      ref={
-        ref as MutableRefObject<HTMLAnchorElement | null> &
-          MutableRefObject<HTMLButtonElement | null> &
-          MutableRefObject<HTMLDivElement | null>
-      }
-      role={role}
-      type={type}
     >
       {icon}
-      {label && <div className="truncate text-sm font-medium">{label}</div>}
+      {label && (
+        <div className="truncate text-sm font-medium" id={labelId}>
+          {label}
+        </div>
+      )}
       {textSuffix && <div className="text-sm font-medium">{textSuffix}</div>}
       {suffix}
     </Element>
   );
-});
+};

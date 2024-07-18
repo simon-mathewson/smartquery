@@ -13,13 +13,12 @@ export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = (prop
       <div className="text-2xl font-medium text-textPrimary">An error occurred</div>
       <div className="text-textSecondary">Sorry about that. Reloading might help.</div>
       <Button
-        className="my-2 min-w-[96px]"
         color="primary"
+        htmlProps={{ className: 'my-2 min-w-[96px]', onClick: () => window.location.reload() }}
         label="Reload"
-        onClick={() => window.location.reload()}
         variant="filled"
       />
-      <CodeEditor value={error.stack || ''} readOnly />
+      <CodeEditor editorProps={{ readOnly: true, value: error.stack || '' }} />
     </div>
   );
 };

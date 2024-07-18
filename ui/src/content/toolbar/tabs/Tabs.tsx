@@ -19,21 +19,25 @@ export const Tabs: React.FC = () => {
       {tabs.map((tab) => {
         return (
           <Button
-            className="w-[180px]"
             color={activeTab?.id === tab.id ? 'primary' : 'secondary'}
+            htmlProps={{
+              className: 'w-[180px]',
+              onClick: () => setActiveTabId(tab.id),
+            }}
             key={tab.id}
             label={getTabTitle(tab, queryResults)}
-            onClick={() => setActiveTabId(tab.id)}
             suffix={
               <Button
-                className="ml-auto"
                 color={activeTab?.id === tab.id ? 'primary' : 'secondary'}
                 element="div"
-                icon={<Close />}
-                onClickCapture={(event) => {
-                  removeTab(tab.id);
-                  event.preventDefault();
+                htmlProps={{
+                  className: 'ml-auto',
+                  onClickCapture: (event) => {
+                    removeTab(tab.id);
+                    event.preventDefault();
+                  },
                 }}
+                icon={<Close />}
                 size="small"
               />
             }

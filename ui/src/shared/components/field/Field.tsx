@@ -5,18 +5,18 @@ import { v4 as uuid } from 'uuid';
 import { FieldContext } from './FieldContext';
 
 export type FieldProps = {
-  className?: string;
+  htmlProps?: React.HTMLProps<HTMLDivElement>;
   label?: string;
 };
 
 export const Field: React.FC<PropsWithChildren<FieldProps>> = (props) => {
-  const { children, className, label } = props;
+  const { children, htmlProps, label } = props;
 
   const [controlId] = useState(uuid());
 
   return (
     <FieldContext.Provider value={useMemo(() => ({ controlId }), [controlId])}>
-      <div className={classNames('grid gap-1 focus-within:text-primary', className)}>
+      <div className={classNames('grid gap-1 focus-within:text-primary', htmlProps?.className)}>
         {label && (
           <label className="block pl-1 text-xs font-medium" htmlFor={controlId}>
             {label}

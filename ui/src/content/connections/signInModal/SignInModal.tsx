@@ -97,16 +97,15 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
           <form onSubmit={onSubmit}>
             <fieldset disabled={isConnecting} className="flex flex-col gap-2">
               <Field label="User">
-                <Input disabled value={username} />
+                <Input htmlProps={{ disabled: true, value: username }} />
               </Field>
               <Field label="Password">
                 <CredentialInput
-                  autoFocus
+                  htmlProps={{ autoFocus: true, value: password }}
                   isExistingCredential
                   onChange={setPassword}
                   showAddToKeychain
                   username={username}
-                  value={password}
                 />
               </Field>
               {/* Enable submit on enter despite actual submit button being outside form */}
@@ -118,29 +117,27 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
           <form onSubmit={onSubmit}>
             <fieldset className="flex flex-col gap-2" disabled={isConnecting}>
               <Field label="SSH User">
-                <Input disabled value={sshUsername} />
+                <Input htmlProps={{ disabled: true, value: sshUsername }} />
               </Field>
               {connection.ssh.password !== undefined && (
                 <Field label="SSH Password">
                   <CredentialInput
-                    autoFocus={!showDbLogin}
+                    htmlProps={{ autoFocus: !showDbLogin, value: sshPassword }}
                     isExistingCredential
                     onChange={setPassword}
                     showAddToKeychain
                     username={sshUsername as string}
-                    value={sshPassword}
                   />
                 </Field>
               )}
               {connection.ssh.privateKey !== undefined && (
                 <Field label="SSH Private key">
                   <CredentialInput
-                    autoFocus={!showDbLogin}
+                    htmlProps={{ autoFocus: !showDbLogin, value: sshPrivateKey }}
                     isExistingCredential
                     onChange={setSshPrivateKey}
                     showAddToKeychain
                     username={sshUsername as string}
-                    value={sshPrivateKey}
                   />
                 </Field>
               )}
@@ -152,20 +149,21 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
         {showAuthFailed && <ErrorMessage>Authentication failed. Please try again.</ErrorMessage>}
         <div className="grid grid-cols-2 gap-2">
           <Button
-            disabled={isConnecting}
-            label="Cancel"
-            onClick={() => {
-              close();
-              if (!activeConnection) {
-                navigate(routes.root());
-              }
+            htmlProps={{
+              disabled: isConnecting,
+              onClick: () => {
+                close();
+                if (!activeConnection) {
+                  navigate(routes.root());
+                }
+              },
             }}
+            label="Cancel"
           />
           <Button
-            disabled={isConnecting}
+            htmlProps={{ disabled: isConnecting, onClick: () => onSubmit() }}
             label="Sign in"
             icon={<Key />}
-            onClick={() => onSubmit()}
             variant="filled"
           />
         </div>

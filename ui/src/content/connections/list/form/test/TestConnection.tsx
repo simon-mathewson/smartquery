@@ -84,11 +84,13 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     <>
       <ConnectionSignInModal {...signInModal} />
       <Button
-        className="mt-2"
-        disabled={isTesting || !isFormValid(form)}
+        htmlProps={{
+          className: 'mt-2',
+          disabled: isTesting || !isFormValid(form),
+          onClick: () => test(),
+        }}
         icon={<SettingsEthernet />}
         label="Test connection"
-        onClick={() => test()}
         {...(isTesting && {
           label: 'Testing connection...',
         })}

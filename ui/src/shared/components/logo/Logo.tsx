@@ -1,11 +1,11 @@
 import React from 'react';
 
 export type LogoProps = {
-  className?: string;
+  htmlProps?: React.ImgHTMLAttributes<HTMLImageElement>;
 };
 
 export const Logo: React.FC<LogoProps> = (props) => {
-  const { className } = props;
+  const { htmlProps } = props;
 
-  return <img className={className} src="/logo.svg" />;
+  return <img {...htmlProps} src="/logo.svg" />;
 };

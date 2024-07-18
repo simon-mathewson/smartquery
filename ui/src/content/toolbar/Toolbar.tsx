@@ -16,9 +16,9 @@ export const Toolbar: React.FC = () => {
       <Tabs />
       <Button
         align="left"
+        htmlProps={{ onClick: () => addQuery({ showEditor: true }) }}
         icon={<Add />}
         label={tabs.length ? undefined : 'New query'}
-        onClick={() => addQuery({ showEditor: true })}
       />
       <Changes />
     </div>

@@ -87,7 +87,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
     <>
       <form className="mx-auto grid w-[320px] gap-2" onSubmit={onSubmit}>
         <ThreeColumns
-          left={!hideBackButton && <Button icon={<ArrowBack />} onClick={exit} />}
+          left={!hideBackButton && <Button htmlProps={{ onClick: exit }} icon={<ArrowBack />} />}
           middle={
             <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
               {mode === 'add' ? 'Add' : 'Edit'} Connection
@@ -100,8 +100,8 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                   removeConnection(connectionToEdit.id);
                   exit();
                 }}
-                renderTrigger={(props) => (
-                  <Button color="danger" icon={<DeleteOutline />} {...props} />
+                renderTrigger={(htmlProps) => (
+                  <Button color="danger" htmlProps={htmlProps} icon={<DeleteOutline />} />
                 )}
                 text="Delete connection"
               />
@@ -125,17 +125,19 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           />
         </Field>
         <Field label="Name">
-          <Input onChange={getChangeHandler('name')} value={form.name} />
+          <Input htmlProps={{ value: form.name }} onChange={getChangeHandler('name')} />
         </Field>
         <div className="grid grid-cols-2 gap-2">
           <Field label="Host">
-            <Input onChange={getChangeHandler('host')} value={form.host} />
+            <Input htmlProps={{ value: form.host }} onChange={getChangeHandler('host')} />
           </Field>
           <Field label="Port">
             <Input
+              htmlProps={{
+                placeholder: form.engine ? String(getDefaultPort(form.engine)) : '',
+                value: form.port === null ? '' : String(form.port),
+              }}
               onChange={(value) => getChangeHandler('port')(value ? Number(value) : null)}
-              placeholder={form.engine ? String(getDefaultPort(form.engine)) : ''}
-              value={form.port === null ? '' : String(form.port)}
             />
           </Field>
         </div>
@@ -159,30 +161,29 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           />
         </Field>
         <Field label="User">
-          <Input onChange={getChangeHandler('user')} value={form.user} />
+          <Input htmlProps={{ value: form.user }} onChange={getChangeHandler('user')} />
         </Field>
         {form.credentialStorage === 'localStorage' && (
           <Field label="Password">
             <CredentialInput
+              htmlProps={{ value: form.password }}
               onChange={getChangeHandler('password')}
               username={getCredentialUsername({
                 ...form,
                 port: form.port ?? (form.engine ? getDefaultPort(form.engine) : -1),
               })}
-              value={form.password}
             />
           </Field>
         )}
         <Field label="Default database">
-          <Input onChange={getChangeHandler('database')} value={form.database} />
+          <Input htmlProps={{ value: form.database }} onChange={getChangeHandler('database')} />
         </Field>
         <SshFormSection form={form} getChangeHandler={getChangeHandler} />
         <TestConnection form={form} />
         <Button
-          disabled={!isFormValid(form)}
+          htmlProps={{ disabled: !isFormValid(form), type: 'submit' }}
           icon={<Done />}
           label={mode === 'add' ? 'Add' : 'Save'}
-          type="submit"
           variant="filled"
         />
       </form>

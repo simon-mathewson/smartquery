@@ -44,7 +44,11 @@ export const ConnectionList: React.FC<ConnectionListProps> = (props) => {
               <div className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-sm font-medium text-textPrimary">
                 Connections
               </div>
-              <Button icon={<Add />} label="Add" onClick={() => setIsAddingOrEditing(true)} />
+              <Button
+                htmlProps={{ onClick: () => setIsAddingOrEditing(true) }}
+                icon={<Add />}
+                label="Add"
+              />
             </div>
             <List
               items={connections.map((connection, index) => ({

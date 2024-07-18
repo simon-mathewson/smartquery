@@ -31,7 +31,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
         {isFirst ? 'WHERE' : filter.logicalOperator}
       </div>
       <Select
-        className="!w-[200px] shrink-0"
+        htmlProps={{ className: '!w-[200px] shrink-0' }}
         onChange={(newColumn) => {
           updateFilter((current) => ({ ...current, column: newColumn }));
         }}
@@ -40,7 +40,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
         value={filter.column ?? null}
       />
       <Select
-        className="!w-[144px] shrink-0"
+        htmlProps={{ className: '!w-[144px] shrink-0' }}
         monospace
         onChange={(newOperator) => {
           updateFilter((current) =>
@@ -58,9 +58,9 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
       />
       {'value' in filter && column && !includes(NULL_OPERATORS, filter.operator) && (
         <ColumnField
-          className="!w-[256px] shrink-0"
           column={column}
           hideLabel
+          htmlProps={{ className: '!w-[256px] shrink-0' }}
           onChange={(newValue) => {
             updateFilter((current) => ({
               ...current,
@@ -72,12 +72,14 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
         />
       )}
       <Button
-        className="mr-1 mt-[6px]"
+        htmlProps={{
+          className: 'mr-1 mt-[6px]',
+          onClick: removeFilter,
+          type: 'button',
+        }}
         color="secondary"
         icon={<Close />}
-        onClick={removeFilter}
         size="small"
-        type="button"
       />
     </div>
   );

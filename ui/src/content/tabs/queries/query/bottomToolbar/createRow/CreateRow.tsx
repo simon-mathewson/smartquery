@@ -39,5 +39,5 @@ export const Add: React.FC<AddProps> = (props) => {
     });
   };
 
-  return <Button color="primary" icon={<AddIcon />} onClick={handleClick} />;
+  return <Button color="primary" htmlProps={{ onClick: handleClick }} icon={<AddIcon />} />;
 };

@@ -13,9 +13,9 @@ export const AddToDesktop: React.FC = () => {
   return (
     <Button
       color="primary"
+      htmlProps={{ onClick: install }}
       icon={<InstallDesktopOutlined />}
       label="Add to Desktop"
-      onClick={install}
     />
   );
 };

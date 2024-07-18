@@ -7,6 +7,6 @@ export const ConfirmDeletePopoverStory = (
 ) => (
   <ConfirmDeletePopover
     {...props}
-    renderTrigger={(triggerProps) => <Button label="Delete" {...triggerProps} />}
+    renderTrigger={(triggerProps) => <Button htmlProps={triggerProps} label="Delete" />}
   />
 );

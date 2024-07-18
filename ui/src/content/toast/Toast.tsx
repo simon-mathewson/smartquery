@@ -52,7 +52,7 @@ export const Toast: React.FC<ToastProps> = (props) => {
               <div className="text-sm font-medium text-white">{title}</div>
               {description && <div className="text-xs text-whiteHover">{description}</div>}
             </div>
-            <Button color="white" icon={<Close />} onClick={close} />
+            <Button color="white" htmlProps={{ onClick: close }} icon={<Close />} />
           </>
         );
       }}

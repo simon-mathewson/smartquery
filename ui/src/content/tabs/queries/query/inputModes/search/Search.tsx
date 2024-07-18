@@ -25,16 +25,20 @@ export const Search: React.FC = () => {
       }}
     >
       <Input
-        autoFocus
-        className="!w-56"
+        htmlProps={{
+          autoFocus: true,
+          className: '!w-56',
+          placeholder: `Search ${table}`,
+          value,
+        }}
         onChange={(newValue) => {
           setValue(newValue);
           setIsChanged(true);
         }}
-        placeholder={`Search ${table}`}
-        value={value}
       />
-      {isChanged && <Button color="primary" icon={<Send />} type="submit" variant="filled" />}
+      {isChanged && (
+        <Button color="primary" icon={<Send />} htmlProps={{ type: 'submit' }} variant="filled" />
+      )}
     </form>
   );
 };

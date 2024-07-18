@@ -22,13 +22,15 @@ export const Changes: React.FC = () => {
       </div>
       <ConfirmDeletePopover
         onConfirm={clearChanges}
-        renderTrigger={(props) => <Button color="danger" icon={<DeleteOutline />} {...props} />}
+        renderTrigger={(htmlProps) => (
+          <Button color="danger" htmlProps={htmlProps} icon={<DeleteOutline />} />
+        )}
         text={`Delete ${changeCount} change${changeCount > 1 ? 's' : ''}`}
       />
       <Button
+        htmlProps={{ ref: reviewChangesCardTriggerRef }}
         icon={<ArrowForward />}
         label="Review & Submit"
-        ref={reviewChangesCardTriggerRef}
         variant="filled"
       />
       <ReviewChangesCard triggerRef={reviewChangesCardTriggerRef} />
