@@ -108,6 +108,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
         },
         htmlProps?.className,
       )}
+      type={htmlProps?.type ?? 'button'}
     >
       {icon}
       {label && (
