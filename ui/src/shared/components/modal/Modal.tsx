@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 
 export type ModalProps = PropsWithChildren<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ModalControl<any, any> & {
+  ModalControl<any> & {
     htmlProps?: React.HTMLProps<HTMLDivElement>;
     subtitle?: string;
     title?: string;
@@ -24,8 +24,9 @@ export const Modal = (props: ModalProps) => {
       darkenBackground
       htmlProps={{
         ...htmlProps,
-        'aria-labelledby': titleId,
         'aria-describedby': subtitleId,
+        'aria-labelledby': titleId,
+        'aria-modal': true,
         role: 'dialog',
       }}
       isOpen={isOpen}

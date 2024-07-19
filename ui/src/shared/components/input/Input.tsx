@@ -7,6 +7,7 @@ import { mergeRefs } from 'react-merge-refs';
 import { isNotUndefined } from '~/shared/utils/typescript';
 
 export type InputProps = {
+  hidden?: boolean;
   onChange?: (value: string) => void;
 } & (
   | {
@@ -20,7 +21,7 @@ export type InputProps = {
 );
 
 export const Input: React.FC<InputProps> = (props) => {
-  const { element: Element = 'input', htmlProps, onChange: onChangeProp } = props;
+  const { element: Element = 'input', hidden, htmlProps, onChange: onChangeProp } = props;
 
   const { mode } = useTheme();
   const fieldContext = useContext(FieldContext);
@@ -99,7 +100,7 @@ export const Input: React.FC<InputProps> = (props) => {
           'resize-none overflow-hidden focus:overflow-auto': Element === 'textarea',
         },
       )}
-      id={fieldContext?.controlId}
+      id={!hidden ? fieldContext?.controlId : undefined}
       onChange={onChange}
       onFocus={onFocus}
       ref={mergeRefs(

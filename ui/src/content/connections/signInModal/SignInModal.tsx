@@ -101,7 +101,7 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
               </Field>
               <Field label="Password">
                 <CredentialInput
-                  htmlProps={{ autoFocus: true, value: password }}
+                  htmlProps={{ value: password }}
                   isExistingCredential
                   onChange={setPassword}
                   showAddToKeychain
@@ -122,7 +122,7 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
               {connection.ssh.password !== undefined && (
                 <Field label="SSH Password">
                   <CredentialInput
-                    htmlProps={{ autoFocus: !showDbLogin, value: sshPassword }}
+                    htmlProps={{ value: sshPassword }}
                     isExistingCredential
                     onChange={setPassword}
                     showAddToKeychain
@@ -133,7 +133,7 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
               {connection.ssh.privateKey !== undefined && (
                 <Field label="SSH Private key">
                   <CredentialInput
-                    htmlProps={{ autoFocus: !showDbLogin, value: sshPrivateKey }}
+                    htmlProps={{ value: sshPrivateKey }}
                     isExistingCredential
                     onChange={setSshPrivateKey}
                     showAddToKeychain

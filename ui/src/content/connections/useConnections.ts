@@ -106,7 +106,7 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
       const sshPrivateKey = overrides?.sshPrivateKey ?? connection.ssh?.privateKey;
 
       if (password === null || sshPassword === null || sshPrivateKey === null) {
-        await signInModal.open({
+        signInModal.open({
           connection,
           onSignIn: async (credentials) =>
             connect(connection.id, {

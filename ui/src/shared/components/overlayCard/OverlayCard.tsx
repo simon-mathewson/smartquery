@@ -1,11 +1,8 @@
-import { useClickOutside } from '~/shared/hooks/useClickOutside/useClickOutside';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { mergeRefs } from 'react-merge-refs';
 import classNames from 'classnames';
-import { OverlayPortal } from '../overlayPortal/OverlayPortal';
-import { useStyles } from './useStyles';
-import { isNotNull, isNotUndefined } from '~/shared/utils/typescript';
+import React from 'react';
 import { Card } from '../card/Card';
+import { OverlayPortal } from '../overlayPortal/OverlayPortal';
+import { useOverlayCard } from './useOverlayCard';
 
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
@@ -27,107 +24,14 @@ export type OverlayCardProps = {
 };
 
 export const OverlayCard: React.FC<OverlayCardProps> = (props) => {
-  const {
-    align,
-    children,
-    closeOnOutsideClick = true,
-    darkenBackground,
-    htmlProps,
-    isOpen: isOpenProp,
-    matchTriggerWidth = false,
-    onClose,
-    onOpen,
-    position,
-    triggerRef,
-    anchorRef = triggerRef,
-  } = props;
-
-  const [isOpen, setIsOpen] = useState(false);
+  const { children, darkenBackground, htmlProps } = props;
 
   const {
-    animateInBackground,
-    animateOutBackground,
-    animateInWrapper,
-    animateOutWrapper,
-    backgroundRef,
-    registerContent,
-    updateStyles,
-    wrapperRef,
-  } = useStyles({
-    align,
-    anchorRef,
-    matchTriggerWidth,
-    position,
-  });
-
-  const close = useCallback(async () => {
-    await Promise.all(
-      [animateOutWrapper(), darkenBackground ? animateOutBackground() : null].filter(isNotNull),
-    );
-    setIsOpen(false);
-    onClose?.();
-    wrapperRef.current = null;
-    backgroundRef.current = null;
-  }, [
-    animateOutBackground,
-    animateOutWrapper,
-    backgroundRef,
-    darkenBackground,
-    onClose,
-    wrapperRef,
-  ]);
-
-  const open = useCallback(async () => {
-    setIsOpen(true);
-    onOpen?.();
-    setTimeout(() => {
-      updateStyles();
-    });
-  }, [onOpen, updateStyles]);
-
-  useEffect(() => {
-    if (isOpenProp === undefined) return;
-    if (isOpenProp) {
-      open();
-    } else {
-      close();
-    }
-  }, [close, isOpenProp, open]);
-
-  useEffect(() => {
-    const trigger = triggerRef?.current;
-    if (!trigger) return;
-
-    const handleClick = () => {
-      if (isOpen) {
-        close();
-      } else {
-        open();
-      }
-    };
-
-    trigger.addEventListener('click', handleClick);
-
-    return () => {
-      trigger.removeEventListener('click', handleClick);
-    };
-  }, [animateInWrapper, close, isOpen, open, triggerRef, updateStyles]);
-
-  const localRef = useRef<HTMLDivElement | null>(null);
-
-  useClickOutside({
-    active: isOpen,
-    disabled: !closeOnOutsideClick,
-    additionalRefs: useMemo(() => [localRef, triggerRef].filter(isNotUndefined), [triggerRef]),
-    handler: useCallback(() => {
-      close();
-    }, [close]),
-    ref: localRef,
-  });
-
-  const childrenProps = useMemo(() => ({ close }), [close]);
-
-  const refs = useMemo(() => mergeRefs([localRef, registerContent]), [localRef, registerContent]);
+    childrenProps,
+    isOpen,
+    refs,
+    styles: { animateInBackground, animateInWrapper, backgroundRef, wrapperRef },
+  } = useOverlayCard(props);
 
   return (
     <OverlayPortal>
