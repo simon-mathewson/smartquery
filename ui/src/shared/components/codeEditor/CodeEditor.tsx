@@ -71,6 +71,12 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       className={large ? 'cm-min-height-large' : 'cm-min-height-small'}
       extensions={extensions}
       onChange={(sql) => onChange?.(sql)}
+      onKeyDown={(event) => {
+        // Prevent "Tab" from moving focus to the next element.
+        if (event.key === 'Tab') {
+          event.stopPropagation();
+        }
+      }}
       ref={editorRef}
       theme={theme}
     />

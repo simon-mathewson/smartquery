@@ -29,7 +29,7 @@ export const OverlayCard: React.FC<OverlayCardProps> = (props) => {
   const {
     childrenProps,
     isOpen,
-    refs,
+    ref,
     styles: { animateInBackground, animateInWrapper, backgroundRef, wrapperRef },
   } = useOverlayCard(props);
 
@@ -63,12 +63,13 @@ export const OverlayCard: React.FC<OverlayCardProps> = (props) => {
           >
             <Card
               htmlProps={{
+                role: 'dialog',
                 ...htmlProps,
                 className: classNames(
                   'pointer-events-auto shadow-2xl [max-height:inherit]',
                   htmlProps?.className,
                 ),
-                ref: refs,
+                ref,
               }}
             >
               {children(childrenProps)}

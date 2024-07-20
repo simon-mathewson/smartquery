@@ -10,7 +10,7 @@ import { SettingsOverlay } from '../settings/Overlay';
 export const NavigationSidebar: React.FC = () => {
   const { activeConnection: currentActiveConnection } = useDefinedContext(ConnectionsContext);
 
-  const connectionsTriggerRef = useRef<HTMLDivElement | null>(null);
+  const connectionsTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   const previousActiveConnection = usePrevious<ActiveConnection | null>(currentActiveConnection);
 
@@ -18,8 +18,8 @@ export const NavigationSidebar: React.FC = () => {
 
   return (
     <div className="sticky top-0 flex h-screen grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-2 px-2 pt-2">
-      <div
-        className="grid w-full cursor-pointer select-none gap-1 rounded-lg p-2 text-sm hover:bg-secondaryHighlight"
+      <button
+        className="grid w-full cursor-pointer select-none gap-1 rounded-lg p-2 text-left text-sm hover:bg-secondaryHighlight"
         ref={connectionsTriggerRef}
       >
         {activeConnection && (
@@ -35,7 +35,7 @@ export const NavigationSidebar: React.FC = () => {
             </div>
           </>
         )}
-      </div>
+      </button>
       <Connections triggerRef={connectionsTriggerRef} />
       {currentActiveConnection && <TableList />}
       <SettingsOverlay />

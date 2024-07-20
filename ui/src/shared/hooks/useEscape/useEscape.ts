@@ -35,8 +35,10 @@ export const useEscape = (props: {
   const index = escapeStack.indexOf(id);
   const childRefs = escapeStack.slice(index + 1);
 
+  const isTopLevel = childRefs.length === 0;
+
   useEffect(() => {
-    if (childRefs.length > 0 || !clickOutside) return;
+    if (!isTopLevel || !clickOutside) return;
 
     const listener = (event: MouseEvent | TouchEvent) => {
       const isClickInsideSomeRef = [clickOutside.ref, ...(clickOutside.additionalRefs ?? [])].some(
@@ -53,10 +55,10 @@ export const useEscape = (props: {
     return () => {
       document.removeEventListener('mousedown', listener);
     };
-  }, [childRefs.length, clickOutside, handler]);
+  }, [isTopLevel, clickOutside, handler]);
 
   useEffect(() => {
-    if (childRefs.length > 0) return;
+    if (!isTopLevel) return;
 
     const listener = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -69,5 +71,7 @@ export const useEscape = (props: {
     return () => {
       document.removeEventListener('keydown', listener);
     };
-  }, [childRefs.length, handler]);
+  }, [isTopLevel, handler]);
+
+  return { isTopLevel };
 };

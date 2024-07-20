@@ -52,7 +52,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
       aria-disabled={props.htmlProps?.disabled}
       aria-labelledby={label ? labelId : undefined}
       className={classNames(
-        'flex h-[36px] cursor-pointer select-none items-center gap-2 rounded-lg px-2 py-2 ring-primaryHighlightHover focus-visible:ring-2 [&>svg]:text-[20px]',
+        'flex h-[36px] cursor-pointer select-none items-center gap-2 rounded-lg px-2 py-2 [&>svg]:text-[20px]',
         {
           '!h-[24px] !gap-1 [&>svg]:h-[16px] [&>svg]:w-[16px]': size === 'small',
           '!rounded-full': icon && !label,

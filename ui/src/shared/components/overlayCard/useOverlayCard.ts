@@ -5,6 +5,7 @@ import { isNotNull, isNotUndefined } from '~/shared/utils/typescript';
 import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { mergeRefs } from 'react-merge-refs';
 import { focusFirstControl } from '~/shared/utils/focusFirstControl';
+import { useKeyboardNavigation } from './useKeyboardNavigation';
 
 export const useOverlayCard = (props: OverlayCardProps) => {
   const {
@@ -42,6 +43,8 @@ export const useOverlayCard = (props: OverlayCardProps) => {
   } = styles;
 
   const close = useCallback(async () => {
+    previouslyFocusedElementRef.current?.focus();
+
     await Promise.all(
       [animateOutWrapper(), darkenBackground ? animateOutBackground() : null].filter(isNotNull),
     );
@@ -49,8 +52,6 @@ export const useOverlayCard = (props: OverlayCardProps) => {
     onClose?.();
     wrapperRef.current = null;
     backgroundRef.current = null;
-
-    previouslyFocusedElementRef.current?.focus();
   }, [
     animateOutBackground,
     animateOutWrapper,
@@ -115,7 +116,7 @@ export const useOverlayCard = (props: OverlayCardProps) => {
     [localRef, triggerRef],
   );
 
-  useEscape({
+  const { isTopLevel } = useEscape({
     active: isOpen,
     clickOutside: closeOnOutsideClick ? clickOutsideProps : undefined,
     handler: close,
@@ -123,16 +124,18 @@ export const useOverlayCard = (props: OverlayCardProps) => {
 
   const childrenProps = useMemo(() => ({ close }), [close]);
 
-  const refs = useMemo(() => mergeRefs([localRef, registerContent]), [localRef, registerContent]);
+  const ref = useMemo(() => mergeRefs([localRef, registerContent]), [localRef, registerContent]);
+
+  useKeyboardNavigation({ isTopLevel, ref: localRef });
 
   return useMemo(
     () => ({
       childrenProps,
       close,
       isOpen,
-      refs,
+      ref,
       styles,
     }),
-    [childrenProps, close, isOpen, refs, styles],
+    [childrenProps, close, isOpen, ref, styles],
   );
 };

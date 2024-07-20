@@ -4,6 +4,7 @@ import { Button } from '../button/Button';
 
 export type ListItemProps = {
   actions?: Array<{ icon: React.ReactNode; onClick: () => void }>;
+  autoFocus?: boolean;
   className?: string;
   hint?: string;
   label?: string;
@@ -16,6 +17,7 @@ export type ListItemProps = {
 export const ListItem: React.FC<ListItemProps> = (props) => {
   const {
     actions,
+    autoFocus,
     className,
     hint,
     label,
@@ -29,12 +31,13 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
     <div
       aria-selected={selected}
       className={classNames(
-        'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-1.5 focus-visible:ring',
+        'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-1.5',
         {
           'bg-primary hover:bg-primaryHover': selectedVariant === 'primary' && selected,
           'bg-secondaryHighlight hover:bg-secondaryHighlightHover':
             selectedVariant === 'secondary' && selected,
           'hover:bg-secondaryHighlight focus:bg-secondaryHighlight': !selected,
+          'auto-focus': autoFocus,
         },
         className,
       )}

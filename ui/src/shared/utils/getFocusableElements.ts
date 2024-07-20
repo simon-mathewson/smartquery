@@ -1,14 +1,15 @@
 export const getFocusableElements = (container: HTMLElement): HTMLElement[] => {
   return Array.from(
     container.querySelectorAll<HTMLElement>(
+      // Keep in sync with focus style selectors in index.css
       [
-        'a:not([aria-disabled="true"])',
-        'button:not(:disabled)',
-        'input:not(:disabled):not([readonly])',
-        'textarea:not(:disabled):not([readonly])',
-        'select:not(:disabled)',
-        'details:not(:disabled)',
-        '[tabindex]:not(:disabled):not([tabindex="-1"])',
+        'a:not([aria-disabled="true"]):not(.hidden)',
+        'button:not(:disabled):not(.hidden)',
+        'input:not(:disabled):not([readonly]):not(.hidden)',
+        'textarea:not(:disabled):not([readonly]):not(.hidden)',
+        'select:not(:disabled):not(.hidden)',
+        'details:not(:disabled):not(.hidden)',
+        '[tabindex]:not(:disabled):not([tabindex="-1"]):not(.hidden)',
       ].join(),
     ),
   );

@@ -54,3 +54,16 @@
   font-weight: 500;
   src: url(fonts/Inter-Medium.ttf);
 }
+
+@layer components {
+  /* Keep in sync with selectors in `getFocusableElements.ts` */
+  a:not([aria-disabled='true']):not(.hidden),
+  button:not(:disabled):not(.hidden),
+  input:not(:disabled):not([readonly]):not(.hidden),
+  textarea:not(:disabled):not([readonly]):not(.hidden),
+  select:not(:disabled):not(.hidden),
+  details:not(:disabled):not(.hidden),
+  [tabindex]:not(:disabled):not([tabindex='-1']):not(.hidden) {
+    @apply ring-primaryHighlightHover focus-visible:ring-2;
+  }
+}

@@ -3,13 +3,14 @@ import { ListItem, type ListItemProps } from './Item';
 import { useKeyboardNavigation } from './useKeyboardNavigation';
 
 export type ListProps = {
+  autoFocusFirstItem?: boolean;
   className?: string;
   emptyPlaceholder?: string;
   items: ListItemProps[];
 };
 
 export const List: React.FC<ListProps> = (props) => {
-  const { className, emptyPlaceholder, items } = props;
+  const { autoFocusFirstItem, className, emptyPlaceholder, items } = props;
 
   const { onKeyDown } = useKeyboardNavigation();
 
@@ -25,7 +26,7 @@ export const List: React.FC<ListProps> = (props) => {
       tabIndex={0}
     >
       {items.map((item, index) => (
-        <ListItem key={index} {...item} />
+        <ListItem key={index} {...item} autoFocus={index === 0 && autoFocusFirstItem} />
       ))}
     </div>
   );

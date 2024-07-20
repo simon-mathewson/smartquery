@@ -9,5 +9,9 @@ export const focusFirstControl = (container: HTMLElement) => {
     return;
   }
 
-  focusableElements[0]?.focus();
+  const elementToFocus =
+    focusableElements.find((element) => element.classList.contains('auto-focus')) ??
+    focusableElements[0];
+
+  elementToFocus?.focus();
 };

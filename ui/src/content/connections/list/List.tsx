@@ -51,6 +51,7 @@ export const ConnectionList: React.FC<ConnectionListProps> = (props) => {
               />
             </div>
             <List
+              autoFocusFirstItem
               items={connections.map((connection, index) => ({
                 actions: [
                   {
