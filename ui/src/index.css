@@ -64,6 +64,6 @@
   select:not(:disabled):not(.hidden),
   details:not(:disabled):not(.hidden),
   [tabindex]:not(:disabled):not([tabindex='-1']):not(.hidden) {
-    @apply ring-primaryHighlightHover focus-visible:ring-2;
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primaryHover;
   }
 }
