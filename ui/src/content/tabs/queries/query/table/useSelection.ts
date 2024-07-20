@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from 'react';
-import { useClickOutside } from '~/shared/hooks/useClickOutside/useClickOutside';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
 import { ResultContext } from '../Context';
@@ -13,14 +13,16 @@ export const useSelection = () => {
 
   const selectionActionsRef = useRef<HTMLDivElement | null>(null);
 
-  useClickOutside({
+  useEscape({
     active: selection.length > 0,
-    additionalRefs: [selectionActionsRef],
+    clickOutside: {
+      additionalRefs: useMemo(() => [selectionActionsRef], []),
+      ref: tableContentRef,
+    },
     handler: () => {
       setSelection([]);
       lastSelectedCellIndicesRef.current = [];
     },
-    ref: tableContentRef,
   });
 
   const lastClickRef = useRef<{ columnIndex: number; rowIndex: number; timestamp: number }>();

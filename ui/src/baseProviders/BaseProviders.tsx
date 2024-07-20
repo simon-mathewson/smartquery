@@ -4,7 +4,7 @@ import { ThemeProvider } from '~/content/theme/Provider';
 import { useTheme } from '~/content/theme/useTheme';
 import { ErrorBoundary } from '../content/errorBoundary/ErrorBoundary';
 import { ToastProvider } from '../content/toast/Provider';
-import { ClickOutsideQueueProvider } from '../shared/hooks/useClickOutside/useQueue/Provider';
+import { EscapeStackProvider } from '../shared/hooks/useEscape/useStack/Provider';
 
 export const BaseProviders: React.FC<PropsWithChildren> = ({ children }) => {
   useTheme();
@@ -12,9 +12,9 @@ export const BaseProviders: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <ThemeProvider>
       <ErrorBoundary>
-        <ClickOutsideQueueProvider>
+        <EscapeStackProvider>
           <ToastProvider>{children}</ToastProvider>
-        </ClickOutsideQueueProvider>
+        </EscapeStackProvider>
       </ErrorBoundary>
     </ThemeProvider>
   );

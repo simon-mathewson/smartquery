@@ -39,6 +39,7 @@ export function Select<T>(props: SelectProps<T>) {
         )}
         id={fieldContext?.controlId}
         ref={triggerRef}
+        type="button"
       >
         <div
           className={classNames(

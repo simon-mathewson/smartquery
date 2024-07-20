@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { OverlayCardProps } from './OverlayCard';
 import { useStyles } from './useStyles';
 import { isNotNull, isNotUndefined } from '~/shared/utils/typescript';
-import { useClickOutside } from '~/shared/hooks/useClickOutside/useClickOutside';
+import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { mergeRefs } from 'react-merge-refs';
 
 export const useOverlayCard = (props: OverlayCardProps) => {
@@ -102,14 +102,18 @@ export const useOverlayCard = (props: OverlayCardProps) => {
 
   const localRef = useRef<HTMLDivElement | null>(null);
 
-  useClickOutside({
+  const clickOutsideProps = useMemo(
+    () => ({
+      additionalRefs: [triggerRef].filter(isNotUndefined),
+      ref: localRef,
+    }),
+    [localRef, triggerRef],
+  );
+
+  useEscape({
     active: isOpen,
-    disabled: !closeOnOutsideClick,
-    additionalRefs: useMemo(() => [localRef, triggerRef].filter(isNotUndefined), [triggerRef]),
-    handler: useCallback(() => {
-      close();
-    }, [close]),
-    ref: localRef,
+    clickOutside: closeOnOutsideClick ? clickOutsideProps : undefined,
+    handler: close,
   });
 
   const childrenProps = useMemo(() => ({ close }), [close]);
