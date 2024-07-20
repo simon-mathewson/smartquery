@@ -29,7 +29,7 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
     <div
       aria-selected={selected}
       className={classNames(
-        'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-1.5',
+        'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-1.5 focus-visible:ring',
         {
           'bg-primary hover:bg-primaryHover': selectedVariant === 'primary' && selected,
           'bg-secondaryHighlight hover:bg-secondaryHighlightHover':

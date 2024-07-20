@@ -1,6 +1,6 @@
 import { ArrowBack, DeleteOutline, Done } from '@mui/icons-material';
 import { cloneDeep, set } from 'lodash';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { getCredentialUsername } from '~/content/connections/utils';
 import { Button } from '~/shared/components/button/Button';
@@ -17,6 +17,8 @@ import { TestConnection } from './test/TestConnection';
 import type { FormSchema } from './utils';
 import { getConnectionFromForm, getDefaultPort, isFormValid } from './utils';
 import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { focusFirstControl } from '~/shared/utils/focusFirstControl';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;
@@ -83,9 +85,18 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
     exit();
   };
 
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffectOnce(() => {
+    setTimeout(() => {
+      if (!formRef.current) return;
+      focusFirstControl(formRef.current);
+    });
+  });
+
   return (
     <>
-      <form className="mx-auto grid w-[320px] gap-2" onSubmit={onSubmit}>
+      <form className="mx-auto grid w-[320px] gap-2" onSubmit={onSubmit} ref={formRef}>
         <ThreeColumns
           left={!hideBackButton && <Button htmlProps={{ onClick: exit }} icon={<ArrowBack />} />}
           middle={
@@ -110,6 +121,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         />
         <Field label="Engine">
           <Select<Connection['engine']>
+            htmlProps={{ autoFocus: true }}
             onChange={getChangeHandler('engine')}
             options={[
               {

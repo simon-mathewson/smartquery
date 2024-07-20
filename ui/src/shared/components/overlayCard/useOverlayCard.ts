@@ -4,6 +4,7 @@ import { useStyles } from './useStyles';
 import { isNotNull, isNotUndefined } from '~/shared/utils/typescript';
 import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { mergeRefs } from 'react-merge-refs';
+import { focusFirstControl } from '~/shared/utils/focusFirstControl';
 
 export const useOverlayCard = (props: OverlayCardProps) => {
   const {
@@ -65,6 +66,10 @@ export const useOverlayCard = (props: OverlayCardProps) => {
 
     setTimeout(() => {
       updateStyles();
+
+      if (localRef.current) {
+        focusFirstControl(localRef.current);
+      }
     });
 
     if (document.activeElement instanceof HTMLElement) {

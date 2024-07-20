@@ -38,7 +38,12 @@ export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
     <>
       <Input
         hidden
-        htmlProps={{ autoComplete: 'username', className: 'hidden', value: username }}
+        htmlProps={{
+          autoComplete: 'username',
+          className: 'hidden',
+          readOnly: true,
+          value: username,
+        }}
       />
       <div className="flex w-full items-center gap-2">
         <Input

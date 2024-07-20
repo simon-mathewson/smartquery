@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { FieldContext } from '../field/FieldContext';
 
 export type SelectProps<T> = {
-  htmlProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
+  htmlProps?: React.HTMLProps<HTMLButtonElement>;
   monospace?: boolean;
   placeholder?: string;
   onChange: (value: T) => void;
@@ -30,6 +30,7 @@ export function Select<T>(props: SelectProps<T>) {
   return (
     <>
       <button
+        {...htmlProps}
         aria-controls={listboxId}
         aria-expanded={isOpen}
         aria-haspopup="listbox"

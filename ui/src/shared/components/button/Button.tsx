@@ -52,7 +52,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
       aria-disabled={props.htmlProps?.disabled}
       aria-labelledby={label ? labelId : undefined}
       className={classNames(
-        'flex h-[36px] cursor-pointer select-none items-center gap-2 rounded-lg px-2 py-2 [&>svg]:text-[20px]',
+        'flex h-[36px] cursor-pointer select-none items-center gap-2 rounded-lg px-2 py-2 ring-primaryHighlightHover focus-visible:ring-2 [&>svg]:text-[20px]',
         {
           '!h-[24px] !gap-1 [&>svg]:h-[16px] [&>svg]:w-[16px]': size === 'small',
           '!rounded-full': icon && !label,
@@ -64,46 +64,46 @@ export const Button: React.FC<ButtonProps> = (props) => {
           'pointer-events-none opacity-50': htmlProps?.disabled,
           'font-mono font-medium': monospace,
 
-          'text-black hover:bg-blackHighlight focus-visible:bg-blackHighlight [&>svg]:text-black':
+          'text-black hover:bg-blackHighlight focus:bg-blackHighlight [&>svg]:text-black':
             color === 'black' && variant === 'default',
-          'bg-black text-white hover:bg-blackHover focus-visible:bg-blackHover [&>svg]:text-white':
+          'bg-black text-white hover:bg-blackHover focus:bg-blackHover [&>svg]:text-white':
             color === 'black' && variant === 'filled',
-          'bg-blackHighlight text-black hover:bg-blackHighlightHover focus-visible:bg-blackHighlightHover':
+          'bg-blackHighlight text-black hover:bg-blackHighlightHover focus:bg-blackHighlightHover':
             color === 'black' && variant === 'highlighted',
 
-          'text-danger hover:bg-dangerHighlight focus-visible:bg-dangerHighlight [&>svg]:text-danger':
+          'text-danger hover:bg-dangerHighlight focus:bg-dangerHighlight [&>svg]:text-danger':
             color === 'danger' && variant === 'default',
-          'bg-danger text-white hover:bg-dangerHover focus-visible:bg-dangerHover [&>svg]:text-white':
+          'bg-danger text-white hover:bg-dangerHover focus:bg-dangerHover [&>svg]:text-white':
             color === 'danger' && variant === 'filled',
-          'bg-dangerHighlight text-danger hover:bg-dangerHighlightHover focus-visible:bg-dangerHighlightHover':
+          'bg-dangerHighlight text-danger hover:bg-dangerHighlightHover focus:bg-dangerHighlightHover':
             color === 'danger' && variant === 'highlighted',
 
-          'text-primary hover:bg-primaryHighlight focus-visible:bg-primaryHighlight [&>svg]:text-primary':
+          'text-primary hover:bg-primaryHighlight focus:bg-primaryHighlight [&>svg]:text-primary':
             color === 'primary' && variant === 'default',
-          'bg-primary text-white hover:bg-primaryHover focus-visible:bg-primaryHover [&>svg]:text-white':
+          'bg-primary text-white hover:bg-primaryHover focus:bg-primaryHover [&>svg]:text-white':
             color === 'primary' && variant === 'filled',
-          'bg-primaryHighlight text-primary hover:bg-primaryHighlightHover focus-visible:bg-primaryHighlightHover':
+          'bg-primaryHighlight text-primary hover:bg-primaryHighlightHover focus:bg-primaryHighlightHover':
             color === 'primary' && variant === 'highlighted',
 
-          'text-secondary hover:bg-secondaryHighlight focus-visible:bg-secondaryHighlight [&>svg]:text-secondary':
+          'text-secondary hover:bg-secondaryHighlight focus:bg-secondaryHighlight [&>svg]:text-secondary':
             color === 'secondary' && variant === 'default',
-          'bg-secondary text-white hover:bg-secondaryHover focus-visible:bg-secondaryHover [&>svg]:text-white':
+          'bg-secondary text-white hover:bg-secondaryHover focus:bg-secondaryHover [&>svg]:text-white':
             color === 'secondary' && variant === 'filled',
-          'bg-secondaryHighlight text-secondary hover:bg-secondaryHighlightHover focus-visible:bg-secondaryHighlightHover':
+          'bg-secondaryHighlight text-secondary hover:bg-secondaryHighlightHover focus:bg-secondaryHighlightHover':
             color === 'secondary' && variant === 'highlighted',
 
-          'text-success hover:bg-successHighlight focus-visible:bg-successHighlight [&>svg]:text-success':
+          'text-success hover:bg-successHighlight focus:bg-successHighlight [&>svg]:text-success':
             color === 'success' && variant === 'default',
-          'bg-success text-white hover:bg-successHover focus-visible:bg-successHover [&>svg]:text-white':
+          'bg-success text-white hover:bg-successHover focus:bg-successHover [&>svg]:text-white':
             color === 'success' && variant === 'filled',
-          'bg-successHighlight text-success hover:bg-successHighlightHover focus-visible:bg-successHighlightHover':
+          'bg-successHighlight text-success hover:bg-successHighlightHover focus:bg-successHighlightHover':
             color === 'success' && variant === 'highlighted',
 
-          'text-white hover:bg-whiteHighlight focus-visible:bg-whiteHighlight [&>svg]:text-white':
+          'text-white hover:bg-whiteHighlight focus:bg-whiteHighlight [&>svg]:text-white':
             color === 'white' && variant === 'default',
-          'bg-white text-black hover:bg-whiteHover focus-visible:bg-whiteHover [&>svg]:text-black':
+          'bg-white text-black hover:bg-whiteHover focus:bg-whiteHover [&>svg]:text-black':
             color === 'white' && variant === 'filled',
-          'bg-whiteHighlight text-white hover:bg-whiteHighlightHover focus-visible:bg-whiteHighlightHover':
+          'bg-whiteHighlight text-white hover:bg-whiteHighlightHover focus:bg-whiteHighlightHover':
             color === 'white' && variant === 'highlighted',
         },
         htmlProps?.className,
