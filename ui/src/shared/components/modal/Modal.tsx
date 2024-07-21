@@ -37,14 +37,14 @@ export const Modal = (props: ModalProps) => {
           {(title || subtitle) && (
             <div className="flex flex-col gap-1 pb-2 pt-1">
               {title && (
-                <div className="truncate text-center text-lg font-medium" id={titleId}>
+                <h1 className="truncate text-center text-lg font-medium" id={titleId}>
                   {title}
-                </div>
+                </h1>
               )}
               {subtitle && (
-                <div className="truncate text-center text-xs text-textTertiary" id={subtitleId}>
+                <h2 className="truncate text-center text-xs text-textTertiary" id={subtitleId}>
                   {subtitle}
-                </div>
+                </h2>
               )}
             </div>
           )}
