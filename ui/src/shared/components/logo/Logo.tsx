@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React from 'react';
 
 export type LogoProps = {
@@ -7,5 +8,12 @@ export type LogoProps = {
 export const Logo: React.FC<LogoProps> = (props) => {
   const { htmlProps } = props;
 
-  return <img {...htmlProps} role="presentation" src="/logo.svg" />;
+  return (
+    <img
+      {...htmlProps}
+      className={classNames('select-none', htmlProps?.className)}
+      role="presentation"
+      src="/logo.svg"
+    />
+  );
 };
