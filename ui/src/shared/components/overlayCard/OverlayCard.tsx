@@ -20,7 +20,6 @@ export type OverlayCardProps = {
     y: 'top' | 'center' | 'bottom';
   };
   triggerRef?: React.MutableRefObject<HTMLElement | null>;
-  width?: number;
 };
 
 export const OverlayCard: React.FC<OverlayCardProps> = (props) => {

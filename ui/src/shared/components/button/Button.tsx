@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid';
 export type ButtonProps = {
   align?: 'left' | 'center' | 'right';
   color?: Color;
+  htmlProps?: React.HTMLProps<HTMLButtonElement>;
   icon?: React.ReactNode;
   label?: string;
   monospace?: boolean;

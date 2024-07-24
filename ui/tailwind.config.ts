@@ -81,7 +81,7 @@ export const themes = {
 } as const;
 
 export default {
-  content: ['./src/index.html', './src/**/*.{ts,tsx}'],
+  content: ['./src/index.html', './src/**/*.{ts,tsx,test.ts,test.tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
