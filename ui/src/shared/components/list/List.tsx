@@ -20,16 +20,17 @@ export const List = <T extends string>(props: ListProps<T>) => {
   }
 
   const getAutoFocus = (item: (typeof items)[number], index: number) => {
-    if (autoFocusFirstItem) {
-      if (index === 0) return true;
-      return undefined;
+    if (
+      (multiple && props.selectedValues.length > 0) ||
+      (!multiple && props.selectedValue !== null)
+    ) {
+      return (multiple && props.selectedValues[0] === item.value) ||
+        (!multiple && props.selectedValue !== null && props.selectedValue === item.value)
+        ? true
+        : undefined;
     }
 
-    if (multiple) {
-      return props.selectedValues[0] === item.value;
-    }
-
-    return props.selectedValue === item.value;
+    return autoFocusFirstItem && index === 0 ? true : undefined;
   };
 
   return (
