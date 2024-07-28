@@ -46,4 +46,10 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], viewport: { width: 400, height: 400 } },
     },
   ],
+  expect: {
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.1,
+    },
+  },
+  snapshotPathTemplate: '{testDir}/__snapshots__/{testFilePath}/{arg}{ext}',
 });

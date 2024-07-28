@@ -1,5 +1,7 @@
 import { getFocusableElements } from './getFocusableElements';
 
+export const autoFocusClass = 'auto-focus';
+
 export const focusFirstControl = (container: HTMLElement) => {
   const focusableElements = getFocusableElements(container);
 
@@ -10,7 +12,7 @@ export const focusFirstControl = (container: HTMLElement) => {
   }
 
   const elementToFocus =
-    focusableElements.find((element) => element.classList.contains('auto-focus')) ??
+    focusableElements.find((element) => element.classList.contains(autoFocusClass)) ??
     focusableElements[0];
 
   elementToFocus?.focus();

@@ -43,14 +43,15 @@ export const DatabaseList: React.FC = () => {
       <List
         items={databases.map((database) => ({
           label: database,
-          onSelect: () => {
-            if (!activeConnection) return;
-
-            return connect(activeConnection.id, { database });
-          },
-          selected: activeConnection?.database === database,
           selectedVariant: 'primary',
+          value: database,
         }))}
+        onSelect={(database) => {
+          if (!activeConnection) return;
+
+          return connect(activeConnection.id, { database });
+        }}
+        selectedValue={activeConnection?.database ?? null}
       />
     </div>
   );

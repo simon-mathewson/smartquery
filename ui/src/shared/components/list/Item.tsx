@@ -1,20 +1,22 @@
 import classNames from 'classnames';
 import React from 'react';
 import { Button } from '../button/Button';
+import { autoFocusClass } from '~/shared/utils/focusFirstControl';
 
-export type ListItemProps = {
+export type ListItemProps<T extends string> = {
   actions?: Array<{ icon: React.ReactNode; onClick: () => void }>;
   autoFocus?: boolean;
   className?: string;
   hint?: string;
   label?: string;
   onMouseDown?: React.MouseEventHandler<HTMLElement>;
-  onSelect?: () => void;
+  onSelect: () => void;
   selected?: boolean;
   selectedVariant?: 'primary' | 'secondary';
+  value: T;
 };
 
-export const ListItem: React.FC<ListItemProps> = (props) => {
+export const ListItem = <T extends string>(props: ListItemProps<T>) => {
   const {
     actions,
     autoFocus,
@@ -37,7 +39,7 @@ export const ListItem: React.FC<ListItemProps> = (props) => {
           'bg-secondaryHighlight hover:bg-secondaryHighlightHover':
             selectedVariant === 'secondary' && selected,
           'hover:bg-secondaryHighlight focus:bg-secondaryHighlight': !selected,
-          'auto-focus': autoFocus,
+          [autoFocusClass]: autoFocus,
         },
         className,
       )}

@@ -62,7 +62,6 @@ export const OverlayCard: React.FC<OverlayCardProps> = (props) => {
           >
             <Card
               htmlProps={{
-                role: 'dialog',
                 ...htmlProps,
                 className: classNames(
                   'pointer-events-auto shadow-2xl [max-height:inherit]',

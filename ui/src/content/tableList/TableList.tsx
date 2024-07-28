@@ -9,6 +9,8 @@ import { withQuotes } from '~/shared/utils/sql';
 import { assert } from 'ts-essentials';
 import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';
+import { uniq } from 'lodash';
+import { isNotUndefined } from '~/shared/utils/typescript';
 
 export const TableList: React.FC = () => {
   const trpc = useDefinedContext(TrpcContext);
@@ -41,13 +43,16 @@ export const TableList: React.FC = () => {
     });
   }, [activeConnection, trpc]);
 
-  const getIsSelected = (tableName: string) =>
-    activeTab?.queries.some((query) =>
-      query.some((q) => {
-        const result = q.id in queryResults ? queryResults[q.id] : null;
-        return result?.table === tableName;
-      }),
-    );
+  const selectedTables = uniq(
+    activeTab?.queries.flatMap((query) =>
+      query
+        .map((q) => {
+          const result = q.id in queryResults ? queryResults[q.id] : null;
+          return result?.table;
+        })
+        .filter(isNotUndefined),
+    ),
+  );
 
   const getQuery = (tableName: string) => {
     assert(activeConnection);
@@ -86,10 +91,12 @@ export const TableList: React.FC = () => {
           }),
           label: tableName,
           onMouseDown: getHandleMouseDown(tableName),
-          onSelect: () => addQuery(getQuery(tableName)),
-          selected: getIsSelected(tableName),
           selectedVariant: 'secondary',
+          value: tableName,
         }))}
+        multiple
+        onSelect={(tableName) => addQuery(getQuery(tableName))}
+        selectedValues={selectedTables}
       />
     </div>
   );

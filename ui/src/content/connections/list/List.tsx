@@ -64,10 +64,11 @@ export const ConnectionList: React.FC<ConnectionListProps> = (props) => {
                 ],
                 hint: `${connection.user}@${connection.host}:${connection.port}`,
                 label: connection.name,
-                onSelect: () => connect(connection.id),
-                selected: activeConnection?.id === connection.id,
                 selectedVariant: 'primary',
+                value: connection.id,
               }))}
+              onSelect={connect}
+              selectedValue={activeConnection?.id ?? null}
             />
           </div>
           {!hideDatabases && (
