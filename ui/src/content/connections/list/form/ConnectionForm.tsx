@@ -9,7 +9,7 @@ import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/C
 import { Field } from '~/shared/components/field/Field';
 import { Input } from '~/shared/components/input/Input';
 import { Select } from '~/shared/components/select/Select';
-import { ThreeColumns } from '~/shared/components/threeColumns/ThreeColumns';
+import { Header } from '~/shared/components/header/Header';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
 import type { Connection } from '~/shared/types';
 import { SshFormSection } from './ssh/SshFormSection';
@@ -97,7 +97,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   return (
     <>
       <form className="mx-auto grid w-[320px] gap-2" onSubmit={onSubmit} ref={formRef}>
-        <ThreeColumns
+        <Header
           left={!hideBackButton && <Button htmlProps={{ onClick: exit }} icon={<ArrowBack />} />}
           middle={
             <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">

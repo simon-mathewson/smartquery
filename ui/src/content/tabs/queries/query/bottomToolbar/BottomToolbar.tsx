@@ -1,7 +1,7 @@
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import React from 'react';
 import { Button } from '~/shared/components/button/Button';
-import { ThreeColumns } from '~/shared/components/threeColumns/ThreeColumns';
+import { Header } from '~/shared/components/header/Header';
 import { usePagination } from './usePagination';
 import { Add } from './createRow/CreateRow';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
@@ -27,7 +27,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
   const nextDisabled = totalRows !== undefined && totalRows - ((offset ?? 0) + (limit ?? 0)) <= 0;
 
   return (
-    <ThreeColumns
+    <Header
       left={<Add handleRowCreationRef={handleRowCreationRef} />}
       middle={
         ((totalRows !== undefined && totalRows > 0) || rows.length > 0) && (

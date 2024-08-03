@@ -1,12 +1,12 @@
 import React from 'react';
 
-export type ThreeColumnsProps = {
+export type HeaderProps = {
   left?: React.ReactNode;
   middle?: React.ReactNode;
   right?: React.ReactNode;
 };
 
-export const ThreeColumns: React.FC<ThreeColumnsProps> = (props) => {
+export const Header: React.FC<HeaderProps> = (props) => {
   const { left, middle, right } = props;
 
   return (

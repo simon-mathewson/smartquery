@@ -9,7 +9,7 @@ import { Table } from './table/Table';
 import type { InputMode } from './types';
 import { getQueryTitle } from './utils';
 import { InputModesSelect } from './inputModes/Select';
-import { ThreeColumns } from '~/shared/components/threeColumns/ThreeColumns';
+import { Header } from '~/shared/components/header/Header';
 import { BottomToolbar } from './bottomToolbar/BottomToolbar';
 import { QueryContext, ResultContext } from './Context';
 import { QueriesContext } from '../Context';
@@ -42,7 +42,7 @@ export const Query: React.FC = () => {
       )}
       data-query={query.id}
     >
-      <ThreeColumns
+      <Header
         left={
           result ? <InputModesSelect inputMode={inputMode} setInputMode={setInputMode} /> : null
         }
