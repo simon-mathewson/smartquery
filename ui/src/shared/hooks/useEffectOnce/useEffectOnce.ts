@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 
-export const useEffectOnce = (effect: React.EffectCallback, options?: { enabled: boolean }) => {
+export type UseEffectOnceOptions = { enabled: boolean };
+
+export const useEffectOnce = (effect: React.EffectCallback, options?: UseEffectOnceOptions) => {
   const enabled = options?.enabled ?? true;
 
   const hasRun = useRef(false);
