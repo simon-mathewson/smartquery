@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getParserOptions, sqlParser } from '~/shared/utils/parser';
 import { QueriesContext } from '../../Context';
 import { getLimitAndOffset, setLimitAndOffset } from '../../utils';

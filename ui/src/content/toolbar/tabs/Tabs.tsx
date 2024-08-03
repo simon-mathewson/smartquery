@@ -1,6 +1,6 @@
 import React from 'react';
 import { TabsContext } from '~/content/tabs/Context';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getTabTitle } from './utils';
 import { Button } from '~/shared/components/button/Button';
 import { Close } from '@mui/icons-material';

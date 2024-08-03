@@ -1,4 +1,4 @@
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import React, { useEffect, useState } from 'react';
 import { ConnectionsContext } from '../connections/Context';
 import { TrpcContext } from '../trpc/Context';

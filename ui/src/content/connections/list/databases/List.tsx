@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '../../Context';
 import { TrpcContext } from '~/content/trpc/Context';
 import { List } from '~/shared/components/list/List';

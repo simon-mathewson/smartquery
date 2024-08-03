@@ -4,7 +4,7 @@ import { Button } from '~/shared/components/button/Button';
 import { Header } from '~/shared/components/header/Header';
 import { usePagination } from './usePagination';
 import { Add } from './createRow/CreateRow';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../Context';
 
 export type BottomToolbarProps = {

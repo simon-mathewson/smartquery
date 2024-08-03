@@ -7,7 +7,7 @@ import { getCurrentOs, getDistributableUrl } from './utils';
 import { distributablesByOs } from './constants';
 import { Button } from '~/shared/components/button/Button';
 import { ArrowForward, FileDownloadOutlined } from '@mui/icons-material';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { LinkContext } from '../Context';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '~/router/routes';

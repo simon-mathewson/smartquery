@@ -3,7 +3,7 @@ import React from 'react';
 import { EditContext } from '~/content/edit/Context';
 import { Button } from '~/shared/components/button/Button';
 import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/ConfirmDeletePopover';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ReviewChangesCard } from './reviewChangesCard/ReviewChangesCard';
 
 export const Changes: React.FC = () => {

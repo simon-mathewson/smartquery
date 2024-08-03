@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { getWhere } from './utils';
 import NodeSqlParser from 'node-sql-parser';

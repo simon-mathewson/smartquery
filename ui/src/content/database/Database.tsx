@@ -1,4 +1,4 @@
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { NavigationSidebar } from '../navigationSidebar/NavigationSidebar';
 import { Toolbar } from '../toolbar/Toolbar';
 import { Queries } from '../tabs/queries/Queries';

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TrpcContext } from '../trpc/Context';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { useNavigate } from 'react-router-dom';

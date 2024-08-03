@@ -3,7 +3,7 @@ import React from 'react';
 import { EditContext } from '~/content/edit/Context';
 import { getPrimaryKeys } from '~/content/tabs/queries/utils';
 import { Button } from '~/shared/components/button/Button';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../../Context';
 
 export type DeleteProps = {

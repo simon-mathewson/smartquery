@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { routes } from '~/router/routes';
 import type { ModalControl } from '~/shared/components/modal/types';
 import type { SignInModalInput } from './signInModal/types';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TrpcContext } from '../trpc/Context';
 import { ToastContext } from '../toast/Context';
 import { getInitialConnections } from './utils';

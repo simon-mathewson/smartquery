@@ -1,7 +1,7 @@
 import { DropMarker } from '~/content/dragAndDrop/DropMarker';
 import React from 'react';
 import { Query } from './query/Query';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TabsContext } from '../Context';
 import { QueryProvider } from './query/Provider';
 import { Logo } from '~/shared/components/logo/Logo';

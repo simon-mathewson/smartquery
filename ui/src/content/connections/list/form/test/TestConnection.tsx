@@ -10,7 +10,7 @@ import { ConnectionSignInModal } from '~/content/connections/signInModal/SignInM
 import { isAuthError } from '~/shared/utils/prisma';
 import { isNil } from 'lodash';
 import { TrpcContext } from '~/content/trpc/Context';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 
 export type TestConnectionProps = {
   form: FormSchema;

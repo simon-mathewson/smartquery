@@ -1,4 +1,4 @@
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../Context';
 import { useCallback, useEffect } from 'react';
 import { getTsvFromSelection } from '../utils/getTsvFromSelection';

@@ -1,4 +1,4 @@
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import classNames from 'classnames';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { DragAndDropContext } from './Context';

@@ -2,7 +2,7 @@ import React from 'react';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Field } from '~/shared/components/field/Field';
 import type { ThemeModePreference } from '../theme/types';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ThemeContext } from '../theme/Context';
 import { AddToDesktop } from './addToDesktop/AddToDesktop';
 

@@ -5,7 +5,7 @@ import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import React, { useMemo } from 'react';
 import './styles.css';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ThemeContext } from '~/content/theme/Context';
 import { themes } from '../../../../tailwind.config';
 

@@ -2,7 +2,7 @@ import { Close, Refresh } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
 import classNames from 'classnames';
 import React, { useContext } from 'react';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { Button } from '../../../../shared/components/button/Button';
 import { InputModes } from './inputModes/InputModes';
 import { Table } from './table/Table';

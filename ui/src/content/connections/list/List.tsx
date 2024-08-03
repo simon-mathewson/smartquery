@@ -1,6 +1,6 @@
 import { Add, EditOutlined } from '@mui/icons-material';
 import { Button } from '~/shared/components/button/Button';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '../Context';
 import { useState } from 'react';
 import { DatabaseList } from './databases/List';

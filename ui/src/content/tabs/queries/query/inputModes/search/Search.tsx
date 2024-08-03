@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '~/shared/components/button/Button';
 import { Input } from '~/shared/components/input/Input';
 import { useSearch } from './useSearch';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../Context';
 
 export const Search: React.FC = () => {

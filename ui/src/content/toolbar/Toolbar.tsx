@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '~/shared/components/button/Button';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { Add } from '@mui/icons-material';
 import { Changes } from './changes/Changes';
 import { TabsContext } from '../tabs/Context';

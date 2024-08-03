@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TableList } from '../tableList/TableList';
 import { Connections } from './connections/Connections';
 import { ConnectionsContext } from '../connections/Context';

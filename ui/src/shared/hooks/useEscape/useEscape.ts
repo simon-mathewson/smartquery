@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { HtmlRef } from '~/shared/types';
-import { useDefinedContext } from '../useDefinedContext';
+import { useDefinedContext } from '../useDefinedContext/useDefinedContext';
 import { EscapeStackContext } from './useStack/Context';
 import { v4 as uuid } from 'uuid';
 

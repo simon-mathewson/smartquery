@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import * as uuid from 'uuid';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useLocalStorageState';
 import type { Query } from '~/shared/types';
 import { type Tab } from '~/shared/types';

@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 import { QueryContext, ResultContext } from './Context';
 import type { Query } from '~/shared/types';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { QueriesContext } from '../Context';
 
 export type QueryContextValue = {

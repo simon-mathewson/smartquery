@@ -8,7 +8,7 @@ import { EditContext } from '~/content/edit/Context';
 import type { PrimaryKey } from '~/content/edit/types';
 import { doChangeLocationsMatch } from '~/content/edit/utils';
 import { Button } from '~/shared/components/button/Button';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getPrimaryKeys } from '../../../utils';
 import { ResultContext } from '../../Context';
 import { EditOverlay } from '../editOverlay/EditOverlay';

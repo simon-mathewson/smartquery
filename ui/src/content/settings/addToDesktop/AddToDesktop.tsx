@@ -1,6 +1,6 @@
 import { InstallDesktopOutlined } from '@mui/icons-material';
 import { Button } from '~/shared/components/button/Button';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AddToDesktopContext } from './Context';
 
 export const AddToDesktop: React.FC = () => {

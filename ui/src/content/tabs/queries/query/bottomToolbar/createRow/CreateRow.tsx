@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '~/shared/components/button/Button';
 import { Add as AddIcon } from '@mui/icons-material';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { EditContext } from '~/content/edit/Context';
 import type { CreateChangeInput, CreateRow } from '~/content/edit/types';
 import { ResultContext } from '../../Context';

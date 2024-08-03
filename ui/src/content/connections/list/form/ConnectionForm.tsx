@@ -10,7 +10,7 @@ import { Field } from '~/shared/components/field/Field';
 import { Input } from '~/shared/components/input/Input';
 import { Select } from '~/shared/components/select/Select';
 import { Header } from '~/shared/components/header/Header';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { Connection } from '~/shared/types';
 import { SshFormSection } from './ssh/SshFormSection';
 import { TestConnection } from './test/TestConnection';

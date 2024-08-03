@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React from 'react';
 import { type Column, type Value } from '~/shared/types';
 import { isDateTimeType, isEnumType, isNumberType, isTimeType } from '~/shared/dataTypes/utils';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { QueryContext } from '../../Context';
 import type { CreateValue } from '~/content/edit/types';
 import type { useSorting } from '../sorting/useSorting';

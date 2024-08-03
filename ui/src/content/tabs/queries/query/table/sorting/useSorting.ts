@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { getSortedColumnFromAst } from './utils';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { QueryContext } from '../../Context';
 import { getParserOptions, sqlParser } from '~/shared/utils/parser';
 import type NodeSqlParser from 'node-sql-parser';

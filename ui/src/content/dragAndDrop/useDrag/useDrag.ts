@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { getClosestDropMarker } from './utils';
-import { useDefinedContext } from '../../../shared/hooks/useDefinedContext';
+import { useDefinedContext } from '../../../shared/hooks/useDefinedContext/useDefinedContext';
 import { DragAndDropContext } from '../Context';
 import { TabsContext } from '~/content/tabs/Context';
 import type { DropMarker } from '../types';

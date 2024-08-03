@@ -3,7 +3,7 @@ import React from 'react';
 import { assert } from 'ts-essentials';
 import { ColumnField } from '~/shared/components/columnField/ColumnField';
 import { Select } from '~/shared/components/select/Select';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../../Context';
 import { NULL_OPERATORS, OPERATORS } from '../constants';
 import type { FormFilter, NullOperator, OperatorWithValue } from '../types';

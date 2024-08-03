@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { EditContext } from '~/content/edit/Context';
 import type { CreateChange, DeleteChange, UpdateChange } from '~/content/edit/types';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getPrimaryKeys } from '../../utils';
 import { Cell } from './cell/Cell';
 import { SelectionActions } from './selectionActions/SelectionActions';
