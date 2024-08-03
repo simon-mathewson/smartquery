@@ -4,15 +4,17 @@ import { useDefinedContext } from '../useDefinedContext';
 import { EscapeStackContext } from './useStack/Context';
 import { v4 as uuid } from 'uuid';
 
-/** Manages escaping (e.g. closing a modal) via escape key or clicking outside */
-export const useEscape = (props: {
+export type UseEscapeProps = {
   active: boolean;
   clickOutside?: {
     additionalRefs?: HtmlRef[];
     ref: HtmlRef;
   };
   handler: () => void;
-}) => {
+};
+
+/** Manages escaping (e.g. closing a modal) via escape key or clicking outside */
+export const useEscape = (props: UseEscapeProps) => {
   const { active, clickOutside, handler } = props;
 
   const {

@@ -48,7 +48,7 @@ export const router = trpc.router({
       // Connect right away so we get an error if connection is invalid
       await client.$connect();
     } catch (error: unknown) {
-      console.log(error);
+      console.error(error);
       if (sshTunnel) {
         void sshTunnel.shutdown();
       }
