@@ -60,7 +60,7 @@ export function Select<T extends string>(props: SelectProps<T>) {
         <ExpandMore className="text-secondary" />
       </button>
       <OverlayCard
-        htmlProps={{ className: 'p-1' }}
+        htmlProps={{ className: '!p-0' }}
         matchTriggerWidth
         onClose={() => setIsOpen(false)}
         onOpen={() => setIsOpen(true)}
@@ -68,11 +68,14 @@ export function Select<T extends string>(props: SelectProps<T>) {
       >
         {({ close }) => (
           <List
-            htmlProps={{ id: listboxId }}
+            htmlProps={{
+              className: '!gap-0',
+              id: listboxId,
+            }}
             items={options.map(({ label, value }) => ({
               htmlProps: {
                 className: classNames(
-                  'cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-1.5 text-sm font-medium text-textSecondary',
+                  'first:rounded-t-xl last:rounded-b-xl rounded-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-1.5 text-sm font-medium text-textSecondary',
                   {
                     'bg-primary text-white': value === selectedValue,
                     'hover:bg-secondaryHighlight': value !== selectedValue,

@@ -6,8 +6,8 @@ import { autoFocusClass } from '~/shared/utils/focusFirstControl';
 export type ListItemProps<T extends string> = {
   actions?: Array<{ icon: React.ReactNode; onClick: () => void }>;
   autoFocus?: boolean;
-  className?: string;
   hint?: string;
+  htmlProps?: React.HTMLProps<HTMLDivElement>;
   label?: string;
   onMouseDown?: React.MouseEventHandler<HTMLElement>;
   onSelect: () => void;
@@ -20,8 +20,8 @@ export const ListItem = <T extends string>(props: ListItemProps<T>) => {
   const {
     actions,
     autoFocus,
-    className,
     hint,
+    htmlProps,
     label,
     onMouseDown,
     onSelect,
@@ -31,6 +31,7 @@ export const ListItem = <T extends string>(props: ListItemProps<T>) => {
 
   return (
     <div
+      {...htmlProps}
       aria-selected={selected}
       className={classNames(
         'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-1.5',
@@ -41,7 +42,7 @@ export const ListItem = <T extends string>(props: ListItemProps<T>) => {
           'hover:bg-secondaryHighlight focus:bg-secondaryHighlight': !selected,
           [autoFocusClass]: autoFocus,
         },
-        className,
+        htmlProps?.className,
       )}
       onClick={onSelect}
       onMouseDown={onMouseDown}
