@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useStoredState } from '~/shared/hooks/useLocalStorageState';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { ThemeMode, ThemeModePreference } from './types';
 
 const systemDarkModeQuery = '(prefers-color-scheme: dark)';

@@ -10,7 +10,7 @@ import type {
   CreateChangeInput,
 } from './types';
 import { doChangeLocationsMatch, getValueString } from './utils';
-import { useStoredState } from '~/shared/hooks/useLocalStorageState';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { withQuotes } from '~/shared/utils/sql';

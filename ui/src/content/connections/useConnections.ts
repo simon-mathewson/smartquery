@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useStoredState } from '~/shared/hooks/useLocalStorageState';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { ActiveConnection, Connection } from '~/shared/types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { useParams, useNavigate } from 'react-router-dom';

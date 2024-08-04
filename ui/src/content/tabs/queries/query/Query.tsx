@@ -13,7 +13,7 @@ import { Header } from '~/shared/components/header/Header';
 import { BottomToolbar } from './bottomToolbar/BottomToolbar';
 import { QueryContext, ResultContext } from './Context';
 import { QueriesContext } from '../Context';
-import { useStoredState } from '~/shared/hooks/useLocalStorageState';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 
 export const Query: React.FC = () => {
   const { removeQuery, runQuery } = useDefinedContext(QueriesContext);

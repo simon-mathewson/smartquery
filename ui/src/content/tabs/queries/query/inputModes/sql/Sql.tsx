@@ -3,7 +3,7 @@ import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { QueriesContext } from '../../../Context';
 import { QueryContext } from '../../Context';
-import { useStoredState } from '~/shared/hooks/useLocalStorageState';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 
 export const Sql: React.FC = () => {
   const { updateQuery } = useDefinedContext(QueriesContext);
