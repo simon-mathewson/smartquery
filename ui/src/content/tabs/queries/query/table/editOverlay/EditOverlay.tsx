@@ -2,7 +2,7 @@ import { range } from 'lodash';
 import { useMemo } from 'react';
 import { getPrimaryKeys } from '~/content/tabs/queries/utils';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
-import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
+import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays/arrays';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../Context';
 import type { EditOverlayFieldProps } from './field/Field';

@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
+import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays/arrays';
 import { ResultContext } from '../Context';
 
 export const useSelection = () => {

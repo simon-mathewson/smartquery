@@ -14,7 +14,7 @@ import { ResultContext } from '../../Context';
 import { EditOverlay } from '../editOverlay/EditOverlay';
 import { Delete } from './delete/Delete';
 import { popoverHeight, popoverMargin } from './constants';
-import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays';
+import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays/arrays';
 
 export type SelectionActionsProps = {
   columnCount: number;
