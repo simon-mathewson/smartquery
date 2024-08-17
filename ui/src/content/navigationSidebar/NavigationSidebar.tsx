@@ -4,7 +4,7 @@ import { TableList } from '../tableList/TableList';
 import { Connections } from './connections/Connections';
 import { ConnectionsContext } from '../connections/Context';
 import type { ActiveConnection } from '~/shared/types';
-import { usePrevious } from '~/shared/hooks/usePrevious';
+import { usePrevious } from '~/shared/hooks/usePrevious/usePrevious';
 import { SettingsOverlay } from '../settings/Overlay';
 
 export const NavigationSidebar: React.FC = () => {
