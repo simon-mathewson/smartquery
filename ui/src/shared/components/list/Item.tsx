@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import { Button } from '../button/Button';
-import { autoFocusClass } from '~/shared/utils/focusFirstControl';
+import { autoFocusClass } from '~/shared/utils/focusFirstControl/focusFirstControl';
 
 export type ListItemProps<T extends string> = {
   actions?: Array<{ icon: React.ReactNode; onClick: () => void }>;

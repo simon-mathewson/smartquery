@@ -1,4 +1,4 @@
-import { getFocusableElements } from './getFocusableElements';
+import { getFocusableElements } from '../getFocusableElements';
 
 export const autoFocusClass = 'auto-focus';
 

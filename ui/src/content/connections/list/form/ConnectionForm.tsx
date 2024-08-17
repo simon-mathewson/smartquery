@@ -18,7 +18,7 @@ import type { FormSchema } from './utils';
 import { getConnectionFromForm, getDefaultPort, isFormValid } from './utils';
 import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { focusFirstControl } from '~/shared/utils/focusFirstControl';
+import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
 
 export type ConnectionFormProps = {
   connectionToEditIndex: number | null;

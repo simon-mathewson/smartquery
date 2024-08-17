@@ -4,7 +4,7 @@ import { useStyles } from './useStyles';
 import { isNotNull, isNotUndefined } from '~/shared/utils/typescript';
 import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { mergeRefs } from 'react-merge-refs';
-import { focusFirstControl } from '~/shared/utils/focusFirstControl';
+import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
 import { useKeyboardNavigation } from './useKeyboardNavigation';
 
 export const useOverlayCard = (props: OverlayCardProps) => {
