@@ -5,7 +5,7 @@ import { Button } from '~/shared/components/button/Button';
 import { CodeEditor } from '../codeEditor/CodeEditor';
 import { getErrorMessage } from './utils';
 import { ErrorMessage } from '../errorMessage/ErrorMessage';
-import { getIsWindows } from '~/shared/utils/isWindows';
+import { getIsWindows } from '~/shared/utils/isWindows/isWindows';
 
 export type SqlEditorProps = {
   onChange?: (sql: string) => void;
