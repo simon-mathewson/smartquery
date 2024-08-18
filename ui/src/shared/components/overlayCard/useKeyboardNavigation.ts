@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getFocusableElements } from '~/shared/utils/getFocusableElements';
+import { getFocusableElements } from '~/shared/utils/getFocusableElements/getFocusableElements';
 
 export type UseKeyboardNavigationProps = {
   isTopLevel: boolean;

@@ -8,8 +8,8 @@ export const getFocusableElements = (container: HTMLElement): HTMLElement[] => {
         'input:not(:disabled):not([readonly]):not(.hidden)',
         'textarea:not(:disabled):not([readonly]):not(.hidden)',
         'select:not(:disabled):not(.hidden)',
-        'details:not(:disabled):not(.hidden)',
-        '[tabindex]:not(:disabled):not([tabindex="-1"]):not(.hidden)',
+        'details:not([aria-disabled="true"]):not(.hidden)',
+        '[tabindex]:not([aria-disabled="true"]):not([tabindex="-1"]):not(.hidden)',
       ].join(),
     ),
   );
