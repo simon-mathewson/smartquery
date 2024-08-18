@@ -1,14 +1,13 @@
 import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '~/content/connections/Context';
-import { getFiltersFromAst, getAstFromFilters } from './utils';
-import NodeSqlParser from 'node-sql-parser';
-import { getParserOptions } from '~/shared/utils/parser';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
+import { QueriesContext } from '../../../Context';
 import { getLimitAndOffset, setLimitAndOffset } from '../../../utils';
 import { QueryContext, ResultContext } from '../../Context';
-import { QueriesContext } from '../../../Context';
 import type { Filter } from './types';
+import { getAstFromFilters, getFiltersFromAst } from './utils';
 
 export const useFilters = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -36,10 +35,7 @@ export const useFilters = () => {
         setLimitAndOffset(newStatement, limitAndOffset.limit);
       }
 
-      const newSql = new NodeSqlParser.Parser().sqlify(
-        newStatement,
-        getParserOptions(activeConnection.engine),
-      );
+      const newSql = getSqlForAst(newStatement, activeConnection.engine);
       await updateQuery({ id: query.id, run: true, sql: newSql });
     },
     [activeConnection, columns, select, query.id, updateQuery],

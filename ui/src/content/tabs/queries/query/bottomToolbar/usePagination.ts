@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { getParserOptions, sqlParser } from '~/shared/utils/parser';
+import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import { QueriesContext } from '../../Context';
 import { getLimitAndOffset, setLimitAndOffset } from '../../utils';
 import { QueryContext, ResultContext } from '../Context';
@@ -31,7 +31,7 @@ export const usePagination = () => {
       const newQuery = cloneDeep(select.parsed);
       setLimitAndOffset(newQuery, limitAndOffset.limit, newOffset);
 
-      const sql = sqlParser.sqlify(newQuery, getParserOptions(activeConnection.engine));
+      const sql = getSqlForAst(newQuery, activeConnection.engine);
 
       await updateQuery({ id: query.id, run: true, sql });
     },

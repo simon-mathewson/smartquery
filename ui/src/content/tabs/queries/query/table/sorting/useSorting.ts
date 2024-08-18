@@ -1,13 +1,13 @@
 import { cloneDeep } from 'lodash';
-import { useCallback, useMemo } from 'react';
-import { getSortedColumnFromAst } from './utils';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { QueryContext } from '../../Context';
-import { getParserOptions, sqlParser } from '~/shared/utils/parser';
 import type NodeSqlParser from 'node-sql-parser';
+import { useCallback, useMemo } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import { QueriesContext } from '../../../Context';
 import { getLimitAndOffset, setLimitAndOffset } from '../../../utils';
+import { QueryContext } from '../../Context';
+import { getSortedColumnFromAst } from './utils';
 
 export const useSorting = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -46,7 +46,7 @@ export const useSorting = () => {
         setLimitAndOffset(newStatement, limitAndOffset.limit);
       }
 
-      const sql = sqlParser.sqlify(newStatement, getParserOptions(activeConnection.engine));
+      const sql = getSqlForAst(newStatement, activeConnection.engine);
 
       void updateQuery({ id: query.id, run: true, sql });
     },
