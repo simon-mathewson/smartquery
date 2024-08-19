@@ -7,6 +7,7 @@ export default mergeConfig(
     test: {
       include: ['**/*.test.ts'],
       globalSetup: 'src/test/globalSetup.ts',
+      environment: 'happy-dom',
     },
   }),
 );
