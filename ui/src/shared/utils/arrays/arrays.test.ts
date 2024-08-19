@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/experimental-ct-react';
+import { expect, test } from 'vitest';
 import { cloneArrayWithEmptyValues } from './arrays';
 
 test('cloneArrayWithEmptyValues', () => {
