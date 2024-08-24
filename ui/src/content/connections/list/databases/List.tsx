@@ -8,11 +8,9 @@ export const DatabaseList: React.FC = () => {
 
   return (
     <div>
-      <div className="flex h-[44px] items-center pb-2 pl-1">
-        <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-textPrimary">
-          Databases
-        </div>
-      </div>
+      <h2 className="mb-2 overflow-hidden text-ellipsis whitespace-nowrap py-2 pl-1 text-sm font-medium text-textPrimary">
+        Databases
+      </h2>
       <List
         items={activeConnectionDatabases.map((database) => ({
           label: database,
