@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`getSqlForAst generates SQL for AST > MySQL 1`] = `"SELECT * FROM \`users\` INNER JOIN \`posts\` ON \`users\`.\`id\` = \`posts\`.\`user_id\` WHERE \`users\`.\`id\` = 1 ORDER BY \`users\`.\`id\` ASC LIMIT 1"`;
+
+exports[`getSqlForAst generates SQL for AST > PostgreSQL 1`] = `"SELECT * FROM "users" INNER JOIN "posts" ON "users"."id" = "posts"."user_id" WHERE "users"."id" = 1 ORDER BY "users"."id" ASC LIMIT 1"`;
