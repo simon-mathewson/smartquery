@@ -6,7 +6,7 @@ import { TrpcContext } from '~/content/trpc/Context';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { splitSqlStatements } from '~/shared/utils/sql';
+import { splitSqlStatements } from '~/shared/utils/sql/sql';
 
 export type ReviewChangesCardProps = {
   triggerRef: React.RefObject<HTMLButtonElement>;

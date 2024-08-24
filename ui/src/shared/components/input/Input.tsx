@@ -4,7 +4,7 @@ import React, { useCallback, useContext } from 'react';
 import { useTheme } from '~/content/theme/useTheme';
 import { FieldContext } from '../field/FieldContext';
 import { mergeRefs } from 'react-merge-refs';
-import { isNotUndefined } from '~/shared/utils/typescript';
+import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 
 export type InputProps = {
   hidden?: boolean;

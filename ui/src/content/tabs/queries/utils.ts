@@ -7,7 +7,7 @@ import { isTimeType } from '~/shared/dataTypes/utils';
 import type { Column, Connection, PrismaValue, Query, Row, Value } from '~/shared/types';
 import { getAstForSql } from '~/shared/utils/sqlParser/getAstForSql';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
-import { splitSqlStatements } from '~/shared/utils/sql';
+import { splitSqlStatements } from '~/shared/utils/sql/sql';
 import type { AddQueryOptions, Select } from './types';
 
 export const getPrimaryKeys = (columns: Column[], rows: Row[], rowIndex: number) => {

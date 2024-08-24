@@ -4,7 +4,7 @@ import { ConnectionsContext } from '~/content/connections/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { Row } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
-import { isNotNull } from '~/shared/utils/typescript';
+import { isNotNull } from '~/shared/utils/typescript/typescript';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
 import {

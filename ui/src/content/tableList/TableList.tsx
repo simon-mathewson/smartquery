@@ -5,12 +5,12 @@ import { TrpcContext } from '../trpc/Context';
 import { TabsContext } from '../tabs/Context';
 import { QueriesContext } from '../tabs/queries/Context';
 import { useDrag } from '../dragAndDrop/useDrag/useDrag';
-import { addQuotes } from '~/shared/utils/sql';
+import { addQuotes } from '~/shared/utils/sql/sql';
 import { assert } from 'ts-essentials';
 import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';
 import { uniq } from 'lodash';
-import { isNotUndefined } from '~/shared/utils/typescript';
+import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 
 export const TableList: React.FC = () => {
   const trpc = useDefinedContext(TrpcContext);

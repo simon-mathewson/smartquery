@@ -10,7 +10,7 @@ import { ErrorMessage } from '~/shared/components/errorMessage/ErrorMessage';
 import { Modal } from '~/shared/components/modal/Modal';
 import type { ModalControl } from '~/shared/components/modal/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { isAuthError } from '~/shared/utils/prisma';
+import { isAuthError } from '~/shared/utils/prisma/prisma';
 import { ConnectionsContext } from '../Context';
 import { getCredentialUsername } from '../utils';
 import type { SignInModalInput } from './types';

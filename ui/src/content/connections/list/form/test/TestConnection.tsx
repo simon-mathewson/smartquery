@@ -7,7 +7,7 @@ import type { ConnectInput } from '~/shared/types';
 import type { SignInModalInput } from '~/content/connections/signInModal/types';
 import { useModal } from '~/shared/components/modal/useModal';
 import { ConnectionSignInModal } from '~/content/connections/signInModal/SignInModal';
-import { isAuthError } from '~/shared/utils/prisma';
+import { isAuthError } from '~/shared/utils/prisma/prisma';
 import { isNil } from 'lodash';
 import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';

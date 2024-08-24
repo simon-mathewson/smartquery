@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { OverlayCardProps } from './OverlayCard';
 import { useStyles } from './useStyles';
-import { isNotNull, isNotUndefined } from '~/shared/utils/typescript';
+import { isNotNull, isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { mergeRefs } from 'react-merge-refs';
 import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';

@@ -13,7 +13,7 @@ import { doChangeLocationsMatch, getValueString } from './utils';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
-import { addQuotes } from '~/shared/utils/sql';
+import { addQuotes } from '~/shared/utils/sql/sql';
 
 export const useEdit = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
