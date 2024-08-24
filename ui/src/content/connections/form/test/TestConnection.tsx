@@ -85,7 +85,6 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
       <ConnectionSignInModal {...signInModal} />
       <Button
         htmlProps={{
-          className: 'mt-2',
           disabled: isTesting || !isFormValid(form),
           onClick: () => test(),
         }}

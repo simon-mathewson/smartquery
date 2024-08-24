@@ -6,14 +6,16 @@ import { getCredentialUsername } from '~/content/connections/utils';
 import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
 import { isNil } from 'lodash';
 import { defaultSshPort } from '../constants';
+import classNames from 'classnames';
 
 export type SshFormSectionProps = {
-  form: FormSchema;
+  form: Pick<FormSchema, 'ssh'>;
   getChangeHandler: (key: string) => (value: unknown) => void;
+  htmlProps?: React.HTMLProps<HTMLDivElement>;
 };
 
 export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
-  const { form, getChangeHandler } = props;
+  const { form, getChangeHandler, htmlProps } = props;
 
   const showPasswordField =
     form.ssh?.credentialStorage === 'localStorage' && form.ssh?.credentialType === 'password';
@@ -21,8 +23,8 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
     form.ssh?.credentialStorage === 'localStorage' && form.ssh?.credentialType === 'privateKey';
 
   return (
-    <>
-      <Field htmlProps={{ className: 'mt-2' }}>
+    <div className={classNames('grid gap-2', htmlProps?.className)}>
+      <Field>
         <ButtonSelect<true>
           equalWidth
           fullWidth
@@ -144,6 +146,6 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
           )}
         </>
       )}
-    </>
+    </div>
   );
 };

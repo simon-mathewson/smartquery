@@ -96,7 +96,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
   return (
     <>
-      <form className="mx-auto grid w-[320px] gap-2" onSubmit={onSubmit} ref={formRef}>
+      <form className="grid w-[320px] gap-2" onSubmit={onSubmit} ref={formRef}>
         <Header
           left={!hideBackButton && <Button htmlProps={{ onClick: exit }} icon={<ArrowBack />} />}
           middle={
@@ -190,7 +190,11 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         <Field label="Default database">
           <Input htmlProps={{ value: form.database }} onChange={getChangeHandler('database')} />
         </Field>
-        <SshFormSection form={form} getChangeHandler={getChangeHandler} />
+        <SshFormSection
+          form={form}
+          getChangeHandler={getChangeHandler}
+          htmlProps={{ className: 'my-2' }}
+        />
         <TestConnection form={form} />
         <Button
           htmlProps={{ disabled: !isFormValid(form), type: 'submit' }}
