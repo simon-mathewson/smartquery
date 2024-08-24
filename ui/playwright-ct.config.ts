@@ -7,7 +7,7 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   testMatch: '**/*.test.tsx',
   testDir: './',
-  snapshotDir: './__snapshots__',
+  snapshotPathTemplate: '{testFilePath}/../__snapshots__/{arg}{ext}',
   timeout: 10 * 1000,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -37,5 +37,4 @@ export default defineConfig({
       maxDiffPixelRatio: 0.1,
     },
   },
-  snapshotPathTemplate: '{testDir}/__snapshots__/{testFilePath}/{arg}{ext}',
 });
