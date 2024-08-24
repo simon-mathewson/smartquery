@@ -1,18 +1,18 @@
 import { Add, EditOutlined } from '@mui/icons-material';
 import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { ConnectionsContext } from '../Context';
+import { ConnectionsContext } from './Context';
 import { useState } from 'react';
 import { DatabaseList } from './databases/List';
 import { ConnectionForm } from './form/ConnectionForm';
 import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';
 
-export type ConnectionListProps = {
+export type ConnectionsProps = {
   hideDatabases?: boolean;
 };
 
-export const ConnectionList: React.FC<ConnectionListProps> = (props) => {
+export const Connections: React.FC<ConnectionsProps> = (props) => {
   const { hideDatabases } = props;
 
   const { activeConnection, connect, connections } = useDefinedContext(ConnectionsContext);

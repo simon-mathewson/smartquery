@@ -1,6 +1,6 @@
 import { List } from '~/shared/components/list/List';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { ConnectionsContext } from '../../Context';
+import { ConnectionsContext } from '../Context';
 
 export const DatabaseList: React.FC = () => {
   const { activeConnection, activeConnectionDatabases, connect } =

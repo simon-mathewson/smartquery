@@ -1,6 +1,6 @@
 import React from 'react';
-import type { useConnections } from '../../useConnections';
-import { ConnectionsContext } from '../../Context';
+import type { useConnections } from '../useConnections';
+import { ConnectionsContext } from '../Context';
 import { DatabaseList } from './List';
 import type { DeepPartial } from 'ts-essentials';
 

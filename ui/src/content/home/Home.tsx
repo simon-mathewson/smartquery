@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '~/shared/components/card/Card';
-import { ConnectionList } from '../connections/list/List';
+import { Connections } from '../connections/Connections';
 import { Logo } from '~/shared/components/logo/Logo';
 
 export const Home: React.FC = () => {
@@ -8,7 +8,7 @@ export const Home: React.FC = () => {
     <div className="flex flex-col items-center gap-2 pt-6">
       <Logo htmlProps={{ className: 'mb-4 w-16' }} />
       <Card htmlProps={{ className: 'w-max' }}>
-        <ConnectionList hideDatabases />
+        <Connections hideDatabases />
       </Card>
     </div>
   );

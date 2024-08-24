@@ -1,11 +1,12 @@
 import React, { useRef } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TableList } from '../tableList/TableList';
-import { Connections } from './connections/Connections';
 import { ConnectionsContext } from '../connections/Context';
 import type { ActiveConnection } from '~/shared/types';
 import { usePrevious } from '~/shared/hooks/usePrevious/usePrevious';
 import { SettingsOverlay } from '../settings/Overlay';
+import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
+import { Connections } from '../connections/Connections';
 
 export const NavigationSidebar: React.FC = () => {
   const { activeConnection: currentActiveConnection } = useDefinedContext(ConnectionsContext);
@@ -36,8 +37,17 @@ export const NavigationSidebar: React.FC = () => {
           </>
         )}
       </button>
-      <Connections triggerRef={connectionsTriggerRef} />
+
+      <OverlayCard
+        align="left"
+        htmlProps={{ className: 'w-max p-2 shadow-2xl' }}
+        triggerRef={connectionsTriggerRef}
+      >
+        {() => <Connections />}
+      </OverlayCard>
+
       {currentActiveConnection && <TableList />}
+
       <SettingsOverlay />
     </div>
   );
