@@ -1,37 +1,10 @@
-import { useEffect, useState } from 'react';
+import { List } from '~/shared/components/list/List';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '../../Context';
-import { TrpcContext } from '~/content/trpc/Context';
-import { List } from '~/shared/components/list/List';
 
 export const DatabaseList: React.FC = () => {
-  const trpc = useDefinedContext(TrpcContext);
-
-  const { activeConnection, connect } = useDefinedContext(ConnectionsContext);
-
-  const [databases, setDatabases] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!activeConnection) return;
-
-    const { clientId, engine } = activeConnection;
-
-    const databasesStatement = {
-      mysql:
-        "SELECT schema_name AS db FROM information_schema.schemata WHERE schema_name NOT IN ('information_schema', 'performance_schema', 'sys') ORDER BY schema_name ASC",
-      postgresql:
-        'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC',
-    }[engine];
-    const ac = new AbortController();
-
-    trpc.sendQuery
-      .mutate({ clientId, statements: [databasesStatement] }, { signal: ac.signal })
-      .then(([rows]) => {
-        setDatabases(rows.map(({ db }) => String(db)));
-      });
-
-    return () => ac.abort();
-  }, [activeConnection, trpc]);
+  const { activeConnection, activeConnectionDatabases, connect } =
+    useDefinedContext(ConnectionsContext);
 
   return (
     <div>
@@ -41,7 +14,7 @@ export const DatabaseList: React.FC = () => {
         </div>
       </div>
       <List
-        items={databases.map((database) => ({
+        items={activeConnectionDatabases.map((database) => ({
           label: database,
           selectedVariant: 'primary',
           value: database,

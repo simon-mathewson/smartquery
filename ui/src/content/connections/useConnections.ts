@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import type { ActiveConnection, Connection } from '~/shared/types';
+import type { ActiveConnection, Connection, Engine } from '~/shared/types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { useParams, useNavigate } from 'react-router-dom';
 import { routes } from '~/router/routes';
@@ -33,6 +33,8 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
   }>();
 
   const [activeConnection, setActiveConnection] = useState<ActiveConnection | null>(null);
+
+  const [activeConnectionDatabases, setActiveConnectionDatabases] = useState<string[]>([]);
 
   useEffect(() => {
     if (!activeConnectionClientId || !connectionIdParam || !databaseParam) return;
@@ -81,7 +83,24 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
     setActiveConnectionClientId(null);
     setActiveConnection(null);
+    setActiveConnectionDatabases([]);
   }, [activeConnection, trpc]);
+
+  const getDatabases = useCallback(
+    async (clientId: string, engine: Engine) => {
+      const databasesStatement = {
+        mysql:
+          "SELECT schema_name AS db FROM information_schema.schemata WHERE schema_name NOT IN ('information_schema', 'performance_schema', 'sys') ORDER BY schema_name ASC",
+        postgresql:
+          'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC',
+      }[engine];
+
+      trpc.sendQuery.mutate({ clientId, statements: [databasesStatement] }).then(([rows]) => {
+        setActiveConnectionDatabases(rows.map(({ db }) => String(db)));
+      });
+    },
+    [trpc.sendQuery],
+  );
 
   const connect = useCallback(
     async (
@@ -136,9 +155,11 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
         });
 
         setActiveConnectionClientId(newClientId);
-        navigate(routes.database(connection.id, selectedDatabase));
 
+        navigate(routes.database(connection.id, selectedDatabase));
         window.document.title = `${selectedDatabase} – ${connection.name}`;
+
+        await getDatabases(newClientId, connection.engine);
       } catch (error) {
         console.error(error);
 
@@ -151,7 +172,7 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
         navigate(routes.root());
       }
     },
-    [connections, disconnect, navigate, signInModal, toast, trpc.connectDb],
+    [connections, disconnect, getDatabases, navigate, signInModal, toast, trpc.connectDb],
   );
 
   useEffectOnce(() => {
@@ -195,12 +216,21 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
   return useMemo(
     () => ({
       activeConnection,
+      activeConnectionDatabases,
       addConnection,
       connect,
       connections,
       removeConnection,
       updateConnection,
     }),
-    [activeConnection, addConnection, connect, connections, removeConnection, updateConnection],
+    [
+      activeConnection,
+      activeConnectionDatabases,
+      addConnection,
+      connect,
+      connections,
+      removeConnection,
+      updateConnection,
+    ],
   );
 };

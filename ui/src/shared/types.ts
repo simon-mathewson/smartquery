@@ -31,6 +31,8 @@ export const connectionSchema = z.object({
 
 export type Connection = z.infer<typeof connectionSchema>;
 
+export type Engine = Connection['engine'];
+
 export type ActiveConnection = Connection & {
   clientId: string;
 };
