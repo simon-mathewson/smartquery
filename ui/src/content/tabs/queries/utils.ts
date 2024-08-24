@@ -7,7 +7,7 @@ import { isTimeType } from '~/shared/dataTypes/utils';
 import type { Column, Connection, PrismaValue, Query, Row, Value } from '~/shared/types';
 import { getAstForSql } from '~/shared/utils/sqlParser/getAstForSql';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
-import { parseStatements } from '~/shared/utils/sql';
+import { splitSqlStatements } from '~/shared/utils/sql';
 import type { AddQueryOptions, Select } from './types';
 
 export const getPrimaryKeys = (columns: Column[], rows: Row[], rowIndex: number) => {
@@ -88,7 +88,7 @@ export const parseQuery = (props: {
 } => {
   const { engine, sql } = props;
 
-  const statements = parseStatements(sql);
+  const statements = splitSqlStatements(sql);
 
   const select =
     statements.length === 1 ? getSelectFromStatement({ engine, statement: statements[0] }) : null;

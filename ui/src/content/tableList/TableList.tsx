@@ -5,7 +5,7 @@ import { TrpcContext } from '../trpc/Context';
 import { TabsContext } from '../tabs/Context';
 import { QueriesContext } from '../tabs/queries/Context';
 import { useDrag } from '../dragAndDrop/useDrag/useDrag';
-import { withQuotes } from '~/shared/utils/sql';
+import { addQuotes } from '~/shared/utils/sql';
 import { assert } from 'ts-essentials';
 import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';
@@ -59,8 +59,8 @@ export const TableList: React.FC = () => {
 
     return {
       sql: {
-        mysql: `SELECT * FROM ${withQuotes(activeConnection.engine, tableName)} LIMIT 50`,
-        postgresql: `SELECT * FROM ${withQuotes(activeConnection.engine, tableName)} LIMIT 50`,
+        mysql: `SELECT * FROM ${addQuotes(activeConnection.engine, tableName)} LIMIT 50`,
+        postgresql: `SELECT * FROM ${addQuotes(activeConnection.engine, tableName)} LIMIT 50`,
       }[activeConnection.engine],
     };
   };

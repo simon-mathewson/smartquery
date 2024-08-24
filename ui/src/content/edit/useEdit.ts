@@ -13,7 +13,7 @@ import { doChangeLocationsMatch, getValueString } from './utils';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
-import { withQuotes } from '~/shared/utils/sql';
+import { addQuotes } from '~/shared/utils/sql';
 
 export const useEdit = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -257,7 +257,7 @@ export const useEdit = () => {
       const { location } = change;
 
       const columns = Object.keys(change.rows[0]);
-      const columnList = columns.map((column) => withQuotes(engine, column)).join(',\n  ');
+      const columnList = columns.map((column) => addQuotes(engine, column)).join(',\n  ');
 
       const valueRows = change.rows
         .map((row) => {
@@ -268,7 +268,7 @@ export const useEdit = () => {
         })
         .join(',\n');
 
-      return `INSERT INTO ${withQuotes(
+      return `INSERT INTO ${addQuotes(
         engine,
         location.table,
       )} (\n  ${columnList}\n) VALUES\n${valueRows};`;
@@ -281,7 +281,7 @@ export const useEdit = () => {
         .map((primaryKeys) => {
           return primaryKeys
             .map((primaryKey) => {
-              return `${withQuotes(engine, primaryKey.column)} = '${primaryKey.value}'`;
+              return `${addQuotes(engine, primaryKey.column)} = '${primaryKey.value}'`;
             })
             .join(' AND ');
         })
@@ -289,7 +289,7 @@ export const useEdit = () => {
 
       const where = `WHERE ${primaryKeyConditions}`;
 
-      return `DELETE FROM ${withQuotes(engine, location.table)}\n${where};`;
+      return `DELETE FROM ${addQuotes(engine, location.table)}\n${where};`;
     });
 
     const updateStatements = aggregatedUpdateChanges.map((change) => {
@@ -299,7 +299,7 @@ export const useEdit = () => {
         .map((primaryKeys) => {
           return primaryKeys
             .map((primaryKey) => {
-              return `${withQuotes(engine, primaryKey.column)} = '${primaryKey.value}'`;
+              return `${addQuotes(engine, primaryKey.column)} = '${primaryKey.value}'`;
             })
             .join(' AND ');
         })
@@ -307,7 +307,7 @@ export const useEdit = () => {
 
       const where = `WHERE ${primaryKeyConditions}`;
 
-      return `UPDATE ${withQuotes(engine, location.table)}\nSET ${withQuotes(
+      return `UPDATE ${addQuotes(engine, location.table)}\nSET ${addQuotes(
         engine,
         location.column,
       )} = ${getValueString(change.value)}\n${where};`;

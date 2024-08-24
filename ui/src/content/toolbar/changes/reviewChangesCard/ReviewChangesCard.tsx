@@ -6,7 +6,7 @@ import { TrpcContext } from '~/content/trpc/Context';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { parseStatements } from '~/shared/utils/sql';
+import { splitSqlStatements } from '~/shared/utils/sql';
 
 export type ReviewChangesCardProps = {
   triggerRef: React.RefObject<HTMLButtonElement>;
@@ -32,7 +32,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
 
     await trpc.sendQuery.mutate({
       clientId: activeConnection.clientId,
-      statements: parseStatements(userSql),
+      statements: splitSqlStatements(userSql),
     });
 
     clearChanges();
