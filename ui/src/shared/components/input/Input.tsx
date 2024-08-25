@@ -91,6 +91,7 @@ export const Input: React.FC<InputProps> = (props) => {
   return (
     <Element
       role={getRole()}
+      {...(hidden ? {} : fieldContext?.controlHtmlProps)}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {...(htmlProps as any)}
       className={classNames(
@@ -98,9 +99,9 @@ export const Input: React.FC<InputProps> = (props) => {
         htmlProps?.className,
         {
           'resize-none overflow-hidden focus:overflow-auto': Element === 'textarea',
+          hidden,
         },
       )}
-      id={!hidden ? fieldContext?.controlId : undefined}
       onChange={onChange}
       onFocus={onFocus}
       ref={mergeRefs(

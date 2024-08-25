@@ -1,7 +1,8 @@
+import { cloneDeep } from 'lodash';
 import { assert } from 'ts-essentials';
 import { z } from 'zod';
+import type { Engine } from '~/shared/types';
 import { connectionSchema } from '~/shared/types';
-import { cloneDeep } from 'lodash';
 
 export const formSchema = connectionSchema.extend({
   engine: connectionSchema.shape.engine.nullable(),
@@ -18,9 +19,9 @@ export const formSchema = connectionSchema.extend({
     .nullable(),
 });
 
-export type FormSchema = z.infer<typeof formSchema>;
+export type FormValues = z.infer<typeof formSchema>;
 
-export const isFormValid = (form: FormSchema) => {
+export const isFormValid = (form: FormValues) => {
   try {
     getConnectionFromForm(form);
     return true;
@@ -29,7 +30,7 @@ export const isFormValid = (form: FormSchema) => {
   }
 };
 
-export const getConnectionFromForm = (formArg: FormSchema) => {
+export const getConnectionFromForm = (formArg: FormValues) => {
   const form = cloneDeep(formArg);
 
   assert(form.engine);
@@ -69,7 +70,7 @@ export const getConnectionFromForm = (formArg: FormSchema) => {
   return connection;
 };
 
-export const getDefaultPort = (engine: NonNullable<FormSchema['engine']>) =>
+export const getDefaultPort = (engine: Engine) =>
   ({
     mysql: 3306,
     postgresql: 5432,

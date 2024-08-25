@@ -1,7 +1,7 @@
 import { CheckCircleOutline, SettingsEthernet, WarningAmber } from '@mui/icons-material';
 import { Button } from '~/shared/components/button/Button';
 import React, { useEffect, useState } from 'react';
-import type { FormSchema } from '../utils';
+import type { FormValues } from '../utils';
 import { getConnectionFromForm, isFormValid } from '../utils';
 import type { ConnectInput } from '~/shared/types';
 import type { SignInModalInput } from '~/content/connections/signInModal/types';
@@ -13,7 +13,7 @@ import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 
 export type TestConnectionProps = {
-  form: FormSchema;
+  form: FormValues;
 };
 
 export const TestConnection: React.FC<TestConnectionProps> = (props) => {

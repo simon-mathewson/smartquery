@@ -37,10 +37,10 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
 
   return (
     <div
+      {...fieldContext?.controlHtmlProps}
       className={classNames('flex gap-2 rounded-lg', {
         'w-full': fullWidth,
       })}
-      id={fieldContext?.controlId}
       role="radiogroup"
     >
       {options.map(({ button, value }, index) => (

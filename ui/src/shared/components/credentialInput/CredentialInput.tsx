@@ -40,7 +40,6 @@ export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
         hidden
         htmlProps={{
           autoComplete: 'username',
-          className: 'hidden',
           readOnly: true,
           value: username,
         }}

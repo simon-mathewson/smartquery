@@ -14,7 +14,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import type { Connection } from '~/shared/types';
 import { SshFormSection } from './ssh/SshFormSection';
 import { TestConnection } from './test/TestConnection';
-import type { FormSchema } from './utils';
+import type { FormValues } from './utils';
 import { getConnectionFromForm, getDefaultPort, isFormValid } from './utils';
 import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
@@ -36,7 +36,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const connectionToEdit =
     connectionToEditIndex !== null ? connections[connectionToEditIndex] : null;
 
-  const [form, setForm] = useState<FormSchema>(
+  const [formValues, setFormValues] = useState<FormValues>(
     connectionToEdit
       ? {
           ...connectionToEdit,
@@ -65,8 +65,8 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         },
   );
 
-  const getChangeHandler = (key: string) => (value: unknown) => {
-    setForm((formValues) => {
+  const setFormValue = (key: string, value: unknown) => {
+    setFormValues((formValues) => {
       const newValues = cloneDeep(formValues);
       set(newValues, key, value);
       return newValues;
@@ -76,7 +76,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const connection = getConnectionFromForm(form);
+    const connection = getConnectionFromForm(formValues);
 
     connectionToEdit
       ? updateConnection(connectionToEdit.id, connection)
@@ -122,7 +122,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         <Field label="Engine">
           <Select<Connection['engine']>
             htmlProps={{ autoFocus: true }}
-            onChange={getChangeHandler('engine')}
+            onChange={(value) => setFormValue('engine', value)}
             options={[
               {
                 label: 'MySQL',
@@ -133,23 +133,29 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 value: 'postgresql',
               },
             ]}
-            value={form.engine}
+            value={formValues.engine}
           />
         </Field>
         <Field label="Name">
-          <Input htmlProps={{ value: form.name }} onChange={getChangeHandler('name')} />
+          <Input
+            htmlProps={{ value: formValues.name }}
+            onChange={(value) => setFormValue('name', value)}
+          />
         </Field>
         <div className="grid grid-cols-2 gap-2">
           <Field label="Host">
-            <Input htmlProps={{ value: form.host }} onChange={getChangeHandler('host')} />
+            <Input
+              htmlProps={{ value: formValues.host }}
+              onChange={(value) => setFormValue('host', value)}
+            />
           </Field>
           <Field label="Port">
             <Input
               htmlProps={{
-                placeholder: form.engine ? String(getDefaultPort(form.engine)) : '',
-                value: form.port === null ? '' : String(form.port),
+                placeholder: formValues.engine ? String(getDefaultPort(formValues.engine)) : '',
+                value: formValues.port === null ? '' : String(formValues.port),
               }}
-              onChange={(value) => getChangeHandler('port')(value ? Number(value) : null)}
+              onChange={(value) => setFormValue('port', value ? Number(value) : null)}
             />
           </Field>
         </div>
@@ -157,7 +163,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           <ButtonSelect<'alwaysAsk' | 'localStorage'>
             equalWidth
             fullWidth
-            onChange={getChangeHandler('credentialStorage')}
+            onChange={(value) => setFormValue('credentialStorage', value)}
             options={[
               {
                 button: { label: 'None / Keychain' },
@@ -169,35 +175,42 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
               },
             ]}
             required
-            value={form.credentialStorage}
+            value={formValues.credentialStorage}
           />
         </Field>
         <Field label="User">
-          <Input htmlProps={{ value: form.user }} onChange={getChangeHandler('user')} />
+          <Input
+            htmlProps={{ value: formValues.user }}
+            onChange={(value) => setFormValue('user', value)}
+          />
         </Field>
-        {form.credentialStorage === 'localStorage' && (
+        {formValues.credentialStorage === 'localStorage' && (
           <Field label="Password">
             <CredentialInput
-              htmlProps={{ value: form.password }}
-              onChange={getChangeHandler('password')}
+              htmlProps={{ value: formValues.password }}
+              onChange={(value) => setFormValue('password', value)}
               username={getCredentialUsername({
-                ...form,
-                port: form.port ?? (form.engine ? getDefaultPort(form.engine) : -1),
+                ...formValues,
+                port:
+                  formValues.port ?? (formValues.engine ? getDefaultPort(formValues.engine) : -1),
               })}
             />
           </Field>
         )}
         <Field label="Default database">
-          <Input htmlProps={{ value: form.database }} onChange={getChangeHandler('database')} />
+          <Input
+            htmlProps={{ value: formValues.database }}
+            onChange={(value) => setFormValue('database', value)}
+          />
         </Field>
         <SshFormSection
-          form={form}
-          getChangeHandler={getChangeHandler}
+          formValues={formValues}
           htmlProps={{ className: 'my-2' }}
+          setFormValue={setFormValue}
         />
-        <TestConnection form={form} />
+        <TestConnection form={formValues} />
         <Button
-          htmlProps={{ disabled: !isFormValid(form), type: 'submit' }}
+          htmlProps={{ disabled: !isFormValid(formValues), type: 'submit' }}
           icon={<Done />}
           label={mode === 'add' ? 'Add' : 'Save'}
           variant="filled"

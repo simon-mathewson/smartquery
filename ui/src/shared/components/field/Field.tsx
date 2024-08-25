@@ -13,12 +13,18 @@ export const Field: React.FC<PropsWithChildren<FieldProps>> = (props) => {
   const { children, htmlProps, label } = props;
 
   const [controlId] = useState(uuid());
+  const [labelId] = useState(uuid());
 
   return (
-    <FieldContext.Provider value={useMemo(() => ({ controlId }), [controlId])}>
+    <FieldContext.Provider
+      value={useMemo(
+        () => ({ controlHtmlProps: { 'aria-labelledby': labelId, id: controlId } }),
+        [controlId, labelId],
+      )}
+    >
       <div className={classNames('grid gap-1 focus-within:text-primary', htmlProps?.className)}>
         {label && (
-          <label className="block pl-1 text-xs font-medium" htmlFor={controlId}>
+          <label className="block pl-1 text-xs font-medium" htmlFor={controlId} id={labelId}>
             {label}
           </label>
         )}
