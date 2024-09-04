@@ -9,7 +9,7 @@ export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = (prop
   const { error } = props;
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-2">
+    <div className="flex min-h-full flex-col items-center justify-center gap-2 p-4">
       <div className="text-2xl font-medium text-textPrimary">An error occurred</div>
       <div className="text-textSecondary">Sorry about that. Reloading might help.</div>
       <Button

@@ -9,12 +9,12 @@ import { Button } from '~/shared/components/button/Button';
 import { ArrowForward, FileDownloadOutlined } from '@mui/icons-material';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { LinkContext } from '../Context';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
 import { ErrorMessage } from '~/shared/components/errorMessage/ErrorMessage';
 
 export const Setup: React.FC = () => {
-  const navigate = useNavigate();
+  const [, navigate] = useLocation();
 
   const link = useDefinedContext(LinkContext);
 

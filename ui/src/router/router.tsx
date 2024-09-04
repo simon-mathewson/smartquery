@@ -1,29 +1,21 @@
-import { createBrowserRouter } from 'react-router-dom';
+import React from 'react';
+import { Route, Switch } from 'wouter';
 import { App } from '~/App';
-import { routes } from './routes';
-import { Home } from '~/content/home/Home';
 import { Database } from '~/content/database/Database';
+import { Home } from '~/content/home/Home';
 import { Setup } from '~/content/link/setup/Setup';
-import { BubbleError } from './BubbleError';
+import { routes } from './routes';
 
-export const router = createBrowserRouter([
-  {
-    path: routes.root(),
-    element: <App />,
-    errorElement: <BubbleError />,
-    children: [
-      {
-        path: routes.root(),
-        element: <Home />,
-      },
-      {
-        path: routes.setup(),
-        element: <Setup />,
-      },
-      {
-        path: routes.database(),
-        element: <Database />,
-      },
-    ],
-  },
-]);
+export const Router: React.FC = () => {
+  return (
+    <Route path={routes.root()} nest>
+      <App>
+        <Switch>
+          <Route path={routes.root()} component={Home} />
+          <Route path={routes.setup()} component={Setup} />
+          <Route path={routes.database()} component={Database} />
+        </Switch>
+      </App>
+    </Route>
+  );
+};

@@ -1,6 +1,6 @@
 import { Key } from '@mui/icons-material';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { assert } from 'ts-essentials';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
@@ -19,7 +19,7 @@ import { CredentialInput } from '~/shared/components/credentialInput/CredentialI
 export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (props) => {
   const { close, input } = props;
 
-  const navigate = useNavigate();
+  const [, navigate] = useLocation();
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { ActiveConnection, Connection, Engine } from '~/shared/types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useRoute } from 'wouter';
 import { routes } from '~/router/routes';
 import type { ModalControl } from '~/shared/components/modal/types';
 import type { SignInModalInput } from './signInModal/types';
@@ -14,7 +14,7 @@ import { getInitialConnections } from './utils';
 export const useConnections = (props: { signInModal: ModalControl<SignInModalInput> }) => {
   const { signInModal } = props;
 
-  const navigate = useNavigate();
+  const [, navigate] = useLocation();
 
   const trpc = useDefinedContext(TrpcContext);
 
@@ -27,10 +27,14 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
 
   const [activeConnectionClientId, setActiveConnectionClientId] = useState<string | null>(null);
 
-  const { connectionId: connectionIdParam, database: databaseParam } = useParams<{
+  const [, dbRouteParams] = useRoute<{
     connectionId: string;
     database: string;
-  }>();
+  }>(routes.database());
+
+  const { connectionId: connectionIdParam, database: databaseParam } = dbRouteParams ?? {};
+
+  const previousRouteParamsRef = useRef<typeof dbRouteParams | undefined>(undefined);
 
   const [activeConnection, setActiveConnection] = useState<ActiveConnection | null>(null);
 
@@ -191,18 +195,15 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
     };
   }, [disconnect]);
 
-  const routeParams = useParams<{ connectionId?: string; database?: string }>();
-  const previousRouteParamsRef = useRef<typeof routeParams | undefined>(undefined);
-
   // Disconnect when navigating to non-DB route
   useEffect(() => {
     const previousRouteParams = previousRouteParamsRef.current;
-    previousRouteParamsRef.current = routeParams;
+    previousRouteParamsRef.current = dbRouteParams;
 
     if (!previousRouteParams) return;
 
     const { connectionId: previousConnectionId, database: previousDatabase } = previousRouteParams;
-    const { connectionId: nextConnectionId, database: nextDatabase } = routeParams;
+    const { connectionId: nextConnectionId, database: nextDatabase } = dbRouteParams ?? {};
 
     if (
       previousConnectionId &&
@@ -211,7 +212,7 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
     ) {
       void disconnect();
     }
-  }, [disconnect, routeParams]);
+  }, [disconnect, dbRouteParams]);
 
   return useMemo(
     () => ({

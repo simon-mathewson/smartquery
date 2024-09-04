@@ -2,11 +2,11 @@ import { useCallback, useMemo } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TrpcContext } from '../trpc/Context';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
 
 export const useLink = () => {
-  const navigate = useNavigate();
+  const [, navigate] = useLocation();
 
   const trpc = useDefinedContext(TrpcContext);
 

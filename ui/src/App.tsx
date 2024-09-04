@@ -1,5 +1,4 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
 import { ConnectionsProvider } from './content/connections/Provider';
 import { DragAndDropProvider } from './content/dragAndDrop/Provider';
 import { EditProvider } from './content/edit/Provider';
@@ -10,7 +9,9 @@ import { QueriesProvider } from './content/tabs/queries/Provider';
 import { TrpcProvider } from './content/trpc/Provider';
 import { BaseProviders } from './baseProviders/BaseProviders';
 
-export const App: React.FC = () => {
+export const App: React.FC<React.PropsWithChildren> = (props) => {
+  const { children } = props;
+
   return (
     <BaseProviders>
       <TrpcProvider>
@@ -20,9 +21,7 @@ export const App: React.FC = () => {
               <TabsProvider>
                 <QueriesProvider>
                   <DragAndDropProvider>
-                    <AddToDesktopProvider>
-                      <Outlet />
-                    </AddToDesktopProvider>
+                    <AddToDesktopProvider>{children}</AddToDesktopProvider>
                   </DragAndDropProvider>
                 </QueriesProvider>
               </TabsProvider>
