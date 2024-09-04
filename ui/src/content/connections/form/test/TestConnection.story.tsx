@@ -8,10 +8,11 @@ import type { getMockTrpcClient } from './TestConnection.mocks';
 export type TestConnectionStoryProps = {
   mockTrpcClient: ReturnType<typeof getMockTrpcClient>;
   props: TestConnectionProps;
+  shouldFail: boolean;
 };
 
 export const TestConnectionStory = (storyProps: TestConnectionStoryProps) => {
-  const { mockTrpcClient, props } = storyProps;
+  const { mockTrpcClient, props, shouldFail } = storyProps;
 
   return (
     <TrpcContext.Provider
@@ -19,9 +20,15 @@ export const TestConnectionStory = (storyProps: TestConnectionStoryProps) => {
         {
           connectDb: {
             mutate: (input) =>
-              new Promise((resolve) => {
+              new Promise((resolve, reject) => {
                 mockTrpcClient.connectDb.mutate(input);
-                setTimeout(() => resolve('1'), 100);
+                setTimeout(() => {
+                  if (shouldFail) {
+                    reject(new Error('Failed to connect'));
+                  } else {
+                    resolve('1');
+                  }
+                }, 100);
               }),
           },
           disconnectDb: {

@@ -42,4 +42,5 @@ export const getStoryProps = () =>
   ({
     mockTrpcClient: getMockTrpcClient(),
     props: getProps(),
+    shouldFail: false,
   }) satisfies TestConnectionStoryProps;

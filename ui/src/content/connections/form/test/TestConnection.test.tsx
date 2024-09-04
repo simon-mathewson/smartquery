@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/experimental-ct-react';
+import type { TestConnectionStoryProps } from './TestConnection.story';
 import { TestConnectionStory } from './TestConnection.story';
 import { getStoryProps, getProps, getValidFormValues } from './TestConnection.mocks';
 
@@ -25,7 +26,7 @@ test.describe('TestConnection', () => {
     await expect($).toHaveScreenshot('enabled.png');
   });
 
-  test('should test connection and show positive response if successful', async ({ mount }) => {
+  test('should indicate that test succeeded', async ({ mount }) => {
     const props = {
       ...getStoryProps(),
       props: {
@@ -62,5 +63,30 @@ test.describe('TestConnection', () => {
         },
       ],
     ]);
+
+    expect(props.mockTrpcClient.disconnectDb.mutate.calls).toEqual([['1']]);
+  });
+
+  test('should indicate that test failed', async ({ mount }) => {
+    const props = {
+      ...getStoryProps(),
+      props: {
+        ...getProps(),
+        formValues: getValidFormValues(),
+      },
+      shouldFail: true,
+    } satisfies TestConnectionStoryProps;
+
+    const $ = await mount(<TestConnectionStory {...props} />);
+
+    await $.click();
+
+    await expect($).toHaveText('Testing connection...');
+    await expect($).toHaveScreenshot('testing.png');
+    await expect($).toBeDisabled();
+
+    await expect($).toHaveText('Connection failed');
+    await expect($).toHaveScreenshot('failed.png');
+    await expect($).not.toBeDisabled();
   });
 });
