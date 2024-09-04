@@ -208,7 +208,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           htmlProps={{ className: 'my-2' }}
           setFormValue={setFormValue}
         />
-        <TestConnection form={formValues} />
+        <TestConnection formValues={formValues} />
         <Button
           htmlProps={{ disabled: !isFormValid(formValues), type: 'submit' }}
           icon={<Done />}

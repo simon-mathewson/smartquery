@@ -16,3 +16,5 @@ export const trpcClient = createTRPCProxyClient<typeof router>({
     }),
   ],
 });
+
+export type TrpcClient = typeof trpcClient;

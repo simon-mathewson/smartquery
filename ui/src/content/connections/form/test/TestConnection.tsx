@@ -13,11 +13,11 @@ import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 
 export type TestConnectionProps = {
-  form: FormValues;
+  formValues: FormValues;
 };
 
 export const TestConnection: React.FC<TestConnectionProps> = (props) => {
-  const { form } = props;
+  const { formValues } = props;
 
   const trpc = useDefinedContext(TrpcContext);
 
@@ -30,14 +30,14 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
   useEffect(() => {
     setHasFailed(false);
     setHasSucceeded(false);
-  }, [form]);
+  }, [formValues]);
 
   const test = async (credentials?: {
     password?: string;
     sshPassword?: string;
     sshPrivateKey?: string;
   }) => {
-    const connection = getConnectionFromForm(form);
+    const connection = getConnectionFromForm(formValues);
 
     const password = credentials?.password ?? connection.password;
     const sshPassword = credentials?.sshPassword ?? connection.ssh?.password;
@@ -85,7 +85,7 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
       <ConnectionSignInModal {...signInModal} />
       <Button
         htmlProps={{
-          disabled: isTesting || !isFormValid(form),
+          disabled: isTesting || !isFormValid(formValues),
           onClick: () => test(),
         }}
         icon={<SettingsEthernet />}

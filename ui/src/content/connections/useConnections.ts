@@ -11,6 +11,8 @@ import { TrpcContext } from '../trpc/Context';
 import { ToastContext } from '../toast/Context';
 import { getInitialConnections } from './utils';
 
+export type UseConnections = ReturnType<typeof useConnections>;
+
 export const useConnections = (props: { signInModal: ModalControl<SignInModalInput> }) => {
   const { signInModal } = props;
 

@@ -1,0 +1,66 @@
+import { expect, test } from '@playwright/experimental-ct-react';
+import { TestConnectionStory } from './TestConnection.story';
+import { getStoryProps, getProps, getValidFormValues } from './TestConnection.mocks';
+
+test.describe('TestConnection', () => {
+  test('should render button for testing connection if form is valid', async ({ mount }) => {
+    const $ = await mount(<TestConnectionStory {...getStoryProps()} />);
+
+    await expect($).toHaveText('Test connection');
+    await expect($).toHaveRole('button');
+    await expect($).toBeDisabled();
+    await expect($).toHaveScreenshot('disabled.png');
+
+    await $.update(
+      <TestConnectionStory
+        {...getStoryProps()}
+        props={{
+          ...getProps(),
+          formValues: getValidFormValues(),
+        }}
+      />,
+    );
+
+    await expect($).not.toBeDisabled();
+    await expect($).toHaveScreenshot('enabled.png');
+  });
+
+  test('should test connection and show positive response if successful', async ({ mount }) => {
+    const props = {
+      ...getStoryProps(),
+      props: {
+        ...getProps(),
+        formValues: getValidFormValues(),
+      },
+    };
+
+    const $ = await mount(<TestConnectionStory {...props} />);
+
+    await $.click();
+
+    await expect($).toHaveText('Testing connection...');
+    await expect($).toHaveScreenshot('testing.png');
+    await expect($).toBeDisabled();
+
+    await expect($).toHaveText('Connection succeeded');
+    await expect($).toHaveScreenshot('success.png');
+    await expect($).not.toBeDisabled();
+
+    expect(props.mockTrpcClient.connectDb.mutate.calls).toEqual([
+      [
+        {
+          credentialStorage: 'localStorage',
+          database: 'test',
+          engine: 'postgresql',
+          host: 'localhost',
+          id: '',
+          name: 'test',
+          password: 'password',
+          port: 5432,
+          ssh: null,
+          user: 'user',
+        },
+      ],
+    ]);
+  });
+});
