@@ -43,4 +43,18 @@ export const getStoryProps = () =>
     mockTrpcClient: getMockTrpcClient(),
     props: getProps(),
     shouldFail: false,
+    shouldFailWithAuthError: false,
   }) satisfies TestConnectionStoryProps;
+
+export const expectedConnectInput = {
+  credentialStorage: 'localStorage',
+  database: 'test',
+  engine: 'postgresql',
+  host: 'localhost',
+  id: '',
+  name: 'test',
+  password: 'password',
+  port: 5432,
+  ssh: null,
+  user: 'user',
+};

@@ -9,10 +9,11 @@ export type TestConnectionStoryProps = {
   mockTrpcClient: ReturnType<typeof getMockTrpcClient>;
   props: TestConnectionProps;
   shouldFail: boolean;
+  shouldFailWithAuthError: boolean;
 };
 
 export const TestConnectionStory = (storyProps: TestConnectionStoryProps) => {
-  const { mockTrpcClient, props, shouldFail } = storyProps;
+  const { mockTrpcClient, props, shouldFail, shouldFailWithAuthError } = storyProps;
 
   return (
     <TrpcContext.Provider
@@ -25,17 +26,19 @@ export const TestConnectionStory = (storyProps: TestConnectionStoryProps) => {
                 setTimeout(() => {
                   if (shouldFail) {
                     reject(new Error('Failed to connect'));
+                  } else if (shouldFailWithAuthError) {
+                    reject(new Error('Authentication failed'));
                   } else {
                     resolve('1');
                   }
-                }, 100);
+                }, 400);
               }),
           },
           disconnectDb: {
             mutate: (input) =>
               new Promise((resolve) => {
                 mockTrpcClient.disconnectDb.mutate(input);
-                setTimeout(resolve, 100);
+                resolve();
               }),
           },
         } as Partial<TrpcClient> as TrpcClient

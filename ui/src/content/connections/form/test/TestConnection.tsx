@@ -7,7 +7,6 @@ import type { ConnectInput } from '~/shared/types';
 import type { SignInModalInput } from '~/content/connections/signInModal/types';
 import { useModal } from '~/shared/components/modal/useModal';
 import { ConnectionSignInModal } from '~/content/connections/signInModal/SignInModal';
-import { isAuthError } from '~/shared/utils/prisma/prisma';
 import { isNil } from 'lodash';
 import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -43,11 +42,11 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     const sshPassword = credentials?.sshPassword ?? connection.ssh?.password;
     const sshPrivateKey = credentials?.sshPrivateKey ?? connection.ssh?.privateKey;
 
-    if (isNil(password) || (connection.ssh && isNil(sshPassword) && isNil(sshPrivateKey))) {
-      signInModal.open({
-        connection,
-        onSignIn: test,
-      });
+    const showSignInModal =
+      isNil(password) || Boolean(connection.ssh && isNil(sshPassword) && isNil(sshPrivateKey));
+
+    if (showSignInModal) {
+      signInModal.open({ connection, onSignIn: test });
       return;
     }
 
@@ -55,29 +54,19 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     setHasFailed(false);
     setHasSucceeded(false);
 
-    try {
-      const clientId = await trpc.connectDb.mutate({
-        ...connection,
-        password,
-        ssh: connection.ssh
-          ? {
-              ...connection.ssh,
-              password: sshPassword,
-              privateKey: sshPrivateKey,
-            }
-          : null,
-      } as ConnectInput);
-      setHasSucceeded(true);
-      await trpc.disconnectDb.mutate(clientId);
-    } catch (error) {
-      // Throw auth error so sign in modal can show error message
-      if (isAuthError(error)) {
-        throw error;
-      }
-      setHasFailed(true);
-    }
-
-    setIsTesting(false);
+    const clientId = await trpc.connectDb.mutate({
+      ...connection,
+      password,
+      ssh: connection.ssh
+        ? {
+            ...connection.ssh,
+            password: sshPassword,
+            privateKey: sshPrivateKey,
+          }
+        : null,
+    } as ConnectInput);
+    setHasSucceeded(true);
+    await trpc.disconnectDb.mutate(clientId);
   };
 
   return (
@@ -86,7 +75,15 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
       <Button
         htmlProps={{
           disabled: isTesting || !isFormValid(formValues),
-          onClick: () => test(),
+          onClick: async () => {
+            try {
+              await test();
+            } catch (error) {
+              setHasFailed(true);
+            } finally {
+              setIsTesting(false);
+            }
+          },
         }}
         icon={<SettingsEthernet />}
         label="Test connection"
