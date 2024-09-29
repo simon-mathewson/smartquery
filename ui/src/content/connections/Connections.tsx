@@ -19,16 +19,16 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
 
   const [isAddingOrEditing, setIsAddingOrEditing] = useState(() => connections.length === 0);
 
-  const [connectionToEditIndex, setConnectionToEditIndex] = useState<number | null>(null);
+  const [connectionToEditId, setConnectionToEditId] = useState<string | undefined>(undefined);
 
   return (
     <>
       {isAddingOrEditing ? (
         <ConnectionForm
-          connectionToEditIndex={connectionToEditIndex}
+          connectionToEditId={connectionToEditId}
           hideBackButton={connections.length === 0}
           exit={() => {
-            setConnectionToEditIndex(null);
+            setConnectionToEditId(undefined);
             setIsAddingOrEditing(false);
           }}
         />
@@ -52,12 +52,12 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
             </div>
             <List
               autoFocusFirstItem
-              items={connections.map((connection, index) => ({
+              items={connections.map((connection) => ({
                 actions: [
                   {
                     icon: <EditOutlined />,
                     onClick: () => {
-                      setConnectionToEditIndex(index);
+                      setConnectionToEditId(connection.id);
                       setIsAddingOrEditing(true);
                     },
                   },

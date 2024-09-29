@@ -95,7 +95,7 @@ export const Input: React.FC<InputProps> = (props) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {...(htmlProps as any)}
       className={classNames(
-        'block w-full rounded-lg border-[1.5px] border-border bg-background px-2 py-[6.5px] text-sm font-medium text-textSecondary outline-none focus:border-primary disabled:opacity-50',
+        'block w-full rounded-lg border-[1px] border-border bg-background px-2 py-[7px] text-sm font-medium text-textSecondary outline-none focus:border-primary disabled:opacity-50',
         htmlProps?.className,
         {
           'resize-none overflow-hidden focus:overflow-auto': Element === 'textarea',

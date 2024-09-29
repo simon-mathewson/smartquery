@@ -69,6 +69,7 @@ test.describe('Select', () => {
     const $ = await mount(<Select {...props} value={options[0].value} />);
 
     await expect($).toHaveText(options[0].label);
+    await expect($).toHaveAttribute('data-value', options[0].value);
     await expect($).not.toHaveText(placeholder);
     await expect($).toHaveScreenshot('triggerFilled.png');
 

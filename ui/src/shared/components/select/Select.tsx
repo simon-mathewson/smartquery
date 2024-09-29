@@ -32,6 +32,7 @@ export function Select<T extends string>(props: SelectProps<T>) {
     <>
       <button
         {...htmlProps}
+        {...fieldContext?.controlHtmlProps}
         aria-controls={listboxId}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -42,7 +43,7 @@ export function Select<T extends string>(props: SelectProps<T>) {
           },
           htmlProps?.className,
         )}
-        id={fieldContext?.controlId}
+        data-value={selectedValue}
         ref={triggerRef}
         type="button"
       >

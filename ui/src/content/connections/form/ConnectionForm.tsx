@@ -21,20 +21,21 @@ import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
 
 export type ConnectionFormProps = {
-  connectionToEditIndex: number | null;
+  connectionToEditId?: string;
   exit: () => void;
-  hideBackButton: boolean;
+  hideBackButton?: boolean;
 };
 
 export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
-  const { connectionToEditIndex, exit, hideBackButton } = props;
+  const { connectionToEditId, exit, hideBackButton } = props;
 
-  const mode = connectionToEditIndex === null ? 'add' : 'edit';
+  const mode = connectionToEditId ? 'edit' : 'add';
 
   const { addConnection, connections, removeConnection, updateConnection } =
     useDefinedContext(ConnectionsContext);
-  const connectionToEdit =
-    connectionToEditIndex !== null ? connections[connectionToEditIndex] : null;
+  const connectionToEdit = connectionToEditId
+    ? connections.find((connection) => connection.id === connectionToEditId)
+    : null;
 
   const [formValues, setFormValues] = useState<FormValues>(
     connectionToEdit
@@ -98,14 +99,18 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
     <>
       <form className="grid w-[320px] gap-2" onSubmit={onSubmit} ref={formRef}>
         <Header
-          left={!hideBackButton && <Button htmlProps={{ onClick: exit }} icon={<ArrowBack />} />}
+          left={
+            !hideBackButton && (
+              <Button htmlProps={{ 'aria-label': 'Cancel', onClick: exit }} icon={<ArrowBack />} />
+            )
+          }
           middle={
             <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
               {mode === 'add' ? 'Add' : 'Edit'} Connection
             </div>
           }
           right={
-            connectionToEdit !== null && (
+            connectionToEdit && (
               <ConfirmDeletePopover
                 onConfirm={() => {
                   removeConnection(connectionToEdit.id);
@@ -122,7 +127,9 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         <Field label="Engine">
           <Select<Connection['engine']>
             htmlProps={{ autoFocus: true }}
-            onChange={(value) => setFormValue('engine', value)}
+            onChange={(value) => {
+              setFormValue('engine', value);
+            }}
             options={[
               {
                 label: 'MySQL',
