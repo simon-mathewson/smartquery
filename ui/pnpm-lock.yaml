@@ -88,11 +88,11 @@ importers:
         version: 3.22.4
     devDependencies:
       '@playwright/experimental-ct-react':
-        specifier: ^1.44.1
-        version: 1.44.1(@types/node@20.10.4)(terser@5.28.1)(vite@5.2.8(@types/node@20.10.4)(terser@5.28.1))
+        specifier: 1.47.2
+        version: 1.47.2(@types/node@20.10.4)(terser@5.28.1)(vite@5.2.8(@types/node@20.10.4)(terser@5.28.1))
       '@playwright/test':
-        specifier: ^1.44.1
-        version: 1.44.1
+        specifier: 1.47.2
+        version: 1.47.2
       '@types/lodash':
         specifier: ^4.14.201
         version: 4.14.202
@@ -1336,18 +1336,18 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@playwright/experimental-ct-core@1.44.1':
-    resolution: {integrity: sha512-IqeXzfmpHH8yHA0fGQ//l/tDJHzUmg2dQj3t28E1tCshvnYc9fVr53Na9+/B8ME//vw0UFpv+CSKcOTHwWrhQg==}
-    engines: {node: '>=16'}
+  '@playwright/experimental-ct-core@1.47.2':
+    resolution: {integrity: sha512-aTR254jpS7mpuX8Od6vt9zOOmeuZ1PPI8aaT3vxb8lOtRWoq/XsCsnlxu3eWInbDsiYyAEcxPsiGLU9PXgC4LQ==}
+    engines: {node: '>=18'}
 
-  '@playwright/experimental-ct-react@1.44.1':
-    resolution: {integrity: sha512-qRhv2zmZVwtzAYWwQO4j+It0S5zLUuZg/7Ke61ymCC5jGqlwf2kYqogFxBiDdhAO1sz/dN0UtdU+6df0HK5yzw==}
-    engines: {node: '>=16'}
+  '@playwright/experimental-ct-react@1.47.2':
+    resolution: {integrity: sha512-taWSdPhbdXl6dsC2RmlfGoOy9moeBxMdV7j4n/IEXfzMWu7GshUR9kAESg3QsV03i1vU8kTX5Ko28Yt3ISnk4w==}
+    engines: {node: '>=18'}
     hasBin: true
 
-  '@playwright/test@1.44.1':
-    resolution: {integrity: sha512-1hZ4TNvD5z9VuhNJ/walIjvMVvYkZKf71axoF/uiAqpntQJXpG64dlXhoDXE3OczPuTuvjf/M5KWFg5VAVUS3Q==}
-    engines: {node: '>=16'}
+  '@playwright/test@1.47.2':
+    resolution: {integrity: sha512-jTXRsoSPONAs8Za9QEQdyjFn+0ZQFjCiIztAIF6bi1HqhBzG9Ma7g1WotyiGqFSBRZjIEqMdT8RUlbk1QVhzCQ==}
+    engines: {node: '>=18'}
     hasBin: true
 
   '@popperjs/core@2.11.8':
@@ -2970,14 +2970,14 @@ packages:
   pkg-types@1.0.3:
     resolution: {integrity: sha512-nN7pYi0AQqJnoLPC9eHFQ8AcyaixBUOwvqc5TDnIKCMEE6I0y8P7OKA7fPexsXGCGxQDl/cmrLAp26LhcwxZ4A==}
 
-  playwright-core@1.44.1:
-    resolution: {integrity: sha512-wh0JWtYTrhv1+OSsLPgFzGzt67Y7BE/ZS3jEqgGBlp2ppp1ZDj8c+9IARNW4dwf1poq5MgHreEM2KV/GuR4cFA==}
-    engines: {node: '>=16'}
+  playwright-core@1.47.2:
+    resolution: {integrity: sha512-3JvMfF+9LJfe16l7AbSmU555PaTl2tPyQsVInqm3id16pdDfvZ8TTZ/pyzmkbDrZTQefyzU7AIHlZqQnxpqHVQ==}
+    engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.44.1:
-    resolution: {integrity: sha512-qr/0UJ5CFAtloI3avF95Y0L1xQo6r3LQArLIg/z/PoGJ6xa+EwzrwO5lpNr/09STxdHuUoP2mvuELJS+hLdtgg==}
-    engines: {node: '>=16'}
+  playwright@1.47.2:
+    resolution: {integrity: sha512-nx1cLMmQWqmA3UsnjaaokyoUpdVaaDhJhMoxX2qj3McpjnsqFHs516QAKYhqHAgOP+oCFTEOCOAaD1RgD/RQfA==}
+    engines: {node: '>=18'}
     hasBin: true
 
   possible-typed-array-names@1.0.0:
@@ -3879,7 +3879,7 @@ snapshots:
 
   '@babel/core@7.24.7':
     dependencies:
-      '@ampproject/remapping': 2.2.1
+      '@ampproject/remapping': 2.3.0
       '@babel/code-frame': 7.24.7
       '@babel/generator': 7.24.7
       '@babel/helper-compilation-targets': 7.24.7
@@ -3890,7 +3890,7 @@ snapshots:
       '@babel/traverse': 7.24.7
       '@babel/types': 7.24.7
       convert-source-map: 2.0.0
-      debug: 4.3.4
+      debug: 4.3.6
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -4681,7 +4681,7 @@ snapshots:
       '@babel/helper-split-export-declaration': 7.24.7
       '@babel/parser': 7.24.7
       '@babel/types': 7.24.7
-      debug: 4.3.4
+      debug: 4.3.6
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -5166,10 +5166,10 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
 
-  '@playwright/experimental-ct-core@1.44.1(@types/node@20.10.4)(terser@5.28.1)':
+  '@playwright/experimental-ct-core@1.47.2(@types/node@20.10.4)(terser@5.28.1)':
     dependencies:
-      playwright: 1.44.1
-      playwright-core: 1.44.1
+      playwright: 1.47.2
+      playwright-core: 1.47.2
       vite: 5.2.8(@types/node@20.10.4)(terser@5.28.1)
     transitivePeerDependencies:
       - '@types/node'
@@ -5180,9 +5180,9 @@ snapshots:
       - sugarss
       - terser
 
-  '@playwright/experimental-ct-react@1.44.1(@types/node@20.10.4)(terser@5.28.1)(vite@5.2.8(@types/node@20.10.4)(terser@5.28.1))':
+  '@playwright/experimental-ct-react@1.47.2(@types/node@20.10.4)(terser@5.28.1)(vite@5.2.8(@types/node@20.10.4)(terser@5.28.1))':
     dependencies:
-      '@playwright/experimental-ct-core': 1.44.1(@types/node@20.10.4)(terser@5.28.1)
+      '@playwright/experimental-ct-core': 1.47.2(@types/node@20.10.4)(terser@5.28.1)
       '@vitejs/plugin-react': 4.3.1(vite@5.2.8(@types/node@20.10.4)(terser@5.28.1))
     transitivePeerDependencies:
       - '@types/node'
@@ -5195,9 +5195,9 @@ snapshots:
       - terser
       - vite
 
-  '@playwright/test@1.44.1':
+  '@playwright/test@1.47.2':
     dependencies:
-      playwright: 1.44.1
+      playwright: 1.47.2
 
   '@popperjs/core@2.11.8': {}
 
@@ -6880,11 +6880,11 @@ snapshots:
       mlly: 1.6.1
       pathe: 1.1.2
 
-  playwright-core@1.44.1: {}
+  playwright-core@1.47.2: {}
 
-  playwright@1.44.1:
+  playwright@1.47.2:
     dependencies:
-      playwright-core: 1.44.1
+      playwright-core: 1.47.2
     optionalDependencies:
       fsevents: 2.3.2
 

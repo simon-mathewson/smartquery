@@ -85,39 +85,34 @@ test.describe('ConnectionForm', () => {
     ]);
   });
 
-  test('allows storing password', async ({ mount }) => {
-    const props = getProps();
+  test.describe('uses default port', () => {
+    [
+      { name: 'MySQL', port: 3306 },
+      { name: 'PostgreSQL', port: 5432 },
+    ].forEach(({ name, port }) => {
+      test(name, async ({ mount }) => {
+        const props = getProps();
 
-    const $ = await mount(<ConnectionFormStory {...props} />);
+        const $ = await mount(<ConnectionFormStory {...props} />);
 
-    await fillOutForm($);
+        await fillOutForm($);
 
-    await expect($.getByRole('radio', { name: 'None / Keychain', checked: true })).toBeAttached();
-    await expect($.getByRole('textbox', { name: 'Password' })).not.toBeAttached();
+        await $.getByRole('button', { name: 'Engine' }).click();
+        await $.page().locator('#overlay').getByRole('option', { name }).click();
+        await $.page().waitForTimeout(animationOptions.duration);
 
-    await $.getByRole('radio', { name: 'Browser storage' }).click();
-    await expect($.getByRole('textbox', { name: 'Password' })).toBeAttached();
+        await $.getByRole('textbox', { name: 'Port' }).clear();
 
-    await $.getByRole('textbox', { name: 'Password' }).fill('password');
+        await expect($.getByRole('textbox', { name: 'Port' })).toHaveAttribute(
+          'placeholder',
+          String(port),
+        );
 
-    await $.getByRole('button', { name: 'Add' }).click();
+        await $.getByRole('button', { name: 'Add' }).click();
 
-    expect(props.connectionsContext.addConnection.calls).toEqual([
-      [
-        {
-          credentialStorage: 'localStorage',
-          database: 'db',
-          engine: 'postgresql',
-          host: 'localhost',
-          id: '',
-          name: 'My connection',
-          password: 'password',
-          port: 1234,
-          ssh: null,
-          user: 'user',
-        },
-      ],
-    ]);
+        expect(props.connectionsContext.addConnection.calls).toMatchObject([[{ port }]]);
+      });
+    });
   });
 
   test('allows storing password', async ({ mount }) => {
