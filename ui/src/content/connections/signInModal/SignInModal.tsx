@@ -16,7 +16,9 @@ import { getCredentialUsername } from '../utils';
 import type { SignInModalInput } from './types';
 import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
 
-export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (props) => {
+export type SignInModalProps = ModalControl<SignInModalInput>;
+
+export const SignInModal: React.FC<SignInModalProps> = (props) => {
   const { close, input } = props;
 
   const [, navigate] = useLocation();
@@ -124,7 +126,7 @@ export const ConnectionSignInModal: React.FC<ModalControl<SignInModalInput>> = (
                   <CredentialInput
                     htmlProps={{ value: sshPassword }}
                     isExistingCredential
-                    onChange={setPassword}
+                    onChange={setSshPassword}
                     showAddToKeychain
                     username={sshUsername as string}
                   />

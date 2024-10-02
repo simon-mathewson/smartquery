@@ -6,7 +6,7 @@ import { getConnectionFromForm, isFormValid } from '../utils';
 import type { ConnectInput } from '~/shared/types';
 import type { SignInModalInput } from '~/content/connections/signInModal/types';
 import { useModal } from '~/shared/components/modal/useModal';
-import { ConnectionSignInModal } from '~/content/connections/signInModal/SignInModal';
+import { SignInModal } from '~/content/connections/signInModal/SignInModal';
 import { isNil } from 'lodash';
 import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -71,7 +71,7 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
 
   return (
     <>
-      <ConnectionSignInModal {...signInModal} />
+      <SignInModal {...signInModal} />
       <Button
         htmlProps={{
           disabled: isTesting || !isFormValid(formValues),
