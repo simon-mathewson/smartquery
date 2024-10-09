@@ -18,8 +18,13 @@ export const Field: React.FC<PropsWithChildren<FieldProps>> = (props) => {
   return (
     <FieldContext.Provider
       value={useMemo(
-        () => ({ controlHtmlProps: { 'aria-labelledby': labelId, id: controlId } }),
-        [controlId, labelId],
+        () => ({
+          controlHtmlProps: {
+            'aria-labelledby': label === undefined ? undefined : labelId,
+            id: controlId,
+          },
+        }),
+        [controlId, label, labelId],
       )}
     >
       <div className={classNames('grid gap-1 focus-within:text-primary', htmlProps?.className)}>

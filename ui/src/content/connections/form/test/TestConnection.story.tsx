@@ -2,8 +2,8 @@ import { TrpcContext } from '~/content/trpc/Context';
 import { TestConnection, type TestConnectionProps } from './TestConnection';
 import type { TrpcClient } from '~/content/trpc/client';
 import { ConnectionsContext } from '../../Context';
-import type { UseConnections } from '../../useConnections';
 import type { getMockTrpcClient } from './TestConnection.mocks';
+import { connectionsContextMock } from '../../Context.mock';
 
 export type TestConnectionStoryProps = {
   mockTrpcClient: ReturnType<typeof getMockTrpcClient>;
@@ -44,9 +44,7 @@ export const TestConnectionStory = (storyProps: TestConnectionStoryProps) => {
         } as Partial<TrpcClient> as TrpcClient
       }
     >
-      <ConnectionsContext.Provider
-        value={{ activeConnection: null } as Partial<UseConnections> as UseConnections}
-      >
+      <ConnectionsContext.Provider value={{ ...connectionsContextMock, activeConnection: null }}>
         <TestConnection {...props} />
       </ConnectionsContext.Provider>
     </TrpcContext.Provider>

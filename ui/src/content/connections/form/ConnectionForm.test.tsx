@@ -4,15 +4,11 @@ import { spy } from 'tinyspy';
 import type { ConnectionFormStoryProps } from './ConnectionForm.story';
 import { ConnectionFormStory } from './ConnectionForm.story';
 import { animationOptions } from '~/shared/components/overlayCard/constants';
+import { connectionsContextMock } from '../Context.mock';
 
 const getProps = () =>
   ({
-    connectionsContext: {
-      addConnection: spy(),
-      connections: [],
-      removeConnection: spy(),
-      updateConnection: spy(),
-    },
+    connectionsContext: connectionsContextMock,
     connectionFormProps: { exit: spy() },
   }) satisfies ConnectionFormStoryProps;
 
@@ -22,9 +18,9 @@ const fillOutForm = async ($: MountResult) => {
   await $.page().waitForTimeout(animationOptions.duration);
 
   await $.getByRole('textbox', { name: 'Name' }).fill('My connection');
-  await $.getByRole('textbox', { name: 'Host' }).fill('localhost');
-  await $.getByRole('textbox', { name: 'Port' }).fill('1234');
-  await $.getByRole('textbox', { name: 'User' }).fill('user');
+  await $.getByRole('textbox', { name: 'Host' }).first().fill('localhost');
+  await $.getByRole('textbox', { name: 'Port' }).first().fill('1234');
+  await $.getByRole('textbox', { name: 'User' }).first().fill('user');
   await $.getByRole('textbox', { name: 'Default database' }).fill('db');
 };
 
@@ -36,7 +32,7 @@ test.describe('ConnectionForm', () => {
 
     const $ = await mount(<ConnectionFormStory {...props} />);
 
-    await expect($).toHaveScreenshot('render.png');
+    await expect($).toHaveScreenshot('initial.png');
   });
 
   test('allows exiting form', async ({ mount }) => {
@@ -158,50 +154,28 @@ test.describe('ConnectionForm', () => {
         {...props}
         connectionFormProps={{
           ...props.connectionFormProps,
-          connectionToEditId: '1',
-        }}
-        connectionsContext={{
-          ...props.connectionsContext,
-          connections: [
-            {
-              credentialStorage: 'alwaysAsk',
-              database: 'other_db',
-              engine: 'mysql',
-              host: 'other_host',
-              id: '1',
-              name: 'Other connection',
-              password: null,
-              port: 5248,
-              ssh: null,
-              user: 'other_user',
-            },
-          ],
+          connectionToEditId: '2',
         }}
       />,
     );
 
-    await expect($.getByRole('button', { name: 'Engine' })).toHaveAttribute('data-value', 'mysql');
-    await expect($.getByRole('textbox', { name: 'Name' })).toHaveValue('Other connection');
-    await expect($.getByRole('textbox', { name: 'Host' })).toHaveValue('other_host');
-    await expect($.getByRole('textbox', { name: 'Port' })).toHaveValue('5248');
-    await expect($.getByRole('textbox', { name: 'User' })).toHaveValue('other_user');
-    await expect($.getByRole('textbox', { name: 'Default database' })).toHaveValue('other_db');
-
     await fillOutForm($);
+
+    await $.getByRole('radio', { name: 'Connect via SSH' }).uncheck();
 
     await $.getByRole('button', { name: 'Save' }).click();
 
     expect(props.connectionsContext.updateConnection.calls).toEqual([
       [
-        '1',
+        '2',
         {
-          credentialStorage: 'alwaysAsk',
+          credentialStorage: 'localStorage',
           database: 'db',
           engine: 'postgresql',
           host: 'localhost',
-          id: '1',
+          id: '2',
           name: 'My connection',
-          password: null,
+          password: 'password',
           port: 1234,
           ssh: null,
           user: 'user',

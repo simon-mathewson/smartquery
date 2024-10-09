@@ -2,27 +2,15 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { spy } from 'tinyspy';
 import type { SignInModalStoryProps } from './SignInModal.story';
 import { SignInModalStory } from './SignInModal.story';
+import { connectionsContextMock } from '../Context.mock';
 
 const getProps = () =>
   ({
-    connectionsContext: {
-      activeConnection: {},
-    },
+    connectionsContext: connectionsContextMock,
     signInModalProps: {
       close: spy(),
       input: {
-        connection: {
-          credentialStorage: 'alwaysAsk',
-          database: 'db',
-          engine: 'mysql',
-          host: 'localhost',
-          id: '1',
-          name: 'Test connection',
-          password: null,
-          port: 1234,
-          ssh: null,
-          user: 'user',
-        },
+        connection: connectionsContextMock.connections[0],
         onSignIn: spy(),
       },
       isOpen: true,
