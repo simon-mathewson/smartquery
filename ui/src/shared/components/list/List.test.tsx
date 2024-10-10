@@ -63,13 +63,13 @@ test.describe('List', () => {
   test('renders list with item actions and hints', async ({ mount }) => {
     const items = [
       {
-        actions: [{ icon: <Add />, onClick: spy() }],
+        actions: [{ icon: <Add />, label: 'Add', onClick: spy() }],
         hint: 'Hint 1',
         label: 'Item 1',
         value: 'item1',
       },
       {
-        actions: [{ icon: <Add />, onClick: spy() }],
+        actions: [{ icon: <Add />, label: 'Add', onClick: spy() }],
         hint: 'Hint 2',
         label: 'Item 2',
         value: 'item2',
@@ -81,7 +81,8 @@ test.describe('List', () => {
     for (const [index, item] of (await $.getByRole('option').all()).entries()) {
       await expect(item).toContainText(items[index].label);
       await expect(item).toContainText(items[index].hint);
-      await expect(item.getByTestId('AddIcon')).toBeAttached();
+
+      await expect(item.getByRole('button', { name: 'Add' }).getByTestId('AddIcon')).toBeAttached();
 
       await item.getByRole('button').click();
 
