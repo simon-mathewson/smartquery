@@ -1,17 +1,25 @@
 import { List } from '~/shared/components/list/List';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '../Context';
+import { useState } from 'react';
+import { v4 as uuid } from 'uuid';
 
 export const DatabaseList: React.FC = () => {
   const { activeConnection, activeConnectionDatabases, connect } =
     useDefinedContext(ConnectionsContext);
 
+  const [labelId] = useState(uuid);
+
   return (
     <div>
-      <h2 className="mb-2 overflow-hidden text-ellipsis whitespace-nowrap py-2 pl-1 text-sm font-medium text-textPrimary">
+      <h2
+        className="mb-2 overflow-hidden text-ellipsis whitespace-nowrap py-2 pl-1 text-sm font-medium text-textPrimary"
+        id={labelId}
+      >
         Databases
       </h2>
       <List
+        htmlProps={{ 'aria-labelledby': labelId }}
         items={activeConnectionDatabases.map((database) => ({
           label: database,
           selectedVariant: 'primary',

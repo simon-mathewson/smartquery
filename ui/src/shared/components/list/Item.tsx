@@ -4,7 +4,7 @@ import { Button } from '../button/Button';
 import { autoFocusClass } from '~/shared/utils/focusFirstControl/focusFirstControl';
 
 export type ListItemProps<T extends string> = {
-  actions?: Array<{ icon: React.ReactNode; onClick: () => void }>;
+  actions?: Array<{ icon: React.ReactNode; label: string; onClick: () => void }>;
   autoFocus?: boolean;
   hint?: string;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
@@ -77,6 +77,7 @@ export const ListItem = <T extends string>(props: ListItemProps<T>) => {
         <Button
           color={selected ? 'white' : 'primary'}
           htmlProps={{
+            'aria-label': action.label,
             onClick: (event) => {
               event.stopPropagation();
               action.onClick();

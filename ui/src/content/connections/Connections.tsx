@@ -7,6 +7,7 @@ import { DatabaseList } from './databases/List';
 import { ConnectionForm } from './form/ConnectionForm';
 import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';
+import { v4 as uuid } from 'uuid';
 
 export type ConnectionsProps = {
   hideDatabases?: boolean;
@@ -20,6 +21,8 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
   const [isAddingOrEditing, setIsAddingOrEditing] = useState(() => connections.length === 0);
 
   const [connectionToEditId, setConnectionToEditId] = useState<string | undefined>(undefined);
+
+  const [connectionsLabelId] = useState(uuid);
 
   return (
     <>
@@ -41,7 +44,10 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
         >
           <div>
             <div className="flex items-center justify-between pb-2 pl-1">
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-sm font-medium text-textPrimary">
+              <div
+                className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-sm font-medium text-textPrimary"
+                id={connectionsLabelId}
+              >
                 Connections
               </div>
               <Button
@@ -52,10 +58,12 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
             </div>
             <List
               autoFocusFirstItem
+              htmlProps={{ 'aria-labelledby': connectionsLabelId }}
               items={connections.map((connection) => ({
                 actions: [
                   {
                     icon: <EditOutlined />,
+                    label: 'Edit',
                     onClick: () => {
                       setConnectionToEditId(connection.id);
                       setIsAddingOrEditing(true);
