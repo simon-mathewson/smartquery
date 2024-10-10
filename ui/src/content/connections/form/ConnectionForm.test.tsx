@@ -183,4 +183,25 @@ test.describe('ConnectionForm', () => {
       ],
     ]);
   });
+
+  test('allows deleting connection', async ({ mount }) => {
+    const props = getProps();
+
+    const $ = await mount(
+      <ConnectionFormStory
+        {...props}
+        connectionFormProps={{
+          ...props.connectionFormProps,
+          connectionToEditId: '2',
+        }}
+      />,
+    );
+
+    await $.getByRole('button', { name: 'Delete connection' }).click();
+    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().getByRole('menu').getByRole('menuitem', { name: 'Delete connection' }).click();
+
+    expect(props.connectionsContext.removeConnection.calls).toEqual([['2']]);
+    expect(props.connectionFormProps.exit.calls).toEqual([[]]);
+  });
 });

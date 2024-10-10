@@ -23,9 +23,10 @@ export const ConfirmDeletePopover: React.FC<ConfirmDeletePopoverProps> = (props)
         'aria-controls': menuId,
         'aria-expanded': isOpen,
         'aria-haspopup': 'menu',
+        'aria-label': text,
         ref: triggerRef,
       }) as const,
-    [isOpen, menuId],
+    [isOpen, menuId, text],
   );
 
   return (
