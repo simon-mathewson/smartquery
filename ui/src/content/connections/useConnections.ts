@@ -101,9 +101,11 @@ export const useConnections = (props: { signInModal: ModalControl<SignInModalInp
           'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC',
       }[engine];
 
-      trpc.sendQuery.mutate({ clientId, statements: [databasesStatement] }).then(([rows]) => {
-        setActiveConnectionDatabases(rows.map(({ db }) => String(db)));
-      });
+      return trpc.sendQuery
+        .mutate({ clientId, statements: [databasesStatement] })
+        .then(([rows]) => {
+          setActiveConnectionDatabases(rows.map(({ db }) => String(db)));
+        });
     },
     [trpc.sendQuery],
   );
