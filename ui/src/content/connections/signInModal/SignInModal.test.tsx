@@ -2,26 +2,12 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { spy } from 'tinyspy';
 import type { SignInModalStoryProps } from './SignInModal.story';
 import { SignInModalStory } from './SignInModal.story';
-import { connectionsContextMock } from '../Context.mock';
-
-const getProps = () =>
-  ({
-    connectionsContext: connectionsContextMock,
-    signInModalProps: {
-      close: spy(),
-      input: {
-        connection: connectionsContextMock.connections[0],
-        onSignIn: spy(),
-      },
-      isOpen: true,
-      open: spy(),
-    },
-  }) satisfies SignInModalStoryProps;
+import { getSignInModalStoryProps } from './SignInModal.mocks';
 
 test.describe('SignInModal', () => {
   test('allows canceling sign in', async ({ mount }) => {
     const props = {
-      ...getProps(),
+      ...getSignInModalStoryProps(),
       navigate: spy(),
     } satisfies SignInModalStoryProps;
 
@@ -35,7 +21,7 @@ test.describe('SignInModal', () => {
 
   test('redirects to root on cancel if there is no active connection', async ({ mount }) => {
     const props = {
-      ...getProps(),
+      ...getSignInModalStoryProps(),
       connectionsContext: {
         activeConnection: null,
       },
@@ -51,7 +37,7 @@ test.describe('SignInModal', () => {
   });
 
   test('allows signing in if DB password is required', async ({ mount }) => {
-    const props = getProps();
+    const props = getSignInModalStoryProps();
 
     const $ = await mount(<SignInModalStory {...props} />);
 
@@ -88,13 +74,13 @@ test.describe('SignInModal', () => {
 
   test('allows signing in if SSH password is required', async ({ mount }) => {
     const props = {
-      ...getProps(),
+      ...getSignInModalStoryProps(),
       signInModalProps: {
-        ...getProps().signInModalProps,
+        ...getSignInModalStoryProps().signInModalProps,
         input: {
-          ...getProps().signInModalProps.input,
+          ...getSignInModalStoryProps().signInModalProps.input,
           connection: {
-            ...getProps().signInModalProps.input.connection,
+            ...getSignInModalStoryProps().signInModalProps.input.connection,
             credentialStorage: 'localStorage',
             ssh: {
               credentialStorage: 'alwaysAsk',
@@ -145,13 +131,13 @@ test.describe('SignInModal', () => {
 
   test('allows signing in if SSH private key is required', async ({ mount }) => {
     const props = {
-      ...getProps(),
+      ...getSignInModalStoryProps(),
       signInModalProps: {
-        ...getProps().signInModalProps,
+        ...getSignInModalStoryProps().signInModalProps,
         input: {
-          ...getProps().signInModalProps.input,
+          ...getSignInModalStoryProps().signInModalProps.input,
           connection: {
-            ...getProps().signInModalProps.input.connection,
+            ...getSignInModalStoryProps().signInModalProps.input.connection,
             credentialStorage: 'localStorage',
             ssh: {
               credentialStorage: 'alwaysAsk',
@@ -203,13 +189,13 @@ test.describe('SignInModal', () => {
 
   test('allows signing in if both DB and SSH password are required', async ({ mount }) => {
     const props = {
-      ...getProps(),
+      ...getSignInModalStoryProps(),
       signInModalProps: {
-        ...getProps().signInModalProps,
+        ...getSignInModalStoryProps().signInModalProps,
         input: {
-          ...getProps().signInModalProps.input,
+          ...getSignInModalStoryProps().signInModalProps.input,
           connection: {
-            ...getProps().signInModalProps.input.connection,
+            ...getSignInModalStoryProps().signInModalProps.input.connection,
             password: null,
             ssh: {
               credentialStorage: 'alwaysAsk',
@@ -260,7 +246,7 @@ test.describe('SignInModal', () => {
 
   test('shows error message if authentication fails', async ({ mount }) => {
     const props = {
-      ...getProps(),
+      ...getSignInModalStoryProps(),
       showError: true,
     } satisfies SignInModalStoryProps;
 

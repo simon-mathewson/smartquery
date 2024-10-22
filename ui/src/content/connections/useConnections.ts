@@ -11,9 +11,11 @@ import { TrpcContext } from '../trpc/Context';
 import { ToastContext } from '../toast/Context';
 import { getInitialConnections } from './utils';
 
-export type UseConnections = ReturnType<typeof useConnections>;
+export type Connections = ReturnType<typeof useConnections>;
 
-export const useConnections = (props: { signInModal: ModalControl<SignInModalInput> }) => {
+export type UseConnectionsProps = { signInModal: ModalControl<SignInModalInput> };
+
+export const useConnections = (props: UseConnectionsProps) => {
   const { signInModal } = props;
 
   const [, navigate] = useLocation();

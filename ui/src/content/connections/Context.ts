@@ -1,4 +1,4 @@
 import { createContext } from 'react';
-import type { UseConnections } from './useConnections';
+import type { Connections } from './useConnections';
 
-export const ConnectionsContext = createContext<UseConnections | null>(null);
+export const ConnectionsContext = createContext<Connections | null>(null);

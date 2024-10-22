@@ -1,5 +1,5 @@
 import { spy } from 'tinyspy';
-import type { UseConnections } from './useConnections';
+import type { Connections } from './useConnections';
 import type { Connection } from '~/shared/types';
 
 const connection1 = {
@@ -42,4 +42,4 @@ export const connectionsContextMock = {
   connections: [connection1, connection2],
   removeConnection: spy(),
   updateConnection: spy(),
-} satisfies UseConnections;
+} satisfies Connections;
