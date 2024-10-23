@@ -13,7 +13,7 @@ export default defineConfig({
   forbidOnly: process.env.CI !== undefined,
   retries: 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? 'junit' : 'html',
+  reporter: process.env.CI ? [['junit', { outputFile: 'test-ct-report.xml' }]] : 'html',
   use: {
     trace: 'on-first-retry',
     ctPort: 3100,

@@ -17,7 +17,8 @@ phases:
       - cd ../ui
       - pnpm typecheck
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
-      - NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts | tee test-ct-report.xml
+      - pnpm playwright install --with-deps chromium
+      - NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
       - pnpm build
       - cd ../link
       - pnpm typecheck
@@ -46,3 +47,4 @@ reports:
 cache:
   paths:
     - ".pnpm-store/**/*"
+    - "/root/.cache/ms-playwright/**/*"
