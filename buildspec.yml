@@ -17,7 +17,7 @@ phases:
       - cd ../ui
       - pnpm typecheck
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
-      - pnpm playwright test -c playwright-ct.config.ts --workers 1 --reporter junit > test-ct-report.xml
+      - NODE_OPTIONS=--max-old-space-size=3072 pnpm playwright test -c playwright-ct.config.ts --workers 1 --reporter junit > test-ct-report.xml
       - pnpm build
       - cd ../link
       - pnpm typecheck
