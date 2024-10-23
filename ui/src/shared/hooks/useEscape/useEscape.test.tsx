@@ -64,9 +64,10 @@ test.describe('useEscape', () => {
     expect(handler1.calls).toEqual([[]]);
     expect(handler2.calls).toEqual([[]]);
 
-    await Promise.all((await $.locator('div').all()).map((div) => div.click()));
-
+    await $.locator('div').first().click();
     expect(handler1.calls).toEqual([[]]);
-    expect(handler2.calls).toEqual([[]]);
+
+    await $.locator('div').last().click();
+    expect(handler1.calls).toEqual([[], []]);
   });
 });

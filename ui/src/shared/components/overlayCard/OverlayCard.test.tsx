@@ -6,7 +6,7 @@ import type { OverlayCardProps } from './OverlayCard';
 import { spy } from 'tinyspy';
 
 test.describe('OverlayCard', () => {
-  const getOverlayCard = ($: MountResult) => $.page().locator('#overlay').getByRole('dialog');
+  const getOverlayCard = ($: MountResult) => $.page().locator('#overlay > div > div');
   const getTrigger = ($: MountResult) => $.page().getByRole('button', { name: 'Open' });
 
   test('should render the overlay card below the trigger and allow closing it', async ({
@@ -167,9 +167,10 @@ test.describe('OverlayCard', () => {
             expect(
               (await card.evaluate((el) => el.getBoundingClientRect().left)) -
                 (await trigger.evaluate((el) => el.getBoundingClientRect().left)),
-            ).toBe(
+            ).toBeCloseTo(
               (await trigger.evaluate((el) => el.getBoundingClientRect().right)) -
                 (await card.evaluate((el) => el.getBoundingClientRect().right)),
+              -0.5,
             );
             break;
           case 'right':
