@@ -10,10 +10,10 @@ export default defineConfig({
   snapshotPathTemplate: '{testFilePath}/../__snapshots__/{arg}{ext}',
   timeout: 10 * 1000,
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  forbidOnly: process.env.CI !== undefined,
+  retries: 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  reporter: process.env.CI ? 'junit' : 'html',
   use: {
     trace: 'on-first-retry',
     ctPort: 3100,
