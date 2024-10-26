@@ -56,4 +56,3 @@ cache:
   paths:
     - ".pnpm-store/**/*"
     - "/root/.cache/ms-playwright/**/*"
-    - "ui/playwright/.cache/**/*"
