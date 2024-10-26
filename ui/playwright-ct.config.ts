@@ -33,7 +33,6 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        deviceScaleFactor: 1,
         viewport: { width: 400, height: 400 },
       },
     },
@@ -41,7 +40,6 @@ export default defineConfig({
   expect: {
     toHaveScreenshot: {
       maxDiffPixelRatio: 0.1,
-      scale: 'device',
     },
   },
 });
