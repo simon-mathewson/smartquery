@@ -54,6 +54,8 @@ test('Textarea resizes', async ({ mount }) => {
   } satisfies InputProps;
 
   const $ = await mount(<Input {...props} />);
+  // Trigger onChange
+  await $.fill(props.htmlProps.value);
 
   expect($).toHaveRole('textbox');
   expect($).toHaveValue(props.htmlProps.value);

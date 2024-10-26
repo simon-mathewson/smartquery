@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { Connections } from './Connections';
 import { ConnectionsContext } from './Context';
-import { connectionsContextMock } from './Context.mock';
+import { getConnectionsContextMock } from './Context.mock';
 import type { TrpcClient } from '../trpc/client';
 import { TrpcContext } from '../trpc/Context';
 
@@ -12,7 +12,7 @@ test.use({
 test.describe('Connections', () => {
   test('should show list initially', async ({ mount }) => {
     const $ = await mount(
-      <ConnectionsContext.Provider value={connectionsContextMock}>
+      <ConnectionsContext.Provider value={getConnectionsContextMock()}>
         <Connections />
       </ConnectionsContext.Provider>,
     );
@@ -26,7 +26,7 @@ test.describe('Connections', () => {
 
   test('should allow hiding databases', async ({ mount }) => {
     const $ = await mount(
-      <ConnectionsContext.Provider value={connectionsContextMock}>
+      <ConnectionsContext.Provider value={getConnectionsContextMock()}>
         <Connections hideDatabases />
       </ConnectionsContext.Provider>,
     );
@@ -38,7 +38,7 @@ test.describe('Connections', () => {
 
   test('allows adding connection', async ({ mount }) => {
     const $ = await mount(
-      <ConnectionsContext.Provider value={connectionsContextMock}>
+      <ConnectionsContext.Provider value={getConnectionsContextMock()}>
         <TrpcContext.Provider value={{} as Partial<TrpcClient> as TrpcClient}>
           <Connections hideDatabases />
         </TrpcContext.Provider>
@@ -55,7 +55,7 @@ test.describe('Connections', () => {
 
   test('allows editing connection', async ({ mount }) => {
     const $ = await mount(
-      <ConnectionsContext.Provider value={connectionsContextMock}>
+      <ConnectionsContext.Provider value={getConnectionsContextMock()}>
         <TrpcContext.Provider value={{} as Partial<TrpcClient> as TrpcClient}>
           <Connections hideDatabases />
         </TrpcContext.Provider>

@@ -34,12 +34,13 @@ const connection2 = {
   user: 'user',
 } satisfies Connection;
 
-export const connectionsContextMock = {
-  activeConnection: { clientId: '1', ...connection1 },
-  activeConnectionDatabases: ['development', 'test', 'staging'],
-  addConnection: spy(),
-  connect: spy(),
-  connections: [connection1, connection2],
-  removeConnection: spy(),
-  updateConnection: spy(),
-} satisfies Connections;
+export const getConnectionsContextMock = () =>
+  ({
+    activeConnection: { clientId: '1', ...connection1 },
+    activeConnectionDatabases: ['development', 'test', 'staging'],
+    addConnection: spy(),
+    connect: spy(),
+    connections: [connection1, connection2],
+    removeConnection: spy(),
+    updateConnection: spy(),
+  }) satisfies Connections;

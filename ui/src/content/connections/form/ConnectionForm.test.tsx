@@ -4,11 +4,11 @@ import { spy } from 'tinyspy';
 import type { ConnectionFormStoryProps } from './ConnectionForm.story';
 import { ConnectionFormStory } from './ConnectionForm.story';
 import { animationOptions } from '~/shared/components/overlayCard/constants';
-import { connectionsContextMock } from '../Context.mock';
+import { getConnectionsContextMock } from '../Context.mock';
 
 const getProps = () =>
   ({
-    connectionsContext: connectionsContextMock,
+    connectionsContext: getConnectionsContextMock(),
     connectionFormProps: { exit: spy() },
   }) satisfies ConnectionFormStoryProps;
 

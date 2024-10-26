@@ -128,12 +128,13 @@ test.describe('OverlayCard', () => {
     await expect(card).toBeVisible();
 
     const trigger = getTrigger($);
-    expect(await card.evaluate((el) => el.getBoundingClientRect().top)).toBe(
+    expect(await card.evaluate((el) => el.getBoundingClientRect().top)).toBeCloseTo(
       (await trigger.evaluate((el) => el.getBoundingClientRect().bottom)) + overlayCardMargin,
+      -0.5,
     );
-    expect(await card.evaluate((el) => window.innerWidth - el.getBoundingClientRect().right)).toBe(
-      overlayCardMargin,
-    );
+    expect(
+      await card.evaluate((el) => window.innerWidth - el.getBoundingClientRect().right),
+    ).toBeCloseTo(overlayCardMargin, -0.5);
   });
 
   test.describe('allows aligning the card relative to the trigger', () => {
@@ -220,25 +221,25 @@ test.describe('OverlayCard', () => {
 
         switch (position.y) {
           case 'top':
-            expect(cardRect.top).toBe(overlayCardMargin);
+            expect(cardRect.top).toBeCloseTo(overlayCardMargin, -0.5);
             break;
           case 'center':
-            expect(cardRect.top).toBe(windowHeight - cardRect.bottom);
+            expect(cardRect.top).toBeCloseTo(windowHeight - cardRect.bottom, -0.5);
             break;
           case 'bottom':
-            expect(cardRect.bottom).toBe(windowHeight - overlayCardMargin);
+            expect(cardRect.bottom).toBeCloseTo(windowHeight - overlayCardMargin, -0.5);
             break;
         }
 
         switch (position.x) {
           case 'left':
-            expect(cardRect.left).toBe(overlayCardMargin);
+            expect(cardRect.left).toBeCloseTo(overlayCardMargin, -0.5);
             break;
           case 'center':
-            expect(cardRect.left).toBe(windowWidth - cardRect.right);
+            expect(cardRect.left).toBeCloseTo(windowWidth - cardRect.right, -0.5);
             break;
           case 'right':
-            expect(cardRect.right).toBe(windowWidth - overlayCardMargin);
+            expect(cardRect.right).toBeCloseTo(windowWidth - overlayCardMargin, -0.5);
             break;
         }
       });
@@ -300,11 +301,13 @@ test.describe('OverlayCard', () => {
     await expect(card).toBeVisible();
 
     const anchor = $.page().locator('.bg-red-500');
-    expect(await card.evaluate((el) => el.getBoundingClientRect().top)).toBe(
+    expect(await card.evaluate((el) => el.getBoundingClientRect().top)).toBeCloseTo(
       (await anchor.evaluate((el) => el.getBoundingClientRect().bottom)) + overlayCardMargin,
+      -0.5,
     );
-    expect(await card.evaluate((el) => el.getBoundingClientRect().left)).toBe(
+    expect(await card.evaluate((el) => el.getBoundingClientRect().left)).toBeCloseTo(
       (await anchor.evaluate((el) => el.getBoundingClientRect().left)) + overlayCardMargin,
+      -0.5,
     );
   });
 

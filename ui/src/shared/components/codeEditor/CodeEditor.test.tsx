@@ -46,7 +46,5 @@ test('renders code editor with placeholder', async ({ mount }) => {
 test('renders code editor with line numbers hidden', async ({ mount }) => {
   const $ = await mount(<CodeEditor hideLineNumbers editorProps={{ value: 'test' }} />);
 
-  const lineNumbers = $.locator('.cm-gutterElement');
-
-  expect(lineNumbers).toHaveCount(0);
+  await expect($.locator('.cm-gutterElement')).not.toBeAttached();
 });
