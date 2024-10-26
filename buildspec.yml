@@ -34,10 +34,6 @@ phases:
       - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
 
 reports:
-  all:
-    files:
-      - "**/*-report.xml"
-    file-format: "JUNITXML"
   link:
     files:
       - "link/test-report.xml"
@@ -45,6 +41,9 @@ reports:
   ui:
     files:
       - "ui/test-report.xml"
+    file-format: "JUNITXML"
+  ui-ct:
+    files:
       - "ui/test-ct-report.xml"
     file-format: "JUNITXML"
 
