@@ -14,6 +14,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? [['junit', { outputFile: 'test-ct-report.xml' }]] : 'html',
+  outputDir: 'test-ct-output',
   use: {
     trace: 'on-first-retry',
     ctPort: 3100,
@@ -25,11 +26,15 @@ export default defineConfig({
         },
       },
     },
+    screenshot: 'only-on-failure',
   },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], viewport: { width: 400, height: 400 } },
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 400, height: 400 },
+      },
     },
   ],
   expect: {

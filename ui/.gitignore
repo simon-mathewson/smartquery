@@ -30,3 +30,7 @@ circularDependencies.json
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+test-ct-output
+test-ct-report.xml
+test-report.xml

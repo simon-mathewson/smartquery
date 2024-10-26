@@ -33,7 +33,15 @@ phases:
       - aws s3 sync --delete dist s3://dabase-ui
       - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
 
+artifacts:
+  files:
+    - "ui/test-ct-output/**"
+
 reports:
+  all:
+    files:
+      - "**/*-report.xml"
+    file-format: "JUNITXML"
   link:
     files:
       - "link/test-report.xml"
