@@ -30,7 +30,7 @@ phases:
   post_build:
     commands:
       - cd ../ui
-      - aws s3 sync --delete dist s3://dabase-ui
+      - aws s3 sync dist s3://dabase-ui
       - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
 
 reports:
