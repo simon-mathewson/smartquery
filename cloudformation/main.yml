@@ -1,0 +1,22 @@
+Resources:
+  CloudFrontStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/cloudfront.yml"
+
+  Route53Stack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/route53.yml"
+    DependsOn: CloudFrontStack
+
+  S3Stack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/s3.yml"

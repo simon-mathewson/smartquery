@@ -1,0 +1,31 @@
+Resources:
+  Route53HostedZoneDabase:
+    Type: "AWS::Route53::HostedZone"
+    Properties:
+      Name: "dabase.dev."
+
+  Route53RecordSetEmail:
+    Type: "AWS::Route53::RecordSet"
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "dabase.dev."
+      Type: "MX"
+      TTL: "3600"
+      ResourceRecords:
+        - "1 SMTP.GOOGLE.COM"
+        - "5 ALT1.ASPMX.L.GOOGLE.COM"
+        - "5 ALT2.ASPMX.L.GOOGLE.COM"
+        - "10 ALT3.ASPMX.L.GOOGLE.COM"
+        - "10 ALT4.ASPMX.L.GOOGLE.COM"
+
+  Route53RecordSetDabaseUi:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "dabase.dev."
+      Type: "A"
+      AliasTarget:
+        # This is the CloudFront hosted zone ID, which is fixed for CloudFront
+        HostedZoneId: "Z2FDTNDATAQYW2"
+        DNSName: !ImportValue CloudFrontDistributionDabaseUiDomainName
+    DependsOn: Route53HostedZoneDabase

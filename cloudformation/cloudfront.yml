@@ -1,0 +1,84 @@
+Resources:
+  CloudFrontDistributionDabaseUi:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::CloudFront::Distribution"
+    DeletionPolicy: "Delete"
+    Properties:
+      DistributionConfig:
+        Logging:
+          IncludeCookies: false
+          Bucket: ""
+          Prefix: ""
+        Comment: ""
+        DefaultRootObject: "index.html"
+        Origins:
+          - ConnectionTimeout: 10
+            OriginAccessControlId: ""
+            ConnectionAttempts: 3
+            OriginCustomHeaders: []
+            DomainName: "dabase-ui.s3-website.eu-central-1.amazonaws.com"
+            OriginShield:
+              Enabled: false
+            OriginPath: ""
+            Id: "dabase-ui.s3.eu-central-1.amazonaws.com"
+            CustomOriginConfig:
+              OriginKeepaliveTimeout: 5
+              OriginReadTimeout: 30
+              OriginSSLProtocols:
+                - "SSLv3"
+                - "TLSv1"
+                - "TLSv1.1"
+                - "TLSv1.2"
+              HTTPSPort: 443
+              HTTPPort: 80
+              OriginProtocolPolicy: "http-only"
+        ViewerCertificate:
+          MinimumProtocolVersion: "TLSv1.2_2021"
+          SslSupportMethod: "sni-only"
+          AcmCertificateArn: "arn:aws:acm:us-east-1:339712876040:certificate/2ff1392e-9493-4a7e-96b7-24ab8da20a30"
+        PriceClass: "PriceClass_100"
+        DefaultCacheBehavior:
+          Compress: true
+          TrustedKeyGroups: []
+          FunctionAssociations: []
+          AllowedMethods:
+            - "HEAD"
+            - "GET"
+            - "OPTIONS"
+          CachedMethods:
+            - "HEAD"
+            - "GET"
+          LambdaFunctionAssociations: []
+          SmoothStreaming: false
+          TargetOriginId: "dabase-ui.s3.eu-central-1.amazonaws.com"
+          ViewerProtocolPolicy: "redirect-to-https"
+          CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6" # CachingOptmized
+          TrustedSigners: []
+          FieldLevelEncryptionId: ""
+        Staging: false
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 10
+            ResponseCode: 200
+            ErrorCode: 404
+            ResponsePagePath: "/index.html"
+        ContinuousDeploymentPolicyId: ""
+        OriginGroups:
+          Quantity: 0
+          Items: []
+        Enabled: true
+        Aliases:
+          - "dabase.dev"
+        IPV6Enabled: true
+        WebACLId: "arn:aws:wafv2:us-east-1:339712876040:global/webacl/CreatedByCloudFront-64892164-9432-4553-91cc-052eb3eb087e/1bc7676d-1403-4831-a49a-69c4224197bf"
+        HttpVersion: "http2"
+        Restrictions:
+          GeoRestriction:
+            Locations: []
+            RestrictionType: "none"
+        CacheBehaviors: []
+
+Outputs:
+  CloudFrontDistributionDabaseUiDomainName:
+    Value: !GetAtt CloudFrontDistributionDabaseUi.DomainName
+    Export:
+      Name: "CloudFrontDistributionDabaseUiDomainName"

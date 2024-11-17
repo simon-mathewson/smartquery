@@ -1,0 +1,104 @@
+Resources:
+  S3BucketDabaseLink:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Delete"
+    Properties:
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        BlockPublicAcls: false
+      BucketName: "dabase-link"
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - BucketKeyEnabled: true
+            ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
+
+  S3BucketPolicyDabaseLink:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::S3::BucketPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      Bucket: !Ref S3BucketDabaseLink
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "arn:aws:s3:::dabase-link/*"
+            Action: "s3:GetObject"
+            Effect: "Allow"
+            Principal: "*"
+            Sid: "PublicReadGetObject"
+
+  S3BucketDabaseUi:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Delete"
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: "index.html"
+        ErrorDocument: "index.html"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        BlockPublicAcls: false
+      BucketName: "dabase-ui"
+      CorsConfiguration:
+        CorsRules:
+          - MaxAge: 3000
+            AllowedMethods:
+              - "GET"
+              - "POST"
+              - "PUT"
+            AllowedOrigins:
+              - "*"
+            AllowedHeaders:
+              - "*"
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - BucketKeyEnabled: true
+            ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
+
+  S3BucketPolicyDabaseUi:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::S3::BucketPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      Bucket: !Ref S3BucketDabaseUi
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "arn:aws:s3:::dabase-ui/*"
+            Action: "s3:GetObject"
+            Effect: "Allow"
+            Principal: "*"
+            Sid: "PublicReadGetObject"
+
+  S3BucketCodePipeline:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Delete"
+    Properties:
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "dabase-codepipeline"
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - BucketKeyEnabled: true
+            ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
