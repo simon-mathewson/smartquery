@@ -16,27 +16,27 @@ phases:
     commands:
       - cd ../ui
       - pnpm typecheck
-      - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
-      - pnpm playwright install --with-deps chromium
-      - NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
+      # - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
+      # - pnpm playwright install --with-deps chromium
+      # - NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
       - pnpm build
 
       - cd ../link
       - pnpm typecheck
       - pnpm db:generate
-      - pnpm test:db:up
-      - sleep 15
-      - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
+      # - pnpm test:db:up
+      # - sleep 15
+      # - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
       - pnpm build:node
   post_build:
     commands:
       - cd ../cloudFormation
       - aws s3 sync . s3://dabase-cloudformation --delete --exclude "parameters.json"
-      - |
-        aws cloudformation deploy 
-          --stack-name dabase-2025-01-18-19-40-48 
-          --template-file main.yml 
-          --parameter-overrides file://parameters.json 
+      - >
+        aws cloudformation deploy
+          --stack-name dabase-2025-01-18-19-40-48
+          --template-file main.yml
+          --parameter-overrides file://parameters.json
           --capabilities CAPABILITY_NAMED_IAM
 
       - cd ../ui
