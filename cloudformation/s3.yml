@@ -1,8 +1,8 @@
 Resources:
   S3BucketDabaseLink:
-    UpdateReplacePolicy: "Delete"
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
     Properties:
       PublicAccessBlockConfiguration:
         RestrictPublicBuckets: false
@@ -20,9 +20,9 @@ Resources:
               SSEAlgorithm: "AES256"
 
   S3BucketPolicyDabaseLink:
-    UpdateReplacePolicy: "Delete"
     Type: "AWS::S3::BucketPolicy"
     DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
     Properties:
       Bucket: !Ref S3BucketDabaseLink
       PolicyDocument:
@@ -35,9 +35,9 @@ Resources:
             Sid: "PublicReadGetObject"
 
   S3BucketDabaseUi:
-    UpdateReplacePolicy: "Delete"
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
     Properties:
       WebsiteConfiguration:
         IndexDocument: "index.html"
@@ -69,9 +69,9 @@ Resources:
               SSEAlgorithm: "AES256"
 
   S3BucketPolicyDabaseUi:
-    UpdateReplacePolicy: "Delete"
     Type: "AWS::S3::BucketPolicy"
     DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
     Properties:
       Bucket: !Ref S3BucketDabaseUi
       PolicyDocument:
@@ -84,9 +84,9 @@ Resources:
             Sid: "PublicReadGetObject"
 
   S3BucketCodePipeline:
-    UpdateReplacePolicy: "Delete"
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
     Properties:
       PublicAccessBlockConfiguration:
         RestrictPublicBuckets: true
@@ -102,3 +102,13 @@ Resources:
           - BucketKeyEnabled: true
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
+
+Outputs:
+  S3BucketCodePipeline:
+    Value: !Ref S3BucketCodePipeline
+    Export:
+      Name: "S3BucketCodePipeline"
+  S3BucketDabaseUi:
+    Value: !Ref S3BucketDabaseUi
+    Export:
+      Name: "S3BucketDabaseUi"

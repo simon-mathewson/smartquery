@@ -4,7 +4,60 @@ Resources:
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
-      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/cloudfront.yml"
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/cloudFront.yml"
+
+  CodeBuildStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/codeBuild.yml"
+    DependsOn:
+      - CloudFrontStack
+      - IamStack
+
+  CodePipelineStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/codePipeline.yml"
+    DependsOn:
+      - CodeBuildStack
+      - CodeStarConnectionsStack
+      - IamStack
+      - S3Stack
+
+  CodeStarConnectionsStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/codeStarConnections.yml"
+
+  CognitoStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/cognito.yml"
+
+  IamStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/iam.yml"
+    DependsOn:
+      - CloudFrontStack
+      - S3Stack
+
+  PinpointStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/pinpoint.yml"
 
   Route53Stack:
     Type: "AWS::CloudFormation::Stack"

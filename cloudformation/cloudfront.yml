@@ -1,8 +1,6 @@
 Resources:
   CloudFrontDistributionDabaseUi:
-    UpdateReplacePolicy: "Delete"
     Type: "AWS::CloudFront::Distribution"
-    DeletionPolicy: "Delete"
     Properties:
       DistributionConfig:
         Logging:
@@ -69,7 +67,6 @@ Resources:
         Aliases:
           - "dabase.dev"
         IPV6Enabled: true
-        WebACLId: "arn:aws:wafv2:us-east-1:339712876040:global/webacl/CreatedByCloudFront-64892164-9432-4553-91cc-052eb3eb087e/1bc7676d-1403-4831-a49a-69c4224197bf"
         HttpVersion: "http2"
         Restrictions:
           GeoRestriction:
@@ -82,3 +79,7 @@ Outputs:
     Value: !GetAtt CloudFrontDistributionDabaseUi.DomainName
     Export:
       Name: "CloudFrontDistributionDabaseUiDomainName"
+  CloudFrontDistributionDabaseUi:
+    Value: !Ref CloudFrontDistributionDabaseUi
+    Export:
+      Name: "CloudFrontDistributionDabaseUi"

@@ -29,6 +29,15 @@ phases:
       - pnpm build:node
   post_build:
     commands:
+      - cd ..
+      - aws s3 sync cloudFormation/ s3://dabase-cloudformation --delete --exclude "parameters.json"
+      - aws cloudformation update-stack \
+        --stack-name dabase-2025-01-18-19-40-48 \
+        --template-url https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/main.yml \
+        --parameters file://cloudFormation/parameters.json \
+        --capabilities CAPABILITY_NAMED_IAM
+      - aws cloudformation wait stack-update-complete --stack-name dabase-2025-01-18-19-40-48
+
       - cd ../ui
       - aws s3 sync dist s3://dabase-ui
       - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths '/*'

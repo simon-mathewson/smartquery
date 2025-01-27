@@ -1,0 +1,12 @@
+Resources:
+  PinpointAppDabase:
+    Type: AWS::Pinpoint::App
+    Properties:
+      Name: dabase
+
+Outputs:
+  PinpointAppId:
+    Description: "Pinpoint App ID"
+    Value: !Ref PinpointAppDabase
+    Export:
+      Name: PinpointAppId

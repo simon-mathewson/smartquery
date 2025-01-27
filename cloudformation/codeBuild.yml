@@ -1,0 +1,33 @@
+Resources:
+  CodeBuildDabase:
+    Type: "AWS::CodeBuild::Project"
+    Properties:
+      Artifacts:
+        Type: "CODEPIPELINE"
+      Cache:
+        Type: "LOCAL"
+        Modes:
+          - "LOCAL_CUSTOM_CACHE"
+          - "LOCAL_DOCKER_LAYER_CACHE"
+          - "LOCAL_SOURCE_CACHE"
+      Environment:
+        ComputeType: "BUILD_GENERAL1_SMALL"
+        EnvironmentVariables:
+          - Name: "CLOUDFRONT_DISTRIBUTION_ID"
+            Value: !ImportValue CloudFrontDistributionDabaseUi
+        Image: "aws/codebuild/standard:7.0"
+        PrivilegedMode: true
+        Type: "LINUX_CONTAINER"
+      LogsConfig:
+        CloudWatchLogs:
+          Status: "ENABLED"
+      Name: "dabase"
+      ServiceRole: !ImportValue IamRoleCodeBuildArn
+      Source:
+        Type: "CODEPIPELINE"
+
+Outputs:
+  CodeBuildDabase:
+    Value: !Ref CodeBuildDabase
+    Export:
+      Name: CodeBuildDabase

@@ -6,6 +6,7 @@ Resources:
 
   Route53RecordSetEmail:
     Type: "AWS::Route53::RecordSet"
+    DependsOn: Route53HostedZoneDabase
     Properties:
       HostedZoneName: "dabase.dev."
       Name: "dabase.dev."
@@ -20,6 +21,7 @@ Resources:
 
   Route53RecordSetDabaseUi:
     Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
     Properties:
       HostedZoneName: "dabase.dev."
       Name: "dabase.dev."
@@ -28,4 +30,3 @@ Resources:
         # This is the CloudFront hosted zone ID, which is fixed for CloudFront
         HostedZoneId: "Z2FDTNDATAQYW2"
         DNSName: !ImportValue CloudFrontDistributionDabaseUiDomainName
-    DependsOn: Route53HostedZoneDabase

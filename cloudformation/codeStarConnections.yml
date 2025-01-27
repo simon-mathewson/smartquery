@@ -1,0 +1,12 @@
+Resources:
+  CodeStarConnectionDabase:
+    Type: AWS::CodeStarConnections::Connection
+    Properties:
+      ConnectionName: "GitHubConnectionDabase"
+      ProviderType: GitHub
+
+Outputs:
+  CodeStarConnectionDabaseArn:
+    Value: !Ref CodeStarConnectionDabase
+    Export:
+      Name: CodeStarConnectionDabaseArn

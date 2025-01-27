@@ -1,0 +1,92 @@
+Resources:
+  ManagedPolicyDeployDabase:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:GetBucketVersioning
+              - s3:PutObject
+              - s3:ListBucket
+            Resource:
+              - !Sub
+                - "arn:${AWS::Partition}:s3:::${BucketName}"
+                - BucketName: !ImportValue S3BucketCodePipeline
+              - !Sub
+                - "arn:${AWS::Partition}:s3:::${BucketName}/*"
+                - BucketName: !ImportValue S3BucketCodePipeline
+              - !Sub
+                - "arn:${AWS::Partition}:s3:::${BucketName}"
+                - BucketName: !ImportValue S3BucketDabaseUi
+              - !Sub
+                - "arn:${AWS::Partition}:s3:::${BucketName}/*"
+                - BucketName: !ImportValue S3BucketDabaseUi
+          - Effect: Allow
+            Action:
+              - cloudfront:CreateInvalidation
+            Resource: !Sub
+              - "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${DistributionId}"
+              - DistributionId: !ImportValue CloudFrontDistributionDabaseUi
+
+  IamRoleCodeBuild:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AWSCodeBuildAdminAccess"
+        - !Ref ManagedPolicyDeployDabase
+      Policies:
+        - PolicyName: CodeBuildPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "logs:*"
+                Resource: "*"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "codebuild.amazonaws.com"
+  
+  IamRoleCodePipeline:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AWSCodeBuildAdminAccess"
+        - !Ref ManagedPolicyDeployDabase
+      Policies:
+        - PolicyName: CodeStarConnectionAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codestar-connections:UseConnection
+                Resource: "*"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "codepipeline.amazonaws.com"
+
+Outputs:
+  IamRoleCodeBuildArn:
+    Value: !GetAtt IamRoleCodeBuild.Arn
+    Export:
+      Name: IamRoleCodeBuildArn
+      
+  IamRoleCodePipelineArn:
+    Value: !GetAtt IamRoleCodePipeline.Arn
+    Export:
+      Name: IamRoleCodePipelineArn

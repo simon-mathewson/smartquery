@@ -1,0 +1,40 @@
+Resources:
+  CodePipelineDabase:
+    Type: "AWS::CodePipeline::Pipeline"
+    Properties:
+      ArtifactStore:
+        Type: "S3"
+        Location: !ImportValue S3BucketCodePipeline
+      Name: dabase
+      RoleArn: !ImportValue IamRoleCodePipelineArn
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: Source
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeStarSourceConnection
+                Version: "1"
+              Configuration:
+                ConnectionArn: !ImportValue CodeStarConnectionDabaseArn
+                FullRepositoryId: "simon-mathewson/dabase"
+                BranchName: "main"
+              OutputArtifacts:
+                - Name: SourceOutput
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: Build
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: "1" 
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !ImportValue CodeBuildDabase
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutput
+              RunOrder: 1
