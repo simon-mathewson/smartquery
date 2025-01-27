@@ -43,6 +43,7 @@ Resources:
               - "cloudformation:DeleteChangeSet"
               - "cloudformation:DescribeStacks"
               - "cloudformation:GetTemplateSummary"
+              - "cloudformation:UpdateStack"
             Resource:
               - !Sub "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/dabase-*/*"
 

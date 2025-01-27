@@ -31,7 +31,7 @@ phases:
   post_build:
     commands:
       - cd ../cloudFormation
-      - aws s3 sync . s3://dabase-cloudformation --delete --exclude "parameters.json"
+      - aws s3 sync . s3://dabase-cloudformation --delete
       - >
         aws cloudformation deploy \
           --stack-name dabase-2025-01-18-19-40-48 \

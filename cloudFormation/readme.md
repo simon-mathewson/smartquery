@@ -12,7 +12,7 @@ These commands should be kept in sync with buildspec.yml.
 
 ```sh
 cd ../cloudFormation
-aws s3 sync . s3://dabase-cloudformation --delete --exclude "parameters.json"
+aws s3 sync . s3://dabase-cloudformation --delete
 aws cloudformation create-stack \
    --stack-name dabase-$(date +%Y-%m-%d-%H-%M-%S) \
    --template-url https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/main.yml \
