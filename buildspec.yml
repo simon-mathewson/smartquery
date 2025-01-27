@@ -33,10 +33,10 @@ phases:
       - cd ../cloudFormation
       - aws s3 sync . s3://dabase-cloudformation --delete --exclude "parameters.json"
       - >
-        aws cloudformation deploy
-          --stack-name dabase-2025-01-18-19-40-48
-          --template-file main.yml
-          --parameter-overrides file://parameters.json
+        aws cloudformation deploy \
+          --stack-name dabase-2025-01-18-19-40-48 \
+          --template-file main.yml \
+          --parameter-overrides file://parameters.json \
           --capabilities CAPABILITY_NAMED_IAM
 
       - cd ../ui
