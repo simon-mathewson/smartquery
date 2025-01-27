@@ -40,7 +40,7 @@ export const useEscape = (props: UseEscapeProps) => {
   const isTopLevel = childRefs.length === 0;
 
   useEffect(() => {
-    if (!isTopLevel || !clickOutside) return;
+    if (!isTopLevel || !clickOutside || !active) return;
 
     const listener = (event: MouseEvent | TouchEvent) => {
       const isClickInsideSomeRef = [clickOutside.ref, ...(clickOutside.additionalRefs ?? [])].some(
@@ -57,7 +57,7 @@ export const useEscape = (props: UseEscapeProps) => {
     return () => {
       document.removeEventListener('mousedown', listener);
     };
-  }, [isTopLevel, clickOutside, handler]);
+  }, [isTopLevel, clickOutside, handler, active]);
 
   useEffect(() => {
     if (!isTopLevel) return;
