@@ -34,9 +34,7 @@ Resources:
             Federated: "cognito-identity.amazonaws.com"
           Condition:
             StringEquals:
-              'cognito-identity.amazonaws.com:aud': !Sub
-                - "eu-central-1:${IdentityPoolId}"
-                - IdentityPoolId: !GetAtt CognitoIdentityPoolDabase.Id
+              'cognito-identity.amazonaws.com:aud': !GetAtt CognitoIdentityPoolDabase.Id
             'ForAnyValue:StringLike':
               'cognito-identity.amazonaws.com:amr': "unauthenticated"
 
