@@ -20,6 +20,7 @@ phases:
       - pnpm playwright install --with-deps chromium
       - NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
       - pnpm build
+
       - cd ../link
       - pnpm typecheck
       - pnpm db:generate
@@ -31,12 +32,11 @@ phases:
     commands:
       - cd ../cloudFormation
       - aws s3 sync . s3://dabase-cloudformation --delete --exclude "parameters.json"
-      - aws cloudformation update-stack \
+      - aws cloudformation deploy \
         --stack-name dabase-2025-01-18-19-40-48 \
-        --template-url https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/main.yml \
-        --parameters file://parameters.json \
+        --template-file main.yml \
+        --parameter-overrides file://parameters.json \
         --capabilities CAPABILITY_NAMED_IAM
-      - aws cloudformation wait stack-update-complete --stack-name dabase-2025-01-18-19-40-48
 
       - cd ../ui
       - aws s3 sync dist s3://dabase-ui

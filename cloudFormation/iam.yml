@@ -25,6 +25,8 @@ Resources:
               - !Sub
                 - "arn:${AWS::Partition}:s3:::${BucketName}/*"
                 - BucketName: !ImportValue S3BucketDabaseUi
+              - "arn:aws:s3:::dabase-cloudformation"
+              - "arn:aws:s3:::dabase-cloudformation/*"
           - Effect: Allow
             Action:
               - cloudfront:CreateInvalidation
