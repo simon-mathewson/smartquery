@@ -2,6 +2,7 @@ Resources:
   ManagedPolicyDeployDabase:
     Type: "AWS::IAM::ManagedPolicy"
     Properties:
+      Path: "/service-role/"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -34,6 +35,16 @@ Resources:
             Resource: !Sub
               - "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${DistributionId}"
               - DistributionId: !ImportValue CloudFrontDistributionDabaseUi
+          - Effect: "Allow"
+            Action:
+              - "cloudformation:CreateChangeSet"
+              - "cloudformation:DescribeChangeSet"
+              - "cloudformation:ExecuteChangeSet"
+              - "cloudformation:DeleteChangeSet"
+              - "cloudformation:DescribeStacks"
+              - "cloudformation:GetTemplateSummary"
+            Resource:
+              - !Sub "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/dabase-*/*"
 
   IamRoleCodeBuild:
     Type: "AWS::IAM::Role"
