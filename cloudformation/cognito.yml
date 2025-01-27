@@ -13,14 +13,18 @@ Resources:
         Version: "2012-10-17"
         Statement:
           - Resource: "*"
-            Action: "mobiletargeting:PutEvents"
+            Action: 
+              - "mobiletargeting:PutEvents"
+              - "mobiletargeting:UpdateEndpoint"
+              - "mobileanalytics:PutEvents"
             Effect: "Allow"
-          - Resource: "*"
-            Action: "mobiletargeting:UpdateEndpoint"
-            Effect: "Allow"
-          - Resource: "*"
-            Action: "mobileanalytics:PutEvents"
-            Effect: "Allow"
+            Condition:
+              StringEquals:
+                'cognito-identity.amazonaws.com:aud': !Sub
+                  - "eu-central-1:${IdentityPoolId}"
+                  - IdentityPoolId: !GetAtt CognitoIdentityPoolDabase.Id
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr': "unauthenticated"
 
   IAMRoleCognito:
     Type: "AWS::IAM::Role"
@@ -31,14 +35,7 @@ Resources:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Condition:
-            StringEquals:
-              cognito-identity.amazonaws.com:aud: !Sub
-                - "eu-central-1:${IdentityPoolId}"
-                - IdentityPoolId: !GetAtt CognitoIdentityPoolDabase.Id
-            ForAnyValue:StringLike:
-              cognito-identity.amazonaws.com:amr: "unauthenticated"
-          Action: "sts:AssumeRoleWithWebIdentity"
+        - Action: "sts:AssumeRoleWithWebIdentity"
           Effect: "Allow"
           Principal:
             Federated: "cognito-identity.amazonaws.com"
