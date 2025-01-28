@@ -43,21 +43,25 @@ export const OverlayCard: React.FC<OverlayCardProps> = (props) => {
             },
           )}
           ref={(background) => {
-            if (background && !backgroundRef.current) {
-              if (darkenBackground) {
-                animateInBackground(background);
+            setTimeout(() => {
+              if (background && !backgroundRef.current) {
+                if (darkenBackground) {
+                  animateInBackground(background);
+                }
+                backgroundRef.current = background;
               }
-              backgroundRef.current = background;
-            }
+            }, 10);
           }}
         >
           <div
             className="absolute opacity-0"
             ref={(wrapper) => {
-              if (wrapper && !wrapperRef.current) {
-                animateInWrapper(wrapper);
-                wrapperRef.current = wrapper;
-              }
+              setTimeout(() => {
+                if (wrapper && !wrapperRef.current) {
+                  animateInWrapper(wrapper);
+                  wrapperRef.current = wrapper;
+                }
+              }, 10);
             }}
           >
             <Card
