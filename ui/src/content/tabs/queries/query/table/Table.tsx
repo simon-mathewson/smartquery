@@ -20,7 +20,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const { query } = useDefinedContext(QueryContext);
 
-  const { columns, rows, table } = useDefinedContext(ResultContext);
+  const { columns, rows, table, tableType } = useDefinedContext(ResultContext);
 
   const { createChanges, getChangeAtLocation } = useDefinedContext(EditContext);
 
@@ -169,7 +169,7 @@ export const Table: React.FC<TableProps> = (props) => {
               });
             })}
           </div>
-          {isEditable && (
+          {isEditable && tableType === 'BASE TABLE' && (
             <SelectionActions
               columnCount={visibleColumns!.length}
               isEditing={isEditing}

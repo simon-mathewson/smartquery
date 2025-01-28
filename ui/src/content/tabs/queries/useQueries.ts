@@ -3,7 +3,7 @@ import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { Row } from '~/shared/types';
+import type { Row, TableType } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
 import { isNotNull } from '~/shared/utils/typescript/typescript';
 import { TabsContext } from '../Context';
@@ -13,6 +13,7 @@ import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
 import { convertPrismaValue } from './utils/convertPrismaValue';
 import { getNewQuery } from './utils/getNewQuery';
 import { parseQuery } from './utils/parse';
+import { getTableStatement } from './utils/getTableStatement';
 
 export const useQueries = () => {
   const trpc = useDefinedContext(TrpcContext);
@@ -87,9 +88,18 @@ export const useQueries = () => {
         select,
       });
 
-      const statementsWithMetadata = [selectStatement, columnsStatement, totalRowsStatement].filter(
-        isNotNull,
-      );
+      const tableStatement = getTableStatement({
+        connection: activeConnection,
+        select,
+        table: select.table,
+      });
+
+      const statementsWithMetadata = [
+        selectStatement,
+        columnsStatement,
+        totalRowsStatement,
+        tableStatement,
+      ].filter(isNotNull);
 
       onStartLoading(id);
 
@@ -99,7 +109,7 @@ export const useQueries = () => {
           statements: statementsWithMetadata,
         });
 
-        const [firstSelectResult, columnsResult, totalRowsResult] = results;
+        const [firstSelectResult, columnsResult, totalRowsResult, tableResult] = results;
 
         const columns = getColumnsFromResult({
           connection: activeConnection,
@@ -118,12 +128,16 @@ export const useQueries = () => {
 
         const totalRows = Number(totalRowsResult[0].count);
 
+        assert(tableResult[0].table_type);
+        const tableType = tableResult[0].table_type as TableType;
+
         setQueryResults((currentQueryResults) => ({
           ...currentQueryResults,
           [query.id]: {
             columns,
             rows,
             table: select!.table,
+            tableType,
             totalRows,
           },
         }));
@@ -173,6 +187,7 @@ export const useQueries = () => {
             [query.id]: {
               columns: null,
               rows,
+              tableType: null,
             },
           }));
         } else {

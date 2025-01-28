@@ -64,10 +64,13 @@ export type Query = {
   statements: string[] | null;
 };
 
+export type TableType = 'BASE TABLE' | 'SYSTEM_VIEW' | 'VIEW';
+
 export type QueryResult = {
   columns: Column[] | null;
   rows: Row[];
   table?: string;
+  tableType: TableType | null;
   totalRows?: number;
 };
 
