@@ -5,11 +5,11 @@ import { parseQuery } from './parse';
 
 export const getNewQuery = (props: {
   addQueryOptions: AddQueryOptions;
-  engine: Connection['engine'];
+  connection: Connection;
 }) => {
   const {
     addQueryOptions: { showEditor, sql },
-    engine,
+    connection,
   } = props;
 
   return {
@@ -17,6 +17,6 @@ export const getNewQuery = (props: {
     isLoading: false,
     showEditor: showEditor === true,
     sql: sql ?? null,
-    ...(sql ? parseQuery({ engine, sql }) : { select: null, statements: null }),
+    ...(sql ? parseQuery({ connection, sql }) : { select: null, statements: null }),
   } satisfies Query;
 };

@@ -201,7 +201,10 @@ export const useQueries = () => {
 
       assert(activeConnection);
 
-      const newQuery = getNewQuery({ addQueryOptions: query, engine: activeConnection.engine });
+      const newQuery = getNewQuery({
+        addQueryOptions: query,
+        connection: activeConnection,
+      });
 
       if (!tabId) {
         addTab([[newQuery]]);
@@ -259,7 +262,7 @@ export const useQueries = () => {
               ? {
                   ...q,
                   sql: sql.trim(),
-                  ...parseQuery({ engine: activeConnection.engine, sql }),
+                  ...parseQuery({ connection: activeConnection, sql }),
                 }
               : q,
           ),

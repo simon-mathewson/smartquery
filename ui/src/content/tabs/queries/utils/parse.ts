@@ -2,12 +2,14 @@ import type { Connection } from '~/shared/types';
 import { splitSqlStatements } from '~/shared/utils/sql/sql';
 import { getAstForSql } from '~/shared/utils/sqlParser/getAstForSql';
 import type { Select } from '../types';
+import type NodeSqlParser from 'node-sql-parser';
 
 const getSelectFromStatement = (props: {
-  engine: Connection['engine'];
+  connection: Connection;
   statement: string;
 }): Select | null => {
-  const { engine, statement } = props;
+  const { connection, statement } = props;
+  const { engine, database: connectionDatabase } = connection;
 
   const parsed = getAstForSql({ engine, statement });
 
@@ -23,22 +25,36 @@ const getSelectFromStatement = (props: {
   const table = parsed.from[0].table;
   if (!table) return null;
 
-  return { parsed, table };
+  const from = parsed.from[0];
+
+  const selectSchema = ('db' in from && (from as NodeSqlParser.From).db) || undefined;
+
+  const catalog = engine === 'postgresql' ? connectionDatabase : 'def';
+  const schema = selectSchema ?? (engine === 'postgresql' ? 'public' : connectionDatabase);
+
+  return {
+    catalog,
+    parsed,
+    schema,
+    table,
+  };
 };
 
 export const parseQuery = (props: {
-  engine: Connection['engine'];
+  connection: Connection;
   sql: string;
 }): {
   select: Select | null;
   statements: string[] | null;
 } => {
-  const { engine, sql } = props;
+  const { connection, sql } = props;
 
   const statements = splitSqlStatements(sql);
 
   const select =
-    statements.length === 1 ? getSelectFromStatement({ engine, statement: statements[0] }) : null;
+    statements.length === 1
+      ? getSelectFromStatement({ connection, statement: statements[0] })
+      : null;
 
   return {
     select,

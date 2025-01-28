@@ -18,24 +18,13 @@ export const getColumnsStatement = (props: {
   table: string;
 }): string => {
   const {
-    connection: { database: connectionDatabase, engine },
+    connection: { engine },
     select,
     table,
   } = props;
 
-  const from = select.parsed.from?.[0];
-
-  const selectDatabaseOrSchema = ('db' in from && (from as NodeSqlParser.From).db) || undefined;
-  const database =
-    engine === 'postgresql' ? connectionDatabase : selectDatabaseOrSchema ?? connectionDatabase;
-
-  const catalog = engine === 'postgresql' ? connectionDatabase : 'def';
-  const schema =
-    engine === 'postgresql'
-      ? selectDatabaseOrSchema ?? 'public'
-      : selectDatabaseOrSchema ?? database;
-
-  const isMysqlInformationSchemaQuery = engine === 'mysql' && schema === 'information_schema';
+  const isMysqlInformationSchemaQuery =
+    engine === 'mysql' && select.schema === 'information_schema';
   const databaseColumn = engine === 'postgresql' ? 'table_catalog' : 'table_schema';
 
   return `
@@ -71,8 +60,8 @@ export const getColumnsStatement = (props: {
     WHERE ${isMysqlInformationSchemaQuery ? 'LOWER(c.table_name)' : 'c.table_name'} = '${
       isMysqlInformationSchemaQuery ? table.toLowerCase() : table
     }'
-    AND c.table_catalog = '${catalog}'
-    AND c.table_schema = '${schema}'
+    AND c.table_catalog = '${select.catalog}'
+    AND c.table_schema = '${select.schema}'
     ${
       engine === 'postgresql'
         ? `GROUP BY c.column_name, c.ordinal_position, c.data_type, c.is_nullable, tc.constraint_type`
