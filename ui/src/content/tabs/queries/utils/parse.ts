@@ -8,8 +8,10 @@ const getSelectFromStatement = (props: {
   connection: Connection;
   statement: string;
 }): Select | null => {
-  const { connection, statement } = props;
-  const { engine, database: connectionDatabase } = connection;
+  const {
+    connection: { engine, database: connectionDatabase },
+    statement,
+  } = props;
 
   const parsed = getAstForSql({ engine, statement });
 
