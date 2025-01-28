@@ -125,13 +125,31 @@ export const getMySqlEnumValuesFromColumnType = (columnType: string) => {
   );
 };
 
-export const getColumnsStatement = (props: { connection: Connection; table: string }): string => {
+export const getColumnsStatement = (props: {
+  connection: Connection;
+  select: Select;
+  table: string;
+}): string => {
   const {
-    connection: { database, engine },
+    connection: { database: connectionDatabase, engine },
+    select,
     table,
   } = props;
 
-  const databaseColumn = engine === 'mysql' ? 'table_schema' : 'table_catalog';
+  const from = select.parsed.from?.[0];
+
+  const selectDatabaseOrSchema = ('db' in from && (from as NodeSqlParser.From).db) || undefined;
+  const database =
+    engine === 'postgresql' ? connectionDatabase : selectDatabaseOrSchema ?? connectionDatabase;
+
+  const catalog = engine === 'postgresql' ? connectionDatabase : 'def';
+  const schema =
+    engine === 'postgresql'
+      ? selectDatabaseOrSchema ?? 'public'
+      : selectDatabaseOrSchema ?? database;
+
+  const isMysqlInformationSchemaQuery = engine === 'mysql' && schema === 'information_schema';
+  const databaseColumn = engine === 'postgresql' ? 'table_catalog' : 'table_schema';
 
   return `
     SELECT
@@ -163,8 +181,11 @@ export const getColumnsStatement = (props: { connection: Connection; table: stri
       ON tc.constraint_name = k.constraint_name
       AND tc.table_name = k.table_name
       AND tc.${databaseColumn} = k.${databaseColumn}
-    WHERE c.table_name = '${table}'
-    AND c.${databaseColumn} = '${database}'
+    WHERE ${isMysqlInformationSchemaQuery ? 'LOWER(c.table_name)' : 'c.table_name'} = '${
+      isMysqlInformationSchemaQuery ? table.toLowerCase() : table
+    }'
+    AND c.table_catalog = '${catalog}'
+    AND c.table_schema = '${schema}'
     ${
       engine === 'postgresql'
         ? `GROUP BY c.column_name, c.ordinal_position, c.data_type, c.is_nullable, tc.constraint_type`
