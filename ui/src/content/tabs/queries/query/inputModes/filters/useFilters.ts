@@ -4,7 +4,7 @@ import { ConnectionsContext } from '~/content/connections/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import { QueriesContext } from '../../../Context';
-import { getLimitAndOffset, setLimitAndOffset } from '../../../utils';
+import { getLimitAndOffset, setLimitAndOffset } from '../../../utils/limitAndOffset';
 import { QueryContext, ResultContext } from '../../Context';
 import type { Filter } from './types';
 import { getAstFromFilters, getFiltersFromAst } from './utils';

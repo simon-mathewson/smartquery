@@ -1,21 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '~/content/connections/Context';
+import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { Row } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
 import { isNotNull } from '~/shared/utils/typescript/typescript';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
-import {
-  convertPrismaValue,
-  getColumnsFromResult,
-  getColumnsStatement,
-  getNewQuery,
-  getTotalRowsStatement,
-  parseQuery,
-} from './utils';
-import { TrpcContext } from '~/content/trpc/Context';
+import { getColumnsFromResult, getColumnsStatement } from './utils/columns';
+import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
+import { convertPrismaValue } from './utils/convertPrismaValue';
+import { getNewQuery } from './utils/getNewQuery';
+import { parseQuery } from './utils/parse';
 
 export const useQueries = () => {
   const trpc = useDefinedContext(TrpcContext);

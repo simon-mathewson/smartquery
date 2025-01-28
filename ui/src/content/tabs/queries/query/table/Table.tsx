@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { EditContext } from '~/content/edit/Context';
 import type { CreateChange, DeleteChange, UpdateChange } from '~/content/edit/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { getPrimaryKeys } from '../../utils';
+import { getPrimaryKeys } from '../../utils/primaryKeys';
 import { Cell } from './cell/Cell';
 import { SelectionActions } from './selectionActions/SelectionActions';
 import { useSelection } from './useSelection';

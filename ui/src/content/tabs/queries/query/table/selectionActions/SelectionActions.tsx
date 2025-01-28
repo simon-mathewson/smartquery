@@ -9,7 +9,7 @@ import type { PrimaryKey } from '~/content/edit/types';
 import { doChangeLocationsMatch } from '~/content/edit/utils';
 import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { getPrimaryKeys } from '../../../utils';
+import { getPrimaryKeys } from '../../../utils/primaryKeys';
 import { ResultContext } from '../../Context';
 import { EditOverlay } from '../editOverlay/EditOverlay';
 import { Delete } from './delete/Delete';
