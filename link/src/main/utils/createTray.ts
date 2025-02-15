@@ -1,7 +1,11 @@
 import type { MenuItemConstructorOptions } from 'electron';
 import { Menu, Tray, app, nativeImage } from 'electron';
-import settings from 'electron-settings';
+import Store from 'electron-store';
 import iconPath from '../../../resources/trayIconTemplate.png?asset';
+
+const store = new Store<{ startOnLogin: boolean }>({
+  defaults: { startOnLogin: false },
+});
 
 /**
  * Create icon in OS tray and set up context menu
@@ -25,10 +29,10 @@ export const createTray = () => {
       {
         label: 'Start on Login',
         type: 'checkbox',
-        checked: (settings.getSync('startOnLogin') as boolean | undefined) ?? false,
+        checked: store.get('startOnLogin') === true,
         click: (menuItem) => {
           const newValue = menuItem.checked;
-          settings.setSync('startOnLogin', newValue);
+          store.set('startOnLogin', newValue);
           app.setLoginItemSettings({ openAtLogin: newValue });
         },
       },

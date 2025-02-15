@@ -41,7 +41,7 @@
     "@trpc/server": "10.44.1",
     "@types/lodash": "^4.14.202",
     "cors": "^2.8.5",
-    "electron-settings": "^4.0.4",
+    "electron-store": "8.2.0",
     "find-free-ports": "^3.1.1",
     "lodash": "^4.17.21",
     "node-sql-parser": "^4.18.0",
