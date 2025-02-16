@@ -8,5 +8,10 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "typescript.tsdk": "link/node_modules/typescript/lib"
+  "typescript.tsdk": "link/node_modules/typescript/lib",
+  "search.exclude": {
+    "link/dist": true,
+    "link/out": true,
+    "link/prisma/client": true
+  }
 }
