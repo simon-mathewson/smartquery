@@ -5,6 +5,7 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      - npm i -g corepack@latest
       - corepack enable pnpm
       - pnpm config set store-dir .pnpm-store
       - cd link
