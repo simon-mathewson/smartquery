@@ -8,3 +8,4 @@ prisma/client
 .env.*.local
 electron-builder.env
 test-report.xml
+.pnpm-store

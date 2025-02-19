@@ -2,7 +2,6 @@ const artifactName = '${name}_${version}_${arch}.${ext}';
 const artifactNameWindows = '${name}_${version}_${arch}_setup.${ext}';
 
 module.exports = {
-  afterSign: 'buildResources/notarize.js',
   appId: 'dev.dabase.link',
   asarUnpack: ['resources/**'],
   extraResources: [
@@ -49,6 +48,7 @@ module.exports = {
   dmg: {
     artifactName,
     sign: false,
+    title: 'dabase-link', // Mac ARM build fails if this contains spaces
   },
   linux: {
     target: [
