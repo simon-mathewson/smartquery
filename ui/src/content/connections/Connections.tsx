@@ -58,7 +58,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
             </div>
             <List
               autoFocusFirstItem
-              htmlProps={{ 'aria-labelledby': connectionsLabelId }}
+              htmlProps={{ 'aria-labelledby': connectionsLabelId, className: 'w-[280px]' }}
               items={connections.map((connection) => ({
                 actions: [
                   {
