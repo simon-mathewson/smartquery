@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { ListItem, type ListItemProps } from './Item';
 import { useKeyboardNavigation } from './useKeyboardNavigation';
 
-export type ListProps<T extends string> = {
+export type ListProps<T> = {
   autoFocusFirstItem?: boolean;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
   emptyPlaceholder?: string;
@@ -10,7 +10,7 @@ export type ListProps<T extends string> = {
   onSelect?: (value: T) => void;
 } & ({ multiple?: false; selectedValue: T | null } | { multiple: true; selectedValues: T[] });
 
-export const List = <T extends string>(props: ListProps<T>) => {
+export function List<T>(props: ListProps<T>) {
   const { autoFocusFirstItem, emptyPlaceholder, htmlProps, items, multiple, onSelect } = props;
 
   const { onKeyDown } = useKeyboardNavigation();
@@ -57,4 +57,4 @@ export const List = <T extends string>(props: ListProps<T>) => {
       ))}
     </div>
   );
-};
+}

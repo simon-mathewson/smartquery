@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import type { ActiveConnection, Connection, Engine } from '~/shared/types';
+import type { ActiveConnection, Connection, Database, Engine } from '~/shared/types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { useLocation, useRoute } from 'wouter';
 import { routes } from '~/router/routes';
@@ -31,18 +31,31 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const [activeConnectionClientId, setActiveConnectionClientId] = useState<string | null>(null);
 
-  const [, dbRouteParams] = useRoute<{
+  const [, dbRouteParamsWithoutSchema] = useRoute<{
     connectionId: string;
     database: string;
+    schema: undefined;
+  }>(routes.database({ schema: '' }));
+
+  const [, dbRouteParamsWithSchema] = useRoute<{
+    connectionId: string;
+    database: string;
+    schema: string;
   }>(routes.database());
 
-  const { connectionId: connectionIdParam, database: databaseParam } = dbRouteParams ?? {};
+  const dbRouteParams = dbRouteParamsWithSchema ?? dbRouteParamsWithoutSchema;
+
+  const {
+    connectionId: connectionIdParam,
+    database: databaseParam,
+    schema: schemaParam,
+  } = dbRouteParams ?? {};
 
   const previousRouteParamsRef = useRef<typeof dbRouteParams | undefined>(undefined);
 
   const [activeConnection, setActiveConnection] = useState<ActiveConnection | null>(null);
 
-  const [activeConnectionDatabases, setActiveConnectionDatabases] = useState<string[]>([]);
+  const [activeConnectionDatabases, setActiveConnectionDatabases] = useState<Database[]>([]);
 
   useEffect(() => {
     if (!activeConnectionClientId || !connectionIdParam || !databaseParam) return;
@@ -54,8 +67,9 @@ export const useConnections = (props: UseConnectionsProps) => {
       ...connection,
       clientId: activeConnectionClientId,
       database: databaseParam,
+      schema: schemaParam,
     } satisfies ActiveConnection);
-  }, [activeConnectionClientId, databaseParam, connectionIdParam, connections]);
+  }, [activeConnectionClientId, databaseParam, connectionIdParam, connections, schemaParam]);
 
   const addConnection = useCallback(
     (connection: Omit<Connection, 'id'>) => {
@@ -103,11 +117,28 @@ export const useConnections = (props: UseConnectionsProps) => {
           'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC',
       }[engine];
 
-      return trpc.sendQuery
-        .mutate({ clientId, statements: [databasesStatement] })
-        .then(([rows]) => {
-          setActiveConnectionDatabases(rows.map(({ db }) => String(db)));
-        });
+      const statements = [databasesStatement];
+
+      if (engine === 'postgresql') {
+        statements.push(
+          "SELECT schema_name AS schema, catalog_name AS db FROM information_schema.schemata WHERE schema_name <> 'information_schema' AND schema_name NOT LIKE 'pg_%' ORDER BY schema_name ASC",
+        );
+      }
+
+      await trpc.sendQuery.mutate({ clientId, statements }).then(([dbRows, schemaRows]) => {
+        setActiveConnectionDatabases(
+          dbRows.map((dbRow) => {
+            const db = String(dbRow.db);
+            return {
+              name: db,
+              schemas:
+                schemaRows
+                  ?.filter((schemaRow) => db === String(schemaRow.db))
+                  .map((schemaRow) => String(schemaRow.schema)) ?? [],
+            };
+          }),
+        );
+      });
     },
     [trpc.sendQuery],
   );
@@ -118,6 +149,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       overrides?: {
         database?: string;
         password?: string;
+        schema?: string;
         sshPassword?: string;
         sshPrivateKey?: string;
       },
@@ -140,6 +172,7 @@ export const useConnections = (props: UseConnectionsProps) => {
           onSignIn: async (credentials) =>
             connect(connection.id, {
               database: overrides?.database,
+              schema: overrides?.schema,
               ...credentials,
             }),
         });
@@ -149,12 +182,14 @@ export const useConnections = (props: UseConnectionsProps) => {
       await disconnect();
 
       const selectedDatabase = overrides?.database ?? connection.database;
+      const selectedSchema = overrides?.schema ?? connection.schema;
 
       try {
         const newClientId = await trpc.connectDb.mutate({
           ...connection,
           database: selectedDatabase,
           password,
+          schema: selectedSchema,
           ssh: connection.ssh
             ? {
                 ...connection.ssh,
@@ -166,8 +201,16 @@ export const useConnections = (props: UseConnectionsProps) => {
 
         setActiveConnectionClientId(newClientId);
 
-        navigate(routes.database(connection.id, selectedDatabase));
-        window.document.title = `${selectedDatabase} – ${connection.name}`;
+        navigate(
+          routes.database({
+            connectionId: connection.id,
+            database: selectedDatabase,
+            schema: selectedSchema ?? '',
+          }),
+        );
+        window.document.title = `${
+          selectedSchema ? `${selectedSchema} – ` : ''
+        }${selectedDatabase} – ${connection.name}`;
 
         await getDatabases(newClientId, connection.engine);
       } catch (error) {

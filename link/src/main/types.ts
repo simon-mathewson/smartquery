@@ -10,6 +10,7 @@ export const connectionSchema = z.object({
   name: z.string().trim().min(1),
   password: z.string(),
   port: z.number(),
+  schema: z.string().trim().min(1).optional(),
   ssh: z
     .object({
       host: z.string().trim().min(1),

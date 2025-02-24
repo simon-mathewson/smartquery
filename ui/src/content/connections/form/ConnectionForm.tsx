@@ -42,6 +42,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
       ? {
           ...connectionToEdit,
           password: connectionToEdit?.password ?? '',
+          schema: connectionToEdit?.schema ?? '',
           ssh: connectionToEdit?.ssh
             ? {
                 ...connectionToEdit.ssh,
@@ -61,6 +62,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           name: '',
           password: '',
           port: null,
+          schema: '',
           ssh: null,
           user: '',
         },
@@ -210,6 +212,14 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             onChange={(value) => setFormValue('database', value)}
           />
         </Field>
+        {formValues.engine === 'postgresql' && (
+          <Field label="Default schema">
+            <Input
+              htmlProps={{ value: formValues.schema }}
+              onChange={(value) => setFormValue('schema', value)}
+            />
+          </Field>
+        )}
         <SshFormSection
           formValues={formValues}
           htmlProps={{ className: 'my-2' }}

@@ -43,6 +43,12 @@ export const getConnectionFromForm = (formArg: FormValues) => {
     form.ssh.port = 22;
   }
 
+  if (form.engine === 'postgresql') {
+    form.schema = form.schema || undefined;
+  } else {
+    form.schema = undefined;
+  }
+
   const connection = connectionSchema.parse(form);
 
   if (connection.credentialStorage !== 'localStorage') {

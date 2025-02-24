@@ -14,7 +14,7 @@ export const router = trpc.router({
   connectDb: trpc.procedure.input(connectionSchema).mutation(async (props) => {
     const {
       ctx: { clients },
-      input: { database, engine, host: remoteHost, password, port: remotePort, ssh, user },
+      input: { database, engine, host: remoteHost, password, port: remotePort, schema, ssh, user },
     } = props;
 
     const clientId = uniqueId();
@@ -38,7 +38,7 @@ export const router = trpc.router({
       }
       if (engine === 'postgresql') {
         return new PostgresClient({
-          datasourceUrl: `postgresql://${user}:${password}@${host}:${port}/${database}`,
+          datasourceUrl: `postgresql://${user}:${password}@${host}:${port}/${database}${schema ? `?schema=${schema}` : ''}`,
         });
       }
       throw new Error(`Unsupported engine: ${engine}`);

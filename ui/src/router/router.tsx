@@ -14,6 +14,7 @@ export const Router: React.FC = () => {
           <Route path={routes.root()} component={Home} />
           <Route path={routes.setup()} component={Setup} />
           <Route path={routes.database()} component={Database} />
+          <Route path={routes.database({ schema: '' })} component={Database} />
         </Switch>
       </App>
     </Route>

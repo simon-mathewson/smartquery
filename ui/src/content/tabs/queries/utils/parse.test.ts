@@ -11,6 +11,7 @@ describe('Query parsing utils', () => {
   const postgresConnection: Connection = {
     engine: 'postgresql',
     database: 'test_db',
+    schema: 'public',
   } as Connection;
 
   describe('parseQuery', () => {
@@ -21,8 +22,8 @@ describe('Query parsing utils', () => {
 
         expect(result.statements).toEqual(['SELECT id, name FROM users']);
         expect(result.select).toEqual({
-          catalog: 'def',
-          schema: 'test_db',
+          database: 'test_db',
+          schema: undefined,
           table: 'users',
           parsed: expect.any(Object),
         });
@@ -34,8 +35,8 @@ describe('Query parsing utils', () => {
 
         expect(result.statements).toEqual(['SELECT id, name FROM other_db.users']);
         expect(result.select).toEqual({
-          catalog: 'def',
-          schema: 'other_db',
+          database: 'other_db',
+          schema: undefined,
           table: 'users',
           parsed: expect.any(Object),
         });
@@ -75,7 +76,7 @@ describe('Query parsing utils', () => {
 
         expect(result.statements).toEqual(['SELECT id, name FROM users']);
         expect(result.select).toEqual({
-          catalog: 'test_db',
+          database: 'test_db',
           schema: 'public',
           table: 'users',
           parsed: expect.any(Object),
@@ -88,7 +89,7 @@ describe('Query parsing utils', () => {
 
         expect(result.statements).toEqual(['SELECT id, name FROM custom_schema.users']);
         expect(result.select).toEqual({
-          catalog: 'test_db',
+          database: 'test_db',
           schema: 'custom_schema',
           table: 'users',
           parsed: expect.any(Object),

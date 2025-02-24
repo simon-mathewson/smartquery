@@ -37,8 +37,8 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
         />
       ) : (
         <div
-          className={classNames('grid min-w-[256px] gap-3', {
-            'grid-cols-[4fr_max-content_3fr]': !hideDatabases,
+          className={classNames('grid gap-3', {
+            'grid-cols-[280px_auto]': !hideDatabases,
             'grid-cols-[1fr]': hideDatabases,
           })}
         >
@@ -58,7 +58,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
             </div>
             <List
               autoFocusFirstItem
-              htmlProps={{ 'aria-labelledby': connectionsLabelId, className: 'w-[280px]' }}
+              htmlProps={{ 'aria-labelledby': connectionsLabelId }}
               items={connections.map((connection) => ({
                 actions: [
                   {
@@ -79,12 +79,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
               selectedValue={activeConnection?.id ?? null}
             />
           </div>
-          {!hideDatabases && (
-            <>
-              <div className="h-full w-px bg-border" />
-              <DatabaseList />
-            </>
-          )}
+          {!hideDatabases && <DatabaseList />}
         </div>
       )}
     </>

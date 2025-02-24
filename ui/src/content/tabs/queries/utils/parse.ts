@@ -9,7 +9,7 @@ const getSelectFromStatement = (props: {
   statement: string;
 }): Select | null => {
   const {
-    connection: { engine, database: connectionDatabase },
+    connection: { engine, database: connectionDatabase, schema: connectionSchema },
     statement,
   } = props;
 
@@ -29,13 +29,14 @@ const getSelectFromStatement = (props: {
 
   const from = parsed.from[0];
 
-  const selectSchema = ('db' in from && (from as NodeSqlParser.From).db) || undefined;
+  const selectSchemaOrDatabase = ('db' in from && (from as NodeSqlParser.From).db) || undefined;
 
-  const catalog = engine === 'postgresql' ? connectionDatabase : 'def';
-  const schema = selectSchema ?? (engine === 'postgresql' ? 'public' : connectionDatabase);
+  const database =
+    engine === 'postgresql' ? connectionDatabase : selectSchemaOrDatabase ?? connectionDatabase;
+  const schema = engine === 'postgresql' ? selectSchemaOrDatabase ?? connectionSchema : undefined;
 
   return {
-    catalog,
+    database,
     parsed,
     schema,
     table,

@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '../button/Button';
 import { autoFocusClass } from '~/shared/utils/focusFirstControl/focusFirstControl';
 
-export type ListItemProps<T extends string> = {
+export type ListItemProps<T> = {
   actions?: Array<{ icon: React.ReactNode; label: string; onClick: () => void }>;
   autoFocus?: boolean;
   hint?: string;
@@ -16,7 +16,7 @@ export type ListItemProps<T extends string> = {
   value: T;
 };
 
-export const ListItem = <T extends string>(props: ListItemProps<T>) => {
+export function ListItem<T>(props: ListItemProps<T>) {
   const {
     actions,
     autoFocus,
@@ -89,4 +89,4 @@ export const ListItem = <T extends string>(props: ListItemProps<T>) => {
       ))}
     </div>
   );
-};
+}

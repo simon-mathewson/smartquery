@@ -60,8 +60,8 @@ export const getColumnsStatement = (props: {
     WHERE ${isMysqlInformationSchemaQuery ? 'LOWER(c.table_name)' : 'c.table_name'} = '${
       isMysqlInformationSchemaQuery ? table.toLowerCase() : table
     }'
-    AND c.table_catalog = '${select.catalog}'
-    AND c.table_schema = '${select.schema}'
+    AND c.table_catalog = '${engine === 'postgresql' ? select.database : 'def'}'
+    AND c.table_schema = '${engine === 'postgresql' ? select.schema : select.database}'
     ${
       engine === 'postgresql'
         ? `GROUP BY c.column_name, c.ordinal_position, c.data_type, c.is_nullable, tc.constraint_type`

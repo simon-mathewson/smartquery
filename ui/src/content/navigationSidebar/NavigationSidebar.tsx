@@ -40,7 +40,7 @@ export const NavigationSidebar: React.FC = () => {
 
       <OverlayCard
         align="left"
-        htmlProps={{ className: 'w-max p-2 shadow-2xl w-[440px]' }}
+        htmlProps={{ className: 'w-max p-2 shadow-2xl' }}
         triggerRef={connectionsTriggerRef}
       >
         {() => <Connections />}

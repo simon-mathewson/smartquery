@@ -5,9 +5,9 @@ import { DragAndDropContext } from '../Context';
 import { TabsContext } from '~/content/tabs/Context';
 import type { DropMarker } from '../types';
 
-export const useDrag = (props: {
+export const useDrag = <T extends Record<string, unknown>>(props: {
   dragRef?: React.MutableRefObject<HTMLElement | null>;
-  onDrop: (props: { dropMarker: DropMarker; itemId: string; tabId: string }) => void;
+  onDrop: (props: { dropMarker: DropMarker; item: T; tabId: string }) => void;
 }) => {
   const { dragRef, onDrop } = props;
 
@@ -18,7 +18,7 @@ export const useDrag = (props: {
   const [isDragging, setIsDragging] = useState(false);
 
   const triggerRef = useRef<HTMLElement | null>(null);
-  const currentItemIdRef = useRef<string | null>(null);
+  const currentItemRef = useRef<T | null>(null);
 
   const cloneRef = useRef<HTMLElement | null>(null);
 
@@ -80,11 +80,11 @@ export const useDrag = (props: {
   );
 
   const getHandleMouseDown = useCallback(
-    (itemId: string) => (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    (item: T) => (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
       if (!activeTab) return;
 
       triggerRef.current = event.currentTarget as HTMLElement | null;
-      currentItemIdRef.current = itemId;
+      currentItemRef.current = item;
       startRef.current = { x: event.clientX, y: event.clientY };
 
       document.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -101,7 +101,7 @@ export const useDrag = (props: {
           setActiveDropMarker(null);
           cloneRef.current = null;
           triggerRef.current = null;
-          currentItemIdRef.current = null;
+          currentItemRef.current = null;
           setIsDragging(false);
           isUnlocked.current = false;
 
@@ -115,7 +115,7 @@ export const useDrag = (props: {
 
           onDrop({
             dropMarker,
-            itemId,
+            item,
             tabId: activeTab.id,
           });
         },

@@ -12,6 +12,8 @@ import { List } from '~/shared/components/list/List';
 import { uniq } from 'lodash';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 
+type Table = { name: string; schema: string | undefined };
+
 export const TableList: React.FC = () => {
   const trpc = useDefinedContext(TrpcContext);
 
@@ -19,27 +21,27 @@ export const TableList: React.FC = () => {
   const { activeTab } = useDefinedContext(TabsContext);
   const { addQuery, queryResults } = useDefinedContext(QueriesContext);
 
-  const [tables, setTables] = useState<string[]>([]);
+  const [tables, setTables] = useState<Table[]>([]);
 
   useEffect(() => {
     if (!activeConnection) return;
 
-    const { clientId, database, engine } = activeConnection;
+    const { clientId, database, engine, schema } = activeConnection;
 
     const tableNamesStatement = {
       mysql: `SELECT table_name AS t FROM information_schema.tables
         WHERE table_type = 'BASE TABLE'
         AND table_schema = '${database}'
         ORDER BY t ASC`,
-      postgresql: `SELECT table_name AS t FROM information_schema.tables
+      postgresql: `SELECT table_name AS t, table_schema AS s FROM information_schema.tables
         WHERE table_type = 'BASE TABLE'
-        AND table_schema NOT IN ('pg_catalog', 'information_schema')
+        ${schema ? `AND table_schema = '${schema}'` : ''}
         AND table_catalog = '${database}'
         ORDER BY t ASC`,
     }[engine];
 
     trpc.sendQuery.mutate({ clientId, statements: [tableNamesStatement] }).then(([rows]) => {
-      setTables(rows.map(({ t }) => String(t)));
+      setTables(rows.map(({ t, s }) => ({ name: String(t), schema: s ? String(s) : undefined })));
     });
   }, [activeConnection, trpc]);
 
@@ -48,33 +50,35 @@ export const TableList: React.FC = () => {
       query
         .map((q) => {
           const result = q.id in queryResults ? queryResults[q.id] : null;
-          return result?.table;
+          return result?.table ? { name: result.table, schema: result.schema } : undefined;
         })
         .filter(isNotUndefined),
     ),
-  );
+  ) satisfies Table[];
 
-  const getQuery = (tableName: string) => {
+  const getQuery = (table: Table) => {
     assert(activeConnection);
 
     return {
       sql: {
-        mysql: `SELECT * FROM ${addQuotes(activeConnection.engine, tableName)} LIMIT 50`,
-        postgresql: `SELECT * FROM ${addQuotes(activeConnection.engine, tableName)} LIMIT 50`,
+        mysql: `SELECT * FROM ${addQuotes(activeConnection.engine, table.name)} LIMIT 50`,
+        postgresql: `SELECT * FROM ${
+          activeConnection.schema ? '' : `${addQuotes(activeConnection.engine, table.schema!)}.`
+        }${addQuotes(activeConnection.engine, table.name)} LIMIT 50`,
       }[activeConnection.engine],
     };
   };
 
-  const { getHandleMouseDown, isDragging } = useDrag({
+  const { getHandleMouseDown, isDragging } = useDrag<Table>({
     onDrop: (dropProps) => {
       const {
-        itemId: tableName,
+        item: table,
         dropMarker: { column, horizontal, row },
       } = dropProps;
 
       assert(activeTab);
 
-      addQuery(getQuery(tableName), {
+      addQuery(getQuery(table), {
         position: { column, row: horizontal ? row : undefined },
         tabId: activeTab.id,
       });
@@ -83,19 +87,19 @@ export const TableList: React.FC = () => {
 
   return (
     <div className="flex w-full flex-col gap-1 overflow-auto py-2">
-      <List
+      <List<Table>
         emptyPlaceholder="This database is empty."
-        items={tables.map((tableName) => ({
+        items={tables.map((table) => ({
           className: classNames({
             '!opacity-50': isDragging,
           }),
-          label: tableName,
-          onMouseDown: getHandleMouseDown(tableName),
+          label: table.name,
+          onMouseDown: getHandleMouseDown(table),
           selectedVariant: 'secondary',
-          value: tableName,
+          value: table,
         }))}
         multiple
-        onSelect={(tableName) => addQuery(getQuery(tableName))}
+        onSelect={(table) => addQuery(getQuery(table))}
         selectedValues={selectedTables}
       />
     </div>

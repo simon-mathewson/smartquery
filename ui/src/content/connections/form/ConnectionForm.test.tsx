@@ -22,6 +22,7 @@ const fillOutForm = async ($: MountResult) => {
   await $.getByRole('textbox', { name: 'Port' }).first().fill('1234');
   await $.getByRole('textbox', { name: 'User' }).first().fill('user');
   await $.getByRole('textbox', { name: 'Default database' }).fill('db');
+  await $.getByRole('textbox', { name: 'Default schema' }).fill('public');
 };
 
 test.use({ viewport: { width: 400, height: 800 } });
@@ -74,6 +75,7 @@ test.describe('ConnectionForm', () => {
           name: 'My connection',
           password: null,
           port: 1234,
+          schema: 'public',
           ssh: null,
           user: 'user',
         },
@@ -139,6 +141,7 @@ test.describe('ConnectionForm', () => {
           name: 'My connection',
           password: 'password',
           port: 1234,
+          schema: 'public',
           ssh: null,
           user: 'user',
         },
@@ -177,6 +180,7 @@ test.describe('ConnectionForm', () => {
           name: 'My connection',
           password: 'password',
           port: 1234,
+          schema: 'public',
           ssh: null,
           user: 'user',
         },

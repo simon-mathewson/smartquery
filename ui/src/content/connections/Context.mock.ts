@@ -1,8 +1,8 @@
 import { spy } from 'tinyspy';
 import type { Connections } from './useConnections';
-import type { Connection } from '~/shared/types';
+import type { ActiveConnection, Connection } from '~/shared/types';
 
-const connection1 = {
+export const connectionMock1 = {
   credentialStorage: 'alwaysAsk',
   database: 'development',
   engine: 'mysql',
@@ -15,7 +15,7 @@ const connection1 = {
   user: 'user',
 } satisfies Connection;
 
-const connection2 = {
+export const connectionMock2 = {
   credentialStorage: 'localStorage',
   database: 'postgres',
   engine: 'postgresql',
@@ -24,6 +24,7 @@ const connection2 = {
   name: 'Other connection',
   password: 'password',
   port: 5248,
+  schema: 'public',
   ssh: {
     credentialStorage: 'alwaysAsk',
     host: 'localhost',
@@ -36,11 +37,15 @@ const connection2 = {
 
 export const getConnectionsContextMock = () =>
   ({
-    activeConnection: { clientId: '1', ...connection1 },
-    activeConnectionDatabases: ['development', 'test', 'staging'],
+    activeConnection: { clientId: '1', ...connectionMock1 } as ActiveConnection,
+    activeConnectionDatabases: [
+      { name: 'development', schemas: [] },
+      { name: 'test', schemas: [] },
+      { name: 'staging', schemas: [] },
+    ],
     addConnection: spy(),
     connect: spy(),
-    connections: [connection1, connection2],
+    connections: [connectionMock1, connectionMock2],
     removeConnection: spy(),
     updateConnection: spy(),
   }) satisfies Connections;

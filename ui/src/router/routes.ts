@@ -1,6 +1,8 @@
 export const routes = {
   root: () => '/',
   setup: () => '/setup',
-  database: (connectionId = ':connectionId', database = ':database') =>
-    `/db/${connectionId}/${database}`,
+  database: (params?: { connectionId?: string; database?: string; schema?: string }) =>
+    `/db/${params?.connectionId ?? ':connectionId'}/${params?.database ?? ':database'}${
+      params?.schema !== '' ? `/${params?.schema ?? ':schema'}` : ''
+    }`,
 };

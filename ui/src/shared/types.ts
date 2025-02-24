@@ -16,6 +16,7 @@ export const connectionSchema = z.object({
   name: z.string().trim().min(1),
   password: z.string().nullable(),
   port: z.number(),
+  schema: z.string().trim().min(1).optional(),
   ssh: z
     .object({
       credentialStorage: z.union([z.literal('alwaysAsk'), z.literal('localStorage')]),
@@ -35,6 +36,11 @@ export type Engine = Connection['engine'];
 
 export type ActiveConnection = Connection & {
   clientId: string;
+};
+
+export type Database = {
+  name: string;
+  schemas: string[];
 };
 
 export type PrismaValue = string | string[] | number | boolean | Date | Prisma.Decimal | null;
@@ -69,6 +75,7 @@ export type TableType = 'BASE TABLE' | 'SYSTEM_VIEW' | 'VIEW';
 export type QueryResult = {
   columns: Column[] | null;
   rows: Row[];
+  schema?: string;
   table?: string;
   tableType: TableType | null;
   totalRows?: number;
