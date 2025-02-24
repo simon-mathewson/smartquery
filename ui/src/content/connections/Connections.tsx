@@ -39,7 +39,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
         <div
           className={classNames('grid gap-3', {
             'grid-cols-[280px_auto]': !hideDatabases,
-            'grid-cols-[1fr]': hideDatabases,
+            'grid-cols-[280px]': hideDatabases,
           })}
         >
           <div>
