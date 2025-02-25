@@ -62,7 +62,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
                 (!isWindows && !browserEvent.ctrlKey && browserEvent.metaKey))
             ) {
               browserEvent.stopPropagation();
-              props.submit?.();
+
+              if (value) {
+                props.submit?.();
+              }
             }
           });
         }

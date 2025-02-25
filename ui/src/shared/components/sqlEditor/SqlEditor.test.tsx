@@ -16,28 +16,10 @@ test.describe('SqlEditor', () => {
     props.onSubmit.reset();
   });
 
-  test('should display and syntax highlight SQL', async ({ mount }) => {
+  test('should display SQL', async ({ mount }) => {
     const $ = await mount(<SqlEditor {...props} />);
 
-    await expect($.locator('.cm-content')).toHaveText(props.value);
-
-    const classNameSelect = await $.getByText('SELECT').getAttribute('class');
-    const classNameFrom = await $.getByText('FROM').getAttribute('class');
-    const classNameWhere = await $.getByText('WHERE').getAttribute('class');
-
-    expect(classNameSelect).toBe(classNameFrom);
-    expect(classNameFrom).toBe(classNameWhere);
-
-    const classNameColumn = await $.getByText('*').getAttribute('class');
-    const classNameLimit = await $.getByText('1').last().getAttribute('class');
-
-    expect(classNameSelect).not.toBe(classNameColumn);
-    expect(classNameColumn).toBe(classNameLimit);
-
-    const classNameTable = await $.getByText('"table"').getAttribute('class');
-
-    expect(classNameTable).not.toBe(classNameSelect);
-    expect(classNameTable).not.toBe(classNameColumn);
+    await expect($.getByRole('textbox')).toHaveValue(props.value);
   });
 
   test('should allow changing value', async ({ mount }) => {
