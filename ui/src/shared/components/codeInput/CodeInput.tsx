@@ -1,9 +1,9 @@
 import classNames from 'classnames';
+import type { CodeEditorProps } from '../codeEditor/CodeEditor';
 import { CodeEditor } from '../codeEditor/CodeEditor';
-import type { ReactCodeMirrorProps } from '@uiw/react-codemirror';
 
 export type CodeInputProps = {
-  editorProps?: ReactCodeMirrorProps;
+  editorProps?: CodeEditorProps;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
   language: 'sql' | 'json';
   onChange?: (value: string) => void;
@@ -23,12 +23,7 @@ export const CodeInput: React.FC<CodeInputProps> = (props) => {
         htmlProps?.className,
       )}
     >
-      <CodeEditor
-        editorProps={editorProps}
-        hideLineNumbers
-        language={language}
-        onChange={onChange}
-      />
+      <CodeEditor {...editorProps} hideLineNumbers language={language} onChange={onChange} />
     </div>
   );
 };

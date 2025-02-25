@@ -1,84 +1,106 @@
-import { sql } from '@codemirror/lang-sql';
-import { githubLightInit, githubDarkInit } from '@uiw/codemirror-theme-github';
-import type { ReactCodeMirrorProps, ReactCodeMirrorRef } from '@uiw/react-codemirror';
-import CodeMirror, { EditorView } from '@uiw/react-codemirror';
-import { json } from '@codemirror/lang-json';
-import React, { useMemo } from 'react';
-import './styles.css';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import Editor from '@monaco-editor/react';
+import classNames from 'classnames';
+import React from 'react';
 import { ThemeContext } from '~/content/theme/Context';
-import { themes } from '../../../../tailwind.config';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { getIsWindows } from '~/shared/utils/getIsWindows/getIsWindows';
 
 export type CodeEditorProps = {
-  editorProps?: ReactCodeMirrorProps;
-  editorRef?: React.RefObject<ReactCodeMirrorRef>;
+  autoFocus?: boolean;
   hideLineNumbers?: boolean;
   language?: 'json' | 'sql';
   large?: boolean;
   onChange?: (value: string) => void;
+  placeholder?: string;
+  readOnly?: boolean;
+  submit?: () => void;
+  value?: string;
 };
 
-const commonOptions = {
-  background: 'transparent',
-  fontFamily: 'Fira Mono, monospace',
-  gutterBackground: 'transparent',
-} as const;
-
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
-  const { editorProps, editorRef, hideLineNumbers, language, large, onChange } = props;
+  const { autoFocus, hideLineNumbers, language, large, onChange, readOnly, value } = props;
 
   const { mode } = useDefinedContext(ThemeContext);
 
-  const theme = useMemo(
-    () =>
-      mode === 'light'
-        ? githubLightInit({
-            settings: {
-              ...commonOptions,
-              gutterBorder: themes.light.border,
-              lineHighlight: '#0000000A',
-              selection: `${themes.light.primary}50`,
-              selectionMatch: `${themes.light.primary}25`,
-            },
-          })
-        : githubDarkInit({
-            settings: {
-              ...commonOptions,
-              gutterBorder: themes.dark.border,
-              lineHighlight: '#FFFFFF0A',
-              selection: `${themes.dark.primary}50`,
-              selectionMatch: `${themes.dark.primary}25`,
-            },
-          }),
-    [mode],
-  );
-
-  const extensions = [EditorView.lineWrapping];
-  if (language === 'sql') {
-    extensions.push(sql());
-  } else if (language === 'json') {
-    extensions.push(json());
-  }
-
   return (
-    <CodeMirror
-      {...editorProps}
-      basicSetup={{
-        autocompletion: false,
-        foldGutter: false,
-        lineNumbers: !hideLineNumbers,
-      }}
-      className={large ? 'cm-min-height-large' : 'cm-min-height-small'}
-      extensions={extensions}
-      onChange={(sql) => onChange?.(sql)}
-      onKeyDown={(event) => {
-        // Prevent "Tab" from moving focus to the next element.
-        if (event.key === 'Tab') {
-          event.stopPropagation();
+    <Editor
+      className={classNames(
+        '[&_.margin]:!bg-transparent [&_.monaco-editor-background]:!bg-transparent [&_.monaco-editor]:!bg-transparent [&_.monaco-editor]:!outline-none',
+      )}
+      defaultLanguage={language}
+      onChange={(value) => onChange?.(value ?? '')}
+      onMount={(editor, monaco) => {
+        const setHeight = () => {
+          const contentHeight = Math.max(large ? 80 : 30, editor.getContentHeight());
+
+          editor.getContainerDomNode().style.height = `${contentHeight}px`;
+
+          editor.layout({
+            width: editor.getContainerDomNode().clientWidth,
+            height: contentHeight,
+          });
+
+          setTimeout(() => {
+            editor.getContainerDomNode().querySelector('.current-line')?.scrollIntoView();
+          });
+        };
+
+        editor.onDidContentSizeChange(setHeight);
+
+        if (props.submit) {
+          editor.onKeyDown((event) => {
+            const isWindows = getIsWindows();
+
+            const { browserEvent } = event;
+
+            if (
+              browserEvent.key === 'Enter' &&
+              !browserEvent.shiftKey &&
+              !browserEvent.altKey &&
+              !browserEvent.repeat &&
+              ((isWindows && browserEvent.ctrlKey && !browserEvent.metaKey) ||
+                (!isWindows && !browserEvent.ctrlKey && browserEvent.metaKey))
+            ) {
+              browserEvent.stopPropagation();
+              props.submit?.();
+            }
+          });
+        }
+
+        setHeight();
+
+        editor.getModel()?.setEOL(monaco.editor.EndOfLineSequence.LF);
+
+        if (autoFocus) {
+          editor.focus();
         }
       }}
-      ref={editorRef}
-      theme={theme}
+      options={{
+        folding: false,
+        fontFamily: 'Fira Mono, monospace',
+        glyphMargin: true,
+        lineDecorationsWidth: hideLineNumbers ? 0 : 16,
+        lineNumbers: hideLineNumbers ? 'off' : undefined,
+        lineNumbersMinChars: 2,
+        minimap: { enabled: false },
+        overviewRulerLanes: 0,
+        padding: {
+          top: large ? 8 : 4,
+          bottom: large ? 8 : 4,
+        },
+        readOnly,
+        scrollbar: {
+          alwaysConsumeMouseWheel: false,
+          vertical: 'hidden',
+        },
+        scrollBeyondLastLine: false,
+        wordWrap: 'on',
+      }}
+      theme={mode === 'light' ? 'vs' : 'vs-dark'}
+      value={value}
+      wrapperProps={{
+        style: { overflow: 'hidden', width: '100%' },
+      }}
     />
   );
 };

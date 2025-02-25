@@ -18,7 +18,7 @@ export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = (prop
         label="Reload"
         variant="filled"
       />
-      <CodeEditor editorProps={{ readOnly: true, value: error.stack || '' }} />
+      <CodeEditor hideLineNumbers readOnly value={error.stack || ''} />
     </div>
   );
 };

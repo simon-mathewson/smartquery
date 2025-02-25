@@ -6,13 +6,13 @@ test('renders code editor with value and allows editing', async ({ mount }) => {
   const value = 'SELECT * FROM table;';
   const onChange = spy();
 
-  const $ = await mount(<CodeEditor editorProps={{ value }} onChange={onChange} />);
+  const $ = await mount(<CodeEditor autoFocus value={value} onChange={onChange} />);
+
+  await expect($).toHaveText(`1${value}`);
+
+  await $.click();
 
   const editor = $.getByRole('textbox');
-  await expect(editor).toHaveText(value);
-
-  await editor.click();
-
   const newValue = 'SELECT column FROM table;\nSELECT 1;';
   await editor.selectText();
   await editor.press('Delete');
@@ -20,31 +20,14 @@ test('renders code editor with value and allows editing', async ({ mount }) => {
 
   expect(onChange.calls.at(-1)?.[0]).toBe(newValue);
 
-  const lineNumbers = $.locator('.cm-gutterElement');
-  await expect(lineNumbers).toHaveCount(3);
-  await expect(lineNumbers.nth(1)).toHaveText('1');
-  await expect(lineNumbers.nth(2)).toHaveText('2');
-});
-
-test('renders code editor with placeholder', async ({ mount }) => {
-  const placeholder = 'Type your query here';
-  const onChange = spy();
-
-  const $ = await mount(
-    <CodeEditor editorProps={{ placeholder, value: '' }} onChange={onChange} />,
-  );
-
-  const editor = $.getByRole('textbox');
-
-  await expect(editor).toHaveText(placeholder);
-
-  await editor.fill('a');
-
-  await expect(editor).toHaveText('a');
+  const lineNumbers = $.locator('.line-numbers');
+  await expect(lineNumbers).toHaveCount(2);
+  await expect(lineNumbers.nth(0)).toHaveText('1');
+  await expect(lineNumbers.nth(1)).toHaveText('2');
 });
 
 test('renders code editor with line numbers hidden', async ({ mount }) => {
-  const $ = await mount(<CodeEditor hideLineNumbers editorProps={{ value: 'test' }} />);
+  const $ = await mount(<CodeEditor hideLineNumbers value="test" />);
 
-  await expect($.locator('.cm-gutterElement')).not.toBeAttached();
+  await expect($.locator('.line-numbers')).not.toBeAttached();
 });

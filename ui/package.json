@@ -15,16 +15,13 @@
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
-    "@codemirror/lang-json": "0.19.2",
-    "@codemirror/lang-sql": "^6.5.4",
     "@emotion/styled": "^11.11.0",
+    "@monaco-editor/react": "^4.7.0",
     "@mui/icons-material": "^5.14.16",
     "@mui/material": "5.14.20",
     "@trpc/client": "10.44.1",
     "@trpc/server": "10.44.1",
     "@types/uuid": "^9.0.8",
-    "@uiw/codemirror-theme-github": "^4.21.20",
-    "@uiw/react-codemirror": "^4.21.20",
     "aws-amplify": "^6.6.7",
     "classnames": "^2.3.2",
     "decimal.js": "^10.4.3",
