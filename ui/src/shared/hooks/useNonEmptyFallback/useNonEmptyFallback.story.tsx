@@ -7,7 +7,7 @@ export type UseNonEmptyFallbackStoryProps = {
 export const UseNonEmptyFallbackStory: React.FC<UseNonEmptyFallbackStoryProps> = (props) => {
   const { value } = props;
 
-  const previousValue = useNonEmptyFallback(value);
+  const nonEmptyValue = useNonEmptyFallback(value);
 
-  return String(previousValue);
+  return String(nonEmptyValue);
 };
