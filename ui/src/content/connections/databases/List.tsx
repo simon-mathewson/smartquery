@@ -4,12 +4,19 @@ import { ConnectionsContext } from '../Context';
 import { useMemo, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import classNames from 'classnames';
+import { useNonEmptyFallback } from '~/shared/hooks/useNonEmptyFallback/useNonEmptyFallback';
 
 export const DatabaseList: React.FC = () => {
-  const { activeConnection, activeConnectionDatabases, connect } =
-    useDefinedContext(ConnectionsContext);
+  const {
+    activeConnection: currentActiveConnection,
+    activeConnectionDatabases: currentActiveConnectionDatabases,
+    connect,
+  } = useDefinedContext(ConnectionsContext);
 
   const [labelId] = useState(uuid);
+
+  const activeConnection = useNonEmptyFallback(currentActiveConnection);
+  const activeConnectionDatabases = useNonEmptyFallback(currentActiveConnectionDatabases);
 
   const schemas = useMemo(() => {
     if (!activeConnection) return [];
