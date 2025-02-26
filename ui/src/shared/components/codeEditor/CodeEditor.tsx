@@ -25,7 +25,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   return (
     <Editor
       className={classNames(
-        '[&_.margin]:!bg-transparent [&_.monaco-editor-background]:!bg-transparent [&_.monaco-editor]:!bg-transparent [&_.monaco-editor]:!outline-none',
+        '[&_.margin]:!bg-transparent [&_.monaco-editor-background]:!bg-transparent [&_.monaco-editor]:!bg-transparent [&_.monaco-editor]:!outline-none [&_.suggest-widget>.message]:text-[12px]',
       )}
       defaultLanguage={language}
       onChange={(value) => onChange?.(value ?? '')}
@@ -63,7 +63,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
             ) {
               browserEvent.stopPropagation();
 
-              if (value) {
+              if (editor.getValue()) {
                 props.submit?.();
               }
             }
