@@ -10,8 +10,14 @@ import { Input } from '~/shared/components/input/Input';
 
 export const Settings: React.FC = () => {
   const { modePreference, setModePreference } = useDefinedContext(ThemeContext);
-  const { openAiApiKey, setOpenAiApiKey, anthropicApiKey, setAnthropicApiKey } =
-    useDefinedContext(AiContext);
+  const {
+    googleAiApiKey,
+    openAiApiKey,
+    setGoogleAiApiKey,
+    setOpenAiApiKey,
+    aiProvider,
+    setAiProvider,
+  } = useDefinedContext(AiContext);
 
   return (
     <div className="flex flex-col gap-2">
@@ -32,18 +38,35 @@ export const Settings: React.FC = () => {
           value={modePreference}
         />
       </Field>
-      <Field label="OpenAI API Key">
-        <Input
-          onChange={(value) => setOpenAiApiKey(value)}
-          htmlProps={{ type: 'password', value: openAiApiKey }}
+      <Field label="AI Provider">
+        <ButtonSelect<typeof aiProvider>
+          equalWidth
+          fullWidth
+          onChange={(value) => setAiProvider(value)}
+          options={[
+            { button: { label: 'Google' }, value: 'google' },
+            { button: { label: 'OpenAI' }, value: 'openai' },
+          ]}
+          value={aiProvider}
         />
       </Field>
-      <Field label="Anthropic API Key">
-        <Input
-          onChange={(value) => setAnthropicApiKey(value)}
-          htmlProps={{ type: 'password', value: anthropicApiKey }}
-        />
-      </Field>
+      {aiProvider && (
+        <Field label={aiProvider === 'openai' ? 'OpenAI API Key' : 'Google AI API Key'}>
+          <Input
+            onChange={(value) => {
+              if (aiProvider === 'openai') {
+                setOpenAiApiKey(value);
+              } else {
+                setGoogleAiApiKey(value);
+              }
+            }}
+            htmlProps={{
+              type: 'password',
+              value: aiProvider === 'openai' ? openAiApiKey : googleAiApiKey,
+            }}
+          />
+        </Field>
+      )}
       <AddToDesktop />
     </div>
   );

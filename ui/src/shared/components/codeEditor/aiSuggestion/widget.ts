@@ -103,49 +103,52 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
   }
 
   async getSuggestion(codeBeforeCursor: string): Promise<string | undefined> {
-    if (!this.ai.openAi || !this.ai.anthropic) {
-      return undefined;
-    }
-
     this.getSuggestionAbortController.abort();
     this.getSuggestionAbortController = new AbortController();
 
-    const response = await this.ai.openAi.chat.completions.create(
-      {
-        temperature: 0,
+    if (this.ai.aiProvider === 'openai' && this.ai.openAi) {
+      const response = await this.ai.openAi.chat.completions.create(
+        {
+          temperature: 0,
+          model: 'gpt-4o',
+          messages: [
+            { role: 'developer', content: developerPrompt },
+            { role: 'user', content: codeBeforeCursor },
+          ],
+        },
+        {
+          signal: this.getSuggestionAbortController.signal,
+        },
+      );
 
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: 'developer',
-            content: developerPrompt,
-          },
-          { role: 'user', content: codeBeforeCursor },
-        ],
-      },
-      {
-        signal: this.getSuggestionAbortController.signal,
-      },
-    );
+      return response.choices[0].message.content ?? undefined;
+    }
 
-    const data = response.choices[0].message.content;
+    if (this.ai.aiProvider === 'google' && this.ai.googleAi) {
+      const model = this.ai.googleAi.getGenerativeModel({
+        model: 'gemini-2.0-flash',
+        systemInstruction: developerPrompt,
+      });
 
-    // const response = await this.ai.anthropic.messages.create({
-    //   model: 'claude-3-7-sonnet-20250219',
-    //   max_tokens: 1000,
-    //   temperature: 0,
-    //   system: developerPrompt,
-    //   messages: [
-    //     {
-    //       role: 'user',
-    //       content: [{ type: 'text', text: codeBeforeCursor }],
-    //     },
-    //   ],
-    // });
+      const response = await model.generateContent(
+        {
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: codeBeforeCursor }],
+            },
+          ],
+          generationConfig: { temperature: 0 },
+        },
+        { signal: this.getSuggestionAbortController.signal },
+      );
 
-    // const data = response.content[0]?.type === 'text' ? response.content[0].text : undefined;
+      const data = response.response.text();
 
-    return data ?? undefined;
+      return data ?? undefined;
+    }
+
+    return undefined;
   }
 
   getId(): string {

@@ -1,40 +1,50 @@
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import OpenAI from 'openai';
 import { useEffect, useState } from 'react';
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export const useAi = () => {
+  const [aiProvider, setAiProvider] = useStoredState<'google' | 'openai' | undefined>(
+    'aiProvider',
+    undefined,
+  );
+
   const [openAiApiKey, setOpenAiApiKey] = useStoredState<string | undefined>(
     'openAiApiKey',
     undefined,
   );
-  const [anthropicApiKey, setAnthropicApiKey] = useStoredState<string | undefined>(
-    'anthropicApiKey',
+
+  const [googleAiApiKey, setGoogleAiApiKey] = useStoredState<string | undefined>(
+    'googleAiApiKey',
     undefined,
   );
 
   const [openAi, setOpenAi] = useState<OpenAI | null>(null);
 
-  const [anthropic, setAnthropic] = useState<Anthropic | null>(null);
+  const [googleAi, setGoogleAi] = useState<GoogleGenerativeAI | null>(null);
 
   useEffect(() => {
-    if (openAiApiKey) {
+    if (aiProvider === 'openai' && openAiApiKey) {
       setOpenAi(new OpenAI({ apiKey: openAiApiKey, dangerouslyAllowBrowser: true }));
     } else {
       setOpenAi(null);
     }
 
-    if (anthropicApiKey) {
-      setAnthropic(
-        new Anthropic({
-          apiKey: anthropicApiKey,
-          dangerouslyAllowBrowser: true,
-        }),
-      );
+    if (aiProvider === 'google' && googleAiApiKey) {
+      setGoogleAi(new GoogleGenerativeAI(googleAiApiKey));
     } else {
-      setAnthropic(null);
+      setGoogleAi(null);
     }
-  }, [openAiApiKey, anthropicApiKey]);
+  }, [aiProvider, openAiApiKey, googleAiApiKey]);
 
-  return { openAiApiKey, setOpenAiApiKey, openAi, anthropicApiKey, setAnthropicApiKey, anthropic };
+  return {
+    aiProvider,
+    googleAi,
+    googleAiApiKey,
+    openAi,
+    openAiApiKey,
+    setAiProvider,
+    setGoogleAiApiKey,
+    setOpenAiApiKey,
+  };
 };

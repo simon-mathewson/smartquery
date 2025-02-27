@@ -27,6 +27,7 @@ export const getInitialConnections = (): Connection[] =>
           name: 'Postgres',
           password: 'password',
           port: Number(import.meta.env.VITE_POSTGRESQL_PORT),
+          schema: 'public',
           ssh: null,
           user: 'postgres',
         },
