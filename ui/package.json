@@ -15,6 +15,7 @@
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.37.0",
     "@emotion/styled": "^11.11.0",
     "@monaco-editor/react": "^4.7.0",
     "@mui/icons-material": "^5.14.16",
@@ -27,6 +28,7 @@
     "decimal.js": "^10.4.3",
     "luxon": "^3.4.4",
     "node-sql-parser": "^4.18.0",
+    "openai": "^4.85.4",
     "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -59,6 +61,7 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "happy-dom": "^14.12.3",
     "lodash": "^4.17.21",
+    "monaco-editor": "^0.52.2",
     "postcss": "^8.4.31",
     "prettier": "^3.0.2",
     "prettier-plugin-tailwindcss": "^0.5.6",

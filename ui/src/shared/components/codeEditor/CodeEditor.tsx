@@ -4,6 +4,8 @@ import React from 'react';
 import { ThemeContext } from '~/content/theme/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getIsWindows } from '~/shared/utils/getIsWindows/getIsWindows';
+import { AiSuggestionWidget } from './aiSuggestion/widget';
+import { AiContext } from '~/content/ai/Context';
 
 export type CodeEditorProps = {
   autoFocus?: boolean;
@@ -22,10 +24,12 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
 
   const { mode } = useDefinedContext(ThemeContext);
 
+  const ai = useDefinedContext(AiContext);
+
   return (
     <Editor
       className={classNames(
-        '[&_.margin]:!bg-transparent [&_.monaco-editor-background]:!bg-transparent [&_.monaco-editor]:!bg-transparent [&_.monaco-editor]:!outline-none [&_.suggest-widget>.message]:text-[12px]',
+        '[&_.margin]:!bg-background [&_.monaco-editor-background]:!bg-background [&_.monaco-editor]:!bg-background [&_.monaco-editor]:!outline-none [&_.suggest-widget>.message]:text-[12px]',
       )}
       defaultLanguage={language}
       onChange={(value) => onChange?.(value ?? '')}
@@ -77,6 +81,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         if (autoFocus) {
           editor.focus();
         }
+
+        new AiSuggestionWidget(editor, monaco, ai);
       }}
       options={{
         folding: false,
@@ -102,7 +108,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       theme={mode === 'light' ? 'vs' : 'vs-dark'}
       value={value}
       wrapperProps={{
-        style: { overflow: 'hidden', width: '100%' },
+        style: { overflow: 'hidden', paddingRight: 8, width: '100%' },
       }}
     />
   );

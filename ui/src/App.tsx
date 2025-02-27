@@ -8,6 +8,7 @@ import { TabsProvider } from './content/tabs/Provider';
 import { QueriesProvider } from './content/tabs/queries/Provider';
 import { TrpcProvider } from './content/trpc/Provider';
 import { BaseProviders } from './baseProviders/BaseProviders';
+import { AiProvider } from './content/ai/Provider';
 
 export const App: React.FC<React.PropsWithChildren> = (props) => {
   const { children } = props;
@@ -21,7 +22,9 @@ export const App: React.FC<React.PropsWithChildren> = (props) => {
               <TabsProvider>
                 <QueriesProvider>
                   <DragAndDropProvider>
-                    <AddToDesktopProvider>{children}</AddToDesktopProvider>
+                    <AddToDesktopProvider>
+                      <AiProvider>{children}</AiProvider>
+                    </AddToDesktopProvider>
                   </DragAndDropProvider>
                 </QueriesProvider>
               </TabsProvider>

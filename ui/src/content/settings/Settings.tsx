@@ -5,9 +5,13 @@ import type { ThemeModePreference } from '../theme/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ThemeContext } from '../theme/Context';
 import { AddToDesktop } from './addToDesktop/AddToDesktop';
+import { AiContext } from '../ai/Context';
+import { Input } from '~/shared/components/input/Input';
 
 export const Settings: React.FC = () => {
   const { modePreference, setModePreference } = useDefinedContext(ThemeContext);
+  const { openAiApiKey, setOpenAiApiKey, anthropicApiKey, setAnthropicApiKey } =
+    useDefinedContext(AiContext);
 
   return (
     <div className="flex flex-col gap-2">
@@ -26,6 +30,18 @@ export const Settings: React.FC = () => {
           ]}
           required
           value={modePreference}
+        />
+      </Field>
+      <Field label="OpenAI API Key">
+        <Input
+          onChange={(value) => setOpenAiApiKey(value)}
+          htmlProps={{ type: 'password', value: openAiApiKey }}
+        />
+      </Field>
+      <Field label="Anthropic API Key">
+        <Input
+          onChange={(value) => setAnthropicApiKey(value)}
+          htmlProps={{ type: 'password', value: anthropicApiKey }}
         />
       </Field>
       <AddToDesktop />
