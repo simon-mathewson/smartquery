@@ -140,10 +140,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       id: string,
       overrides?: {
         database?: string;
-        password?: string;
         schema?: string;
-        sshPassword?: string;
-        sshPrivateKey?: string;
       },
     ) => {
       const connection = connections.find((c) => c.id === id);
@@ -188,22 +185,39 @@ export const useConnections = (props: UseConnectionsProps) => {
             return undefined;
           }
 
-          const password = overrides?.password ?? connection.password;
-          const sshPassword = overrides?.sshPassword ?? connection.ssh?.password;
-          const sshPrivateKey = overrides?.sshPrivateKey ?? connection.ssh?.privateKey;
+          const { password, sshPassword, sshPrivateKey } = await (async () => {
+            const storedCredentials = {
+              password: connection.password ?? '',
+              sshPassword: connection.ssh?.password ?? undefined,
+              sshPrivateKey: connection.ssh?.privateKey ?? undefined,
+            };
 
-          if (password === null || sshPassword === null || sshPrivateKey === null) {
-            signInModal.open({
-              connection,
-              onSignIn: async (credentials) =>
-                connect(connection.id, {
-                  database: overrides?.database,
-                  schema: overrides?.schema,
-                  ...credentials,
-                }),
-            });
-            return;
-          }
+            if (
+              connection.password === null ||
+              connection.ssh?.password === null ||
+              connection.ssh?.privateKey === null
+            ) {
+              return new Promise<{
+                password: string;
+                sshPassword: string | undefined;
+                sshPrivateKey: string | undefined;
+              }>((resolve) => {
+                signInModal.open({
+                  connection,
+                  onSignIn: async (enteredCredentials) =>
+                    resolve({
+                      password: enteredCredentials.password ?? storedCredentials.password,
+                      sshPassword: enteredCredentials.sshPassword ?? storedCredentials.sshPassword,
+                      sshPrivateKey:
+                        enteredCredentials.sshPrivateKey ?? storedCredentials.sshPrivateKey,
+                    }),
+                });
+              });
+            }
+
+            return storedCredentials;
+          })();
+
           const newClientId = await trpc.connectDb.mutate({
             ...connection,
             database: selectedDatabase,
