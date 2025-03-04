@@ -25,12 +25,12 @@
     }
   },
   "include": [
-    "globals.d.ts",
-    "playwright-ct.config.ts",
-    "playwright.config.ts",
-    "playwright",
-    "src",
-    "tailwind.config.ts"
+    "./globals.d.ts",
+    "./playwright-ct.config.ts",
+    "./playwright.config.ts",
+    "./playwright",
+    "./src",
+    "./tailwind.config.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

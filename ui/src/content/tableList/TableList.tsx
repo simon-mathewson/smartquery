@@ -26,23 +26,52 @@ export const TableList: React.FC = () => {
   useEffect(() => {
     if (!activeConnection) return;
 
-    const { clientId, database, engine, schema } = activeConnection;
+    const { database, engine, type } = activeConnection;
 
-    const tableNamesStatement = {
-      mysql: `SELECT table_name AS t FROM information_schema.tables
-        WHERE table_type = 'BASE TABLE'
-        AND table_schema = '${database}'
-        ORDER BY t ASC`,
-      postgresql: `SELECT table_name AS t, table_schema AS s FROM information_schema.tables
-        WHERE table_type = 'BASE TABLE'
-        ${schema ? `AND table_schema = '${schema}'` : ''}
-        AND table_catalog = '${database}'
-        ORDER BY t ASC`,
-    }[engine];
+    const tableNamesStatement = (() => {
+      switch (engine) {
+        case 'mysql':
+          return `
+            SELECT table_name AS t FROM information_schema.tables
+            WHERE table_type = 'BASE TABLE'
+            AND table_schema = '${database}'
+            ORDER BY t ASC
+          `;
+        case 'postgresql':
+          return `
+            SELECT table_name AS t, table_schema AS s FROM information_schema.tables
+            WHERE table_type = 'BASE TABLE'
+            ${activeConnection.schema ? `AND table_schema = '${activeConnection.schema}'` : ''}
+            AND table_catalog = '${database}'
+            ORDER BY t ASC
+          `;
+        case 'sqlite':
+          return `
+            SELECT name AS t FROM sqlite_master
+            WHERE type = 'table'
+            AND name NOT LIKE 'sqlite_%'
+            ORDER BY t ASC
+          `;
+      }
+    })();
 
-    trpc.sendQuery.mutate({ clientId, statements: [tableNamesStatement] }).then(([rows]) => {
-      setTables(rows.map(({ t, s }) => ({ name: String(t), schema: s ? String(s) : undefined })));
-    });
+    if (type === 'remote') {
+      trpc.sendQuery
+        .mutate({ clientId: activeConnection.clientId, statements: [tableNamesStatement] })
+        .then(([rows]) => {
+          setTables(
+            rows.map(({ t, s }) => ({ name: String(t), schema: s ? String(s) : undefined })),
+          );
+        });
+    } else {
+      const [result] = activeConnection.sqliteDb.exec(tableNamesStatement);
+      setTables(
+        result.values.map(([tableName]) => ({
+          name: String(tableName),
+          schema: undefined,
+        })),
+      );
+    }
   }, [activeConnection, trpc]);
 
   const selectedTables = uniq(
@@ -59,14 +88,22 @@ export const TableList: React.FC = () => {
   const getQuery = (table: Table) => {
     assert(activeConnection);
 
-    return {
-      sql: {
-        mysql: `SELECT * FROM ${addQuotes(activeConnection.engine, table.name)} LIMIT 50`,
-        postgresql: `SELECT * FROM ${
-          activeConnection.schema ? '' : `${addQuotes(activeConnection.engine, table.schema!)}.`
-        }${addQuotes(activeConnection.engine, table.name)} LIMIT 50`,
-      }[activeConnection.engine],
-    };
+    switch (activeConnection.engine) {
+      case 'mysql':
+        return {
+          sql: `SELECT * FROM ${table.name} LIMIT 50`,
+        };
+      case 'postgresql':
+        return {
+          sql: `SELECT * FROM ${
+            activeConnection.schema ? '' : `${addQuotes(activeConnection.engine, table.schema!)}.`
+          }${addQuotes(activeConnection.engine, table.name)} LIMIT 50`,
+        };
+      case 'sqlite':
+        return {
+          sql: `SELECT * FROM ${table.name} LIMIT 50`,
+        };
+    }
   };
 
   const { getHandleMouseDown, isDragging } = useDrag<Table>({

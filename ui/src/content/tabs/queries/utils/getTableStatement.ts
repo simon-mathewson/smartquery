@@ -12,6 +12,14 @@ export const getTableStatement = (props: {
     table,
   } = props;
 
+  if (engine === 'sqlite') {
+    return `
+      SELECT CASE type WHEN 'table' THEN 'BASE TABLE' ELSE '' END AS table_type
+      FROM sqlite_master
+      WHERE name = '${table}'
+    `;
+  }
+
   const isMysqlInformationSchemaQuery =
     engine === 'mysql' && select.schema === 'information_schema';
 

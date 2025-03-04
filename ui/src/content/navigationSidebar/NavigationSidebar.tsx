@@ -26,9 +26,11 @@ export const NavigationSidebar: React.FC = () => {
             <div className="text-md truncate font-medium leading-tight text-textPrimary">
               {activeConnection.name}
             </div>
-            <div className="truncate text-xs leading-tight text-textSecondary">
-              {activeConnection.user}@{activeConnection.host}:{activeConnection.port}
-            </div>
+            {activeConnection.type === 'remote' && (
+              <div className="truncate text-xs leading-tight text-textSecondary">
+                {activeConnection.user}@{activeConnection.host}:{activeConnection.port}
+              </div>
+            )}
             <div className="truncate font-mono text-xs font-medium leading-tight text-textSecondary">
               {activeConnection.database}
             </div>

@@ -19,7 +19,7 @@ export const DatabaseList: React.FC = () => {
   const activeConnectionDatabases = useNonEmptyFallback(currentActiveConnectionDatabases);
 
   const schemas = useMemo(() => {
-    if (!activeConnection) return [];
+    if (!activeConnection || activeConnection.engine !== 'postgresql') return [];
 
     return (
       activeConnectionDatabases.find((database) => database.name === activeConnection.database)
@@ -32,7 +32,7 @@ export const DatabaseList: React.FC = () => {
       className={classNames('grid gap-2', {
         'grid-cols-[max-content_192px_max-content_192px]':
           activeConnection?.engine === 'postgresql',
-        'grid-cols-[max-content_192px]': activeConnection?.engine === 'mysql',
+        'grid-cols-[max-content_192px]': activeConnection?.engine !== 'postgresql',
       })}
     >
       <div className="h-full w-px bg-border" />

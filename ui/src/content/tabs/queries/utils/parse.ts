@@ -8,10 +8,8 @@ const getSelectFromStatement = (props: {
   connection: Connection;
   statement: string;
 }): Select | null => {
-  const {
-    connection: { engine, database: connectionDatabase, schema: connectionSchema },
-    statement,
-  } = props;
+  const { connection, statement } = props;
+  const { engine, database: connectionDatabase } = connection;
 
   const parsed = getAstForSql({ engine, statement });
 
@@ -33,7 +31,7 @@ const getSelectFromStatement = (props: {
 
   const database =
     engine === 'postgresql' ? connectionDatabase : selectSchemaOrDatabase ?? connectionDatabase;
-  const schema = engine === 'postgresql' ? selectSchemaOrDatabase ?? connectionSchema : undefined;
+  const schema = engine === 'postgresql' ? selectSchemaOrDatabase ?? connection.schema : undefined;
 
   return {
     database,

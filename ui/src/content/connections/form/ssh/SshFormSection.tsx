@@ -9,7 +9,7 @@ import { defaultSshPort } from '../constants';
 import classNames from 'classnames';
 
 export type SshFormSectionProps = {
-  formValues: Pick<FormValues, 'ssh'>;
+  formValues: Pick<Extract<FormValues, { type: 'remote' }>, 'ssh'>;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
   setFormValue: (key: string, value: unknown) => void;
 };
@@ -42,7 +42,7 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
                     port: null,
                     privateKey: '',
                     user: '',
-                  } as FormValues['ssh'])
+                  } as Extract<FormValues, { type: 'remote' }>['ssh'])
                 : null,
             )
           }

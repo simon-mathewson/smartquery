@@ -10,6 +10,7 @@ import { SignInModal } from '~/content/connections/signInModal/SignInModal';
 import { isNil } from 'lodash';
 import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { assert } from 'ts-essentials';
 
 export type TestConnectionProps = {
   formValues: FormValues;
@@ -36,7 +37,8 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     sshPassword?: string;
     sshPrivateKey?: string;
   }) => {
-    const connection = getConnectionFromForm(formValues);
+    const connection = getConnectionFromForm({ ...formValues, id: 'id' });
+    assert(connection.type === 'remote');
 
     const password = credentials?.password ?? connection.password;
     const sshPassword = credentials?.sshPassword ?? connection.ssh?.password;

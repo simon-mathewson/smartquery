@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { DatabaseListStory } from './List.story';
-import { connectionMock2, getConnectionsContextMock } from '../Context.mock';
+import { postgresqlConnectionMock, getConnectionsContextMock } from '../Context.mock';
 import type { ActiveConnection } from '~/shared/types';
 import type { Connections } from '../useConnections';
 
@@ -37,7 +37,7 @@ test.describe('DatabaseList', () => {
     const connections = {
       ...getConnectionsContextMock(),
       activeConnection: {
-        ...connectionMock2,
+        ...postgresqlConnectionMock,
         clientId: '2',
         credentialStorage: 'localStorage',
       } satisfies ActiveConnection,

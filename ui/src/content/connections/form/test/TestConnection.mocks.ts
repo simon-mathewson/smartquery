@@ -8,13 +8,14 @@ export const getProps = () =>
     formValues: {
       credentialStorage: 'alwaysAsk',
       database: '',
-      engine: null,
+      engine: 'postgresql',
       host: '',
       id: '',
       name: '',
       password: '',
       port: null,
       ssh: null,
+      type: 'remote',
       user: '',
     },
   }) satisfies TestConnectionProps;
@@ -51,10 +52,11 @@ export const expectedConnectInput = {
   database: 'test',
   engine: 'postgresql',
   host: 'localhost',
-  id: '',
+  id: 'id',
   name: 'test',
   password: 'password',
   port: 5432,
   ssh: null,
+  type: 'remote',
   user: 'user',
 };

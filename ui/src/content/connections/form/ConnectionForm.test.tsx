@@ -13,10 +13,6 @@ const getProps = () =>
   }) satisfies ConnectionFormStoryProps;
 
 const fillOutForm = async ($: MountResult) => {
-  await $.getByRole('button', { name: 'Engine' }).click();
-  await $.page().locator('#overlay').getByRole('option', { name: 'PostgreSQL' }).click();
-  await $.page().waitForTimeout(animationOptions.duration);
-
   await $.getByRole('textbox', { name: 'Name' }).fill('My connection');
   await $.getByRole('textbox', { name: 'Host' }).first().fill('localhost');
   await $.getByRole('textbox', { name: 'Port' }).first().fill('1234');
@@ -71,16 +67,38 @@ test.describe('ConnectionForm', () => {
           database: 'db',
           engine: 'postgresql',
           host: 'localhost',
-          id: '',
+          id: '3',
           name: 'My connection',
           password: null,
           port: 1234,
           schema: 'public',
           ssh: null,
+          type: 'remote',
           user: 'user',
         },
       ],
     ]);
+  });
+
+  test('allows creating SQLite connection', async ({ mount }) => {
+    const props = getProps();
+
+    const $ = await mount(<ConnectionFormStory {...props} />);
+
+    await $.getByRole('radio', { name: 'SQLite' }).click();
+
+    await expect($).toHaveScreenshot('sqlite.png');
+
+    await $.getByRole('textbox', { name: 'Name' }).fill('My connection');
+
+    // TODO: Playwright doesn't support intercepting window.showOpenFilePicker yet
+
+    // const fileChooserPromise = $.page().waitForEvent('filechooser');
+
+    // await $.getByRole('button', { name: 'Choose file' }).click();
+
+    // const fileChooser = await fileChooserPromise;
+    // await fileChooser.setFiles('./demo.sqlite');
   });
 
   test.describe('uses default port', () => {
@@ -95,9 +113,9 @@ test.describe('ConnectionForm', () => {
 
         await fillOutForm($);
 
-        await $.getByRole('button', { name: 'Engine' }).click();
-        await $.page().locator('#overlay').getByRole('option', { name }).click();
-        await $.page().waitForTimeout(animationOptions.duration);
+        if (name !== 'PostgreSQL') {
+          await $.getByRole('radio', { name }).click();
+        }
 
         await $.getByRole('textbox', { name: 'Port' }).clear();
 
@@ -137,12 +155,13 @@ test.describe('ConnectionForm', () => {
           database: 'db',
           engine: 'postgresql',
           host: 'localhost',
-          id: '',
+          id: '3',
           name: 'My connection',
           password: 'password',
           port: 1234,
           schema: 'public',
           ssh: null,
+          type: 'remote',
           user: 'user',
         },
       ],
@@ -182,6 +201,7 @@ test.describe('ConnectionForm', () => {
           port: 1234,
           schema: 'public',
           ssh: null,
+          type: 'remote',
           user: 'user',
         },
       ],

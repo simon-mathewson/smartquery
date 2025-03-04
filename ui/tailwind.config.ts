@@ -1,7 +1,6 @@
 import type { Config } from 'tailwindcss';
 import colors from 'tailwindcss/colors';
 import { createThemes } from 'tw-colors';
-import easings from 'tailwindcss-easing';
 
 export const themes = {
   dark: {
@@ -91,5 +90,5 @@ export default {
       },
     },
   },
-  plugins: [easings, createThemes(themes)],
+  plugins: [createThemes(themes)],
 } satisfies Config;

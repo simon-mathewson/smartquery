@@ -3,17 +3,18 @@ import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { Row, TableType } from '~/shared/types';
+import type { DbValue, Row, TableType } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
 import { isNotNull } from '~/shared/utils/typescript/typescript';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
 import { getColumnsFromResult, getColumnsStatement } from './utils/columns';
 import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
-import { convertPrismaValue } from './utils/convertPrismaValue';
+import { convertDbValue } from './utils/convertPrismaValue';
 import { getNewQuery } from './utils/getNewQuery';
 import { parseQuery } from './utils/parse';
 import { getTableStatement } from './utils/getTableStatement';
+import { convertSqliteResultsToRecords } from '~/shared/utils/sqlite/sqlite';
 
 export const useQueries = () => {
   const trpc = useDefinedContext(TrpcContext);
@@ -104,10 +105,16 @@ export const useQueries = () => {
       onStartLoading(id);
 
       try {
-        const results = await trpc.sendQuery.mutate({
-          clientId: activeConnection.clientId,
-          statements: statementsWithMetadata,
-        });
+        const results = (
+          activeConnection.engine === 'sqlite'
+            ? convertSqliteResultsToRecords(
+                activeConnection.sqliteDb.exec(statementsWithMetadata.join(';')),
+              )
+            : await trpc.sendQuery.mutate({
+                clientId: activeConnection.clientId,
+                statements: statementsWithMetadata,
+              })
+        ) as Record<string, DbValue>[][];
 
         const [firstSelectResult, columnsResult, totalRowsResult, tableResult] = results;
 
@@ -121,7 +128,7 @@ export const useQueries = () => {
           Object.fromEntries(
             Object.entries(row).map(([columnName, value]) => {
               const column = columns.find((column) => column.name === columnName);
-              return [columnName, convertPrismaValue(value, column?.dataType)];
+              return [columnName, convertDbValue(value, column?.dataType)];
             }),
           ),
         );
@@ -162,8 +169,6 @@ export const useQueries = () => {
 
       if (!statements) return;
 
-      const { clientId } = activeConnection;
-
       if (select && statements.length === 1) {
         return runSelectQuery(id);
       }
@@ -171,13 +176,20 @@ export const useQueries = () => {
       onStartLoading(id);
 
       try {
-        const results = await trpc.sendQuery.mutate({ clientId, statements });
+        const results = (
+          activeConnection.engine === 'sqlite'
+            ? convertSqliteResultsToRecords(activeConnection.sqliteDb.exec(statements.join(';')))
+            : await trpc.sendQuery.mutate({
+                clientId: activeConnection.clientId,
+                statements,
+              })
+        ) as Record<string, DbValue>[][];
 
         const rawRows = results.find((result) => result.length) ?? null;
         const rows = rawRows
           ? rawRows.map((row) =>
               Object.fromEntries(
-                Object.entries(row).map(([key, value]) => [key, convertPrismaValue(value)]),
+                Object.entries(row).map(([key, value]) => [key, convertDbValue(value)]),
               ),
             )
           : null;

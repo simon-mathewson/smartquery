@@ -1,7 +1,7 @@
-import type { Connection } from '~/shared/types';
+import type { RemoteConnection } from '~/shared/types';
 
 export type SignInModalInput = {
-  connection: Connection;
+  connection: RemoteConnection;
   onSignIn: (credentials: {
     password?: string;
     sshPassword?: string;

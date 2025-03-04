@@ -77,7 +77,10 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                     },
                   },
                 ],
-                hint: `${connection.user}@${connection.host}:${connection.port}`,
+                hint:
+                  connection.type === 'remote'
+                    ? `${connection.user}@${connection.host}:${connection.port}`
+                    : undefined,
                 label: connection.name,
                 selectedVariant: 'primary',
                 value: connection.id,

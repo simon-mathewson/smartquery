@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import type { ActiveConnection, Connection, Database, Engine } from '~/shared/types';
+import type { ActiveConnection, Connection, Database } from '~/shared/types';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { useLocation, useRoute } from 'wouter';
 import { routes } from '~/router/routes';
@@ -10,6 +10,9 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { TrpcContext } from '../trpc/Context';
 import { ToastContext } from '../toast/Context';
 import { getInitialConnections } from './utils';
+import { SqliteContext } from '../sqlite/Context';
+import { getFileHandle, requestFileHandlePermission } from '~/shared/utils/fileHandles/fileHandles';
+import { assert } from 'ts-essentials';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -24,12 +27,12 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const toast = useDefinedContext(ToastContext);
 
+  const { getSqlite } = useDefinedContext(SqliteContext);
+
   const [connections, setConnections] = useStoredState<Connection[]>(
     'connections',
     getInitialConnections,
   );
-
-  const [activeConnectionClientId, setActiveConnectionClientId] = useState<string | null>(null);
 
   const [, dbRouteParamsWithoutSchema] = useRoute<{
     connectionId: string;
@@ -57,29 +60,9 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const [activeConnectionDatabases, setActiveConnectionDatabases] = useState<Database[]>([]);
 
-  useEffect(() => {
-    if (!activeConnectionClientId || !connectionIdParam || !databaseParam) return;
-
-    const connection = connections.find((c) => c.id === connectionIdParam) ?? null;
-    if (!connection) return;
-
-    setActiveConnection({
-      ...connection,
-      clientId: activeConnectionClientId,
-      database: databaseParam,
-      schema: schemaParam,
-    } satisfies ActiveConnection);
-  }, [activeConnectionClientId, databaseParam, connectionIdParam, connections, schemaParam]);
-
   const addConnection = useCallback(
-    (connection: Omit<Connection, 'id'>) => {
-      setConnections([
-        ...connections,
-        {
-          ...connection,
-          id: String(connections.length),
-        },
-      ]);
+    (connection: Connection) => {
+      setConnections([...connections, connection]);
     },
     [connections, setConnections],
   );
@@ -101,25 +84,34 @@ export const useConnections = (props: UseConnectionsProps) => {
   const disconnect = useCallback(async () => {
     if (!activeConnection) return;
 
-    await trpc.disconnectDb.mutate(activeConnection.clientId);
+    if (activeConnection.type === 'remote') {
+      await trpc.disconnectDb.mutate(activeConnection.clientId);
+    } else {
+      activeConnection.sqliteDb.close();
+    }
 
-    setActiveConnectionClientId(null);
     setActiveConnection(null);
     setActiveConnectionDatabases([]);
   }, [activeConnection, trpc]);
 
   const getDatabases = useCallback(
-    async (clientId: string, engine: Engine) => {
+    async (connection: Connection, clientId?: string) => {
+      if (connection.engine === 'sqlite') {
+        return setActiveConnectionDatabases([{ name: connection.database, schemas: [] }]);
+      }
+
+      assert(clientId);
+
       const databasesStatement = {
         mysql:
           "SELECT schema_name AS db FROM information_schema.schemata WHERE schema_name NOT IN ('information_schema', 'performance_schema', 'sys') ORDER BY schema_name ASC",
         postgresql:
           'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC',
-      }[engine];
+      }[connection.engine];
 
       const statements = [databasesStatement];
 
-      if (engine === 'postgresql') {
+      if (connection.engine === 'postgresql') {
         statements.push(
           "SELECT schema_name AS schema, catalog_name AS db FROM information_schema.schemata WHERE schema_name <> 'information_schema' AND schema_name NOT LIKE 'pg_%' ORDER BY schema_name ASC",
         );
@@ -162,44 +154,79 @@ export const useConnections = (props: UseConnectionsProps) => {
         return;
       }
 
-      const password = overrides?.password ?? connection.password;
-      const sshPassword = overrides?.sshPassword ?? connection.ssh?.password;
-      const sshPrivateKey = overrides?.sshPrivateKey ?? connection.ssh?.privateKey;
-
-      if (password === null || sshPassword === null || sshPrivateKey === null) {
-        signInModal.open({
-          connection,
-          onSignIn: async (credentials) =>
-            connect(connection.id, {
-              database: overrides?.database,
-              schema: overrides?.schema,
-              ...credentials,
-            }),
-        });
-        return;
-      }
-
       await disconnect();
 
+      if (connection.type === 'file') {
+        const sqlite = await getSqlite();
+        const fileHandle = await getFileHandle(connection.id);
+        const permissionGranted = await requestFileHandlePermission(fileHandle, toast);
+
+        if (!permissionGranted) return;
+
+        const file = await fileHandle.getFile();
+        const fileBuffer = await file.arrayBuffer();
+
+        const sqliteDb = new sqlite.Database(new Uint8Array(fileBuffer));
+
+        const activeConnection = {
+          ...connection,
+          sqliteDb,
+        } satisfies ActiveConnection;
+
+        setActiveConnection(activeConnection);
+
+        await getDatabases(connection);
+      }
+
       const selectedDatabase = overrides?.database ?? connection.database;
-      const selectedSchema = overrides?.schema ?? connection.schema;
+      const selectedSchema =
+        overrides?.schema ?? (connection.type === 'remote' ? connection.schema : undefined);
 
       try {
-        const newClientId = await trpc.connectDb.mutate({
-          ...connection,
-          database: selectedDatabase,
-          password,
-          schema: selectedSchema,
-          ssh: connection.ssh
-            ? {
-                ...connection.ssh,
-                password: sshPassword,
-                privateKey: sshPrivateKey,
-              }
-            : null,
-        });
+        const newClientId = await (async () => {
+          if (connection.engine === 'sqlite') {
+            return undefined;
+          }
 
-        setActiveConnectionClientId(newClientId);
+          const password = overrides?.password ?? connection.password;
+          const sshPassword = overrides?.sshPassword ?? connection.ssh?.password;
+          const sshPrivateKey = overrides?.sshPrivateKey ?? connection.ssh?.privateKey;
+
+          if (password === null || sshPassword === null || sshPrivateKey === null) {
+            signInModal.open({
+              connection,
+              onSignIn: async (credentials) =>
+                connect(connection.id, {
+                  database: overrides?.database,
+                  schema: overrides?.schema,
+                  ...credentials,
+                }),
+            });
+            return;
+          }
+          const newClientId = await trpc.connectDb.mutate({
+            ...connection,
+            database: selectedDatabase,
+            password,
+            schema: selectedSchema,
+            ssh: connection.ssh
+              ? {
+                  ...connection.ssh,
+                  password: sshPassword,
+                  privateKey: sshPrivateKey,
+                }
+              : null,
+          });
+
+          setActiveConnection({
+            ...connection,
+            clientId: newClientId,
+            database: selectedDatabase,
+            schema: selectedSchema,
+          } satisfies ActiveConnection);
+
+          return newClientId;
+        })();
 
         navigate(
           routes.database({
@@ -208,11 +235,12 @@ export const useConnections = (props: UseConnectionsProps) => {
             schema: selectedSchema ?? '',
           }),
         );
+
         window.document.title = `${
           selectedSchema ? `${selectedSchema} – ` : ''
         }${selectedDatabase} – ${connection.name}`;
 
-        await getDatabases(newClientId, connection.engine);
+        await getDatabases(connection, newClientId);
       } catch (error) {
         console.error(error);
 
@@ -225,12 +253,21 @@ export const useConnections = (props: UseConnectionsProps) => {
         navigate(routes.root());
       }
     },
-    [connections, disconnect, getDatabases, navigate, signInModal, toast, trpc.connectDb],
+    [
+      connections,
+      disconnect,
+      getDatabases,
+      getSqlite,
+      navigate,
+      signInModal,
+      toast,
+      trpc.connectDb,
+    ],
   );
 
   useEffectOnce(() => {
-    if (connectionIdParam && databaseParam) {
-      connect(connectionIdParam, { database: databaseParam });
+    if (connectionIdParam) {
+      connect(connectionIdParam, { database: databaseParam, schema: schemaParam });
       return;
     }
   });

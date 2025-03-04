@@ -1,7 +1,7 @@
 import { sortBy, uniq } from 'lodash';
 import type NodeSqlParser from 'node-sql-parser';
 import type { DataType } from '~/shared/dataTypes/types';
-import type { Column, Connection, PrismaValue } from '~/shared/types';
+import type { Column, Connection, DbValue } from '~/shared/types';
 import type { Select } from '../types';
 
 export const getMySqlEnumValuesFromColumnType = (columnType: string) => {
@@ -22,6 +22,19 @@ export const getColumnsStatement = (props: {
     select,
     table,
   } = props;
+
+  if (engine === 'sqlite') {
+    return `
+      SELECT
+        name AS column_name,
+        cid AS ordinal_position,
+        type AS data_type,
+        CASE "notnull" WHEN 0 THEN 'YES' ELSE 'NO' END AS is_nullable,
+        CASE pk WHEN 0 THEN '' ELSE 'PRIMARY KEY' END AS constraint_type
+      FROM pragma_table_info('${table}')
+      ORDER BY cid;
+    `;
+  }
 
   const isMysqlInformationSchemaQuery =
     engine === 'mysql' && select.schema === 'information_schema';
@@ -74,7 +87,7 @@ export const getColumnsStatement = (props: {
 export const getColumnsFromResult = (props: {
   connection: Connection;
   parsedStatement: NodeSqlParser.Select;
-  result: Record<string, PrismaValue>[];
+  result: Record<string, DbValue>[];
 }): Column[] => {
   const {
     connection: { engine },

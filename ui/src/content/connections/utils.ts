@@ -16,6 +16,7 @@ export const getInitialConnections = (): Connection[] =>
           password: 'password',
           port: Number(import.meta.env.VITE_MYSQL_PORT),
           ssh: null,
+          type: 'remote',
           user: 'root',
         },
         {
@@ -29,6 +30,7 @@ export const getInitialConnections = (): Connection[] =>
           port: Number(import.meta.env.VITE_POSTGRESQL_PORT),
           schema: 'public',
           ssh: null,
+          type: 'remote',
           user: 'postgres',
         },
       ]

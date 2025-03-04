@@ -1,9 +1,9 @@
 import { Decimal } from 'decimal.js';
 import type { DataType } from '~/shared/dataTypes/types';
 import { isTimeType } from '~/shared/dataTypes/utils';
-import type { PrismaValue, Value } from '~/shared/types';
+import type { DbValue, Value } from '~/shared/types';
 
-export const convertPrismaValue = (value: PrismaValue, dataType?: DataType): Value => {
+export const convertDbValue = (value: DbValue, dataType?: DataType): Value => {
   if (value === null) return null;
 
   if (value instanceof Date) {

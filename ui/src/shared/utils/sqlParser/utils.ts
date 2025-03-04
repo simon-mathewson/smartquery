@@ -7,5 +7,6 @@ export const getParserOptions = (engine: Connection['engine']) => ({
   database: {
     mysql: 'mysql',
     postgresql: 'postgresql',
+    sqlite: 'sqlite',
   }[engine],
 });
