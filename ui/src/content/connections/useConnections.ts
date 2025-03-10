@@ -11,7 +11,6 @@ import { TrpcContext } from '../trpc/Context';
 import { ToastContext } from '../toast/Context';
 import { getInitialConnections } from './utils';
 import { SqliteContext } from '../sqlite/Context';
-import { getFileHandle, requestFileHandlePermission } from '~/shared/utils/fileHandles/fileHandles';
 import { assert } from 'ts-essentials';
 
 export type Connections = ReturnType<typeof useConnections>;
@@ -27,7 +26,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const toast = useDefinedContext(ToastContext);
 
-  const { getSqlite } = useDefinedContext(SqliteContext);
+  const { getSqliteDb } = useDefinedContext(SqliteContext);
 
   const [connections, setConnections] = useStoredState<Connection[]>(
     'connections',
@@ -154,17 +153,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       await disconnect();
 
       if (connection.type === 'file') {
-        const sqlite = await getSqlite();
-        const fileHandle = await getFileHandle(connection.id);
-        const permissionGranted = await requestFileHandlePermission(fileHandle, toast);
-
-        if (!permissionGranted) return;
-
-        const file = await fileHandle.getFile();
-        const fileBuffer = await file.arrayBuffer();
-
-        const sqliteDb = new sqlite.Database(new Uint8Array(fileBuffer));
-
+        const sqliteDb = await getSqliteDb(connection.id);
         const activeConnection = {
           ...connection,
           sqliteDb,
@@ -271,7 +260,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       connections,
       disconnect,
       getDatabases,
-      getSqlite,
+      getSqliteDb,
       navigate,
       signInModal,
       toast,

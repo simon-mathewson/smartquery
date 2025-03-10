@@ -9,13 +9,14 @@ import { useRef } from 'react';
 
 export type ToastProps = {
   color?: 'danger' | 'primary' | 'success';
+  htmlProps?: React.HTMLAttributes<HTMLDivElement>;
   description?: string;
   id: string;
   title: string;
 };
 
 export const Toast: React.FC<ToastProps> = (props) => {
-  const { color, description, id, title } = props;
+  const { color, description, htmlProps, id, title } = props;
 
   const toast = useDefinedContext(ToastContext);
 
@@ -31,11 +32,16 @@ export const Toast: React.FC<ToastProps> = (props) => {
   return (
     <OverlayCard
       htmlProps={{
-        className: classNames('grid w-72 grid-cols-[1fr_max-content] gap-2 p-1 align-top', {
-          'bg-danger': color === 'danger',
-          'bg-primary': color === 'primary',
-          'bg-success': color === 'success',
-        }),
+        className: classNames(
+          'grid w-72 grid-cols-[1fr_max-content] gap-2 p-1 align-top cursor-pointer',
+          {
+            'bg-danger': color === 'danger',
+            'bg-primary': color === 'primary',
+            'bg-success': color === 'success',
+          },
+        ),
+        onClick: close,
+        ...htmlProps,
       }}
       isOpen
       onClose={() => {

@@ -1,4 +1,9 @@
-import { ArrowBack, DeleteOutline, Done } from '@mui/icons-material';
+import {
+  ArrowBack,
+  DeleteOutline,
+  Done,
+  InsertDriveFileOutlined as FileIcon,
+} from '@mui/icons-material';
 import { cloneDeep, set } from 'lodash';
 import React, { useRef, useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
@@ -10,7 +15,6 @@ import { Field } from '~/shared/components/field/Field';
 import { Input } from '~/shared/components/input/Input';
 import { Header } from '~/shared/components/header/Header';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { Connection } from '~/shared/types';
 import { SshFormSection } from './ssh/SshFormSection';
 import { TestConnection } from './test/TestConnection';
 import type { FormValues } from './utils';
@@ -19,9 +23,12 @@ import { CredentialInput } from '~/shared/components/credentialInput/CredentialI
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
 import { FileHandleSelect } from '~/shared/components/fileHandleSelect/FileHandleSelect';
-import { ToastContext } from '~/content/toast/Context';
 import { assert } from 'ts-essentials';
-import { storeFileHandle } from '~/shared/utils/fileHandles/fileHandles';
+import { sqliteDemoConnectionId } from '~/content/welcome/constants';
+import { v4 as uuid } from 'uuid';
+import { SqliteContext } from '~/content/sqlite/Context';
+import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
+import { Setup as LinkSetup } from '~/content/link/setup/Setup';
 
 export type ConnectionFormProps = {
   connectionToEditId?: string;
@@ -29,10 +36,16 @@ export type ConnectionFormProps = {
   hideBackButton?: boolean;
 };
 
+const labels = {
+  mysql: 'MySQL',
+  postgresql: 'PostgreSQL',
+  sqlite: 'SQLite',
+};
+
 export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { connectionToEditId, exit, hideBackButton } = props;
 
-  const toast = useDefinedContext(ToastContext);
+  const { getSqliteContent, storeSqliteContent } = useDefinedContext(SqliteContext);
 
   const mode = connectionToEditId ? 'edit' : 'add';
 
@@ -45,7 +58,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const [formValues, setFormValues] = useState<FormValues>();
 
   useEffectOnce(() => {
-    getInitialFormValues(connectionToEdit, toast).then(setFormValues);
+    getInitialFormValues(connectionToEdit, getSqliteContent).then(setFormValues);
   });
 
   const setFormValue = (key: string, value: unknown) => {
@@ -64,13 +77,13 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
     event.preventDefault();
 
-    formValues.id ||= String(connections.length);
+    formValues.id ||= uuid();
 
     const connection = getConnectionFromForm(formValues);
 
     if (formValues.type === 'file') {
       assert(formValues.fileHandle);
-      await storeFileHandle(formValues.fileHandle, formValues.id);
+      await storeSqliteContent(formValues.fileHandle, formValues.id);
     }
 
     connectionToEdit
@@ -121,30 +134,24 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           }
         />
         <Field label="Engine">
-          <ButtonSelect<Connection['engine'] | null>
+          <ButtonSelect<FormValues['engine'] | null>
             equalWidth
             fullWidth
             onChange={(value) => {
               setFormValue('engine', value);
               setFormValue('type', value === 'sqlite' ? 'file' : 'remote');
             }}
-            options={[
-              {
-                button: { label: 'MySQL', htmlProps: { autoFocus: true } },
-                value: 'mysql',
+            options={(['mysql', 'postgresql', 'sqlite'] as const).map((engine, index) => ({
+              button: {
+                label: labels[engine],
+                htmlProps: { autoFocus: index === 0 },
               },
-              {
-                button: { label: 'PostgreSQL' },
-                value: 'postgresql',
-              },
-              {
-                button: { label: 'SQLite' },
-                value: 'sqlite',
-              },
-            ]}
+              value: engine,
+            }))}
             value={formValues.engine}
           />
         </Field>
+        {formValues.type === 'remote' && <LinkSetup databaseLabel={labels[formValues.engine]} />}
         <Field label="Name">
           <Input
             htmlProps={{ value: formValues.name }}
@@ -153,20 +160,20 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         </Field>
         {formValues.engine === 'sqlite' ? (
           <Field label="Database file">
-            <FileHandleSelect
-              options={{
-                types: [
-                  {
-                    description: 'SQLite database',
-                    accept: {
-                      'application/vnd.sqlite3': ['.sqlite', '.sqlite3', '.db'],
-                    },
-                  },
-                ],
-              }}
-              value={formValues.fileHandle}
-              onChange={(value) => setFormValue('fileHandle', value)}
-            />
+            {formValues.id === sqliteDemoConnectionId ? (
+              <div className="flex w-full items-center gap-2">
+                <FileIcon className="!text-[20px] text-textTertiary" />
+                <div className="flex-1 text-ellipsis text-sm font-medium text-textSecondary">
+                  demo.sqlite
+                </div>
+              </div>
+            ) : (
+              <FileHandleSelect
+                options={sqliteChooseFileOptions}
+                value={formValues.fileHandle}
+                onChange={(value) => setFormValue('fileHandle', value)}
+              />
+            )}
           </Field>
         ) : (
           <>

@@ -2,9 +2,8 @@ import { Button } from '../button/Button';
 import { Add as AddIcon } from '@mui/icons-material';
 import { InsertDriveFileOutlined as FileIcon } from '@mui/icons-material';
 import { DeleteOutline as DeleteIcon } from '@mui/icons-material';
-import { ToastContext } from '~/content/toast/Context';
+import { SqliteContext } from '~/content/sqlite/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { requestFileHandlePermission } from '~/shared/utils/fileHandles/fileHandles';
 
 type FileHandleSelectProps = {
   onChange: React.Dispatch<React.SetStateAction<FileSystemFileHandle | null>>;
@@ -15,13 +14,13 @@ type FileHandleSelectProps = {
 export const FileHandleSelect: React.FC<FileHandleSelectProps> = (props) => {
   const { onChange, options, value } = props;
 
-  const toast = useDefinedContext(ToastContext);
+  const { requestFileHandlePermission } = useDefinedContext(SqliteContext);
 
   const selectFile = async () => {
     const [handle] = await window.showOpenFilePicker(options);
     onChange(handle);
 
-    await requestFileHandlePermission(handle, toast);
+    await requestFileHandlePermission(handle);
   };
 
   if (!value) {

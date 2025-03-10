@@ -1,10 +1,8 @@
 import { cloneDeep } from 'lodash';
 import { assert } from 'ts-essentials';
 import { z } from 'zod';
-import type { useToast } from '~/content/toast/useToast';
 import type { Connection, Engine } from '~/shared/types';
 import { connectionSchema, fileConnectionSchema, remoteConnectionSchema } from '~/shared/types';
-import { getFileHandle } from '~/shared/utils/fileHandles/fileHandles';
 
 export const formSchema = z.discriminatedUnion('type', [
   remoteConnectionSchema.extend({
@@ -29,24 +27,16 @@ export type FormValues = z.infer<typeof formSchema>;
 
 export const getInitialFormValues = async (
   connectionToEdit: Connection | null,
-  toast: ReturnType<typeof useToast>,
-) => {
+  getSqliteContent: (id: string) => Promise<ArrayBuffer | FileSystemFileHandle>,
+): Promise<FormValues> => {
   if (connectionToEdit) {
     if (connectionToEdit.type === 'file') {
-      const fileHandle = await (async () => {
-        try {
-          return await getFileHandle(connectionToEdit.id);
-        } catch (error) {
-          toast.add({
-            color: 'danger',
-            description: 'Database file not found. Please select the file again.',
-            title: 'Error',
-          });
-          return null;
-        }
-      })();
+      const fileHandle = await getSqliteContent(connectionToEdit.id);
 
-      return { ...connectionToEdit, fileHandle };
+      return {
+        ...connectionToEdit,
+        fileHandle: fileHandle instanceof FileSystemFileHandle ? fileHandle : null,
+      };
     }
 
     return {

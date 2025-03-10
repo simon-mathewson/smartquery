@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { EditContext } from '~/content/edit/Context';
+import { SqliteContext } from '~/content/sqlite/Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
-import { ToastContext } from '~/content/toast/Context';
 import { TrpcContext } from '~/content/trpc/Context';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { getFileHandle, requestFileHandlePermission } from '~/shared/utils/fileHandles/fileHandles';
 import { splitSqlStatements } from '~/shared/utils/sql/sql';
 
 export type ReviewChangesCardProps = {
@@ -18,7 +17,8 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   const { triggerRef } = props;
 
   const trpc = useDefinedContext(TrpcContext);
-  const toast = useDefinedContext(ToastContext);
+  const { getSqliteContent, requestFileHandlePermission, storeSqliteContent } =
+    useDefinedContext(SqliteContext);
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
   const { refetchActiveTabSelectQueries } = useDefinedContext(QueriesContext);
@@ -34,16 +34,23 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
     if (!activeConnection) return;
 
     if (activeConnection.engine === 'sqlite') {
-      const fileHandle = await getFileHandle(activeConnection.id);
+      const fileHandle = await getSqliteContent(activeConnection.id);
 
-      const hasPermission = await requestFileHandlePermission(fileHandle, toast);
-      if (!hasPermission) return;
+      if (fileHandle instanceof FileSystemFileHandle) {
+        await requestFileHandlePermission(fileHandle);
+      }
 
       activeConnection.sqliteDb.run(splitSqlStatements(userSql).join(';'));
 
-      const writable = await fileHandle.createWritable();
-      await writable.write(activeConnection.sqliteDb.export());
-      await writable.close();
+      const updatedDb = activeConnection.sqliteDb.export();
+
+      if (fileHandle instanceof FileSystemFileHandle) {
+        const writable = await fileHandle.createWritable();
+        await writable.write(updatedDb);
+        await writable.close();
+      } else {
+        await storeSqliteContent(updatedDb, activeConnection.id);
+      }
     } else {
       await trpc.sendQuery.mutate({
         clientId: activeConnection.clientId,
@@ -57,8 +64,10 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   }, [
     activeConnection,
     clearChanges,
+    getSqliteContent,
     refetchActiveTabSelectQueries,
-    toast,
+    requestFileHandlePermission,
+    storeSqliteContent,
     trpc.sendQuery,
     userSql,
   ]);

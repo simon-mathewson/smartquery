@@ -1,89 +1,106 @@
+import { FileDownloadOutlined } from '@mui/icons-material';
 import { useCallback, useState } from 'react';
-import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
-import { Card } from '~/shared/components/card/Card';
-import { Logo } from '~/shared/components/logo/Logo';
-import type { Os } from './types';
-import { getCurrentOs, getDistributableUrl } from './utils';
-import { distributablesByOs } from './constants';
 import { Button } from '~/shared/components/button/Button';
-import { ArrowForward, FileDownloadOutlined } from '@mui/icons-material';
+import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { LinkContext } from '../Context';
-import { useLocation } from 'wouter';
-import { routes } from '~/router/routes';
-import { ErrorMessage } from '~/shared/components/errorMessage/ErrorMessage';
+import { distributablesByOs } from './constants';
+import type { Os } from './types';
+import { getCurrentOs, getDistributableUrl } from './utils';
+import { PublishedWithChangesOutlined as VerifyLinkIcon } from '@mui/icons-material';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
-export const Setup: React.FC = () => {
-  const [, navigate] = useLocation();
+type SetupProps = {
+  databaseLabel: string;
+};
+
+export const Setup: React.FC<SetupProps> = (props) => {
+  const { databaseLabel } = props;
 
   const link = useDefinedContext(LinkContext);
 
   const [os, setOs] = useState<Os>(getCurrentOs());
   const [checkingLinkStatus, setCheckingLinkStatus] = useState(false);
-  const [showLinkNotReady, setShowLinkNotReady] = useState(false);
+  const [linkStatus, setLinkStatus] = useState<'unknown' | 'ready' | 'notReady'>('unknown');
+  const [hidden, setHidden] = useState(false);
 
-  const handleContinue = useCallback(() => {
+  useEffectOnce(() => {
+    void link.getIsReady().then((isReady) => {
+      setHidden(isReady);
+    });
+  });
+
+  const handleVerifyLinkInstallation = useCallback(() => {
     setCheckingLinkStatus(true);
 
     void link.getIsReady().then((isReady) => {
       if (isReady) {
-        navigate(routes.root());
+        setLinkStatus('ready');
       } else {
-        setShowLinkNotReady(true);
-        setCheckingLinkStatus(false);
+        setLinkStatus('notReady');
       }
+      setCheckingLinkStatus(false);
     });
-  }, [link, navigate]);
+  }, [link]);
+
+  if (hidden) {
+    return null;
+  }
 
   return (
-    <div className="flex flex-col items-center gap-6 py-6">
-      <Logo htmlProps={{ className: 'w-16' }} />
-      <Card htmlProps={{ className: 'flex w-[360px] flex-col gap-3 p-4' }}>
-        <div className="text-center text-lg font-medium text-textSecondary">Welcome to Dabase!</div>
-        <div className="text-sm leading-snug text-textSecondary">
-          To use Dabase, you need to install Dabase Link, a background service that allows Dabase to
-          connect to your databases.
-        </div>
-        <div className="flex flex-col gap-2">
-          <ButtonSelect<Os>
-            equalWidth
-            fullWidth
-            onChange={setOs}
-            options={[
-              { button: { label: 'Linux' }, value: 'linux' },
-              { button: { label: 'Mac' }, value: 'mac' },
-              { button: { label: 'Windows' }, value: 'windows' },
-            ]}
-            required
-            value={os}
-          />
-          <div className="flex flex-col gap-2">
-            {distributablesByOs[os].map((distributable) => (
-              <Button
-                element="a"
-                htmlProps={{ className: 'grow basis-0', href: getDistributableUrl(distributable) }}
-                icon={<FileDownloadOutlined />}
-                key={getDistributableUrl(distributable)}
-                label={`.${distributable.fileExtension} (${distributable.arch})`}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="text-sm leading-snug text-textSecondary">
-          Once Link is installed and running, click continue.
-        </div>
-        {showLinkNotReady && (
-          <ErrorMessage>
-            Unable to reach Link. Please make sure it is installed and running.
-          </ErrorMessage>
-        )}
-        <Button
-          htmlProps={{ disabled: checkingLinkStatus, onClick: handleContinue }}
-          icon={<ArrowForward />}
-          label="Continue"
-          variant="filled"
+    <>
+      <div className="pb-2 pl-1 pt-3 text-xs leading-snug text-textSecondary">
+        To connect to {databaseLabel} install Dabase Link, a background service that allows Dabase
+        to connect to your databases.
+      </div>
+      <div className="flex flex-col gap-2">
+        <ButtonSelect<Os>
+          equalWidth
+          fullWidth
+          onChange={setOs}
+          options={[
+            { button: { label: 'Linux' }, value: 'linux' },
+            { button: { label: 'Mac' }, value: 'mac' },
+            { button: { label: 'Windows' }, value: 'windows' },
+          ]}
+          required
+          value={os}
         />
-      </Card>
-    </div>
+        <div className="flex flex-col gap-2">
+          {distributablesByOs[os].map((distributable) => (
+            <Button
+              element="a"
+              htmlProps={{ className: 'grow basis-0', href: getDistributableUrl(distributable) }}
+              icon={<FileDownloadOutlined />}
+              key={getDistributableUrl(distributable)}
+              label={`.${distributable.fileExtension} (${distributable.arch})`}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="text-sm leading-snug text-textSecondary">
+        Once Link is installed and running, verify the installation:
+      </div>
+      <Button
+        color={
+          (
+            {
+              notReady: 'danger',
+              ready: 'success',
+              unknown: 'primary',
+            } as const
+          )[linkStatus]
+        }
+        htmlProps={{ disabled: checkingLinkStatus, onClick: handleVerifyLinkInstallation }}
+        icon={<VerifyLinkIcon />}
+        label={
+          {
+            notReady: 'Unable to reach Link',
+            ready: 'Link is ready',
+            unknown: 'Verify Link installation',
+          }[linkStatus]
+        }
+      />
+    </>
   );
 };
