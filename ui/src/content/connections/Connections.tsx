@@ -12,10 +12,11 @@ import { useNonEmptyFallback } from '~/shared/hooks/useNonEmptyFallback/useNonEm
 
 export type ConnectionsProps = {
   hideDatabases?: boolean;
+  htmlProps?: React.HTMLAttributes<HTMLDivElement>;
 };
 
 export const Connections: React.FC<ConnectionsProps> = (props) => {
-  const { hideDatabases } = props;
+  const { hideDatabases, htmlProps } = props;
 
   const {
     activeConnection: currentActiveConnection,
@@ -48,6 +49,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
             'grid-cols-[280px_auto]': !hideDatabases,
             'grid-cols-[280px]': hideDatabases,
           })}
+          {...htmlProps}
         >
           <div>
             <div className="flex items-center justify-between pb-2 pl-1">

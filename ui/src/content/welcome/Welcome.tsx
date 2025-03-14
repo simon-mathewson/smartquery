@@ -6,14 +6,11 @@ import { Card } from '~/shared/components/card/Card';
 import { Logo } from '~/shared/components/logo/Logo';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
-import { ConnectionForm } from '../connections/form/ConnectionForm';
 import { sqliteDemoConnectionId } from './constants';
 import { SqliteContext } from '../sqlite/Context';
-import { useLocation } from 'wouter';
+import { Connections } from '../connections/Connections';
 
 export const Welcome: React.FC = () => {
-  const [, navigate] = useLocation();
-
   const { connections, addConnection } = useDefinedContext(ConnectionsContext);
 
   const { storeSqliteContent } = useDefinedContext(SqliteContext);
@@ -48,7 +45,7 @@ export const Welcome: React.FC = () => {
   return (
     <div className="flex flex-col items-center gap-6 py-6">
       <Logo htmlProps={{ className: 'w-16' }} />
-      <Card htmlProps={{ className: 'flex w-[360px] flex-col gap-3 p-4' }}>
+      <Card htmlProps={{ className: 'flex w-[352px] flex-col gap-3 p-4' }}>
         <div className="text-center text-lg font-medium text-textSecondary">Welcome to Dabase!</div>
         <div className="text-sm leading-snug text-textSecondary">
           To see how Dabase works, check out the demo database:
@@ -60,8 +57,8 @@ export const Welcome: React.FC = () => {
           variant="filled"
         />
       </Card>
-      <Card htmlProps={{ className: 'flex w-[360px] flex-col gap-3 p-4' }}>
-        <ConnectionForm exit={() => navigate(routes.root())} hideBackButton />
+      <Card htmlProps={{ className: 'flex w-[352px] flex-col gap-3 p-4' }}>
+        <Connections hideDatabases htmlProps={{ className: 'w-full' }} />
       </Card>
     </div>
   );
