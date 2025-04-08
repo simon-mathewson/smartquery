@@ -9,7 +9,6 @@ import type { SignInModalInput } from './signInModal/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TrpcContext } from '../trpc/Context';
 import { ToastContext } from '../toast/Context';
-import { getInitialConnections } from './utils';
 import { SqliteContext } from '../sqlite/Context';
 import { assert } from 'ts-essentials';
 
@@ -28,10 +27,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const { getSqliteDb } = useDefinedContext(SqliteContext);
 
-  const [connections, setConnections] = useStoredState<Connection[]>(
-    'connections',
-    getInitialConnections,
-  );
+  const [connections, setConnections] = useStoredState<Connection[]>('connections', []);
 
   const [, dbRouteParamsWithoutSchema] = useRoute<{
     connectionId: string;
@@ -66,13 +62,6 @@ export const useConnections = (props: UseConnectionsProps) => {
     [connections, setConnections],
   );
 
-  const removeConnection = useCallback(
-    (id: string) => {
-      setConnections(connections.filter((c) => c.id !== id));
-    },
-    [connections, setConnections],
-  );
-
   const updateConnection = useCallback(
     (id: string, connection: Connection) => {
       setConnections(connections.map((c) => (c.id === id ? connection : c)));
@@ -92,6 +81,18 @@ export const useConnections = (props: UseConnectionsProps) => {
     setActiveConnection(null);
     setActiveConnectionDatabases([]);
   }, [activeConnection, trpc]);
+
+  const removeConnection = useCallback(
+    (id: string) => {
+      setConnections(connections.filter((c) => c.id !== id));
+
+      if (activeConnection?.id === id) {
+        void disconnect();
+        navigate(routes.root());
+      }
+    },
+    [setConnections, connections, activeConnection?.id, disconnect, navigate],
+  );
 
   const getDatabases = useCallback(
     async (connection: Connection, clientId?: string) => {

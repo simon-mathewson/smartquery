@@ -8,7 +8,6 @@ import { ConnectionForm } from './form/ConnectionForm';
 import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';
 import { v4 as uuid } from 'uuid';
-import { useNonEmptyFallback } from '~/shared/hooks/useNonEmptyFallback/useNonEmptyFallback';
 
 export type ConnectionsProps = {
   hideDatabases?: boolean;
@@ -18,13 +17,7 @@ export type ConnectionsProps = {
 export const Connections: React.FC<ConnectionsProps> = (props) => {
   const { hideDatabases, htmlProps } = props;
 
-  const {
-    activeConnection: currentActiveConnection,
-    connect,
-    connections,
-  } = useDefinedContext(ConnectionsContext);
-
-  const activeConnection = useNonEmptyFallback(currentActiveConnection);
+  const { activeConnection, connect, connections } = useDefinedContext(ConnectionsContext);
 
   const [isAddingOrEditing, setIsAddingOrEditing] = useState(() => connections.length === 0);
 
@@ -36,6 +29,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
     <>
       {isAddingOrEditing ? (
         <ConnectionForm
+          htmlProps={htmlProps}
           connectionToEditId={connectionToEditId}
           hideBackButton={connections.length === 0}
           exit={() => {

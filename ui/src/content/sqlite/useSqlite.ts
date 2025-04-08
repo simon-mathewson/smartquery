@@ -4,6 +4,7 @@ import initSqlite from 'sql.js';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
 import { ToastContext } from '../toast/Context';
+import type { SqliteDatabase } from '~/shared/types';
 
 const indexedDbConnection = 'sqliteStorage';
 const indexedDbStore = 'sqlite';
@@ -95,7 +96,7 @@ export const useSqlite = () => {
 
         return new sqlite.Database(new Uint8Array(fileOrFileHandle));
       } catch (error) {
-        return new Promise<SqlJsStatic['Database']>((resolve, reject) => {
+        return new Promise<SqliteDatabase>((resolve, reject) => {
           toast.add({
             color: 'danger',
             title: 'Unable to find database file, click here to add it again',
@@ -109,11 +110,7 @@ export const useSqlite = () => {
                   await storeSqliteContent(handle, connectionId);
 
                   const file = await handle.getFile();
-                  resolve(
-                    new sqlite.Database(
-                      new Uint8Array(await file.arrayBuffer()),
-                    ) as unknown as SqlJsStatic['Database'],
-                  );
+                  resolve(new sqlite.Database(new Uint8Array(await file.arrayBuffer())));
                 } catch (error) {
                   reject(error);
                 }

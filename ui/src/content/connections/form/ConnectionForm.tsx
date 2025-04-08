@@ -24,16 +24,17 @@ import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
 import { FileHandleSelect } from '~/shared/components/fileHandleSelect/FileHandleSelect';
 import { assert } from 'ts-essentials';
-import { sqliteDemoConnectionId } from '~/content/welcome/constants';
 import { v4 as uuid } from 'uuid';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
 import { Setup as LinkSetup } from '~/content/link/setup/Setup';
+import { sqliteDemoConnectionId } from '~/content/home/constants';
 
 export type ConnectionFormProps = {
   connectionToEditId?: string;
   exit: () => void;
   hideBackButton?: boolean;
+  htmlProps?: React.HTMLAttributes<HTMLElement>;
 };
 
 const labels = {
@@ -43,7 +44,7 @@ const labels = {
 };
 
 export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
-  const { connectionToEditId, exit, hideBackButton } = props;
+  const { connectionToEditId, exit, hideBackButton, htmlProps } = props;
 
   const { getSqliteContent, storeSqliteContent } = useDefinedContext(SqliteContext);
 
@@ -106,7 +107,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
   return (
     <>
-      <form className="grid w-[320px] gap-2" onSubmit={onSubmit} ref={formRef}>
+      <form className="grid w-[320px] gap-2" onSubmit={onSubmit} ref={formRef} {...htmlProps}>
         <Header
           left={
             !hideBackButton && (

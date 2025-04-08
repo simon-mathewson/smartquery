@@ -44,6 +44,8 @@ export const fileConnectionSchema = baseConnectionSchema.extend({
 
 export type FileConnection = z.infer<typeof fileConnectionSchema>;
 
+export { SqliteDatabase };
+
 export const connectionSchema = z.discriminatedUnion('type', [
   remoteConnectionSchema,
   fileConnectionSchema,
