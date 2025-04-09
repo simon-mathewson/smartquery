@@ -22,6 +22,10 @@ phases:
       # - NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
       - pnpm build
 
+      - cd ../about
+      - pnpm typecheck
+      - pnpm build
+
       - cd ../link
       - pnpm typecheck
       - pnpm db:generate
@@ -41,7 +45,11 @@ phases:
 
       - cd ../ui
       - aws s3 sync dist s3://dabase-ui
-      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+      - aws cloudfront create-invalidation --distribution-id $DABASE_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+
+      - cd ../about
+      - aws s3 sync out s3://dabase-about
+      - aws cloudfront create-invalidation --distribution-id $DABASE_ABOUT_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
 
 reports:
   link:

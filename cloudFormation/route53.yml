@@ -30,3 +30,15 @@ Resources:
         # This is the CloudFront hosted zone ID, which is fixed for CloudFront
         HostedZoneId: "Z2FDTNDATAQYW2"
         DNSName: !ImportValue CloudFrontDistributionDabaseUiDomainName
+
+  Route53RecordSetDabaseAboout:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "about.dabase.dev."
+      Type: "A"
+      AliasTarget:
+        # This is the CloudFront hosted zone ID, which is fixed for CloudFront
+        HostedZoneId: "Z2FDTNDATAQYW2"
+        DNSName: !ImportValue CloudFrontDistributionDabaseAboutDomainName

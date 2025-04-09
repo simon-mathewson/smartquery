@@ -27,6 +27,12 @@ Resources:
               - !Sub
                 - "arn:${AWS::Partition}:s3:::${BucketName}/*"
                 - BucketName: !ImportValue S3BucketDabaseUi
+              - !Sub
+                - "arn:${AWS::Partition}:s3:::${BucketName}"
+                - BucketName: !ImportValue S3BucketDabaseAbout
+              - !Sub
+                - "arn:${AWS::Partition}:s3:::${BucketName}/*"
+                - BucketName: !ImportValue S3BucketDabaseAbout
               - "arn:aws:s3:::dabase-cloudformation"
               - "arn:aws:s3:::dabase-cloudformation/*"
           - Effect: Allow
@@ -35,6 +41,12 @@ Resources:
             Resource: !Sub
               - "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${DistributionId}"
               - DistributionId: !ImportValue CloudFrontDistributionDabaseUi
+          - Effect: Allow
+            Action:
+              - cloudfront:CreateInvalidation
+            Resource: !Sub
+              - "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${DistributionId}"
+              - DistributionId: !ImportValue CloudFrontDistributionDabaseAbout
           - Effect: "Allow"
             Action:
               - "cloudformation:CreateChangeSet"

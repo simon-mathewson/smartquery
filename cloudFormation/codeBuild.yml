@@ -13,8 +13,10 @@ Resources:
       Environment:
         ComputeType: "BUILD_GENERAL1_SMALL"
         EnvironmentVariables:
-          - Name: "CLOUDFRONT_DISTRIBUTION_ID"
+          - Name: "DABASE_UI_CLOUDFRONT_DISTRIBUTION_ID"
             Value: !ImportValue CloudFrontDistributionDabaseUi
+          - Name: "DABASE_ABOUT_CLOUDFRONT_DISTRIBUTION_ID"
+            Value: !ImportValue CloudFrontDistributionDabaseAbout
         Image: "aws/codebuild/standard:7.0"
         PrivilegedMode: true
         Type: "LINUX_CONTAINER"

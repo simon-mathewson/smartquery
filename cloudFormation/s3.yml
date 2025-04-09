@@ -103,6 +103,55 @@ Resources:
             Principal: "*"
             Sid: "PublicReadGetObject"
 
+  S3BucketDabaseAbout:
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: "index.html"
+        ErrorDocument: "index.html"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        BlockPublicAcls: false
+      BucketName: "dabase-about"
+      CorsConfiguration:
+        CorsRules:
+          - MaxAge: 3000
+            AllowedMethods:
+              - "GET"
+              - "POST"
+              - "PUT"
+            AllowedOrigins:
+              - "*"
+            AllowedHeaders:
+              - "*"
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - BucketKeyEnabled: true
+            ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
+
+  S3BucketPolicyDabaseAbout:
+    Type: "AWS::S3::BucketPolicy"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      Bucket: !Ref S3BucketDabaseAbout
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Resource: "arn:aws:s3:::dabase-about/*"
+            Action: "s3:GetObject"
+            Effect: "Allow"
+            Principal: "*"
+            Sid: "PublicReadGetObject"
+
 Outputs:
   S3BucketCodePipeline:
     Value: !Ref S3BucketCodePipeline
@@ -112,3 +161,7 @@ Outputs:
     Value: !Ref S3BucketDabaseUi
     Export:
       Name: "S3BucketDabaseUi"
+  S3BucketDabaseAbout:
+    Value: !Ref S3BucketDabaseAbout
+    Export:
+      Name: "S3BucketDabaseAbout"
