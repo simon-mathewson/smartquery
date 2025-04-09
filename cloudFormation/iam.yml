@@ -51,6 +51,9 @@ Resources:
               - "cloudformation:UpdateStack"
             Resource:
               - !Sub "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/dabase-*/*"
+          - Effect: "Allow"
+            Action: "route53:*"
+            Resource: "*"
 
   IamRoleCodeBuild:
     Type: "AWS::IAM::Role"
