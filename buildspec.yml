@@ -12,6 +12,8 @@ phases:
       - pnpm install
       - cd ../ui
       - pnpm install
+      - cd ../about
+      - pnpm install
   build:
     on-failure: ABORT
     commands:
