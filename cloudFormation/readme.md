@@ -48,3 +48,12 @@ To build for macOS and sign, ensure Apple Developer certificate is available in 
 
 - `VITE_AWS_COGNITO_IDENTITY_POOL_ID`
 - `VITE_AWS_PINPOINT_APP_ID`
+
+### 7. Create ACM certificates
+
+In the AWS console, go to Certificate Manager, Request a certificate, and request a certificate for the following domains:
+
+- `dabase.dev`
+- `about.dabase.dev`
+
+Replace `AcmCertificateArn` value in CloudFormation files with new ID.
