@@ -14,6 +14,7 @@ Resources:
               - s3:GetObjectVersion
               - s3:ListBucket
               - s3:PutObject
+              - s3:CreateBucket
             Resource:
               - !Sub
                 - "arn:${AWS::Partition}:s3:::${BucketName}"
