@@ -61,6 +61,7 @@ Resources:
       Path: "/service-role/"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AWSCodeBuildAdminAccess"
+        - "arn:aws:iam::aws:policy/IAMFullAccess"
         - !Ref ManagedPolicyDeployDabase
       Policies:
         - PolicyName: CodeBuildPolicy
@@ -85,6 +86,7 @@ Resources:
       Path: "/service-role/"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AWSCodeBuildAdminAccess"
+        - "arn:aws:iam::aws:policy/IAMFullAccess"
         - !Ref ManagedPolicyDeployDabase
       Policies:
         - PolicyName: CodeStarConnectionAccess
