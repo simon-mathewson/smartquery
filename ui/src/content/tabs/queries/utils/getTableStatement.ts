@@ -21,7 +21,7 @@ export const getTableStatement = (props: {
   }
 
   const isMysqlInformationSchemaQuery =
-    engine === 'mysql' && select.schema === 'information_schema';
+    engine === 'mysql' && select.database === 'information_schema';
 
   // Use table_type as column name to avoid case sensitivity issues
   return `

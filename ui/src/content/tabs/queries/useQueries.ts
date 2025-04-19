@@ -5,7 +5,7 @@ import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { DbValue, Row, TableType } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
-import { isNotNull } from '~/shared/utils/typescript/typescript';
+import { isNotNull, isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
 import { getColumnsFromResult, getColumnsStatement } from './utils/columns';
@@ -78,7 +78,7 @@ export const useQueries = () => {
 
       const selectStatement = statements[0];
 
-      const columnsStatement = getColumnsStatement({
+      const [columnsStatement, sqliteForeignKeysStatement] = getColumnsStatement({
         connection: activeConnection,
         select,
         table: select.table,
@@ -98,9 +98,14 @@ export const useQueries = () => {
       const statementsWithMetadata = [
         selectStatement,
         columnsStatement,
-        totalRowsStatement,
         tableStatement,
-      ].filter(isNotNull);
+        totalRowsStatement,
+        sqliteForeignKeysStatement,
+      ];
+
+      const statementsWithMetadataFiltered = statementsWithMetadata
+        .filter(isNotNull)
+        .filter(isNotUndefined);
 
       onStartLoading(id);
 
@@ -108,20 +113,24 @@ export const useQueries = () => {
         const results = (
           activeConnection.engine === 'sqlite'
             ? convertSqliteResultsToRecords(
-                activeConnection.sqliteDb.exec(statementsWithMetadata.join(';')),
+                activeConnection.sqliteDb.exec(statementsWithMetadataFiltered.join(';')),
               )
             : await trpc.sendQuery.mutate({
                 clientId: activeConnection.clientId,
-                statements: statementsWithMetadata,
+                statements: statementsWithMetadataFiltered,
               })
         ) as Record<string, DbValue>[][];
 
-        const [firstSelectResult, columnsResult, totalRowsResult, tableResult] = results;
+        const [firstSelectResult, columnsResult, tableResult] = results;
+
+        const totalRowsResult = totalRowsStatement ? results[3] : null;
+        const sqliteForeignKeysResult = sqliteForeignKeysStatement ? results[4] : null;
 
         const columns = getColumnsFromResult({
           connection: activeConnection,
           parsedStatement: select!.parsed,
           result: columnsResult,
+          sqliteForeignKeysResult,
         });
 
         const rows = firstSelectResult.map<Row>((row) =>
@@ -133,7 +142,7 @@ export const useQueries = () => {
           ),
         );
 
-        const totalRows = Number(totalRowsResult[0].count);
+        const totalRows = Number(totalRowsResult?.[0].count);
 
         assert(tableResult[0].table_type);
         const tableType = tableResult[0].table_type as TableType;

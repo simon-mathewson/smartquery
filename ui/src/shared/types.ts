@@ -77,7 +77,11 @@ export type Row = {
 export type Column = {
   dataType: DataType;
   enumValues?: string[] | null;
-  isForeignKey?: boolean;
+  foreignKey: {
+    schema?: string;
+    table: string;
+    column: string;
+  } | null;
   isNullable?: boolean;
   isPrimaryKey?: boolean;
   isVisible: boolean;
