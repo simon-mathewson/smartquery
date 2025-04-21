@@ -1,7 +1,8 @@
 import type NodeSqlParser from 'node-sql-parser';
+import type { InputMode } from './query/types';
 
 export type AddQueryOptions = {
-  showEditor?: boolean;
+  initialInputMode?: InputMode;
   sql?: string;
 };
 

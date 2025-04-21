@@ -1,13 +1,23 @@
-import type { XOR } from 'ts-essentials';
+import { assert, type XOR } from 'ts-essentials';
 import classNames from 'classnames';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { type Column, type Value } from '~/shared/types';
-import { isDateTimeType, isEnumType, isNumberType, isTimeType } from '~/shared/dataTypes/utils';
+import {
+  isDateTimeType,
+  isEnumType,
+  isNumberType,
+  isTextType,
+  isTimeType,
+} from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { QueryContext } from '../../Context';
 import type { CreateValue } from '~/content/edit/types';
 import type { useSorting } from '../sorting/useSorting';
-import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
+import { ArrowForward, ArrowUpward, ArrowDownward } from '@mui/icons-material';
+import { Button } from '~/shared/components/button/Button';
+import { QueriesContext } from '../../../Context';
+import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
+import { ConnectionsContext } from '~/content/connections/Context';
 
 export type CellProps = {
   column: Column | string;
@@ -48,12 +58,50 @@ export const Cell: React.FC<CellProps> = (props) => {
     value,
   } = props;
 
+  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  assert(activeConnection);
+
+  const { addQuery } = useDefinedContext(QueriesContext);
+
   const { query } = useDefinedContext(QueryContext);
 
   const selected =
     type === 'body' &&
     selection[rowIndex] &&
     (selection[rowIndex].length === 0 || selection[rowIndex].includes(columnIndex));
+
+  const openForeignTable = useCallback(() => {
+    assert(typeof column === 'object' && column.foreignKey);
+
+    const { foreignKey } = column;
+
+    const sql = getSqlForAst(
+      {
+        type: 'select',
+        columns: [{ expr: { type: 'column_ref', column: '*' } }],
+        from: [{ db: foreignKey.schema, table: foreignKey.table }],
+        where: {
+          type: 'binary_expr',
+          operator: '=',
+          left: { type: 'column_ref', column: foreignKey.column, table: null },
+          right: {
+            type: isTextType(column.dataType) ? 'single_quote_string' : 'number',
+            value,
+          },
+        },
+        with: null,
+        options: null,
+        distinct: null,
+        groupby: null,
+        having: null,
+        orderby: null,
+        limit: null,
+      },
+      activeConnection.engine,
+    );
+
+    addQuery({ sql, initialInputMode: 'filters' }, { afterActiveTab: true });
+  }, [activeConnection.engine, addQuery, column, value]);
 
   return (
     <div
@@ -150,6 +198,17 @@ export const Cell: React.FC<CellProps> = (props) => {
           return value;
         })()}
       </div>
+      {type !== 'header' && typeof column === 'object' && column.foreignKey && (
+        <Button
+          color={selected ? 'white' : 'secondary'}
+          htmlProps={{
+            className: '-mr-1',
+            onClick: openForeignTable,
+          }}
+          icon={<ArrowForward />}
+          size="small"
+        />
+      )}
       {query.select && type === 'header' && (
         <>
           {!sorting.sortedColumn ||

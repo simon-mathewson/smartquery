@@ -8,14 +8,14 @@ export const getNewQuery = (props: {
   connection: Connection;
 }) => {
   const {
-    addQueryOptions: { showEditor, sql },
+    addQueryOptions: { initialInputMode, sql },
     connection,
   } = props;
 
   return {
     id: uuid.v4(),
     isLoading: false,
-    showEditor: showEditor === true,
+    initialInputMode,
     sql: sql ?? null,
     ...(sql ? parseQuery({ connection, sql }) : { select: null, statements: null }),
   } satisfies Query;

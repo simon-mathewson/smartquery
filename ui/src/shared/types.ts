@@ -5,6 +5,7 @@ import { z } from 'zod';
 import type { inferRouterInputs } from '@trpc/server';
 import type { router } from '../../../link/src/main/router/router';
 import type { Database as SqliteDatabase, SqlValue as SqliteValue } from 'sql.js';
+import type { InputMode } from '~/content/tabs/queries/query/types';
 
 export type ConnectInput = inferRouterInputs<typeof router>['connectDb'];
 
@@ -90,9 +91,9 @@ export type Column = {
 
 export type Query = {
   id: string;
+  initialInputMode?: InputMode;
   isLoading: boolean;
   select: Select | null;
-  showEditor: boolean;
   sql: string | null;
   statements: string[] | null;
 };

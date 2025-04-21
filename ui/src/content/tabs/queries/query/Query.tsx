@@ -22,10 +22,12 @@ export const Query: React.FC = () => {
 
   const result = useContext(ResultContext);
 
+  const initialInputMode = query.initialInputMode ?? (!query.select ? 'editor' : undefined);
+
   const inputModeStorageKey = `query-${query.id}-inputMode`;
   const [inputMode, setInputMode] = useStoredState<InputMode | undefined>(
     inputModeStorageKey,
-    !query.select ? 'editor' : undefined,
+    initialInputMode,
     sessionStorage,
   );
 

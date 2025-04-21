@@ -24,13 +24,21 @@ export const useTabs = () => {
   const activeTab = useMemo(() => tabs.find((t) => t.id === activeTabId), [tabs, activeTabId]);
 
   const addTab = useCallback(
-    (queries: Query[][]) => {
+    (queries: Query[][], afterActive?: boolean) => {
       const id = uuid.v4();
 
-      setTabs((currentTabs) => [...currentTabs, { id, queries }]);
+      setTabs((currentTabs) => {
+        const newIndex = afterActive
+          ? currentTabs.findIndex((t) => t.id === activeTabId) + 1
+          : currentTabs.length;
+
+        const newTabs = [...currentTabs];
+        newTabs.splice(newIndex, 0, { id, queries });
+        return newTabs;
+      });
       setActiveTabId(id);
     },
-    [setActiveTabId, setTabs],
+    [activeTabId, setActiveTabId, setTabs],
   );
 
   const removeTab = useCallback(

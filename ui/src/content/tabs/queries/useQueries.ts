@@ -5,7 +5,7 @@ import { TrpcContext } from '~/content/trpc/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { DbValue, Row, TableType } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
-import { isNotNull, isNotUndefined } from '~/shared/utils/typescript/typescript';
+import { isNotNull } from '~/shared/utils/typescript/typescript';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
 import { getColumnsFromResult, getColumnsStatement } from './utils/columns';
@@ -78,7 +78,7 @@ export const useQueries = () => {
 
       const selectStatement = statements[0];
 
-      const [columnsStatement, sqliteForeignKeysStatement] = getColumnsStatement({
+      const [columnsStatement, constraintsStatement] = getColumnsStatement({
         connection: activeConnection,
         select,
         table: select.table,
@@ -98,14 +98,12 @@ export const useQueries = () => {
       const statementsWithMetadata = [
         selectStatement,
         columnsStatement,
+        constraintsStatement,
         tableStatement,
         totalRowsStatement,
-        sqliteForeignKeysStatement,
       ];
 
-      const statementsWithMetadataFiltered = statementsWithMetadata
-        .filter(isNotNull)
-        .filter(isNotUndefined);
+      const statementsWithMetadataFiltered = statementsWithMetadata.filter(isNotNull);
 
       onStartLoading(id);
 
@@ -113,7 +111,9 @@ export const useQueries = () => {
         const results = (
           activeConnection.engine === 'sqlite'
             ? convertSqliteResultsToRecords(
-                activeConnection.sqliteDb.exec(statementsWithMetadataFiltered.join(';')),
+                statementsWithMetadataFiltered.map(
+                  (statement) => activeConnection.sqliteDb.exec(statement)[0],
+                ),
               )
             : await trpc.sendQuery.mutate({
                 clientId: activeConnection.clientId,
@@ -121,16 +121,14 @@ export const useQueries = () => {
               })
         ) as Record<string, DbValue>[][];
 
-        const [firstSelectResult, columnsResult, tableResult] = results;
-
-        const totalRowsResult = totalRowsStatement ? results[3] : null;
-        const sqliteForeignKeysResult = sqliteForeignKeysStatement ? results[4] : null;
+        const [firstSelectResult, columnsResult, constraintsResult, tableResult, totalRowsResult] =
+          results;
 
         const columns = getColumnsFromResult({
           connection: activeConnection,
           parsedStatement: select!.parsed,
-          result: columnsResult,
-          sqliteForeignKeysResult,
+          columnsResult,
+          constraintsResult,
         });
 
         const rows = firstSelectResult.map<Row>((row) =>
@@ -187,7 +185,9 @@ export const useQueries = () => {
       try {
         const results = (
           activeConnection.engine === 'sqlite'
-            ? convertSqliteResultsToRecords(activeConnection.sqliteDb.exec(statements.join(';')))
+            ? convertSqliteResultsToRecords(
+                statements.map((statement) => activeConnection.sqliteDb.exec(statement)[0]),
+              )
             : await trpc.sendQuery.mutate({
                 clientId: activeConnection.clientId,
                 statements,
@@ -232,9 +232,10 @@ export const useQueries = () => {
       options?: {
         position?: { column: number; row?: number };
         tabId?: string;
+        afterActiveTab?: boolean;
       },
     ) => {
-      const { position, tabId } = options ?? {};
+      const { position, tabId, afterActiveTab } = options ?? {};
 
       assert(activeConnection);
 
@@ -244,7 +245,7 @@ export const useQueries = () => {
       });
 
       if (!tabId) {
-        addTab([[newQuery]]);
+        addTab([[newQuery]], afterActiveTab);
       } else {
         setQueries((currentQueries) => {
           if (!position) {
