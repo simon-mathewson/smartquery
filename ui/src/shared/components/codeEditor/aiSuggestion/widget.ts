@@ -46,6 +46,11 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
 
       if (textAfterCursor.trim().length === 0) {
         const textBeforeCursor = lines.slice(0, lineNumber).join('\n');
+
+        if (textBeforeCursor.trim().length === 0) {
+          return;
+        }
+
         this.suggestion = await this.getSuggestion(textBeforeCursor);
 
         if (!this.suggestion) {
