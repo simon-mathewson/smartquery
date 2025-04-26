@@ -61,7 +61,7 @@ dataTypes.forEach((dataType) => {
 
         const props = {
           ...scenario,
-          column: { ...scenario.column, isVisible: true },
+          column: { ...scenario.column, isVisible: true, foreignKey: null },
           onChange,
         };
 

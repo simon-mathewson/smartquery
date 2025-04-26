@@ -19,6 +19,7 @@ const postgresProps = {
       'Orange',
       'Kiwi',
     ],
+    foreignKey: null,
     isNullable: true,
     isVisible: true,
     name: 'fruit',
