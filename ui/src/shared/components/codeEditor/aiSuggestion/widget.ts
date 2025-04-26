@@ -111,49 +111,31 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
     this.getSuggestionAbortController.abort();
     this.getSuggestionAbortController = new AbortController();
 
-    if (this.ai.aiProvider === 'openai' && this.ai.openAi) {
-      const response = await this.ai.openAi.chat.completions.create(
-        {
-          temperature: 0,
-          model: 'gpt-4o',
-          messages: [
-            { role: 'developer', content: developerPrompt },
-            { role: 'user', content: codeBeforeCursor },
-          ],
-        },
-        {
-          signal: this.getSuggestionAbortController.signal,
-        },
-      );
-
-      return response.choices[0].message.content ?? undefined;
+    if (!this.ai.googleAi) {
+      return undefined;
     }
 
-    if (this.ai.aiProvider === 'google' && this.ai.googleAi) {
-      const model = this.ai.googleAi.getGenerativeModel({
-        model: 'gemini-2.0-flash',
-        systemInstruction: developerPrompt,
-      });
+    const model = this.ai.googleAi.getGenerativeModel({
+      model: 'gemini-2.0-flash',
+      systemInstruction: developerPrompt,
+    });
 
-      const response = await model.generateContent(
-        {
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: codeBeforeCursor }],
-            },
-          ],
-          generationConfig: { temperature: 0 },
-        },
-        { signal: this.getSuggestionAbortController.signal },
-      );
+    const response = await model.generateContent(
+      {
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: codeBeforeCursor }],
+          },
+        ],
+        generationConfig: { temperature: 0 },
+      },
+      { signal: this.getSuggestionAbortController.signal },
+    );
 
-      const data = response.response.text();
+    const data = response.response.text();
 
-      return data ?? undefined;
-    }
-
-    return undefined;
+    return data ?? undefined;
   }
 
   getId(): string {
