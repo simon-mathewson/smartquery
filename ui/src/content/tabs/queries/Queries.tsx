@@ -18,7 +18,7 @@ export const Queries: React.FC = () => {
   }
 
   return (
-    <div className="flex h-full justify-start overflow-hidden pb-3" key={activeTab.id}>
+    <div className="flex h-full grow justify-start overflow-hidden" key={activeTab.id}>
       <DropMarker column={0} row={0} />
       {activeTab.queries.map((column, columnIndex) => (
         <React.Fragment key={columnIndex}>
