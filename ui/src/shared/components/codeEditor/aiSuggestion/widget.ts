@@ -15,6 +15,8 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
 
   private getSuggestionAbortController = new AbortController();
 
+  private timeout: number | undefined;
+
   constructor(
     private readonly editor: editorType.ICodeEditor,
     private readonly monaco: typeof monacoType,
@@ -108,6 +110,12 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
   }
 
   async getSuggestion(codeBeforeCursor: string): Promise<string | undefined> {
+    clearTimeout(this.timeout);
+
+    await new Promise<void>((resolve) => {
+      this.timeout = setTimeout(resolve, 1000) as unknown as number;
+    });
+
     this.getSuggestionAbortController.abort();
     this.getSuggestionAbortController = new AbortController();
 
@@ -115,27 +123,22 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
       return undefined;
     }
 
-    const model = this.ai.googleAi.getGenerativeModel({
+    const response = await this.ai.googleAi.models.generateContent({
       model: 'gemini-2.0-flash',
-      systemInstruction: developerPrompt,
+      config: {
+        abortSignal: this.getSuggestionAbortController.signal,
+        systemInstruction: developerPrompt,
+        temperature: 0,
+      },
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: codeBeforeCursor }],
+        },
+      ],
     });
 
-    const response = await model.generateContent(
-      {
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: codeBeforeCursor }],
-          },
-        ],
-        generationConfig: { temperature: 0 },
-      },
-      { signal: this.getSuggestionAbortController.signal },
-    );
-
-    const data = response.response.text();
-
-    return data ?? undefined;
+    return response.text ?? undefined;
   }
 
   getId(): string {

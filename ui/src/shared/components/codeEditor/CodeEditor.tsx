@@ -82,7 +82,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
           editor.focus();
         }
 
-        new AiSuggestionWidget(editor, monaco, ai);
+        if (!readOnly) {
+          new AiSuggestionWidget(editor, monaco, ai);
+        }
       }}
       options={{
         folding: false,

@@ -1,6 +1,6 @@
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { useState } from 'react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
 export const useAi = () => {
   const [googleAiApiKey, setGoogleAiApiKey] = useStoredState<string | undefined>(
@@ -8,10 +8,10 @@ export const useAi = () => {
     undefined,
   );
 
-  const [googleAi, setGoogleAi] = useState<GoogleGenerativeAI | null>(null);
+  const [googleAi, setGoogleAi] = useState<GoogleGenAI | null>(null);
 
   if (googleAiApiKey && !googleAi) {
-    setGoogleAi(new GoogleGenerativeAI(googleAiApiKey));
+    setGoogleAi(new GoogleGenAI({ apiKey: googleAiApiKey }));
   } else if (!googleAiApiKey && googleAi) {
     setGoogleAi(null);
   }

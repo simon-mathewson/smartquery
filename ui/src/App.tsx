@@ -9,6 +9,7 @@ import { QueriesProvider } from './content/tabs/queries/Provider';
 import { TrpcProvider } from './content/trpc/Provider';
 import { BaseProviders } from './baseProviders/BaseProviders';
 import { SqliteProvider } from './content/sqlite/Provider';
+import { CopilotProvider } from './content/copilot/Provider';
 
 export const App: React.FC<React.PropsWithChildren> = (props) => {
   const { children } = props;
@@ -23,7 +24,9 @@ export const App: React.FC<React.PropsWithChildren> = (props) => {
                 <TabsProvider>
                   <QueriesProvider>
                     <DragAndDropProvider>
-                      <AddToDesktopProvider>{children}</AddToDesktopProvider>
+                      <AddToDesktopProvider>
+                        <CopilotProvider>{children}</CopilotProvider>
+                      </AddToDesktopProvider>
                     </DragAndDropProvider>
                   </QueriesProvider>
                 </TabsProvider>
