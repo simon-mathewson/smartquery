@@ -10,6 +10,7 @@ import { AiContext } from '~/content/ai/Context';
 export type CodeEditorProps = {
   autoFocus?: boolean;
   hideLineNumbers?: boolean;
+  htmlProps?: React.HTMLAttributes<HTMLDivElement>;
   language?: 'json' | 'sql';
   large?: boolean;
   onChange?: (value: string) => void;
@@ -20,7 +21,8 @@ export type CodeEditorProps = {
 };
 
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
-  const { autoFocus, hideLineNumbers, language, large, onChange, readOnly, value } = props;
+  const { autoFocus, hideLineNumbers, htmlProps, language, large, onChange, readOnly, value } =
+    props;
 
   const { mode } = useDefinedContext(ThemeContext);
 
@@ -30,6 +32,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     <Editor
       className={classNames(
         '[&_.margin]:!bg-background [&_.monaco-editor-background]:!bg-background [&_.monaco-editor]:!bg-background [&_.monaco-editor]:!outline-none [&_.suggest-widget>.message]:text-[12px]',
+        htmlProps?.className,
       )}
       defaultLanguage={language}
       onChange={(value) => onChange?.(value ?? '')}

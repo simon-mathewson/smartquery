@@ -7,6 +7,7 @@ import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '../connections/Context';
 import { getCopilotSystemInstruction } from './systemInstruction';
 import { ToastContext } from '../toast/Context';
+import { cloneDeep } from 'lodash';
 
 export const useCopilot = () => {
   const toast = useDefinedContext(ToastContext);
@@ -64,7 +65,7 @@ export const useCopilot = () => {
         for await (const chunk of response) {
           responseContent!.parts[0]!.text! += chunk.text;
 
-          setThread((contents) => contents);
+          setThread((contents) => [...contents.slice(0, -1), cloneDeep(responseContent)]);
         }
 
         setInput('');

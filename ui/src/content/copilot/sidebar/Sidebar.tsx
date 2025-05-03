@@ -4,14 +4,13 @@ import { Card } from '~/shared/components/card/Card';
 import { Input } from '~/shared/components/input/Input';
 import { Field } from '~/shared/components/field/Field';
 import { Button } from '~/shared/components/button/Button';
-import { Close, Send, DeleteOutline, StopOutlined } from '@mui/icons-material';
+import { Close, Send, DeleteOutline, Stop } from '@mui/icons-material';
 import { Header } from '~/shared/components/header/Header';
 import { PulseLoader } from 'react-spinners';
 import colors from 'tailwindcss/colors';
 import classNames from 'classnames';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
-import ReactMarkdown from 'react-markdown';
-import { CodeEditor } from '~/shared/components/codeEditor/CodeEditor';
+import { MessagePart } from './MessagePart/MessagePart';
 
 export const CopilotSidebar: React.FC = () => {
   const {
@@ -54,35 +53,9 @@ export const CopilotSidebar: React.FC = () => {
                     message.role === 'user',
                 })}
               >
-                {message.parts?.map((part, index) => {
-                  return (
-                    <ReactMarkdown
-                      key={index}
-                      components={{
-                        code(props) {
-                          const { children, className, node, ...rest } = props;
-
-                          const match = /language-(json|sql)/.exec(className || '');
-
-                          return match ? (
-                            <CodeEditor
-                              hideLineNumbers
-                              language={match[1] as 'json' | 'sql'}
-                              readOnly
-                              value={String(children)}
-                            />
-                          ) : (
-                            <code {...rest} className={className}>
-                              {children}
-                            </code>
-                          );
-                        },
-                      }}
-                    >
-                      {part.text}
-                    </ReactMarkdown>
-                  );
-                })}
+                {message.parts?.map((part, partIndex) => (
+                  <MessagePart key={partIndex} part={part} />
+                ))}
               </div>
             </div>
           );
@@ -117,7 +90,7 @@ export const CopilotSidebar: React.FC = () => {
             onChange={setInput}
           />
           {isLoading ? (
-            <Button htmlProps={{ onClick: stopGenerating }} icon={<StopOutlined />} />
+            <Button htmlProps={{ onClick: stopGenerating }} icon={<Stop />} />
           ) : (
             <Button htmlProps={{ disabled: input.length === 0, type: 'submit' }} icon={<Send />} />
           )}
