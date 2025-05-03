@@ -59,22 +59,12 @@ export const useCopilot = () => {
           parts: [{ text: '' }],
         } satisfies Content;
 
+        setThread((contents) => [...contents, responseContent]);
+
         for await (const chunk of response) {
-          setThread((contents) => {
-            const newContents = [...contents];
+          responseContent!.parts[0]!.text! += chunk.text;
 
-            if (!newContents.find((content) => content === responseContent)) {
-              newContents.push(responseContent);
-            }
-
-            assert(responseContent?.parts?.[0].text !== undefined);
-
-            if (responseContent) {
-              responseContent!.parts[0]!.text! += chunk.text;
-            }
-
-            return newContents;
-          });
+          setThread((contents) => contents);
         }
 
         setInput('');
