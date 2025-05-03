@@ -6,7 +6,7 @@ export const themes = {
   dark: {
     background: colors.neutral[900],
     border: colors.neutral[700],
-    card: colors.neutral[800],
+    card: '#1F1F1F',
 
     textPrimary: '#FFFFFFE9',
     textSecondary: '#FFFFFFC0',

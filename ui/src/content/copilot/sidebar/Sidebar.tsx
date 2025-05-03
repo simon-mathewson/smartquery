@@ -46,12 +46,17 @@ export const CopilotSidebar: React.FC = () => {
           }
 
           return (
-            <div className={classNames({ 'pl-[32px]': message.role === 'user' })} key={index}>
+            <div
+              className={classNames({ 'flex justify-end pl-[32px]': message.role === 'user' })}
+              key={index}
+            >
               <div
-                className={classNames('prose max-w-none text-sm leading-relaxed', {
-                  'ml-auto w-max rounded-lg bg-primary px-2 py-1 text-white':
-                    message.role === 'user',
-                })}
+                className={classNames(
+                  'prose max-w-none text-sm leading-relaxed [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
+                  {
+                    'rounded-xl bg-primary px-2 py-1 text-white': message.role === 'user',
+                  },
+                )}
               >
                 {message.parts?.map((part, partIndex) => (
                   <MessagePart key={partIndex} part={part} />
@@ -79,7 +84,16 @@ export const CopilotSidebar: React.FC = () => {
                   e.preventDefault();
 
                   if (e.shiftKey) {
-                    setInput(input + '\n');
+                    const textarea = e.target as HTMLTextAreaElement;
+                    const cursorPosition = textarea.selectionStart;
+                    const newInput =
+                      input.slice(0, cursorPosition) + '\n' + input.slice(cursorPosition);
+
+                    setInput(newInput);
+
+                    setTimeout(() => {
+                      textarea.selectionStart = textarea.selectionEnd = cursorPosition + 1;
+                    }, 0);
                   } else if (input.length !== 0) {
                     void sendMessage(input);
                   }

@@ -33,6 +33,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       className={classNames(
         '[&_.margin]:!bg-background [&_.monaco-editor-background]:!bg-background [&_.monaco-editor]:!bg-background [&_.monaco-editor]:!outline-none [&_.suggest-widget>.message]:text-[12px]',
         htmlProps?.className,
+        {
+          '[&_.monaco-editor_.cursors-layer_>_.cursor]:!hidden': readOnly,
+        },
       )}
       defaultLanguage={language}
       onChange={(value) => onChange?.(value ?? '')}
@@ -91,15 +94,16 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       }}
       options={{
         folding: false,
-        fontFamily: 'Fira Mono, monospace',
         glyphMargin: true,
         lineDecorationsWidth: hideLineNumbers ? 0 : 16,
         lineNumbers: hideLineNumbers ? 'off' : undefined,
         lineNumbersMinChars: 2,
         minimap: { enabled: false },
         overviewRulerLanes: 0,
+        renderLineHighlight: readOnly ? 'none' : 'line',
+        renderLineHighlightOnlyWhenFocus: true,
         padding: {
-          top: large ? 8 : 4,
+          top: large ? 8 : 5,
           bottom: large ? 8 : 4,
         },
         readOnly,
