@@ -103,8 +103,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         renderLineHighlight: readOnly ? 'none' : 'line',
         renderLineHighlightOnlyWhenFocus: true,
         padding: {
-          top: large ? 8 : 5,
-          bottom: large ? 8 : 4,
+          top: 12,
+          bottom: 12,
         },
         readOnly,
         scrollbar: {
