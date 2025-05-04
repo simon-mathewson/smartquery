@@ -1,9 +1,10 @@
 import { Send } from '@mui/icons-material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { Button } from '~/shared/components/button/Button';
 import { CodeEditor } from '../codeEditor/CodeEditor';
 import { getErrorMessage } from './utils';
 import { ErrorMessage } from '../errorMessage/ErrorMessage';
+import { QueryContext } from '~/content/tabs/queries/query/Context';
 
 export type SqlEditorProps = {
   onChange?: (sql: string) => void;
@@ -13,6 +14,8 @@ export type SqlEditorProps = {
 
 export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const { onChange, onSubmit, value } = props;
+
+  const query = useContext(QueryContext);
 
   const [error, setError] = useState<string | undefined>();
 
@@ -51,7 +54,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         <Button
           htmlProps={{
             className: 'ml-auto w-36',
-            disabled: !value?.trim(),
+            disabled: !value?.trim() || query?.query.isLoading,
             type: 'submit',
           }}
           icon={<Send />}

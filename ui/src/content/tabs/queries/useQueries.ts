@@ -15,13 +15,20 @@ import { getNewQuery } from './utils/getNewQuery';
 import { parseQuery } from './utils/parse';
 import { getTableStatement } from './utils/getTableStatement';
 import { convertSqliteResultsToRecords } from '~/shared/utils/sqlite/sqlite';
+import { SqliteContext } from '~/content/sqlite/Context';
+import { ToastContext } from '~/content/toast/Context';
 
 export const useQueries = () => {
+  const toast = useDefinedContext(ToastContext);
+
   const trpc = useDefinedContext(TrpcContext);
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const { activeTab, addTab, setTabs, tabs } = useDefinedContext(TabsContext);
+
+  const { getSqliteContent, requestFileHandlePermission, storeSqliteContent } =
+    useDefinedContext(SqliteContext);
 
   const [queryResults, setQueryResults] = useState<Record<string, QueryResult>>({});
 
@@ -182,16 +189,36 @@ export const useQueries = () => {
       onStartLoading(id);
 
       try {
-        const results = (
-          activeConnection.engine === 'sqlite'
-            ? convertSqliteResultsToRecords(
-                statements.map((statement) => activeConnection.sqliteDb.exec(statement)[0]),
-              )
-            : await trpc.sendQuery.mutate({
-                clientId: activeConnection.clientId,
-                statements,
-              })
-        ) as Record<string, DbValue>[][];
+        const results = await (async () => {
+          if (activeConnection.engine !== 'sqlite') {
+            return trpc.sendQuery.mutate({
+              clientId: activeConnection.clientId,
+              statements,
+            });
+          }
+
+          const fileHandle = await getSqliteContent(activeConnection.id);
+
+          if (fileHandle instanceof FileSystemFileHandle) {
+            await requestFileHandlePermission(fileHandle);
+          }
+
+          const results = convertSqliteResultsToRecords(
+            statements.map((statement) => activeConnection.sqliteDb.exec(statement)[0]),
+          ) as Record<string, DbValue>[][];
+
+          const updatedDb = activeConnection.sqliteDb.export();
+
+          if (fileHandle instanceof FileSystemFileHandle) {
+            const writable = await fileHandle.createWritable();
+            await writable.write(updatedDb);
+            await writable.close();
+          } else {
+            await storeSqliteContent(updatedDb, activeConnection.id);
+          }
+
+          return results;
+        })();
 
         const rawRows = results.find((result) => result.length) ?? null;
         const rows = rawRows
@@ -217,12 +244,27 @@ export const useQueries = () => {
             delete newQueryResults[query.id];
             return newQueryResults;
           });
+          toast.add({
+            color: 'success',
+            description: 'No results returned',
+            title: 'Query completed',
+          });
         }
       } finally {
         onFinishLoading(id);
       }
     },
-    [activeConnection, onFinishLoading, onStartLoading, runSelectQuery, trpc],
+    [
+      activeConnection,
+      getSqliteContent,
+      onFinishLoading,
+      onStartLoading,
+      requestFileHandlePermission,
+      runSelectQuery,
+      storeSqliteContent,
+      toast,
+      trpc,
+    ],
   );
 
   const addQuery = useCallback(
