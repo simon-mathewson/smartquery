@@ -37,7 +37,11 @@ export const CopilotSidebar: React.FC = () => {
       htmlProps={{ className: 'max-h-full h-max w-[320px] flex-none relative flex-col flex gap-2' }}
     >
       <Header
-        left={<Button htmlProps={{ onClick: () => clearThread() }} icon={<DeleteOutline />} />}
+        left={
+          thread.length ? (
+            <Button htmlProps={{ onClick: () => clearThread() }} icon={<DeleteOutline />} />
+          ) : null
+        }
         middle={<div className="text-center text-sm font-medium text-textPrimary">Copilot</div>}
         right={
           <Button
