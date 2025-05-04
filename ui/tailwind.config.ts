@@ -31,10 +31,10 @@ export const themes = {
     secondaryHighlightHover: '#FFFFFF2B',
     secondaryHover: `${colors.neutral[700]}D9`,
 
-    success: colors.green[500],
-    successHighlight: `${colors.green[500]}2B`,
-    successHighlightHover: `${colors.green[500]}3A`,
-    successHover: `${colors.green[500]}D9`,
+    success: colors.green[600],
+    successHighlight: `${colors.green[600]}2B`,
+    successHighlightHover: `${colors.green[600]}3A`,
+    successHover: `${colors.green[600]}D9`,
 
     whiteHighlight: '#FFFFFF1A',
     whiteHighlightHover: '#FFFFFF2B',
@@ -68,10 +68,10 @@ export const themes = {
     secondaryHighlightHover: '#0000001B',
     secondaryHover: `${colors.neutral[700]}D9`,
 
-    success: colors.green[500],
-    successHighlight: `${colors.green[500]}1A`,
-    successHighlightHover: `${colors.green[500]}2B`,
-    successHover: `${colors.green[500]}D9`,
+    success: colors.green[600],
+    successHighlight: `${colors.green[600]}1A`,
+    successHighlightHover: `${colors.green[600]}2B`,
+    successHover: `${colors.green[600]}D9`,
 
     whiteHighlight: '#FFFFFF1A',
     whiteHighlightHover: '#FFFFFF2B',
