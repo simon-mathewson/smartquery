@@ -33,7 +33,9 @@ export const CopilotSidebar: React.FC = () => {
   } = useDefinedContext(CopilotContext);
 
   return (
-    <Card htmlProps={{ className: 'h-full w-[320px] flex-none relative flex-col flex gap-2' }}>
+    <Card
+      htmlProps={{ className: 'max-h-full h-max w-[320px] flex-none relative flex-col flex gap-2' }}
+    >
       <Header
         left={<Button htmlProps={{ onClick: () => clearThread() }} icon={<DeleteOutline />} />}
         middle={<div className="text-center text-sm font-medium text-textPrimary">Copilot</div>}
@@ -45,7 +47,7 @@ export const CopilotSidebar: React.FC = () => {
           />
         }
       />
-      <div className="flex flex-1 flex-col gap-4 overflow-auto px-1">
+      <div className="flex flex-col gap-4 overflow-auto px-1">
         {thread.map((message, index) => {
           const textParts = message.parts?.map((part) => part.text).filter(isNotUndefined);
 

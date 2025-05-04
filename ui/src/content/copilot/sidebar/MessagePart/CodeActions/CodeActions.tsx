@@ -1,9 +1,10 @@
-import { AddOutlined, ContentCopyOutlined, PlayArrowOutlined } from '@mui/icons-material';
+import { ContentCopyOutlined } from '@mui/icons-material';
 import { QueriesContext } from '~/content/tabs/queries/Context';
 import { ToastContext } from '~/content/toast/Context';
 import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-
+import Play from '~/shared/icons/Play.svg?react';
+import Add from '~/shared/icons/Add.svg?react';
 export const CodeActions: React.FC<{ code: string }> = ({ code }) => {
   const toast = useDefinedContext(ToastContext);
 
@@ -24,7 +25,7 @@ export const CodeActions: React.FC<{ code: string }> = ({ code }) => {
             );
           },
         }}
-        icon={<PlayArrowOutlined />}
+        icon={<Play />}
         size="small"
       />
       <Button
@@ -40,7 +41,7 @@ export const CodeActions: React.FC<{ code: string }> = ({ code }) => {
             );
           },
         }}
-        icon={<AddOutlined />}
+        icon={<Add />}
         size="small"
       />
       <Button

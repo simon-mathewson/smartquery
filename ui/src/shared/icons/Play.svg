@@ -1,0 +1,10 @@
+<svg
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    stroke="currentColor"
+    d="M22 12L6 2V22L22 12Z"
+    stroke-width="2"
+  />
+</svg>
