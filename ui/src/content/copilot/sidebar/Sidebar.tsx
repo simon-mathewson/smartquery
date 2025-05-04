@@ -77,14 +77,14 @@ export const CopilotSidebar: React.FC = () => {
       </div>
       <div>
         {isLoadingSchemaDefinitions && (
-          <div className="flex items-center gap-2 px-1 pb-3 pt-1">
-            <CircularProgress size={20} />
+          <div className="mb-2 mt-1 flex w-max items-center gap-2 rounded-lg bg-primaryHighlight px-2 py-1 text-xs font-[500] text-textSecondary">
+            <CircularProgress size={15} className="!text-textSecondary" />
             <div className="text-xs text-textSecondary">Loading schema definitions...</div>
           </div>
         )}
         {hasSchemaDefinitions && (
-          <div className="flex items-center gap-2 px-1 pb-3 pt-1 text-xs font-[500] text-textSecondary">
-            <Language className="!h-5 !w-5" />
+          <div className="mb-2 mt-1 flex w-max items-center gap-2 rounded-lg bg-primaryHighlight px-2 py-1 text-xs font-[500] text-textSecondary">
+            <Language className="!h-4 !w-4" />
             <span className="font-mono">
               {activeConnection.database}
               {activeConnection.engine === 'postgresql' && ` • ${activeConnection.schema}`}
