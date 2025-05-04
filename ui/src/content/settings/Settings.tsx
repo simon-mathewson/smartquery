@@ -31,7 +31,17 @@ export const Settings: React.FC = () => {
           value={modePreference}
         />
       </Field>
-      <Field label="Google AI API Key">
+      <Field
+        hint={
+          <>
+            Get a free key at{' '}
+            <a className="underline" href="https://aistudio.google.com/apikey" target="_blank">
+              aistudio.google.com/apikey
+            </a>
+          </>
+        }
+        label="Google AI API Key"
+      >
         <Input
           onChange={setGoogleAiApiKey}
           htmlProps={{

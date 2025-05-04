@@ -102,10 +102,13 @@ export const useCopilot = () => {
     setThread([]);
   }, [setThread, stopGenerating]);
 
+  const isEnabled = googleAi !== null;
+
   return useMemo(
     () => ({
       clearThread,
       input,
+      isEnabled,
       isLoading,
       isLoadingSchemaDefinitions,
       hasSchemaDefinitions,
@@ -119,12 +122,12 @@ export const useCopilot = () => {
     [
       clearThread,
       input,
+      isEnabled,
       isLoading,
       isLoadingSchemaDefinitions,
       hasSchemaDefinitions,
       isOpen,
       sendMessage,
-      setInput,
       setIsOpen,
       stopGenerating,
       thread,

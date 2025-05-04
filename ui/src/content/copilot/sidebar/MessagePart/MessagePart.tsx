@@ -25,7 +25,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
                 <CodeEditor
                   editorOptions={{
                     padding: {
-                      top: showActions ? 0 : 12,
+                      top: showActions ? 4 : 12,
                       bottom: 12,
                     },
                   }}
