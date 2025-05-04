@@ -4,7 +4,7 @@ import { Card } from '~/shared/components/card/Card';
 import { Input } from '~/shared/components/input/Input';
 import { Field } from '~/shared/components/field/Field';
 import { Button } from '~/shared/components/button/Button';
-import { Close, Send, DeleteOutline, Stop } from '@mui/icons-material';
+import { Close, Send, DeleteOutline, Stop, Language } from '@mui/icons-material';
 import { Header } from '~/shared/components/header/Header';
 import { PulseLoader } from 'react-spinners';
 import colors from 'tailwindcss/colors';
@@ -12,13 +12,19 @@ import classNames from 'classnames';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { MessagePart } from './MessagePart/MessagePart';
 import { CircularProgress } from '@mui/material';
+import { ConnectionsContext } from '~/content/connections/Context';
+import { assert } from 'ts-essentials';
 
 export const CopilotSidebar: React.FC = () => {
+  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  assert(activeConnection, 'No active connection');
+
   const {
     clearThread,
     input,
     isLoading,
     isLoadingSchemaDefinitions,
+    hasSchemaDefinitions,
     sendMessage,
     setInput,
     setIsOpen,
@@ -39,7 +45,7 @@ export const CopilotSidebar: React.FC = () => {
           />
         }
       />
-      <div className="flex flex-1 flex-col gap-2 overflow-auto px-1">
+      <div className="flex flex-1 flex-col gap-4 overflow-auto px-1">
         {thread.map((message, index) => {
           const textParts = message.parts?.map((part) => part.text).filter(isNotUndefined);
 
@@ -54,7 +60,7 @@ export const CopilotSidebar: React.FC = () => {
             >
               <div
                 className={classNames(
-                  'prose max-w-none text-sm leading-relaxed [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
+                  'prose prose-code:font-[500] prose-code:after:content-none prose-code:before:content-none prose-pre:bg-transparent prose-pre:p-0 max-w-none text-sm leading-normal [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
                   {
                     'rounded-xl bg-primary px-2 py-1 text-white': message.role === 'user',
                   },
@@ -71,9 +77,18 @@ export const CopilotSidebar: React.FC = () => {
       </div>
       <div>
         {isLoadingSchemaDefinitions && (
-          <div className="flex items-center gap-3 px-1 pb-3 pt-1">
-            <CircularProgress size={16} />
+          <div className="flex items-center gap-2 px-1 pb-3 pt-1">
+            <CircularProgress size={20} />
             <div className="text-xs text-textSecondary">Loading schema definitions...</div>
+          </div>
+        )}
+        {hasSchemaDefinitions && (
+          <div className="flex items-center gap-2 px-1 pb-3 pt-1 text-xs font-[500] text-textSecondary">
+            <Language className="!h-5 !w-5" />
+            <span className="font-mono">
+              {activeConnection.database}
+              {activeConnection.engine === 'postgresql' && ` • ${activeConnection.schema}`}
+            </span>
           </div>
         )}
         <form

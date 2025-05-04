@@ -18,7 +18,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
               <CodeEditor
                 hideLineNumbers
                 htmlProps={{
-                  className: 'rounded-xl overflow-hidden my-2',
+                  className: 'rounded-xl overflow-hidden',
                 }}
                 language={match[1] as 'json' | 'sql'}
                 readOnly

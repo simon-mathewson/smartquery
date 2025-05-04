@@ -1,5 +1,6 @@
 import type { ActiveConnection } from '~/shared/types';
 import type { SchemaDefinitions } from './schemaDefinitions/types';
+import superjson from 'superjson';
 
 export const getSystemInstructions = (
   activeConnection: ActiveConnection,
@@ -8,11 +9,9 @@ export const getSystemInstructions = (
   let instructions = `You are a copilot assistant in a database UI.\n\nThe engine is ${activeConnection.engine}.`;
 
   if (schemaDefinitions) {
-    instructions += `\n\nThe schema definitions are as follows:\n\nTables:\n${JSON.stringify(
+    instructions += `\n\nThe schema definitions are as follows:\n\nTables:\n${superjson.stringify(
       schemaDefinitions.tables,
-      null,
-      2,
-    )}\n\nViews:\n${JSON.stringify(schemaDefinitions.views, null, 2)}`;
+    )}\n\nViews:\n${superjson.stringify(schemaDefinitions.views)}`;
   }
 
   return instructions;

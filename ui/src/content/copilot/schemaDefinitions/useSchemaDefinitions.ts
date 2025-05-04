@@ -1,5 +1,5 @@
 import { omit } from 'lodash';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { TrpcContext } from '~/content/trpc/Context';
@@ -42,32 +42,59 @@ export const useSchemaDefinitions = () => {
 
     setIsLoading(true);
 
+    const statements = (() => {
+      switch (engine) {
+        case 'postgresql':
+          return [
+            `
+            SELECT table_name, table_type  FROM information_schema.tables 
+            WHERE table_catalog = '${database}'
+            AND table_schema = '${schema}'
+          `,
+            `
+            SELECT table_name, column_name, ordinal_position, column_default, is_nullable, data_type, character_maximum_length, numeric_precision, numeric_scale FROM information_schema.columns
+            WHERE table_catalog = '${database}'
+            AND table_schema = '${schema}'
+          `,
+            `
+            SELECT constraint_name, table_name, constraint_type FROM information_schema.table_constraints
+            WHERE table_catalog = '${database}'
+            AND table_schema = '${schema}'
+            AND constraint_type <> 'CHECK'
+          `,
+            `
+            SELECT table_name, view_definition FROM information_schema.views
+            WHERE table_catalog = '${database}'
+            AND table_schema = '${schema}'
+          `,
+          ];
+        case 'mysql':
+          return [
+            `
+              SELECT TABLE_NAME table_name, TABLE_TYPE table_type FROM information_schema.tables 
+              WHERE TABLE_SCHEMA = '${database}'
+            `,
+            `
+              SELECT TABLE_NAME table_name, COLUMN_NAME column_name, ORDINAL_POSITION ordinal_position, COLUMN_DEFAULT column_default, IS_NULLABLE is_nullable, DATA_TYPE data_type, CHARACTER_MAXIMUM_LENGTH character_maximum_length, NUMERIC_PRECISION numeric_precision, NUMERIC_SCALE numeric_scale FROM information_schema.columns
+              WHERE TABLE_SCHEMA = '${database}'
+            `,
+            `
+              SELECT CONSTRAINT_NAME constraint_name, TABLE_NAME table_name, CONSTRAINT_TYPE constraint_type FROM information_schema.table_constraints
+              WHERE TABLE_SCHEMA = '${database}'
+              AND CONSTRAINT_TYPE <> 'CHECK'
+            `,
+            `
+              SELECT TABLE_NAME table_name, VIEW_DEFINITION view_definition FROM information_schema.views
+              WHERE TABLE_SCHEMA = '${database}'
+            `,
+          ];
+      }
+    })();
+
     try {
       const results = await trpc.sendQuery.mutate({
         clientId: activeConnection.clientId,
-        statements: [
-          `
-        SELECT table_name, table_type  FROM information_schema.tables 
-        WHERE table_catalog = '${engine === 'postgresql' ? database : 'def'}'
-        AND table_schema = '${engine === 'postgresql' ? schema : database}'
-      `,
-          `
-        SELECT table_name, column_name, ordinal_position, column_default, is_nullable, data_type, character_maximum_length, numeric_precision, numeric_scale FROM information_schema.columns
-        WHERE table_catalog = '${engine === 'postgresql' ? database : 'def'}'
-        AND table_schema = '${engine === 'postgresql' ? schema : database}'
-      `,
-          `
-        SELECT constraint_name, table_name, constraint_type FROM information_schema.table_constraints
-        WHERE table_catalog = '${engine === 'postgresql' ? database : 'def'}'
-        AND table_schema = '${engine === 'postgresql' ? schema : database}'
-        AND constraint_type <> 'CHECK'
-      `,
-          `
-        SELECT table_name, view_definition FROM information_schema.views
-        WHERE table_catalog = '${engine === 'postgresql' ? database : 'def'}'
-        AND table_schema = '${engine === 'postgresql' ? schema : database}'
-      `,
-        ],
+        statements,
       });
 
       const [tables, columns, tableConstraints, views] = results;
@@ -111,11 +138,18 @@ export const useSchemaDefinitions = () => {
     trpc.sendQuery,
   ]);
 
+  // Fetch schema definitions when active connection changes
+  useEffect(() => {
+    getSchemaDefinitions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeConnection]);
+
   return useMemo(
     () => ({
       getSchemaDefinitions,
+      hasSchemaDefinitions: storedSchemaDefinitions !== null,
       isLoading,
     }),
-    [getSchemaDefinitions, isLoading],
+    [getSchemaDefinitions, isLoading, storedSchemaDefinitions],
   );
 };

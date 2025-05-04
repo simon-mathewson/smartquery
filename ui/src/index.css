@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@plugin "@tailwindcss/typography";
-
 @layer base {
   html {
     @apply bg-background;

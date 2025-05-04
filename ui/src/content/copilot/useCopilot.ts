@@ -28,7 +28,11 @@ export const useCopilot = () => {
 
   const [input, setInput] = useState('');
 
-  const { getSchemaDefinitions, isLoading: isLoadingSchemaDefinitions } = useSchemaDefinitions();
+  const {
+    getSchemaDefinitions,
+    isLoading: isLoadingSchemaDefinitions,
+    hasSchemaDefinitions,
+  } = useSchemaDefinitions();
 
   const sendMessage = useCallback(
     async (message: string) => {
@@ -80,6 +84,7 @@ export const useCopilot = () => {
           description: error instanceof Error ? error.message : 'Unknown error',
           color: 'danger',
         });
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -103,6 +108,7 @@ export const useCopilot = () => {
       input,
       isLoading,
       isLoadingSchemaDefinitions,
+      hasSchemaDefinitions,
       isOpen,
       sendMessage,
       setInput,
@@ -115,6 +121,7 @@ export const useCopilot = () => {
       input,
       isLoading,
       isLoadingSchemaDefinitions,
+      hasSchemaDefinitions,
       isOpen,
       sendMessage,
       setInput,

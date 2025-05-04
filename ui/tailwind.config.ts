@@ -90,5 +90,5 @@ export default {
       },
     },
   },
-  plugins: [createThemes(themes)],
+  plugins: [createThemes(themes), require('@tailwindcss/typography')],
 } satisfies Config;
