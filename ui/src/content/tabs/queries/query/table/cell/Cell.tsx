@@ -105,6 +105,7 @@ export const Cell: React.FC<CellProps> = (props) => {
 
   return (
     <div
+      tabIndex={-1}
       className={classNames(
         'group flex h-8 max-w-[240px] select-none items-center justify-between gap-2 px-2 transition-colors duration-100',
         (() => {

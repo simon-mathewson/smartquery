@@ -35,11 +35,11 @@ export const Table: React.FC<TableProps> = (props) => {
     [createChanges, table],
   );
 
-  useCopyPaste(selection, rowsToCreate);
+  const tableRef = useRef<HTMLDivElement | null>(null);
+
+  useCopyPaste(selection, rowsToCreate, tableRef);
 
   const sorting = useSorting();
-
-  const tableRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     handleRowCreationRef.current = () => {
