@@ -6,9 +6,11 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { getIsWindows } from '~/shared/utils/getIsWindows/getIsWindows';
 import { AiSuggestionWidget } from './aiSuggestion/widget';
 import { AiContext } from '~/content/ai/Context';
+import type { editor } from 'monaco-editor';
 
 export type CodeEditorProps = {
   autoFocus?: boolean;
+  editorOptions?: editor.IStandaloneEditorConstructionOptions | undefined;
   hideLineNumbers?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
   language?: 'json' | 'sql';
@@ -21,8 +23,17 @@ export type CodeEditorProps = {
 };
 
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
-  const { autoFocus, hideLineNumbers, htmlProps, language, large, onChange, readOnly, value } =
-    props;
+  const {
+    autoFocus,
+    editorOptions,
+    hideLineNumbers,
+    htmlProps,
+    language,
+    large,
+    onChange,
+    readOnly,
+    value,
+  } = props;
 
   const { mode } = useDefinedContext(ThemeContext);
 
@@ -113,6 +124,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         },
         scrollBeyondLastLine: false,
         wordWrap: 'on',
+        ...(editorOptions ?? {}),
       }}
       theme={mode === 'light' ? 'vs' : 'vs-dark'}
       value={value}

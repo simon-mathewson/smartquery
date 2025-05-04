@@ -229,12 +229,13 @@ export const useQueries = () => {
     (
       query: AddQueryOptions,
       options?: {
-        position?: { column: number; row?: number };
-        tabId?: string;
         afterActiveTab?: boolean;
+        position?: { column: number; row?: number };
+        skipRun?: boolean;
+        tabId?: string;
       },
     ) => {
-      const { position, tabId, afterActiveTab } = options ?? {};
+      const { position, tabId, afterActiveTab, skipRun } = options ?? {};
 
       assert(activeConnection);
 
@@ -269,9 +270,11 @@ export const useQueries = () => {
         }, tabId);
       }
 
-      setTimeout(() => {
-        void runQuery(newQuery.id);
-      });
+      if (!skipRun) {
+        setTimeout(() => {
+          void runQuery(newQuery.id);
+        });
+      }
     },
     [activeConnection, addTab, runQuery, setQueries],
   );
