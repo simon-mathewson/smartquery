@@ -142,8 +142,7 @@ export const useQueries = () => {
 
         const totalRows = Number(totalRowsResult?.[0].count);
 
-        assert(tableResult[0].table_type);
-        const tableType = tableResult[0].table_type as TableType;
+        const tableType = (tableResult[0]?.table_type ?? 'SYSTEM_VIEW') as TableType;
 
         setQueryResults((currentQueryResults) => ({
           ...currentQueryResults,

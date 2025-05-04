@@ -9,9 +9,9 @@ export const getSystemInstructions = (
   let instructions = `You are a copilot assistant in a database UI.\n\nThe engine is ${activeConnection.engine}.`;
 
   if (schemaDefinitions) {
-    instructions += `\n\nThe schema definitions are as follows:\n\nTables:\n${superjson.stringify(
-      schemaDefinitions.tables,
-    )}\n\nViews:\n${superjson.stringify(schemaDefinitions.views)}`;
+    instructions += `\n\nThe schema definitions are as follows:\n\n${superjson.stringify(
+      schemaDefinitions.definitions,
+    )}`;
   }
 
   return instructions;
