@@ -117,7 +117,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       theme={mode === 'light' ? 'vs' : 'vs-dark'}
       value={value}
       wrapperProps={{
-        style: { overflow: 'hidden', paddingRight: 8, width: '100%' },
+        style: { overflow: 'hidden', width: '100%' },
       }}
     />
   );
