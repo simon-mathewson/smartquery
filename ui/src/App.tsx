@@ -1,15 +1,14 @@
 import React from 'react';
+import { BaseProviders } from './baseProviders/BaseProviders';
 import { ConnectionsProvider } from './content/connections/Provider';
 import { DragAndDropProvider } from './content/dragAndDrop/Provider';
 import { EditProvider } from './content/edit/Provider';
 import { LinkProvider } from './content/link/Provider';
 import { AddToDesktopProvider } from './content/settings/addToDesktop/Provider';
+import { SqliteProvider } from './content/sqlite/Provider';
 import { TabsProvider } from './content/tabs/Provider';
 import { QueriesProvider } from './content/tabs/queries/Provider';
 import { TrpcProvider } from './content/trpc/Provider';
-import { BaseProviders } from './baseProviders/BaseProviders';
-import { SqliteProvider } from './content/sqlite/Provider';
-import { CopilotProvider } from './content/copilot/Provider';
 
 export const App: React.FC<React.PropsWithChildren> = (props) => {
   const { children } = props;
@@ -24,9 +23,7 @@ export const App: React.FC<React.PropsWithChildren> = (props) => {
                 <TabsProvider>
                   <QueriesProvider>
                     <DragAndDropProvider>
-                      <AddToDesktopProvider>
-                        <CopilotProvider>{children}</CopilotProvider>
-                      </AddToDesktopProvider>
+                      <AddToDesktopProvider>{children}</AddToDesktopProvider>
                     </DragAndDropProvider>
                   </QueriesProvider>
                 </TabsProvider>

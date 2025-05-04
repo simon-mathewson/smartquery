@@ -5,17 +5,16 @@ import type { Content } from '@google/genai';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '../connections/Context';
-import { getCopilotSystemInstruction } from './systemInstruction';
+import { getSystemInstructions } from './systemInstruction';
 import { ToastContext } from '../toast/Context';
-import { cloneDeep, omit } from 'lodash';
-import { TrpcContext } from '../trpc/Context';
+import { cloneDeep } from 'lodash';
+import { useSchemaDefinitions } from './schemaDefinitions/useSchemaDefinitions';
 
 export const useCopilot = () => {
   const toast = useDefinedContext(ToastContext);
 
-  const trpc = useDefinedContext(TrpcContext);
-
   const { activeConnection } = useDefinedContext(ConnectionsContext);
+  assert(activeConnection);
 
   const { googleAi } = useDefinedContext(AiContext);
 
@@ -29,60 +28,11 @@ export const useCopilot = () => {
 
   const [input, setInput] = useState('');
 
-  const getSchemaDefinitions = useCallback(async () => {
-    assert(activeConnection);
-    assert('clientId' in activeConnection);
-
-    const { engine, database, schema } = activeConnection;
-
-    const results = await trpc.sendQuery.mutate({
-      clientId: activeConnection.clientId,
-      statements: [
-        `
-          SELECT table_name, table_type  FROM information_schema.tables 
-          WHERE table_catalog = '${engine === 'postgresql' ? database : 'def'}'
-          AND table_schema = '${engine === 'postgresql' ? schema : database}'
-        `,
-        `
-          SELECT table_name, column_name, ordinal_position, column_default, is_nullable, data_type, character_maximum_length, numeric_precision, numeric_scale FROM information_schema.columns
-          WHERE table_catalog = '${engine === 'postgresql' ? database : 'def'}'
-          AND table_schema = '${engine === 'postgresql' ? schema : database}'
-        `,
-        `
-          SELECT constraint_name, table_name, constraint_type FROM information_schema.table_constraints
-          WHERE table_catalog = '${engine === 'postgresql' ? database : 'def'}'
-          AND table_schema = '${engine === 'postgresql' ? schema : database}'
-          AND constraint_type <> 'CHECK'
-        `,
-        `
-          SELECT table_name, view_definition FROM information_schema.views
-          WHERE table_catalog = '${engine === 'postgresql' ? database : 'def'}'
-          AND table_schema = '${engine === 'postgresql' ? schema : database}'
-        `,
-      ],
-    });
-
-    const [tables, columns, tableConstraints, views] = results;
-
-    const processedTables = tables.map((table) => {
-      return {
-        ...table,
-        columns: columns
-          .filter((column) => column.table_name === table.table_name)
-          .map((column) => omit(column, 'table_name')),
-        tableConstraints: tableConstraints
-          .filter((constraint) => constraint.table_name === table.table_name)
-          .map((constraint) => omit(constraint, 'table_name')),
-      };
-    });
-
-    return { tables: processedTables, views };
-  }, [activeConnection, trpc]);
+  const { getSchemaDefinitions, isLoading: isLoadingSchemaDefinitions } = useSchemaDefinitions();
 
   const sendMessage = useCallback(
     async (message: string) => {
       assert(googleAi);
-      assert(activeConnection);
 
       setIsLoading(true);
 
@@ -105,7 +55,7 @@ export const useCopilot = () => {
           model: 'gemini-2.0-flash',
           config: {
             abortSignal: abortControllerRef.current.signal,
-            systemInstruction: getCopilotSystemInstruction(activeConnection, schemaDefinitions),
+            systemInstruction: getSystemInstructions(activeConnection, schemaDefinitions),
           },
           contents: threadWithUserMessage,
         });
@@ -152,6 +102,7 @@ export const useCopilot = () => {
       clearThread,
       input,
       isLoading,
+      isLoadingSchemaDefinitions,
       isOpen,
       sendMessage,
       setInput,
@@ -163,6 +114,7 @@ export const useCopilot = () => {
       clearThread,
       input,
       isLoading,
+      isLoadingSchemaDefinitions,
       isOpen,
       sendMessage,
       setInput,

@@ -11,12 +11,14 @@ import colors from 'tailwindcss/colors';
 import classNames from 'classnames';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { MessagePart } from './MessagePart/MessagePart';
+import { CircularProgress } from '@mui/material';
 
 export const CopilotSidebar: React.FC = () => {
   const {
     clearThread,
     input,
     isLoading,
+    isLoadingSchemaDefinitions,
     sendMessage,
     setInput,
     setIsOpen,
@@ -67,49 +69,60 @@ export const CopilotSidebar: React.FC = () => {
         })}
         {isLoading && <PulseLoader color={colors.neutral[400]} size={8} />}
       </div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          void sendMessage(input);
-        }}
-      >
-        <Field>
-          <Input
-            element="textarea"
-            htmlProps={{
-              disabled: isLoading,
-              placeholder: 'Ask anything about your database',
-              onKeyDown: (e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
+      <div>
+        {isLoadingSchemaDefinitions && (
+          <div className="flex items-center gap-3 px-1 pb-3 pt-1">
+            <CircularProgress size={16} />
+            <div className="text-xs text-textSecondary">Loading schema definitions...</div>
+          </div>
+        )}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void sendMessage(input);
+          }}
+        >
+          <Field>
+            <Input
+              element="textarea"
+              htmlProps={{
+                disabled: isLoading,
+                placeholder: 'Ask anything about your database',
+                onKeyDown: (e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
 
-                  if (e.shiftKey) {
-                    const textarea = e.target as HTMLTextAreaElement;
-                    const cursorPosition = textarea.selectionStart;
-                    const newInput =
-                      input.slice(0, cursorPosition) + '\n' + input.slice(cursorPosition);
+                    if (e.shiftKey) {
+                      const textarea = e.target as HTMLTextAreaElement;
+                      const cursorPosition = textarea.selectionStart;
+                      const newInput =
+                        input.slice(0, cursorPosition) + '\n' + input.slice(cursorPosition);
 
-                    setInput(newInput);
+                      setInput(newInput);
 
-                    setTimeout(() => {
-                      textarea.selectionStart = textarea.selectionEnd = cursorPosition + 1;
-                    }, 0);
-                  } else if (input.length !== 0) {
-                    void sendMessage(input);
+                      setTimeout(() => {
+                        textarea.selectionStart = textarea.selectionEnd = cursorPosition + 1;
+                      }, 0);
+                    } else if (input.length !== 0) {
+                      void sendMessage(input);
+                    }
                   }
-                }
-              },
-              value: input,
-            }}
-            onChange={setInput}
-          />
-          {isLoading ? (
-            <Button htmlProps={{ onClick: stopGenerating }} icon={<Stop />} />
-          ) : (
-            <Button htmlProps={{ disabled: input.length === 0, type: 'submit' }} icon={<Send />} />
-          )}
-        </Field>
-      </form>
+                },
+                value: input,
+              }}
+              onChange={setInput}
+            />
+            {isLoading ? (
+              <Button htmlProps={{ onClick: stopGenerating }} icon={<Stop />} />
+            ) : (
+              <Button
+                htmlProps={{ disabled: input.length === 0, type: 'submit' }}
+                icon={<Send />}
+              />
+            )}
+          </Field>
+        </form>
+      </div>
     </Card>
   );
 };
