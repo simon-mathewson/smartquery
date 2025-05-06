@@ -8,6 +8,8 @@ import { Tabs } from './tabs/Tabs';
 import { QueriesContext } from '../tabs/queries/Context';
 import { CopilotContext } from '../copilot/Context';
 import { ToastContext } from '../toast/Context';
+import { EditContext } from '../edit/Context';
+import classNames from 'classnames';
 
 export const Toolbar: React.FC = () => {
   const toast = useDefinedContext(ToastContext);
@@ -15,6 +17,7 @@ export const Toolbar: React.FC = () => {
   const { tabs } = useDefinedContext(TabsContext);
   const { addQuery } = useDefinedContext(QueriesContext);
   const copilot = useDefinedContext(CopilotContext);
+  const { allChanges } = useDefinedContext(EditContext);
 
   return (
     <div className="mb-1 mt-1 flex items-center gap-3 py-2">
@@ -25,11 +28,11 @@ export const Toolbar: React.FC = () => {
         icon={<Add />}
         label={tabs.length ? undefined : 'New query'}
       />
-      <Changes />
+      {allChanges.length && <Changes />}
       <Button
         color="primary"
         htmlProps={{
-          className: 'ml-auto',
+          className: classNames({ 'ml-auto': !allChanges.length }),
           onClick: () => {
             if (!copilot.isEnabled) {
               toast.add({

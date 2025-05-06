@@ -11,8 +11,6 @@ export const Changes: React.FC = () => {
 
   const changeCount = allChanges.length;
 
-  if (!changeCount) return null;
-
   const reviewChangesCardTriggerRef = React.createRef<HTMLButtonElement>();
 
   return (
