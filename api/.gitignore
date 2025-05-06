@@ -1,0 +1,5 @@
+node_modules
+prisma/generated
+.env.local
+.env.*.local
+dist

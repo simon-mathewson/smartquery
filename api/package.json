@@ -1,0 +1,29 @@
+{
+  "name": "dabase-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "NODE_ENV=development pnpm dotenv-flow -- tsx watch main",
+    "typecheck": "tsc --noEmit --skipLibCheck",
+    "build": "esbuild main.ts --bundle --packages=external --platform=node --format=esm --outdir=dist --sourcemap",
+    "lint": "eslint --cache .",
+    "start": "pnpm dev"
+  },
+  "dependencies": {
+    "@prisma/client": "6.7.0",
+    "@trpc/server": "11.1.2",
+    "express": "^5.0.0",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.5",
+    "dotenv-flow-cli": "^1.1.1",
+    "esbuild": "^0.17.10",
+    "eslint": "^9.26.0",
+    "prisma": "^6.7.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228"
+}
