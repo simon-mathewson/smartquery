@@ -3,11 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development pnpm dotenv-flow -- tsx watch main",
-    "typecheck": "tsc --noEmit --skipLibCheck",
     "build": "esbuild main.ts --bundle --packages=external --platform=node --format=esm --outdir=dist --sourcemap",
+    "dev": "NODE_ENV=development pnpm dotenv-flow -- tsx watch main",
     "lint": "eslint --cache .",
-    "start": "pnpm dev"
+    "prisma": "NODE_ENV=development pnpm dotenv-flow -- prisma",
+    "start": "pnpm dev",
+    "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
     "@prisma/client": "6.7.0",
