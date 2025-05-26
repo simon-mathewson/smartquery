@@ -28,7 +28,7 @@ export const Toolbar: React.FC = () => {
         icon={<Add />}
         label={tabs.length ? undefined : 'New query'}
       />
-      {allChanges.length && <Changes />}
+      {allChanges.length > 0 && <Changes />}
       <Button
         color="primary"
         htmlProps={{

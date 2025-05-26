@@ -6,6 +6,7 @@ export const themes = {
   dark: {
     background: colors.neutral[900],
     border: colors.neutral[700],
+    borderHover: colors.neutral[600],
     card: '#1F1F1F',
 
     textPrimary: '#FFFFFFE9',
@@ -43,6 +44,7 @@ export const themes = {
   light: {
     background: colors.neutral[50],
     border: colors.neutral[200],
+    borderHover: colors.neutral[300],
     card: colors.white,
 
     textPrimary: colors.neutral[800],

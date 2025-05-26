@@ -6,13 +6,7 @@
   xmlns="http://www.w3.org/2000/svg"
 >
   <path
-    d="M12 2V22"
-    stroke="currentColor"
-    stroke-width="2"
-  />
-  <path
-    d="M22 12L2 12"
-    stroke="currentColor"
-    stroke-width="2"
+    d="M13 11H22V13H13V22H11V13H2V11H11V2H13V11Z"
+    fill="currentColor"
   />
 </svg>

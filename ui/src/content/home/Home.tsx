@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Card } from '~/shared/components/card/Card';
 import { Connections } from '../connections/Connections';
 import { Logo } from '~/shared/components/logo/Logo';
@@ -7,13 +7,16 @@ import { ConnectionsContext } from '../connections/Context';
 import { SqliteContext } from '../sqlite/Context';
 import { sqliteDemoConnectionId } from './constants';
 import { routes } from '~/router/routes';
-import { Button } from '~/shared/components/button/Button';
-import { ArrowForward } from '@mui/icons-material';
+import Add from '~/shared/icons/Add.svg?react';
+import { ScienceOutlined, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
+import { ConnectionForm } from '../connections/form/ConnectionForm';
 
 export const Home: React.FC = () => {
   const { connections, addConnection } = useDefinedContext(ConnectionsContext);
 
   const { storeSqliteContent } = useDefinedContext(SqliteContext);
+
+  const [stage, setStage] = useState<'initial' | 'addConnection' | 'signUp' | 'logIn'>('initial');
 
   const openDemoDatabase = useCallback(async () => {
     const hasDemoConnection = connections.some(
@@ -42,28 +45,64 @@ export const Home: React.FC = () => {
     window.location.pathname = routes.database(routeParams);
   }, [addConnection, connections, storeSqliteContent]);
 
+  const actions = useMemo(
+    () => [
+      {
+        label: 'Open demo database',
+        icon: ScienceOutlined,
+        onClick: openDemoDatabase,
+      },
+      ...(connections.length === 0
+        ? [
+            {
+              label: 'Add connection',
+              icon: Add,
+              onClick: () => setStage('addConnection'),
+            },
+          ]
+        : []),
+      {
+        label: 'Sign up',
+        icon: PersonAddAlt1Outlined,
+        onClick: () => setStage('signUp'),
+      },
+      {
+        label: 'Log in',
+        icon: VpnKeyOutlined,
+        onClick: () => setStage('logIn'),
+      },
+    ],
+    [connections.length, openDemoDatabase],
+  );
+
   return (
-    <div className="flex flex-col items-center gap-5 pt-6">
-      <Logo htmlProps={{ className: 'mb-4 w-16' }} />
-      {connections.length === 0 && (
-        <Card htmlProps={{ className: 'flex w-[352px] flex-col gap-3 p-3' }}>
-          <div className="text-center text-lg font-medium text-textSecondary">
-            Welcome to Dabase!
-          </div>
-          <div className="text-sm leading-snug text-textSecondary">
-            To see how Dabase works, check out the demo database:
-          </div>
-          <Button
-            htmlProps={{ onClick: openDemoDatabase }}
-            icon={<ArrowForward />}
-            label="Open demo database"
-            variant="filled"
-          />
+    <div className="mx-auto flex w-[356px] flex-col items-center gap-6 py-8">
+      <Logo htmlProps={{ className: 'w-16' }} />
+      {connections.length > 0 && (
+        <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
+          <Connections hideDatabases htmlProps={{ className: 'flex flex-col gap-2' }} />
         </Card>
       )}
-      <Card htmlProps={{ className: 'flex w-[352px] flex-col p-3' }}>
-        <Connections hideDatabases htmlProps={{ className: 'flex flex-col gap-2' }} />
-      </Card>
+      {stage === 'initial' && (
+        <div className="flex w-full flex-col gap-3">
+          {actions.map((action) => (
+            <button
+              className="hover:border-borderHover relative flex h-14 cursor-pointer items-center gap-3 overflow-hidden rounded-xl border border-border bg-card p-4"
+              key={action.label}
+              onClick={action.onClick}
+              tabIndex={0}
+            >
+              <action.icon className="absolute right-2 top-0 !h-[72px] !w-auto text-primaryHighlight" />
+              <div className="text-sm font-medium text-textPrimary">{action.label}</div>
+            </button>
+          ))}
+        </div>
+      )}
+      {stage === 'addConnection' && (
+        <Card htmlProps={{ className: 'flex flex-col p-3' }}>
+          <ConnectionForm exit={() => setStage('initial')} />
+        </Card>
+      )}
     </div>
   );
 };
