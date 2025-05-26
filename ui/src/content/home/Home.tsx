@@ -10,13 +10,14 @@ import { routes } from '~/router/routes';
 import Add from '~/shared/icons/Add.svg?react';
 import { ScienceOutlined, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
 import { ConnectionForm } from '../connections/form/ConnectionForm';
+import { Signup } from '../auth/Signup';
 
 export const Home: React.FC = () => {
   const { connections, addConnection } = useDefinedContext(ConnectionsContext);
 
   const { storeSqliteContent } = useDefinedContext(SqliteContext);
 
-  const [stage, setStage] = useState<'initial' | 'addConnection' | 'signUp' | 'logIn'>('initial');
+  const [stage, setStage] = useState<'initial' | 'addConnection' | 'signup' | 'logIn'>('initial');
 
   const openDemoDatabase = useCallback(async () => {
     const hasDemoConnection = connections.some(
@@ -67,7 +68,7 @@ export const Home: React.FC = () => {
         hint: 'Save your connections across devices',
         label: 'Sign up',
         icon: PersonAddAlt1Outlined,
-        onClick: () => setStage('signUp'),
+        onClick: () => setStage('signup'),
       },
       {
         label: 'Log in',
@@ -81,7 +82,7 @@ export const Home: React.FC = () => {
   return (
     <div className="mx-auto flex w-[356px] flex-col items-center gap-6 py-8">
       <Logo htmlProps={{ className: 'w-16' }} />
-      {connections.length > 0 && (
+      {connections.length > 0 && stage === 'initial' && (
         <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
           <Connections hideDatabases htmlProps={{ className: 'flex flex-col gap-2' }} />
         </Card>
@@ -109,6 +110,7 @@ export const Home: React.FC = () => {
           <ConnectionForm exit={() => setStage('initial')} />
         </Card>
       )}
+      {stage === 'signup' && <Signup exit={() => setStage('initial')} />}
     </div>
   );
 };
