@@ -48,20 +48,23 @@ export const Home: React.FC = () => {
   const actions = useMemo(
     () => [
       {
-        label: 'Open demo database',
+        hint: 'See how Dabase works with dummy data',
         icon: ScienceOutlined,
+        label: 'Open demo database',
         onClick: openDemoDatabase,
       },
       ...(connections.length === 0
         ? [
             {
-              label: 'Add connection',
+              hint: 'Connect to your database',
               icon: Add,
+              label: 'Add connection',
               onClick: () => setStage('addConnection'),
             },
           ]
         : []),
       {
+        hint: 'Save your connections across devices',
         label: 'Sign up',
         icon: PersonAddAlt1Outlined,
         onClick: () => setStage('signUp'),
@@ -93,7 +96,10 @@ export const Home: React.FC = () => {
               tabIndex={0}
             >
               <action.icon className="absolute right-2 top-0 !h-[72px] !w-auto text-primaryHighlight" />
-              <div className="text-sm font-medium text-textPrimary">{action.label}</div>
+              <div className="flex flex-col items-start gap-[2px]">
+                <div className="text-sm font-medium text-textPrimary">{action.label}</div>
+                <div className="text-xs text-textTertiary">{action.hint}</div>
+              </div>
             </button>
           ))}
         </div>
