@@ -6,6 +6,9 @@ import { Header } from '~/shared/components/header/Header';
 import { Input } from '~/shared/components/input/Input';
 import { Done } from '@mui/icons-material';
 import { useCallback, useState } from 'react';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { ApiContext } from '../api/Context';
+import { ToastContext } from '../toast/Context';
 
 export type SignupProps = {
   cancel: () => void;
@@ -14,13 +17,32 @@ export type SignupProps = {
 export const Signup: React.FC<SignupProps> = (props) => {
   const { cancel } = props;
 
+  const api = useDefinedContext(ApiContext);
+  const toast = useDefinedContext(ToastContext);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
 
-  const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-  }, []);
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      try {
+        await api.auth.signUp.mutate({ email, password });
+
+        location.reload();
+      } catch (error) {
+        console.error(error);
+
+        toast.add({
+          color: 'danger',
+          title: 'Sign up failed',
+        });
+      }
+    },
+    [api.auth.signUp, email, password, toast],
+  );
 
   return (
     <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>

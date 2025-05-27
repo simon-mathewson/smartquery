@@ -13,18 +13,10 @@ export const authRouter = trpc.router({
       z.object({
         email: z.string().email(),
         password: z.string().min(12),
-        repeatPassword: z.string().min(12),
       }),
     )
     .mutation(async ({ input, ctx: { prisma } }) => {
-      const { email, password, repeatPassword } = input;
-
-      if (password !== repeatPassword) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Passwords do not match',
-        });
-      }
+      const { email, password } = input;
 
       const { hashedPassword, salt } = await hashPassword(password);
 

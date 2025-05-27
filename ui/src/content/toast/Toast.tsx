@@ -33,7 +33,7 @@ export const Toast: React.FC<ToastProps> = (props) => {
     <OverlayCard
       htmlProps={{
         className: classNames(
-          'grid w-72 grid-cols-[1fr_max-content] gap-2 p-1 align-top cursor-pointer',
+          'grid w-72 grid-cols-[1fr_max-content] gap-2 p-1 align-top cursor-pointer border-none',
           {
             'bg-danger': color === 'danger',
             'bg-primary': color === 'primary',
