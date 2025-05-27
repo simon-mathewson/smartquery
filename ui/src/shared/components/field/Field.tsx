@@ -5,13 +5,14 @@ import { v4 as uuid } from 'uuid';
 import { FieldContext } from './FieldContext';
 
 export type FieldProps = {
+  error?: string;
   hint?: React.ReactNode;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
   label?: string;
 };
 
 export const Field: React.FC<PropsWithChildren<FieldProps>> = (props) => {
-  const { children, htmlProps, hint, label } = props;
+  const { children, htmlProps, hint, label, error } = props;
 
   const [controlId] = useState(uuid());
   const [labelId] = useState(uuid());
@@ -36,6 +37,7 @@ export const Field: React.FC<PropsWithChildren<FieldProps>> = (props) => {
         )}
         <div className="flex gap-2 overflow-hidden">{children}</div>
         {hint && <div className="px-1 text-xs text-textTertiary">{hint}</div>}
+        {error && <div className="px-1 text-xs text-danger">{error}</div>}
       </div>
     </FieldContext.Provider>
   );

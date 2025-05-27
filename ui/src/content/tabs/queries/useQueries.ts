@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '~/content/connections/Context';
-import { TrpcContext } from '~/content/trpc/Context';
+import { LinkApiContext } from '~/content/link/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { DbValue, Row, TableType } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
@@ -21,7 +21,7 @@ import { ToastContext } from '~/content/toast/Context';
 export const useQueries = () => {
   const toast = useDefinedContext(ToastContext);
 
-  const trpc = useDefinedContext(TrpcContext);
+  const linkApi = useDefinedContext(LinkApiContext);
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
@@ -122,7 +122,7 @@ export const useQueries = () => {
                   (statement) => activeConnection.sqliteDb.exec(statement)[0],
                 ),
               )
-            : await trpc.sendQuery.mutate({
+            : await linkApi.sendQuery.mutate({
                 clientId: activeConnection.clientId,
                 statements: statementsWithMetadataFiltered,
               })
@@ -166,7 +166,7 @@ export const useQueries = () => {
         onFinishLoading(id);
       }
     },
-    [activeConnection, onFinishLoading, onStartLoading, trpc],
+    [activeConnection, linkApi, onFinishLoading, onStartLoading],
   );
 
   const runQuery = useCallback(
@@ -191,7 +191,7 @@ export const useQueries = () => {
       try {
         const results = await (async () => {
           if (activeConnection.engine !== 'sqlite') {
-            return trpc.sendQuery.mutate({
+            return linkApi.sendQuery.mutate({
               clientId: activeConnection.clientId,
               statements,
             });
@@ -257,13 +257,13 @@ export const useQueries = () => {
     [
       activeConnection,
       getSqliteContent,
+      linkApi.sendQuery,
       onFinishLoading,
       onStartLoading,
       requestFileHandlePermission,
       runSelectQuery,
       storeSqliteContent,
       toast,
-      trpc,
     ],
   );
 

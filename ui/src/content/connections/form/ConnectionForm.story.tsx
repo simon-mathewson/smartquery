@@ -4,8 +4,8 @@ import { ConnectionsContext } from '../Context';
 import type { ConnectionFormProps } from './ConnectionForm';
 import { ConnectionForm } from './ConnectionForm';
 import type { DeepPartial } from 'ts-essentials';
-import type { TrpcClient } from '~/content/trpc/client';
-import { TrpcContext } from '~/content/trpc/Context';
+import type { LinkApiClient } from '~/content/link/api/client';
+import { LinkApiContext } from '~/content/link/api/Context';
 
 export type ConnectionFormStoryProps = {
   connectionsContext: DeepPartial<ReturnType<typeof useConnections>>;
@@ -17,9 +17,9 @@ export const ConnectionFormStory: React.FC<ConnectionFormStoryProps> = (props) =
 
   return (
     <ConnectionsContext.Provider value={connectionsContext as ReturnType<typeof useConnections>}>
-      <TrpcContext.Provider value={{} as Partial<TrpcClient> as TrpcClient}>
+      <LinkApiContext.Provider value={{} as Partial<LinkApiClient> as LinkApiClient}>
         <ConnectionForm {...connectionFormProps} />
-      </TrpcContext.Provider>
+      </LinkApiContext.Provider>
     </ConnectionsContext.Provider>
   );
 };

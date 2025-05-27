@@ -8,7 +8,7 @@ import type { SignInModalInput } from '~/content/connections/signInModal/types';
 import { useModal } from '~/shared/components/modal/useModal';
 import { SignInModal } from '~/content/connections/signInModal/SignInModal';
 import { isNil } from 'lodash';
-import { TrpcContext } from '~/content/trpc/Context';
+import { LinkApiContext } from '~/content/link/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { assert } from 'ts-essentials';
 
@@ -19,7 +19,7 @@ export type TestConnectionProps = {
 export const TestConnection: React.FC<TestConnectionProps> = (props) => {
   const { formValues } = props;
 
-  const trpc = useDefinedContext(TrpcContext);
+  const linkApi = useDefinedContext(LinkApiContext);
 
   const [isTesting, setIsTesting] = useState(false);
   const [hasSucceeded, setHasSucceeded] = useState(false);
@@ -56,7 +56,7 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     setHasFailed(false);
     setHasSucceeded(false);
 
-    const clientId = await trpc.connectDb.mutate({
+    const clientId = await linkApi.connectDb.mutate({
       ...connection,
       password,
       ssh: connection.ssh
@@ -68,7 +68,7 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
         : null,
     } as ConnectInput);
     setHasSucceeded(true);
-    await trpc.disconnectDb.mutate(clientId);
+    await linkApi.disconnectDb.mutate(clientId);
   };
 
   return (

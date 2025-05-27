@@ -1,7 +1,7 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import React, { useEffect, useState } from 'react';
 import { ConnectionsContext } from '../connections/Context';
-import { TrpcContext } from '../trpc/Context';
+import { LinkApiContext } from '../link/api/Context';
 import { TabsContext } from '../tabs/Context';
 import { QueriesContext } from '../tabs/queries/Context';
 import { useDrag } from '../dragAndDrop/useDrag/useDrag';
@@ -15,7 +15,7 @@ import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 type Table = { name: string; schema: string | undefined };
 
 export const TableList: React.FC = () => {
-  const trpc = useDefinedContext(TrpcContext);
+  const linkApi = useDefinedContext(LinkApiContext);
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
   const { activeTab } = useDefinedContext(TabsContext);
@@ -56,7 +56,7 @@ export const TableList: React.FC = () => {
     })();
 
     if (type === 'remote') {
-      trpc.sendQuery
+      linkApi.sendQuery
         .mutate({ clientId: activeConnection.clientId, statements: [tableNamesStatement] })
         .then(([rows]) => {
           setTables(
@@ -72,7 +72,7 @@ export const TableList: React.FC = () => {
         })),
       );
     }
-  }, [activeConnection, trpc]);
+  }, [activeConnection, linkApi]);
 
   const selectedTables = uniq(
     activeTab?.queries.flatMap((query) =>

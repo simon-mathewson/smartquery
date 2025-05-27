@@ -33,7 +33,7 @@ export const getValidFormValues = () =>
     user: 'user',
   }) satisfies FormValues;
 
-export const getMockTrpcClient = () =>
+export const getMockLinkApiClient = () =>
   ({
     connectDb: { mutate: spy() },
     disconnectDb: { mutate: spy() },
@@ -41,7 +41,7 @@ export const getMockTrpcClient = () =>
 
 export const getStoryProps = () =>
   ({
-    mockTrpcClient: getMockTrpcClient(),
+    mockLinkApiClient: getMockLinkApiClient(),
     props: getProps(),
     shouldFail: false,
     shouldFailWithAuthError: false,

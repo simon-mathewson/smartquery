@@ -110,7 +110,7 @@ export const Home: React.FC = () => {
           <ConnectionForm exit={() => setStage('initial')} />
         </Card>
       )}
-      {stage === 'signup' && <Signup exit={() => setStage('initial')} />}
+      {stage === 'signup' && <Signup cancel={() => setStage('initial')} />}
     </div>
   );
 };

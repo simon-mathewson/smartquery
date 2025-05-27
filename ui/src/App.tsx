@@ -8,30 +8,33 @@ import { AddToDesktopProvider } from './content/settings/addToDesktop/Provider';
 import { SqliteProvider } from './content/sqlite/Provider';
 import { TabsProvider } from './content/tabs/Provider';
 import { QueriesProvider } from './content/tabs/queries/Provider';
-import { TrpcProvider } from './content/trpc/Provider';
+import { LinkApiProvider } from './content/link/api/Provider';
+import { ApiProvider } from './content/api/Provider';
 
 export const App: React.FC<React.PropsWithChildren> = (props) => {
   const { children } = props;
 
   return (
     <BaseProviders>
-      <TrpcProvider>
-        <LinkProvider>
-          <SqliteProvider>
-            <ConnectionsProvider>
-              <EditProvider>
-                <TabsProvider>
-                  <QueriesProvider>
-                    <DragAndDropProvider>
-                      <AddToDesktopProvider>{children}</AddToDesktopProvider>
-                    </DragAndDropProvider>
-                  </QueriesProvider>
-                </TabsProvider>
-              </EditProvider>
-            </ConnectionsProvider>
-          </SqliteProvider>
-        </LinkProvider>
-      </TrpcProvider>
+      <ApiProvider>
+        <LinkApiProvider>
+          <LinkProvider>
+            <SqliteProvider>
+              <ConnectionsProvider>
+                <EditProvider>
+                  <TabsProvider>
+                    <QueriesProvider>
+                      <DragAndDropProvider>
+                        <AddToDesktopProvider>{children}</AddToDesktopProvider>
+                      </DragAndDropProvider>
+                    </QueriesProvider>
+                  </TabsProvider>
+                </EditProvider>
+              </ConnectionsProvider>
+            </SqliteProvider>
+          </LinkProvider>
+        </LinkApiProvider>
+      </ApiProvider>
     </BaseProviders>
   );
 };

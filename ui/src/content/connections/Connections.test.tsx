@@ -2,8 +2,8 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { Connections } from './Connections';
 import { ConnectionsContext } from './Context';
 import { getConnectionsContextMock } from './Context.mock';
-import type { TrpcClient } from '../trpc/client';
-import { TrpcContext } from '../trpc/Context';
+import type { LinkApiClient } from '../link/api/client';
+import { LinkApiContext } from '../link/api/Context';
 
 test.use({
   viewport: { height: 520, width: 520 },
@@ -39,9 +39,9 @@ test.describe('Connections', () => {
   test('allows adding connection', async ({ mount }) => {
     const $ = await mount(
       <ConnectionsContext.Provider value={getConnectionsContextMock()}>
-        <TrpcContext.Provider value={{} as Partial<TrpcClient> as TrpcClient}>
+        <LinkApiContext.Provider value={{} as Partial<LinkApiClient> as LinkApiClient}>
           <Connections hideDatabases />
-        </TrpcContext.Provider>
+        </LinkApiContext.Provider>
       </ConnectionsContext.Provider>,
     );
 
@@ -56,9 +56,9 @@ test.describe('Connections', () => {
   test('allows editing connection', async ({ mount }) => {
     const $ = await mount(
       <ConnectionsContext.Provider value={getConnectionsContextMock()}>
-        <TrpcContext.Provider value={{} as Partial<TrpcClient> as TrpcClient}>
+        <LinkApiContext.Provider value={{} as Partial<LinkApiClient> as LinkApiClient}>
           <Connections hideDatabases />
-        </TrpcContext.Provider>
+        </LinkApiContext.Provider>
       </ConnectionsContext.Provider>,
     );
 

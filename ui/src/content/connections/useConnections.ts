@@ -7,7 +7,7 @@ import { routes } from '~/router/routes';
 import type { ModalControl } from '~/shared/components/modal/types';
 import type { SignInModalInput } from './signInModal/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { TrpcContext } from '../trpc/Context';
+import { LinkApiContext } from '../link/api/Context';
 import { ToastContext } from '../toast/Context';
 import { SqliteContext } from '../sqlite/Context';
 import { assert } from 'ts-essentials';
@@ -21,7 +21,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const [, navigate] = useLocation();
 
-  const trpc = useDefinedContext(TrpcContext);
+  const linkApi = useDefinedContext(LinkApiContext);
 
   const toast = useDefinedContext(ToastContext);
 
@@ -73,14 +73,14 @@ export const useConnections = (props: UseConnectionsProps) => {
     if (!activeConnection) return;
 
     if (activeConnection.type === 'remote') {
-      await trpc.disconnectDb.mutate(activeConnection.clientId);
+      await linkApi.disconnectDb.mutate(activeConnection.clientId);
     } else {
       activeConnection.sqliteDb.close();
     }
 
     setActiveConnection(null);
     setActiveConnectionDatabases([]);
-  }, [activeConnection, trpc]);
+  }, [activeConnection, linkApi]);
 
   const removeConnection = useCallback(
     (id: string) => {
@@ -117,7 +117,7 @@ export const useConnections = (props: UseConnectionsProps) => {
         );
       }
 
-      await trpc.sendQuery.mutate({ clientId, statements }).then(([dbRows, schemaRows]) => {
+      await linkApi.sendQuery.mutate({ clientId, statements }).then(([dbRows, schemaRows]) => {
         setActiveConnectionDatabases(
           dbRows.map((dbRow) => {
             const db = String(dbRow.db);
@@ -132,7 +132,7 @@ export const useConnections = (props: UseConnectionsProps) => {
         );
       });
     },
-    [trpc.sendQuery],
+    [linkApi.sendQuery],
   );
 
   const connect = useCallback(
@@ -208,7 +208,7 @@ export const useConnections = (props: UseConnectionsProps) => {
             return storedCredentials;
           })();
 
-          const newClientId = await trpc.connectDb.mutate({
+          const newClientId = await linkApi.connectDb.mutate({
             ...connection,
             database: selectedDatabase,
             password,
@@ -265,7 +265,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       navigate,
       signInModal,
       toast,
-      trpc.connectDb,
+      linkApi.connectDb,
     ],
   );
 

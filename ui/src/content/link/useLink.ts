@@ -1,18 +1,18 @@
 import { useCallback, useMemo } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { TrpcContext } from '../trpc/Context';
+import { LinkApiContext } from '../link/api/Context';
 
 export const useLink = () => {
-  const trpc = useDefinedContext(TrpcContext);
+  const linkApi = useDefinedContext(LinkApiContext);
 
   const getIsReady = useCallback(async () => {
     try {
-      await trpc.status.query();
+      await linkApi.status.query();
       return true;
     } catch {
       return false;
     }
-  }, [trpc]);
+  }, [linkApi]);
 
   const waitUntilReady = useCallback(async () => {
     while (!(await getIsReady())) {

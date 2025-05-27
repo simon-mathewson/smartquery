@@ -56,8 +56,8 @@ test.describe('TestConnection', () => {
     // await expect($).toHaveScreenshot('success.png');
     await expect($).not.toBeDisabled();
 
-    expect(props.mockTrpcClient.connectDb.mutate.calls).toEqual([[expectedConnectInput]]);
-    expect(props.mockTrpcClient.disconnectDb.mutate.calls).toEqual([['1']]);
+    expect(props.mockLinkApiClient.connectDb.mutate.calls).toEqual([[expectedConnectInput]]);
+    expect(props.mockLinkApiClient.disconnectDb.mutate.calls).toEqual([['1']]);
   });
 
   test('should indicate that test failed', async ({ mount }) => {
@@ -84,8 +84,8 @@ test.describe('TestConnection', () => {
     // await expect($).toHaveScreenshot('failed.png');
     await expect($).not.toBeDisabled();
 
-    expect(props.mockTrpcClient.connectDb.mutate.calls).toEqual([[expectedConnectInput]]);
-    expect(props.mockTrpcClient.disconnectDb.mutate.calls).toEqual([]);
+    expect(props.mockLinkApiClient.connectDb.mutate.calls).toEqual([[expectedConnectInput]]);
+    expect(props.mockLinkApiClient.disconnectDb.mutate.calls).toEqual([]);
   });
 
   test('should show sign in modal if credentials are required', async ({ mount }) => {

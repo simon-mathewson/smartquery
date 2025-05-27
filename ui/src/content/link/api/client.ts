@@ -1,8 +1,8 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
-import type { router } from '../../../../link/src/main/router/router';
+import type { router } from '../../../../../link/src/main/router/router';
 
-export const trpcClient = createTRPCProxyClient<typeof router>({
+export const linkApiClient = createTRPCProxyClient<typeof router>({
   transformer: superjson,
   links: [
     httpBatchLink({
@@ -17,4 +17,4 @@ export const trpcClient = createTRPCProxyClient<typeof router>({
   ],
 });
 
-export type TrpcClient = typeof trpcClient;
+export type LinkApiClient = typeof linkApiClient;

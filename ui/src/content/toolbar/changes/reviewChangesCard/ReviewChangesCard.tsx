@@ -3,7 +3,7 @@ import { ConnectionsContext } from '~/content/connections/Context';
 import { EditContext } from '~/content/edit/Context';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
-import { TrpcContext } from '~/content/trpc/Context';
+import { LinkApiContext } from '~/content/link/api/Context';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -16,7 +16,7 @@ export type ReviewChangesCardProps = {
 export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   const { triggerRef } = props;
 
-  const trpc = useDefinedContext(TrpcContext);
+  const linkApi = useDefinedContext(LinkApiContext);
   const { getSqliteContent, requestFileHandlePermission, storeSqliteContent } =
     useDefinedContext(SqliteContext);
 
@@ -52,7 +52,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
         await storeSqliteContent(updatedDb, activeConnection.id);
       }
     } else {
-      await trpc.sendQuery.mutate({
+      await linkApi.sendQuery.mutate({
         clientId: activeConnection.clientId,
         statements: splitSqlStatements(userSql),
       });
@@ -65,10 +65,10 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
     activeConnection,
     clearChanges,
     getSqliteContent,
+    linkApi,
     refetchActiveTabSelectQueries,
     requestFileHandlePermission,
     storeSqliteContent,
-    trpc.sendQuery,
     userSql,
   ]);
 

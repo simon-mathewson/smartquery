@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '~/content/connections/Context';
-import { TrpcContext } from '~/content/trpc/Context';
+import { LinkApiContext } from '~/content/link/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { SchemaDefinitions } from './types';
@@ -14,7 +14,7 @@ import { convertSqliteResultsToRecords } from '~/shared/utils/sqlite/sqlite';
 export const useSchemaDefinitions = () => {
   const toast = useDefinedContext(ToastContext);
 
-  const trpc = useDefinedContext(TrpcContext);
+  const linkApi = useDefinedContext(LinkApiContext);
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
   assert(activeConnection);
@@ -59,7 +59,7 @@ export const useSchemaDefinitions = () => {
         return sqliteDefinitions;
       }
 
-      const results = await trpc.sendQuery.mutate({
+      const results = await linkApi.sendQuery.mutate({
         clientId: activeConnection.clientId,
         statements: getStatements(activeConnection),
       });
@@ -104,7 +104,7 @@ export const useSchemaDefinitions = () => {
     setStoredSchemaDefinitions,
     storedSchemaDefinitions,
     toast,
-    trpc.sendQuery,
+    linkApi.sendQuery,
   ]);
 
   // Fetch schema definitions when active connection changes

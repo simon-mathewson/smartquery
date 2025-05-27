@@ -1,28 +1,28 @@
-import { TrpcContext } from '~/content/trpc/Context';
+import { LinkApiContext } from '~/content/link/api/Context';
 import { TestConnection, type TestConnectionProps } from './TestConnection';
-import type { TrpcClient } from '~/content/trpc/client';
+import type { LinkApiClient } from '~/content/link/api/client';
 import { ConnectionsContext } from '../../Context';
-import type { getMockTrpcClient } from './TestConnection.mocks';
+import type { getMockLinkApiClient } from './TestConnection.mocks';
 import { getConnectionsContextMock } from '../../Context.mock';
 
 export type TestConnectionStoryProps = {
-  mockTrpcClient: ReturnType<typeof getMockTrpcClient>;
+  mockLinkApiClient: ReturnType<typeof getMockLinkApiClient>;
   props: TestConnectionProps;
   shouldFail: boolean;
   shouldFailWithAuthError: boolean;
 };
 
 export const TestConnectionStory = (storyProps: TestConnectionStoryProps) => {
-  const { mockTrpcClient, props, shouldFail, shouldFailWithAuthError } = storyProps;
+  const { mockLinkApiClient, props, shouldFail, shouldFailWithAuthError } = storyProps;
 
   return (
-    <TrpcContext.Provider
+    <LinkApiContext.Provider
       value={
         {
           connectDb: {
             mutate: (input) =>
               new Promise((resolve, reject) => {
-                mockTrpcClient.connectDb.mutate(input);
+                mockLinkApiClient.connectDb.mutate(input);
                 setTimeout(() => {
                   if (shouldFail) {
                     reject(new Error('Failed to connect'));
@@ -37,11 +37,11 @@ export const TestConnectionStory = (storyProps: TestConnectionStoryProps) => {
           disconnectDb: {
             mutate: (input) =>
               new Promise((resolve) => {
-                mockTrpcClient.disconnectDb.mutate(input);
+                mockLinkApiClient.disconnectDb.mutate(input);
                 resolve();
               }),
           },
-        } as Partial<TrpcClient> as TrpcClient
+        } as Partial<LinkApiClient> as LinkApiClient
       }
     >
       <ConnectionsContext.Provider
@@ -49,6 +49,6 @@ export const TestConnectionStory = (storyProps: TestConnectionStoryProps) => {
       >
         <TestConnection {...props} />
       </ConnectionsContext.Provider>
-    </TrpcContext.Provider>
+    </LinkApiContext.Provider>
   );
 };
