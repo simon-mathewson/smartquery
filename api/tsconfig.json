@@ -6,7 +6,10 @@
     "strict": true,
     "moduleResolution": "node",
     "noEmit": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "~/*": ["./*"]
+    }
   },
   "exclude": ["node_modules"]
 }
