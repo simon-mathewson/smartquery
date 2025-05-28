@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Card } from '~/shared/components/card/Card';
 import { Connections } from '../connections/Connections';
-import { Logo } from '~/shared/components/logo/Logo';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '../connections/Context';
 import { SqliteContext } from '../sqlite/Context';
@@ -10,7 +9,8 @@ import { routes } from '~/router/routes';
 import Add from '~/shared/icons/Add.svg?react';
 import { ScienceOutlined, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
 import { ConnectionForm } from '../connections/form/ConnectionForm';
-import { Signup } from '../auth/Signup';
+import { Page } from '~/shared/components/page/Page';
+import { Link } from 'wouter';
 
 export const Home: React.FC = () => {
   const { connections, addConnection } = useDefinedContext(ConnectionsContext);
@@ -68,7 +68,7 @@ export const Home: React.FC = () => {
         hint: 'Save your connections across devices',
         label: 'Sign up',
         icon: PersonAddAlt1Outlined,
-        onClick: () => setStage('signup'),
+        route: routes.signup(),
       },
       {
         label: 'Log in',
@@ -80,8 +80,7 @@ export const Home: React.FC = () => {
   );
 
   return (
-    <div className="mx-auto flex w-[356px] flex-col items-center gap-6 py-8">
-      <Logo htmlProps={{ className: 'w-16' }} />
+    <Page>
       {connections.length > 0 && stage === 'initial' && (
         <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
           <Connections hideDatabases htmlProps={{ className: 'flex flex-col gap-2' }} />
@@ -89,20 +88,25 @@ export const Home: React.FC = () => {
       )}
       {stage === 'initial' && (
         <div className="flex w-full flex-col gap-3">
-          {actions.map((action) => (
-            <button
-              className="hover:border-borderHover relative flex h-14 cursor-pointer items-center gap-3 overflow-hidden rounded-xl border border-border bg-card p-4"
-              key={action.label}
-              onClick={action.onClick}
-              tabIndex={0}
-            >
-              <action.icon className="absolute right-2 top-0 !h-[72px] !w-auto text-primaryHighlight" />
-              <div className="flex flex-col items-start gap-[2px]">
-                <div className="text-sm font-medium text-textPrimary">{action.label}</div>
-                <div className="text-xs text-textTertiary">{action.hint}</div>
-              </div>
-            </button>
-          ))}
+          {actions.map((action) => {
+            const Element = action.route ? Link : 'button';
+
+            return (
+              <Element
+                className="relative flex h-14 cursor-pointer items-center gap-3 overflow-hidden rounded-xl border border-border bg-card p-4 hover:border-borderHover"
+                key={action.label}
+                onClick={action.onClick}
+                href={action.route as string}
+                tabIndex={0}
+              >
+                <action.icon className="absolute right-2 top-0 !h-[72px] !w-auto text-primaryHighlight" />
+                <div className="flex flex-col items-start gap-[2px]">
+                  <div className="text-sm font-medium text-textPrimary">{action.label}</div>
+                  <div className="text-xs text-textTertiary">{action.hint}</div>
+                </div>
+              </Element>
+            );
+          })}
         </div>
       )}
       {stage === 'addConnection' && (
@@ -110,7 +114,6 @@ export const Home: React.FC = () => {
           <ConnectionForm exit={() => setStage('initial')} />
         </Card>
       )}
-      {stage === 'signup' && <Signup cancel={() => setStage('initial')} />}
-    </div>
+    </Page>
   );
 };

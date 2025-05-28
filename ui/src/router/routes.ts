@@ -4,4 +4,5 @@ export const routes = {
       params?.database !== '' ? `/${params?.database ?? ':database'}` : ''
     }${params?.schema !== '' ? `/${params?.schema ?? ':schema'}` : ''}`,
   root: () => '/',
+  signup: () => '/signup',
 };

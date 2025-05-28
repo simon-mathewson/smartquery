@@ -4,6 +4,7 @@ import { App } from '~/App';
 import { Database } from '~/content/database/Database';
 import { Home } from '~/content/home/Home';
 import { routes } from './routes';
+import { Signup } from '~/content/auth/Signup';
 
 export const Router: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ export const Router: React.FC = () => {
           <Route path={routes.database()} component={Database} />
           <Route path={routes.database({ schema: '' })} component={Database} />
           <Route path={routes.database({ schema: '', database: '' })} component={Database} />
+          <Route path={routes.signup()} component={Signup} />
         </Switch>
       </App>
     </Route>

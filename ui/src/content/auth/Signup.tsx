@@ -9,13 +9,12 @@ import { useCallback, useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ApiContext } from '../api/Context';
 import { ToastContext } from '../toast/Context';
+import { useLocation } from 'wouter';
+import { routes } from '~/router/routes';
+import { Page } from '~/shared/components/page/Page';
 
-export type SignupProps = {
-  cancel: () => void;
-};
-
-export const Signup: React.FC<SignupProps> = (props) => {
-  const { cancel } = props;
+export const Signup: React.FC = () => {
+  const [, navigate] = useLocation();
 
   const api = useDefinedContext(ApiContext);
   const toast = useDefinedContext(ToastContext);
@@ -31,7 +30,12 @@ export const Signup: React.FC<SignupProps> = (props) => {
       try {
         await api.auth.signUp.mutate({ email, password });
 
-        location.reload();
+        toast.add({
+          title: 'Signup successful',
+          color: 'success',
+        });
+
+        navigate(routes.root());
       } catch (error) {
         console.error(error);
 
@@ -41,59 +45,63 @@ export const Signup: React.FC<SignupProps> = (props) => {
         });
       }
     },
-    [api.auth.signUp, email, password, toast],
+    [api.auth.signUp, email, navigate, password, toast],
   );
 
   return (
-    <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
-      <Header
-        left={<Button htmlProps={{ onClick: cancel }} icon={<ArrowBack />} />}
-        middle={
-          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-            Sign up
-          </div>
-        }
-      />
-      <form className="flex flex-col gap-2 py-2" onSubmit={handleSubmit}>
-        <Field label="Email">
-          <Input htmlProps={{ type: 'email', value: email }} onChange={setEmail} />
-        </Field>
-        <Field
-          hint="At least 12 characters. Your password will be used to encrypt your database credentials."
-          label="Password"
-        >
-          <Input
-            htmlProps={{
-              autoComplete: 'new-password',
-              minLength: 12,
-              type: 'password',
-              value: password,
-            }}
-            onChange={setPassword}
-          />
-        </Field>
-        <Field
-          label="Repeat password"
-          error={
-            repeatPassword && repeatPassword !== password ? "Passwords don't match" : undefined
+    <Page>
+      <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
+        <Header
+          left={
+            <Button htmlProps={{ onClick: () => navigate(routes.root()) }} icon={<ArrowBack />} />
           }
-        >
-          <Input
-            htmlProps={{ autoComplete: 'new-password', type: 'password', value: repeatPassword }}
-            onChange={setRepeatPassword}
-          />
-        </Field>
-        <Button
-          htmlProps={{
-            disabled: repeatPassword !== password || !email || !password,
-            className: 'mt-4',
-            type: 'submit',
-          }}
-          icon={<Done />}
-          label="Sign up"
-          variant="filled"
+          middle={
+            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
+              Sign up
+            </div>
+          }
         />
-      </form>
-    </Card>
+        <form className="flex flex-col gap-2 py-2" onSubmit={handleSubmit}>
+          <Field label="Email">
+            <Input htmlProps={{ type: 'email', value: email }} onChange={setEmail} />
+          </Field>
+          <Field
+            hint="At least 12 characters. Your password will be used to encrypt your database credentials."
+            label="Password"
+          >
+            <Input
+              htmlProps={{
+                autoComplete: 'new-password',
+                minLength: 12,
+                type: 'password',
+                value: password,
+              }}
+              onChange={setPassword}
+            />
+          </Field>
+          <Field
+            label="Repeat password"
+            error={
+              repeatPassword && repeatPassword !== password ? "Passwords don't match" : undefined
+            }
+          >
+            <Input
+              htmlProps={{ autoComplete: 'new-password', type: 'password', value: repeatPassword }}
+              onChange={setRepeatPassword}
+            />
+          </Field>
+          <Button
+            htmlProps={{
+              disabled: repeatPassword !== password || !email || !password,
+              className: 'mt-4',
+              type: 'submit',
+            }}
+            icon={<Done />}
+            label="Sign up"
+            variant="filled"
+          />
+        </form>
+      </Card>
+    </Page>
   );
 };
