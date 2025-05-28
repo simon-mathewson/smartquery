@@ -8,7 +8,6 @@ import { sqliteDemoConnectionId } from './constants';
 import { routes } from '~/router/routes';
 import Add from '~/shared/icons/Add.svg?react';
 import { ScienceOutlined, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
-import { ConnectionForm } from '../connections/form/ConnectionForm';
 import { Page } from '~/shared/components/page/Page';
 import { Link } from 'wouter';
 
@@ -17,7 +16,7 @@ export const Home: React.FC = () => {
 
   const { storeSqliteContent } = useDefinedContext(SqliteContext);
 
-  const [stage, setStage] = useState<'initial' | 'addConnection' | 'signup' | 'logIn'>('initial');
+  const [stage, setStage] = useState<'initial' | 'logIn'>('initial');
 
   const openDemoDatabase = useCallback(async () => {
     const hasDemoConnection = connections.some(
@@ -60,7 +59,7 @@ export const Home: React.FC = () => {
               hint: 'Connect to your database',
               icon: Add,
               label: 'Add connection',
-              onClick: () => setStage('addConnection'),
+              route: routes.addConnection(),
             },
           ]
         : []),
@@ -108,11 +107,6 @@ export const Home: React.FC = () => {
             );
           })}
         </div>
-      )}
-      {stage === 'addConnection' && (
-        <Card htmlProps={{ className: 'flex flex-col p-3' }}>
-          <ConnectionForm exit={() => setStage('initial')} />
-        </Card>
       )}
     </Page>
   );

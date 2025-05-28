@@ -5,6 +5,7 @@ import { Database } from '~/content/database/Database';
 import { Home } from '~/content/home/Home';
 import { routes } from './routes';
 import { Signup } from '~/content/auth/Signup';
+import { AddConnectionPage } from '~/content/connections/AddConnectionPage/AddConnectionPage';
 
 export const Router: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ export const Router: React.FC = () => {
       <App>
         <Switch>
           <Route path={routes.root()} component={Home} />
+          <Route path={routes.addConnection()} component={AddConnectionPage} />
           <Route path={routes.database()} component={Database} />
           <Route path={routes.database({ schema: '' })} component={Database} />
           <Route path={routes.database({ schema: '', database: '' })} component={Database} />
