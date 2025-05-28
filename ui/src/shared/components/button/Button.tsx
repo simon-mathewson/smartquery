@@ -2,6 +2,9 @@ import classNames from 'classnames';
 import React, { useState } from 'react';
 import type { Color } from '~/content/theme/types';
 import { v4 as uuid } from 'uuid';
+import type { BrowserLocationHook } from 'wouter/use-browser-location';
+import type { LinkProps } from 'wouter';
+import { Link } from 'wouter';
 
 export type ButtonProps = {
   align?: 'left' | 'center' | 'right';
@@ -27,13 +30,17 @@ export type ButtonProps = {
       element: 'div';
       htmlProps?: React.HTMLProps<HTMLDivElement>;
     }
+  | {
+      element: 'link';
+      htmlProps?: React.HTMLProps<LinkProps<BrowserLocationHook>>;
+    }
 );
 
 export const Button: React.FC<ButtonProps> = (props) => {
   const {
     align = 'center',
     color = 'primary',
-    element: Element = 'button',
+    element = 'button',
     htmlProps,
     icon,
     label,
@@ -43,6 +50,8 @@ export const Button: React.FC<ButtonProps> = (props) => {
     textSuffix,
     variant = 'default',
   } = props;
+
+  const Element = element === 'link' ? Link : element;
 
   const [labelId] = useState(() => uuid());
 

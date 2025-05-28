@@ -7,17 +7,12 @@ import { Input } from '~/shared/components/input/Input';
 import { Done } from '@mui/icons-material';
 import { useCallback, useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { ApiContext } from '../api/Context';
-import { ToastContext } from '../toast/Context';
-import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
 import { Page } from '~/shared/components/page/Page';
+import { AuthContext } from '../Context';
 
 export const Signup: React.FC = () => {
-  const [, navigate] = useLocation();
-
-  const api = useDefinedContext(ApiContext);
-  const toast = useDefinedContext(ToastContext);
+  const auth = useDefinedContext(AuthContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,34 +22,16 @@ export const Signup: React.FC = () => {
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      try {
-        await api.auth.signUp.mutate({ email, password });
-
-        toast.add({
-          title: 'Signup successful',
-          color: 'success',
-        });
-
-        navigate(routes.root());
-      } catch (error) {
-        console.error(error);
-
-        toast.add({
-          color: 'danger',
-          title: 'Sign up failed',
-        });
-      }
+      void auth.signUp(email, password);
     },
-    [api.auth.signUp, email, navigate, password, toast],
+    [auth, email, password],
   );
 
   return (
     <Page>
       <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
         <Header
-          left={
-            <Button htmlProps={{ onClick: () => navigate(routes.root()) }} icon={<ArrowBack />} />
-          }
+          left={<Button element="link" htmlProps={{ href: routes.root() }} icon={<ArrowBack />} />}
           middle={
             <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
               Sign up
@@ -63,7 +40,10 @@ export const Signup: React.FC = () => {
         />
         <form className="flex flex-col gap-2 py-2" onSubmit={handleSubmit}>
           <Field label="Email">
-            <Input htmlProps={{ type: 'email', value: email }} onChange={setEmail} />
+            <Input
+              htmlProps={{ autoFocus: true, type: 'email', value: email }}
+              onChange={setEmail}
+            />
           </Field>
           <Field
             hint="At least 12 characters. Your password will be used to encrypt your database credentials."

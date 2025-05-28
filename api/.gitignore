@@ -3,3 +3,4 @@ prisma/generated
 .env.local
 .env.*.local
 dist
+.eslintcache

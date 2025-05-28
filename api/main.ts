@@ -6,7 +6,12 @@ import { createContext } from './context';
 
 const app = express();
 
-app.use(cors({ origin: process.env.UI_URL }));
+app.use(
+  cors({
+    origin: process.env.UI_URL,
+    credentials: true,
+  }),
+);
 
 app.use(
   '/trpc',

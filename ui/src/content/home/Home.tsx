@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Card } from '~/shared/components/card/Card';
 import { Connections } from '../connections/Connections';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -10,13 +10,18 @@ import Add from '~/shared/icons/Add.svg?react';
 import { ScienceOutlined, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
 import { Page } from '~/shared/components/page/Page';
 import { Link } from 'wouter';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { ApiContext } from '../api/Context';
 
 export const Home: React.FC = () => {
+  const api = useDefinedContext(ApiContext);
+  useEffectOnce(() => {
+    void api.auth.test.query();
+  });
+
   const { connections, addConnection } = useDefinedContext(ConnectionsContext);
 
   const { storeSqliteContent } = useDefinedContext(SqliteContext);
-
-  const [stage, setStage] = useState<'initial' | 'logIn'>('initial');
 
   const openDemoDatabase = useCallback(async () => {
     const hasDemoConnection = connections.some(
@@ -72,7 +77,7 @@ export const Home: React.FC = () => {
       {
         label: 'Log in',
         icon: VpnKeyOutlined,
-        onClick: () => setStage('logIn'),
+        route: routes.login(),
       },
     ],
     [connections.length, openDemoDatabase],
@@ -80,34 +85,32 @@ export const Home: React.FC = () => {
 
   return (
     <Page>
-      {connections.length > 0 && stage === 'initial' && (
+      {connections.length > 0 && (
         <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
           <Connections hideDatabases htmlProps={{ className: 'flex flex-col gap-2' }} />
         </Card>
       )}
-      {stage === 'initial' && (
-        <div className="flex w-full flex-col gap-3">
-          {actions.map((action) => {
-            const Element = action.route ? Link : 'button';
+      <div className="flex w-full flex-col gap-3">
+        {actions.map((action) => {
+          const Element = action.route ? Link : 'button';
 
-            return (
-              <Element
-                className="relative flex h-14 cursor-pointer items-center gap-3 overflow-hidden rounded-xl border border-border bg-card p-4 hover:border-borderHover"
-                key={action.label}
-                onClick={action.onClick}
-                href={action.route as string}
-                tabIndex={0}
-              >
-                <action.icon className="absolute right-2 top-0 !h-[72px] !w-auto text-primaryHighlight" />
-                <div className="flex flex-col items-start gap-[2px]">
-                  <div className="text-sm font-medium text-textPrimary">{action.label}</div>
-                  <div className="text-xs text-textTertiary">{action.hint}</div>
-                </div>
-              </Element>
-            );
-          })}
-        </div>
-      )}
+          return (
+            <Element
+              className="relative flex h-14 cursor-pointer items-center gap-3 overflow-hidden rounded-xl border border-border bg-card p-4 hover:border-borderHover"
+              key={action.label}
+              onClick={action.onClick}
+              href={action.route as string}
+              tabIndex={0}
+            >
+              <action.icon className="absolute right-2 top-0 !h-[72px] !w-auto text-primaryHighlight" />
+              <div className="flex flex-col items-start gap-[2px]">
+                <div className="text-sm font-medium text-textPrimary">{action.label}</div>
+                <div className="text-xs text-textTertiary">{action.hint}</div>
+              </div>
+            </Element>
+          );
+        })}
+      </div>
     </Page>
   );
 };

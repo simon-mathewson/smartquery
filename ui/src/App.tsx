@@ -10,6 +10,7 @@ import { TabsProvider } from './content/tabs/Provider';
 import { QueriesProvider } from './content/tabs/queries/Provider';
 import { LinkApiProvider } from './content/link/api/Provider';
 import { ApiProvider } from './content/api/Provider';
+import { AuthProvider } from './content/auth/Provider';
 
 export const App: React.FC<React.PropsWithChildren> = (props) => {
   const { children } = props;
@@ -17,23 +18,25 @@ export const App: React.FC<React.PropsWithChildren> = (props) => {
   return (
     <BaseProviders>
       <ApiProvider>
-        <LinkApiProvider>
-          <LinkProvider>
-            <SqliteProvider>
-              <ConnectionsProvider>
-                <EditProvider>
-                  <TabsProvider>
-                    <QueriesProvider>
-                      <DragAndDropProvider>
-                        <AddToDesktopProvider>{children}</AddToDesktopProvider>
-                      </DragAndDropProvider>
-                    </QueriesProvider>
-                  </TabsProvider>
-                </EditProvider>
-              </ConnectionsProvider>
-            </SqliteProvider>
-          </LinkProvider>
-        </LinkApiProvider>
+        <AuthProvider>
+          <LinkApiProvider>
+            <LinkProvider>
+              <SqliteProvider>
+                <ConnectionsProvider>
+                  <EditProvider>
+                    <TabsProvider>
+                      <QueriesProvider>
+                        <DragAndDropProvider>
+                          <AddToDesktopProvider>{children}</AddToDesktopProvider>
+                        </DragAndDropProvider>
+                      </QueriesProvider>
+                    </TabsProvider>
+                  </EditProvider>
+                </ConnectionsProvider>
+              </SqliteProvider>
+            </LinkProvider>
+          </LinkApiProvider>
+        </AuthProvider>
       </ApiProvider>
     </BaseProviders>
   );
