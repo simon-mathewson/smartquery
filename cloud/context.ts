@@ -1,9 +1,21 @@
-import { PrismaClient } from '~/prisma/generated/client';
-import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
+import type { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import cookie, { SerializeOptions as CookieSerializeOptions } from 'cookie';
+import { PrismaClient } from '~/prisma/generated/client';
 import { verifyAuthToken } from './auth/authToken';
 
-export const createContext = async ({ req, res }: CreateExpressContextOptions) => {
+export type Context = {
+  getCookie: ReturnType<typeof createGetCookie>;
+  setCookie: ReturnType<typeof createSetCookie>;
+  prisma: PrismaClient;
+  req: CreateExpressContextOptions['req'];
+  res: CreateExpressContextOptions['res'];
+  user: { id: string; email: string } | null;
+};
+
+export const createContext = async ({
+  req,
+  res,
+}: CreateExpressContextOptions): Promise<Context> => {
   const prisma = new PrismaClient();
 
   const getCookie = createGetCookie(req);
@@ -29,8 +41,6 @@ export const createContext = async ({ req, res }: CreateExpressContextOptions) =
     user: await getUser(),
   };
 };
-
-export type Context = Awaited<ReturnType<typeof createContext>>;
 
 export const createGetCookie = (req: CreateExpressContextOptions['req']) => (name: string) => {
   const cookieHeader = req.headers['cookie'];

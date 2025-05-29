@@ -38,5 +38,5 @@
     "node_modules", // Good practice to explicitly exclude node_modules if not already
     "dist" // If you have a build output directory, exclude it too
   ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "../cloud" }]
 }

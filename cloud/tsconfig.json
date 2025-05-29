@@ -5,9 +5,10 @@
     "esModuleInterop": true,
     "strict": true,
     "moduleResolution": "node",
-    "noEmit": true,
     "skipLibCheck": true,
     "declaration": true,
+    "composite": true,
+    "outDir": "./dist",
     "paths": {
       "~/*": ["./*"]
     }
