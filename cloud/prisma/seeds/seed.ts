@@ -16,5 +16,23 @@ import { PrismaClient } from '../generated';
     },
   });
 
+  await prisma.connection.create({
+    data: {
+      database: 'mysql_db',
+      engine: 'mysql',
+      host: 'localhost',
+      name: 'mysql_db',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: 'password',
+      port: 3306,
+      schema: 'mysql',
+    },
+  });
+
   console.info('Seeding complete.');
 })();

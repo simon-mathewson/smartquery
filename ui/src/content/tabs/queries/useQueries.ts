@@ -257,7 +257,7 @@ export const useQueries = () => {
     [
       activeConnection,
       getSqliteContent,
-      linkApi.sendQuery,
+      linkApi,
       onFinishLoading,
       onStartLoading,
       requestFileHandlePermission,
