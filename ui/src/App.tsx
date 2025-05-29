@@ -9,7 +9,7 @@ import { SqliteProvider } from './content/sqlite/Provider';
 import { TabsProvider } from './content/tabs/Provider';
 import { QueriesProvider } from './content/tabs/queries/Provider';
 import { LinkApiProvider } from './content/link/api/Provider';
-import { ApiProvider } from './content/api/Provider';
+import { CloudApiProvider } from './content/cloud/api/Provider';
 import { AuthProvider } from './content/auth/Provider';
 
 export const App: React.FC<React.PropsWithChildren> = (props) => {
@@ -17,7 +17,7 @@ export const App: React.FC<React.PropsWithChildren> = (props) => {
 
   return (
     <BaseProviders>
-      <ApiProvider>
+      <CloudApiProvider>
         <AuthProvider>
           <LinkApiProvider>
             <LinkProvider>
@@ -37,7 +37,7 @@ export const App: React.FC<React.PropsWithChildren> = (props) => {
             </LinkProvider>
           </LinkApiProvider>
         </AuthProvider>
-      </ApiProvider>
+      </CloudApiProvider>
     </BaseProviders>
   );
 };

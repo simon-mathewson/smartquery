@@ -10,15 +10,8 @@ import Add from '~/shared/icons/Add.svg?react';
 import { ScienceOutlined, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
 import { Page } from '~/shared/components/page/Page';
 import { Link } from 'wouter';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { ApiContext } from '../api/Context';
 
 export const Home: React.FC = () => {
-  const api = useDefinedContext(ApiContext);
-  useEffectOnce(() => {
-    void api.auth.test.query();
-  });
-
   const { connections, addConnection } = useDefinedContext(ConnectionsContext);
 
   const { storeSqliteContent } = useDefinedContext(SqliteContext);

@@ -1,7 +1,7 @@
 import { initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 
-import { Context } from './context';
+import type { Context } from './context';
 import { authRouter } from './auth/router';
 
 const trpc = initTRPC.context<Context>().create({ transformer: superjson });

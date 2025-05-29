@@ -1,8 +1,8 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
-import type { appRouter } from '../../../../api/router';
+import type { appRouter } from '../../../../../cloud/router';
 
-export const apiClient = createTRPCProxyClient<typeof appRouter>({
+export const cloudApiClient = createTRPCProxyClient<typeof appRouter>({
   transformer: superjson,
   links: [
     httpBatchLink({
@@ -12,9 +12,9 @@ export const apiClient = createTRPCProxyClient<typeof appRouter>({
           // Sends cookies cross-origin
           credentials: 'include',
         }),
-      url: `${import.meta.env.VITE_API_URL}/trpc`,
+      url: `${import.meta.env.VITE_CLOUD_URL}/trpc`,
     }),
   ],
 });
 
-export type ApiClient = typeof apiClient;
+export type CloudApiClient = typeof cloudApiClient;

@@ -28,9 +28,15 @@
     "./globals.d.ts",
     "./playwright-ct.config.ts",
     "./playwright.config.ts",
-    "./playwright",
-    "./src",
+    "./playwright/**/*.ts", // Be more specific if playright only contains .ts files
+    "./src/**/*.ts", // Only include .ts files within src
+    "./src/**/*.tsx", // Include .tsx files for react components
     "./tailwind.config.ts"
+  ],
+  "exclude": [
+    "../cloud", // Explicitly exclude the cloud directory
+    "node_modules", // Good practice to explicitly exclude node_modules if not already
+    "dist" // If you have a build output directory, exclude it too
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

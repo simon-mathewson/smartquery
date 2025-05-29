@@ -1,8 +1,8 @@
 services:
-  dabase-api:
+  dabase-cloud:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: dabase
     ports:
-      - "5444:5432"
+      - '5444:5432'

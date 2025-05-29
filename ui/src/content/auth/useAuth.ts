@@ -1,6 +1,6 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import { ApiContext } from '../api/Context';
+import { CloudApiContext } from '../cloud/api/Context';
 import type { User } from './types';
 import { useCallback, useMemo } from 'react';
 import { useLocation } from 'wouter';
@@ -10,7 +10,7 @@ import { routes } from '~/router/routes';
 export const useAuth = () => {
   const [, navigate] = useLocation();
 
-  const api = useDefinedContext(ApiContext);
+  const cloudApi = useDefinedContext(CloudApiContext);
   const toast = useDefinedContext(ToastContext);
 
   const [user, setUser] = useStoredState<User | null>('useAuth.user', null);
@@ -18,7 +18,7 @@ export const useAuth = () => {
   const logIn = useCallback(
     async (email: string, password: string) => {
       try {
-        const user = await api.auth.logIn.mutate({ email, password });
+        const user = await cloudApi.auth.logIn.mutate({ email, password });
 
         setUser(user);
 
@@ -37,13 +37,13 @@ export const useAuth = () => {
         });
       }
     },
-    [api.auth.logIn, navigate, setUser, toast],
+    [cloudApi.auth.logIn, navigate, setUser, toast],
   );
 
   const signUp = useCallback(
     async (email: string, password: string) => {
       try {
-        await api.auth.signUp.mutate({ email, password });
+        await cloudApi.auth.logIn.mutate({ email, password });
 
         toast.add({
           title: 'Signup successful',
@@ -60,7 +60,7 @@ export const useAuth = () => {
         });
       }
     },
-    [api.auth.signUp, navigate, toast],
+    [cloudApi.auth.logIn, navigate, toast],
   );
 
   return useMemo(
