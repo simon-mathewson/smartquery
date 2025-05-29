@@ -5,11 +5,13 @@ export const useStoredState = <T>(
   key: string,
   defaultValue: T | (() => T),
   storage = localStorage,
+  migrations: Array<(storedValue: T) => T> = [],
 ) => {
   const getInitialValue = () => {
     const storedValue = storage.getItem(key);
     if (storedValue) {
-      return superjson.parse<T>(storedValue);
+      const parsedValue = superjson.parse<T>(storedValue);
+      return migrations.reduce((value, migration) => migration(value), parsedValue);
     }
     return typeof defaultValue === 'function' ? (defaultValue as () => T)() : defaultValue;
   };

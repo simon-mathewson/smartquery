@@ -29,6 +29,7 @@ import { SqliteContext } from '~/content/sqlite/Context';
 import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
 import { Setup as LinkSetup } from '~/content/link/setup/Setup';
 import { sqliteDemoConnectionId } from '~/content/home/constants';
+import { AuthContext } from '~/content/auth/Context';
 
 export type ConnectionFormProps = {
   connectionToEditId?: string;
@@ -37,14 +38,21 @@ export type ConnectionFormProps = {
   htmlProps?: React.HTMLAttributes<HTMLElement>;
 };
 
-const labels = {
+const engineLabels = {
   mysql: 'MySQL',
   postgresql: 'PostgreSQL',
   sqlite: 'SQLite',
 };
 
+const storageLocationLabels = {
+  cloud: 'Cloud',
+  local: 'Local',
+};
+
 export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { connectionToEditId, exit, hideBackButton, htmlProps } = props;
+
+  const { user } = useDefinedContext(AuthContext);
 
   const { getSqliteContent, storeSqliteContent } = useDefinedContext(SqliteContext);
 
@@ -59,7 +67,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const [formValues, setFormValues] = useState<FormValues>();
 
   useEffectOnce(() => {
-    getInitialFormValues(connectionToEdit, getSqliteContent).then(setFormValues);
+    getInitialFormValues({ connectionToEdit, getSqliteContent, user }).then(setFormValues);
   });
 
   const setFormValue = (key: string, value: unknown) => {
@@ -134,6 +142,23 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             )
           }
         />
+        <Field label="Storage location">
+          <ButtonSelect<FormValues['storageLocation'] | null>
+            equalWidth
+            fullWidth
+            onChange={(value) => {
+              setFormValue('storageLocation', value);
+            }}
+            options={(['cloud', 'local'] as const).map((storageLocation, index) => ({
+              button: {
+                label: storageLocationLabels[storageLocation],
+                htmlProps: { autoFocus: index === 0 },
+              },
+              value: storageLocation,
+            }))}
+            value={formValues.storageLocation}
+          />
+        </Field>
         <Field label="Engine">
           <ButtonSelect<FormValues['engine'] | null>
             equalWidth
@@ -144,7 +169,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             }}
             options={(['mysql', 'postgresql', 'sqlite'] as const).map((engine, index) => ({
               button: {
-                label: labels[engine],
+                label: engineLabels[engine],
                 htmlProps: { autoFocus: index === 0 },
               },
               value: engine,
@@ -152,7 +177,9 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             value={formValues.engine}
           />
         </Field>
-        {formValues.type === 'remote' && <LinkSetup databaseLabel={labels[formValues.engine]} />}
+        {formValues.type === 'remote' && (
+          <LinkSetup databaseLabel={engineLabels[formValues.engine]} />
+        )}
         <Field label="Name">
           <Input
             htmlProps={{ value: formValues.name }}

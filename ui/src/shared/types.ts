@@ -13,6 +13,7 @@ export const baseConnectionSchema = z.object({
   database: z.string().trim().min(1),
   id: z.string().min(1),
   name: z.string().trim().min(1),
+  storageLocation: z.union([z.literal('local'), z.literal('cloud')]),
 });
 
 export const remoteConnectionSchema = baseConnectionSchema.extend({

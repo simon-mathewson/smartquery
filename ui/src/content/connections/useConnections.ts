@@ -27,7 +27,13 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const { getSqliteDb } = useDefinedContext(SqliteContext);
 
-  const [connections, setConnections] = useStoredState<Connection[]>('connections', []);
+  const [connections, setConnections] = useStoredState<Connection[]>('connections', [], undefined, [
+    (storedConnections) =>
+      storedConnections.map((connection) => ({
+        ...connection,
+        storageLocation: connection.storageLocation ?? 'local',
+      })),
+  ]);
 
   const [, dbRouteParamsWithoutSchema] = useRoute<{
     connectionId: string;

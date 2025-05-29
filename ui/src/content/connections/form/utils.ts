@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { assert } from 'ts-essentials';
 import { z } from 'zod';
+import type { User } from '~/content/auth/types';
 import type { Connection, Engine } from '~/shared/types';
 import { connectionSchema, fileConnectionSchema, remoteConnectionSchema } from '~/shared/types';
 
@@ -25,10 +26,13 @@ export const formSchema = z.discriminatedUnion('type', [
 
 export type FormValues = z.infer<typeof formSchema>;
 
-export const getInitialFormValues = async (
-  connectionToEdit: Connection | null,
-  getSqliteContent: (id: string) => Promise<ArrayBuffer | FileSystemFileHandle>,
-): Promise<FormValues> => {
+export const getInitialFormValues = async (props: {
+  connectionToEdit: Connection | null;
+  getSqliteContent: (id: string) => Promise<ArrayBuffer | FileSystemFileHandle>;
+  user: User | null;
+}): Promise<FormValues> => {
+  const { connectionToEdit, getSqliteContent, user } = props;
+
   if (connectionToEdit) {
     if (connectionToEdit.type === 'file') {
       const fileHandle = await getSqliteContent(connectionToEdit.id);
@@ -66,6 +70,7 @@ export const getInitialFormValues = async (
     port: null,
     schema: '',
     ssh: null,
+    storageLocation: user ? 'cloud' : 'local',
     type: 'remote',
     user: '',
   } satisfies FormValues;
