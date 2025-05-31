@@ -17,9 +17,9 @@ export const seed = async () => {
       user: 'root',
     },
     {
-      database: 'postgresql_db',
+      database: 'postgres_db',
       defaultDatabase: 'postgres',
-      engine: 'postgresql',
+      engine: 'postgres',
       host: 'localhost',
       password: 'password',
       port: Number(process.env.VITE_POSTGRESQL_PORT),

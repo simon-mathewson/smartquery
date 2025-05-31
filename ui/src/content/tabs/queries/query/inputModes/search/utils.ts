@@ -16,7 +16,7 @@ export const getWhere = (props: {
         type: 'binary_expr',
         operator: 'LIKE',
         left:
-          engine === 'postgresql'
+          engine === 'postgres'
             ? ({
                 type: 'function',
                 name: 'LOWER',
@@ -41,7 +41,7 @@ export const getWhere = (props: {
                 column: column.name,
               },
         right:
-          engine === 'postgresql'
+          engine === 'postgres'
             ? ({
                 type: 'function',
                 name: 'LOWER',

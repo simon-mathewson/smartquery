@@ -178,7 +178,7 @@ export const getColumnsFromResult = (props: {
         return getMySqlEnumValuesFromColumnType(mysql_column_type);
       }
 
-      if (engine === 'postgresql' && postgres_enum_values?.length) {
+      if (engine === 'postgres' && postgres_enum_values?.length) {
         return postgres_enum_values;
       }
 

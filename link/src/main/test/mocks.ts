@@ -14,10 +14,10 @@ export const mocks = {
       user: 'root',
     } satisfies Connection,
     postgres: {
-      database: 'postgresql_db',
+      database: 'postgres_db',
       host: 'localhost',
       id: 'postgres-connection',
-      engine: 'postgresql',
+      engine: 'postgres',
       name: 'Postgres',
       password: 'password',
       port: Number(import.meta.env.VITE_POSTGRESQL_PORT),

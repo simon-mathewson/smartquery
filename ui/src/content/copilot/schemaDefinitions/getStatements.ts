@@ -6,7 +6,7 @@ export const getStatements = (
   const { engine, database } = activeConnection;
 
   switch (engine) {
-    case 'postgresql':
+    case 'postgres':
       return [
         `
         SELECT table_name, table_type  FROM information_schema.tables 

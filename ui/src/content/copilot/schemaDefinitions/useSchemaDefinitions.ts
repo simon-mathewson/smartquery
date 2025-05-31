@@ -26,7 +26,7 @@ export const useSchemaDefinitions = () => {
   const [storedSchemaDefinitions, setStoredSchemaDefinitions] =
     useStoredState<SchemaDefinitions | null>(
       `useSchemaDefinitions.schemaDefinitions.${id}.${database}${
-        engine === 'postgresql' ? `.${activeConnection.schema}` : ''
+        engine === 'postgres' ? `.${activeConnection.schema}` : ''
       }`,
       null,
     );

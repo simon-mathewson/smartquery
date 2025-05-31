@@ -25,7 +25,7 @@ describe('getAstForSql', () => {
 
     test('PostgreSQL', () => {
       expect(
-        getAstForSql({ engine: 'postgresql', statement: postgresSelectStatement }),
+        getAstForSql({ engine: 'postgres', statement: postgresSelectStatement }),
       ).toMatchSnapshot();
     });
   });

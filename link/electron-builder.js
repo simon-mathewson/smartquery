@@ -6,7 +6,7 @@ module.exports = {
   asarUnpack: ['resources/**'],
   extraResources: [
     {
-      from: 'prisma/client/postgresql',
+      from: 'prisma/client/postgres',
       to: '.prisma/client',
       filter: ['*.node'],
     },

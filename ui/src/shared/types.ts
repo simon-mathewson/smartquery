@@ -17,15 +17,15 @@ export const baseConnectionSchema = z.object({
 });
 
 export const remoteConnectionSchema = baseConnectionSchema.extend({
-  credentialStorage: z.union([z.literal('alwaysAsk'), z.literal('localStorage')]),
-  engine: z.union([z.literal('mysql'), z.literal('postgresql')]),
+  credentialStorage: z.union([z.literal('alwaysAsk'), z.literal('localStorage')]).optional(),
+  engine: z.union([z.literal('mysql'), z.literal('postgres')]),
   host: z.string().trim().min(1),
   password: z.string().nullable(),
   port: z.number(),
   schema: z.string().trim().min(1).optional(),
   ssh: z
     .object({
-      credentialStorage: z.union([z.literal('alwaysAsk'), z.literal('localStorage')]),
+      credentialStorage: z.union([z.literal('alwaysAsk'), z.literal('localStorage')]).optional(),
       host: z.string().trim().min(1),
       password: z.string().nullable().optional(),
       port: z.number(),

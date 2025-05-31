@@ -30,7 +30,7 @@ export const getTableStatement = (props: {
     WHERE ${isMysqlInformationSchemaQuery ? 'LOWER(table_name)' : 'table_name'} = '${
       isMysqlInformationSchemaQuery ? table.toLowerCase() : table
     }'
-    AND table_catalog = '${engine === 'postgresql' ? select.database : 'def'}'
-    AND table_schema = '${engine === 'postgresql' ? select.schema : select.database}'
+    AND table_catalog = '${engine === 'postgres' ? select.database : 'def'}'
+    AND table_schema = '${engine === 'postgres' ? select.schema : select.database}'
   `;
 };

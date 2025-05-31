@@ -9,7 +9,7 @@ export const createClient = async (
 
   const Client = {
     mysql: MySqlClient,
-    postgresql: PostgresClient,
+    postgres: PostgresClient,
   }[engine];
 
   const db = options?.useDefaultDatabase ? defaultDatabase : database;

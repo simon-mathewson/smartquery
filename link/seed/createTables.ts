@@ -6,7 +6,7 @@ export const createTables = async (connection: Connection) => {
 
   const prisma = await createClient(connection);
 
-  if (engine === 'postgresql') {
+  if (engine === 'postgres') {
     await prisma.$queryRaw`
       CREATE TYPE test_enum AS ENUM ('Alpha', 'Beta', 'Charlie');
     `;
@@ -15,15 +15,15 @@ export const createTables = async (connection: Connection) => {
     `;
   }
 
-  const booleanType = engine === 'postgresql' ? 'BOOLEAN' : 'TINYINT';
-  const datetimeType = engine === 'postgresql' ? 'TIMESTAMP' : 'DATETIME';
+  const booleanType = engine === 'postgres' ? 'BOOLEAN' : 'TINYINT';
+  const datetimeType = engine === 'postgres' ? 'TIMESTAMP' : 'DATETIME';
   const datetimeWithTimeZoneType = {
     mysql: 'DATETIME',
-    postgresql: 'TIMESTAMP WITH TIME ZONE',
+    postgres: 'TIMESTAMP WITH TIME ZONE',
   }[engine];
   const intAutoIncrementType = {
     mysql: 'INT NOT NULL AUTO_INCREMENT',
-    postgresql: 'SERIAL',
+    postgres: 'SERIAL',
   }[engine];
 
   await prisma.$queryRawUnsafe(`
@@ -46,13 +46,13 @@ export const createTables = async (connection: Connection) => {
       enum_column ${
         {
           mysql: 'ENUM("Alpha", "Beta", "Charlie")',
-          postgresql: 'test_enum',
+          postgres: 'test_enum',
         }[engine]
       } NOT NULL,
       enum_column_nullable ${
         {
           mysql: 'ENUM("Alpha", "Beta", "Charlie")',
-          postgresql: 'test_enum',
+          postgres: 'test_enum',
         }[engine]
       } NULL,
       json_column JSON NOT NULL,
@@ -66,7 +66,7 @@ export const createTables = async (connection: Connection) => {
       id ${
         {
           mysql: 'INT NOT NULL AUTO_INCREMENT',
-          postgresql: 'SERIAL',
+          postgres: 'SERIAL',
         }[engine]
       },
       name VARCHAR(255) NOT NULL,
@@ -75,7 +75,7 @@ export const createTables = async (connection: Connection) => {
       role ${
         {
           mysql: 'ENUM("USER", "ADMIN")',
-          postgresql: 'user_role',
+          postgres: 'user_role',
         }[engine]
       } NOT NULL DEFAULT 'USER',
       attributes JSON NULL,
@@ -91,7 +91,7 @@ export const createTables = async (connection: Connection) => {
       updated_at ${datetimeType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
       user_id INT NOT NULL,
       title VARCHAR(255) NOT NULL,
-      is_published ${booleanType} NOT NULL DEFAULT ${engine === 'postgresql' ? 'FALSE' : '0'},
+      is_published ${booleanType} NOT NULL DEFAULT ${engine === 'postgres' ? 'FALSE' : '0'},
       is_deleted ${booleanType} NULL,
       internal_note_1 VARCHAR(255) NULL,
       internal_note_2 VARCHAR(255) NULL,

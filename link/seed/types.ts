@@ -1,7 +1,7 @@
 export type Connection = {
   database: string;
   defaultDatabase: string;
-  engine: 'mysql' | 'postgresql';
+  engine: 'mysql' | 'postgres';
   host: string;
   password: string;
   port: number;

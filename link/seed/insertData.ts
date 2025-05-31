@@ -10,7 +10,7 @@ export const insertData = async (connection: Connection) => {
   const getBooleanSqlValue = (value: boolean | null) => {
     if (value === null) return 'NULL';
 
-    return engine === 'postgresql' ? value : Number(value);
+    return engine === 'postgres' ? value : Number(value);
   };
 
   await prisma.$queryRawUnsafe(`

@@ -7,7 +7,7 @@ export const resetDatabase = async (connection: Connection) => {
   const prisma = await createClient(connection, { useDefaultDatabase: true });
 
   await prisma.$queryRawUnsafe(`
-    DROP DATABASE IF EXISTS ${database} ${engine === 'postgresql' ? 'WITH (FORCE)' : ''};
+    DROP DATABASE IF EXISTS ${database} ${engine === 'postgres' ? 'WITH (FORCE)' : ''};
   `);
 
   await prisma.$queryRawUnsafe(`

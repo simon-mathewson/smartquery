@@ -36,9 +36,9 @@ export const router = trpc.router({
           datasourceUrl: `mysql://${user}:${password}@${host}:${port}/${database}`,
         });
       }
-      if (engine === 'postgresql') {
+      if (engine === 'postgres') {
         return new PostgresClient({
-          datasourceUrl: `postgresql://${user}:${password}@${host}:${port}/${database}${schema ? `?schema=${schema}` : ''}`,
+          datasourceUrl: `postgres://${user}:${password}@${host}:${port}/${database}${schema ? `?schema=${schema}` : ''}`,
         });
       }
       throw new Error(`Unsupported engine: ${engine}`);
@@ -107,3 +107,5 @@ export const router = trpc.router({
     }),
   status: trpc.procedure.query(() => true),
 });
+
+export type Router = typeof router;

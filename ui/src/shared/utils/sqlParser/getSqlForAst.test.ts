@@ -86,6 +86,6 @@ describe('getSqlForAst generates SQL for AST', () => {
   });
 
   test('PostgreSQL', () => {
-    expect(getSqlForAst(ast, 'postgresql')).toMatchSnapshot();
+    expect(getSqlForAst(ast, 'postgres')).toMatchSnapshot();
   });
 });

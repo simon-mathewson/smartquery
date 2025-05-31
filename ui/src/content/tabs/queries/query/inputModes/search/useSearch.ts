@@ -60,7 +60,7 @@ export const useSearch = () => {
 
     const hasSearchStructure = isEqualWith(select.parsed.where, searchWhere, (a) => {
       if (get(a, 'type') === 'binary_expr' && get(a, 'operator') === 'LIKE') {
-        if (activeConnection.engine === 'postgresql') {
+        if (activeConnection.engine === 'postgres') {
           if (get(a, 'right.type') === 'function' && get(a, 'right.name') === 'LOWER') {
             const value = get(a, 'right.args.value[0].value');
             if (value.startsWith('%') && value.endsWith('%')) {

@@ -1,9 +1,8 @@
-import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
 import type { router } from '../../../../../link/src/main/router/router';
 
-export const linkApiClient = createTRPCProxyClient<typeof router>({
-  transformer: superjson,
+export const linkApiClient = createTRPCClient<typeof router>({
   links: [
     httpBatchLink({
       fetch: (input, init) =>
@@ -12,6 +11,7 @@ export const linkApiClient = createTRPCProxyClient<typeof router>({
           // Keeps disconnect request on beforeonload alive when the user navigates away
           keepalive: true,
         }),
+      transformer: superjson,
       url: import.meta.env.VITE_LINK_URL,
     }),
   ],

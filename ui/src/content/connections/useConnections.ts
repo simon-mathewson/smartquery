@@ -11,6 +11,10 @@ import { LinkApiContext } from '../link/api/Context';
 import { ToastContext } from '../toast/Context';
 import { SqliteContext } from '../sqlite/Context';
 import { assert } from 'ts-essentials';
+import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
+import { CloudApiContext } from '../cloud/api/Context';
+import { sortBy } from 'lodash';
+import { mapCloudConnectionToClient } from './mapCloudConnectionToClient';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -21,19 +25,39 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const [, navigate] = useLocation();
 
+  const cloudApi = useDefinedContext(CloudApiContext);
+
   const linkApi = useDefinedContext(LinkApiContext);
 
   const toast = useDefinedContext(ToastContext);
 
   const { getSqliteDb } = useDefinedContext(SqliteContext);
 
-  const [connections, setConnections] = useStoredState<Connection[]>('connections', [], undefined, [
-    (storedConnections) =>
-      storedConnections.map((connection) => ({
-        ...connection,
-        storageLocation: connection.storageLocation ?? 'local',
-      })),
-  ]);
+  const [localConnections, setLocalConnections] = useStoredState<Connection[]>(
+    'connections',
+    [],
+    undefined,
+    [
+      (storedConnections) =>
+        storedConnections.map((connection) => ({
+          ...connection,
+          storageLocation: connection.storageLocation ?? 'local',
+        })),
+    ],
+  );
+
+  const [cloudConnections, refetchCloudConnections] = useCloudQuery(() =>
+    cloudApi.connections.list.query(),
+  );
+
+  const connections = useMemo(
+    () =>
+      sortBy(
+        [...localConnections, ...(cloudConnections?.map(mapCloudConnectionToClient) ?? [])],
+        (c) => c.name.toLowerCase(),
+      ),
+    [localConnections, cloudConnections],
+  );
 
   const [, dbRouteParamsWithoutSchema] = useRoute<{
     connectionId: string;
@@ -63,16 +87,16 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const addConnection = useCallback(
     (connection: Connection) => {
-      setConnections([...connections, connection]);
+      setLocalConnections([...localConnections, connection]);
     },
-    [connections, setConnections],
+    [localConnections, setLocalConnections],
   );
 
   const updateConnection = useCallback(
     (id: string, connection: Connection) => {
-      setConnections(connections.map((c) => (c.id === id ? connection : c)));
+      setLocalConnections(localConnections.map((c) => (c.id === id ? connection : c)));
     },
-    [connections, setConnections],
+    [localConnections, setLocalConnections],
   );
 
   const disconnect = useCallback(async () => {
@@ -90,14 +114,14 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const removeConnection = useCallback(
     (id: string) => {
-      setConnections(connections.filter((c) => c.id !== id));
+      setLocalConnections(localConnections.filter((c) => c.id !== id));
 
       if (activeConnection?.id === id) {
         void disconnect();
         navigate(routes.root());
       }
     },
-    [setConnections, connections, activeConnection?.id, disconnect, navigate],
+    [setLocalConnections, localConnections, activeConnection?.id, disconnect, navigate],
   );
 
   const getDatabases = useCallback(
@@ -111,13 +135,13 @@ export const useConnections = (props: UseConnectionsProps) => {
       const databasesStatement = {
         mysql:
           "SELECT schema_name AS db FROM information_schema.schemata WHERE schema_name NOT IN ('information_schema', 'performance_schema', 'sys') ORDER BY schema_name ASC",
-        postgresql:
+        postgres:
           'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC',
       }[connection.engine];
 
       const statements = [databasesStatement];
 
-      if (connection.engine === 'postgresql') {
+      if (connection.engine === 'postgres') {
         statements.push(
           "SELECT schema_name AS schema, catalog_name AS db FROM information_schema.schemata WHERE schema_name <> 'information_schema' AND schema_name NOT LIKE 'pg_%' ORDER BY schema_name ASC",
         );

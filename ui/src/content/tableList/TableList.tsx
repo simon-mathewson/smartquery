@@ -37,7 +37,7 @@ export const TableList: React.FC = () => {
             AND table_schema = '${database}'
             ORDER BY t ASC
           `;
-        case 'postgresql':
+        case 'postgres':
           return `
             SELECT table_name AS t, table_schema AS s FROM information_schema.tables
             WHERE table_type = 'BASE TABLE'
@@ -93,7 +93,7 @@ export const TableList: React.FC = () => {
         return {
           sql: `SELECT * FROM ${table.name} LIMIT 50`,
         };
-      case 'postgresql':
+      case 'postgres':
         return {
           sql: `SELECT * FROM ${
             activeConnection.schema ? '' : `${addQuotes(activeConnection.engine, table.schema!)}.`

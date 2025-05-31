@@ -9,7 +9,7 @@ describe('Query parsing utils', () => {
   } as Connection;
 
   const postgresConnection: Connection = {
-    engine: 'postgresql',
+    engine: 'postgres',
     database: 'test_db',
     schema: 'public',
   } as Connection;

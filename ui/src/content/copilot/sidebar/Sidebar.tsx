@@ -66,7 +66,7 @@ export const CopilotSidebar: React.FC = () => {
             >
               <div
                 className={classNames(
-                  'prose dark:prose-invert prose-code:font-[500] prose-code:after:content-none prose-code:before:content-none prose-pre:bg-transparent prose-pre:p-0 max-w-none text-sm leading-normal [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
+                  'prose max-w-none text-sm leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
                   {
                     'rounded-xl bg-primary px-2 py-1 text-white': message.role === 'user',
                   },
@@ -93,7 +93,7 @@ export const CopilotSidebar: React.FC = () => {
             <Language className="!h-4 !w-4" />
             <span className="font-mono">
               {activeConnection.database}
-              {activeConnection.engine === 'postgresql' && ` • ${activeConnection.schema}`}
+              {activeConnection.engine === 'postgres' && ` • ${activeConnection.schema}`}
             </span>
           </div>
         )}

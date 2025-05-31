@@ -30,8 +30,8 @@ const getSelectFromStatement = (props: {
   const selectSchemaOrDatabase = ('db' in from && (from as NodeSqlParser.From).db) || undefined;
 
   const database =
-    engine === 'postgresql' ? connectionDatabase : selectSchemaOrDatabase ?? connectionDatabase;
-  const schema = engine === 'postgresql' ? selectSchemaOrDatabase ?? connection.schema : undefined;
+    engine === 'postgres' ? connectionDatabase : selectSchemaOrDatabase ?? connectionDatabase;
+  const schema = engine === 'postgres' ? selectSchemaOrDatabase ?? connection.schema : undefined;
 
   return {
     database,

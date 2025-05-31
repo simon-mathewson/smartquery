@@ -62,7 +62,7 @@ export const getInitialFormValues = async (props: {
   return {
     credentialStorage: 'alwaysAsk',
     database: '',
-    engine: 'postgresql',
+    engine: 'postgres',
     host: '',
     id: '',
     name: '',
@@ -97,7 +97,7 @@ export const getConnectionFromForm = (formArg: FormValues) => {
       form.ssh.port = 22;
     }
 
-    if (form.engine === 'postgresql') {
+    if (form.engine === 'postgres') {
       form.schema = form.schema || undefined;
     } else {
       form.schema = undefined;
@@ -140,5 +140,5 @@ export const getConnectionFromForm = (formArg: FormValues) => {
 export const getDefaultPort = (engine: Exclude<Engine, 'sqlite'>) =>
   ({
     mysql: 3306,
-    postgresql: 5432,
+    postgres: 5432,
   })[engine];

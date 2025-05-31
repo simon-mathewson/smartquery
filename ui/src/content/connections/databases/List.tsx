@@ -12,7 +12,7 @@ export const DatabaseList: React.FC = () => {
   const [labelId] = useState(uuid);
 
   const schemas = useMemo(() => {
-    if (!activeConnection || activeConnection.engine !== 'postgresql') return [];
+    if (!activeConnection || activeConnection.engine !== 'postgres') return [];
 
     return (
       activeConnectionDatabases.find((database) => database.name === activeConnection.database)
@@ -23,9 +23,8 @@ export const DatabaseList: React.FC = () => {
   return (
     <div
       className={classNames('grid gap-2', {
-        'grid-cols-[max-content_192px_max-content_192px]':
-          activeConnection?.engine === 'postgresql',
-        'grid-cols-[max-content_192px]': activeConnection?.engine !== 'postgresql',
+        'grid-cols-[max-content_192px_max-content_192px]': activeConnection?.engine === 'postgres',
+        'grid-cols-[max-content_192px]': activeConnection?.engine !== 'postgres',
       })}
     >
       <div className="h-full w-px bg-border" />
@@ -51,7 +50,7 @@ export const DatabaseList: React.FC = () => {
           selectedValue={activeConnection?.database ?? null}
         />
       </div>
-      {activeConnection?.engine === 'postgresql' && (
+      {activeConnection?.engine === 'postgres' && (
         <>
           <div className="h-full w-px bg-border" />
           <div>

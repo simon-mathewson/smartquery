@@ -156,7 +156,7 @@ export const useQueries = () => {
           [query.id]: {
             columns,
             rows,
-            schema: activeConnection.engine === 'postgresql' ? select!.schema : undefined,
+            schema: activeConnection.engine === 'postgres' ? select!.schema : undefined,
             table: select!.table,
             tableType,
             totalRows,

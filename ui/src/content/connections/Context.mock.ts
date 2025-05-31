@@ -12,14 +12,15 @@ export const mysqlConnectionMock = {
   password: null,
   port: 1234,
   ssh: null,
+  storageLocation: 'local',
   type: 'remote',
   user: 'user',
 } satisfies Connection;
 
-export const postgresqlConnectionMock = {
+export const postgresConnectionMock = {
   credentialStorage: 'localStorage',
   database: 'postgres',
-  engine: 'postgresql',
+  engine: 'postgres',
   host: '127.0.0.1',
   id: '2',
   name: 'PostgreSQL connection',
@@ -33,6 +34,7 @@ export const postgresqlConnectionMock = {
     port: 22,
     user: 'ssh_user',
   },
+  storageLocation: 'local',
   type: 'remote',
   user: 'user',
 } satisfies Connection;
@@ -42,6 +44,7 @@ export const sqliteConnectionMock = {
   engine: 'sqlite',
   id: '3',
   name: 'SQLite connection',
+  storageLocation: 'local',
   type: 'file',
 } satisfies FileConnection;
 
@@ -55,7 +58,7 @@ export const getConnectionsContextMock = () =>
     ],
     addConnection: spy(),
     connect: spy(),
-    connections: [mysqlConnectionMock, postgresqlConnectionMock, sqliteConnectionMock] as const,
+    connections: [mysqlConnectionMock, postgresConnectionMock, sqliteConnectionMock] as const,
     removeConnection: spy(),
     updateConnection: spy(),
   }) satisfies Connections;

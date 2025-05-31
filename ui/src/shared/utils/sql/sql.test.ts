@@ -8,7 +8,7 @@ describe('SQL utils', () => {
     });
 
     test('PostgreSQL', () => {
-      expect(addQuotes('postgresql', 'table')).toBe('"table"');
+      expect(addQuotes('postgres', 'table')).toBe('"table"');
     });
   });
 

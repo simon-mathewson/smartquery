@@ -1,9 +1,9 @@
 services:
-  postgresql:
+  postgres:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgresql_db
+      POSTGRES_DB: postgres_db
     ports:
       - '${VITE_POSTGRESQL_PORT}:5432'
   mysql:

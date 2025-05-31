@@ -4,7 +4,7 @@ import type { SSHConnection } from 'node-ssh-forward';
 
 export const connectionSchema = z.object({
   database: z.string().trim().min(1),
-  engine: z.union([z.literal('mysql'), z.literal('postgresql')]),
+  engine: z.union([z.literal('mysql'), z.literal('postgres')]),
   host: z.string().trim().min(1),
   id: z.string(),
   name: z.string().trim().min(1),

@@ -40,7 +40,7 @@ export type ConnectionFormProps = {
 
 const engineLabels = {
   mysql: 'MySQL',
-  postgresql: 'PostgreSQL',
+  postgres: 'PostgreSQL',
   sqlite: 'SQLite',
 };
 
@@ -167,7 +167,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
               setFormValue('engine', value);
               setFormValue('type', value === 'sqlite' ? 'file' : 'remote');
             }}
-            options={(['mysql', 'postgresql', 'sqlite'] as const).map((engine, index) => ({
+            options={(['mysql', 'postgres', 'sqlite'] as const).map((engine, index) => ({
               button: {
                 label: engineLabels[engine],
                 htmlProps: { autoFocus: index === 0 },
@@ -267,7 +267,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 onChange={(value) => setFormValue('database', value)}
               />
             </Field>
-            {formValues.engine === 'postgresql' && (
+            {formValues.engine === 'postgres' && (
               <Field label="Default schema">
                 <Input
                   htmlProps={{ value: formValues.schema }}

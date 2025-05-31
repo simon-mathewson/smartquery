@@ -15,8 +15,8 @@ importers:
         specifier: 6.7.0
         version: 6.7.0(prisma@6.7.0(typescript@5.8.2))(typescript@5.8.2)
       '@trpc/server':
-        specifier: 10.44.1
-        version: 10.44.1
+        specifier: 11.1.4
+        version: 11.1.4(typescript@5.8.2)
       cookie:
         specifier: ^1.0.2
         version: 1.0.2
@@ -73,7 +73,7 @@ importers:
         specifier: ^4.19.3
         version: 4.19.3
       typescript:
-        specifier: ^5.8.2
+        specifier: 5.8.2
         version: 5.8.2
       typescript-eslint:
         specifier: ^8.33.0
@@ -481,9 +481,10 @@ packages:
   '@prisma/get-platform@6.7.0':
     resolution: {integrity: sha512-i9IH5lO4fQwnMLvQLYNdgVh9TK3PuWBfQd7QLk/YurnAIg+VeADcZDbmhAi4XBBDD+hDif9hrKyASu0hbjwabw==}
 
-  '@trpc/server@10.44.1':
-    resolution: {integrity: sha512-mF7B+K6LjuboX8I1RZgKE5GA/fJhsJ8tKGK2UBt3Bwik7hepEPb4NJgNr7vO6BK5IYwPdBLRLTctRw6XZx0sRg==}
-    engines: {node: '>=18.0.0'}
+  '@trpc/server@11.1.4':
+    resolution: {integrity: sha512-X3TSLwQQh5+zi+yY7BnnmUUwVNdeBj3BAt580sAJ+Qd5PvDhz1gSNHGOAlOLulCFn6g/JHf8n+DbnPF/Gb63SA==}
+    peerDependencies:
+      typescript: '>=5.7.2'
 
   '@types/body-parser@1.19.5':
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
@@ -1666,7 +1667,9 @@ snapshots:
     dependencies:
       '@prisma/debug': 6.7.0
 
-  '@trpc/server@10.44.1': {}
+  '@trpc/server@11.1.4(typescript@5.8.2)':
+    dependencies:
+      typescript: 5.8.2
 
   '@types/body-parser@1.19.5':
     dependencies:

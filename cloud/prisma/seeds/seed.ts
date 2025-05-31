@@ -18,7 +18,27 @@ import { PrismaClient } from '../generated';
 
   await prisma.connection.create({
     data: {
+      database: 'postgres_db',
+      dbUser: 'postgres',
+      engine: 'postgres',
+      host: 'localhost',
+      name: 'postgres_db',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: 'password',
+      port: 5433,
+      schema: 'public',
+    },
+  });
+
+  await prisma.connection.create({
+    data: {
       database: 'mysql_db',
+      dbUser: 'root',
       engine: 'mysql',
       host: 'localhost',
       name: 'mysql_db',
@@ -29,7 +49,7 @@ import { PrismaClient } from '../generated';
       },
       encryptCredentials: false,
       password: 'password',
-      port: 3306,
+      port: 3307,
       schema: 'mysql',
     },
   });

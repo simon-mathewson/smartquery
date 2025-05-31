@@ -65,7 +65,7 @@ test.describe('ConnectionForm', () => {
         {
           credentialStorage: 'alwaysAsk',
           database: 'db',
-          engine: 'postgresql',
+          engine: 'postgres',
           host: 'localhost',
           id: '3',
           name: 'My connection',
@@ -153,7 +153,7 @@ test.describe('ConnectionForm', () => {
         {
           credentialStorage: 'localStorage',
           database: 'db',
-          engine: 'postgresql',
+          engine: 'postgres',
           host: 'localhost',
           id: '3',
           name: 'My connection',
@@ -193,7 +193,7 @@ test.describe('ConnectionForm', () => {
         {
           credentialStorage: 'localStorage',
           database: 'db',
-          engine: 'postgresql',
+          engine: 'postgres',
           host: 'localhost',
           id: '2',
           name: 'My connection',
