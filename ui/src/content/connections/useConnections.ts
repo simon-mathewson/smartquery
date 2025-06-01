@@ -15,6 +15,7 @@ import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { CloudApiContext } from '../cloud/api/Context';
 import { sortBy } from 'lodash';
 import { mapCloudConnectionToClient } from './mapCloudConnectionToClient';
+import { AuthContext } from '../auth/Context';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -26,11 +27,9 @@ export const useConnections = (props: UseConnectionsProps) => {
   const [, navigate] = useLocation();
 
   const cloudApi = useDefinedContext(CloudApiContext);
-
   const linkApi = useDefinedContext(LinkApiContext);
-
+  const { user } = useDefinedContext(AuthContext);
   const toast = useDefinedContext(ToastContext);
-
   const { getSqliteDb } = useDefinedContext(SqliteContext);
 
   const [localConnections, setLocalConnections] = useStoredState<Connection[]>(
@@ -46,9 +45,9 @@ export const useConnections = (props: UseConnectionsProps) => {
     ],
   );
 
-  const [cloudConnections, refetchCloudConnections] = useCloudQuery(() =>
-    cloudApi.connections.list.query(),
-  );
+  const [cloudConnections] = useCloudQuery(() => cloudApi.connections.list.query(), {
+    disabled: !user,
+  });
 
   const connections = useMemo(
     () =>

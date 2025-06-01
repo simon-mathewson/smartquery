@@ -1,11 +1,12 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { CloudApiContext } from '../cloud/api/Context';
 import type { User } from './types';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocation } from 'wouter';
 import { ToastContext } from '../toast/Context';
 import { routes } from '~/router/routes';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { TRPCClientError } from '@trpc/client';
 
 export const useAuth = () => {
   const [, navigate] = useLocation();
@@ -13,19 +14,53 @@ export const useAuth = () => {
   const cloudApi = useDefinedContext(CloudApiContext);
   const toast = useDefinedContext(ToastContext);
 
-  const [user, setUser] = useStoredState<User | null>('useAuth.user', null);
+  const [user, setUser] = useState<User | null>(null);
 
-  const logIn = useCallback(
-    async (email: string, password: string) => {
-      try {
-        const user = await cloudApi.auth.logIn.mutate({ email, password });
+  const logOut = useCallback(
+    async (props: { skipToast?: boolean } = {}) => {
+      setUser(null);
 
-        setUser(user);
+      await cloudApi.auth.logOut.mutate();
 
+      if (!props.skipToast) {
         toast.add({
-          title: 'Login successful',
+          title: 'Successfully logged out',
           color: 'success',
         });
+      }
+
+      navigate(routes.root());
+    },
+    [cloudApi, navigate, setUser, toast],
+  );
+
+  const getCurrentUser = useCallback(async () => {
+    try {
+      const user = await cloudApi.auth.currentUser.query();
+
+      setUser(user);
+    } catch (error) {
+      if (error instanceof TRPCClientError && error.data?.code === 'UNAUTHORIZED') {
+        await logOut({ skipToast: true });
+        return;
+      }
+      throw error;
+    }
+  }, [cloudApi.auth.currentUser, logOut, setUser]);
+
+  const logIn = useCallback(
+    async (email: string, password: string, props: { skipToast?: boolean } = {}) => {
+      try {
+        await cloudApi.auth.logIn.mutate({ email, password });
+
+        await getCurrentUser();
+
+        if (!props.skipToast) {
+          toast.add({
+            title: 'Login successful',
+            color: 'success',
+          });
+        }
 
         navigate(routes.root());
       } catch (error) {
@@ -37,20 +72,20 @@ export const useAuth = () => {
         });
       }
     },
-    [cloudApi.auth.logIn, navigate, setUser, toast],
+    [cloudApi, getCurrentUser, navigate, toast],
   );
 
   const signUp = useCallback(
     async (email: string, password: string) => {
       try {
-        await cloudApi.auth.logIn.mutate({ email, password });
+        await cloudApi.auth.signUp.mutate({ email, password });
 
         toast.add({
           title: 'Signup successful',
           color: 'success',
         });
 
-        navigate(routes.root());
+        await logIn(email, password, { skipToast: true });
       } catch (error) {
         console.error(error);
 
@@ -60,15 +95,20 @@ export const useAuth = () => {
         });
       }
     },
-    [cloudApi.auth.logIn, navigate, toast],
+    [cloudApi, logIn, toast],
   );
+
+  useEffectOnce(() => {
+    getCurrentUser();
+  });
 
   return useMemo(
     () => ({
       logIn,
+      logOut,
       signUp,
       user,
     }),
-    [user, logIn, signUp],
+    [user, logIn, logOut, signUp],
   );
 };

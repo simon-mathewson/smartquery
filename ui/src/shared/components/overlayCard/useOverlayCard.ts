@@ -122,7 +122,7 @@ export const useOverlayCard = (props: OverlayCardProps) => {
     handler: close,
   });
 
-  const childrenProps = useMemo(() => ({ close }), [close]);
+  const childrenProps = useMemo(() => ({ close, open }), [close, open]);
 
   const ref = useMemo(() => mergeRefs([localRef, registerContent]), [localRef, registerContent]);
 

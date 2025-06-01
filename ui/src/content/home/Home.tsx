@@ -10,10 +10,11 @@ import Add from '~/shared/icons/Add.svg?react';
 import { ScienceOutlined, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
 import { Page } from '~/shared/components/page/Page';
 import { Link } from 'wouter';
+import { AuthContext } from '../auth/Context';
 
 export const Home: React.FC = () => {
+  const { user } = useDefinedContext(AuthContext);
   const { connections, addConnection } = useDefinedContext(ConnectionsContext);
-
   const { storeSqliteContent } = useDefinedContext(SqliteContext);
 
   const openDemoDatabase = useCallback(async () => {
@@ -61,19 +62,23 @@ export const Home: React.FC = () => {
             },
           ]
         : []),
-      {
-        hint: 'Save your connections across devices',
-        label: 'Sign up',
-        icon: PersonAddAlt1Outlined,
-        route: routes.signup(),
-      },
-      {
-        label: 'Log in',
-        icon: VpnKeyOutlined,
-        route: routes.login(),
-      },
+      ...(!user
+        ? [
+            {
+              hint: 'Save your connections across devices',
+              label: 'Sign up',
+              icon: PersonAddAlt1Outlined,
+              route: routes.signup(),
+            },
+            {
+              label: 'Log in',
+              icon: VpnKeyOutlined,
+              route: routes.login(),
+            },
+          ]
+        : []),
     ],
-    [connections.length, openDemoDatabase],
+    [connections.length, openDemoDatabase, user],
   );
 
   return (

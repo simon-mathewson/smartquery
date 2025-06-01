@@ -7,8 +7,16 @@ import { ThemeContext } from '../theme/Context';
 import { AddToDesktop } from './addToDesktop/AddToDesktop';
 import { AiContext } from '../ai/Context';
 import { Input } from '~/shared/components/input/Input';
+import { AuthContext } from '../auth/Context';
+import { Button } from '~/shared/components/button/Button';
+import { LogoutOutlined } from '@mui/icons-material';
 
-export const Settings: React.FC = () => {
+export type SettingsProps = {
+  close: () => Promise<void>;
+};
+
+export const Settings: React.FC<SettingsProps> = ({ close }) => {
+  const { logOut, user } = useDefinedContext(AuthContext);
   const { modePreference, setModePreference } = useDefinedContext(ThemeContext);
   const { googleAiApiKey, setGoogleAiApiKey } = useDefinedContext(AiContext);
 
@@ -51,6 +59,18 @@ export const Settings: React.FC = () => {
         />
       </Field>
       <AddToDesktop />
+      {user && (
+        <Button
+          htmlProps={{
+            onClick: () => {
+              void close();
+              void logOut();
+            },
+          }}
+          icon={<LogoutOutlined />}
+          label="Log out"
+        />
+      )}
     </div>
   );
 };

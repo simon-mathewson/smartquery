@@ -3,16 +3,26 @@ import { useRef } from 'react';
 import { Button } from '~/shared/components/button/Button';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { Settings } from './Settings';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { AuthContext } from '../auth/Context';
+import classNames from 'classnames';
 
 export const SettingsOverlay: React.FC = () => {
+  const { user } = useDefinedContext(AuthContext);
+
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   return (
     <>
       <Button
+        align="left"
         color="secondary"
-        htmlProps={{ className: 'sticky bottom-0 left-2 mb-2 mt-auto', ref: triggerRef }}
+        htmlProps={{
+          className: classNames('fixed bottom-2 left-2', { 'w-[208px]': user }),
+          ref: triggerRef,
+        }}
         icon={<SettingsOutlined />}
+        label={user?.email}
       />
       <OverlayCard
         align="center"
@@ -20,7 +30,7 @@ export const SettingsOverlay: React.FC = () => {
         darkenBackground
         triggerRef={triggerRef}
       >
-        {() => <Settings />}
+        {({ close }) => <Settings close={close} />}
       </OverlayCard>
     </>
   );

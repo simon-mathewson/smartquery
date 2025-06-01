@@ -7,7 +7,7 @@ import { useOverlayCard } from './useOverlayCard';
 export type OverlayCardProps = {
   align?: 'left' | 'center' | 'right';
   anchorRef?: React.MutableRefObject<HTMLElement | null>;
-  children: (props: { close: () => Promise<void> }) => React.ReactNode;
+  children: (props: { close: () => Promise<void>; open: () => void }) => React.ReactNode;
   closeOnOutsideClick?: boolean;
   darkenBackground?: boolean;
   htmlProps?: React.HTMLProps<HTMLDivElement>;

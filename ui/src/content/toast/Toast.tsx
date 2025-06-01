@@ -4,30 +4,51 @@ import { Button } from '~/shared/components/button/Button';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ToastContext } from './Context';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { ToastProps } from './useToast';
 
-export type ToastProps = {
-  color?: 'danger' | 'primary' | 'success';
-  htmlProps?: React.HTMLAttributes<HTMLDivElement>;
-  description?: string;
-  id: string;
-  title: string;
-};
+export const Toast: React.FC = () => {
+  const { queue, remove } = useDefinedContext(ToastContext);
 
-export const Toast: React.FC<ToastProps> = (props) => {
-  const { color, description, htmlProps, id, title } = props;
-
-  const toast = useDefinedContext(ToastContext);
+  const [currentToast, setCurrentToast] = useState<ToastProps | null>(null);
 
   const closeRef = useRef<(() => Promise<void>) | null>(null);
+  const openRef = useRef<(() => void) | null>(null);
 
-  useEffectOnce(() => {
-    setTimeout(async () => {
-      await closeRef.current?.();
-      toast.remove(id);
-    }, 5000);
-  });
+  useEffect(() => {
+    const nextToast = queue.at(0);
+
+    if (nextToast === currentToast) {
+      return;
+    }
+
+    if (!nextToast) {
+      if (currentToast) {
+        void closeRef.current!().then(() => {
+          setCurrentToast(null);
+        });
+      }
+      return;
+    }
+
+    if (currentToast) {
+      void closeRef.current!().then(() => {
+        setTimeout(() => {
+          setCurrentToast(nextToast);
+          openRef.current!();
+        }, 0);
+      });
+      return;
+    }
+
+    setCurrentToast(nextToast);
+  }, [currentToast, queue]);
+
+  if (!currentToast) {
+    return null;
+  }
+
+  const { color, description, htmlProps, id, title } = currentToast;
 
   return (
     <OverlayCard
@@ -40,17 +61,16 @@ export const Toast: React.FC<ToastProps> = (props) => {
             'bg-success': color === 'success',
           },
         ),
-        onClick: close,
+        onClick: () => remove(id),
         ...htmlProps,
       }}
       isOpen
-      onClose={() => {
-        toast.remove(id);
-      }}
+      onClose={() => remove(id)}
       position={{ x: 'center', y: 'bottom' }}
     >
-      {({ close }) => {
+      {({ close, open }) => {
         closeRef.current = close;
+        openRef.current = open;
 
         return (
           <>
@@ -58,7 +78,7 @@ export const Toast: React.FC<ToastProps> = (props) => {
               <div className="text-sm font-medium text-white">{title}</div>
               {description && <div className="text-xs text-whiteHover">{description}</div>}
             </div>
-            <Button color="white" htmlProps={{ onClick: close }} icon={<Close />} />
+            <Button color="white" htmlProps={{ onClick: () => remove(id) }} icon={<Close />} />
           </>
         );
       }}

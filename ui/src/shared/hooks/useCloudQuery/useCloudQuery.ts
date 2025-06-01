@@ -1,16 +1,32 @@
-import { useCallback, useMemo, useState } from 'react';
-import { useEffectOnce } from '../useEffectOnce/useEffectOnce';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export const useCloudQuery = <T>(query: () => Promise<T>) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useCloudQuery = <T extends any[] | []>(
+  query: () => Promise<T>,
+  props: { disabled?: boolean; emptyValue?: T },
+) => {
   const [response, setResponse] = useState<T | null>(null);
 
-  useEffectOnce(() => {
+  const emptyValue = useMemo(() => props?.emptyValue ?? ([] as T), [props?.emptyValue]);
+
+  useEffect(() => {
+    if (props.disabled) {
+      setResponse(emptyValue);
+      return;
+    }
+
     query().then(setResponse);
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.disabled]);
 
   const refetch = useCallback(() => {
+    if (props.disabled) {
+      setResponse(emptyValue);
+      return;
+    }
+
     query().then(setResponse);
-  }, [query]);
+  }, [props.disabled, query, emptyValue]);
 
   return useMemo(() => [response, refetch] as const, [response, refetch]);
 };

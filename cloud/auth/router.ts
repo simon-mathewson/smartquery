@@ -7,8 +7,13 @@ import crypto from 'crypto';
 import { encrypt } from './encrypt';
 import { createAuthToken } from './authToken';
 import { deriveKeyEncryptionKeyFromPassword } from './deriveKeyEncryptionKeyFromPassword';
+import { isAuthenticated } from '~/middlewares/isAuthenticated';
 
 export const authRouter = trpc.router({
+  currentUser: trpc.procedure
+    .use(isAuthenticated)
+    .output(z.object({ id: z.string(), email: z.string() }))
+    .query(async ({ ctx: { user } }) => user),
   logIn: trpc.procedure
     .input(
       z.object({
@@ -16,7 +21,6 @@ export const authRouter = trpc.router({
         password: z.string().min(12),
       }),
     )
-    .output(z.object({ id: z.string(), email: z.string() }))
     .mutation(async ({ input, ctx: { prisma, setCookie } }) => {
       const { email, password } = input;
 
@@ -47,12 +51,16 @@ export const authRouter = trpc.router({
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
       });
-
-      return {
-        id: user.id,
-        email: user.email,
-      };
     }),
+  logOut: trpc.procedure.mutation(async ({ ctx: { setCookie } }) => {
+    setCookie('authToken', '', {
+      httpOnly: true,
+      maxAge: 0,
+      path: '/',
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+  }),
   signUp: trpc.procedure
     .input(
       z.object({

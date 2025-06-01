@@ -11,6 +11,7 @@ import { QueriesProvider } from './content/tabs/queries/Provider';
 import { LinkApiProvider } from './content/link/api/Provider';
 import { CloudApiProvider } from './content/cloud/api/Provider';
 import { AuthProvider } from './content/auth/Provider';
+import { SettingsOverlay } from './content/settings/Overlay';
 
 export const App: React.FC<React.PropsWithChildren> = (props) => {
   const { children } = props;
@@ -27,7 +28,10 @@ export const App: React.FC<React.PropsWithChildren> = (props) => {
                     <TabsProvider>
                       <QueriesProvider>
                         <DragAndDropProvider>
-                          <AddToDesktopProvider>{children}</AddToDesktopProvider>
+                          <AddToDesktopProvider>
+                            {children}
+                            <SettingsOverlay />
+                          </AddToDesktopProvider>
                         </DragAndDropProvider>
                       </QueriesProvider>
                     </TabsProvider>

@@ -10,18 +10,16 @@ import { Login } from '~/content/auth/Login/Login';
 
 export const Router: React.FC = () => {
   return (
-    <Route path={routes.root()} nest>
-      <App>
-        <Switch>
-          <Route path={routes.root()} component={Home} />
-          <Route path={routes.addConnection()} component={AddConnectionPage} />
-          <Route path={routes.database()} component={Database} />
-          <Route path={routes.database({ schema: '' })} component={Database} />
-          <Route path={routes.database({ schema: '', database: '' })} component={Database} />
-          <Route path={routes.login()} component={Login} />
-          <Route path={routes.signup()} component={Signup} />
-        </Switch>
-      </App>
-    </Route>
+    <App>
+      <Switch>
+        <Route path={routes.root()} component={Home} />
+        <Route path={routes.addConnection()} component={AddConnectionPage} />
+        <Route path={routes.database()} component={Database} />
+        <Route path={routes.database({ schema: '' })} component={Database} />
+        <Route path={routes.database({ schema: '', database: '' })} component={Database} />
+        <Route path={routes.login()} component={Login} />
+        <Route path={routes.signup()} component={Signup} />
+      </Switch>
+    </App>
   );
 };

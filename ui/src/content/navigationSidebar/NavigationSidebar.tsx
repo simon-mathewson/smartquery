@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TableList } from '../tableList/TableList';
 import { ConnectionsContext } from '../connections/Context';
-import { SettingsOverlay } from '../settings/Overlay';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { Connections } from '../connections/Connections';
 
@@ -12,7 +11,7 @@ export const NavigationSidebar: React.FC = () => {
   const connectionsTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   return (
-    <div className="sticky top-0 flex h-screen grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-2 px-2 pt-2">
+    <div className="sticky top-0 flex h-[calc(100vh-52px)] grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-2 px-2 pt-2">
       <button
         className="grid w-full cursor-pointer select-none gap-1 rounded-lg p-2 text-left text-sm hover:bg-secondaryHighlight"
         ref={connectionsTriggerRef}
@@ -43,8 +42,6 @@ export const NavigationSidebar: React.FC = () => {
       </OverlayCard>
 
       {activeConnection && <TableList />}
-
-      <SettingsOverlay />
     </div>
   );
 };

@@ -6,12 +6,9 @@ import { Toast } from './Toast';
 export const ToastProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const context = useToast();
 
-  const { queue } = context;
-  const currentToast = queue.at(0);
-
   return (
     <ToastContext.Provider value={context}>
-      {currentToast && <Toast {...currentToast} />}
+      <Toast />
       {children}
     </ToastContext.Provider>
   );
