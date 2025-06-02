@@ -38,10 +38,15 @@ export const useConnections = (props: UseConnectionsProps) => {
     undefined,
     [
       (storedConnections) =>
-        storedConnections.map((connection) => ({
-          ...connection,
-          storageLocation: connection.storageLocation ?? 'local',
-        })),
+        storedConnections.map(
+          (connection) =>
+            ({
+              ...connection,
+              engine:
+                (connection.engine as string) === 'postgresql' ? 'postgres' : connection.engine,
+              storageLocation: connection.storageLocation ?? 'local',
+            }) as Connection,
+        ),
     ],
   );
 

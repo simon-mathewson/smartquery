@@ -6,7 +6,7 @@ export const sqlParser = new NodeSqlParser.Parser();
 export const getParserOptions = (engine: Connection['engine']) => ({
   database: {
     mysql: 'mysql',
-    postgres: 'postgres',
+    postgres: 'postgresql',
     sqlite: 'sqlite',
   }[engine],
 });
