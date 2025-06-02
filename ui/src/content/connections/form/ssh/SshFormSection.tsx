@@ -100,23 +100,25 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
               formValues.ssh.credentialType === 'privateKey' ? 'Private key' : 'Password'
             } storage`}
           >
-            <ButtonSelect<'alwaysAsk' | 'localStorage'>
-              equalWidth
-              fullWidth
-              onChange={(value) => setFormValue('ssh.credentialStorage', value)}
-              options={[
-                {
-                  button: { label: 'None / Keychain' },
-                  value: 'alwaysAsk',
-                },
-                {
-                  button: { label: 'Browser storage' },
-                  value: 'localStorage',
-                },
-              ]}
-              required
-              value={formValues.ssh.credentialStorage}
-            />
+            {formValues.ssh.credentialStorage && (
+              <ButtonSelect<'alwaysAsk' | 'localStorage'>
+                equalWidth
+                fullWidth
+                onChange={(value) => setFormValue('ssh.credentialStorage', value)}
+                options={[
+                  {
+                    button: { label: 'None / Keychain' },
+                    value: 'alwaysAsk',
+                  },
+                  {
+                    button: { label: 'Browser storage' },
+                    value: 'localStorage',
+                  },
+                ]}
+                required
+                value={formValues.ssh.credentialStorage}
+              />
+            )}
           </Field>
           <Field label="User">
             <Input

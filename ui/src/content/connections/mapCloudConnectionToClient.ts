@@ -1,5 +1,5 @@
 import type { inferRouterOutputs } from '@trpc/server';
-import type { Connection } from '~/shared/types';
+import type { Connection } from '@/types/connection';
 import type { AppRouter } from '../../../../cloud/router';
 
 type CloudConnection = inferRouterOutputs<AppRouter>['connections']['list'][number];

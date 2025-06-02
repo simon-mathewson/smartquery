@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import type { ButtonProps } from '../button/Button';
+import type { ButtonButtonProps, ButtonProps } from '../button/Button';
 import { Button } from '../button/Button';
 import type { XOR } from 'ts-essentials';
 import { useContext } from 'react';
@@ -8,7 +8,7 @@ import { FieldContext } from '../field/FieldContext';
 export type ButtonSelectProps<T> = {
   equalWidth?: boolean;
   fullWidth?: boolean;
-  options: Array<{ button: ButtonProps; value: T }>;
+  options: Array<{ button: ButtonButtonProps; value: T }>;
   selectedButton?: ButtonProps;
 } & XOR<
   {
@@ -49,7 +49,9 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
           variant="highlighted"
           {...button}
           {...(value === selectedValue ? selectedButton : {})}
+          element="button"
           htmlProps={{
+            ...button.htmlProps,
             'aria-checked': value === selectedValue,
             className: classNames({ 'grow basis-0': equalWidth, 'w-full': fullWidth }),
             onClick: () => {

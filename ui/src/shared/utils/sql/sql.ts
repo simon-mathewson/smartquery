@@ -1,6 +1,6 @@
-import type { Connection } from '~/shared/types';
+import type { Engine } from '@/types/connection';
 
-export const addQuotes = (engine: Connection['engine'], value: string) => {
+export const addQuotes = (engine: Engine, value: string) => {
   if (engine === 'mysql') return `\`${value}\``;
   return `"${value}"`;
 };

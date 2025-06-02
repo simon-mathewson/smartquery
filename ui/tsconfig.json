@@ -21,7 +21,8 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@/*": ["../shared/*"]
     }
   },
   "include": [
@@ -31,7 +32,8 @@
     "./playwright/**/*.ts", // Be more specific if playright only contains .ts files
     "./src/**/*.ts", // Only include .ts files within src
     "./src/**/*.tsx", // Include .tsx files for react components
-    "./tailwind.config.ts"
+    "./tailwind.config.ts",
+    "../shared/**/*.ts"
   ],
   "exclude": [
     "../cloud", // Explicitly exclude the cloud directory

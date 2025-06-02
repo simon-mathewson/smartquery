@@ -1,4 +1,4 @@
-import type { Connection } from '~/shared/types';
+import type { Connection } from '@/types/connection';
 import { splitSqlStatements } from '~/shared/utils/sql/sql';
 import { getAstForSql } from '~/shared/utils/sqlParser/getAstForSql';
 import type { Select } from '../types';

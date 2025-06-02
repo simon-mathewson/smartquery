@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { parseQuery } from './parse';
-import type { Connection } from '~/shared/types';
+import type { Connection } from '@/types/connection';
 
 describe('Query parsing utils', () => {
   const mysqlConnection: Connection = {

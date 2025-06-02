@@ -142,23 +142,6 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             )
           }
         />
-        <Field label="Storage location">
-          <ButtonSelect<FormValues['storageLocation'] | null>
-            equalWidth
-            fullWidth
-            onChange={(value) => {
-              setFormValue('storageLocation', value);
-            }}
-            options={(['cloud', 'local'] as const).map((storageLocation, index) => ({
-              button: {
-                label: storageLocationLabels[storageLocation],
-                htmlProps: { autoFocus: index === 0 },
-              },
-              value: storageLocation,
-            }))}
-            value={formValues.storageLocation}
-          />
-        </Field>
         <Field label="Engine">
           <ButtonSelect<FormValues['engine'] | null>
             equalWidth
@@ -180,6 +163,26 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         {formValues.type === 'remote' && (
           <LinkSetup databaseLabel={engineLabels[formValues.engine]} />
         )}
+        <Field label="Storage location">
+          <ButtonSelect<FormValues['storageLocation'] | null>
+            equalWidth
+            fullWidth
+            onChange={(value) => {
+              setFormValue('storageLocation', value);
+            }}
+            options={(['cloud', 'local'] as const).map((storageLocation, index) => ({
+              button: {
+                label: storageLocationLabels[storageLocation],
+                htmlProps: {
+                  autoFocus: index === 0,
+                },
+              },
+              value: storageLocation,
+            }))}
+            required
+            value={formValues.storageLocation}
+          />
+        </Field>
         <Field label="Name">
           <Input
             htmlProps={{ value: formValues.name }}
@@ -223,23 +226,25 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
               </Field>
             </div>
             <Field label="Password storage">
-              <ButtonSelect<'alwaysAsk' | 'localStorage'>
-                equalWidth
-                fullWidth
-                onChange={(value) => setFormValue('credentialStorage', value)}
-                options={[
-                  {
-                    button: { label: 'None / Keychain' },
-                    value: 'alwaysAsk',
-                  },
-                  {
-                    button: { label: 'Browser storage' },
-                    value: 'localStorage',
-                  },
-                ]}
-                required
-                value={formValues.credentialStorage}
-              />
+              {formValues.credentialStorage && (
+                <ButtonSelect<'alwaysAsk' | 'localStorage'>
+                  equalWidth
+                  fullWidth
+                  onChange={(value) => setFormValue('credentialStorage', value)}
+                  options={[
+                    {
+                      button: { label: 'None / Keychain' },
+                      value: 'alwaysAsk',
+                    },
+                    {
+                      button: { label: 'Browser storage' },
+                      value: 'localStorage',
+                    },
+                  ]}
+                  required
+                  value={formValues.credentialStorage}
+                />
+              )}
             </Field>
             <Field label="User">
               <Input

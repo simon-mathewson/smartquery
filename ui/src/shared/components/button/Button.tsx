@@ -6,10 +6,9 @@ import type { BrowserLocationHook } from 'wouter/use-browser-location';
 import type { LinkProps } from 'wouter';
 import { Link } from 'wouter';
 
-export type ButtonProps = {
+type BaseProps = {
   align?: 'left' | 'center' | 'right';
   color?: Color;
-  htmlProps?: React.HTMLProps<HTMLButtonElement>;
   icon?: React.ReactNode;
   label?: string;
   monospace?: boolean;
@@ -17,24 +16,29 @@ export type ButtonProps = {
   suffix?: React.ReactNode;
   textSuffix?: string;
   variant?: 'default' | 'filled' | 'highlighted';
-} & (
-  | {
-      element: 'a';
-      htmlProps?: React.HTMLProps<HTMLAnchorElement>;
-    }
-  | {
-      element?: 'button';
-      htmlProps?: React.HTMLProps<HTMLButtonElement>;
-    }
-  | {
-      element: 'div';
-      htmlProps?: React.HTMLProps<HTMLDivElement>;
-    }
-  | {
-      element: 'link';
-      htmlProps?: React.HTMLProps<LinkProps<BrowserLocationHook>>;
-    }
-);
+};
+
+export type ButtonButtonProps = BaseProps & {
+  element?: 'button';
+  htmlProps?: React.HTMLProps<HTMLButtonElement>;
+};
+
+export type ButtonAnchorProps = BaseProps & {
+  element: 'a';
+  htmlProps?: React.HTMLProps<HTMLAnchorElement>;
+};
+
+export type ButtonDivProps = BaseProps & {
+  element: 'div';
+  htmlProps?: React.HTMLProps<HTMLDivElement>;
+};
+
+export type ButtonLinkProps = BaseProps & {
+  element: 'link';
+  htmlProps?: React.HTMLProps<LinkProps<BrowserLocationHook>>;
+};
+
+export type ButtonProps = ButtonButtonProps | ButtonAnchorProps | ButtonDivProps | ButtonLinkProps;
 
 export const Button: React.FC<ButtonProps> = (props) => {
   const {

@@ -8,6 +8,9 @@
     "module": "ES2022",
     "moduleResolution": "Node",
     "strict": true,
-    "target": "ES2021"
+    "target": "ES2021",
+    "paths": {
+      "@/*": ["../shared/*"]
+    }
   }
 }

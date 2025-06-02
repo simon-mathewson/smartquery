@@ -14,7 +14,7 @@ export const mockStore = async (page: Page) => {
     window.navigatorCredentialsStoreCalls = [];
     navigator.credentials.store = function (credential: PasswordCredential) {
       window.navigatorCredentialsStoreCalls.push(credential);
-      return Promise.resolve(credential);
+      return Promise.resolve();
     };
 
     window.PasswordCredential = class {

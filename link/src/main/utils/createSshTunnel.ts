@@ -1,10 +1,10 @@
 import { SSHConnection } from 'node-ssh-forward';
 import findFreePorts from 'find-free-ports';
 
-import type { Connection } from '../types';
+import type { RemoteConnection } from '@/types/connection';
 import assert from 'assert';
 
-export const createSshTunnel = async (connection: Connection) => {
+export const createSshTunnel = async (connection: RemoteConnection) => {
   const { host, port, ssh } = connection;
 
   assert(ssh);
@@ -15,8 +15,8 @@ export const createSshTunnel = async (connection: Connection) => {
   const sshTunnel = new SSHConnection({
     endHost: ssh.host,
     endPort: ssh.port,
-    password: ssh.password,
-    privateKey: ssh.privateKey,
+    password: ssh.password ?? undefined,
+    privateKey: ssh.privateKey ?? undefined,
     username: ssh.user,
   });
 

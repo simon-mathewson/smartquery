@@ -1,4 +1,4 @@
-import type { Connection } from '~/shared/types';
+import type { Connection } from '@/types/connection';
 import { castArray } from 'lodash';
 import { getParserOptions, sqlParser } from './utils';
 

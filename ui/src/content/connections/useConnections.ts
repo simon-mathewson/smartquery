@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import type { ActiveConnection, Connection, Database } from '~/shared/types';
+import type { ActiveConnection, Database } from '~/shared/types';
+import type { Connection } from '@/types/connection';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { useLocation, useRoute } from 'wouter';
 import { routes } from '~/router/routes';

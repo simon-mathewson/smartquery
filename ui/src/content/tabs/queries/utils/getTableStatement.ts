@@ -1,4 +1,4 @@
-import type { Connection } from '~/shared/types';
+import type { Connection } from '@/types/connection';
 import type { Select } from '../types';
 
 export const getTableStatement = (props: {

@@ -38,6 +38,7 @@ export const Home: React.FC = () => {
       engine: 'sqlite',
       id: sqliteDemoConnectionId,
       name: 'Demo',
+      storageLocation: 'local',
       type: 'file',
     });
 

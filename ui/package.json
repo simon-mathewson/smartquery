@@ -43,7 +43,7 @@
     "uuid": "^9.0.1",
     "vite-plugin-svgr": "^4.2.0",
     "wouter": "^3.3.5",
-    "zod": "^3.23.8"
+    "zod": "3.23.8"
   },
   "devDependencies": {
     "@playwright/experimental-ct-react": "1.47.2",

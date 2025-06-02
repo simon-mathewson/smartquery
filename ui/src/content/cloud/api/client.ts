@@ -5,7 +5,7 @@ import type { AppRouter } from '../../../../../cloud/router';
 export const cloudApiClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      fetch: (input, init) =>
+      fetch: (input: RequestInfo | URL, init?: RequestInit) =>
         fetch(input, {
           ...init,
           // Sends cookies cross-origin

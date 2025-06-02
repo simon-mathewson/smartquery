@@ -1,6 +1,7 @@
 import { spy } from 'tinyspy';
 import type { Connections } from './useConnections';
-import type { ActiveConnection, Connection, FileConnection } from '~/shared/types';
+import type { ActiveConnection } from '~/shared/types';
+import type { Connection, FileConnection } from '@/types/connection';
 
 export const mysqlConnectionMock = {
   credentialStorage: 'alwaysAsk',

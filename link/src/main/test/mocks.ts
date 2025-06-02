@@ -1,4 +1,4 @@
-import type { Connection } from '../types';
+import type { RemoteConnection } from '@/types/connection';
 
 export const mocks = {
   connections: {
@@ -11,8 +11,10 @@ export const mocks = {
       password: 'password',
       port: Number(import.meta.env.VITE_MYSQL_PORT),
       ssh: null,
+      storageLocation: 'local',
+      type: 'remote',
       user: 'root',
-    } satisfies Connection,
+    } satisfies RemoteConnection,
     postgres: {
       database: 'postgres_db',
       host: 'localhost',
@@ -22,7 +24,9 @@ export const mocks = {
       password: 'password',
       port: Number(import.meta.env.VITE_POSTGRESQL_PORT),
       ssh: null,
+      storageLocation: 'local',
+      type: 'remote',
       user: 'postgres',
-    } satisfies Connection,
+    } satisfies RemoteConnection,
   },
 } as const;

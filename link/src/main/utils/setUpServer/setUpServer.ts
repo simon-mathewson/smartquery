@@ -19,6 +19,4 @@ export const setUpServer = (props: { createContext: () => Context }) => {
 
   server.listen(parseInt(import.meta.env.VITE_PORT, 10));
   console.info(`Link listening on port ${import.meta.env.VITE_PORT}`);
-
-  return server.server;
 };

@@ -1,7 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { MySqlClient, PostgresClient } from '../../../prisma';
 import { trpcClient } from '../test/utils/getTrpcClient';
-import type { Context } from '../utils/setUpServer/context';
 import { initialContext } from '../utils/setUpServer/context';
 import { setUpServer } from '../utils/setUpServer/setUpServer';
 import { cloneDeep } from 'lodash';
@@ -9,7 +8,7 @@ import { mocks } from '../test/mocks';
 import { seed } from '../../../seed/seed';
 
 describe('router', () => {
-  let context: Context | null = null;
+  let context = initialContext;
 
   beforeAll(() => {
     setUpServer({ createContext: () => context });

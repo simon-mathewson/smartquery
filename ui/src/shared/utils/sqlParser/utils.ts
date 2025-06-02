@@ -1,5 +1,5 @@
 import NodeSqlParser from 'node-sql-parser';
-import type { Connection } from '~/shared/types';
+import type { Connection } from '@/types/connection';
 
 export const sqlParser = new NodeSqlParser.Parser();
 

@@ -1,5 +1,5 @@
 import type NodeSqlParser from 'node-sql-parser';
-import type { Connection } from '~/shared/types';
+import type { Connection } from '@/types/connection';
 import type { Column } from '~/shared/types';
 
 export const getWhere = (props: {
