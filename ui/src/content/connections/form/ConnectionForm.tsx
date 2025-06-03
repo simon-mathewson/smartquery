@@ -189,6 +189,37 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             value={formValues.storageLocation}
           />
         </Field>
+        {formValues.type === 'remote' && (
+          <>
+            <Field label="Password storage">
+              <ButtonSelect<'alwaysAsk' | 'encrypted' | 'plain'>
+                equalWidth
+                fullWidth
+                onChange={(value) => setFormValue('credentialStorage', value)}
+                options={[
+                  ...(formValues.storageLocation === 'cloud'
+                    ? ([
+                        {
+                          button: { label: 'Encrypted' },
+                          value: 'encrypted',
+                        },
+                      ] as const)
+                    : []),
+                  {
+                    button: { label: 'Always ask' },
+                    value: 'alwaysAsk',
+                  },
+                  {
+                    button: { label: 'Plain' },
+                    value: 'plain',
+                  },
+                ]}
+                required
+                value={formValues.credentialStorage}
+              />
+            </Field>
+          </>
+        )}
         <Field label="Name">
           <Input
             htmlProps={{ value: formValues.name }}
@@ -231,34 +262,13 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 />
               </Field>
             </div>
-            <Field label="Password storage">
-              {formValues.credentialStorage && (
-                <ButtonSelect<'alwaysAsk' | 'localStorage'>
-                  equalWidth
-                  fullWidth
-                  onChange={(value) => setFormValue('credentialStorage', value)}
-                  options={[
-                    {
-                      button: { label: 'None / Keychain' },
-                      value: 'alwaysAsk',
-                    },
-                    {
-                      button: { label: 'Browser storage' },
-                      value: 'localStorage',
-                    },
-                  ]}
-                  required
-                  value={formValues.credentialStorage}
-                />
-              )}
-            </Field>
             <Field label="User">
               <Input
                 htmlProps={{ value: formValues.user }}
                 onChange={(value) => setFormValue('user', value)}
               />
             </Field>
-            {formValues.credentialStorage === 'localStorage' && (
+            {formValues.credentialStorage === 'plain' && (
               <Field label="Password">
                 <CredentialInput
                   htmlProps={{ value: formValues.password }}

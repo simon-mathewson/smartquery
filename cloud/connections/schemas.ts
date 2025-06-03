@@ -2,8 +2,8 @@ import { fileConnectionSchema, remoteConnectionSchema } from '@/types/connection
 import { z } from 'zod';
 
 export const createConnectionInputSchema = z.discriminatedUnion('type', [
-  remoteConnectionSchema.omit({ credentialStorage: true, id: true, ssh: true }).extend({
-    ssh: remoteConnectionSchema.shape.ssh.unwrap().omit({ credentialStorage: true }).nullable(),
+  remoteConnectionSchema.omit({ id: true, ssh: true }).extend({
+    ssh: remoteConnectionSchema.shape.ssh.unwrap().nullable(),
     type: z.literal('remote'),
   }),
   fileConnectionSchema.omit({ id: true }).extend({
@@ -14,8 +14,8 @@ export const createConnectionInputSchema = z.discriminatedUnion('type', [
 export type CreateConnectionInput = z.infer<typeof createConnectionInputSchema>;
 
 export const updateConnectionInputSchema = z.discriminatedUnion('type', [
-  remoteConnectionSchema.omit({ credentialStorage: true, ssh: true }).extend({
-    ssh: remoteConnectionSchema.shape.ssh.unwrap().omit({ credentialStorage: true }).nullable(),
+  remoteConnectionSchema.omit({ ssh: true }).extend({
+    ssh: remoteConnectionSchema.shape.ssh.unwrap().nullable(),
     type: z.literal('remote'),
   }),
   fileConnectionSchema.extend({

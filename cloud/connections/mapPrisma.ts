@@ -9,6 +9,7 @@ export const mapPrismaToConnection = (c: DbConnection) => {
       ? { ...c, engine: c.engine, storageLocation: 'cloud', type: 'file' }
       : {
           ...c,
+          credentialStorage: c.encryptCredentials ? 'encrypted' : 'plain',
           engine: c.engine,
           host: c.host!,
           port: c.port!,
@@ -34,10 +35,10 @@ export const mapConnectionToPrisma = (
   c: CreateConnectionInput,
 ): Prisma.ConnectionCreateWithoutUserInput => ({
   ...omit(c, 'id', 'ssh', 'storageLocation', 'type', 'user'),
-  encryptCredentials: false,
   ...(c.type === 'remote'
     ? {
         dbUser: c.user,
+        encryptCredentials: c.credentialStorage === 'encrypted',
         ...(c.ssh
           ? {
               sshHost: c.ssh.host,
@@ -48,5 +49,7 @@ export const mapConnectionToPrisma = (
             }
           : null),
       }
-    : {}),
+    : {
+        encryptCredentials: false,
+      }),
 });

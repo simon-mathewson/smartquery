@@ -19,7 +19,7 @@ export const mysqlConnectionMock = {
 } satisfies Connection;
 
 export const postgresConnectionMock = {
-  credentialStorage: 'localStorage',
+  credentialStorage: 'plain',
   database: 'postgres',
   engine: 'postgres',
   host: '127.0.0.1',
@@ -29,7 +29,6 @@ export const postgresConnectionMock = {
   port: 5248,
   schema: 'public',
   ssh: {
-    credentialStorage: 'alwaysAsk',
     host: 'localhost',
     password: null,
     port: 22,

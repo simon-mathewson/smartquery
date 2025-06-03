@@ -8,9 +8,11 @@ export const baseConnectionSchema = z.object({
 });
 
 export const remoteConnectionSchema = baseConnectionSchema.extend({
-  credentialStorage: z
-    .union([z.literal("alwaysAsk"), z.literal("localStorage")])
-    .optional(),
+  credentialStorage: z.union([
+    z.literal("alwaysAsk"),
+    z.literal("encrypted"),
+    z.literal("plain"),
+  ]),
   engine: z.union([z.literal("mysql"), z.literal("postgres")]),
   host: z.string().trim().min(1),
   password: z.string().nullable(),
@@ -18,9 +20,6 @@ export const remoteConnectionSchema = baseConnectionSchema.extend({
   schema: z.string().trim().min(1).optional(),
   ssh: z
     .object({
-      credentialStorage: z
-        .union([z.literal("alwaysAsk"), z.literal("localStorage")])
-        .optional(),
       host: z.string().trim().min(1),
       password: z.string().nullable().optional(),
       port: z.number(),

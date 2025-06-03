@@ -39,7 +39,7 @@ test.describe('DatabaseList', () => {
       activeConnection: {
         ...postgresConnectionMock,
         clientId: '2',
-        credentialStorage: 'localStorage',
+        credentialStorage: 'plain',
       } satisfies ActiveConnection,
       activeConnectionDatabases: [{ name: 'postgres', schemas: ['public', 'information_schema'] }],
     } satisfies Connections;

@@ -151,7 +151,7 @@ test.describe('ConnectionForm', () => {
     expect(props.connectionsContext.addConnection.calls).toEqual([
       [
         {
-          credentialStorage: 'localStorage',
+          credentialStorage: 'plain',
           database: 'db',
           engine: 'postgres',
           host: 'localhost',
@@ -191,7 +191,7 @@ test.describe('ConnectionForm', () => {
       [
         '2',
         {
-          credentialStorage: 'localStorage',
+          credentialStorage: 'plain',
           database: 'db',
           engine: 'postgres',
           host: 'localhost',

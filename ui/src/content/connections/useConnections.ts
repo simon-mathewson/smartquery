@@ -14,7 +14,7 @@ import { SqliteContext } from '../sqlite/Context';
 import { assert } from 'ts-essentials';
 import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { CloudApiContext } from '../cloud/api/Context';
-import { sortBy } from 'lodash';
+import { omit, sortBy } from 'lodash';
 import { AuthContext } from '../auth/Context';
 
 export type Connections = ReturnType<typeof useConnections>;
@@ -39,12 +39,18 @@ export const useConnections = (props: UseConnectionsProps) => {
     [
       (storedConnections) =>
         storedConnections.map(
-          (connection) =>
+          (c) =>
             ({
-              ...connection,
-              engine:
-                (connection.engine as string) === 'postgresql' ? 'postgres' : connection.engine,
-              storageLocation: connection.storageLocation ?? 'local',
+              ...c,
+              engine: (c.engine as string) === 'postgresql' ? 'postgres' : c.engine,
+              storageLocation: c.storageLocation ?? 'local',
+              ...(c.type === 'remote' && {
+                credentialStorage:
+                  (c.credentialStorage as string) === 'localStorage'
+                    ? 'plain'
+                    : c.credentialStorage,
+                ssh: c.ssh ? omit(c.ssh, 'credentialStorage') : null,
+              }),
             }) as Connection,
         ),
     ],

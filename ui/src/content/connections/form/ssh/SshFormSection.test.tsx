@@ -7,8 +7,8 @@ const getProps = () =>
   ({
     setFormValue: spy(),
     formValues: {
+      credentialStorage: 'plain',
       ssh: {
-        credentialStorage: 'alwaysAsk',
         credentialType: 'password',
         host: 'localhost',
         password: 'password',
@@ -23,7 +23,9 @@ test.describe('SshFormSection', () => {
   test('allows toggling SSH', async ({ mount }) => {
     const props = getProps();
 
-    const $ = await mount(<SshFormSection {...props} formValues={{ ssh: null }} />);
+    const $ = await mount(
+      <SshFormSection {...props} formValues={{ ssh: null, credentialStorage: 'plain' }} />,
+    );
 
     const toggle = $.getByRole('radio', { name: 'Connect via SSH' });
 
@@ -56,7 +58,9 @@ test.describe('SshFormSection', () => {
   });
 
   test('controls should be hidden if SSH is disabled', async ({ mount }) => {
-    const $ = await mount(<SshFormSection {...getProps()} formValues={{ ssh: null }} />);
+    const $ = await mount(
+      <SshFormSection {...getProps()} formValues={{ ssh: null, credentialStorage: 'plain' }} />,
+    );
 
     await expect($.getByRole('textbox', { name: 'Host' })).not.toBeAttached();
 
@@ -110,12 +114,6 @@ test.describe('SshFormSection', () => {
 
     expect(props.setFormValue.calls.slice(-1)).toEqual([['ssh.credentialType', 'privateKey']]);
 
-    await $.getByRole('radiogroup', { name: 'Password storage' })
-      .getByRole('radio', { name: 'Browser storage' })
-      .click();
-
-    expect(props.setFormValue.calls.slice(-1)).toEqual([['ssh.credentialStorage', 'localStorage']]);
-
     await $.getByRole('textbox', { name: 'User' }).fill('user');
 
     expect(props.setFormValue.calls.slice(-1)).toEqual([['ssh.user', 'user']]);
@@ -132,7 +130,7 @@ test.describe('SshFormSection', () => {
     await $.update(
       <SshFormSection
         {...props}
-        formValues={{ ssh: { ...props.formValues.ssh, credentialStorage: 'localStorage' } }}
+        formValues={{ ssh: { ...props.formValues.ssh }, credentialStorage: 'plain' }}
       />,
     );
 
@@ -148,9 +146,9 @@ test.describe('SshFormSection', () => {
         formValues={{
           ssh: {
             ...props.formValues.ssh,
-            credentialStorage: 'localStorage',
             credentialType: 'privateKey',
           },
+          credentialStorage: 'plain',
         }}
       />,
     );

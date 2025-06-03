@@ -81,9 +81,8 @@ test.describe('SignInModal', () => {
           ...getSignInModalStoryProps().signInModalProps.input,
           connection: {
             ...getSignInModalStoryProps().signInModalProps.input.connection,
-            credentialStorage: 'localStorage',
+            credentialStorage: 'plain',
             ssh: {
-              credentialStorage: 'alwaysAsk',
               host: 'sshhost',
               password: null,
               port: 2345,
@@ -138,9 +137,8 @@ test.describe('SignInModal', () => {
           ...getSignInModalStoryProps().signInModalProps.input,
           connection: {
             ...getSignInModalStoryProps().signInModalProps.input.connection,
-            credentialStorage: 'localStorage',
+            credentialStorage: 'plain',
             ssh: {
-              credentialStorage: 'alwaysAsk',
               host: 'sshhost',
               port: 2345,
               privateKey: null,
@@ -198,7 +196,6 @@ test.describe('SignInModal', () => {
             ...getSignInModalStoryProps().signInModalProps.input.connection,
             password: null,
             ssh: {
-              credentialStorage: 'alwaysAsk',
               host: 'sshhost',
               password: null,
               port: 2345,

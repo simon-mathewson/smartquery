@@ -47,13 +47,11 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
         await onSignIn({
           password: connection.credentialStorage === 'alwaysAsk' ? password : undefined,
           sshPassword:
-            connection.ssh?.credentialStorage === 'alwaysAsk' &&
-            connection.ssh?.password !== undefined
+            connection.credentialStorage === 'alwaysAsk' && connection.ssh?.password !== undefined
               ? sshPassword
               : undefined,
           sshPrivateKey:
-            connection.ssh?.credentialStorage === 'alwaysAsk' &&
-            connection.ssh?.privateKey !== undefined
+            connection.credentialStorage === 'alwaysAsk' && connection.ssh?.privateKey !== undefined
               ? sshPrivateKey
               : undefined,
         });
@@ -115,7 +113,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
             </fieldset>
           </form>
         )}
-        {connection.ssh?.credentialStorage === 'alwaysAsk' && (
+        {connection.credentialStorage === 'alwaysAsk' && connection.ssh && (
           <form onSubmit={onSubmit}>
             <fieldset className="flex flex-col gap-2" disabled={isConnecting}>
               <Field label="SSH User">

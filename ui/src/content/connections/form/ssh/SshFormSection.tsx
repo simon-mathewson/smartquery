@@ -9,7 +9,7 @@ import { defaultSshPort } from '../constants';
 import classNames from 'classnames';
 
 export type SshFormSectionProps = {
-  formValues: Pick<Extract<FormValues, { type: 'remote' }>, 'ssh'>;
+  formValues: Pick<Extract<FormValues, { type: 'remote' }>, 'credentialStorage' | 'ssh'>;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
   setFormValue: (key: string, value: unknown) => void;
 };
@@ -18,11 +18,9 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
   const { formValues, htmlProps, setFormValue } = props;
 
   const showPasswordField =
-    formValues.ssh?.credentialStorage === 'localStorage' &&
-    formValues.ssh?.credentialType === 'password';
+    formValues.credentialStorage === 'plain' && formValues.ssh?.credentialType === 'password';
   const showPrivateKeyField =
-    formValues.ssh?.credentialStorage === 'localStorage' &&
-    formValues.ssh?.credentialType === 'privateKey';
+    formValues.credentialStorage === 'plain' && formValues.ssh?.credentialType === 'privateKey';
 
   return (
     <div className={classNames('grid gap-2', htmlProps?.className)}>
@@ -95,31 +93,6 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
               value={formValues.ssh.credentialType}
             />
           </Field>
-          <Field
-            label={`${
-              formValues.ssh.credentialType === 'privateKey' ? 'Private key' : 'Password'
-            } storage`}
-          >
-            {formValues.ssh.credentialStorage && (
-              <ButtonSelect<'alwaysAsk' | 'localStorage'>
-                equalWidth
-                fullWidth
-                onChange={(value) => setFormValue('ssh.credentialStorage', value)}
-                options={[
-                  {
-                    button: { label: 'None / Keychain' },
-                    value: 'alwaysAsk',
-                  },
-                  {
-                    button: { label: 'Browser storage' },
-                    value: 'localStorage',
-                  },
-                ]}
-                required
-                value={formValues.ssh.credentialStorage}
-              />
-            )}
-          </Field>
           <Field label="User">
             <Input
               htmlProps={{ value: formValues.ssh.user }}
@@ -136,7 +109,7 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
                 })}
                 htmlProps={{
                   value:
-                    formValues.ssh.credentialStorage === 'alwaysAsk' ? '' : formValues.ssh.password,
+                    formValues.credentialStorage === 'alwaysAsk' ? '' : formValues.ssh.password,
                 }}
               />
             </Field>

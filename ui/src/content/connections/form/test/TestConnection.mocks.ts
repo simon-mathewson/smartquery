@@ -24,7 +24,7 @@ export const getProps = () =>
 export const getValidFormValues = () =>
   ({
     ...getProps().formValues,
-    credentialStorage: 'localStorage',
+    credentialStorage: 'plain',
     database: 'test',
     engine: 'postgres',
     host: 'localhost',
@@ -49,7 +49,7 @@ export const getStoryProps = () =>
   }) satisfies TestConnectionStoryProps;
 
 export const expectedConnectInput = {
-  credentialStorage: 'localStorage',
+  credentialStorage: 'plain',
   database: 'test',
   engine: 'postgres',
   host: 'localhost',
