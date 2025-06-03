@@ -19,13 +19,14 @@ export const useCloudQuery = <T extends any[] | []>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.disabled]);
 
-  const refetch = useCallback(() => {
+  const refetch = useCallback(async () => {
     if (props.disabled) {
       setResponse(emptyValue);
       return;
     }
 
-    query().then(setResponse);
+    const response = await query();
+    setResponse(response);
   }, [props.disabled, query, emptyValue]);
 
   return useMemo(() => [response, refetch] as const, [response, refetch]);

@@ -1,7 +1,6 @@
 {
   "name": "dabase-cloud",
   "private": true,
-  "type": "module",
   "scripts": {
     "build": "esbuild main.ts --bundle --packages=external --platform=node --format=esm --outdir=dist --sourcemap",
     "dev": "NODE_ENV=development pnpm dotenv-flow -- tsx watch main",
@@ -18,8 +17,9 @@
     "cors": "^2.8.5",
     "express": "^5.0.0",
     "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "superjson": "1.12.4",
-    "zod": "^3.24.4"
+    "zod": "3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
@@ -27,6 +27,7 @@
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/lodash": "^4.17.17",
     "@types/node": "^22.13.5",
     "dotenv-flow-cli": "^1.1.1",
     "esbuild": "^0.17.10",

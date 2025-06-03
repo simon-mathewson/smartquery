@@ -15,7 +15,6 @@ import { assert } from 'ts-essentials';
 import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { CloudApiContext } from '../cloud/api/Context';
 import { sortBy } from 'lodash';
-import { mapCloudConnectionToClient } from './mapCloudConnectionToClient';
 import { AuthContext } from '../auth/Context';
 
 export type Connections = ReturnType<typeof useConnections>;
@@ -51,16 +50,15 @@ export const useConnections = (props: UseConnectionsProps) => {
     ],
   );
 
-  const [cloudConnections] = useCloudQuery(() => cloudApi.connections.list.query(), {
-    disabled: !user,
-  });
+  const [cloudConnections, refetchCloudConnections] = useCloudQuery(
+    () => cloudApi.connections.list.query(),
+    {
+      disabled: !user,
+    },
+  );
 
   const connections = useMemo(
-    () =>
-      sortBy(
-        [...localConnections, ...(cloudConnections?.map(mapCloudConnectionToClient) ?? [])],
-        (c) => c.name.toLowerCase(),
-      ),
+    () => sortBy([...localConnections, ...(cloudConnections ?? [])], (c) => c.name.toLowerCase()),
     [localConnections, cloudConnections],
   );
 
@@ -91,17 +89,68 @@ export const useConnections = (props: UseConnectionsProps) => {
   const [activeConnectionDatabases, setActiveConnectionDatabases] = useState<Database[]>([]);
 
   const addConnection = useCallback(
-    (connection: Connection) => {
-      setLocalConnections([...localConnections, connection]);
+    async (connection: Connection, onSuccess?: () => void) => {
+      try {
+        if (connection.storageLocation === 'local') {
+          setLocalConnections([...localConnections, connection]);
+        } else {
+          await cloudApi.connections.create.mutate(connection);
+          await refetchCloudConnections();
+        }
+
+        toast.add({
+          color: 'success',
+          title: 'Connection added',
+        });
+
+        onSuccess?.();
+      } catch (error) {
+        console.error(error);
+
+        toast.add({
+          color: 'danger',
+          title: 'Failed to add connection',
+        });
+      }
     },
-    [localConnections, setLocalConnections],
+    [cloudApi, localConnections, setLocalConnections, toast, refetchCloudConnections],
   );
 
   const updateConnection = useCallback(
-    (id: string, connection: Connection) => {
-      setLocalConnections(localConnections.map((c) => (c.id === id ? connection : c)));
+    async (id: string, connection: Connection, onSuccess?: () => void) => {
+      const existingConnection = connections.find((c) => c.id === id);
+      assert(existingConnection);
+
+      try {
+        if (connection.storageLocation === 'local') {
+          setLocalConnections(localConnections.map((c) => (c.id === id ? connection : c)));
+        } else {
+          if (existingConnection.storageLocation === 'local') {
+            setLocalConnections(localConnections.filter((c) => c.id !== id));
+            await cloudApi.connections.create.mutate(connection);
+          } else {
+            await cloudApi.connections.update.mutate(connection);
+          }
+
+          await refetchCloudConnections();
+        }
+
+        toast.add({
+          color: 'success',
+          title: 'Connection updated',
+        });
+
+        onSuccess?.();
+      } catch (error) {
+        console.error(error);
+
+        toast.add({
+          color: 'danger',
+          title: 'Failed to update connection',
+        });
+      }
     },
-    [localConnections, setLocalConnections],
+    [cloudApi, connections, localConnections, setLocalConnections, refetchCloudConnections, toast],
   );
 
   const disconnect = useCallback(async () => {
@@ -118,15 +167,47 @@ export const useConnections = (props: UseConnectionsProps) => {
   }, [activeConnection, linkApi]);
 
   const removeConnection = useCallback(
-    (id: string) => {
-      setLocalConnections(localConnections.filter((c) => c.id !== id));
+    async (id: string) => {
+      const connection = connections.find((c) => c.id === id);
+      assert(connection);
 
-      if (activeConnection?.id === id) {
-        void disconnect();
-        navigate(routes.root());
+      try {
+        if (connection.storageLocation === 'local') {
+          setLocalConnections(localConnections.filter((c) => c.id !== id));
+        } else {
+          await cloudApi.connections.delete.mutate({ id });
+          await refetchCloudConnections();
+        }
+
+        toast.add({
+          color: 'success',
+          title: 'Connection removed',
+        });
+
+        if (activeConnection?.id === id) {
+          void disconnect();
+          navigate(routes.root());
+        }
+      } catch (error) {
+        console.error(error);
+
+        toast.add({
+          color: 'danger',
+          title: 'Failed to remove connection',
+        });
       }
     },
-    [setLocalConnections, localConnections, activeConnection?.id, disconnect, navigate],
+    [
+      connections,
+      toast,
+      activeConnection?.id,
+      setLocalConnections,
+      localConnections,
+      cloudApi.connections.delete,
+      refetchCloudConnections,
+      disconnect,
+      navigate,
+    ],
   );
 
   const getDatabases = useCallback(

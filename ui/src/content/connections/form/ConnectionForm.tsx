@@ -66,8 +66,15 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
   const [formValues, setFormValues] = useState<FormValues>();
 
+  const [isCloudConnection, setIsCloudConnection] = useState<boolean>();
+
   useEffectOnce(() => {
-    getInitialFormValues({ connectionToEdit, getSqliteContent, user }).then(setFormValues);
+    getInitialFormValues({ connectionToEdit, getSqliteContent, user }).then((initialFormValues) => {
+      setFormValues(initialFormValues);
+      setIsCloudConnection(
+        initialFormValues.storageLocation === 'cloud' && connectionToEdit !== null,
+      );
+    });
   });
 
   const setFormValue = (key: string, value: unknown) => {
@@ -96,10 +103,8 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
     }
 
     connectionToEdit
-      ? updateConnection(connectionToEdit.id, connection)
-      : addConnection(connection);
-
-    exit();
+      ? updateConnection(connectionToEdit.id, connection, exit)
+      : addConnection(connection, exit);
   };
 
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -175,6 +180,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 label: storageLocationLabels[storageLocation],
                 htmlProps: {
                   autoFocus: index === 0,
+                  disabled: isCloudConnection && storageLocation === 'local',
                 },
               },
               value: storageLocation,

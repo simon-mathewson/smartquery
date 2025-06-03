@@ -9,10 +9,12 @@
     "declaration": true,
     "composite": true,
     "outDir": "./dist",
+    "rootDir": "../",
     "paths": {
       "~/*": ["./*"],
       "@/*": ["../shared/*"]
     }
   },
+  "include": ["./**/*.ts", "../shared/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

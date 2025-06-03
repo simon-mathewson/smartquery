@@ -1,5 +1,5 @@
 import type { CreateExpressContextOptions } from '@trpc/server/adapters/express';
-import cookie, { SerializeOptions as CookieSerializeOptions } from 'cookie';
+import * as cookie from 'cookie';
 import { PrismaClient } from '~/prisma/generated/client';
 import { verifyAuthToken } from './auth/authToken';
 
@@ -51,6 +51,6 @@ export const createGetCookie = (req: CreateExpressContextOptions['req']) => (nam
 
 export const createSetCookie =
   (res: CreateExpressContextOptions['res']) =>
-  (name: string, value: string, options?: CookieSerializeOptions) => {
+  (name: string, value: string, options?: cookie.SerializeOptions) => {
     res.setHeader('Set-Cookie', cookie.serialize(name, value, options));
   };
