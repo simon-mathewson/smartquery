@@ -19,12 +19,15 @@ model Connection {
   host               String?
   name               String
   password           String?
+  passwordNonce      String?
   port               Int?
   schema             String?
   sshHost            String?
   sshPassword        String?
+  sshPasswordNonce   String?
   sshPort            Int?
   sshPrivateKey      String?
+  sshPrivateKeyNonce String?
   sshUser            String?
   user               User     @relation(fields: [userId], references: [id])
   userId             String
@@ -38,6 +41,7 @@ model User {
   dataEncryptionKey      String
   dataEncryptionKeyNonce String
   email                  String       @unique
+  keyEncryptionKeySalt   String
   password               String
   passwordSalt           String
 }

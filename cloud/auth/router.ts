@@ -1,13 +1,16 @@
 import { TRPCError } from '@trpc/server';
 
-import { z } from 'zod';
-import { trpc } from '../trpc';
-import { hashPassword } from './hashPassword';
+import { bytesToHex, hexToBytes } from '@noble/ciphers/utils';
 import crypto from 'crypto';
-import { encrypt } from './encrypt';
+import { z } from 'zod';
+import { isAuthenticated } from '~/middlewares/isAuthenticated';
+import { trpc } from '../trpc';
 import { createAuthToken } from './authToken';
 import { deriveKeyEncryptionKeyFromPassword } from './deriveKeyEncryptionKeyFromPassword';
-import { isAuthenticated } from '~/middlewares/isAuthenticated';
+import { encrypt } from './encrypt';
+import { hashPassword } from './hashPassword';
+import { verifyPassword } from './verifyPassword';
+import { decrypt } from './decrypt';
 
 export const authRouter = trpc.router({
   currentUser: trpc.procedure
@@ -28,19 +31,14 @@ export const authRouter = trpc.router({
         where: { email },
       });
 
-      const unauthorizedError = new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'Invalid email or password',
-      });
-
       if (!user) {
-        throw unauthorizedError;
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Invalid email or password',
+        });
       }
 
-      const hashedPassword = await hashPassword(password, user.passwordSalt);
-      if (hashedPassword !== user.password) {
-        throw unauthorizedError;
-      }
+      await verifyPassword(user, password);
 
       const token = createAuthToken({ userId: user.id });
 
@@ -76,7 +74,12 @@ export const authRouter = trpc.router({
       const hashedPassword = await hashPassword(password, salt);
 
       const dataEncryptionKey = crypto.randomBytes(32);
-      const { keyEncryptionKey } = await deriveKeyEncryptionKeyFromPassword(password);
+      const keyEncryptionKeySalt = crypto.randomBytes(16);
+
+      const keyEncryptionKey = await deriveKeyEncryptionKeyFromPassword(
+        password,
+        keyEncryptionKeySalt,
+      );
 
       const { ciphertext: encryptedDataEncryptionKey, nonce: dataEncryptionKeyNonce } = encrypt(
         dataEncryptionKey,
@@ -85,11 +88,12 @@ export const authRouter = trpc.router({
 
       await prisma.user.create({
         data: {
+          dataEncryptionKey: bytesToHex(encryptedDataEncryptionKey),
+          dataEncryptionKeyNonce: bytesToHex(dataEncryptionKeyNonce),
           email,
+          keyEncryptionKeySalt: bytesToHex(keyEncryptionKeySalt),
           password: hashedPassword,
           passwordSalt: salt,
-          dataEncryptionKey: Buffer.from(encryptedDataEncryptionKey).toString('base64'),
-          dataEncryptionKeyNonce: Buffer.from(dataEncryptionKeyNonce).toString('base64'),
         },
       });
     }),

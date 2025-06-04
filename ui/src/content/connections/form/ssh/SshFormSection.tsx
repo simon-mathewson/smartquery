@@ -18,9 +18,9 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
   const { formValues, htmlProps, setFormValue } = props;
 
   const showPasswordField =
-    formValues.credentialStorage === 'plain' && formValues.ssh?.credentialType === 'password';
+    formValues.credentialStorage !== 'alwaysAsk' && formValues.ssh?.credentialType === 'password';
   const showPrivateKeyField =
-    formValues.credentialStorage === 'plain' && formValues.ssh?.credentialType === 'privateKey';
+    formValues.credentialStorage !== 'alwaysAsk' && formValues.ssh?.credentialType === 'privateKey';
 
   return (
     <div className={classNames('grid gap-2', htmlProps?.className)}>

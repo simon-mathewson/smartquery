@@ -174,6 +174,13 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             fullWidth
             onChange={(value) => {
               setFormValue('storageLocation', value);
+              if (
+                value === 'local' &&
+                formValues.type === 'remote' &&
+                formValues.credentialStorage === 'encrypted'
+              ) {
+                setFormValue('credentialStorage', 'alwaysAsk');
+              }
             }}
             options={(['cloud', 'local'] as const).map((storageLocation, index) => ({
               button: {
@@ -268,7 +275,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 onChange={(value) => setFormValue('user', value)}
               />
             </Field>
-            {formValues.credentialStorage === 'plain' && (
+            {formValues.credentialStorage !== 'alwaysAsk' && (
               <Field label="Password">
                 <CredentialInput
                   htmlProps={{ value: formValues.password }}

@@ -1,6 +1,6 @@
 import type { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import * as cookie from 'cookie';
-import { PrismaClient } from '~/prisma/generated/client';
+import { PrismaClient, User } from '~/prisma/generated/client';
 import { verifyAuthToken } from './auth/authToken';
 
 export type Context = {
@@ -9,7 +9,7 @@ export type Context = {
   prisma: PrismaClient;
   req: CreateExpressContextOptions['req'];
   res: CreateExpressContextOptions['res'];
-  user: { id: string; email: string } | null;
+  user: User | null;
 };
 
 export const createContext = async ({
@@ -27,7 +27,8 @@ export const createContext = async ({
 
     const decoded = verifyAuthToken(authToken);
 
-    return prisma.user.findUniqueOrThrow({
+    // Return null if not found, let `isAuthorized` throw to trigger client side logout
+    return prisma.user.findUnique({
       where: { id: decoded.userId },
     });
   };

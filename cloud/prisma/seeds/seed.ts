@@ -7,12 +7,14 @@ import { PrismaClient } from '../generated';
 
   await prisma.user.create({
     data: {
-      dataEncryptionKey: 'JMW5jrHfuIahAyPawM/AnnnuHu/eWhOafFdYLrximnr+/I/ZUAdsIa32Ow1gFIiD',
-      dataEncryptionKeyNonce: 'HjF1wiq/y4aXzIjyDn/wqZR9J8qcrykl',
+      dataEncryptionKey:
+        '54ad804c62507b42d63959046c1d0c92f21129e297655ecf10b79a580ee582cf1483d8d2385ead75393027ba51f995f3',
+      dataEncryptionKeyNonce: '8f242f469d64fb04c061b40898d0b5fcb4ab0f6acee5f058',
       email: 'test@dabase.dev',
+      keyEncryptionKeySalt: 'eb8943e0cd3e0d2ac3f945a20272a70a',
       password:
-        'aa5479096e6a5404c38cf600864d7e1e426e12abbd8aa7bc3f0d973fb2128accc16cbd1679ea9ad46d1ecf14675c1f140a30e5c9f65c83059220adca96837f28',
-      passwordSalt: 'd2784477c24db928791a24d1fa954e06',
+        '5172332a5b34fbbafecf69a277f3022e45215916fba3f38ff8a61cb0072a5dbb6f6c3ca7923e7b2c8467d21659ef276a31220bb8e9ae47b380c9d1f0dc02c244',
+      passwordSalt: '31c7bc712b3c556d63dda05d49ec172d',
     },
   });
 
@@ -50,7 +52,25 @@ import { PrismaClient } from '../generated';
       encryptCredentials: false,
       password: 'password',
       port: 3307,
-      schema: 'mysql',
+    },
+  });
+
+  await prisma.connection.create({
+    data: {
+      database: 'dabase',
+      dbUser: 'postgres',
+      engine: 'postgres',
+      host: 'localhost',
+      name: 'Dabase Dev',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: 'password',
+      port: 5444,
+      schema: 'public',
     },
   });
 

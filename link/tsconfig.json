@@ -1,5 +1,5 @@
 {
-  "include": ["electron.vite.config.*", "seed", "src", "prisma"],
+  "include": ["electron.vite.config.*", "seed", "src", "prisma", "../shared/**/*.ts"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,

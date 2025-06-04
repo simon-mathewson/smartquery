@@ -6,7 +6,7 @@ import { useLocation } from 'wouter';
 import { ToastContext } from '../toast/Context';
 import { routes } from '~/router/routes';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { TRPCClientError } from '@trpc/client';
+import { isUserUnauthorizedError } from './isUserUnauthorizedError';
 
 export const useAuth = () => {
   const [, navigate] = useLocation();
@@ -40,7 +40,7 @@ export const useAuth = () => {
 
       setUser(user);
     } catch (error) {
-      if (error instanceof TRPCClientError && error.data?.code === 'UNAUTHORIZED') {
+      if (isUserUnauthorizedError(error)) {
         await logOut({ skipToast: true });
         return;
       }

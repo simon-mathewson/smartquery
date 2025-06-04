@@ -32,9 +32,9 @@ export const mapPrismaToConnection = (c: DbConnection) => {
 };
 
 export const mapConnectionToPrisma = (
-  c: CreateConnectionInput,
+  c: CreateConnectionInput['connection'],
 ): Prisma.ConnectionCreateWithoutUserInput => ({
-  ...omit(c, 'id', 'ssh', 'storageLocation', 'type', 'user'),
+  ...omit(c, 'credentialStorage', 'id', 'ssh', 'storageLocation', 'type', 'user'),
   ...(c.type === 'remote'
     ? {
         dbUser: c.user,

@@ -11,6 +11,7 @@ export const useModal = <Input = void>() => {
 
   const close = useCallback(() => {
     setIsOpen(false);
+    setInput(undefined);
   }, []);
 
   return { close, input, isOpen, open };

@@ -16,13 +16,17 @@ import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { CloudApiContext } from '../cloud/api/Context';
 import { omit, sortBy } from 'lodash';
 import { AuthContext } from '../auth/Context';
+import type { UserPasswordModalInput } from './UserPasswordModal/types';
 
 export type Connections = ReturnType<typeof useConnections>;
 
-export type UseConnectionsProps = { signInModal: ModalControl<SignInModalInput> };
+export type UseConnectionsProps = {
+  signInModal: ModalControl<SignInModalInput>;
+  userPasswordModal: ModalControl<UserPasswordModalInput>;
+};
 
 export const useConnections = (props: UseConnectionsProps) => {
-  const { signInModal } = props;
+  const { signInModal, userPasswordModal } = props;
 
   const [, navigate] = useLocation();
 
@@ -100,7 +104,23 @@ export const useConnections = (props: UseConnectionsProps) => {
         if (connection.storageLocation === 'local') {
           setLocalConnections([...localConnections, connection]);
         } else {
-          await cloudApi.connections.create.mutate(connection);
+          if (connection.type === 'remote' && connection.credentialStorage === 'encrypted') {
+            await new Promise<void>((resolve) =>
+              userPasswordModal.open({
+                mode: 'encrypt',
+                onSubmit: async (password) => {
+                  await cloudApi.connections.create.mutate({
+                    connection,
+                    userPassword: password,
+                  });
+                  resolve();
+                },
+              }),
+            );
+          } else {
+            await cloudApi.connections.create.mutate({ connection });
+          }
+
           await refetchCloudConnections();
         }
 
@@ -119,7 +139,14 @@ export const useConnections = (props: UseConnectionsProps) => {
         });
       }
     },
-    [cloudApi, localConnections, setLocalConnections, toast, refetchCloudConnections],
+    [
+      toast,
+      setLocalConnections,
+      localConnections,
+      refetchCloudConnections,
+      userPasswordModal,
+      cloudApi,
+    ],
   );
 
   const updateConnection = useCallback(
@@ -131,11 +158,27 @@ export const useConnections = (props: UseConnectionsProps) => {
         if (connection.storageLocation === 'local') {
           setLocalConnections(localConnections.map((c) => (c.id === id ? connection : c)));
         } else {
-          if (existingConnection.storageLocation === 'local') {
-            setLocalConnections(localConnections.filter((c) => c.id !== id));
-            await cloudApi.connections.create.mutate(connection);
+          if (
+            connection.type === 'remote' &&
+            (connection.credentialStorage === 'encrypted' ||
+              (existingConnection.type === 'remote' &&
+                existingConnection.credentialStorage === 'encrypted'))
+          ) {
+            await new Promise<void>((resolve) =>
+              userPasswordModal.open({
+                mode: connection.credentialStorage === 'encrypted' ? 'encrypt' : 'decrypt',
+                onSubmit: async (password) => {
+                  await cloudApi.connections.update.mutate({ connection, userPassword: password });
+                  resolve();
+                },
+              }),
+            );
           } else {
-            await cloudApi.connections.update.mutate(connection);
+            await cloudApi.connections.update.mutate({ connection });
+          }
+
+          if (existingConnection.storageLocation === 'local') {
+            setLocalConnections(localConnections.filter((c) => c.id !== existingConnection.id));
           }
 
           await refetchCloudConnections();
@@ -156,7 +199,15 @@ export const useConnections = (props: UseConnectionsProps) => {
         });
       }
     },
-    [cloudApi, connections, localConnections, setLocalConnections, refetchCloudConnections, toast],
+    [
+      connections,
+      toast,
+      setLocalConnections,
+      localConnections,
+      refetchCloudConnections,
+      userPasswordModal,
+      cloudApi,
+    ],
   );
 
   const disconnect = useCallback(async () => {
