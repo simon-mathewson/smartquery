@@ -42,6 +42,24 @@ export const connectionsRouter = trpc.router({
         },
       });
     }),
+  decryptCredentials: trpc.procedure
+    .use(isAuthenticated)
+    .input(z.object({ id: z.string(), userPassword: z.string() }))
+    .output(connectionSchema)
+    .mutation(async ({ input, ctx: { prisma, user } }) => {
+      const connection = await prisma.connection.findUniqueOrThrow({
+        where: { id: input.id, userId: user.id },
+      });
+
+      return mapPrismaToConnection(
+        await decryptCredentials({
+          connection,
+          prisma,
+          userId: user.id,
+          userPassword: input.userPassword,
+        }),
+      );
+    }),
   delete: trpc.procedure
     .use(isAuthenticated)
     .input(z.object({ id: z.string() }))

@@ -378,6 +378,33 @@ export const useConnections = (props: UseConnectionsProps) => {
               });
             }
 
+            if (connection.credentialStorage === 'encrypted') {
+              return new Promise<{
+                password: string;
+                sshPassword: string | undefined;
+                sshPrivateKey: string | undefined;
+              }>((resolve) => {
+                userPasswordModal.open({
+                  mode: 'decrypt',
+                  onSubmit: async (userPassword) => {
+                    const decryptedConnection =
+                      await cloudApi.connections.decryptCredentials.mutate({
+                        id: connection.id,
+                        userPassword,
+                      });
+
+                    assert(decryptedConnection.type === 'remote');
+
+                    resolve({
+                      password: decryptedConnection.password ?? '',
+                      sshPassword: decryptedConnection.ssh?.password ?? undefined,
+                      sshPrivateKey: decryptedConnection.ssh?.privateKey ?? undefined,
+                    });
+                  },
+                });
+              });
+            }
+
             return storedCredentials;
           })();
 
@@ -433,12 +460,14 @@ export const useConnections = (props: UseConnectionsProps) => {
     [
       connections,
       disconnect,
-      getDatabases,
-      getSqliteDb,
-      navigate,
-      signInModal,
       toast,
-      linkApi.connectDb,
+      navigate,
+      getSqliteDb,
+      getDatabases,
+      linkApi,
+      signInModal,
+      userPasswordModal,
+      cloudApi,
     ],
   );
 
