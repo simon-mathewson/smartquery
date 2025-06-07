@@ -43,6 +43,11 @@ Outputs:
   DBEndpoint:
     Description: 'Database endpoint'
     Value: !GetAtt DBInstance.Endpoint.Address
+    Export:
+      Name: DabaseCloudDbEndpoint
+
   DBSecretArn:
     Description: 'Database secret ARN'
     Value: !GetAtt DBInstance.MasterUserSecret.SecretArn
+    Export:
+      Name: DabaseCloudDbSecretArn

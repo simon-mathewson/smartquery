@@ -36,6 +36,12 @@ Resources:
         - Namespace: aws:ec2:vpc
           OptionName: Subnets
           Value: !ImportValue DabaseCloudPrivateSubnets
+        - Namespace: aws:elasticbeanstalk:application:environmentsecrets
+          OptionName: DABASE_CLOUD_DB_SECRET_ARN
+          Value: !ImportValue DabaseCloudDbSecretArn
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DABASE_CLOUD_DB_ENDPOINT
+          Value: !ImportValue DabaseCloudDbEndpoint
 
   ElasticBeanstalkSecurityGroup:
     Type: AWS::EC2::SecurityGroup

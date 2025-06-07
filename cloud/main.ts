@@ -6,6 +6,9 @@ import { createContext } from './context';
 
 const app = express();
 
+console.log(process.env.DABASE_CLOUD_DB_ENDPOINT);
+console.log(process.env.DABASE_CLOUD_DB_SECRET_ARN);
+
 app.use(
   cors({
     origin: process.env.UI_URL,
