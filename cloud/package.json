@@ -2,11 +2,12 @@
   "name": "dabase-cloud",
   "private": true,
   "scripts": {
-    "build": "esbuild main.ts --bundle --packages=external --platform=node --format=esm --outdir=dist --sourcemap",
+    "build": "rollup -c",
     "dev": "NODE_ENV=development pnpm dotenv-flow -- tsx watch main",
     "lint": "eslint --cache .",
     "prisma": "NODE_ENV=development pnpm dotenv-flow -- prisma",
-    "start-production": "chmod +x ./start-production.sh && ./start-production.sh",
+    "setup-production": "chmod +x ./setup-production.sh && ./setup-production.sh",
+    "start-production": "NODE_ENV=production pnpm dotenv-flow -- node dist/bundle.js",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
@@ -23,6 +24,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@types/cookie": "^1.0.0",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.0",
@@ -34,6 +37,8 @@
     "eslint": "^9.26.0",
     "globals": "^16.2.0",
     "prisma": "^6.7.0",
+    "rollup": "^4.42.0",
+    "rollup-plugin-tsconfig-paths": "^1.5.2",
     "tsx": "^4.19.3",
     "typescript": "5.8.2",
     "typescript-eslint": "^8.33.0"
