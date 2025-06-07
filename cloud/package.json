@@ -6,7 +6,7 @@
     "dev": "NODE_ENV=development pnpm dotenv-flow -- tsx watch main",
     "lint": "eslint --cache .",
     "prisma": "NODE_ENV=development pnpm dotenv-flow -- prisma",
-    "start": "pnpm dev",
+    "start-production": "chmod +x ./start-production.sh && ./start-production.sh",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {

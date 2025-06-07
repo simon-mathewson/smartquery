@@ -14,6 +14,8 @@ phases:
       - pnpm install
       - cd ../about
       - pnpm install
+      - cd ../cloud
+      - pnpm install
   build:
     on-failure: ABORT
     commands:
@@ -35,6 +37,15 @@ phases:
       - sleep 15
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
       - pnpm build:node
+
+      - cd ../cloud
+      - pnpm prisma generate
+      - pnpm typecheck
+      - pnpm build
+      # Delete all contents of node_modules, but keep dir so that AWS EB doesn't try to install it
+      - rm -rf node_modules
+      - mkdir node_modules
+      - zip -r application.zip .
   post_build:
     commands:
       - cd ../cloudFormation
@@ -44,6 +55,16 @@ phases:
           --stack-name dabase-2025-01-18-19-40-48 \
           --template-file main.yml \
           --capabilities CAPABILITY_NAMED_IAM
+
+      - cd ../cloud
+      - aws s3 cp application.zip s3://dabase-cloud-source/$CODEBUILD_BUILD_NUMBER.zip
+      - aws elasticbeanstalk create-application-version \
+          --application-name dabase-cloud \
+          --version-label $CODEBUILD_BUILD_NUMBER \
+          --source-bundle S3Bucket=dabase-cloud-source,S3Key=$CODEBUILD_BUILD_NUMBER.zip
+      - aws elasticbeanstalk update-environment \
+          --environment-name dabase-cloud-production \
+          --version-label $CODEBUILD_BUILD_NUMBER
 
       - cd ../ui
       - aws s3 sync dist s3://dabase-ui

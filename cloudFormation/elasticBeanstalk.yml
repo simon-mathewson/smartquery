@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Elastic Beanstalk environment for Node.js application'
+
+Resources:
+  ElasticBeanstalkApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      ApplicationName: dabase-cloud
+      Description: 'Dabase Cloud'
+
+  ElasticBeanstalkEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName: dabase-cloud
+      EnvironmentName: dabase-cloud-production
+      SolutionStackName: 'Node.js 22 running on 64bit Amazon Linux 2023'
+      OptionSettings:
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: InstanceType
+          Value: t2.micro
+        - Namespace: aws:autoscaling:asg
+          OptionName: MinSize
+          Value: 1
+        - Namespace: aws:autoscaling:asg
+          OptionName: MaxSize
+          Value: 1
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: EnvironmentType
+          Value: LoadBalanced
+        - Namespace: aws:elasticbeanstalk:environment:proxy:staticfiles
+          OptionName: /static
+          Value: dist
+        - Namespace: aws:ec2:vpc
+          OptionName: VPCId
+          Value: !ImportValue DabaseCloudVpcId
+        - Namespace: aws:ec2:vpc
+          OptionName: Subnets
+          Value: !ImportValue DabaseCloudPrivateSubnets
+
+  ElasticBeanstalkSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Security group for Elastic Beanstalk environment'
+      VpcId: !ImportValue DabaseCloudVpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  EnvironmentURL:
+    Description: 'URL of the Elastic Beanstalk environment'
+    Value: !Sub 'http://${ElasticBeanstalkEnvironment.EndpointURL}'
+
+  ElasticBeanstalkSecurityGroup:
+    Description: 'Security group ID of the Elastic Beanstalk environment'
+    Value: !Ref ElasticBeanstalkSecurityGroup 
+    Export:
+      Name: DabaseCloudElasticBeanstalkSecurityGroup

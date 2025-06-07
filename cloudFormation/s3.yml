@@ -54,6 +54,31 @@ Resources:
             Principal: "*"
             Sid: "PublicReadGetObject"
 
+  S3BucketDabaseCloudSource:
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "dabase-cloud-source"
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - BucketKeyEnabled: true
+            ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteAfter24Hours
+            Status: Enabled
+            ExpirationInDays: 1
+
   S3BucketDabaseUi:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
