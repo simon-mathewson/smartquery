@@ -2,7 +2,7 @@
   "name": "dabase-cloud",
   "private": true,
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c --bundleConfigAsCjs",
     "dev": "NODE_ENV=development pnpm dotenv-flow -- tsx watch main",
     "lint": "eslint --cache .",
     "prisma": "NODE_ENV=development pnpm dotenv-flow -- prisma",
