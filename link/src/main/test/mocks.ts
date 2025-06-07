@@ -3,6 +3,7 @@ import type { RemoteConnection } from '@/types/connection';
 export const mocks = {
   connections: {
     mysql: {
+      credentialStorage: 'plain',
       database: 'mysql_db',
       engine: 'mysql',
       id: 'mysql-connection',
@@ -16,6 +17,7 @@ export const mocks = {
       user: 'root',
     } satisfies RemoteConnection,
     postgres: {
+      credentialStorage: 'plain',
       database: 'postgres_db',
       host: 'localhost',
       id: 'postgres-connection',
