@@ -19,6 +19,15 @@ phases:
   build:
     on-failure: ABORT
     commands:
+      - cd ../cloud
+      - pnpm prisma generate
+      - pnpm typecheck
+      - pnpm build
+      # Delete all contents of node_modules, but keep dir so that AWS EB doesn't try to install it
+      - rm -rf node_modules
+      - mkdir node_modules
+      - zip -r application.zip .
+
       - cd ../ui
       - pnpm typecheck
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
@@ -37,15 +46,6 @@ phases:
       - sleep 15
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
       - pnpm build:node
-
-      - cd ../cloud
-      - pnpm prisma generate
-      - pnpm typecheck
-      - pnpm build
-      # Delete all contents of node_modules, but keep dir so that AWS EB doesn't try to install it
-      - rm -rf node_modules
-      - mkdir node_modules
-      - zip -r application.zip .
   post_build:
     commands:
       - cd ../cloudFormation
