@@ -49,6 +49,7 @@ Resources:
               - "cloudformation:DescribeStacks"
               - "cloudformation:GetTemplateSummary"
               - "cloudformation:UpdateStack"
+              - "cloudformation:CreateStack"
             Resource:
               - !Sub "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/dabase-*/*"
           - Effect: "Allow"
