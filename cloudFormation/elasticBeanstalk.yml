@@ -8,12 +8,40 @@ Resources:
       ApplicationName: dabase-cloud
       Description: 'Dabase Cloud'
 
+  ElasticBeanstalkIamInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: dabase-cloud-instance-profile
+      Path: /
+      Roles:
+        - !Ref ElasticBeanstalkIamRole
+
+  ElasticBeanstalkIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: elasticbeanstalk.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ElasticBeanstalkPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "rds:*"
+                Resource: "*"
+
   ElasticBeanstalkEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
+    DependsOn: ElasticBeanstalkApplication
     Properties:
       ApplicationName: dabase-cloud
-      EnvironmentName: dabase-cloud-production
-      SolutionStackName: 'Node.js 22 running on 64bit Amazon Linux 2023'
+      EnvironmentName: dabase-cloud
+      SolutionStackName: '64bit Amazon Linux 2023 v6.5.2 running Node.js 22'
       OptionSettings:
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: InstanceType
@@ -21,6 +49,9 @@ Resources:
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: SecurityGroups
           Value: !ImportValue DabaseCloudElasticBeanstalkSecurityGroup
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: IamInstanceProfile
+          Value: !Ref ElasticBeanstalkIamInstanceProfile
         - Namespace: aws:autoscaling:asg
           OptionName: MinSize
           Value: 1
@@ -30,9 +61,6 @@ Resources:
         - Namespace: aws:elasticbeanstalk:environment
           OptionName: EnvironmentType
           Value: LoadBalanced
-        - Namespace: aws:elasticbeanstalk:environment:proxy:staticfiles
-          OptionName: /static
-          Value: dist
         - Namespace: aws:ec2:vpc
           OptionName: VPCId
           Value: !ImportValue DabaseCloudVpcId
@@ -45,19 +73,3 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: DABASE_CLOUD_DB_ENDPOINT
           Value: !ImportValue DabaseCloudDbEndpoint
-
-  ElasticBeanstalkSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: 'Security group for Elastic Beanstalk environment'
-      VpcId: !ImportValue DabaseCloudVpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: 0.0.0.0/0
-
-Outputs:
-  EnvironmentURL:
-    Description: 'URL of the Elastic Beanstalk environment'
-    Value: !Sub 'http://${ElasticBeanstalkEnvironment.EndpointURL}'

@@ -6,6 +6,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: 'Security group for RDS PostgreSQL'
+      VpcId: !ImportValue DabaseCloudVpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 5432

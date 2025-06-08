@@ -69,7 +69,7 @@ phases:
           --version-label $CODEBUILD_BUILD_NUMBER \
           --source-bundle S3Bucket=dabase-cloud-source,S3Key=$CODEBUILD_BUILD_NUMBER.zip
       - aws elasticbeanstalk update-environment \
-          --environment-name dabase-cloud-production \
+          --environment-name dabase-cloud \
           --version-label $CODEBUILD_BUILD_NUMBER
 
       - cd ../ui
