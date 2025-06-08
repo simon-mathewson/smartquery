@@ -9,27 +9,7 @@ Resources:
           - Effect: Allow
             Action:
               - s3:*
-            Resource:
-              - !Sub
-                - "arn:${AWS::Partition}:s3:::${BucketName}"
-                - BucketName: !ImportValue S3BucketCodePipeline
-              - !Sub
-                - "arn:${AWS::Partition}:s3:::${BucketName}/*"
-                - BucketName: !ImportValue S3BucketCodePipeline
-              - !Sub
-                - "arn:${AWS::Partition}:s3:::${BucketName}"
-                - BucketName: !ImportValue S3BucketDabaseUi
-              - !Sub
-                - "arn:${AWS::Partition}:s3:::${BucketName}/*"
-                - BucketName: !ImportValue S3BucketDabaseUi
-              - !Sub
-                - "arn:${AWS::Partition}:s3:::${BucketName}"
-                - BucketName: !ImportValue S3BucketDabaseAbout
-              - !Sub
-                - "arn:${AWS::Partition}:s3:::${BucketName}/*"
-                - BucketName: !ImportValue S3BucketDabaseAbout
-              - "arn:aws:s3:::dabase-cloudformation"
-              - "arn:aws:s3:::dabase-cloudformation/*"
+            Resource: "*"
           - Effect: Allow
             Action:
               - cloudfront:*
@@ -42,18 +22,20 @@ Resources:
                 - DistributionId: !ImportValue CloudFrontDistributionDabaseUi
           - Effect: "Allow"
             Action:
-              - "cloudformation:CreateChangeSet"
-              - "cloudformation:DescribeChangeSet"
-              - "cloudformation:ExecuteChangeSet"
-              - "cloudformation:DeleteChangeSet"
-              - "cloudformation:DescribeStacks"
-              - "cloudformation:GetTemplateSummary"
-              - "cloudformation:UpdateStack"
-              - "cloudformation:CreateStack"
+              - "cloudformation:*"
             Resource:
               - !Sub "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/dabase-*/*"
           - Effect: "Allow"
             Action: "route53:*"
+            Resource: "*"
+          - Effect: Allow
+            Action: "ec2:*"
+            Resource: "*"
+          - Effect: Allow
+            Action: "elasticbeanstalk:*"
+            Resource: "*"
+          - Effect: Allow
+            Action: "rds:*"
             Resource: "*"
 
   IamRoleCodeBuild:
