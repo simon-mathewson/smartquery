@@ -51,7 +51,7 @@ phases:
       - rm -rf node_modules
       - mkdir node_modules
       - rm -rf .pnpm-store
-      - zip -r application.zip .
+      - git archive --format=zip --output=application.zip HEAD:cloud
   post_build:
     commands:
       - cd ../cloudFormation
