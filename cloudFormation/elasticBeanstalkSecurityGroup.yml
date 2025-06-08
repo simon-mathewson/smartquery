@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Elastic Beanstalk security group for Node.js application'
+
+Resources:
+  ElasticBeanstalkSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Security group for Elastic Beanstalk environment'
+      VpcId: !ImportValue DabaseCloudVpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  ElasticBeanstalkSecurityGroup:
+    Description: 'Security group ID of the Elastic Beanstalk environment'
+    Value: !Ref ElasticBeanstalkSecurityGroup 
+    Export:
+      Name: DabaseCloudElasticBeanstalkSecurityGroup

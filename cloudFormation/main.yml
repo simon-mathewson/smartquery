@@ -51,6 +51,13 @@ Resources:
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/cognito.yml"
 
+  ElasticBeanstalkSecurityGroupStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/elasticBeanstalkSecurityGroup.yml"
+
   ElasticBeanstalkStack:
     Type: "AWS::CloudFormation::Stack"
     DeletionPolicy: "Delete"
@@ -83,8 +90,6 @@ Resources:
     UpdateReplacePolicy: "Delete"
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/rds.yml"
-      Parameters:
-        ElasticBeanstalkSecurityGroup: !GetAtt ElasticBeanstalkStack.Outputs.ElasticBeanstalkSecurityGroup
 
   Route53Stack:
     Type: "AWS::CloudFormation::Stack"

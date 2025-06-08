@@ -96,5 +96,5 @@ reports:
 
 cache:
   paths:
-    - ".pnpm-store/**/*"
+    - "/root/**/.pnpm-store/**/*"
     - "/root/.cache/ms-playwright/**/*"

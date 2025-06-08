@@ -18,6 +18,9 @@ Resources:
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: InstanceType
           Value: t2.micro
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: SecurityGroups
+          Value: !ImportValue DabaseCloudElasticBeanstalkSecurityGroup
         - Namespace: aws:autoscaling:asg
           OptionName: MinSize
           Value: 1
@@ -58,9 +61,3 @@ Outputs:
   EnvironmentURL:
     Description: 'URL of the Elastic Beanstalk environment'
     Value: !Sub 'http://${ElasticBeanstalkEnvironment.EndpointURL}'
-
-  ElasticBeanstalkSecurityGroup:
-    Description: 'Security group ID of the Elastic Beanstalk environment'
-    Value: !Ref ElasticBeanstalkSecurityGroup 
-    Export:
-      Name: DabaseCloudElasticBeanstalkSecurityGroup
