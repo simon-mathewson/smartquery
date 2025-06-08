@@ -1,10 +1,10 @@
 Resources:
-  # VPCStack:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   DeletionPolicy: "Delete"
-  #   UpdateReplacePolicy: "Delete"
-  #   Properties:
-  #     TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/vpc.yml"
+  VPCStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/vpc.yml"
 
   CloudFrontStack:
     Type: "AWS::CloudFormation::Stack"
@@ -34,8 +34,8 @@ Resources:
       - CodeStarConnectionsStack
       - IamStack
       - S3Stack
-      # - RDSStack
-      # - ElasticBeanstalkStack
+      - RDSStack
+      - ElasticBeanstalkStack
 
   CodeStarConnectionsStack:
     Type: "AWS::CloudFormation::Stack"
@@ -51,14 +51,14 @@ Resources:
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/cognito.yml"
 
-  # ElasticBeanstalkStack:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   DeletionPolicy: "Delete"
-  #   UpdateReplacePolicy: "Delete"
-  #   Properties:
-  #     TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/elasticBeanstalk.yml"
-  #   DependsOn:
-  #     - VPCStack
+  ElasticBeanstalkStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/elasticBeanstalk.yml"
+    DependsOn:
+      - VPCStack
 
   IamStack:
     Type: "AWS::CloudFormation::Stack"
@@ -77,14 +77,14 @@ Resources:
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/pinpoint.yml"
 
-  # RDSStack:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   DeletionPolicy: "Delete"
-  #   UpdateReplacePolicy: "Delete"
-  #   Properties:
-  #     TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/rds.yml"
-  #     Parameters:
-  #       ElasticBeanstalkSecurityGroup: !GetAtt ElasticBeanstalkStack.Outputs.ElasticBeanstalkSecurityGroup
+  RDSStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/rds.yml"
+      Parameters:
+        ElasticBeanstalkSecurityGroup: !GetAtt ElasticBeanstalkStack.Outputs.ElasticBeanstalkSecurityGroup
 
   Route53Stack:
     Type: "AWS::CloudFormation::Stack"
