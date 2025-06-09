@@ -24,16 +24,11 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: elasticbeanstalk.amazonaws.com
+              Service: ec2.amazonaws.com
             Action: sts:AssumeRole
-      Policies:
-        - PolicyName: ElasticBeanstalkPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action: "rds:*"
-                Resource: "*"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier
+        - arn:aws:iam::aws:policy/AmazonRDSDataFullAccess
 
   ElasticBeanstalkEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
@@ -73,3 +68,6 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: DABASE_CLOUD_DB_ENDPOINT
           Value: !ImportValue DabaseCloudDbEndpoint
+        - Namespace: aws:elasticbeanstalk:cloudwatch:logs
+          OptionName: StreamLogs
+          Value: true
