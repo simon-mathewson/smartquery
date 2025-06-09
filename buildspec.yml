@@ -72,6 +72,11 @@ phases:
           --environment-name dabase-cloud \
           --version-label $CODEBUILD_BUILD_NUMBER
 
+      - >
+        aws elasticbeanstalk wait environment-updated \
+          --environment-name dabase-cloud \
+          --version-label $CODEBUILD_BUILD_NUMBER
+
       - cd ../ui
       - aws s3 sync dist s3://dabase-ui
       - aws cloudfront create-invalidation --distribution-id $DABASE_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'

@@ -1,49 +1,10 @@
 Resources:
-  ManagedPolicyDeployDabase:
-    Type: "AWS::IAM::ManagedPolicy"
-    Properties:
-      Path: "/service-role/"
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Action:
-              - s3:*
-            Resource: "*"
-          - Effect: Allow
-            Action:
-              - cloudfront:*
-            Resource:
-              - !Sub
-                - "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${DistributionId}"
-                - DistributionId: !ImportValue CloudFrontDistributionDabaseAbout
-              - !Sub
-                - "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${DistributionId}"
-                - DistributionId: !ImportValue CloudFrontDistributionDabaseUi
-          - Effect: "Allow"
-            Action: "cloudformation:*"
-            Resource: "*"
-          - Effect: "Allow"
-            Action: "route53:*"
-            Resource: "*"
-          - Effect: Allow
-            Action: "ec2:*"
-            Resource: "*"
-          - Effect: Allow
-            Action: "elasticbeanstalk:*"
-            Resource: "*"
-          - Effect: Allow
-            Action: "rds:*"
-            Resource: "*"
-
   IamRoleCodeBuild:
     Type: "AWS::IAM::Role"
     Properties:
       Path: "/service-role/"
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/AWSCodeBuildAdminAccess"
-        - "arn:aws:iam::aws:policy/IAMFullAccess"
-        - !Ref ManagedPolicyDeployDabase
+        - "arn:aws:iam::aws:policy/AdministratorAccess"
       Policies:
         - PolicyName: CodeBuildPolicy
           PolicyDocument:
@@ -66,9 +27,7 @@ Resources:
     Properties:
       Path: "/service-role/"
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/AWSCodeBuildAdminAccess"
-        - "arn:aws:iam::aws:policy/IAMFullAccess"
-        - !Ref ManagedPolicyDeployDabase
+        - "arn:aws:iam::aws:policy/AdministratorAccess"
       Policies:
         - PolicyName: CodeStarConnectionAccess
           PolicyDocument:
