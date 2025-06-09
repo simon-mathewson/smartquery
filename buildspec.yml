@@ -25,9 +25,6 @@ phases:
       - pnpm prisma generate
       - pnpm typecheck
       - pnpm build
-      - rm -rf node_modules
-      - mkdir node_modules # Keep empty node_modules to prevent EB from installing deps
-      - zip -r application.zip . -x ".pnpm-store/*" "application.zip" "prisma/generated/*" ".rollup.cache/*"
 
       - cd ../ui
       - pnpm typecheck
@@ -47,6 +44,12 @@ phases:
       - sleep 15
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
       - pnpm build:node
+
+      # Package cloud now that deps aren't required for UI typecheck anymore
+      - cd ../cloud
+      - rm -rf node_modules
+      - mkdir node_modules # Keep empty node_modules to prevent EB from installing deps
+      - zip -r application.zip . -x ".pnpm-store/*" "application.zip" "prisma/generated/*" ".rollup.cache/*"
   post_build:
     commands:
       - cd ../cloudFormation
