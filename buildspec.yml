@@ -25,6 +25,9 @@ phases:
       - pnpm prisma generate
       - pnpm typecheck
       - pnpm build
+      - rm -rf node_modules
+      - mkdir node_modules # Keep empty node_modules to prevent EB from installing deps
+      - zip -r application.zip . -x ".pnpm-store/*" "application.zip" "prisma/generated/*" ".rollup.cache/*"
 
       - cd ../ui
       - pnpm typecheck
@@ -44,16 +47,6 @@ phases:
       - sleep 15
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
       - pnpm build:node
-
-      # Build cloud
-      # Delete all contents of node_modules, but keep dir so that AWS EB doesn't try to install it
-      - cd ../cloud
-      - rm -rf node_modules
-      - mkdir node_modules
-      - rm -rf .pnpm-store
-      - cd ..
-      - git archive --format=zip --output=cloud/application.zip HEAD:cloud
-      - cd cloud
   post_build:
     commands:
       - cd ../cloudFormation

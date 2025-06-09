@@ -51,9 +51,11 @@ To build for macOS and sign, ensure Apple Developer certificate is available in 
 
 ### 7. Create ACM certificates
 
-In the AWS console, go to Certificate Manager, Request a certificate, and request a certificate for the following domains:
+In the AWS console, go to Certificate Manager, Request a certificate, and request a certificate for the following domains in both us-east-1 and eu-central-1 regions:
 
 - `dabase.dev`
-- `about.dabase.dev`
+- `*.dabase.dev`
 
-Replace `AcmCertificateArn` value in CloudFormation files with new ID.
+Replace `AcmCertificateArn` value in CloudFormation files with the ARN from us-east-1.
+
+Replace the certificate ARN in the Elastic Beanstalk Stack with the ARN from eu-central-1.

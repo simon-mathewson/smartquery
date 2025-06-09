@@ -52,7 +52,7 @@ Resources:
           Value: t2.micro
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: SecurityGroups
-          Value: !ImportValue DabaseCloudElasticBeanstalkSecurityGroup
+          Value: !ImportValue DabaseCloudElasticBeanstalkEnvironmentSecurityGroup
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: IamInstanceProfile
           Value: !Ref ElasticBeanstalkIamInstanceProfile
@@ -65,12 +65,21 @@ Resources:
         - Namespace: aws:elasticbeanstalk:environment
           OptionName: EnvironmentType
           Value: LoadBalanced
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: LoadBalancerType
+          Value: application
+        - Namespace: aws:elbv2:loadbalancer
+          OptionName: SecurityGroups
+          Value: !ImportValue DabaseCloudELBSecurityGroup
         - Namespace: aws:ec2:vpc
           OptionName: VPCId
           Value: !ImportValue DabaseCloudVpcId
         - Namespace: aws:ec2:vpc
           OptionName: Subnets
           Value: !ImportValue DabaseCloudPrivateSubnets
+        - Namespace: aws:ec2:vpc
+          OptionName: ELBSubnets
+          Value: !ImportValue DabaseCloudPublicSubnets
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: DABASE_CLOUD_DB_SECRET
           Value: !ImportValue DabaseCloudDbSecretArn
@@ -88,13 +97,19 @@ Resources:
           Value: HTTPS
         - Namespace: aws:elbv2:listener:443
           OptionName: SSLCertificateArns
-          Value: 'arn:aws:acm:us-east-1:339712876040:certificate/5cfade6c-317f-4aff-974a-84d51650aca1'
+          Value: arn:aws:acm:eu-central-1:339712876040:certificate/5e69726a-f435-4939-9606-bfcc32690c86
         - Namespace: aws:elbv2:listener:default
           OptionName: ListenerEnabled
           Value: false
         - Namespace: aws:elasticbeanstalk:application
           OptionName: 'Application Healthcheck URL'
           Value: HTTPS:443/health
+        - Namespace: aws:elasticbeanstalk:environment:process:default
+          OptionName: HealthCheckPath
+          Value: /health
+        - Namespace: aws:elasticbeanstalk:environment:process:default
+          OptionName: Port
+          Value: 8080
 
 Outputs:
   ElasticBeanstalkEnvironmentEndpointUrl:

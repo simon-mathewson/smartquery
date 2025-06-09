@@ -2,20 +2,55 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Elastic Beanstalk security group for Node.js application'
 
 Resources:
-  ElasticBeanstalkSecurityGroup:
+  ELBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP/HTTPs ingress
+      VpcId: !ImportValue DabaseCloudVpcId
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        IpProtocol: tcp
+        ToPort: 443
+        FromPort: 443
+
+  ELBSecurityGroupToAppEgress:
+    Type: AWS::EC2::SecurityGroupEgress  # prevent security group circular references
+    Properties:
+      GroupId: !Ref ELBSecurityGroup
+      IpProtocol: tcp
+      ToPort: 8080
+      FromPort: 8080
+      DestinationSecurityGroupId: !Ref ElasticBeanstalkEnvironmentSecurityGroup
+
+  ElasticBeanstalkEnvironmentSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: 'Security group for Elastic Beanstalk environment'
       VpcId: !ImportValue DabaseCloudVpcId
       SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref ELBSecurityGroup
+          IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
         - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
           CidrIp: 0.0.0.0/0
 
+
 Outputs:
-  ElasticBeanstalkSecurityGroup:
-    Description: 'Security group ID of the Elastic Beanstalk environment'
-    Value: !Ref ElasticBeanstalkSecurityGroup 
+  ELBSecurityGroup:
+    Description: 'Security group ID of the ELB'
+    Value: !Ref ELBSecurityGroup 
     Export:
-      Name: DabaseCloudElasticBeanstalkSecurityGroup
+      Name: DabaseCloudELBSecurityGroup
+  ElasticBeanstalkEnvironmentSecurityGroup:
+    Description: 'Security group ID of the Elastic Beanstalk environment'
+    Value: !Ref ElasticBeanstalkEnvironmentSecurityGroup 
+    Export:
+      Name: DabaseCloudElasticBeanstalkEnvironmentSecurityGroup
