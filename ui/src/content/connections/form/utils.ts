@@ -18,9 +18,11 @@ export const formSchema = z.discriminatedUnion('type', [
         port: remoteConnectionSchema.shape.ssh.unwrap().shape.port.nullable(),
       })
       .nullable(),
+    type: z.literal('remote'),
   }),
   fileConnectionSchema.extend({
     fileHandle: z.instanceof(window.FileSystemFileHandle).nullable(),
+    type: z.literal('file'),
   }),
 ]);
 
