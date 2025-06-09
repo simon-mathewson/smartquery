@@ -80,21 +80,18 @@ Resources:
         - Namespace: aws:elasticbeanstalk:cloudwatch:logs
           OptionName: StreamLogs
           Value: true
-        # - Namespace: aws:elbv2:listener:443
-        #   OptionName: ListenerEnabled
-        #   Value: true
-        # - Namespace: aws:elbv2:listener:443
-        #   OptionName: Protocol
-        #   Value: HTTPS
-        # - Namespace: aws:elbv2:listener:443
-        #   OptionName: SSLCertificateArns
-        #   Value: !ImportValue DabaseCloudCertificateArn
-        # - Namespace: aws:elbv2:listener:443
-        #   OptionName: Rules
-        #   Value: default
-        # - Namespace: aws:elbv2:listener:default
-        #   OptionName: ListenerEnabled
-        #   Value: false
+        - Namespace: aws:elbv2:listener:443
+          OptionName: ListenerEnabled
+          Value: true
+        - Namespace: aws:elbv2:listener:443
+          OptionName: Protocol
+          Value: HTTPS
+        - Namespace: aws:elbv2:listener:443
+          OptionName: SSLCertificateArns
+          Value: 'arn:aws:acm:us-east-1:339712876040:certificate/5cfade6c-317f-4aff-974a-84d51650aca1'
+        - Namespace: aws:elbv2:listener:default
+          OptionName: ListenerEnabled
+          Value: false
         - Namespace: aws:elasticbeanstalk:application
           OptionName: 'Application Healthcheck URL'
           Value: HTTPS:443/health
