@@ -80,3 +80,6 @@ Resources:
         - Namespace: aws:elasticbeanstalk:cloudwatch:logs
           OptionName: StreamLogs
           Value: true
+        - Namespace: aws:elasticbeanstalk:application
+          OptionName: 'Application Healthcheck URL'
+          Value: HTTPS:443/health
