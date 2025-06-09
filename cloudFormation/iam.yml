@@ -50,7 +50,7 @@ Outputs:
     Value: !GetAtt IamRoleCodeBuild.Arn
     Export:
       Name: IamRoleCodeBuildArn
-      
+  
   IamRoleCodePipelineArn:
     Value: !GetAtt IamRoleCodePipeline.Arn
     Export:
