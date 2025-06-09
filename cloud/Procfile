@@ -1,1 +1,1 @@
-web: ./setup-production.sh
+web: npm run setup-production
