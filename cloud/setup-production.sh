@@ -12,6 +12,7 @@ urlencode() {
     done
 }
 
+cd cloud
 pnpm install
 
 # Extract username and password from secret JSON
