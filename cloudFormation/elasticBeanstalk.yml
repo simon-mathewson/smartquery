@@ -72,7 +72,7 @@ Resources:
           OptionName: Subnets
           Value: !ImportValue DabaseCloudPrivateSubnets
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
-          OptionName: DABASE_CLOUD_DB_SECRET_ARN
+          OptionName: DABASE_CLOUD_DB_SECRET
           Value: !ImportValue DabaseCloudDbSecretArn
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: DABASE_CLOUD_DB_ENDPOINT
@@ -80,6 +80,28 @@ Resources:
         - Namespace: aws:elasticbeanstalk:cloudwatch:logs
           OptionName: StreamLogs
           Value: true
+        # - Namespace: aws:elbv2:listener:443
+        #   OptionName: ListenerEnabled
+        #   Value: true
+        # - Namespace: aws:elbv2:listener:443
+        #   OptionName: Protocol
+        #   Value: HTTPS
+        # - Namespace: aws:elbv2:listener:443
+        #   OptionName: SSLCertificateArns
+        #   Value: !ImportValue DabaseCloudCertificateArn
+        # - Namespace: aws:elbv2:listener:443
+        #   OptionName: Rules
+        #   Value: default
+        # - Namespace: aws:elbv2:listener:default
+        #   OptionName: ListenerEnabled
+        #   Value: false
         - Namespace: aws:elasticbeanstalk:application
           OptionName: 'Application Healthcheck URL'
           Value: HTTPS:443/health
+
+Outputs:
+  ElasticBeanstalkEnvironmentEndpointUrl:
+    Description: "Elastic Beanstalk Environment Endpoint URL"
+    Value: !GetAtt ElasticBeanstalkEnvironment.EndpointURL
+    Export:
+      Name: DabaseCloudElasticBeanstalkEndpointUrl

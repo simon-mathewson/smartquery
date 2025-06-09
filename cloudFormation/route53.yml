@@ -42,3 +42,15 @@ Resources:
         # This is the CloudFront hosted zone ID, which is fixed for CloudFront
         HostedZoneId: "Z2FDTNDATAQYW2"
         DNSName: !ImportValue CloudFrontDistributionDabaseAboutDomainName
+
+  Route53RecordSetDabaseCloud:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "cloud.dabase.dev."
+      Type: "A"
+      AliasTarget:
+        HostedZoneId: "Z215JYRZR1TBD5"  # Fixed hosted zone ID for Elastic Beanstalk in eu-central-1
+        DNSName: !ImportValue DabaseCloudElasticBeanstalkEndpointUrl
+      
