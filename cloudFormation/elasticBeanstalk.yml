@@ -28,7 +28,16 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier
-        - arn:aws:iam::aws:policy/AmazonRDSDataFullAccess
+        # - arn:aws:iam::aws:policy/AmazonRDSDataFullAccess
+      Policies:
+        - PolicyName: RdsSecretAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !ImportValue DabaseCloudDbSecretArn
 
   ElasticBeanstalkEnvironment:
     Type: AWS::ElasticBeanstalk::Environment

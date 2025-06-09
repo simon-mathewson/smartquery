@@ -26,6 +26,10 @@ app.use(
   }),
 );
 
+app.get('/health', (_, res) => {
+  res.send('OK');
+});
+
 const port = process.env.PORT || 80;
 
 app.listen(port, () => {
