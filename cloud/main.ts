@@ -10,6 +10,7 @@ app.use(
   cors({
     origin: process.env.UI_URL,
     credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS'],
   }),
 );
 
