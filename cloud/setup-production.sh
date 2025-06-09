@@ -1,6 +1,5 @@
 #!/bin/bash
 
-npm install -g pnpm
 pnpm install
 
 # Fetch database secret from AWS Secrets Manager and create .env file
