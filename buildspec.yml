@@ -62,11 +62,13 @@ phases:
 
       - cd ../cloud
       - aws s3 cp application.zip s3://dabase-cloud-source/$CODEBUILD_BUILD_NUMBER.zip
-      - aws elasticbeanstalk create-application-version \
+      - >
+        aws elasticbeanstalk create-application-version \
           --application-name dabase-cloud \
           --version-label $CODEBUILD_BUILD_NUMBER \
           --source-bundle S3Bucket=dabase-cloud-source,S3Key=$CODEBUILD_BUILD_NUMBER.zip
-      - aws elasticbeanstalk update-environment \
+      - >
+        aws elasticbeanstalk update-environment \
           --environment-name dabase-cloud \
           --version-label $CODEBUILD_BUILD_NUMBER
 
