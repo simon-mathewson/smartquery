@@ -33,8 +33,6 @@ export const createContext = async ({
     });
   };
 
-  console.log(res.getHeaders());
-
   return {
     getCookie,
     setCookie,

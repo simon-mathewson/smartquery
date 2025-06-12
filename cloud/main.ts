@@ -6,8 +6,6 @@ import { createContext } from './context';
 
 const app = express();
 
-console.log(process.env.UI_URL);
-
 app.use(
   cors({
     origin: process.env.UI_URL,
@@ -29,6 +27,11 @@ app.use(
 
 app.get('/health', (_, res) => {
   res.status(200).send('OK');
+});
+
+app.use((req, res, next) => {
+  console.log(req.method, req.url, res.getHeaders());
+  next();
 });
 
 const port = process.env.PORT || 80;

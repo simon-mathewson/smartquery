@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
 
-import { bytesToHex, hexToBytes } from '@noble/ciphers/utils';
+import { bytesToHex } from '@noble/ciphers/utils';
 import crypto from 'crypto';
 import { z } from 'zod';
 import { isAuthenticated } from '~/middlewares/isAuthenticated';
@@ -10,7 +10,6 @@ import { deriveKeyEncryptionKeyFromPassword } from './deriveKeyEncryptionKeyFrom
 import { encrypt } from './encrypt';
 import { hashPassword } from './hashPassword';
 import { verifyPassword } from './verifyPassword';
-import { decrypt } from './decrypt';
 
 export const authRouter = trpc.router({
   currentUser: trpc.procedure
