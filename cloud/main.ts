@@ -29,11 +29,6 @@ app.get('/health', (_, res) => {
   res.status(200).send('OK');
 });
 
-app.use((req, res, next) => {
-  console.log(req.method, req.url, res.getHeaders());
-  next();
-});
-
 const port = process.env.PORT || 80;
 
 app.listen(port, () => {
