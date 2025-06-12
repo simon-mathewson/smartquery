@@ -6,15 +6,15 @@ import { createContext } from './context';
 
 const app = express();
 
-const corsOptions = {
-  origin: process.env.UI_URL,
-  credentials: true,
-  methods: ['GET', 'POST', 'OPTIONS'],
-};
+console.log(process.env.UI_URL);
 
-app.use(cors(corsOptions));
-
-app.options('*', cors(corsOptions));
+app.use(
+  cors({
+    origin: process.env.UI_URL,
+    credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS'],
+  }),
+);
 
 app.use(
   '/trpc',
