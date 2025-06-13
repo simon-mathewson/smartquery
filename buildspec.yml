@@ -25,6 +25,10 @@ phases:
       - pnpm prisma generate
       - pnpm typecheck
       - pnpm build
+      - rm -rf node_modules
+      - mkdir node_modules # Keep empty node_modules to prevent EB from installing deps
+      - zip -r application.zip package.json node_modules dist
+      - pnpm install # Reinstall deps for later steps
 
       - cd ../ui
       - pnpm typecheck
@@ -44,12 +48,6 @@ phases:
       - sleep 15
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
       - pnpm build:node
-
-      # Package cloud now that deps aren't required for UI typecheck anymore
-      - cd ../cloud
-      - rm -rf node_modules
-      - mkdir node_modules # Keep empty node_modules to prevent EB from installing deps
-      - zip -r application.zip . -x ".pnpm-store/*" "application.zip" "prisma/generated/*" ".rollup.cache/*"
   post_build:
     commands:
       - cd ../cloudFormation
@@ -78,6 +76,7 @@ phases:
       - export DABASE_CLOUD_DB_PASSWORD=$(echo $DB_SECRET | jq -r '.password')
       - export DABASE_CLOUD_DB_USERNAME=$(echo $DB_SECRET | jq -r '.username')
       - export DATABASE_URL="postgresql://${DABASE_CLOUD_DB_USERNAME}:$(urlencode $DABASE_CLOUD_DB_PASSWORD)@${DABASE_CLOUD_DB_ENDPOINT}/dabase_cloud?schema=public"
+      - echo $DATABASE_URL
       - pnpm prisma migrate deploy
 
       # Deploy server
