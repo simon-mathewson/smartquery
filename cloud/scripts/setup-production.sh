@@ -5,8 +5,8 @@ DB_USERNAME=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.username')
 DB_PASSWORD=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.password')
 
 # Construct DATABASE_URL using the RDS endpoint and credentials
-chmod +x ./scripts/urlencode.sh
-export DATABASE_URL="postgresql://${DB_USERNAME}:$(./scripts/urlencode.sh "$DB_PASSWORD")@${DABASE_CLOUD_DB_ENDPOINT}/dabase_cloud?schema=public"
+chmod +x ./scripts/build-database-url.sh
+export DATABASE_URL=$(./scripts/build-database-url.sh)
 
 pnpm install
 
