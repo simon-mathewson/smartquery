@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 
 urlencode() {
-    local length="${#1}"
-    for (( i = 0; i < length; i++ )); do
-        local c="${1:i:1}"
-        case $c in
-            [a-zA-Z0-9.~_-]) printf "$c" ;;
-            *) printf '%%%02X' "'$c"
-        esac
-    done
+    echo "$1" | awk 'BEGIN { for (i = 0; i <= 255; i++) ord[sprintf("%c", i)] = i }
+    {
+        for (i = 1; i <= length($0); i++) {
+            c = substr($0, i, 1)
+            if (c ~ /[a-zA-Z0-9.~_-]/) printf c
+            else printf "%%%02X", ord[c]
+        }
+    }'
 } 
