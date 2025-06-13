@@ -12,12 +12,13 @@ phases:
       - pnpm install
       - cd ../cloud
       - pnpm install
-      - chmod +x ./scripts/urlencode.sh
       - export DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
       - export DABASE_CLOUD_DB_PASSWORD=$(echo $DB_SECRET | jq -r '.password')
       - export DABASE_CLOUD_DB_USERNAME=$(echo $DB_SECRET | jq -r '.username')
+      - chmod +x ./scripts/urlencode.sh
       - export DATABASE_URL="postgresql://${DABASE_CLOUD_DB_USERNAME}:$(./scripts/urlencode.sh "$DABASE_CLOUD_DB_PASSWORD")@${DABASE_CLOUD_DB_ENDPOINT}/dabase_cloud?schema=public"
       - echo $DATABASE_URL
+      - pnpm prisma migrate deploy
       - cd ../link
       - pnpm install
       - cd ../ui
