@@ -12,6 +12,12 @@ phases:
       - pnpm install
       - cd ../cloud
       - pnpm install
+      - source ./scripts/urlencode.sh
+      - export DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
+      - export DABASE_CLOUD_DB_PASSWORD=$(echo $DB_SECRET | jq -r '.password')
+      - export DABASE_CLOUD_DB_USERNAME=$(echo $DB_SECRET | jq -r '.username')
+      - export DATABASE_URL="postgresql://${DABASE_CLOUD_DB_USERNAME}:$(urlencode $DABASE_CLOUD_DB_PASSWORD)@${DABASE_CLOUD_DB_ENDPOINT}/dabase_cloud?schema=public"
+      - echo $DATABASE_URL
       - cd ../link
       - pnpm install
       - cd ../ui
@@ -61,22 +67,11 @@ phases:
       - cd ../cloud
 
       # Run migrations
-      - |
-        urlencode() {
-          local length="${#1}"
-          for (( i = 0; i < length; i++ )); do
-            local c="${1:i:1}"
-            case $c in
-              [a-zA-Z0-9.~_-]) printf "$c" ;;
-              *) printf '%%%02X' "'$c"
-            esac
-          done
-        }
+      - source ./scripts/urlencode.sh
       - export DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
       - export DABASE_CLOUD_DB_PASSWORD=$(echo $DB_SECRET | jq -r '.password')
       - export DABASE_CLOUD_DB_USERNAME=$(echo $DB_SECRET | jq -r '.username')
       - export DATABASE_URL="postgresql://${DABASE_CLOUD_DB_USERNAME}:$(urlencode $DABASE_CLOUD_DB_PASSWORD)@${DABASE_CLOUD_DB_ENDPOINT}/dabase_cloud?schema=public"
-      - echo $DATABASE_URL
       - pnpm prisma migrate deploy
 
       # Deploy server
