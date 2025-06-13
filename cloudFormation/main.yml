@@ -15,6 +15,7 @@ Resources:
     DependsOn:
       - CloudFrontStack
       - IamStack
+      - RDSStack
 
   CodePipelineStack:
     Type: "AWS::CloudFormation::Stack"

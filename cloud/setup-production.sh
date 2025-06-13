@@ -21,7 +21,4 @@ DB_PASSWORD=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.password')
 # Construct DATABASE_URL using the RDS endpoint and credentials
 export DATABASE_URL="postgresql://${DB_USERNAME}:$(urlencode $DB_PASSWORD)@${DABASE_CLOUD_DB_ENDPOINT}/dabase_cloud?schema=public"
 
-set -e  # Exit immediately if a command exits with a non-zero status
-pnpm prisma migrate deploy
-
 pnpm start-production

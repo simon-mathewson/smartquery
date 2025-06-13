@@ -61,6 +61,26 @@ phases:
           --capabilities CAPABILITY_NAMED_IAM
 
       - cd ../cloud
+
+      # Run migrations
+      - |
+        urlencode() {
+          local length="${#1}"
+          for (( i = 0; i < length; i++ )); do
+            local c="${1:i:1}"
+            case $c in
+              [a-zA-Z0-9.~_-]) printf "$c" ;;
+              *) printf '%%%02X' "'$c"
+            esac
+          done
+        }
+      - export DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
+      - export DABASE_CLOUD_DB_PASSWORD=$(echo $DB_SECRET | jq -r '.password')
+      - export DABASE_CLOUD_DB_USERNAME=$(echo $DB_SECRET | jq -r '.username')
+      - export DATABASE_URL="postgresql://${DABASE_CLOUD_DB_USERNAME}:$(urlencode $DABASE_CLOUD_DB_PASSWORD)@${DABASE_CLOUD_DB_ENDPOINT}/dabase_cloud?schema=public"
+      - pnpm prisma migrate deploy
+
+      # Deploy server
       - aws s3 cp application.zip s3://dabase-cloud-source/$CODEBUILD_BUILD_NUMBER.zip
       - >
         aws elasticbeanstalk create-application-version \
