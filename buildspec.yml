@@ -12,7 +12,7 @@ phases:
       - pnpm install
       - cd ../cloud
       - pnpm install
-      - source ./scripts/urlencode.sh
+      - . ./scripts/urlencode.sh
       - export DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
       - export DABASE_CLOUD_DB_PASSWORD=$(echo $DB_SECRET | jq -r '.password')
       - export DABASE_CLOUD_DB_USERNAME=$(echo $DB_SECRET | jq -r '.username')
@@ -67,7 +67,7 @@ phases:
       - cd ../cloud
 
       # Run migrations
-      - source ./scripts/urlencode.sh
+      - . ./scripts/urlencode.sh
       - export DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
       - export DABASE_CLOUD_DB_PASSWORD=$(echo $DB_SECRET | jq -r '.password')
       - export DABASE_CLOUD_DB_USERNAME=$(echo $DB_SECRET | jq -r '.username')
