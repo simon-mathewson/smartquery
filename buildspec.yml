@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 22
+      nodejs: 18
     commands:
       - npm i -g corepack@latest
       - corepack enable pnpm
