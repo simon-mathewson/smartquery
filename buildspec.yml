@@ -27,7 +27,7 @@ phases:
       - pnpm build
       - rm -rf node_modules
       - mkdir node_modules # Keep empty node_modules to prevent EB from installing deps
-      - zip -r application.zip dist node_modules package.json Procfile scripts
+      - zip -r application.zip .ebextensions dist node_modules package.json Procfile scripts
       - pnpm install # Reinstall deps for later steps
 
       - cd ../ui
