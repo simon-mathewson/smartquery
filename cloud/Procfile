@@ -1,1 +1,1 @@
-web: npm run setup-production
+web: chmod +x ./scripts/setup-production.sh && ./scripts/setup-production.sh

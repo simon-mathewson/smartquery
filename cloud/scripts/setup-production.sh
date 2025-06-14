@@ -8,6 +8,7 @@ DB_PASSWORD=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.password')
 chmod +x ./scripts/build-database-url.sh
 export DATABASE_URL=$(./scripts/build-database-url.sh)
 
-pnpm install
-
-pnpm start-production
+set -a
+source .env.production
+set +a
+node dist/bundle.js
