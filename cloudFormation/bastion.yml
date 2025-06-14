@@ -29,7 +29,7 @@ Resources:
       Roles:
         - !Ref BastionRole
 
-  BastionHostNew:
+  BastionHost:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-092ff8e60e2d51e19  # Amazon Linux 2023 AMI
@@ -43,6 +43,6 @@ Resources:
 Outputs:
   BastionPublicIP:
     Description: Public IP address of the bastion host
-    Value: !GetAtt BastionHostNew.PublicIp
+    Value: !GetAtt BastionHost.PublicIp
     Export:
       Name: DabaseCloudBastionPublicIP
