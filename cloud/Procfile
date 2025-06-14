@@ -1,1 +1,1 @@
-web: npm run setup-production
+web: set -e && npm run setup-production
