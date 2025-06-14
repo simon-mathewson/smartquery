@@ -12,8 +12,8 @@ phases:
       - pnpm install
       - cd ../cloud
       - pnpm install
-      # - cd ../link
-      # - pnpm install
+      - cd ../link
+      - pnpm install
       - cd ../ui
       - pnpm install
       # - cd ../about
