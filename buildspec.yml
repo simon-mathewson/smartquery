@@ -25,11 +25,7 @@ phases:
       - pnpm prisma generate
       - pnpm typecheck
       - pnpm build
-      - mv node_modules node_modules_backup
-      - mkdir node_modules # Keep empty node_modules to prevent EB from installing deps
-      - zip -r application.zip .ebextensions dist node_modules package.json Procfile scripts
-      - rm -rf node_modules
-      - mv node_modules_backup node_modules
+      - zip -r application.zip .ebextensions dist package.json Procfile scripts
 
       - cd ../ui
       - pnpm typecheck
