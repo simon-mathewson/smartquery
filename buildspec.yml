@@ -12,12 +12,12 @@ phases:
       - pnpm install
       - cd ../cloud
       - pnpm install
-      - cd ../link
-      - pnpm install
+      # - cd ../link
+      # - pnpm install
       - cd ../ui
       - pnpm install
-      - cd ../about
-      - pnpm install
+      # - cd ../about
+      # - pnpm install
   build:
     on-failure: ABORT
     commands:
@@ -38,17 +38,17 @@ phases:
       # - NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
       - pnpm build
 
-      - cd ../about
-      - pnpm typecheck
-      - pnpm build
+      # - cd ../about
+      # - pnpm typecheck
+      # - pnpm build
 
-      - cd ../link
-      - pnpm typecheck
-      - pnpm db:generate
-      - pnpm test:db:up
-      - sleep 15
-      - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
-      - pnpm build:node
+      # - cd ../link
+      # - pnpm typecheck
+      # - pnpm db:generate
+      # - pnpm test:db:up
+      # - sleep 15
+      # - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
+      # - pnpm build:node
   post_build:
     commands:
       - cd ../cloudFormation
@@ -88,9 +88,9 @@ phases:
       - aws s3 sync dist s3://dabase-ui
       - aws cloudfront create-invalidation --distribution-id $DABASE_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
 
-      - cd ../about
-      - aws s3 sync out s3://dabase-about
-      - aws cloudfront create-invalidation --distribution-id $DABASE_ABOUT_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+      # - cd ../about
+      # - aws s3 sync out s3://dabase-about
+      # - aws cloudfront create-invalidation --distribution-id $DABASE_ABOUT_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
 
 reports:
   link:
