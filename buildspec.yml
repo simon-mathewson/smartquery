@@ -12,11 +12,6 @@ phases:
       - pnpm install
       - cd ../cloud
       - pnpm install
-      - export DABASE_CLOUD_DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
-      - chmod +x ./scripts/build-database-url.sh
-      - export DATABASE_URL=$(./scripts/build-database-url.sh)
-      - echo $DATABASE_URL
-      - pnpm prisma migrate deploy
       - cd ../link
       - pnpm install
       - cd ../ui
@@ -67,6 +62,7 @@ phases:
 
       # Run migrations
       - export DABASE_CLOUD_DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
+      - chmod +x ./scripts/build-database-url.sh
       - export DATABASE_URL=$(./scripts/build-database-url.sh)
       - pnpm prisma migrate deploy
 
