@@ -21,7 +21,7 @@ Resources:
             Value: !ImportValue DabaseCloudDbSecretArn
           - Name: "DABASE_CLOUD_DB_ENDPOINT"
             Value: !ImportValue DabaseCloudDbEndpoint
-        Image: "aws/codebuild/standard:7.0"
+        Image: "aws/codebuild/amazonlinux-x86_64-lambda-standard:nodejs22"
         PrivilegedMode: true
         Type: "LINUX_CONTAINER"
       LogsConfig:
