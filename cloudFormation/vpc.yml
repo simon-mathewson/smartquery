@@ -109,6 +109,85 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet2
 
+  CodeBuildSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Security group for CodeBuild'
+      VpcId: !Ref VPC
+
+  CodeBuildSecurityGroupToDbEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref CodeBuildSecurityGroup
+      IpProtocol: tcp
+      ToPort: 5432
+      FromPort: 5432
+      DestinationSecurityGroupId: !Ref DabaseCloudDbSecurityGroup
+
+  ELBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP/HTTPs ingress
+      VpcId: !ImportValue DabaseCloudVpcId
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        IpProtocol: tcp
+        ToPort: 443
+        FromPort: 443
+
+  ELBSecurityGroupToAppEgress:
+    Type: AWS::EC2::SecurityGroupEgress  # prevent security group circular references
+    Properties:
+      GroupId: !Ref ELBSecurityGroup
+      IpProtocol: tcp
+      ToPort: 8080
+      FromPort: 8080
+      DestinationSecurityGroupId: !Ref ElasticBeanstalkEnvironmentSecurityGroup
+
+  ElasticBeanstalkEnvironmentSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Security group for Elastic Beanstalk environment'
+      VpcId: !ImportValue DabaseCloudVpcId
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref ELBSecurityGroup
+          IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+
+  ElasticBeanstalkEnvironmentSecurityGroupToDbEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref ElasticBeanstalkEnvironmentSecurityGroup
+      IpProtocol: tcp
+      ToPort: 5432
+      FromPort: 5432
+      DestinationSecurityGroupId: !Ref DabaseCloudDbSecurityGroup
+
+  DabaseCloudDbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Security group for RDS PostgreSQL'
+      VpcId: !Ref VPC
+
+  DbSecurityGroupFromCodeBuildIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref DabaseCloudDbSecurityGroup
+      IpProtocol: tcp
+      ToPort: 5432
+      FromPort: 5432
+      SourceSecurityGroupId: !Ref CodeBuildSecurityGroup
+
+  DbSecurityGroupFromElasticBeanstalkIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref DabaseCloudDbSecurityGroup
+      IpProtocol: tcp
+      ToPort: 5432
+      FromPort: 5432
+      SourceSecurityGroupId: !Ref ElasticBeanstalkEnvironmentSecurityGroup
+
 Outputs:
   VpcId:
     Description: 'VPC ID'
@@ -147,3 +226,27 @@ Outputs:
     Value: !Join [',', [!Ref PrivateSubnet1, !Ref PrivateSubnet2]]
     Export:
       Name: DabaseCloudPrivateSubnets
+
+  CodeBuildSecurityGroup:
+    Description: 'Security group for CodeBuild'
+    Value: !Ref CodeBuildSecurityGroup
+    Export:
+      Name: DabaseCloudCodeBuildSecurityGroup
+
+  ELBSecurityGroup:
+    Description: 'Security group ID of the ELB'
+    Value: !Ref ELBSecurityGroup 
+    Export:
+      Name: DabaseCloudELBSecurityGroup
+      
+  ElasticBeanstalkEnvironmentSecurityGroup:
+    Description: 'Security group ID of the Elastic Beanstalk environment'
+    Value: !Ref ElasticBeanstalkEnvironmentSecurityGroup 
+    Export:
+      Name: DabaseCloudElasticBeanstalkEnvironmentSecurityGroup
+
+  DabaseCloudDbSecurityGroup:
+    Description: 'Security group ID of the RDS PostgreSQL'
+    Value: !Ref DabaseCloudDbSecurityGroup
+    Export:
+      Name: DabaseCloudDbSecurityGroup

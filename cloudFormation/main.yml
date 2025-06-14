@@ -16,6 +16,7 @@ Resources:
       - CloudFrontStack
       - IamStack
       - RDSStack
+      - VPCStack
 
   CodePipelineStack:
     Type: "AWS::CloudFormation::Stack"
@@ -43,14 +44,6 @@ Resources:
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/cognito.yml"
 
-  ElasticBeanstalkSecurityGroupStack:
-    Type: "AWS::CloudFormation::Stack"
-    DeletionPolicy: "Delete"
-    UpdateReplacePolicy: "Delete"
-    Properties:
-      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/elasticBeanstalkSecurityGroup.yml"
-    DependsOn: VPCStack
-
   ElasticBeanstalkStack:
     Type: "AWS::CloudFormation::Stack"
     DeletionPolicy: "Delete"
@@ -58,7 +51,6 @@ Resources:
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/elasticBeanstalk.yml"
     DependsOn:
-      - ElasticBeanstalkSecurityGroupStack
       - RDSStack
       - VPCStack
 
@@ -86,7 +78,6 @@ Resources:
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/rds.yml"
     DependsOn:
-      - ElasticBeanstalkSecurityGroupStack
       - VPCStack
 
   Route53Stack:

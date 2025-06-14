@@ -2,17 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'RDS PostgreSQL database for Dabase Cloud'
 
 Resources:
-  DBSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: 'Security group for RDS PostgreSQL'
-      VpcId: !ImportValue DabaseCloudVpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 5432
-          ToPort: 5432
-          SourceSecurityGroupId: !ImportValue DabaseCloudElasticBeanstalkEnvironmentSecurityGroup
-
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
@@ -33,7 +22,7 @@ Resources:
       MultiAZ: false
       PubliclyAccessible: false
       VPCSecurityGroups:
-        - !Ref DBSecurityGroup
+        - !ImportValue DabaseCloudDbSecurityGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
       BackupRetentionPeriod: 7
       PreferredBackupWindow: '03:00-04:00'
