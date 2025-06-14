@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Bastion host for secure RDS access'
+
+# To test SSH connectivity:
+# ssh -i ~/.ssh/dabase-bastion-key.pem ec2-user@bastion.dabase.dev
+
+Resources:
+  BastionKeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: dabase-bastion-key
+
+  BastionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+  BastionInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref BastionRole
+
+  BastionHost:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-092ff8e60e2d51e19  # Amazon Linux 2023 AMI
+      InstanceType: t2.micro
+      KeyName: !Ref BastionKeyPair
+      SubnetId: !ImportValue DabaseCloudPublicSubnet1
+      SecurityGroupIds:
+        - !ImportValue DabaseCloudBastionSecurityGroup
+      IamInstanceProfile: !Ref BastionInstanceProfile
+
+Outputs:
+  BastionPublicIP:
+    Description: Public IP address of the bastion host
+    Value: !GetAtt BastionHost.PublicIp
+    Export:
+      Name: DabaseCloudBastionPublicIP

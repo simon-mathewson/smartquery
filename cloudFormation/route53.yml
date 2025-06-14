@@ -53,4 +53,15 @@ Resources:
       AliasTarget:
         HostedZoneId: "Z215JYRZR1TBD5"  # Fixed hosted zone ID for Elastic Beanstalk in eu-central-1
         DNSName: !ImportValue DabaseCloudElasticBeanstalkEndpointUrl
+
+  Route53RecordSetBastion:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "bastion.dabase.dev."
+      Type: "A"
+      TTL: "300"
+      ResourceRecords:
+        - !ImportValue DabaseCloudBastionPublicIP
       

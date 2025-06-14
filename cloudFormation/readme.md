@@ -59,3 +59,40 @@ In the AWS console, go to Certificate Manager, Request a certificate, and reques
 Replace `AcmCertificateArn` value in CloudFormation files with the ARN from us-east-1.
 
 Replace the certificate ARN in the Elastic Beanstalk Stack with the ARN from eu-central-1.
+
+### 8. Setup production DB access
+
+1. Get key pair ID
+
+```sh
+aws ec2 describe-key-pairs --filters Name=key-name,Values=dabase-bastion-key
+```
+
+2. Get and store private key
+
+```sh
+aws ssm get-parameter --name /ec2/keypair/<KEY ID> --with-decryption --query Parameter.Value --output text > ~/.ssh/dabase-bastion-key.pem
+
+chmod 400 ~/.ssh/dabase-bastion-key.pem
+```
+
+Production DB info:
+
+SSH User: ec2-user
+SSH Host: bastion.dabase.dev
+SSH Port: 22
+SSH Key: ~/.ssh/dabase-bastion-key.pem
+DB Host: [See DabaseCloudDbEndpoint](https://eu-central-1.console.aws.amazon.com/cloudformation/home?region=eu-central-1#/exports)
+DB Port: 5432
+DB User: postgres
+DB Name: dabase_cloud
+
+
+DB Password:
+
+1. Get secret ARN: [See DabaseCloudDbSecretArn](https://eu-central-1.console.aws.amazon.com/cloudformation/home?region=eu-central-1#/exports)
+2. Get secret:
+
+```sh
+aws secretsmanager get-secret-value --secret-id '<DABASE_CLOUD_DB_SECRET_ARN>' --query SecretString --output text --region eu-central-1 | cat
+```

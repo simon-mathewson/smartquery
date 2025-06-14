@@ -1,10 +1,19 @@
 Resources:
+  BastionStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/bastion.yml"
+
   CloudFrontStack:
     Type: "AWS::CloudFormation::Stack"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/cloudFront.yml"
+    DependsOn:
+      - VPCStack
 
   CodeBuildStack:
     Type: "AWS::CloudFormation::Stack"
@@ -87,6 +96,7 @@ Resources:
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/route53.yml"
     DependsOn:
+      - BastionStack
       - CloudFrontStack
       - ElasticBeanstalkStack
 
