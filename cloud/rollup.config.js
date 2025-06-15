@@ -3,7 +3,6 @@ import typescript from '@rollup/plugin-typescript';
 import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
-import copy from 'rollup-plugin-copy';
 
 export default {
   input: 'main.ts',
@@ -20,8 +19,5 @@ export default {
     }),
     commonjs(),
     json(),
-    copy({
-      targets: [{ src: 'prisma/generated/*.node', dest: 'dist' }],
-    }),
   ],
 };
