@@ -37,7 +37,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - secretsmanager:GetSecretValue
-                Resource: !ImportValue DabaseCloudDbSecretArn
+                Resource: "*"
 
   ElasticBeanstalkEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
@@ -83,6 +83,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: DABASE_CLOUD_DB_SECRET
           Value: !ImportValue DabaseCloudDbSecretArn
+        - Namespace: aws:elasticbeanstalk:application:environmentsecrets
+          OptionName: JWT_SECRET
+          Value: !ImportValue DabaseCloudJwtSecretArn
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: DABASE_CLOUD_DB_ENDPOINT
           Value: !ImportValue DabaseCloudDbEndpoint
