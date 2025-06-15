@@ -52,7 +52,7 @@ export const getInitialFormValues = async (props: {
       ssh: connectionToEdit?.ssh
         ? {
             ...connectionToEdit.ssh,
-            credentialType: connectionToEdit.ssh.password !== undefined ? 'password' : 'privateKey',
+            credentialType: connectionToEdit.ssh.privateKey ? 'privateKey' : 'password',
             password: connectionToEdit.ssh.password ?? '',
             privateKey: connectionToEdit.ssh.privateKey ?? '',
           }
