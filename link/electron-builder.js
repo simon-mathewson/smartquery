@@ -51,15 +51,11 @@ module.exports = {
     title: 'dabase-link', // Mac ARM build fails if this contains spaces
   },
   linux: {
-    target: [
-      { target: 'deb', arch: ['x64', 'arm64'] },
-      { target: 'rpm', arch: ['x64'] },
-    ],
+    target: [{ target: 'deb', arch: ['x64', 'arm64'] }],
     maintainer: 'electronjs.org',
     category: 'Utility',
   },
   deb: { artifactName },
-  rpm: { artifactName },
   npmRebuild: false,
   publish: { provider: 'generic', url: 'https://example.com/auto-updates' },
 };

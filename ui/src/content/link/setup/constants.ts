@@ -14,11 +14,6 @@ export const distributablesByOs: Record<Os, Array<Distributable>> = {
       fileExtension: 'deb',
       fileName: 'dabase-link_0.0.1_arm64.deb',
     },
-    {
-      arch: 'x64',
-      fileExtension: 'rpm',
-      fileName: 'dabase-link_0.0.1_x86_64.rpm',
-    },
   ],
   mac: [
     {
