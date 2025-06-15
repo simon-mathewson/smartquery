@@ -8,7 +8,8 @@ Resources:
   BastionKeyPair:
     Type: AWS::EC2::KeyPair
     Properties:
-      KeyName: dabase-bastion-key
+      KeyName: dabase-bastion-key2
+      KeyType: ed25519
 
   BastionRole:
     Type: AWS::IAM::Role

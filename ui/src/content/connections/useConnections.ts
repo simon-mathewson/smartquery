@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { ActiveConnection, Database } from '~/shared/types';
-import type { Connection } from '@/types/connection';
+import type { Connection, RemoteConnection } from '@/types/connection';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { useLocation, useRoute } from 'wouter';
 import { routes } from '~/router/routes';
@@ -210,18 +210,25 @@ export const useConnections = (props: UseConnectionsProps) => {
     ],
   );
 
+  const disconnectRemote = useCallback(
+    async (clientId: string) => {
+      await linkApi.disconnectDb.mutate(clientId);
+    },
+    [linkApi],
+  );
+
   const disconnect = useCallback(async () => {
     if (!activeConnection) return;
 
     if (activeConnection.type === 'remote') {
-      await linkApi.disconnectDb.mutate(activeConnection.clientId);
+      await disconnectRemote(activeConnection.clientId);
     } else {
       activeConnection.sqliteDb.close();
     }
 
     setActiveConnection(null);
     setActiveConnectionDatabases([]);
-  }, [activeConnection, linkApi]);
+  }, [activeConnection, disconnectRemote]);
 
   const removeConnection = useCallback(
     async (id: string) => {
@@ -308,6 +315,82 @@ export const useConnections = (props: UseConnectionsProps) => {
     [linkApi.sendQuery],
   );
 
+  const connectRemote = useCallback(
+    async (connection: RemoteConnection, options?: { skipDecryption?: boolean }) => {
+      const { password, sshPassword, sshPrivateKey } = await (async () => {
+        const storedCredentials = {
+          password: connection.password ?? '',
+          sshPassword: connection.ssh?.password ?? undefined,
+          sshPrivateKey: connection.ssh?.privateKey ?? undefined,
+        };
+
+        if (
+          connection.password === null ||
+          connection.ssh?.password === null ||
+          connection.ssh?.privateKey === null
+        ) {
+          return new Promise<{
+            password: string;
+            sshPassword: string | undefined;
+            sshPrivateKey: string | undefined;
+          }>((resolve) => {
+            signInModal.open({
+              connection,
+              onSignIn: async (enteredCredentials) =>
+                resolve({
+                  password: enteredCredentials.password ?? storedCredentials.password,
+                  sshPassword: enteredCredentials.sshPassword ?? storedCredentials.sshPassword,
+                  sshPrivateKey:
+                    enteredCredentials.sshPrivateKey ?? storedCredentials.sshPrivateKey,
+                }),
+            });
+          });
+        }
+
+        if (connection.credentialStorage === 'encrypted' && !options?.skipDecryption) {
+          return new Promise<{
+            password: string;
+            sshPassword: string | undefined;
+            sshPrivateKey: string | undefined;
+          }>((resolve) => {
+            userPasswordModal.open({
+              mode: 'decrypt',
+              onSubmit: async (userPassword) => {
+                const decryptedConnection = await cloudApi.connections.decryptCredentials.mutate({
+                  id: connection.id,
+                  userPassword,
+                });
+
+                assert(decryptedConnection.type === 'remote');
+
+                resolve({
+                  password: decryptedConnection.password ?? '',
+                  sshPassword: decryptedConnection.ssh?.password ?? undefined,
+                  sshPrivateKey: decryptedConnection.ssh?.privateKey ?? undefined,
+                });
+              },
+            });
+          });
+        }
+
+        return storedCredentials;
+      })();
+
+      return linkApi.connectDb.mutate({
+        ...connection,
+        password,
+        ssh: connection.ssh
+          ? {
+              ...connection.ssh,
+              password: sshPassword,
+              privateKey: sshPrivateKey,
+            }
+          : null,
+      });
+    },
+    [signInModal, userPasswordModal, cloudApi, linkApi, toast],
+  );
+
   const connect = useCallback(
     async (
       id: string,
@@ -326,100 +409,28 @@ export const useConnections = (props: UseConnectionsProps) => {
 
       await disconnect();
 
-      if (connection.type === 'file') {
-        const sqliteDb = await getSqliteDb(connection.id);
-        const activeConnection = {
-          ...connection,
-          sqliteDb,
-        } satisfies ActiveConnection;
-
-        setActiveConnection(activeConnection);
-
-        await getDatabases(connection);
-      }
-
-      const selectedDatabase = overrides?.database ?? connection.database;
-      const selectedSchema =
-        overrides?.schema ?? (connection.type === 'remote' ? connection.schema : undefined);
-
       try {
-        const newClientId = await (async () => {
-          if (connection.engine === 'sqlite') {
-            return undefined;
-          }
+        if (connection.type === 'file') {
+          const sqliteDb = await getSqliteDb(connection.id);
+          const activeConnection = {
+            ...connection,
+            sqliteDb,
+          } satisfies ActiveConnection;
 
-          const { password, sshPassword, sshPrivateKey } = await (async () => {
-            const storedCredentials = {
-              password: connection.password ?? '',
-              sshPassword: connection.ssh?.password ?? undefined,
-              sshPrivateKey: connection.ssh?.privateKey ?? undefined,
-            };
+          setActiveConnection(activeConnection);
 
-            if (
-              connection.password === null ||
-              connection.ssh?.password === null ||
-              connection.ssh?.privateKey === null
-            ) {
-              return new Promise<{
-                password: string;
-                sshPassword: string | undefined;
-                sshPrivateKey: string | undefined;
-              }>((resolve) => {
-                signInModal.open({
-                  connection,
-                  onSignIn: async (enteredCredentials) =>
-                    resolve({
-                      password: enteredCredentials.password ?? storedCredentials.password,
-                      sshPassword: enteredCredentials.sshPassword ?? storedCredentials.sshPassword,
-                      sshPrivateKey:
-                        enteredCredentials.sshPrivateKey ?? storedCredentials.sshPrivateKey,
-                    }),
-                });
-              });
-            }
+          await getDatabases(connection);
+        }
 
-            if (connection.credentialStorage === 'encrypted') {
-              return new Promise<{
-                password: string;
-                sshPassword: string | undefined;
-                sshPrivateKey: string | undefined;
-              }>((resolve) => {
-                userPasswordModal.open({
-                  mode: 'decrypt',
-                  onSubmit: async (userPassword) => {
-                    const decryptedConnection =
-                      await cloudApi.connections.decryptCredentials.mutate({
-                        id: connection.id,
-                        userPassword,
-                      });
+        const selectedDatabase = overrides?.database ?? connection.database;
+        const selectedSchema =
+          overrides?.schema ?? (connection.type === 'remote' ? connection.schema : undefined);
 
-                    assert(decryptedConnection.type === 'remote');
-
-                    resolve({
-                      password: decryptedConnection.password ?? '',
-                      sshPassword: decryptedConnection.ssh?.password ?? undefined,
-                      sshPrivateKey: decryptedConnection.ssh?.privateKey ?? undefined,
-                    });
-                  },
-                });
-              });
-            }
-
-            return storedCredentials;
-          })();
-
-          const newClientId = await linkApi.connectDb.mutate({
+        if (connection.type === 'remote') {
+          const newClientId = await connectRemote({
             ...connection,
             database: selectedDatabase,
-            password,
             schema: selectedSchema,
-            ssh: connection.ssh
-              ? {
-                  ...connection.ssh,
-                  password: sshPassword,
-                  privateKey: sshPrivateKey,
-                }
-              : null,
           });
 
           setActiveConnection({
@@ -429,8 +440,8 @@ export const useConnections = (props: UseConnectionsProps) => {
             schema: selectedSchema,
           } satisfies ActiveConnection);
 
-          return newClientId;
-        })();
+          await getDatabases(connection, newClientId);
+        }
 
         navigate(
           routes.database({
@@ -443,8 +454,6 @@ export const useConnections = (props: UseConnectionsProps) => {
         window.document.title = `${
           selectedSchema ? `${selectedSchema} – ` : ''
         }${selectedDatabase} – ${connection.name}`;
-
-        await getDatabases(connection, newClientId);
       } catch (error) {
         console.error(error);
 
@@ -512,7 +521,9 @@ export const useConnections = (props: UseConnectionsProps) => {
       activeConnectionDatabases,
       addConnection,
       connect,
+      connectRemote,
       connections,
+      disconnectRemote,
       removeConnection,
       updateConnection,
     }),
@@ -521,7 +532,9 @@ export const useConnections = (props: UseConnectionsProps) => {
       activeConnectionDatabases,
       addConnection,
       connect,
+      connectRemote,
       connections,
+      disconnectRemote,
       removeConnection,
       updateConnection,
     ],

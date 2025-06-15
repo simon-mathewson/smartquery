@@ -21,7 +21,7 @@ export const mapPrismaToConnection = (c: DbConnection) => {
                   password: c.sshPassword,
                   port: c.sshPort,
                   privateKey: c.sshPrivateKey,
-                  user: c.dbUser,
+                  user: c.sshUser!,
                 }
               : null,
           storageLocation: 'cloud',

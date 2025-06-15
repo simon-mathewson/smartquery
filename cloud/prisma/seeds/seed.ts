@@ -74,5 +74,27 @@ import { PrismaClient } from '../generated';
     },
   });
 
+  await prisma.connection.create({
+    data: {
+      database: 'dabase_cloud',
+      dbUser: 'postgres',
+      engine: 'postgres',
+      host: '-',
+      name: 'Dabase Prod',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: true,
+      password: '',
+      port: 5432,
+      schema: 'public',
+      sshHost: 'bastion.dabase.dev',
+      sshPort: 22,
+      sshUser: 'ec2-user',
+    },
+  });
+
   console.info('Seeding complete.');
 })();

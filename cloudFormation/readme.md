@@ -65,7 +65,7 @@ Replace the certificate ARN in the Elastic Beanstalk Stack with the ARN from eu-
 1. Get key pair ID
 
 ```sh
-aws ec2 describe-key-pairs --filters Name=key-name,Values=dabase-bastion-key
+aws ec2 describe-key-pairs
 ```
 
 2. Get and store private key
@@ -86,7 +86,6 @@ DB Host: [See DabaseCloudDbEndpoint](https://eu-central-1.console.aws.amazon.com
 DB Port: 5432
 DB User: postgres
 DB Name: dabase_cloud
-
 
 DB Password:
 

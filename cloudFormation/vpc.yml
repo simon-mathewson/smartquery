@@ -196,6 +196,15 @@ Resources:
       FromPort: 5432
       SourceSecurityGroupId: !Ref ElasticBeanstalkEnvironmentSecurityGroup
 
+  DbSecurityGroupFromBastionIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref DabaseCloudDbSecurityGroup
+      IpProtocol: tcp
+      ToPort: 5432
+      FromPort: 5432
+      SourceSecurityGroupId: !Ref BastionSecurityGroup
+
   BastionSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
