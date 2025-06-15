@@ -25,7 +25,7 @@ phases:
       - pnpm prisma generate
       - pnpm typecheck
       - pnpm build
-      - zip -r application.zip .ebextensions dist package.json Procfile scripts
+      - zip -r application.zip .ebextensions .env.production dist package.json Procfile scripts
 
       - cd ../ui
       - pnpm typecheck

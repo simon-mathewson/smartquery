@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Extract username and password from secret JSON
 DB_USERNAME=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.username')
 DB_PASSWORD=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.password')
