@@ -5,29 +5,36 @@ export const useCloudQuery = <T extends any[] | []>(
   query: () => Promise<T>,
   props: { disabled?: boolean; emptyValue?: T },
 ) => {
-  const [response, setResponse] = useState<T | null>(null);
+  const [results, setResults] = useState<T | null>(null);
+
+  const [hasRun, setHasRun] = useState(false);
 
   const emptyValue = useMemo(() => props?.emptyValue ?? ([] as T), [props?.emptyValue]);
 
-  useEffect(() => {
+  const run = useCallback(async () => {
     if (props.disabled) {
-      setResponse(emptyValue);
-      return;
-    }
-
-    query().then(setResponse);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.disabled]);
-
-  const refetch = useCallback(async () => {
-    if (props.disabled) {
-      setResponse(emptyValue);
+      setResults(emptyValue);
       return;
     }
 
     const response = await query();
-    setResponse(response);
-  }, [props.disabled, query, emptyValue]);
+    setResults(response);
 
-  return useMemo(() => [response, refetch] as const, [response, refetch]);
+    setHasRun(true);
+  }, [props, query, emptyValue]);
+
+  useEffect(() => {
+    void run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.disabled]);
+
+  return useMemo(
+    () =>
+      ({
+        hasRun,
+        results,
+        run,
+      }) as const,
+    [results, run, hasRun],
+  );
 };

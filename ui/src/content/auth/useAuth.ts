@@ -14,22 +14,23 @@ export const useAuth = () => {
   const cloudApi = useDefinedContext(CloudApiContext);
   const toast = useDefinedContext(ToastContext);
 
+  const [isInitializing, setIsInitializing] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
   const logOut = useCallback(
-    async (props: { skipToast?: boolean } = {}) => {
+    async (props: { silent?: boolean } = {}) => {
       setUser(null);
 
       await cloudApi.auth.logOut.mutate();
 
-      if (!props.skipToast) {
+      if (!props.silent) {
         toast.add({
           title: 'Successfully logged out',
           color: 'success',
         });
-      }
 
-      navigate(routes.root());
+        navigate(routes.root());
+      }
     },
     [cloudApi, navigate, setUser, toast],
   );
@@ -41,10 +42,12 @@ export const useAuth = () => {
       setUser(user);
     } catch (error) {
       if (isUserUnauthorizedError(error)) {
-        await logOut({ skipToast: true });
+        await logOut({ silent: true });
         return;
       }
       throw error;
+    } finally {
+      setIsInitializing(false);
     }
   }, [cloudApi.auth.currentUser, logOut, setUser]);
 
@@ -104,11 +107,12 @@ export const useAuth = () => {
 
   return useMemo(
     () => ({
+      isInitializing,
       logIn,
       logOut,
       signUp,
       user,
     }),
-    [user, logIn, logOut, signUp],
+    [user, logIn, logOut, signUp, isInitializing],
   );
 };

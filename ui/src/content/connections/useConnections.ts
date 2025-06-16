@@ -32,7 +32,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const cloudApi = useDefinedContext(CloudApiContext);
   const linkApi = useDefinedContext(LinkApiContext);
-  const { user } = useDefinedContext(AuthContext);
+  const { user, isInitializing: isInitializingAuth } = useDefinedContext(AuthContext);
   const toast = useDefinedContext(ToastContext);
   const { getSqliteDb } = useDefinedContext(SqliteContext);
 
@@ -60,16 +60,16 @@ export const useConnections = (props: UseConnectionsProps) => {
     ],
   );
 
-  const [cloudConnections, refetchCloudConnections] = useCloudQuery(
-    () => cloudApi.connections.list.query(),
-    {
-      disabled: !user,
-    },
-  );
+  const cloudConnectionsQuery = useCloudQuery(() => cloudApi.connections.list.query(), {
+    disabled: !user,
+  });
 
   const connections = useMemo(
-    () => sortBy([...localConnections, ...(cloudConnections ?? [])], (c) => c.name.toLowerCase()),
-    [localConnections, cloudConnections],
+    () =>
+      sortBy([...localConnections, ...(cloudConnectionsQuery.results ?? [])], (c) =>
+        c.name.toLowerCase(),
+      ),
+    [localConnections, cloudConnectionsQuery],
   );
 
   const [, dbRouteParamsWithoutSchema] = useRoute<{
@@ -121,7 +121,7 @@ export const useConnections = (props: UseConnectionsProps) => {
             await cloudApi.connections.create.mutate({ connection });
           }
 
-          await refetchCloudConnections();
+          await cloudConnectionsQuery.run();
         }
 
         toast.add({
@@ -143,7 +143,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       toast,
       setLocalConnections,
       localConnections,
-      refetchCloudConnections,
+      cloudConnectionsQuery,
       userPasswordModal,
       cloudApi,
     ],
@@ -181,7 +181,7 @@ export const useConnections = (props: UseConnectionsProps) => {
             setLocalConnections(localConnections.filter((c) => c.id !== existingConnection.id));
           }
 
-          await refetchCloudConnections();
+          await cloudConnectionsQuery.run();
         }
 
         toast.add({
@@ -204,7 +204,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       toast,
       setLocalConnections,
       localConnections,
-      refetchCloudConnections,
+      cloudConnectionsQuery,
       userPasswordModal,
       cloudApi,
     ],
@@ -240,7 +240,7 @@ export const useConnections = (props: UseConnectionsProps) => {
           setLocalConnections(localConnections.filter((c) => c.id !== id));
         } else {
           await cloudApi.connections.delete.mutate({ id });
-          await refetchCloudConnections();
+          await cloudConnectionsQuery.run();
         }
 
         toast.add({
@@ -268,7 +268,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       setLocalConnections,
       localConnections,
       cloudApi.connections.delete,
-      refetchCloudConnections,
+      cloudConnectionsQuery,
       disconnect,
       navigate,
     ],
@@ -388,7 +388,7 @@ export const useConnections = (props: UseConnectionsProps) => {
           : null,
       });
     },
-    [signInModal, userPasswordModal, cloudApi, linkApi, toast],
+    [signInModal, userPasswordModal, cloudApi, linkApi],
   );
 
   const connect = useCallback(
@@ -466,26 +466,19 @@ export const useConnections = (props: UseConnectionsProps) => {
         navigate(routes.root());
       }
     },
-    [
-      connections,
-      disconnect,
-      toast,
-      navigate,
-      getSqliteDb,
-      getDatabases,
-      linkApi,
-      signInModal,
-      userPasswordModal,
-      cloudApi,
-    ],
+    [connections, disconnect, toast, navigate, getSqliteDb, getDatabases, connectRemote],
   );
 
-  useEffectOnce(() => {
-    if (connectionIdParam) {
-      connect(connectionIdParam, { database: databaseParam, schema: schemaParam });
-      return;
-    }
-  });
+  useEffectOnce(
+    () => {
+      // If user is not logged in, connect to the initial connection. Otherwise, let the cloud
+      // connection query's onComplete handle the initial connection.
+      if (connectionIdParam) {
+        void connect(connectionIdParam, { database: databaseParam, schema: schemaParam });
+      }
+    },
+    { enabled: !isInitializingAuth && (!user || cloudConnectionsQuery.hasRun) },
+  );
 
   // Disconnect when closing tab
   useEffect(() => {

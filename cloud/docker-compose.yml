@@ -3,6 +3,6 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: dabase
+      POSTGRES_DB: dabase_cloud
     ports:
       - '5444:5432'

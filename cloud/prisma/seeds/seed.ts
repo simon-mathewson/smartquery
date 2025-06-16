@@ -57,7 +57,7 @@ import { PrismaClient } from '../generated';
 
   await prisma.connection.create({
     data: {
-      database: 'dabase',
+      database: 'dabase_cloud',
       dbUser: 'postgres',
       engine: 'postgres',
       host: 'localhost',
