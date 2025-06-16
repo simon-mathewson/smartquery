@@ -27,6 +27,7 @@
   },
   "include": [
     "./globals.d.ts",
+    "./playwright-ct.config.ts",
     "./playwright.config.ts",
     "./playwright/**/*.ts", // Be more specific if playright only contains .ts files
     "./src/**/*.ts", // Only include .ts files within src
