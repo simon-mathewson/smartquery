@@ -1,21 +1,18 @@
 import React from 'react';
-import type { useConnections } from '../useConnections';
+import { TestApp } from '~/test/componentTests/TestApp';
 import type { ConnectionFormProps } from './ConnectionForm';
 import { ConnectionForm } from './ConnectionForm';
-import type { DeepPartial } from 'ts-essentials';
-import { TestApp } from '~/test/componentTests/TestApp';
+import { Card } from '~/shared/components/card/Card';
+import type { StoryProps } from '~/test/componentTests/StoryProps';
 
-export type ConnectionFormStoryProps = {
-  connectionsContext: DeepPartial<ReturnType<typeof useConnections>>;
-  connectionFormProps: ConnectionFormProps;
-};
-
-export const ConnectionFormStory: React.FC<ConnectionFormStoryProps> = (props) => {
-  const { connectionsContext, connectionFormProps } = props;
+export const ConnectionFormStory: React.FC<StoryProps<ConnectionFormProps>> = (props) => {
+  const { propsOverrides, providerOverrides } = props;
 
   return (
-    <TestApp mockOverrides={{ ConnectionsProvider: connectionsContext }}>
-      <ConnectionForm {...connectionFormProps} />
+    <TestApp providerOverrides={providerOverrides}>
+      <Card htmlProps={{ className: 'w-max' }}>
+        <ConnectionForm exit={() => {}} {...propsOverrides} />
+      </Card>
     </TestApp>
   );
 };

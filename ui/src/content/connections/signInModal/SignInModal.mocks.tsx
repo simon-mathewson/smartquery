@@ -1,6 +1,6 @@
 import { spy } from 'tinyspy';
 import { getModalControlMock } from '~/shared/components/modal/ModalControl.mock';
-import { getConnectionsContextMock } from '../Context.mock';
+import { getConnectionsContextMock } from '../mocks';
 import type { SignInModalProps } from './SignInModal';
 import type { SignInModalStoryProps } from './SignInModal.story';
 

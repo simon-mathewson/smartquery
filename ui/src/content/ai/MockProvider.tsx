@@ -3,7 +3,7 @@ import type { useAi } from './useAi';
 import { AiContext } from './Context';
 
 export const AiMockProvider: React.FC<MockProviderProps<ReturnType<typeof useAi>>> = (props) => {
-  const { children, mockOverride } = props;
+  const { children, overrides } = props;
 
   return (
     <AiContext.Provider
@@ -11,7 +11,7 @@ export const AiMockProvider: React.FC<MockProviderProps<ReturnType<typeof useAi>
         googleAi: null,
         googleAiApiKey: undefined,
         setGoogleAiApiKey: () => {},
-        ...mockOverride,
+        ...overrides,
       }}
     >
       {children}

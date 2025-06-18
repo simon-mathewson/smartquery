@@ -15,8 +15,7 @@ export function useBuildProviders<T extends Record<string, React.FC<PropsWithChi
             const providerMockOverrides = mockOverrides?.[ProviderName as keyof T];
 
             return () => (
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              <Provider {...(providerMockOverrides ? ({ providerMockOverrides } as any) : {})}>
+              <Provider {...(providerMockOverrides ? { overrides: providerMockOverrides } : {})}>
                 {Acc === null ? children : <Acc />}
               </Provider>
             );

@@ -3,7 +3,7 @@ import { TestConnection, type TestConnectionProps } from './TestConnection';
 import type { LinkApiClient } from '~/content/link/api/client';
 import { ConnectionsContext } from '../../Context';
 import type { getMockLinkApiClient } from './TestConnection.mocks';
-import { getConnectionsContextMock } from '../../Context.mock';
+import { getConnectionsContextMock } from '../../mocks';
 
 export type TestConnectionStoryProps = {
   mockLinkApiClient: ReturnType<typeof getMockLinkApiClient>;

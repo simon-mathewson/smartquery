@@ -7,6 +7,7 @@ import { routes } from './routes';
 import { Signup } from '~/content/auth/Signup/Signup';
 import { AddConnectionPage } from '~/content/connections/AddConnectionPage/AddConnectionPage';
 import { Login } from '~/content/auth/Login/Login';
+import { SettingsOverlay } from '~/content/settings/Overlay';
 
 export const Router: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ export const Router: React.FC = () => {
         <Route path={routes.login()} component={Login} />
         <Route path={routes.signup()} component={Signup} />
       </Switch>
+      <SettingsOverlay />
     </App>
   );
 };

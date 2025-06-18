@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { Connections } from './Connections';
 import { ConnectionsContext } from './Context';
-import { getConnectionsContextMock } from './Context.mock';
+import { getConnectionsContextMock } from './MockProvider';
 import type { LinkApiClient } from '~/content/link/api/client';
 import { LinkApiContext } from '~/content/link/api/Context';
 

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { DatabaseListStory } from './List.story';
-import { postgresConnectionMock, getConnectionsContextMock } from '../Context.mock';
+import { postgresConnectionMock, getConnectionsContextMock } from '../mocks';
 import type { ActiveConnection } from '~/shared/types';
 import type { Connections } from '../useConnections';
 

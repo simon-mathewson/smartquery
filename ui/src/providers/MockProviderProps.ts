@@ -1,3 +1,3 @@
 export type MockProviderProps<T> = React.PropsWithChildren<{
-  mockOverride?: Partial<T>;
+  overrides?: Partial<T>;
 }>;
