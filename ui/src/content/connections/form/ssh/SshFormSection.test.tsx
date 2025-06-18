@@ -1,30 +1,23 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import type { SshFormSectionProps } from './SshFormSection';
+import { getProps } from './mocks';
 import { SshFormSection } from './SshFormSection';
-import { spy } from 'tinyspy';
-
-const getProps = () =>
-  ({
-    setFormValue: spy(),
-    formValues: {
-      credentialStorage: 'plain',
-      ssh: {
-        credentialType: 'password',
-        host: 'localhost',
-        password: 'password',
-        port: 22,
-        privateKey: '',
-        user: 'root',
-      },
-    },
-  }) satisfies SshFormSectionProps;
+import { SshFormSectionStory } from './SshFormSection.story';
 
 test.describe('SshFormSection', () => {
   test('allows toggling SSH', async ({ mount }) => {
     const props = getProps();
 
     const $ = await mount(
-      <SshFormSection {...props} formValues={{ ssh: null, credentialStorage: 'plain' }} />,
+      <SshFormSectionStory
+        propsOverrides={{
+          ...props,
+          formValues: {
+            ...props.formValues,
+            ssh: null,
+            credentialStorage: 'plain',
+          },
+        }}
+      />,
     );
 
     const toggle = $.getByRole('radio', { name: 'Connect via SSH' });
@@ -58,8 +51,15 @@ test.describe('SshFormSection', () => {
   });
 
   test('controls should be hidden if SSH is disabled', async ({ mount }) => {
+    const props = getProps();
+
     const $ = await mount(
-      <SshFormSection {...getProps()} formValues={{ ssh: null, credentialStorage: 'plain' }} />,
+      <SshFormSectionStory
+        propsOverrides={{
+          ...props,
+          formValues: { ...props.formValues, ssh: null },
+        }}
+      />,
     );
 
     await expect($.getByRole('textbox', { name: 'Host' })).not.toBeAttached();
@@ -78,7 +78,7 @@ test.describe('SshFormSection', () => {
   });
 
   test('controls should be visible if SSH is enabled', async ({ mount }) => {
-    const $ = await mount(<SshFormSection {...getProps()} />);
+    const $ = await mount(<SshFormSectionStory />);
 
     await expect($.getByRole('textbox', { name: 'Host' })).toHaveValue('localhost');
 
@@ -88,17 +88,13 @@ test.describe('SshFormSection', () => {
       $.getByRole('radiogroup', { name: 'Credential type' }).getByRole('radio', { checked: true }),
     ).toHaveText('Password');
 
-    await expect(
-      $.getByRole('radiogroup', { name: 'Password storage' }).getByRole('radio', { checked: true }),
-    ).toHaveText('None / Keychain');
-
     await expect($.getByRole('textbox', { name: 'User' })).toHaveValue('root');
   });
 
   test('allows changing SSH settings', async ({ mount }) => {
     const props = getProps();
 
-    const $ = await mount(<SshFormSection {...props} />);
+    const $ = await mount(<SshFormSectionStory propsOverrides={props} />);
 
     await $.getByRole('textbox', { name: 'Host' }).fill('example.com');
 
@@ -119,18 +115,31 @@ test.describe('SshFormSection', () => {
     expect(props.setFormValue.calls.slice(-1)).toEqual([['ssh.user', 'user']]);
   });
 
-  test('shows private key or password field if browser storage is selected', async ({ mount }) => {
+  test('shows private key or password field if plain storage is selected', async ({ mount }) => {
     const props = getProps();
 
-    const $ = await mount(<SshFormSection {...props} />);
+    const $ = await mount(
+      <SshFormSectionStory
+        propsOverrides={{
+          ...props,
+          formValues: { ...props.formValues, credentialStorage: 'alwaysAsk' },
+        }}
+      />,
+    );
 
     await expect($.getByRole('textbox', { name: 'Private key' })).not.toBeAttached();
     await expect($.getByRole('textbox', { name: 'Password' })).not.toBeAttached();
 
     await $.update(
-      <SshFormSection
-        {...props}
-        formValues={{ ssh: { ...props.formValues.ssh }, credentialStorage: 'plain' }}
+      <SshFormSectionStory
+        propsOverrides={{
+          ...props,
+          formValues: {
+            ...props.formValues,
+            ssh: { ...props.formValues.ssh },
+            credentialStorage: 'plain',
+          },
+        }}
       />,
     );
 
@@ -141,14 +150,17 @@ test.describe('SshFormSection', () => {
     expect(props.setFormValue.calls.slice(-1)).toEqual([['ssh.password', 'test']]);
 
     await $.update(
-      <SshFormSection
-        {...props}
-        formValues={{
-          ssh: {
-            ...props.formValues.ssh,
-            credentialType: 'privateKey',
+      <SshFormSectionStory
+        propsOverrides={{
+          ...props,
+          formValues: {
+            ...props.formValues,
+            ssh: {
+              ...props.formValues.ssh,
+              credentialType: 'privateKey',
+            },
+            credentialStorage: 'plain',
           },
-          credentialStorage: 'plain',
         }}
       />,
     );

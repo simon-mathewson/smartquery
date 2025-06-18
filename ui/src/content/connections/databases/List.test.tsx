@@ -9,7 +9,9 @@ test.describe('DatabaseList', () => {
     const connections = getConnectionsContextMock();
     const { activeConnection } = connections;
 
-    const $ = await mount(<DatabaseListStory connectionsContext={connections} />);
+    const $ = await mount(
+      <DatabaseListStory providerOverrides={{ ConnectionsProvider: connections }} />,
+    );
 
     await expect($.getByRole('heading', { level: 2 }).first()).toHaveText('Databases');
 
@@ -24,7 +26,9 @@ test.describe('DatabaseList', () => {
     const connections = getConnectionsContextMock();
     const { activeConnection, activeConnectionDatabases, connect } = connections;
 
-    const $ = await mount(<DatabaseListStory connectionsContext={connections} />);
+    const $ = await mount(
+      <DatabaseListStory providerOverrides={{ ConnectionsProvider: connections }} />,
+    );
 
     await $.getByRole('option', { name: activeConnectionDatabases[1].name }).click();
 
@@ -45,7 +49,9 @@ test.describe('DatabaseList', () => {
     } satisfies Connections;
     const { activeConnection } = connections;
 
-    const $ = await mount(<DatabaseListStory connectionsContext={connections} />);
+    const $ = await mount(
+      <DatabaseListStory providerOverrides={{ ConnectionsProvider: connections }} />,
+    );
 
     await expect($.getByRole('heading', { level: 2 }).last()).toHaveText('Schemas');
 

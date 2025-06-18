@@ -1,15 +1,15 @@
 import React from 'react';
 import type { StoryProps } from '~/test/componentTests/StoryProps';
 import { TestApp } from '~/test/componentTests/TestApp';
-import type { ConnectionFormProps } from './ConnectionForm';
-import { ConnectionForm } from './ConnectionForm';
+import { SshFormSection, type SshFormSectionProps } from './SshFormSection';
+import { getProps } from './mocks';
 
-export const ConnectionFormStory: React.FC<StoryProps<ConnectionFormProps>> = (props) => {
+export const SshFormSectionStory: React.FC<StoryProps<SshFormSectionProps>> = (props) => {
   const { propsOverrides, providerOverrides } = props;
 
   return (
     <TestApp providerOverrides={providerOverrides}>
-      <ConnectionForm exit={() => {}} {...propsOverrides} />
+      <SshFormSection {...getProps()} {...propsOverrides} />
     </TestApp>
   );
 };

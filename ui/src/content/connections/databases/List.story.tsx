@@ -1,19 +1,14 @@
 import React from 'react';
-import type { useConnections } from '../useConnections';
-import { ConnectionsContext } from '../Context';
+import type { StoryProps } from '~/test/componentTests/StoryProps';
+import { TestApp } from '~/test/componentTests/TestApp';
 import { DatabaseList } from './List';
-import type { DeepPartial } from 'ts-essentials';
 
-export type DatabaseListStoryProps = {
-  connectionsContext: DeepPartial<ReturnType<typeof useConnections>>;
-};
-
-export const DatabaseListStory: React.FC<DatabaseListStoryProps> = (props) => {
-  const { connectionsContext } = props;
+export const DatabaseListStory: React.FC<StoryProps> = (props) => {
+  const { providerOverrides } = props;
 
   return (
-    <ConnectionsContext.Provider value={connectionsContext as ReturnType<typeof useConnections>}>
+    <TestApp providerOverrides={providerOverrides}>
       <DatabaseList />
-    </ConnectionsContext.Provider>
+    </TestApp>
   );
 };
