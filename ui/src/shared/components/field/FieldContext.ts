@@ -8,3 +8,5 @@ export type FieldContextProps = {
 };
 
 export const FieldContext = React.createContext<FieldContextProps | null>(null);
+
+FieldContext.displayName = 'FieldContext';
