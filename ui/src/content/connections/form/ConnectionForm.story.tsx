@@ -4,12 +4,11 @@ import { TestApp } from '~/test/componentTests/TestApp';
 import type { ConnectionFormProps } from './ConnectionForm';
 import { ConnectionForm } from './ConnectionForm';
 
-export const ConnectionFormStory: React.FC<StoryProps<ConnectionFormProps>> = (props) => {
-  const { propsOverrides, providerOverrides } = props;
-
-  return (
-    <TestApp providerOverrides={providerOverrides}>
-      <ConnectionForm exit={() => {}} {...propsOverrides} />
-    </TestApp>
-  );
-};
+export const ConnectionFormStory: React.FC<StoryProps<ConnectionFormProps>> = ({
+  props,
+  providers,
+}) => (
+  <TestApp providerOverrides={providers}>
+    <ConnectionForm {...props} />
+  </TestApp>
+);

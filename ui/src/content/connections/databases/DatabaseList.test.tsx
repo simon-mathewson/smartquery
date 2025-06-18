@@ -1,17 +1,15 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import { DatabaseListStory } from './List.story';
-import { postgresConnectionMock, getConnectionsContextMock } from '../mocks';
+import { DatabaseListStory } from './DatabaseList.story';
+import { postgresConnectionMock, getContextMock } from '../mocks';
 import type { ActiveConnection } from '~/shared/types';
 import type { Connections } from '../useConnections';
 
 test.describe('DatabaseList', () => {
   test('should render list of databases', async ({ mount }) => {
-    const connections = getConnectionsContextMock();
+    const connections = getContextMock();
     const { activeConnection } = connections;
 
-    const $ = await mount(
-      <DatabaseListStory providerOverrides={{ ConnectionsProvider: connections }} />,
-    );
+    const $ = await mount(<DatabaseListStory providers={{ ConnectionsProvider: connections }} />);
 
     await expect($.getByRole('heading', { level: 2 }).first()).toHaveText('Databases');
 
@@ -23,12 +21,10 @@ test.describe('DatabaseList', () => {
   });
 
   test('should allow connecting to a database', async ({ mount }) => {
-    const connections = getConnectionsContextMock();
+    const connections = getContextMock();
     const { activeConnection, activeConnectionDatabases, connect } = connections;
 
-    const $ = await mount(
-      <DatabaseListStory providerOverrides={{ ConnectionsProvider: connections }} />,
-    );
+    const $ = await mount(<DatabaseListStory providers={{ ConnectionsProvider: connections }} />);
 
     await $.getByRole('option', { name: activeConnectionDatabases[1].name }).click();
 
@@ -39,7 +35,7 @@ test.describe('DatabaseList', () => {
 
   test('should render list of schemas', async ({ mount }) => {
     const connections = {
-      ...getConnectionsContextMock(),
+      ...getContextMock(),
       activeConnection: {
         ...postgresConnectionMock,
         clientId: '2',
@@ -49,9 +45,7 @@ test.describe('DatabaseList', () => {
     } satisfies Connections;
     const { activeConnection } = connections;
 
-    const $ = await mount(
-      <DatabaseListStory providerOverrides={{ ConnectionsProvider: connections }} />,
-    );
+    const $ = await mount(<DatabaseListStory providers={{ ConnectionsProvider: connections }} />);
 
     await expect($.getByRole('heading', { level: 2 }).last()).toHaveText('Schemas');
 

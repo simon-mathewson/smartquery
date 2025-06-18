@@ -17,6 +17,7 @@ import { ThemeProvider } from '~/content/theme/Provider';
 import { ToastProvider } from '../content/toast/Provider';
 import { EscapeStackProvider } from '../shared/hooks/useEscape/useStack/Provider';
 import { useBuildProviders } from './useBuildProviders';
+import type { ContextTypes } from './ContextTypes';
 
 const providers = {
   ThemeProvider,
@@ -34,7 +35,7 @@ const providers = {
   QueriesProvider,
   DragAndDropProvider,
   AddToDesktopProvider,
-} as const;
+} satisfies Record<keyof ContextTypes, React.FC<PropsWithChildren>>;
 
 export type ProvidersProps = PropsWithChildren;
 

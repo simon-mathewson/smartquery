@@ -1,6 +1,8 @@
 import { createContext } from 'react';
 import type { useAi } from './useAi';
 
-export const AiContext = createContext<ReturnType<typeof useAi> | null>(null);
+export type AiContextType = ReturnType<typeof useAi>;
+
+export const AiContext = createContext<AiContextType | null>(null);
 
 AiContext.displayName = 'AiContext';

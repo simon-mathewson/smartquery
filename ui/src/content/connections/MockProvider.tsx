@@ -1,16 +1,16 @@
 import type { MockProviderProps } from '~/providers/MockProviderProps';
 import { useModal } from '~/shared/components/modal/useModal';
+import type { ConnectionsContextType } from './Context';
 import { ConnectionsContext } from './Context';
+import { getContextMock } from './mocks';
 import { SignInModal } from './signInModal/SignInModal';
 import type { SignInModalInput } from './signInModal/types';
-import type { useConnections } from './useConnections';
 import type { UserPasswordModalInput } from './UserPasswordModal/types';
 import { UserPasswordModal } from './UserPasswordModal/UserPasswordModal';
-import { getConnectionsContextMock } from './mocks';
 
-export const ConnectionsMockProvider: React.FC<
-  MockProviderProps<ReturnType<typeof useConnections>>
-> = (props) => {
+export const ConnectionsMockProvider: React.FC<MockProviderProps<ConnectionsContextType>> = (
+  props,
+) => {
   const { children, overrides } = props;
 
   const signInModal = useModal<SignInModalInput>();
@@ -18,12 +18,7 @@ export const ConnectionsMockProvider: React.FC<
 
   return (
     <>
-      <ConnectionsContext.Provider
-        value={{
-          ...getConnectionsContextMock(),
-          ...overrides,
-        }}
-      >
+      <ConnectionsContext.Provider value={Object.assign(getContextMock(), overrides)}>
         <SignInModal {...signInModal} />
         <UserPasswordModal {...userPasswordModal} />
         {children}

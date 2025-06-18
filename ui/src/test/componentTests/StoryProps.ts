@@ -1,6 +1,5 @@
 import type { MockProvidersProps } from '~/providers/MockProviders';
 
-export type StoryProps<T = Record<string, never>> = {
-  propsOverrides?: Partial<T>;
-  providerOverrides?: MockProvidersProps['mockOverrides'];
-};
+export type StoryProps<T = never> = [T] extends [never]
+  ? { providers?: MockProvidersProps['mockOverrides'] }
+  : { providers?: MockProvidersProps['mockOverrides']; props: T };

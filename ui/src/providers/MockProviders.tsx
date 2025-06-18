@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from 'react';
+import type { DeepPartial } from 'ts-essentials';
 import { assert } from 'ts-essentials';
 import { AiMockProvider } from '~/content/ai/MockProvider';
 import { CloudApiMockProvider } from '~/content/cloud/api/MockProvider';
@@ -16,6 +17,7 @@ import { DragAndDropProvider } from '~/content/dragAndDrop/Provider';
 import { AddToDesktopProvider } from '~/content/settings/addToDesktop/Provider';
 import { AuthMockProvider } from '~/content/auth/MockProvider';
 import { ConnectionsMockProvider } from '~/content/connections/MockProvider';
+import type { ContextTypes } from './ContextTypes';
 
 const mockProviders = {
   ThemeProvider,
@@ -36,7 +38,7 @@ const mockProviders = {
 } as const;
 
 export type MockProvidersProps = PropsWithChildren<{
-  mockOverrides?: Partial<Record<keyof typeof mockProviders, unknown>>;
+  mockOverrides?: DeepPartial<ContextTypes>;
 }>;
 
 export const MockProviders: React.FC<MockProvidersProps> = (props) => {

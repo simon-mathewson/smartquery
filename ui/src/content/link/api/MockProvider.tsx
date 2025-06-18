@@ -1,13 +1,13 @@
 import React from 'react';
 import type { MockProviderProps } from '~/providers/MockProviderProps';
-import { type LinkApiClient } from './client';
+import type { LinkApiContextType } from './Context';
 import { LinkApiContext } from './Context';
 
-export const LinkApiMockProvider: React.FC<MockProviderProps<LinkApiClient | null>> = (props) => {
+export const LinkApiMockProvider: React.FC<MockProviderProps<LinkApiContextType>> = (props) => {
   const { children, overrides } = props;
 
   return (
-    <LinkApiContext.Provider value={{ ...overrides } as unknown as LinkApiClient}>
+    <LinkApiContext.Provider value={Object.assign({} as LinkApiContextType, overrides)}>
       {children}
     </LinkApiContext.Provider>
   );

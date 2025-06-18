@@ -1,7 +1,24 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import { getProps } from './mocks';
+import { spy } from 'tinyspy';
+import type { SshFormSectionProps } from './SshFormSection';
 import { SshFormSection } from './SshFormSection';
 import { SshFormSectionStory } from './SshFormSection.story';
+
+export const getProps = () =>
+  ({
+    setFormValue: spy(),
+    formValues: {
+      credentialStorage: 'plain',
+      ssh: {
+        credentialType: 'password',
+        host: 'localhost',
+        password: 'password',
+        port: 22,
+        privateKey: '',
+        user: 'root',
+      },
+    },
+  }) satisfies SshFormSectionProps;
 
 test.describe('SshFormSection', () => {
   test('allows toggling SSH', async ({ mount }) => {
@@ -9,7 +26,7 @@ test.describe('SshFormSection', () => {
 
     const $ = await mount(
       <SshFormSectionStory
-        propsOverrides={{
+        props={{
           ...props,
           formValues: {
             ...props.formValues,
@@ -55,7 +72,7 @@ test.describe('SshFormSection', () => {
 
     const $ = await mount(
       <SshFormSectionStory
-        propsOverrides={{
+        props={{
           ...props,
           formValues: { ...props.formValues, ssh: null },
         }}
@@ -78,7 +95,7 @@ test.describe('SshFormSection', () => {
   });
 
   test('controls should be visible if SSH is enabled', async ({ mount }) => {
-    const $ = await mount(<SshFormSectionStory />);
+    const $ = await mount(<SshFormSectionStory props={getProps()} />);
 
     await expect($.getByRole('textbox', { name: 'Host' })).toHaveValue('localhost');
 
@@ -94,7 +111,7 @@ test.describe('SshFormSection', () => {
   test('allows changing SSH settings', async ({ mount }) => {
     const props = getProps();
 
-    const $ = await mount(<SshFormSectionStory propsOverrides={props} />);
+    const $ = await mount(<SshFormSectionStory props={props} />);
 
     await $.getByRole('textbox', { name: 'Host' }).fill('example.com');
 
@@ -120,7 +137,7 @@ test.describe('SshFormSection', () => {
 
     const $ = await mount(
       <SshFormSectionStory
-        propsOverrides={{
+        props={{
           ...props,
           formValues: { ...props.formValues, credentialStorage: 'alwaysAsk' },
         }}
@@ -132,7 +149,7 @@ test.describe('SshFormSection', () => {
 
     await $.update(
       <SshFormSectionStory
-        propsOverrides={{
+        props={{
           ...props,
           formValues: {
             ...props.formValues,
@@ -151,7 +168,7 @@ test.describe('SshFormSection', () => {
 
     await $.update(
       <SshFormSectionStory
-        propsOverrides={{
+        props={{
           ...props,
           formValues: {
             ...props.formValues,

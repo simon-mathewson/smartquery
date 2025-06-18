@@ -48,7 +48,7 @@ export const sqliteConnectionMock = {
   type: 'file',
 } satisfies FileConnection;
 
-export const getConnectionsContextMock = () =>
+export const getContextMock = () =>
   ({
     activeConnection: { clientId: '1', ...mysqlConnectionMock } as ActiveConnection,
     activeConnectionDatabases: [

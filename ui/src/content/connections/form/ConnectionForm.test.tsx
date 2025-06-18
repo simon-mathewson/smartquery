@@ -4,6 +4,8 @@ import { ConnectionFormStory } from './ConnectionForm.story';
 import { spy } from 'tinyspy';
 import { animationOptions } from '~/shared/components/overlayCard/constants';
 
+const getProps = () => ({ exit: spy() });
+
 const fillOutForm = async ($: MountResult) => {
   await $.getByRole('textbox', { name: 'Name' }).fill('My connection');
   await $.getByRole('textbox', { name: 'Host' }).first().fill('localhost');
@@ -17,30 +19,33 @@ test.use({ viewport: { width: 400, height: 800 } });
 
 test.describe('ConnectionForm', () => {
   test('renders', async ({ mount }) => {
-    const $ = await mount(<ConnectionFormStory />);
+    const $ = await mount(<ConnectionFormStory props={getProps()} />);
 
     await expect($).toHaveScreenshot('initial.png');
   });
 
   test('allows exiting form', async ({ mount }) => {
-    const props = { exit: spy() };
+    const props = getProps();
 
-    const $ = await mount(<ConnectionFormStory propsOverrides={props} />);
+    const $ = await mount(<ConnectionFormStory props={props} />);
 
     await $.getByRole('button', { name: 'Cancel' }).click();
 
     expect(props.exit.calls.length).toBe(1);
 
-    await $.update(<ConnectionFormStory propsOverrides={{ ...props, hideBackButton: true }} />);
+    await $.update(<ConnectionFormStory props={{ ...props, hideBackButton: true }} />);
 
     await expect($.getByRole('button', { name: 'Cancel' })).not.toBeAttached();
   });
 
   test('allows creating connection', async ({ mount }) => {
-    const addConnection = spy();
+    const addConnection = spy(async () => {});
 
     const $ = await mount(
-      <ConnectionFormStory providerOverrides={{ ConnectionsProvider: { addConnection } }} />,
+      <ConnectionFormStory
+        props={getProps()}
+        providers={{ ConnectionsProvider: { addConnection } }}
+      />,
     );
 
     await fillOutForm($);
@@ -70,7 +75,7 @@ test.describe('ConnectionForm', () => {
   });
 
   test('allows creating SQLite connection', async ({ mount }) => {
-    const $ = await mount(<ConnectionFormStory />);
+    const $ = await mount(<ConnectionFormStory props={getProps()} />);
 
     await $.getByRole('radio', { name: 'SQLite' }).click();
 
@@ -94,10 +99,13 @@ test.describe('ConnectionForm', () => {
       { name: 'PostgreSQL', port: 5432 },
     ].forEach(({ name, port }) => {
       test(name, async ({ mount }) => {
-        const addConnection = spy();
+        const addConnection = spy(async () => {});
 
         const $ = await mount(
-          <ConnectionFormStory providerOverrides={{ ConnectionsProvider: { addConnection } }} />,
+          <ConnectionFormStory
+            props={getProps()}
+            providers={{ ConnectionsProvider: { addConnection } }}
+          />,
         );
 
         await fillOutForm($);
@@ -128,10 +136,13 @@ test.describe('ConnectionForm', () => {
   });
 
   test('allows storing password', async ({ mount }) => {
-    const addConnection = spy();
+    const addConnection = spy(async () => {});
 
     const $ = await mount(
-      <ConnectionFormStory providerOverrides={{ ConnectionsProvider: { addConnection } }} />,
+      <ConnectionFormStory
+        props={getProps()}
+        providers={{ ConnectionsProvider: { addConnection } }}
+      />,
     );
 
     await fillOutForm($);
@@ -169,12 +180,12 @@ test.describe('ConnectionForm', () => {
   });
 
   test('allows updating connection', async ({ mount }) => {
-    const updateConnection = spy();
+    const updateConnection = spy(async () => {});
 
     const $ = await mount(
       <ConnectionFormStory
-        propsOverrides={{ connectionToEditId: '2' }}
-        providerOverrides={{ ConnectionsProvider: { updateConnection } }}
+        props={{ ...getProps(), connectionToEditId: '2' }}
+        providers={{ ConnectionsProvider: { updateConnection } }}
       />,
     );
 
@@ -208,13 +219,13 @@ test.describe('ConnectionForm', () => {
   });
 
   test('allows deleting connection', async ({ mount }) => {
-    const removeConnection = spy();
-    const exit = spy();
+    const removeConnection = spy(async () => {});
+    const props = { ...getProps(), connectionToEditId: '2' };
 
     const $ = await mount(
       <ConnectionFormStory
-        propsOverrides={{ connectionToEditId: '2', exit }}
-        providerOverrides={{ ConnectionsProvider: { removeConnection } }}
+        props={props}
+        providers={{ ConnectionsProvider: { removeConnection } }}
       />,
     );
 
@@ -223,6 +234,6 @@ test.describe('ConnectionForm', () => {
     await $.page().getByRole('menu').getByRole('menuitem', { name: 'Delete connection' }).click();
 
     expect(removeConnection.calls).toEqual([['2']]);
-    expect(exit.calls).toEqual([[]]);
+    expect(props.exit.calls).toEqual([[]]);
   });
 });

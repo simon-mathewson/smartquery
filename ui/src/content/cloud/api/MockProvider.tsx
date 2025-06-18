@@ -1,12 +1,12 @@
 import type { MockProviderProps } from '~/providers/MockProviderProps';
-import { type CloudApiClient } from './client';
+import type { CloudApiContextType } from './Context';
 import { CloudApiContext } from './Context';
 
-export const CloudApiMockProvider: React.FC<MockProviderProps<CloudApiClient | null>> = (props) => {
+export const CloudApiMockProvider: React.FC<MockProviderProps<CloudApiContextType>> = (props) => {
   const { children, overrides } = props;
 
   return (
-    <CloudApiContext.Provider value={{ ...overrides } as unknown as CloudApiClient}>
+    <CloudApiContext.Provider value={Object.assign({} as CloudApiContextType, overrides)}>
       {children}
     </CloudApiContext.Provider>
   );

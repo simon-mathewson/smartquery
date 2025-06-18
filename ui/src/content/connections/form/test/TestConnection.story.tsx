@@ -3,7 +3,7 @@ import { TestConnection, type TestConnectionProps } from './TestConnection';
 import type { LinkApiClient } from '~/content/link/api/client';
 import { ConnectionsContext } from '../../Context';
 import type { getMockLinkApiClient } from './TestConnection.mocks';
-import { getConnectionsContextMock } from '../../mocks';
+import { getContextMock } from '../../mocks';
 
 export type TestConnectionStoryProps = {
   mockLinkApiClient: ReturnType<typeof getMockLinkApiClient>;
@@ -44,9 +44,7 @@ export const TestConnectionStory = (storyProps: TestConnectionStoryProps) => {
         } as Partial<LinkApiClient> as LinkApiClient
       }
     >
-      <ConnectionsContext.Provider
-        value={{ ...getConnectionsContextMock(), activeConnection: null }}
-      >
+      <ConnectionsContext.Provider value={{ ...getContextMock(), activeConnection: null }}>
         <TestConnection {...props} />
       </ConnectionsContext.Provider>
     </LinkApiContext.Provider>

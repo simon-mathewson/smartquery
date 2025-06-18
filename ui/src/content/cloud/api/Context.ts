@@ -1,6 +1,8 @@
 import { createContext } from 'react';
 import type { CloudApiClient } from './client';
 
-export const CloudApiContext = createContext<CloudApiClient | null>(null);
+export type CloudApiContextType = CloudApiClient;
+
+export const CloudApiContext = createContext<CloudApiContextType | null>(null);
 
 CloudApiContext.displayName = 'CloudApiContext';
