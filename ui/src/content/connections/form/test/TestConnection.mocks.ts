@@ -31,21 +31,23 @@ export const getValidFormValues = () =>
     name: 'test',
     password: 'password',
     port: 5432,
+    schema: 'public',
     user: 'user',
   }) satisfies FormValues;
 
-export const getMockLinkApiClient = () =>
+export const getMockConnectionsContext = () =>
   ({
-    connectDb: { mutate: spy() },
-    disconnectDb: { mutate: spy() },
+    connectRemote: spy(async () => ''),
+    disconnectRemote: spy(async () => {}),
   }) as const;
 
 export const getStoryProps = () =>
   ({
-    mockLinkApiClient: getMockLinkApiClient(),
+    providers: {
+      ConnectionsProvider: getMockConnectionsContext(),
+    },
     props: getProps(),
     shouldFail: false,
-    shouldFailWithAuthError: false,
   }) satisfies TestConnectionStoryProps;
 
 export const expectedConnectInput = {
@@ -57,7 +59,9 @@ export const expectedConnectInput = {
   name: 'test',
   password: 'password',
   port: 5432,
+  schema: 'public',
   ssh: null,
+  storageLocation: 'local',
   type: 'remote',
   user: 'user',
 };

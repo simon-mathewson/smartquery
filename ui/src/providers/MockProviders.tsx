@@ -37,8 +37,10 @@ const mockProviders = {
   AddToDesktopProvider,
 } as const;
 
+export type ProviderOverrides = DeepPartial<ContextTypes>;
+
 export type MockProvidersProps = PropsWithChildren<{
-  mockOverrides?: DeepPartial<ContextTypes>;
+  mockOverrides?: ProviderOverrides;
 }>;
 
 export const MockProviders: React.FC<MockProvidersProps> = (props) => {

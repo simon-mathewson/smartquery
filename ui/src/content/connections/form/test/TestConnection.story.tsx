@@ -1,52 +1,35 @@
-import { LinkApiContext } from '~/content/link/api/Context';
+import type { StoryProps } from '~/test/componentTests/StoryProps';
+import { TestApp } from '~/test/componentTests/TestApp';
 import { TestConnection, type TestConnectionProps } from './TestConnection';
-import type { LinkApiClient } from '~/content/link/api/client';
-import { ConnectionsContext } from '../../Context';
-import type { getMockLinkApiClient } from './TestConnection.mocks';
-import { getContextMock } from '../../mocks';
 
-export type TestConnectionStoryProps = {
-  mockLinkApiClient: ReturnType<typeof getMockLinkApiClient>;
-  props: TestConnectionProps;
+export type TestConnectionStoryProps = StoryProps<TestConnectionProps> & {
   shouldFail: boolean;
-  shouldFailWithAuthError: boolean;
 };
 
-export const TestConnectionStory = (storyProps: TestConnectionStoryProps) => {
-  const { mockLinkApiClient, props, shouldFail, shouldFailWithAuthError } = storyProps;
-
-  return (
-    <LinkApiContext.Provider
-      value={
-        {
-          connectDb: {
-            mutate: (input) =>
-              new Promise((resolve, reject) => {
-                mockLinkApiClient.connectDb.mutate(input);
-                setTimeout(() => {
-                  if (shouldFail) {
-                    reject(new Error('Failed to connect'));
-                  } else if (shouldFailWithAuthError) {
-                    reject(new Error('Authentication failed'));
-                  } else {
-                    resolve('1');
-                  }
-                }, 400);
-              }),
-          },
-          disconnectDb: {
-            mutate: (input) =>
-              new Promise((resolve) => {
-                mockLinkApiClient.disconnectDb.mutate(input);
-                resolve();
-              }),
-          },
-        } as Partial<LinkApiClient> as LinkApiClient
-      }
-    >
-      <ConnectionsContext.Provider value={{ ...getContextMock(), activeConnection: null }}>
-        <TestConnection {...props} />
-      </ConnectionsContext.Provider>
-    </LinkApiContext.Provider>
-  );
-};
+export const TestConnectionStory = ({ props, providers, shouldFail }: TestConnectionStoryProps) => (
+  <TestApp
+    providerOverrides={{
+      ConnectionsProvider: {
+        activeConnection: null,
+        connectRemote: (input) =>
+          new Promise((resolve, reject) => {
+            providers?.ConnectionsProvider?.connectRemote?.(input);
+            setTimeout(() => {
+              if (shouldFail) {
+                reject(new Error('Failed to connect'));
+              } else {
+                resolve('1');
+              }
+            }, 400);
+          }),
+        disconnectRemote: (input) =>
+          new Promise((resolve) => {
+            providers?.ConnectionsProvider?.disconnectRemote?.(input);
+            resolve();
+          }),
+      },
+    }}
+  >
+    <TestConnection {...props} />
+  </TestApp>
+);
