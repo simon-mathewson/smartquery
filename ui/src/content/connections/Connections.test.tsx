@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { Connections } from './Connections';
 import { ConnectionsContext } from './Context';
-import { getConnectionsContextMock } from './Context.mock';
-import type { LinkApiClient } from '../link/api/client';
-import { LinkApiContext } from '../link/api/Context';
+import { getConnectionsContextMock } from './MockProvider';
+import type { LinkApiClient } from '~/content/link/api/client';
+import { LinkApiContext } from '~/content/link/api/Context';
 
 test.use({
   viewport: { height: 520, width: 520 },

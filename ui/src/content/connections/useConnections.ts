@@ -267,7 +267,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       activeConnection?.id,
       setLocalConnections,
       localConnections,
-      cloudApi.connections.delete,
+      cloudApi,
       cloudConnectionsQuery,
       disconnect,
       navigate,

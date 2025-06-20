@@ -1,14 +1,13 @@
 import React from 'react';
 import type { StoryProps } from '~/test/componentTests/StoryProps';
 import { TestApp } from '~/test/componentTests/TestApp';
-import type { ConnectionFormProps } from './ConnectionForm';
-import { ConnectionForm } from './ConnectionForm';
+import { SshFormSection, type SshFormSectionProps } from './SshFormSection';
 
-export const ConnectionFormStory: React.FC<StoryProps<ConnectionFormProps>> = ({
+export const SshFormSectionStory: React.FC<StoryProps<SshFormSectionProps>> = ({
   props,
   providers,
 }) => (
   <TestApp providerOverrides={providers}>
-    <ConnectionForm {...props} />
+    <SshFormSection {...props} />
   </TestApp>
 );

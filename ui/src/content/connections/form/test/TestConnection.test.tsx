@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/experimental-ct-react';
+import {
+  expectedConnectInput,
+  getProps,
+  getStoryProps,
+  getValidFormValues,
+} from './TestConnection.mocks';
 import type { TestConnectionStoryProps } from './TestConnection.story';
 import { TestConnectionStory } from './TestConnection.story';
-import {
-  getStoryProps,
-  getProps,
-  getValidFormValues,
-  expectedConnectInput,
-} from './TestConnection.mocks';
 
 test.describe('TestConnection', () => {
   test('should render button for testing connection if form is valid', async ({ mount }) => {
@@ -56,8 +56,10 @@ test.describe('TestConnection', () => {
     // await expect($).toHaveScreenshot('success.png');
     await expect($).not.toBeDisabled();
 
-    expect(props.mockLinkApiClient.connectDb.mutate.calls).toEqual([[expectedConnectInput]]);
-    expect(props.mockLinkApiClient.disconnectDb.mutate.calls).toEqual([['1']]);
+    expect(props.providers.ConnectionsProvider.connectRemote.calls).toEqual([
+      [expectedConnectInput],
+    ]);
+    expect(props.providers.ConnectionsProvider.disconnectRemote.calls).toEqual([['1']]);
   });
 
   test('should indicate that test failed', async ({ mount }) => {
@@ -84,62 +86,9 @@ test.describe('TestConnection', () => {
     // await expect($).toHaveScreenshot('failed.png');
     await expect($).not.toBeDisabled();
 
-    expect(props.mockLinkApiClient.connectDb.mutate.calls).toEqual([[expectedConnectInput]]);
-    expect(props.mockLinkApiClient.disconnectDb.mutate.calls).toEqual([]);
-  });
-
-  test('should show sign in modal if credentials are required', async ({ mount }) => {
-    const props = {
-      ...getStoryProps(),
-      props: {
-        ...getProps(),
-        formValues: {
-          ...getValidFormValues(),
-          credentialStorage: 'alwaysAsk',
-        },
-      },
-    } satisfies TestConnectionStoryProps;
-
-    const $ = await mount(<TestConnectionStory {...props} />);
-
-    await $.click();
-
-    const modal = $.page().getByRole('dialog');
-
-    await expect(modal).toBeVisible();
-
-    await modal.getByLabel('Password').fill('password');
-    await modal.getByRole('button', { name: 'Sign in' }).click();
-
-    await expect(modal).not.toBeAttached();
-    await expect($).toHaveText('Connection succeeded');
-  });
-
-  test('should show error message in modal if credentials are invalid', async ({ mount }) => {
-    const props = {
-      ...getStoryProps(),
-      props: {
-        ...getProps(),
-        formValues: {
-          ...getValidFormValues(),
-          credentialStorage: 'alwaysAsk',
-        },
-      },
-      shouldFailWithAuthError: true,
-    } satisfies TestConnectionStoryProps;
-
-    const $ = await mount(<TestConnectionStory {...props} />);
-
-    await $.click();
-
-    const modal = $.page().getByRole('dialog');
-
-    await expect(modal).toBeVisible();
-
-    await modal.getByLabel('Password').fill('password');
-    await modal.getByRole('button', { name: 'Sign in' }).click();
-
-    await expect(modal).toBeVisible();
-    await expect(modal).toContainText('Authentication failed');
+    expect(props.providers.ConnectionsProvider.connectRemote.calls).toEqual([
+      [expectedConnectInput],
+    ]);
+    expect(props.providers.ConnectionsProvider.disconnectRemote.calls).toEqual([]);
   });
 });

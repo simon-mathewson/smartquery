@@ -1,4 +1,8 @@
 import { createContext } from 'react';
 import type { useAddToDesktop } from './useAddToDesktop';
 
-export const AddToDesktopContext = createContext<ReturnType<typeof useAddToDesktop> | null>(null);
+export type AddToDesktopContextType = ReturnType<typeof useAddToDesktop>;
+
+export const AddToDesktopContext = createContext<AddToDesktopContextType | null>(null);
+
+AddToDesktopContext.displayName = 'AddToDesktopContext';

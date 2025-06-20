@@ -3,7 +3,7 @@ import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from './Context';
 import { useState } from 'react';
-import { DatabaseList } from './databases/List';
+import { DatabaseList } from './databases/DatabaseList';
 import { ConnectionForm } from './form/ConnectionForm';
 import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';

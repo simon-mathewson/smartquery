@@ -1,0 +1,33 @@
+import type { AiContextType } from '~/content/ai/Context';
+import type { AuthContextType } from '~/content/auth/Context';
+import type { CloudApiContextType } from '~/content/cloud/api/Context';
+import type { ConnectionsContextType } from '~/content/connections/Context';
+import type { DragAndDropContextType } from '~/content/dragAndDrop/Context';
+import type { EditContextType } from '~/content/edit/Context';
+import type { LinkApiContextType } from '~/content/link/api/Context';
+import type { LinkContextType } from '~/content/link/Context';
+import type { AddToDesktopContextType } from '~/content/settings/addToDesktop/Context';
+import type { SqliteContextType } from '~/content/sqlite/Context';
+import type { TabsContextType } from '~/content/tabs/Context';
+import type { QueriesContextType } from '~/content/tabs/queries/Context';
+import type { ThemeContextType } from '~/content/theme/Context';
+import type { ToastContextType } from '~/content/toast/Context';
+import type { EscapeStackContextType } from '~/shared/hooks/useEscape/useStack/Context';
+
+export type ContextTypes = {
+  ThemeProvider: ThemeContextType;
+  AiProvider: AiContextType;
+  EscapeStackProvider: EscapeStackContextType;
+  ToastProvider: ToastContextType;
+  CloudApiProvider: CloudApiContextType;
+  AuthProvider: AuthContextType;
+  LinkApiProvider: LinkApiContextType;
+  LinkProvider: LinkContextType;
+  SqliteProvider: SqliteContextType;
+  ConnectionsProvider: ConnectionsContextType;
+  EditProvider: EditContextType;
+  TabsProvider: TabsContextType;
+  QueriesProvider: QueriesContextType;
+  DragAndDropProvider: DragAndDropContextType;
+  AddToDesktopProvider: AddToDesktopContextType;
+};

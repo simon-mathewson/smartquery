@@ -1,7 +1,7 @@
-import { spy } from 'tinyspy';
-import type { Connections } from './useConnections';
-import type { ActiveConnection } from '~/shared/types';
 import type { Connection, FileConnection } from '@/types/connection';
+import { spy } from 'tinyspy';
+import type { ActiveConnection } from '~/shared/types';
+import type { Connections } from './useConnections';
 
 export const mysqlConnectionMock = {
   credentialStorage: 'alwaysAsk',
@@ -48,7 +48,7 @@ export const sqliteConnectionMock = {
   type: 'file',
 } satisfies FileConnection;
 
-export const getConnectionsContextMock = () =>
+export const getContextMock = () =>
   ({
     activeConnection: { clientId: '1', ...mysqlConnectionMock } as ActiveConnection,
     activeConnectionDatabases: [
@@ -58,7 +58,9 @@ export const getConnectionsContextMock = () =>
     ],
     addConnection: spy(),
     connect: spy(),
+    connectRemote: spy(),
     connections: [mysqlConnectionMock, postgresConnectionMock, sqliteConnectionMock] as const,
+    disconnectRemote: spy(),
     removeConnection: spy(),
     updateConnection: spy(),
   }) satisfies Connections;
