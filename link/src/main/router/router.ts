@@ -31,14 +31,16 @@ export const router = trpc.router({
     const port = sshLocalPort ?? remotePort;
 
     const client = (() => {
+      const encodedPassword = password ? encodeURIComponent(password) : '';
+
       if (engine === 'mysql') {
         return new MySqlClient({
-          datasourceUrl: `mysql://${user}:${password}@${host}:${port}/${database}`,
+          datasourceUrl: `mysql://${user}:${encodedPassword}@${host}:${port}/${database}`,
         });
       }
       if (engine === 'postgres') {
         return new PostgresClient({
-          datasourceUrl: `postgres://${user}:${password}@${host}:${port}/${database}${schema ? `?schema=${schema}` : ''}`,
+          datasourceUrl: `postgres://${user}:${encodedPassword}@${host}:${port}/${database}${schema ? `?schema=${schema}` : ''}`,
         });
       }
       throw new Error(`Unsupported engine: ${engine}`);
