@@ -111,4 +111,4 @@ cache:
     - "pnpm_about-$(codebuild-hash-files about/pnpm-lock.yaml)"
     - "pnpm"
   paths:
-    - ".pnpm-store/**/*"
+    - $CODEBUILD_SRC_DIR/.pnpm-store/**/*"
