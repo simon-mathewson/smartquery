@@ -7,17 +7,8 @@ phases:
     commands:
       - npm i -g corepack@latest
       - corepack enable pnpm
-      - pnpm config set store-dir $CODEBUILD_SRC_DIR/.pnpm-store
-      - cd shared
-      - pnpm install
-      - cd ../cloud
-      - pnpm install
-      - cd ../link
-      - pnpm install
-      - cd ../ui
-      - pnpm install
-      - cd ../about
-      - pnpm install
+      - pnpm config set store-dir .pnpm-store
+      - pnpm install --recursive
   # build:
   #   on-failure: ABORT
   #   commands:
@@ -111,4 +102,4 @@ cache:
     - "pnpm_about-$(codebuild-hash-files about/pnpm-lock.yaml)"
     - "pnpm"
   paths:
-    - $CODEBUILD_SRC_DIR/.pnpm-store/**/*"
+    - ".pnpm-store/**/*"
