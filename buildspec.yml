@@ -7,12 +7,20 @@ phases:
     commands:
       - npm i -g corepack@latest
       - corepack enable pnpm
-      - pnpm config set store-dir .pnpm-store
-      - pnpm install --recursive
+      - cd shared
+      - pnpm install
+      - cd ../cloud
+      - pnpm install
+      - cd ../link
+      - pnpm install
+      - cd ../ui
+      - pnpm install
+      - cd ../about
+      - pnpm install
   build:
     on-failure: ABORT
     commands:
-      - cd cloud
+      - cd ../cloud
       - pnpm prisma generate
       - pnpm typecheck
       - pnpm build
