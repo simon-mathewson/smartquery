@@ -4,9 +4,6 @@ Resources:
     Properties:
       Artifacts:
         Type: "CODEPIPELINE"
-      Cache:
-        Location: !ImportValue S3BucketCodeBuildCache
-        Type: "S3"
       Environment:
         ComputeType: "BUILD_GENERAL1_SMALL"
         EnvironmentVariables:

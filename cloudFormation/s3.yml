@@ -1,24 +1,4 @@
 Resources:
-  S3BucketCodeBuildCache:
-    Type: "AWS::S3::Bucket"
-    DeletionPolicy: "Delete"
-    UpdateReplacePolicy: "Delete"
-    Properties:
-      PublicAccessBlockConfiguration:
-        RestrictPublicBuckets: true
-        IgnorePublicAcls: true
-        BlockPublicPolicy: true
-        BlockPublicAcls: true
-      BucketName: "dabase-codebuild-cache"
-      OwnershipControls:
-        Rules:
-          - ObjectOwnership: "BucketOwnerEnforced"
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - BucketKeyEnabled: true
-            ServerSideEncryptionByDefault:
-              SSEAlgorithm: "AES256"
-
   S3BucketCodePipeline:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
@@ -198,10 +178,6 @@ Resources:
             Sid: "PublicReadGetObject"
 
 Outputs:
-  S3BucketCodeBuildCache:
-    Value: !Ref S3BucketCodeBuildCache
-    Export:
-      Name: "S3BucketCodeBuildCache"
   S3BucketCodePipeline:
     Value: !Ref S3BucketCodePipeline
     Export:

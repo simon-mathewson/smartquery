@@ -25,7 +25,6 @@ Resources:
       - CloudFrontStack
       - IamStack
       - RDSStack
-      - S3Stack
       - VPCStack
 
   CodePipelineStack:
