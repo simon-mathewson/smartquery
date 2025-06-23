@@ -103,7 +103,13 @@ reports:
     file-format: "JUNITXML"
 
 cache:
-  key: about-$(codebuild-hash-files about/pnpm-lock.yaml)_cloud-$(codebuild-hash-files cloud/pnpm-lock.yaml)_link-$(codebuild-hash-files link/pnpm-lock.yaml)_shared-$(codebuild-hash-files shared/pnpm-lock.yaml)_ui-$(codebuild-hash-files ui/pnpm-lock.yaml)
+  key: "pnpm_about-$(codebuild-hash-files about/pnpm-lock.yaml)_cloud-$(codebuild-hash-files cloud/pnpm-lock.yaml)_link-$(codebuild-hash-files link/pnpm-lock.yaml)_shared-$(codebuild-hash-files shared/pnpm-lock.yaml)_ui-$(codebuild-hash-files ui/pnpm-lock.yaml)"
+  fallback-keys:
+    - "pnpm_about-$(codebuild-hash-files about/pnpm-lock.yaml)_cloud-$(codebuild-hash-files cloud/pnpm-lock.yaml)_link-$(codebuild-hash-files link/pnpm-lock.yaml)_shared-$(codebuild-hash-files shared/pnpm-lock.yaml)"
+    - "pnpm_about-$(codebuild-hash-files about/pnpm-lock.yaml)_cloud-$(codebuild-hash-files cloud/pnpm-lock.yaml)_link-$(codebuild-hash-files link/pnpm-lock.yaml)"
+    - "pnpm_about-$(codebuild-hash-files about/pnpm-lock.yaml)_cloud-$(codebuild-hash-files cloud/pnpm-lock.yaml)"
+    - "pnpm_about-$(codebuild-hash-files about/pnpm-lock.yaml)"
+    - "pnpm"
   paths:
     - "about/node_modules/**/*"
     - "cloud/node_modules/**/*"
