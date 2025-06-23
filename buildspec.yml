@@ -7,7 +7,7 @@ phases:
     commands:
       - npm i -g corepack@latest
       - corepack enable pnpm
-      - pnpm config set store-dir .pnpm-store
+      - pnpm config set store-dir $CODEBUILD_SRC_DIR/.pnpm-store
       - cd shared
       - pnpm install
       - cd ../cloud
