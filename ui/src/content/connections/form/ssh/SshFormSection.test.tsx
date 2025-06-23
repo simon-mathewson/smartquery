@@ -26,7 +26,7 @@ test.describe('SshFormSection', () => {
 
     const $ = await mount(
       <SshFormSectionStory
-        props={{
+        componentProps={{
           ...props,
           formValues: {
             ...props.formValues,
@@ -72,7 +72,7 @@ test.describe('SshFormSection', () => {
 
     const $ = await mount(
       <SshFormSectionStory
-        props={{
+        componentProps={{
           ...props,
           formValues: { ...props.formValues, ssh: null },
         }}
@@ -95,7 +95,7 @@ test.describe('SshFormSection', () => {
   });
 
   test('controls should be visible if SSH is enabled', async ({ mount }) => {
-    const $ = await mount(<SshFormSectionStory props={getProps()} />);
+    const $ = await mount(<SshFormSectionStory componentProps={getProps()} />);
 
     await expect($.getByRole('textbox', { name: 'Host' })).toHaveValue('localhost');
 
@@ -111,7 +111,7 @@ test.describe('SshFormSection', () => {
   test('allows changing SSH settings', async ({ mount }) => {
     const props = getProps();
 
-    const $ = await mount(<SshFormSectionStory props={props} />);
+    const $ = await mount(<SshFormSectionStory componentProps={props} />);
 
     await $.getByRole('textbox', { name: 'Host' }).fill('example.com');
 
@@ -137,7 +137,7 @@ test.describe('SshFormSection', () => {
 
     const $ = await mount(
       <SshFormSectionStory
-        props={{
+        componentProps={{
           ...props,
           formValues: { ...props.formValues, credentialStorage: 'alwaysAsk' },
         }}
@@ -149,7 +149,7 @@ test.describe('SshFormSection', () => {
 
     await $.update(
       <SshFormSectionStory
-        props={{
+        componentProps={{
           ...props,
           formValues: {
             ...props.formValues,
@@ -168,7 +168,7 @@ test.describe('SshFormSection', () => {
 
     await $.update(
       <SshFormSectionStory
-        props={{
+        componentProps={{
           ...props,
           formValues: {
             ...props.formValues,

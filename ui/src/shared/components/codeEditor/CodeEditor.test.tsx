@@ -1,14 +1,21 @@
 import { CodeEditor } from './CodeEditor';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { spy } from 'tinyspy';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 test('renders code editor with value and allows editing', async ({ mount }) => {
   const value = 'SELECT * FROM table;';
   const onChange = spy();
 
-  const $ = await mount(<CodeEditor autoFocus value={value} onChange={onChange} />);
+  const $ = await mount(
+    <TestApp>
+      <CodeEditor autoFocus value={value} onChange={onChange} />
+    </TestApp>,
+  );
 
   await expect($).toHaveText(`1${value}`);
+
+  await expect($).toHaveScreenshot('codeEditor.png');
 
   await $.click();
 
@@ -27,7 +34,11 @@ test('renders code editor with value and allows editing', async ({ mount }) => {
 });
 
 test('renders code editor with line numbers hidden', async ({ mount }) => {
-  const $ = await mount(<CodeEditor hideLineNumbers value="test" />);
+  const $ = await mount(
+    <TestApp>
+      <CodeEditor hideLineNumbers value="test" />
+    </TestApp>,
+  );
 
   await expect($.locator('.line-numbers')).not.toBeAttached();
 });

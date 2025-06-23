@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { SqlEditor, type SqlEditorProps } from './SqlEditor';
 import { spy } from 'tinyspy';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 test.use({ viewport: { width: 600, height: 400 } });
 
@@ -17,13 +18,23 @@ test.describe('SqlEditor', () => {
   });
 
   test('should display SQL', async ({ mount }) => {
-    const $ = await mount(<SqlEditor {...props} />);
+    const $ = await mount(
+      <TestApp>
+        <SqlEditor {...props} />
+      </TestApp>,
+    );
 
     await expect($.getByRole('textbox')).toHaveValue(props.value);
+
+    await expect($.page()).toHaveScreenshot('sqlEditor.png');
   });
 
   test('should allow changing value', async ({ mount }) => {
-    const $ = await mount(<SqlEditor {...props} />);
+    const $ = await mount(
+      <TestApp>
+        <SqlEditor {...props} />
+      </TestApp>,
+    );
 
     expect(await $.evaluate((node) => node.tagName)).toBe('FORM');
 
@@ -36,7 +47,11 @@ test.describe('SqlEditor', () => {
   });
 
   test('should display submit button', async ({ mount }) => {
-    const $ = await mount(<SqlEditor {...props} />);
+    const $ = await mount(
+      <TestApp>
+        <SqlEditor {...props} />
+      </TestApp>,
+    );
 
     const submitButton = $.getByRole('button').last();
 
@@ -50,7 +65,11 @@ test.describe('SqlEditor', () => {
   });
 
   test('disables submitting if editor is empty', async ({ mount }) => {
-    const $ = await mount(<SqlEditor {...props} value="" />);
+    const $ = await mount(
+      <TestApp>
+        <SqlEditor {...props} value="" />
+      </TestApp>,
+    );
 
     const submitButton = $.getByRole('button').last();
 
@@ -67,7 +86,11 @@ test.describe('SqlEditor', () => {
     test.use({ userAgent: 'A quality operating system' });
 
     test('should allow submitting via CMD+Enter', async ({ mount }) => {
-      const $ = await mount(<SqlEditor {...props} />);
+      const $ = await mount(
+        <TestApp>
+          <SqlEditor {...props} />
+        </TestApp>,
+      );
 
       const editor = $.getByRole('textbox');
 
@@ -81,7 +104,11 @@ test.describe('SqlEditor', () => {
     test.use({ userAgent: 'Windows' });
 
     test('should allow submitting via CTRL+Enter', async ({ mount }) => {
-      const $ = await mount(<SqlEditor {...props} />);
+      const $ = await mount(
+        <TestApp>
+          <SqlEditor {...props} />
+        </TestApp>,
+      );
 
       const editor = $.getByRole('textbox');
 

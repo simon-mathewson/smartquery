@@ -19,7 +19,7 @@ test.use({ viewport: { width: 400, height: 800 } });
 
 test.describe('ConnectionForm', () => {
   test('renders', async ({ mount }) => {
-    const $ = await mount(<ConnectionFormStory props={getProps()} />);
+    const $ = await mount(<ConnectionFormStory componentProps={getProps()} />);
 
     await expect($).toHaveScreenshot('initial.png');
   });
@@ -27,13 +27,13 @@ test.describe('ConnectionForm', () => {
   test('allows exiting form', async ({ mount }) => {
     const props = getProps();
 
-    const $ = await mount(<ConnectionFormStory props={props} />);
+    const $ = await mount(<ConnectionFormStory componentProps={props} />);
 
     await $.getByRole('button', { name: 'Cancel' }).click();
 
     expect(props.exit.calls.length).toBe(1);
 
-    await $.update(<ConnectionFormStory props={{ ...props, hideBackButton: true }} />);
+    await $.update(<ConnectionFormStory componentProps={{ ...props, hideBackButton: true }} />);
 
     await expect($.getByRole('button', { name: 'Cancel' })).not.toBeAttached();
   });
@@ -43,8 +43,8 @@ test.describe('ConnectionForm', () => {
 
     const $ = await mount(
       <ConnectionFormStory
-        props={getProps()}
-        providers={{ ConnectionsProvider: { addConnection } }}
+        componentProps={getProps()}
+        testApp={{ providerOverrides: { ConnectionsProvider: { addConnection } } }}
       />,
     );
 
@@ -75,7 +75,7 @@ test.describe('ConnectionForm', () => {
   });
 
   test('allows creating SQLite connection', async ({ mount }) => {
-    const $ = await mount(<ConnectionFormStory props={getProps()} />);
+    const $ = await mount(<ConnectionFormStory componentProps={getProps()} />);
 
     await $.getByRole('radio', { name: 'SQLite' }).click();
 
@@ -103,8 +103,8 @@ test.describe('ConnectionForm', () => {
 
         const $ = await mount(
           <ConnectionFormStory
-            props={getProps()}
-            providers={{ ConnectionsProvider: { addConnection } }}
+            componentProps={getProps()}
+            testApp={{ providerOverrides: { ConnectionsProvider: { addConnection } } }}
           />,
         );
 
@@ -140,8 +140,8 @@ test.describe('ConnectionForm', () => {
 
     const $ = await mount(
       <ConnectionFormStory
-        props={getProps()}
-        providers={{ ConnectionsProvider: { addConnection } }}
+        componentProps={getProps()}
+        testApp={{ providerOverrides: { ConnectionsProvider: { addConnection } } }}
       />,
     );
 
@@ -184,8 +184,8 @@ test.describe('ConnectionForm', () => {
 
     const $ = await mount(
       <ConnectionFormStory
-        props={{ ...getProps(), connectionToEditId: '2' }}
-        providers={{ ConnectionsProvider: { updateConnection } }}
+        componentProps={{ ...getProps(), connectionToEditId: '2' }}
+        testApp={{ providerOverrides: { ConnectionsProvider: { updateConnection } } }}
       />,
     );
 
@@ -224,8 +224,8 @@ test.describe('ConnectionForm', () => {
 
     const $ = await mount(
       <ConnectionFormStory
-        props={props}
-        providers={{ ConnectionsProvider: { removeConnection } }}
+        componentProps={props}
+        testApp={{ providerOverrides: { ConnectionsProvider: { removeConnection } } }}
       />,
     );
 

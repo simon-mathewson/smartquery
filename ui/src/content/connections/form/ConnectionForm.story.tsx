@@ -5,10 +5,10 @@ import type { ConnectionFormProps } from './ConnectionForm';
 import { ConnectionForm } from './ConnectionForm';
 
 export const ConnectionFormStory: React.FC<StoryProps<ConnectionFormProps>> = ({
-  props,
-  providers,
+  componentProps,
+  testApp,
 }) => (
-  <TestApp providerOverrides={providers}>
-    <ConnectionForm {...props} />
+  <TestApp {...testApp}>
+    <ConnectionForm {...componentProps} />
   </TestApp>
 );

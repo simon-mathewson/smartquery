@@ -1,6 +1,25 @@
 import { ButtonSelect } from './ButtonSelect';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { spy } from 'tinyspy';
+import { TestApp } from '~/test/componentTests/TestApp';
+
+test('renders', async ({ mount }) => {
+  const $ = await mount(
+    <TestApp>
+      <ButtonSelect
+        options={[
+          { button: { label: 'Option 1' }, value: '1' },
+          { button: { label: 'Option 2' }, value: '2' },
+          { button: { label: 'Option 3' }, value: '3' },
+        ]}
+        onChange={() => {}}
+        value="1"
+      />
+    </TestApp>,
+  );
+
+  await expect($).toHaveScreenshot('buttonSelect.png');
+});
 
 test('allows selecting option', async ({ mount }) => {
   const options = [
@@ -12,12 +31,14 @@ test('allows selecting option', async ({ mount }) => {
   const selectedValue = '2';
 
   const $ = await mount(
-    <ButtonSelect
-      onChange={onChange}
-      options={options}
-      selectedButton={{ color: 'primary' }}
-      value={selectedValue}
-    />,
+    <TestApp>
+      <ButtonSelect
+        onChange={onChange}
+        options={options}
+        selectedButton={{ color: 'primary' }}
+        value={selectedValue}
+      />
+    </TestApp>,
   );
 
   await expect($).toHaveRole('radiogroup');
@@ -53,13 +74,15 @@ test('requires selection', async ({ mount }) => {
   const selectedValue = '2';
 
   const $ = await mount(
-    <ButtonSelect
-      onChange={onChange}
-      options={options}
-      required
-      selectedButton={{ color: 'primary' }}
-      value={selectedValue}
-    />,
+    <TestApp>
+      <ButtonSelect
+        onChange={onChange}
+        options={options}
+        required
+        selectedButton={{ color: 'primary' }}
+        value={selectedValue}
+      />
+    </TestApp>,
   );
 
   const buttons = await $.getByRole('radio').all();

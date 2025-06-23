@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import type { CodeInputProps } from './CodeInput';
 import { CodeInput } from './CodeInput';
 import { spy } from 'tinyspy';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 test('CodeInput', async ({ mount }) => {
   const onChange = spy();
@@ -16,17 +17,27 @@ test('CodeInput', async ({ mount }) => {
     },
   } satisfies CodeInputProps;
 
-  const $ = await mount(<CodeInput {...props} />);
+  const $ = await mount(
+    <TestApp>
+      <CodeInput {...props} />
+    </TestApp>,
+  );
 
   const content = $.getByRole('textbox');
 
   await expect(content).toBeFocused();
   await expect(content).toHaveValue('SELECT * FROM TABLE;');
 
+  await expect($).toHaveScreenshot('codeInput.png');
+
   await content.clear();
   expect(onChange.calls.at(-1)?.[0]).toBe('');
 
-  await $.update(<CodeInput {...props} editorProps={{ ...props.editorProps, readOnly: true }} />);
+  await $.update(
+    <TestApp>
+      <CodeInput {...props} editorProps={{ ...props.editorProps, readOnly: true }} />
+    </TestApp>,
+  );
 
   onChange.reset();
 

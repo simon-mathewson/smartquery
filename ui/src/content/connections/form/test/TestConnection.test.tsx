@@ -21,7 +21,7 @@ test.describe('TestConnection', () => {
     await $.update(
       <TestConnectionStory
         {...getStoryProps()}
-        props={{
+        componentProps={{
           ...getProps(),
           formValues: getValidFormValues(),
         }}
@@ -36,7 +36,7 @@ test.describe('TestConnection', () => {
   test('should indicate that test succeeded', async ({ mount }) => {
     const props = {
       ...getStoryProps(),
-      props: {
+      componentProps: {
         ...getProps(),
         formValues: getValidFormValues(),
       },
@@ -56,16 +56,18 @@ test.describe('TestConnection', () => {
     // await expect($).toHaveScreenshot('success.png');
     await expect($).not.toBeDisabled();
 
-    expect(props.providers.ConnectionsProvider.connectRemote.calls).toEqual([
+    expect(props.testApp.providerOverrides.ConnectionsProvider.connectRemote.calls).toEqual([
       [expectedConnectInput],
     ]);
-    expect(props.providers.ConnectionsProvider.disconnectRemote.calls).toEqual([['1']]);
+    expect(props.testApp.providerOverrides.ConnectionsProvider.disconnectRemote.calls).toEqual([
+      ['1'],
+    ]);
   });
 
   test('should indicate that test failed', async ({ mount }) => {
     const props = {
       ...getStoryProps(),
-      props: {
+      componentProps: {
         ...getProps(),
         formValues: getValidFormValues(),
       },
@@ -86,9 +88,9 @@ test.describe('TestConnection', () => {
     // await expect($).toHaveScreenshot('failed.png');
     await expect($).not.toBeDisabled();
 
-    expect(props.providers.ConnectionsProvider.connectRemote.calls).toEqual([
+    expect(props.testApp.providerOverrides.ConnectionsProvider.connectRemote.calls).toEqual([
       [expectedConnectInput],
     ]);
-    expect(props.providers.ConnectionsProvider.disconnectRemote.calls).toEqual([]);
+    expect(props.testApp.providerOverrides.ConnectionsProvider.disconnectRemote.calls).toEqual([]);
   });
 });

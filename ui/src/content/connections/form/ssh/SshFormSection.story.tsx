@@ -4,10 +4,10 @@ import { TestApp } from '~/test/componentTests/TestApp';
 import { SshFormSection, type SshFormSectionProps } from './SshFormSection';
 
 export const SshFormSectionStory: React.FC<StoryProps<SshFormSectionProps>> = ({
-  props,
-  providers,
+  componentProps,
+  testApp,
 }) => (
-  <TestApp providerOverrides={providers}>
-    <SshFormSection {...props} />
+  <TestApp providerOverrides={testApp?.providerOverrides}>
+    <SshFormSection {...componentProps} />
   </TestApp>
 );

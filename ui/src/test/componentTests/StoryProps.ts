@@ -1,5 +1,5 @@
-import type { ProviderOverrides } from '~/providers/MockProviders';
+import type { TestAppOptions } from './TestApp';
 
 export type StoryProps<T = never> = [T] extends [never]
-  ? { providers?: ProviderOverrides }
-  : { providers?: ProviderOverrides; props: T };
+  ? { testApp?: TestAppOptions }
+  : { testApp?: TestAppOptions; componentProps: T };

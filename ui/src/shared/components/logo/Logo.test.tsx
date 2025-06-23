@@ -1,8 +1,15 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { Logo } from './Logo';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 test('Logo', async ({ mount }) => {
-  const $ = await mount(<Logo htmlProps={{ className: 'w-[50px]' }} />);
+  const $ = await mount(
+    <TestApp>
+      <Logo htmlProps={{ className: 'w-[50px]' }} />
+    </TestApp>,
+  );
+
+  await expect($.page()).toHaveScreenshot('logo.png');
 
   await expect($).toHaveRole('presentation');
   await expect($).toBeVisible();

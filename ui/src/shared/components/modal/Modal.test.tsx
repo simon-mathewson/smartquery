@@ -14,8 +14,11 @@ test.describe('Modal', () => {
       title: 'Title',
     };
 
-    const $ = await mount(<ModalStory {...props} />);
+    const $ = await mount(<ModalStory componentProps={props} />);
+
     await $.page().waitForTimeout(animationOptions.duration);
+
+    await expect($.page()).toHaveScreenshot('modal.png');
 
     const overlay = $.page().locator('#overlay');
     const modal = overlay.getByRole('dialog');

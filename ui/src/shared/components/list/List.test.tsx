@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { List } from './List';
 import { spy } from 'tinyspy';
 import { Add } from '@mui/icons-material';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 test.describe('List', () => {
   const emptyPlaceholder = 'No items';
@@ -27,15 +28,25 @@ test.describe('List', () => {
 
   test('renders empty placeholder when no items are provided', async ({ mount }) => {
     const $ = await mount(
-      <List emptyPlaceholder={emptyPlaceholder} items={[]} selectedValue={null} />,
+      <TestApp>
+        <List emptyPlaceholder={emptyPlaceholder} items={[]} selectedValue={null} />
+      </TestApp>,
     );
+
+    await expect($.page()).toHaveScreenshot('listEmpty.png');
 
     await expect($).toHaveText(emptyPlaceholder);
     await expect($.getByRole('option')).toHaveCount(0);
   });
 
   test('renders basic list and allow selecting items', async ({ mount }) => {
-    const $ = await mount(<List {...props} />);
+    const $ = await mount(
+      <TestApp>
+        <List {...props} />
+      </TestApp>,
+    );
+
+    await expect($.page()).toHaveScreenshot('list.png');
 
     await expect($).toHaveRole('listbox');
     await expect($).not.toContainText('No items');
@@ -53,7 +64,13 @@ test.describe('List', () => {
 
     expect(onSelect.calls).toEqual([[items[0].value]]);
 
-    await $.update(<List {...props} selectedValue={items[0].value} />);
+    await $.update(
+      <TestApp>
+        <List {...props} selectedValue={items[0].value} />
+      </TestApp>,
+    );
+
+    await expect($.page()).toHaveScreenshot('listSelected.png');
 
     await expect($.getByRole('option').first()).toHaveAttribute('aria-selected', 'true');
     await expect($.getByRole('option').nth(1)).toHaveAttribute('aria-selected', 'false');
@@ -76,7 +93,13 @@ test.describe('List', () => {
       },
     ];
 
-    const $ = await mount(<List items={items} selectedValue={null} />);
+    const $ = await mount(
+      <TestApp>
+        <List items={items} selectedValue={null} />
+      </TestApp>,
+    );
+
+    await expect($.page()).toHaveScreenshot('listWithActionsAndHints.png');
 
     for (const [index, item] of (await $.getByRole('option').all()).entries()) {
       await expect(item).toContainText(items[index].label);
@@ -91,7 +114,11 @@ test.describe('List', () => {
   });
 
   test('should auto focus selected option', async ({ mount }) => {
-    const $ = await mount(<List {...props} selectedValue={props.items[1].value} />);
+    const $ = await mount(
+      <TestApp>
+        <List {...props} selectedValue={props.items[1].value} />
+      </TestApp>,
+    );
 
     await $.click();
 
@@ -103,7 +130,11 @@ test.describe('List', () => {
 
   test.describe('should allow navigating list via keyboard', () => {
     test('up', async ({ mount }) => {
-      const $ = await mount(<List {...props} />);
+      const $ = await mount(
+        <TestApp>
+          <List {...props} />
+        </TestApp>,
+      );
 
       await $.getByRole('option').nth(2).press('ArrowUp');
       await expect($.getByRole('option').nth(1)).toBeFocused();
@@ -113,7 +144,11 @@ test.describe('List', () => {
     });
 
     test('down', async ({ mount }) => {
-      const $ = await mount(<List {...props} />);
+      const $ = await mount(
+        <TestApp>
+          <List {...props} />
+        </TestApp>,
+      );
 
       await $.getByRole('option').nth(0).press('ArrowDown');
       await expect($.getByRole('option').nth(1)).toBeFocused();
@@ -123,21 +158,33 @@ test.describe('List', () => {
     });
 
     test('first', async ({ mount }) => {
-      const $ = await mount(<List {...props} />);
+      const $ = await mount(
+        <TestApp>
+          <List {...props} />
+        </TestApp>,
+      );
 
       await $.getByRole('option').nth(2).press('Home');
       await expect($.getByRole('option').nth(0)).toBeFocused();
     });
 
     test('last', async ({ mount }) => {
-      const $ = await mount(<List {...props} />);
+      const $ = await mount(
+        <TestApp>
+          <List {...props} />
+        </TestApp>,
+      );
 
       await $.getByRole('option').nth(0).press('End');
       await expect($.getByRole('option').nth(2)).toBeFocused();
     });
 
     test('select', async ({ mount }) => {
-      const $ = await mount(<List {...props} />);
+      const $ = await mount(
+        <TestApp>
+          <List {...props} />
+        </TestApp>,
+      );
 
       await $.getByRole('option').nth(1).press('Enter');
       expect(onSelect.calls).toEqual([[items[1].value]]);
@@ -147,14 +194,22 @@ test.describe('List', () => {
     });
 
     test('blur', async ({ mount }) => {
-      const $ = await mount(<List {...props} />);
+      const $ = await mount(
+        <TestApp>
+          <List {...props} />
+        </TestApp>,
+      );
 
       await $.press('Escape');
       await expect($).not.toBeFocused();
     });
 
     test('focus item by first character', async ({ mount }) => {
-      const $ = await mount(<List {...props} />);
+      const $ = await mount(
+        <TestApp>
+          <List {...props} />
+        </TestApp>,
+      );
 
       for (const item of items) {
         await $.press(item.label[0].toLowerCase());

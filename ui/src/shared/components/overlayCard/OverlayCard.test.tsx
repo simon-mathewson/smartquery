@@ -17,11 +17,13 @@ test.describe('OverlayCard', () => {
 
     const $ = await mount(
       <OverlayCardStory
-        overlayCard={{ htmlProps: { className: 'w-[200px]' }, isOpen: true, onClose, onOpen }}
+        componentProps={{ htmlProps: { className: 'w-[200px]' }, isOpen: true, onClose, onOpen }}
         trigger
       />,
     );
     await $.page().waitForTimeout(animationOptions.duration);
+
+    await expect($.page()).toHaveScreenshot('overlayCard.png');
 
     expect(onOpen.calls).toEqual([[]]);
 
@@ -50,7 +52,7 @@ test.describe('OverlayCard', () => {
 
   test('should allow navigating by keyboard', async ({ mount }) => {
     const $ = await mount(
-      <OverlayCardStory overlayCard={{ htmlProps: { className: 'w-[200px]' } }} trigger />,
+      <OverlayCardStory componentProps={{ htmlProps: { className: 'w-[200px]' } }} trigger />,
     );
 
     const card = getOverlayCard($);
@@ -88,7 +90,7 @@ test.describe('OverlayCard', () => {
   }) => {
     const $ = await mount(
       <OverlayCardStory
-        overlayCard={{ htmlProps: { className: 'w-[200px]' }, isOpen: true }}
+        componentProps={{ htmlProps: { className: 'w-[200px]' }, isOpen: true }}
         trigger={{ htmlProps: { className: 'fixed bottom-0' } }}
       />,
     );
@@ -114,7 +116,7 @@ test.describe('OverlayCard', () => {
   }) => {
     const $ = await mount(
       <OverlayCardStory
-        overlayCard={{
+        componentProps={{
           htmlProps: { className: 'w-[200px]' },
           isOpen: true,
         }}
@@ -142,7 +144,7 @@ test.describe('OverlayCard', () => {
       test(align, async ({ mount }) => {
         const $ = await mount(
           <OverlayCardStory
-            overlayCard={{
+            componentProps={{
               htmlProps: { className: 'w-[200px]' },
               isOpen: true,
               align,
@@ -202,7 +204,7 @@ test.describe('OverlayCard', () => {
       test(`${position.y} ${position.x}`, async ({ mount }) => {
         const $ = await mount(
           <OverlayCardStory
-            overlayCard={{
+            componentProps={{
               htmlProps: { className: 'w-[200px]' },
               isOpen: true,
               position,
@@ -249,7 +251,7 @@ test.describe('OverlayCard', () => {
   test('allows closing the overlay card by clicking outside', async ({ mount }) => {
     const $ = await mount(
       <OverlayCardStory
-        overlayCard={{
+        componentProps={{
           htmlProps: { className: 'w-[200px]' },
           isOpen: true,
         }}
@@ -268,7 +270,7 @@ test.describe('OverlayCard', () => {
     // Allows disable closing on outside click
     await $.update(
       <OverlayCardStory
-        overlayCard={{
+        componentProps={{
           htmlProps: { className: 'w-[200px]' },
           isOpen: true,
           closeOnOutsideClick: false,
@@ -288,7 +290,7 @@ test.describe('OverlayCard', () => {
     const $ = await mount(
       <OverlayCardStory
         anchor
-        overlayCard={{
+        componentProps={{
           htmlProps: { className: 'w-[200px]' },
           isOpen: true,
         }}
@@ -314,7 +316,7 @@ test.describe('OverlayCard', () => {
   test('allows matching the width of the trigger', async ({ mount }) => {
     const $ = await mount(
       <OverlayCardStory
-        overlayCard={{ isOpen: true, matchTriggerWidth: true }}
+        componentProps={{ isOpen: true, matchTriggerWidth: true }}
         trigger={{ htmlProps: { className: 'w-[150px]' } }}
       />,
     );
@@ -332,7 +334,7 @@ test.describe('OverlayCard', () => {
   test('darkens background unless specified otherwise', async ({ mount }) => {
     const $ = await mount(
       <OverlayCardStory
-        overlayCard={{
+        componentProps={{
           htmlProps: { className: 'w-[200px]' },
           isOpen: true,
           darkenBackground: true,
@@ -349,7 +351,7 @@ test.describe('OverlayCard', () => {
 
     const $$ = await mount(
       <OverlayCardStory
-        overlayCard={{
+        componentProps={{
           htmlProps: { className: 'w-[200px]' },
           isOpen: true,
         }}

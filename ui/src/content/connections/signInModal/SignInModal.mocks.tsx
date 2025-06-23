@@ -2,7 +2,6 @@ import { spy } from 'tinyspy';
 import { getModalControlMock } from '~/shared/components/modal/ModalControl.mock';
 import { getContextMock } from '../mocks';
 import type { SignInModalProps } from './SignInModal';
-import type { SignInModalStoryProps } from './SignInModal.story';
 
 export const getSignInModalProps = () =>
   ({
@@ -12,9 +11,3 @@ export const getSignInModalProps = () =>
       onSignIn: spy(),
     },
   }) satisfies SignInModalProps;
-
-export const getSignInModalStoryProps = () =>
-  ({
-    connectionsContext: getContextMock(),
-    signInModalProps: getSignInModalProps(),
-  }) satisfies SignInModalStoryProps;

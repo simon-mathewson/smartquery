@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { CredentialInput, type CredentialInputProps } from './CredentialInput';
 import { mockStore, getStoreCalls } from './mockStore';
 import { spy } from 'tinyspy';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 const props = {
   htmlProps: { value: 'password\nwith line break' },
@@ -14,7 +15,13 @@ const passwordWithReplacedLineBreaks = 'password<br />with line break';
 test('shows credential input and hidden username input', async ({ mount }) => {
   const onChange = spy();
 
-  const $ = await mount(<CredentialInput {...props} />);
+  const $ = await mount(
+    <TestApp>
+      <CredentialInput {...props} />
+    </TestApp>,
+  );
+
+  await expect($.page()).toHaveScreenshot('credentialInput.png');
 
   const hiddenUsernameInput = $.locator('input').first();
   await expect(hiddenUsernameInput).not.toBeVisible();
@@ -28,7 +35,11 @@ test('shows credential input and hidden username input', async ({ mount }) => {
 
   await expect($.locator('button')).not.toBeAttached();
 
-  await $.update(<CredentialInput {...props} isExistingCredential={false} onChange={onChange} />);
+  await $.update(
+    <TestApp>
+      <CredentialInput {...props} isExistingCredential={false} onChange={onChange} />
+    </TestApp>,
+  );
 
   await expect(passwordInput).toHaveAttribute('autocomplete', 'new-password');
 
@@ -38,8 +49,14 @@ test('shows credential input and hidden username input', async ({ mount }) => {
 });
 
 test('allows changing credential and adding it to keychain', async ({ mount }) => {
-  const $ = await mount(<CredentialInput {...props} showAddToKeychain />);
+  const $ = await mount(
+    <TestApp>
+      <CredentialInput {...props} showAddToKeychain />
+    </TestApp>,
+  );
   await mockStore($.page());
+
+  await expect($.page()).toHaveScreenshot('credentialInputWithAddToKeychain.png');
 
   const addToKeychainButton = $.locator('button').first();
   await addToKeychainButton.click();
@@ -52,11 +69,13 @@ test('allows pasting credentials with line breaks', async ({ mount }) => {
   const onChange = spy();
 
   const $ = await mount(
-    <CredentialInput
-      {...props}
-      htmlProps={{ ...props.htmlProps, value: '' }}
-      onChange={onChange}
-    />,
+    <TestApp>
+      <CredentialInput
+        {...props}
+        htmlProps={{ ...props.htmlProps, value: '' }}
+        onChange={onChange}
+      />
+    </TestApp>,
   );
 
   await $.page().evaluate(async (value) => {

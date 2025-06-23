@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { EnumField, type EnumFieldProps } from './EnumField';
 import { spy } from 'tinyspy';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 const onChange = spy();
 
@@ -44,7 +45,13 @@ const scenarios = {
 
 Object.entries(scenarios).forEach(async ([scenario, props]) => {
   test(scenario, async ({ mount }) => {
-    const $ = await mount(<EnumField {...props} />);
+    const $ = await mount(
+      <TestApp>
+        <EnumField {...props} />
+      </TestApp>,
+    );
+
+    await expect($).toHaveScreenshot(`enumField.png`);
 
     await expect($).toHaveAccessibleName('Banana');
     await expect($).toHaveText('Banana');
@@ -64,7 +71,11 @@ Object.entries(scenarios).forEach(async ([scenario, props]) => {
 
     expect(onChange.calls.at(-1)?.[0]).toBe('Strawberry');
 
-    await $.update(<EnumField {...props} stringValue={null} />);
+    await $.update(
+      <TestApp>
+        <EnumField {...props} stringValue={null} />
+      </TestApp>,
+    );
 
     await expect($).toHaveText(props.placeholder);
   });

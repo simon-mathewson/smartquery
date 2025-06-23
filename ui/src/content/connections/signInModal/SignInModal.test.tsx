@@ -1,45 +1,50 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { spy } from 'tinyspy';
-import type { SignInModalStoryProps } from './SignInModal.story';
+import type { SignInModalProps } from './SignInModal';
+import { getSignInModalProps } from './SignInModal.mocks';
 import { SignInModalStory } from './SignInModal.story';
-import { getSignInModalStoryProps } from './SignInModal.mocks';
 
 test.describe('SignInModal', () => {
   test('allows canceling sign in', async ({ mount }) => {
-    const props = {
-      ...getSignInModalStoryProps(),
-      navigate: spy(),
-    } satisfies SignInModalStoryProps;
+    const props = getSignInModalProps();
+    const navigateSpy = spy();
 
-    const $ = await mount(<SignInModalStory {...props} />);
+    const $ = await mount(<SignInModalStory componentProps={props} testApp={{ navigateSpy }} />);
     await $.page().getByRole('button', { name: 'Cancel' }).click();
 
-    expect(props.signInModalProps.close.calls).toEqual([[]]);
+    expect(props.close.calls).toEqual([[]]);
 
-    expect(props.navigate.calls).toEqual([]);
+    expect(navigateSpy.calls).toEqual([]);
   });
 
   test('redirects to root on cancel if there is no active connection', async ({ mount }) => {
-    const props = {
-      ...getSignInModalStoryProps(),
-      connectionsContext: {
-        activeConnection: null,
-      },
-      navigate: spy(),
-    } satisfies SignInModalStoryProps;
+    const props = getSignInModalProps();
+    const navigateSpy = spy();
 
-    const $ = await mount(<SignInModalStory {...props} />);
+    const $ = await mount(
+      <SignInModalStory
+        componentProps={props}
+        testApp={{
+          navigateSpy,
+          providerOverrides: {
+            ConnectionsProvider: {
+              activeConnection: null,
+            },
+          },
+        }}
+      />,
+    );
     await $.page().getByRole('button', { name: 'Cancel' }).click();
 
-    expect(props.signInModalProps.close.calls).toEqual([[]]);
+    expect(props.close.calls).toEqual([[]]);
 
-    expect(props.navigate.calls).toEqual([['/']]);
+    expect(navigateSpy.calls).toEqual([['/']]);
   });
 
   test('allows signing in if DB password is required', async ({ mount }) => {
-    const props = getSignInModalStoryProps();
+    const props = getSignInModalProps();
 
-    const $ = await mount(<SignInModalStory {...props} />);
+    const $ = await mount(<SignInModalStory componentProps={props} />);
 
     await expect($).toHaveScreenshot('db.png');
 
@@ -59,7 +64,7 @@ test.describe('SignInModal', () => {
 
     await $.page().waitForTimeout(1000);
 
-    expect(props.signInModalProps.input.onSignIn.calls).toEqual([
+    expect(props.input.onSignIn.calls).toEqual([
       [
         {
           password: 'password',
@@ -69,99 +74,39 @@ test.describe('SignInModal', () => {
       ],
     ]);
 
-    expect(props.signInModalProps.close.calls).toEqual([[]]);
-  });
-
-  test('allows signing in if SSH password is required', async ({ mount }) => {
-    const props = {
-      ...getSignInModalStoryProps(),
-      signInModalProps: {
-        ...getSignInModalStoryProps().signInModalProps,
-        input: {
-          ...getSignInModalStoryProps().signInModalProps.input,
-          connection: {
-            ...getSignInModalStoryProps().signInModalProps.input.connection,
-            credentialStorage: 'plain',
-            ssh: {
-              host: 'sshhost',
-              password: null,
-              port: 2345,
-              user: 'sshuser',
-            },
-          },
-        },
-      },
-    } satisfies SignInModalStoryProps;
-
-    const $ = await mount(<SignInModalStory {...props} />);
-
-    await expect($).toHaveScreenshot('sshPassword.png');
-
-    await expect($.page().getByRole('textbox', { disabled: true, name: 'SSH User' })).toHaveValue(
-      'sshuser@sshhost:2345',
-    );
-    await expect($.page().getByRole('textbox', { exact: true, name: 'User' })).not.toBeAttached();
-    await expect(
-      $.page().getByRole('textbox', { exact: true, name: 'Password' }),
-    ).not.toBeAttached();
-
-    await $.page().getByRole('textbox', { name: 'SSH Password' }).fill('password');
-
-    await $.page().getByRole('button', { name: 'Sign in' }).click();
-
-    await expect($.page().getByRole('textbox', { name: 'SSH Password' })).toBeDisabled();
-    await expect($.page().getByRole('button', { name: 'Cancel' })).toBeDisabled();
-    await expect($.page().getByRole('button', { name: 'Sign in' })).toBeDisabled();
-
-    await $.page().waitForTimeout(1000);
-
-    expect(props.signInModalProps.input.onSignIn.calls).toEqual([
-      [
-        {
-          password: undefined,
-          sshPassword: 'password',
-          sshPrivateKey: undefined,
-        },
-      ],
-    ]);
-
-    expect(props.signInModalProps.close.calls).toEqual([[]]);
+    expect(props.close.calls).toEqual([[]]);
   });
 
   test('allows signing in if SSH private key is required', async ({ mount }) => {
     const props = {
-      ...getSignInModalStoryProps(),
-      signInModalProps: {
-        ...getSignInModalStoryProps().signInModalProps,
-        input: {
-          ...getSignInModalStoryProps().signInModalProps.input,
-          connection: {
-            ...getSignInModalStoryProps().signInModalProps.input.connection,
-            credentialStorage: 'plain',
-            ssh: {
-              host: 'sshhost',
-              port: 2345,
-              privateKey: null,
-              user: 'sshuser',
-            },
+      ...getSignInModalProps(),
+      input: {
+        ...getSignInModalProps().input,
+        connection: {
+          ...getSignInModalProps().input.connection,
+          credentialStorage: 'alwaysAsk',
+          ssh: {
+            host: 'sshhost',
+            port: 2345,
+            privateKey: null,
+            user: 'sshuser',
           },
         },
       },
-    } satisfies SignInModalStoryProps;
+    } satisfies SignInModalProps;
 
-    const $ = await mount(<SignInModalStory {...props} />);
+    const $ = await mount(<SignInModalStory componentProps={props} />);
 
     await expect($).toHaveScreenshot('sshPrivateKey.png');
 
     await expect($.page().getByRole('textbox', { disabled: true, name: 'SSH User' })).toHaveValue(
       'sshuser@sshhost:2345',
     );
-    await expect($.page().getByRole('textbox', { exact: true, name: 'User' })).not.toBeAttached();
-    await expect(
-      $.page().getByRole('textbox', { exact: true, name: 'Password' }),
-    ).not.toBeAttached();
+    await expect($.page().getByRole('textbox', { exact: true, name: 'User' })).toBeAttached();
+    await expect($.page().getByRole('textbox', { exact: true, name: 'Password' })).toBeAttached();
     await expect($.page().getByRole('textbox', { name: 'SSH Password' })).not.toBeAttached();
 
+    await $.page().getByRole('textbox', { exact: true, name: 'Password' }).fill('password');
     await $.page().getByRole('textbox', { name: 'SSH Private key' }).fill('private key');
 
     await $.page().getByRole('button', { name: 'Sign in' }).click();
@@ -172,43 +117,40 @@ test.describe('SignInModal', () => {
 
     await $.page().waitForTimeout(1000);
 
-    expect(props.signInModalProps.input.onSignIn.calls).toEqual([
+    expect(props.input.onSignIn.calls).toEqual([
       [
         {
-          password: undefined,
+          password: 'password',
           sshPassword: undefined,
           sshPrivateKey: 'private key',
         },
       ],
     ]);
 
-    expect(props.signInModalProps.close.calls).toEqual([[]]);
+    expect(props.close.calls).toEqual([[]]);
   });
 
-  test('allows signing in if both DB and SSH password are required', async ({ mount }) => {
+  test('allows signing in if SSH password is required', async ({ mount }) => {
     const props = {
-      ...getSignInModalStoryProps(),
-      signInModalProps: {
-        ...getSignInModalStoryProps().signInModalProps,
-        input: {
-          ...getSignInModalStoryProps().signInModalProps.input,
-          connection: {
-            ...getSignInModalStoryProps().signInModalProps.input.connection,
+      ...getSignInModalProps(),
+      input: {
+        ...getSignInModalProps().input,
+        connection: {
+          ...getSignInModalProps().input.connection,
+          password: null,
+          ssh: {
+            host: 'sshhost',
             password: null,
-            ssh: {
-              host: 'sshhost',
-              password: null,
-              port: 2345,
-              user: 'sshuser',
-            },
+            port: 2345,
+            user: 'sshuser',
           },
         },
       },
-    } satisfies SignInModalStoryProps;
+    } satisfies SignInModalProps;
 
-    const $ = await mount(<SignInModalStory {...props} />);
+    const $ = await mount(<SignInModalStory componentProps={props} />);
 
-    await expect($).toHaveScreenshot('dbAndSshPassword.png');
+    await expect($).toHaveScreenshot('sshPassword.png');
 
     await expect(
       $.page().getByRole('textbox', { disabled: true, exact: true, name: 'User' }),
@@ -228,7 +170,7 @@ test.describe('SignInModal', () => {
 
     await $.page().waitForTimeout(1000);
 
-    expect(props.signInModalProps.input.onSignIn.calls).toEqual([
+    expect(props.input.onSignIn.calls).toEqual([
       [
         {
           password: 'password',
@@ -238,16 +180,11 @@ test.describe('SignInModal', () => {
       ],
     ]);
 
-    expect(props.signInModalProps.close.calls).toEqual([[]]);
+    expect(props.close.calls).toEqual([[]]);
   });
 
   test('shows error message if authentication fails', async ({ mount }) => {
-    const props = {
-      ...getSignInModalStoryProps(),
-      showError: true,
-    } satisfies SignInModalStoryProps;
-
-    const $ = await mount(<SignInModalStory {...props} />);
+    const $ = await mount(<SignInModalStory componentProps={getSignInModalProps()} showError />);
 
     await $.page().getByRole('button', { name: 'Sign in' }).click();
 

@@ -43,10 +43,12 @@ export const getMockConnectionsContext = () =>
 
 export const getStoryProps = () =>
   ({
-    providers: {
-      ConnectionsProvider: getMockConnectionsContext(),
+    testApp: {
+      providerOverrides: {
+        ConnectionsProvider: getMockConnectionsContext(),
+      },
     },
-    props: getProps(),
+    componentProps: getProps(),
     shouldFail: false,
   }) satisfies TestConnectionStoryProps;
 

@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import type { AlphanumericProps } from './Alphanumeric';
 import { Alphanumeric } from './Alphanumeric';
 import { spy } from 'tinyspy';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 const scenarios = [
   { dataType: 'datetime', stringValue: '2024-06-14T17:30' },
@@ -18,7 +19,13 @@ scenarios.forEach((scenario) => {
 
     const props = { ...scenario, onChange };
 
-    const $ = await mount(<Alphanumeric {...props} />);
+    const $ = await mount(
+      <TestApp>
+        <Alphanumeric {...props} />
+      </TestApp>,
+    );
+
+    await expect($).toHaveScreenshot(`alphanumeric-${scenario.dataType}.png`);
 
     expect($).toHaveRole(scenario.dataType === 'int' ? 'spinbutton' : 'textbox');
 

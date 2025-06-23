@@ -6,14 +6,18 @@ export type TestConnectionStoryProps = StoryProps<TestConnectionProps> & {
   shouldFail: boolean;
 };
 
-export const TestConnectionStory = ({ props, providers, shouldFail }: TestConnectionStoryProps) => (
+export const TestConnectionStory = ({
+  componentProps,
+  shouldFail,
+  testApp,
+}: TestConnectionStoryProps) => (
   <TestApp
     providerOverrides={{
       ConnectionsProvider: {
         activeConnection: null,
         connectRemote: (input) =>
           new Promise((resolve, reject) => {
-            providers?.ConnectionsProvider?.connectRemote?.(input);
+            testApp?.providerOverrides?.ConnectionsProvider?.connectRemote?.(input);
             setTimeout(() => {
               if (shouldFail) {
                 reject(new Error('Failed to connect'));
@@ -24,12 +28,12 @@ export const TestConnectionStory = ({ props, providers, shouldFail }: TestConnec
           }),
         disconnectRemote: (input) =>
           new Promise((resolve) => {
-            providers?.ConnectionsProvider?.disconnectRemote?.(input);
+            testApp?.providerOverrides?.ConnectionsProvider?.disconnectRemote?.(input);
             resolve();
           }),
       },
     }}
   >
-    <TestConnection {...props} />
+    <TestConnection {...componentProps} />
   </TestApp>
 );

@@ -2,15 +2,20 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { Field } from './Field';
 import { Input } from '../input/Input';
 import { assert } from 'ts-essentials';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 test('Field renders label and children', async ({ mount }) => {
   const label = 'Name';
 
   const $ = await mount(
-    <Field label={label}>
-      <Input />
-    </Field>,
+    <TestApp>
+      <Field label={label}>
+        <Input />
+      </Field>
+    </TestApp>,
   );
+
+  await expect($.page()).toHaveScreenshot('field.png');
 
   const labelEl = $.getByText(label);
   const controlId = await labelEl.getAttribute('for');
@@ -24,9 +29,11 @@ test('Field renders label and children', async ({ mount }) => {
   expect(input).toHaveAccessibleName(label);
 
   await $.update(
-    <Field>
-      <Input />
-    </Field>,
+    <TestApp>
+      <Field>
+        <Input />
+      </Field>
+    </TestApp>,
   );
 
   await expect($.locator('label')).not.toBeAttached();

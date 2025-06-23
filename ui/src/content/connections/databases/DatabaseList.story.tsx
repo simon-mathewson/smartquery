@@ -4,10 +4,10 @@ import { TestApp } from '~/test/componentTests/TestApp';
 import { DatabaseList } from './DatabaseList';
 
 export const DatabaseListStory: React.FC<StoryProps> = (props) => {
-  const { providers } = props;
+  const { testApp } = props;
 
   return (
-    <TestApp providerOverrides={providers}>
+    <TestApp {...testApp}>
       <DatabaseList />
     </TestApp>
   );

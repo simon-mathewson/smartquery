@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { Select } from './Select';
 import { spy } from 'tinyspy';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 test.describe('Select', () => {
   const onChange = spy();
@@ -26,7 +27,11 @@ test.describe('Select', () => {
   });
 
   test('should render empty select with placeholder', async ({ mount }) => {
-    const $ = await mount(<Select {...props} />);
+    const $ = await mount(
+      <TestApp>
+        <Select {...props} />
+      </TestApp>,
+    );
 
     await expect($).toHaveScreenshot('triggerEmpty.png');
 
@@ -40,7 +45,11 @@ test.describe('Select', () => {
   });
 
   test('allows opening dropdown and selecting value', async ({ mount }) => {
-    const $ = await mount(<Select {...props} />);
+    const $ = await mount(
+      <TestApp>
+        <Select {...props} />
+      </TestApp>,
+    );
 
     await $.hover();
     await expect($).toHaveScreenshot('triggerHover.png');
@@ -66,7 +75,11 @@ test.describe('Select', () => {
   });
 
   test('should render select with selected value', async ({ mount }) => {
-    const $ = await mount(<Select {...props} value={options[0].value} />);
+    const $ = await mount(
+      <TestApp>
+        <Select {...props} value={options[0].value} />
+      </TestApp>,
+    );
 
     await expect($).toHaveText(options[0].label);
     await expect($).toHaveAttribute('data-value', options[0].value);
@@ -84,7 +97,11 @@ test.describe('Select', () => {
   });
 
   test('should render select with disabled state', async ({ mount }) => {
-    const $ = await mount(<Select {...props} htmlProps={{ ...props.htmlProps, disabled: true }} />);
+    const $ = await mount(
+      <TestApp>
+        <Select {...props} htmlProps={{ ...props.htmlProps, disabled: true }} />
+      </TestApp>,
+    );
 
     await expect($).toHaveScreenshot('triggerDisabled.png');
 

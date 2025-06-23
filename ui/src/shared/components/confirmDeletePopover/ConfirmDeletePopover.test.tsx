@@ -11,7 +11,7 @@ test('ConfirmDeletePopover', async ({ mount }) => {
     text: 'Confirm',
   } satisfies Omit<ConfirmDeletePopoverProps, 'renderTrigger'>;
 
-  const $ = await mount(<ConfirmDeletePopoverStory {...props} />);
+  const $ = await mount(<ConfirmDeletePopoverStory componentProps={props} />);
 
   await expect($).toHaveAccessibleName('Delete');
   await expect($).toHaveText('Delete');
@@ -27,6 +27,8 @@ test('ConfirmDeletePopover', async ({ mount }) => {
   await expect(menu).toBeVisible();
   await expect(menu).toHaveAttribute('id', menuId);
   await expect(menu).toHaveAttribute('role', 'menu');
+
+  await expect($.page()).toHaveScreenshot('confirmDeletePopover.png');
 
   const confirmButton = menu.getByRole('menuitem', { name: 'Confirm' });
   await confirmButton.click();

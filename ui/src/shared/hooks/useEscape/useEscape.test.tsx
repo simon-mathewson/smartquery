@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import { UseEscapeStory } from './useEscape.story';
 import { spy } from 'tinyspy';
-import React from 'react';
+import { UseEscapeStory } from './useEscape.story';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 test.describe('useEscape', () => {
   test('should close on escape key', async ({ mount }) => {
@@ -9,10 +9,10 @@ test.describe('useEscape', () => {
     const handler2 = spy();
 
     const $ = await mount(
-      <React.Fragment>
+      <TestApp>
         <UseEscapeStory active handler={handler1} />
         <UseEscapeStory active handler={handler2} />
-      </React.Fragment>,
+      </TestApp>,
     );
 
     await $.page().keyboard.press('Escape');
@@ -21,10 +21,10 @@ test.describe('useEscape', () => {
     expect(handler2.calls).toEqual([[]]);
 
     await $.update(
-      <React.Fragment>
+      <TestApp>
         <UseEscapeStory active handler={handler1} />
         <UseEscapeStory active={false} handler={handler2} />
-      </React.Fragment>,
+      </TestApp>,
     );
 
     await $.page().keyboard.press('Escape');
@@ -41,10 +41,10 @@ test.describe('useEscape', () => {
     const handler2 = spy();
 
     const $ = await mount(
-      <React.Fragment>
+      <TestApp>
         <UseEscapeStory active handler={handler1} clickOutside />
         <UseEscapeStory active handler={handler2} clickOutside />
-      </React.Fragment>,
+      </TestApp>,
     );
 
     await $.page().mouse.click(0, 0);
@@ -53,10 +53,10 @@ test.describe('useEscape', () => {
     expect(handler2.calls).toEqual([[]]);
 
     await $.update(
-      <React.Fragment>
+      <TestApp>
         <UseEscapeStory active handler={handler1} clickOutside />
         <UseEscapeStory active={false} handler={handler2} clickOutside />
-      </React.Fragment>,
+      </TestApp>,
     );
 
     await $.page().mouse.click(0, 0);

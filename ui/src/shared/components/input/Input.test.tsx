@@ -3,6 +3,7 @@ import { spy } from 'tinyspy';
 import type { InputProps } from './Input';
 import { Input } from './Input';
 import type { Page } from '@playwright/test';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 const getHeight = (page: Page) =>
   page.evaluate(() => document.querySelector('textarea')!.offsetHeight);
@@ -19,7 +20,13 @@ test('Input renders and allows changing text', async ({ mount }) => {
     onChange,
   } satisfies InputProps;
 
-  const $ = await mount(<Input {...props} />);
+  const $ = await mount(
+    <TestApp>
+      <Input {...props} />
+    </TestApp>,
+  );
+
+  await expect($.page()).toHaveScreenshot('input.png');
 
   await expect($).toHaveRole('textbox');
   await expect($).toHaveValue(props.htmlProps.value);
@@ -39,7 +46,11 @@ test('Input renders and allows changing text', async ({ mount }) => {
   await $.fill(newValue);
   expect(onChange.calls.at(-1)?.[0]).toBe(newValue);
 
-  await $.update(<Input {...props} htmlProps={{ ...props.htmlProps, value: '' }} />);
+  await $.update(
+    <TestApp>
+      <Input {...props} htmlProps={{ ...props.htmlProps, value: '' }} />
+    </TestApp>,
+  );
 
   await expect($.page().getByPlaceholder('Placeholder')).toBeAttached();
 });
@@ -53,7 +64,14 @@ test('Textarea resizes', async ({ mount }) => {
     onChange,
   } satisfies InputProps;
 
-  const $ = await mount(<Input {...props} />);
+  const $ = await mount(
+    <TestApp>
+      <Input {...props} />
+    </TestApp>,
+  );
+
+  await expect($.page()).toHaveScreenshot('textarea.png');
+
   // Trigger onChange
   await $.fill(props.htmlProps.value);
 
@@ -65,7 +83,11 @@ test('Textarea resizes', async ({ mount }) => {
   const valueWithLineBreaks =
     'New text\nNew line\nNew text\nNew line\nNew line\nNew line\nNew line\nNew text\nNew line\nNew text\nNew line\nNew line';
 
-  await $.update(<Input {...props} htmlProps={{ value: valueWithLineBreaks }} />);
+  await $.update(
+    <TestApp>
+      <Input {...props} htmlProps={{ value: valueWithLineBreaks }} />
+    </TestApp>,
+  );
   // Trigger onChange
   await $.fill(valueWithLineBreaks);
 
@@ -73,7 +95,11 @@ test('Textarea resizes', async ({ mount }) => {
 
   const shorterValueWithLineBreaks = valueWithLineBreaks.slice(0, 30);
 
-  await $.update(<Input {...props} htmlProps={{ value: shorterValueWithLineBreaks }} />);
+  await $.update(
+    <TestApp>
+      <Input {...props} htmlProps={{ value: shorterValueWithLineBreaks }} />
+    </TestApp>,
+  );
   // Trigger onChange
   await $.fill(shorterValueWithLineBreaks);
 

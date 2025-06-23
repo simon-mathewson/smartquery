@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { spy } from 'tinyspy';
 import { ColumnField } from './ColumnField';
 import { assert } from 'ts-essentials';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 const dataTypes = ['boolean', 'enum', 'varchar'] as const;
 
@@ -65,7 +66,17 @@ dataTypes.forEach((dataType) => {
           onChange,
         };
 
-        const $ = await mount(<ColumnField {...props} />);
+        const $ = await mount(
+          <TestApp>
+            <ColumnField {...props} />
+          </TestApp>,
+        );
+
+        await expect($).toHaveScreenshot(
+          `columnField-${dataType}-${column.isNullable ? 'nullable' : 'nonNullable'}-${
+            value === null ? 'null' : 'nonNull'
+          }.png`,
+        );
 
         const control = {
           boolean: $.getByRole('radiogroup').first(),
@@ -116,7 +127,11 @@ dataTypes.forEach((dataType) => {
           await expect(nullButton).not.toBeChecked();
 
           // Control should retain value after null was selected
-          await $.update(<ColumnField {...props} value={null} />);
+          await $.update(
+            <TestApp>
+              <ColumnField {...props} value={null} />
+            </TestApp>,
+          );
 
           if (dataType === 'boolean') {
             await expect(control.getByRole('radio', { checked: true })).not.toBeAttached();

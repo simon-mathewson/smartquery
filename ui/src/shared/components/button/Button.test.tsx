@@ -3,12 +3,17 @@ import { spy } from 'tinyspy';
 
 import { Button } from './Button';
 import { Add, Edit } from '@mui/icons-material';
+import { TestApp } from '~/test/componentTests/TestApp';
 
 test('renders button with label', async ({ mount }) => {
   const label = 'Click me';
   const onClick = spy();
 
-  const $ = await mount(<Button htmlProps={{ onClick }} label={label} />);
+  const $ = await mount(
+    <TestApp>
+      <Button htmlProps={{ onClick }} label={label} />
+    </TestApp>,
+  );
 
   await expect($).toHaveRole('button');
   await expect($).toHaveAccessibleName(label);
@@ -25,7 +30,11 @@ test('renders button with icon', async ({ mount }) => {
   const icon = <Add />;
   const onClick = spy();
 
-  const $ = await mount(<Button htmlProps={{ onClick }} icon={icon} />);
+  const $ = await mount(
+    <TestApp>
+      <Button htmlProps={{ onClick }} icon={icon} />
+    </TestApp>,
+  );
 
   await expect($).toHaveText('');
   await expect($).toHaveCSS('height', '36px');
@@ -43,19 +52,21 @@ test('renders small disabled link with icon, long label, and suffix', async ({ m
   const onClick = spy();
 
   const $ = await mount(
-    <Button
-      htmlProps={{
-        className: 'w-100',
-        disabled: true,
-        href: '#',
-        onClick,
-      }}
-      element="a"
-      icon={icon}
-      label={label}
-      suffix={<Edit />}
-      textSuffix={textSuffix}
-    />,
+    <TestApp>
+      <Button
+        htmlProps={{
+          className: 'w-100',
+          disabled: true,
+          href: '#',
+          onClick,
+        }}
+        element="a"
+        icon={icon}
+        label={label}
+        suffix={<Edit />}
+        textSuffix={textSuffix}
+      />
+    </TestApp>,
   );
 
   await expect($).toHaveRole('link');

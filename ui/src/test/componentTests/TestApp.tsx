@@ -2,20 +2,27 @@ import '../../index.css';
 
 import type { PropsWithChildren } from 'react';
 import React from 'react';
+import type { SpyFn } from 'tinyspy';
+import { spy } from 'tinyspy';
+import { Router } from 'wouter';
 import { ErrorBoundary } from '~/content/errorBoundary/ErrorBoundary';
-import type { MockProvidersProps } from '~/providers/MockProviders';
+import type { ProviderOverrides } from '~/providers/MockProviders';
 import { MockProviders } from '~/providers/MockProviders';
 
-export type TestAppProps = PropsWithChildren<{
-  providerOverrides?: MockProvidersProps['mockOverrides'];
-}>;
+export type TestAppOptions = { navigateSpy?: SpyFn; providerOverrides?: ProviderOverrides };
+
+export type TestAppProps = PropsWithChildren<TestAppOptions>;
 
 export const TestApp: React.FC<TestAppProps> = (props) => {
   const { children, providerOverrides } = props;
 
+  const navigateSpy = props.navigateSpy ?? spy();
+
   return (
-    <ErrorBoundary>
-      <MockProviders mockOverrides={providerOverrides}>{children}</MockProviders>
-    </ErrorBoundary>
+    <Router hook={() => ['', navigateSpy]}>
+      <ErrorBoundary>
+        <MockProviders mockOverrides={providerOverrides}>{children}</MockProviders>
+      </ErrorBoundary>
+    </Router>
   );
 };
