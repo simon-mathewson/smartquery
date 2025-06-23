@@ -8,7 +8,7 @@ phases:
       - npm i -g corepack@latest
       - corepack enable pnpm
       - pnpm config set store-dir .pnpm-store
-      - pnpm install --recursive --frozen-lockfile
+      - pnpm install --recursive
   # build:
   #   on-failure: ABORT
   #   commands:
