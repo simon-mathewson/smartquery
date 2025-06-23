@@ -5,15 +5,6 @@ Resources:
       Path: "/service-role/"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AdministratorAccess"
-      Policies:
-        - PolicyName: CodeBuildPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - "logs:*"
-                Resource: "*"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
