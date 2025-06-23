@@ -97,12 +97,16 @@ reports:
     files:
       - "ui/test-report.xml"
     file-format: "JUNITXML"
-  # ui-ct:
-  #   files:
-  #     - "ui/test-ct-report.xml"
-  #   file-format: "JUNITXML"
+  ui-ct:
+    files:
+      - "ui/test-ct-report.xml"
+    file-format: "JUNITXML"
 
 cache:
+  key: about-$(codebuild-hash-files about/pnpm-lock.yaml)_cloud-$(codebuild-hash-files cloud/pnpm-lock.yaml)_link-$(codebuild-hash-files link/pnpm-lock.yaml)_shared-$(codebuild-hash-files shared/pnpm-lock.yaml)_ui-$(codebuild-hash-files ui/pnpm-lock.yaml)
   paths:
-    - "/root/**/.pnpm-store/**/*"
-    - "/root/.cache/ms-playwright/**/*"
+    - "about/node_modules/**/*"
+    - "cloud/node_modules/**/*"
+    - "link/node_modules/**/*"
+    - "shared/node_modules/**/*"
+    - "ui/node_modules/**/*"

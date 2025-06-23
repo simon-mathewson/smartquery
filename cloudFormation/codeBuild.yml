@@ -5,11 +5,8 @@ Resources:
       Artifacts:
         Type: "CODEPIPELINE"
       Cache:
-        Type: "LOCAL"
-        Modes:
-          - "LOCAL_CUSTOM_CACHE"
-          - "LOCAL_DOCKER_LAYER_CACHE"
-          - "LOCAL_SOURCE_CACHE"
+        Location: !ImportValue S3BucketCodeBuildCache
+        Type: "S3"
       Environment:
         ComputeType: "BUILD_GENERAL1_SMALL"
         EnvironmentVariables:
