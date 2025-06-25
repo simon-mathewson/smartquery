@@ -4,9 +4,8 @@ import { Button } from '~/shared/components/button/Button';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { LinkContext } from '../Context';
-import { distributablesByOs } from './constants';
 import type { Os } from './types';
-import { getCurrentOs, getDistributableUrl } from './utils';
+import { getCurrentOs, getDistributables, getDistributableUrl } from './utils';
 import { PublishedWithChangesOutlined as VerifyLinkIcon } from '@mui/icons-material';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
@@ -67,7 +66,7 @@ export const Setup: React.FC<SetupProps> = (props) => {
           value={os}
         />
         <div className="flex flex-col gap-2">
-          {distributablesByOs[os].map((distributable) => (
+          {getDistributables(os).map((distributable) => (
             <Button
               element="a"
               htmlProps={{ className: 'grow basis-0', href: getDistributableUrl(distributable) }}

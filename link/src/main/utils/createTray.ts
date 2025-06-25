@@ -17,15 +17,18 @@ export const createTray = () => {
 
   tray.setToolTip('Dabase Link');
 
-  const contextMenuItems: MenuItemConstructorOptions[] = [
+  const contextMenuItems: MenuItemConstructorOptions[] = [];
+
+  contextMenuItems.push(
     {
-      label: 'Quit',
-      click: app.quit,
+      label: `Dabase Link ${import.meta.env.VITE_VERSION}`,
+      enabled: false,
     },
-  ];
+    { type: 'separator' },
+  );
 
   if (process.platform !== 'linux') {
-    contextMenuItems.unshift(
+    contextMenuItems.push(
       {
         label: 'Start on Login',
         type: 'checkbox',
@@ -39,6 +42,11 @@ export const createTray = () => {
       { type: 'separator' },
     );
   }
+
+  contextMenuItems.push({
+    label: 'Quit',
+    click: app.quit,
+  });
 
   const contextMenu = Menu.buildFromTemplate(contextMenuItems);
 

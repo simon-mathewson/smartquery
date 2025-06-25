@@ -57,5 +57,10 @@ module.exports = {
   },
   deb: { artifactName },
   npmRebuild: false,
-  publish: { provider: 'generic', url: 'https://example.com/auto-updates' },
+  publish: {
+    acl: null,
+    bucket: 'dabase-link',
+    provider: 's3',
+    region: 'eu-central-1',
+  },
 };
