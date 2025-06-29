@@ -1,4 +1,33 @@
 Resources:
+  CloudFrontFunctionRewriteUrls:
+    Type: "AWS::CloudFront::Function"
+    Properties:
+      Name: "rewrite-urls"
+      AutoPublish: true
+      FunctionConfig:
+        Comment: "Rewrite URLs for Next.js static export"
+        Runtime: "cloudfront-js-2.0"
+      FunctionCode: |
+        function handler(event) {
+          var request = event.request;
+          var uri = request.uri;
+          
+          // If the URI doesn't end with a file extension, try adding .html
+          if (!uri.includes('.') || uri.endsWith('/')) {
+            // Remove trailing slash if present
+            if (uri.endsWith('/')) {
+              uri = uri.slice(0, -1);
+            }
+            
+            // If it's not the root path, try adding .html
+            if (uri !== '') {
+              request.uri = uri + '.html';
+            }
+          }
+          
+          return request;
+        }
+
   CloudFrontDistributionDabaseUi:
     Type: "AWS::CloudFront::Distribution"
     Properties:
@@ -59,6 +88,10 @@ Resources:
             ResponseCode: 200
             ErrorCode: 404
             ResponsePagePath: "/index.html"
+          - ErrorCachingMinTTL: 10
+            ResponseCode: 200
+            ErrorCode: 403
+            ResponsePagePath: "/index.html"
         ContinuousDeploymentPolicyId: ""
         OriginGroups:
           Quantity: 0
@@ -112,7 +145,9 @@ Resources:
         DefaultCacheBehavior:
           Compress: true
           TrustedKeyGroups: []
-          FunctionAssociations: []
+          FunctionAssociations:
+            - EventType: "viewer-request"
+              FunctionARN: !GetAtt CloudFrontFunctionRewriteUrls.FunctionARN
           AllowedMethods:
             - "HEAD"
             - "GET"
@@ -132,6 +167,10 @@ Resources:
           - ErrorCachingMinTTL: 10
             ResponseCode: 200
             ErrorCode: 404
+            ResponsePagePath: "/index.html"
+          - ErrorCachingMinTTL: 10
+            ResponseCode: 200
+            ErrorCode: 403
             ResponsePagePath: "/index.html"
         ContinuousDeploymentPolicyId: ""
         OriginGroups:
