@@ -1,13 +1,13 @@
 import React from 'react';
 import { Route, Switch } from 'wouter';
 import { App } from '~/App';
-import { Database } from '~/content/database/Database';
-import { Home } from '~/content/home/Home';
-import { routes } from './routes';
+import { Login } from '~/content/auth/Login/Login';
 import { Signup } from '~/content/auth/Signup/Signup';
 import { AddConnectionPage } from '~/content/connections/AddConnectionPage/AddConnectionPage';
-import { Login } from '~/content/auth/Login/Login';
-import { SettingsOverlay } from '~/content/settings/Overlay';
+import { Database } from '~/content/database/Database';
+import { Footer } from '~/content/footer/Footer';
+import { Home } from '~/content/home/Home';
+import { routes } from './routes';
 
 export const Router: React.FC = () => {
   return (
@@ -21,7 +21,7 @@ export const Router: React.FC = () => {
         <Route path={routes.login()} component={Login} />
         <Route path={routes.signup()} component={Signup} />
       </Switch>
-      <SettingsOverlay />
+      <Footer />
     </App>
   );
 };
