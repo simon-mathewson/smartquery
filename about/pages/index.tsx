@@ -3,13 +3,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <>
-      <div className="flex flex-col items-center gap-6 pt-8">
-        <div className="flex gap-5 justify-center items-center">
-          <Image src="/logo.svg" alt="" width={48} height={48} />
-          <h1 className="text-5xl font-[700] text-transparent bg-clip-text bg-gradient-to-br from-indigo-500 to-green-500 from-20% to-80%">
-            Dabase
-          </h1>
-        </div>
+      <div className="flex flex-col items-center gap-6 pt-4">
         <div className="flex flex-col items-center gap-4">
           <h2 className="text-lg font-[Inter] font-[600] text-gray-700 leading-snug text-center">
             The fun, browser-based, AI-powered database UI.
