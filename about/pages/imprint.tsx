@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { emailAddress } from "./constants";
+import { emailAddress } from "../constants";
 
 const Imprint: React.FC = () => {
   return (
