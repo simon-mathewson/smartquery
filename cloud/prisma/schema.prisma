@@ -14,14 +14,14 @@ model Connection {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   database           String
-  dbUser             String?
+  dbUser             String
   encryptCredentials Boolean
   engine             Engine
-  host               String?
+  host               String
   name               String
   password           String?
   passwordNonce      String?
-  port               Int?
+  port               Int
   schema             String?
   sshHost            String?
   sshPassword        String?
@@ -50,5 +50,4 @@ model User {
 enum Engine {
   mysql
   postgres
-  sqlite
 }

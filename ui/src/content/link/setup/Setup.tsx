@@ -88,7 +88,7 @@ export const Setup: React.FC<SetupProps> = (props) => {
           ))}
         </div>
       </div>
-      <div className="text-sm leading-snug text-textSecondary">
+      <div className="text-xs leading-snug text-textSecondary">
         Once Link is installed and running, verify the installation:
       </div>
       <Button

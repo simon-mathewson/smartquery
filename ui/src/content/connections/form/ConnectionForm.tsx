@@ -163,6 +163,9 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             onChange={(value) => {
               setFormValue('engine', value);
               setFormValue('type', value === 'sqlite' ? 'file' : 'remote');
+              if (value === 'sqlite') {
+                setFormValue('storageLocation', 'local');
+              }
             }}
             options={(['mysql', 'postgres', 'sqlite'] as const).map((engine, index) => ({
               button: {
@@ -196,7 +199,9 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 label: storageLocationLabels[storageLocation],
                 htmlProps: {
                   autoFocus: index === 0,
-                  disabled: isCloudConnection && storageLocation === 'local',
+                  disabled:
+                    (isCloudConnection && storageLocation === 'local') ||
+                    (formValues.type === 'file' && storageLocation === 'cloud'),
                 },
               },
               value: storageLocation,

@@ -104,7 +104,9 @@ export const useConnections = (props: UseConnectionsProps) => {
         if (connection.storageLocation === 'local') {
           setLocalConnections([...localConnections, connection]);
         } else {
-          if (connection.type === 'remote' && connection.credentialStorage === 'encrypted') {
+          assert(connection.type === 'remote');
+
+          if (connection.credentialStorage === 'encrypted') {
             await new Promise<void>((resolve) =>
               userPasswordModal.open({
                 mode: 'encrypt',
@@ -158,11 +160,12 @@ export const useConnections = (props: UseConnectionsProps) => {
         if (connection.storageLocation === 'local') {
           setLocalConnections(localConnections.map((c) => (c.id === id ? connection : c)));
         } else {
+          assert(connection.type === 'remote');
+
           if (
-            connection.type === 'remote' &&
-            (connection.credentialStorage === 'encrypted' ||
-              (existingConnection.type === 'remote' &&
-                existingConnection.credentialStorage === 'encrypted'))
+            connection.credentialStorage === 'encrypted' ||
+            (existingConnection.type === 'remote' &&
+              existingConnection.credentialStorage === 'encrypted')
           ) {
             await new Promise<void>((resolve) =>
               userPasswordModal.open({
