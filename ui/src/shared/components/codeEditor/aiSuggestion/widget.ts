@@ -3,6 +3,7 @@ import type * as monacoType from 'monaco-editor';
 import { assert } from 'ts-essentials';
 import type { useAi } from '~/content/ai/useAi';
 import developerPrompt from './developerPrompt.txt?raw';
+import { AnalyticsContextType } from '~/content/analytics/Context';
 
 export class AiSuggestionWidget implements editorType.IContentWidget {
   private static readonly ID = 'editor.widget.aiSuggestion';
@@ -21,6 +22,7 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
     private readonly editor: editorType.ICodeEditor,
     private readonly monaco: typeof monacoType,
     private readonly ai: ReturnType<typeof useAi>,
+    private readonly track: AnalyticsContextType['track'],
   ) {
     const update = async (positionProp?: editorType.ICursorPositionChangedEvent['position']) => {
       const position = positionProp ?? editor.getPosition();
@@ -60,6 +62,7 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
         }
 
         this.editor.addContentWidget(this);
+        this.track('code_editor_ai_suggestion_show');
 
         this.disposeKeyDownListener?.dispose();
         this.disposeKeyDownListener = this.editor.onKeyDown((event) => {
@@ -94,6 +97,8 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
               ],
               () => null,
             );
+
+            this.track('code_editor_ai_suggestion_accept');
 
             this.editor.removeContentWidget(this);
             this.disposeKeyDownListener?.dispose();

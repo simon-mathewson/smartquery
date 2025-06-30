@@ -8,12 +8,14 @@ import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { splitSqlStatements } from '~/shared/utils/sql/sql';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export type ReviewChangesCardProps = {
   triggerRef: React.RefObject<HTMLButtonElement>;
 };
 
 export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { triggerRef } = props;
 
   const linkApi = useDefinedContext(LinkApiContext);
@@ -59,6 +61,8 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
     }
 
     clearChanges();
+
+    track('toolbar_changes_submit');
 
     refetchActiveTabSelectQueries();
   }, [

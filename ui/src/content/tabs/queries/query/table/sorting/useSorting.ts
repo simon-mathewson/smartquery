@@ -8,8 +8,10 @@ import { QueriesContext } from '../../../Context';
 import { getLimitAndOffset, setLimitAndOffset } from '../../../utils/limitAndOffset';
 import { QueryContext } from '../../Context';
 import { getSortedColumnFromAst } from './utils';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const useSorting = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ConnectionsContext);
   const { updateQuery } = useDefinedContext(QueriesContext);
   const { query } = useDefinedContext(QueryContext);
@@ -49,8 +51,10 @@ export const useSorting = () => {
       const sql = getSqlForAst(newStatement, activeConnection.engine);
 
       void updateQuery({ id: query.id, run: true, sql });
+
+      track('table_sort', { direction: newSortDirection });
     },
-    [activeConnection, query.id, query.select, sortedColumn, updateQuery],
+    [activeConnection, query.id, query.select, sortedColumn, updateQuery, track],
   );
 
   return useMemo(() => ({ sortedColumn, toggleSort }), [sortedColumn, toggleSort]);

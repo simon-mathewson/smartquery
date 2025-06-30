@@ -4,8 +4,10 @@ import { TableList } from '../tableList/TableList';
 import { ConnectionsContext } from '../connections/Context';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { Connections } from '../connections/Connections';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const NavigationSidebar: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const connectionsTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -15,6 +17,9 @@ export const NavigationSidebar: React.FC = () => {
       <button
         className="grid w-full cursor-pointer select-none gap-1 rounded-lg p-2 text-left text-sm hover:bg-secondaryHighlight"
         ref={connectionsTriggerRef}
+        onClick={() => {
+          track('navigation_sidebar_open_connections');
+        }}
       >
         {activeConnection && (
           <>

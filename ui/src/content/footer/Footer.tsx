@@ -6,8 +6,11 @@ import { Settings } from '../settings/Settings';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../auth/Context';
 import classNames from 'classnames';
+import { AnalyticsContext } from '../analytics/Context';
 
 export const Footer: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
+
   const { user } = useDefinedContext(AuthContext);
 
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -19,6 +22,7 @@ export const Footer: React.FC = () => {
         htmlProps={{ className: 'w-[340px]' }}
         darkenBackground
         triggerRef={triggerRef}
+        onOpen={() => track('open_settings')}
       >
         {({ close }) => <Settings close={close} />}
       </OverlayCard>

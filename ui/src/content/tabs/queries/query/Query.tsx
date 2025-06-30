@@ -14,8 +14,10 @@ import { BottomToolbar } from './bottomToolbar/BottomToolbar';
 import { QueryContext, ResultContext } from './Context';
 import { QueriesContext } from '../Context';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const Query: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { removeQuery, runQuery } = useDefinedContext(QueriesContext);
 
   const { columnIndex, query, rowIndex } = useDefinedContext(QueryContext);
@@ -57,7 +59,15 @@ export const Query: React.FC = () => {
           <>
             {result && query.select && (
               <div className="relative h-fit w-fit">
-                <Button htmlProps={{ onClick: () => runQuery(query.id) }} icon={<Refresh />} />
+                <Button
+                  htmlProps={{
+                    onClick: () => {
+                      runQuery(query.id);
+                      track('query_reload');
+                    },
+                  }}
+                  icon={<Refresh />}
+                />
                 {query.isLoading && (
                   <CircularProgress
                     className="absolute left-[4px] top-[4px] !text-primary"
@@ -68,7 +78,12 @@ export const Query: React.FC = () => {
             )}
             <Button
               color="secondary"
-              htmlProps={{ onClick: () => removeQuery(query.id) }}
+              htmlProps={{
+                onClick: () => {
+                  removeQuery(query.id);
+                  track('query_close');
+                },
+              }}
               icon={<Close />}
             />
           </>

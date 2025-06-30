@@ -4,8 +4,10 @@ import { ConnectionsContext } from '../Context';
 import { useMemo, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import classNames from 'classnames';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const DatabaseList: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection, activeConnectionDatabases, connect } =
     useDefinedContext(ConnectionsContext);
 
@@ -45,6 +47,8 @@ export const DatabaseList: React.FC = () => {
           onSelect={(database) => {
             if (!activeConnection) return;
 
+            track('database_list_select');
+
             return connect(activeConnection.id, { database });
           }}
           selectedValue={activeConnection?.database ?? null}
@@ -69,6 +73,8 @@ export const DatabaseList: React.FC = () => {
               }))}
               onSelect={(schema) => {
                 if (!activeConnection) return;
+
+                track('database_list_select_schema');
 
                 if (schema === activeConnection.schema) {
                   return connect(activeConnection.id, {

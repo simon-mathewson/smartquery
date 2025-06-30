@@ -7,6 +7,7 @@ import { getIsWindows } from '~/shared/utils/getIsWindows/getIsWindows';
 import { AiSuggestionWidget } from './aiSuggestion/widget';
 import { AiContext } from '~/content/ai/Context';
 import type { editor } from 'monaco-editor';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export type CodeEditorProps = {
   autoFocus?: boolean;
@@ -35,8 +36,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     value,
   } = props;
 
+  const { track } = useDefinedContext(AnalyticsContext);
   const { mode } = useDefinedContext(ThemeContext);
-
   const ai = useDefinedContext(AiContext);
 
   return (
@@ -100,7 +101,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         }
 
         if (!readOnly) {
-          new AiSuggestionWidget(editor, monaco, ai);
+          new AiSuggestionWidget(editor, monaco, ai, track);
         }
       }}
       options={{

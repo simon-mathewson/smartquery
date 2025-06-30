@@ -9,6 +9,7 @@ import { SignInModal } from '~/content/connections/signInModal/SignInModal';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '../../Context';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export type TestConnectionProps = {
   formValues: FormValues;
@@ -17,6 +18,7 @@ export type TestConnectionProps = {
 export const TestConnection: React.FC<TestConnectionProps> = (props) => {
   const { formValues } = props;
 
+  const { track } = useDefinedContext(AnalyticsContext);
   const { connectRemote, disconnectRemote } = useDefinedContext(ConnectionsContext);
 
   const [isTesting, setIsTesting] = useState(false);
@@ -32,19 +34,34 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
   }, [formValues]);
 
   const test = async () => {
+    const isNewConnection = formValues.id === '';
+    const connection = getConnectionFromForm({ ...formValues, id: formValues.id || 'id' });
+    assert(connection.type === 'remote');
+
+    track('connection_form_test_connection', {
+      is_new: isNewConnection,
+      engine: connection.engine,
+    });
+
+    setIsTesting(true);
+    setHasFailed(false);
+    setHasSucceeded(false);
+
     try {
-      const isNewConnection = formValues.id === '';
-      const connection = getConnectionFromForm({ ...formValues, id: formValues.id || 'id' });
-      assert(connection.type === 'remote');
-
-      setIsTesting(true);
-      setHasFailed(false);
-      setHasSucceeded(false);
-
       const clientId = await connectRemote(connection, { skipDecryption: isNewConnection });
       await disconnectRemote(clientId);
       setHasSucceeded(true);
+
+      track('connection_form_test_connection_succeess', {
+        is_new: isNewConnection,
+        engine: connection.engine,
+      });
     } catch (error) {
+      track('connection_form_test_connection_fail', {
+        is_new: isNewConnection,
+        engine: connection.engine,
+      });
+
       setHasFailed(true);
     } finally {
       setIsTesting(false);

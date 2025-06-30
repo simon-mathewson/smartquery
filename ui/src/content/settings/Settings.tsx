@@ -10,12 +10,14 @@ import { Input } from '~/shared/components/input/Input';
 import { AuthContext } from '../auth/Context';
 import { Button } from '~/shared/components/button/Button';
 import { LogoutOutlined } from '@mui/icons-material';
+import { AnalyticsContext } from '../analytics/Context';
 
 export type SettingsProps = {
   close: () => Promise<void>;
 };
 
 export const Settings: React.FC<SettingsProps> = ({ close }) => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { logOut, user } = useDefinedContext(AuthContext);
   const { modePreference, setModePreference } = useDefinedContext(ThemeContext);
   const { googleAiApiKey, setGoogleAiApiKey } = useDefinedContext(AiContext);
@@ -29,7 +31,10 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
         <ButtonSelect<ThemeModePreference>
           equalWidth
           fullWidth
-          onChange={setModePreference}
+          onChange={(value) => {
+            setModePreference(value);
+            track('settings_theme', { value });
+          }}
           options={[
             { button: { label: 'System' }, value: 'system' },
             { button: { label: 'Light' }, value: 'light' },
@@ -51,7 +56,10 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
         label="Google AI API Key"
       >
         <Input
-          onChange={setGoogleAiApiKey}
+          onChange={(value) => {
+            setGoogleAiApiKey(value);
+            track('settings_google_ai_api_key', { value: Boolean(value) });
+          }}
           htmlProps={{
             type: 'password',
             value: googleAiApiKey,
@@ -65,6 +73,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
             onClick: () => {
               void close();
               void logOut();
+              track('settings_log_out');
             },
           }}
           icon={<LogoutOutlined />}

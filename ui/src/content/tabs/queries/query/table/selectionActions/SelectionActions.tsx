@@ -15,6 +15,7 @@ import { EditOverlay } from '../editOverlay/EditOverlay';
 import { Delete } from './delete/Delete';
 import { popoverHeight, popoverMargin } from './constants';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays/arrays';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export type SelectionActionsProps = {
   columnCount: number;
@@ -28,6 +29,7 @@ export type SelectionActionsProps = {
 export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps>((props, ref) => {
   const { columnCount, selection, setIsEditing, setSelection, tableRef } = props;
 
+  const { track } = useDefinedContext(AnalyticsContext);
   const { allChanges, removeChange } = useDefinedContext(EditContext);
 
   const { columns, rows, table } = useDefinedContext(ResultContext);
@@ -179,7 +181,11 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
             ref={mergeRefs([popoverRef, ref])}
           >
             <Button
-              htmlProps={{ className: 'edit-button', ref: editButtonRef }}
+              htmlProps={{
+                className: 'edit-button',
+                onClick: () => track('table_selection_edit'),
+                ref: editButtonRef,
+              }}
               icon={<EditOutlined />}
             />
             {!isEntireSelectionDeleted &&
@@ -206,6 +212,8 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
                       });
                       return newSelection;
                     });
+
+                    track('table_selection_undo');
                   },
                 }}
                 icon={<Undo />}

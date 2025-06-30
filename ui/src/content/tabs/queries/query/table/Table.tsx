@@ -10,6 +10,7 @@ import { useSelection } from './useSelection';
 import { QueryContext, ResultContext } from '../Context';
 import { useCopyPaste } from './copyPaste/useCopyPaste';
 import { useSorting } from './sorting/useSorting';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export type TableProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
@@ -18,6 +19,7 @@ export type TableProps = {
 export const Table: React.FC<TableProps> = (props) => {
   const { handleRowCreationRef } = props;
 
+  const { track } = useDefinedContext(AnalyticsContext);
   const { query } = useDefinedContext(QueryContext);
 
   const { columns, rows, table, tableType } = useDefinedContext(ResultContext);
@@ -76,6 +78,8 @@ export const Table: React.FC<TableProps> = (props) => {
         document
           .querySelector<HTMLButtonElement>(`[data-query="${query.id}"] .edit-button`)
           ?.click();
+
+        track('query_create_row');
       }, 200);
     };
   }, [createChanges, handleRowCreationRef, query.id, rows.length, setSelection, table]);

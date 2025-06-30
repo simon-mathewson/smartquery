@@ -10,8 +10,10 @@ import { CopilotContext } from '../copilot/Context';
 import { ToastContext } from '../toast/Context';
 import { EditContext } from '../edit/Context';
 import classNames from 'classnames';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const Toolbar: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const toast = useDefinedContext(ToastContext);
 
   const { tabs } = useDefinedContext(TabsContext);
@@ -24,7 +26,12 @@ export const Toolbar: React.FC = () => {
       <Tabs />
       <Button
         align="left"
-        htmlProps={{ onClick: () => addQuery({ initialInputMode: 'editor' }) }}
+        htmlProps={{
+          onClick: () => {
+            addQuery({ initialInputMode: 'editor' });
+            track('toolbar_new_query');
+          },
+        }}
         icon={<Add />}
         label={tabs.length ? undefined : 'New query'}
       />
@@ -35,12 +42,16 @@ export const Toolbar: React.FC = () => {
           className: classNames({ 'ml-auto': !allChanges.length }),
           onClick: () => {
             if (!copilot.isEnabled) {
+              track('toolbar_open_copilot_hint');
+
               toast.add({
                 title: 'To use copilot, add your Google AI API key in Settings',
                 color: 'primary',
               });
               return;
             }
+
+            track('toolbar_open_copilot');
 
             copilot.setIsOpen(!copilot.isOpen);
           },

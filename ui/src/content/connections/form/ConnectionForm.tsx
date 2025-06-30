@@ -30,6 +30,7 @@ import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
 import { Setup as LinkSetup } from '~/content/link/setup/Setup';
 import { sqliteDemoConnectionId } from '~/content/home/constants';
 import { AuthContext } from '~/content/auth/Context';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export type ConnectionFormProps = {
   connectionToEditId?: string;
@@ -52,6 +53,7 @@ const storageLocationLabels = {
 export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { connectionToEditId, exit, hideBackButton, htmlProps } = props;
 
+  const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
 
   const { getSqliteContent, storeSqliteContent } = useDefinedContext(SqliteContext);
@@ -105,6 +107,12 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
     connectionToEdit
       ? updateConnection(connectionToEdit.id, connection, exit)
       : addConnection(connection, exit);
+
+    if (connectionToEdit) {
+      track('connection_form_update');
+    } else {
+      track('connection_form_add');
+    }
   };
 
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -137,6 +145,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
               <ConfirmDeletePopover
                 onConfirm={() => {
                   removeConnection(connectionToEdit.id);
+                  track('connection_form_delete');
                   exit();
                 }}
                 renderTrigger={(htmlProps) => (

@@ -3,12 +3,14 @@ import { ResultContext } from '../../Context';
 import { useCallback, useEffect } from 'react';
 import { getTsvFromSelection } from '../utils/getTsvFromSelection';
 import type { CreateRow } from '~/content/edit/types';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const useCopyPaste = (
   selection: number[][],
   rowsToCreate: CreateRow[],
   tableRef: React.RefObject<HTMLDivElement>,
 ) => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { rows } = useDefinedContext(ResultContext);
 
   const onKeydown = useCallback(
@@ -24,12 +26,16 @@ export const useCopyPaste = (
         event.preventDefault();
         const tsv = getTsvFromSelection(selection, [...rows, ...rowsToCreate]);
         navigator.clipboard.writeText(tsv);
+
+        track('table_copy');
       }
       if (event.key === 'v' && (event.ctrlKey || event.metaKey)) {
         event.preventDefault();
+
+        track('table_paste');
       }
     },
-    [rows, rowsToCreate, selection, tableRef],
+    [rows, rowsToCreate, selection, tableRef, track],
   );
 
   useEffect(() => {

@@ -14,8 +14,10 @@ import { MessagePart } from './MessagePart/MessagePart';
 import { CircularProgress } from '@mui/material';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { assert } from 'ts-essentials';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const CopilotSidebar: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ConnectionsContext);
   assert(activeConnection, 'No active connection');
 
@@ -39,14 +41,27 @@ export const CopilotSidebar: React.FC = () => {
       <Header
         left={
           thread.length ? (
-            <Button htmlProps={{ onClick: () => clearThread() }} icon={<DeleteOutline />} />
+            <Button
+              htmlProps={{
+                onClick: () => {
+                  clearThread();
+                  track('copilot_clear_thread');
+                },
+              }}
+              icon={<DeleteOutline />}
+            />
           ) : null
         }
         middle={<div className="text-center text-sm font-medium text-textPrimary">Copilot</div>}
         right={
           <Button
             color="secondary"
-            htmlProps={{ onClick: () => setIsOpen(false) }}
+            htmlProps={{
+              onClick: () => {
+                setIsOpen(false);
+                track('copilot_close');
+              },
+            }}
             icon={<Close />}
           />
         }
@@ -101,6 +116,8 @@ export const CopilotSidebar: React.FC = () => {
           onSubmit={(e) => {
             e.preventDefault();
             void sendMessage(input);
+
+            track('copilot_send_message');
           }}
         >
           <Field>
@@ -134,10 +151,24 @@ export const CopilotSidebar: React.FC = () => {
               onChange={setInput}
             />
             {isLoading ? (
-              <Button htmlProps={{ onClick: stopGenerating }} icon={<Stop />} />
+              <Button
+                htmlProps={{
+                  onClick: () => {
+                    stopGenerating();
+                    track('copilot_stop_generating');
+                  },
+                }}
+                icon={<Stop />}
+              />
             ) : (
               <Button
-                htmlProps={{ disabled: input.length === 0, type: 'submit' }}
+                htmlProps={{
+                  disabled: input.length === 0,
+                  onClick: () => {
+                    track('copilot_send_message');
+                  },
+                  type: 'submit',
+                }}
                 icon={<Send />}
               />
             )}

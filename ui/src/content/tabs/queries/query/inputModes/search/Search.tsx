@@ -5,8 +5,10 @@ import { Input } from '~/shared/components/input/Input';
 import { useSearch } from './useSearch';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../Context';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const Search: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { table } = useDefinedContext(ResultContext);
 
   const { search, searchValue } = useSearch();
@@ -22,6 +24,8 @@ export const Search: React.FC = () => {
 
         search(value);
         setIsChanged(false);
+
+        track('query_search_submit');
       }}
     >
       <Input

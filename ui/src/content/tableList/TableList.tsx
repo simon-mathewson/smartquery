@@ -11,10 +11,12 @@ import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';
 import { uniq } from 'lodash';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 type Table = { name: string; schema: string | undefined };
 
 export const TableList: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const linkApi = useDefinedContext(LinkApiContext);
 
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -119,6 +121,8 @@ export const TableList: React.FC = () => {
         position: { column, row: horizontal ? row : undefined },
         tabId: activeTab.id,
       });
+
+      track('table_list_drag_drop');
     },
   });
 
@@ -136,7 +140,10 @@ export const TableList: React.FC = () => {
           value: table,
         }))}
         multiple
-        onSelect={(table) => addQuery(getQuery(table))}
+        onSelect={(table) => {
+          addQuery(getQuery(table));
+          track('table_list_select');
+        }}
         selectedValues={selectedTables}
       />
     </div>

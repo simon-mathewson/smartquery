@@ -8,6 +8,7 @@ import { ConnectionForm } from './form/ConnectionForm';
 import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';
 import { v4 as uuid } from 'uuid';
+import { AnalyticsContext } from '../analytics/Context';
 
 export type ConnectionsProps = {
   hideDatabases?: boolean;
@@ -17,6 +18,7 @@ export type ConnectionsProps = {
 export const Connections: React.FC<ConnectionsProps> = (props) => {
   const { hideDatabases, htmlProps } = props;
 
+  const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection, connect, connections } = useDefinedContext(ConnectionsContext);
 
   const [isAddingOrEditing, setIsAddingOrEditing] = useState(() => connections.length === 0);
@@ -54,7 +56,12 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                 Connections
               </div>
               <Button
-                htmlProps={{ onClick: () => setIsAddingOrEditing(true) }}
+                htmlProps={{
+                  onClick: () => {
+                    setIsAddingOrEditing(true);
+                    track('connections_add');
+                  },
+                }}
                 icon={<Add />}
                 label="Add"
               />
@@ -70,6 +77,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                     onClick: () => {
                       setConnectionToEditId(connection.id);
                       setIsAddingOrEditing(true);
+                      track('connections_edit');
                     },
                   },
                 ],
@@ -81,7 +89,10 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                 selectedVariant: 'primary',
                 value: connection.id,
               }))}
-              onSelect={connect}
+              onSelect={(connection) => {
+                connect(connection);
+                track('connections_select');
+              }}
               selectedValue={activeConnection?.id ?? null}
             />
           </div>

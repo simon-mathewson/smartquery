@@ -11,8 +11,10 @@ import { ScienceOutlined, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/ico
 import { Page } from '~/shared/components/page/Page';
 import { Link } from 'wouter';
 import { AuthContext } from '../auth/Context';
+import { AnalyticsContext } from '../analytics/Context';
 
 export const Home: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
   const { connections, addConnection } = useDefinedContext(ConnectionsContext);
   const { storeSqliteContent } = useDefinedContext(SqliteContext);
@@ -43,6 +45,8 @@ export const Home: React.FC = () => {
     });
 
     window.location.pathname = routes.database(routeParams);
+
+    track('home_open_demo_database');
   }, [addConnection, connections, storeSqliteContent]);
 
   const actions = useMemo(
@@ -60,6 +64,7 @@ export const Home: React.FC = () => {
               icon: Add,
               label: 'Add connection',
               route: routes.addConnection(),
+              onClick: () => track('home_add_connection'),
             },
           ]
         : []),
@@ -70,11 +75,13 @@ export const Home: React.FC = () => {
               label: 'Sign up',
               icon: PersonAddAlt1Outlined,
               route: routes.signup(),
+              onClick: () => track('home_sign_up'),
             },
             {
               label: 'Log in',
               icon: VpnKeyOutlined,
               route: routes.login(),
+              onClick: () => track('home_log_in'),
             },
           ]
         : []),

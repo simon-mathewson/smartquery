@@ -6,6 +6,7 @@ import { usePagination } from './usePagination';
 import { Add } from './createRow/CreateRow';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../Context';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export type BottomToolbarProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
@@ -14,6 +15,7 @@ export type BottomToolbarProps = {
 export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
   const { handleRowCreationRef } = props;
 
+  const { track } = useDefinedContext(AnalyticsContext);
   const { rows } = useDefinedContext(ResultContext);
 
   const { limit, next, offset, previous, totalRows } = usePagination();
@@ -43,12 +45,24 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
           <>
             <Button
               color="primary"
-              htmlProps={{ disabled: previousDisabled, onClick: previous }}
+              htmlProps={{
+                disabled: previousDisabled,
+                onClick: () => {
+                  track('table_pagination_previous');
+                  previous();
+                },
+              }}
               icon={<ArrowBack />}
             />
             <Button
               color="primary"
-              htmlProps={{ disabled: nextDisabled, onClick: next }}
+              htmlProps={{
+                disabled: nextDisabled,
+                onClick: () => {
+                  track('table_pagination_next');
+                  next();
+                },
+              }}
               icon={<ArrowForward />}
             />
           </>

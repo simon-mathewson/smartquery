@@ -3,8 +3,10 @@ import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays/arrays';
 import { ResultContext } from '../Context';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const useSelection = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { columns } = useDefinedContext(ResultContext);
 
   const [selection, setSelection] = useState<number[][]>([]);
@@ -58,8 +60,10 @@ export const useSelection = () => {
       lastSelectedCellIndicesRef.current.push([rowIndex]);
 
       setSelection(newRowSelections);
+
+      track('table_cell_double_click');
     },
-    [selection],
+    [selection, track],
   );
 
   const handleCellClick = useCallback(
@@ -158,8 +162,10 @@ export const useSelection = () => {
       }
 
       setSelection(newRowSelections);
+
+      track('table_cell_click');
     },
-    [columns?.length, handleCellDoubleClick, selection],
+    [columns?.length, handleCellDoubleClick, selection, track],
   );
 
   return {

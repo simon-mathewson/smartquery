@@ -5,9 +5,9 @@ import remarkGfm from 'remark-gfm';
 import { CodeEditor } from '~/shared/components/codeEditor/CodeEditor';
 import { CodeActions } from './CodeActions/CodeActions';
 
-export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
-  return useMemo(
-    () => (
+export const MessagePart: React.FC<{ part: Part }> = ({ part }) =>
+  useMemo(() => {
+    return (
       <ReactMarkdown
         components={{
           code(props) {
@@ -46,7 +46,5 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
       >
         {part.text}
       </ReactMarkdown>
-    ),
-    [part.text],
-  );
-};
+    );
+  }, [part.text]);

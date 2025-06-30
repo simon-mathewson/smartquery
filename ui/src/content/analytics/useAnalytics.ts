@@ -23,13 +23,16 @@ export const useAnalytics = () => {
     setIsConsentGranted(false);
   }, []);
 
-  const track = useCallback((event: string, props?: Record<string, string>) => {
-    if (import.meta.env.PROD) {
-      ReactGa.event(event, props);
-    } else {
-      console.log('event', event, props);
-    }
-  }, []);
+  const track = useCallback(
+    (event: string, props?: Record<string, string | number | boolean | null | undefined>) => {
+      if (import.meta.env.PROD) {
+        ReactGa.event(event, props);
+      } else {
+        console.log('event', event, props);
+      }
+    },
+    [],
+  );
 
   // Update analytics consent
   useEffect(() => {

@@ -8,6 +8,7 @@ import type { Os } from './types';
 import { getCurrentOs, getDistributables, getDistributableUrl } from './utils';
 import { PublishedWithChangesOutlined as VerifyLinkIcon } from '@mui/icons-material';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 type SetupProps = {
   databaseLabel: string;
@@ -16,6 +17,7 @@ type SetupProps = {
 export const Setup: React.FC<SetupProps> = (props) => {
   const { databaseLabel } = props;
 
+  const { track } = useDefinedContext(AnalyticsContext);
   const link = useDefinedContext(LinkContext);
 
   const [os, setOs] = useState<Os>(getCurrentOs());
@@ -30,13 +32,17 @@ export const Setup: React.FC<SetupProps> = (props) => {
   });
 
   const handleVerifyLinkInstallation = useCallback(() => {
+    track('link_setup_test');
+
     setCheckingLinkStatus(true);
 
     void link.getIsReady().then((isReady) => {
       if (isReady) {
         setLinkStatus('ready');
+        track('link_setup_test_success');
       } else {
         setLinkStatus('notReady');
+        track('link_setup_test_fail');
       }
       setCheckingLinkStatus(false);
     });
@@ -69,7 +75,12 @@ export const Setup: React.FC<SetupProps> = (props) => {
           {getDistributables(os).map((distributable) => (
             <Button
               element="a"
-              htmlProps={{ className: 'grow basis-0', href: getDistributableUrl(distributable) }}
+              htmlProps={{
+                className: 'grow basis-0',
+                href: getDistributableUrl(distributable),
+                onClick: () =>
+                  track('link_setup_download', { os, file_extension: distributable.fileExtension }),
+              }}
               icon={<FileDownloadOutlined />}
               key={getDistributableUrl(distributable)}
               label={`.${distributable.fileExtension} (${distributable.arch})`}

@@ -5,8 +5,10 @@ import { Button } from '~/shared/components/button/Button';
 import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/ConfirmDeletePopover';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ReviewChangesCard } from './reviewChangesCard/ReviewChangesCard';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const Changes: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { allChanges, clearChanges } = useDefinedContext(EditContext);
 
   const changeCount = allChanges.length;
@@ -19,14 +21,22 @@ export const Changes: React.FC = () => {
         {changeCount} change{changeCount > 1 ? 's' : ''}
       </div>
       <ConfirmDeletePopover
-        onConfirm={clearChanges}
+        onConfirm={() => {
+          clearChanges();
+          track('toolbar_changes_clear');
+        }}
         renderTrigger={(htmlProps) => (
           <Button color="danger" htmlProps={htmlProps} icon={<DeleteOutline />} />
         )}
         text={`Delete ${changeCount} change${changeCount > 1 ? 's' : ''}`}
       />
       <Button
-        htmlProps={{ ref: reviewChangesCardTriggerRef }}
+        htmlProps={{
+          onClick: () => {
+            track('toolbar_changes_review');
+          },
+          ref: reviewChangesCardTriggerRef,
+        }}
         icon={<ArrowForward />}
         label="Review & Submit"
         variant="filled"

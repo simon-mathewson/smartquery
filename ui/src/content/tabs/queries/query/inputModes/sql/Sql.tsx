@@ -4,10 +4,11 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { QueriesContext } from '../../../Context';
 import { QueryContext } from '../../Context';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const Sql: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
   const { updateQuery } = useDefinedContext(QueriesContext);
-
   const { query } = useDefinedContext(QueryContext);
 
   const valueStorageKey = `query-${query.id}-formSql`;
@@ -34,10 +35,11 @@ export const Sql: React.FC = () => {
     [setValue],
   );
 
-  const onSubmit = useCallback(
-    () => updateQuery({ id: query.id, run: true, sql: valueRef.current }),
-    [query.id, updateQuery],
-  );
+  const onSubmit = useCallback(async () => {
+    track('query_sql_submit');
+
+    await updateQuery({ id: query.id, run: true, sql: valueRef.current });
+  }, [query.id, updateQuery, track]);
 
   return (
     <div className="px-2 pb-2">

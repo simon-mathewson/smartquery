@@ -6,8 +6,12 @@ import { NULL_OPERATORS } from './constants';
 import { FilterControl } from './control/Control';
 import type { Filter, FormFilter, LogicalOperator } from './types';
 import { useFilters } from './useFilters';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const Filters: React.FC = () => {
+  const { track } = useDefinedContext(AnalyticsContext);
+
   const { applyFilters, filters } = useFilters();
 
   const [formFilters, setFormFilters] = useState<FormFilter[]>(filters);
@@ -36,8 +40,10 @@ export const Filters: React.FC = () => {
           value: '',
         },
       ]);
+
+      track('query_filters_add', { logical_operator: logicalOperator });
     },
-    [formFilters, setFormFilters],
+    [formFilters, setFormFilters, track],
   );
 
   return (
@@ -47,6 +53,8 @@ export const Filters: React.FC = () => {
         event.preventDefault();
 
         applyFilters(formFilters as Filter[]);
+
+        track('query_filters_submit');
       }}
     >
       {formFilters.map((filter, index) => (
@@ -58,6 +66,8 @@ export const Filters: React.FC = () => {
               setFormFilters((current) =>
                 current.filter((currentFilter) => currentFilter !== filter),
               );
+
+              track('query_filters_remove');
             }}
             updateFilter={(getNewFilter) => {
               setFormFilters((current) =>
@@ -65,6 +75,8 @@ export const Filters: React.FC = () => {
                   currentFilter === filter ? getNewFilter(currentFilter) : currentFilter,
                 ),
               );
+
+              track('query_filters_update');
             }}
           />
           {index === formFilters.length - 1 && isChanged && (

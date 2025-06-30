@@ -5,6 +5,7 @@ import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../Context';
 import type { InputMode } from '../types';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export type InputModesSelectProps = {
   inputMode: InputMode | undefined;
@@ -14,6 +15,7 @@ export type InputModesSelectProps = {
 export const InputModesSelect: React.FC<InputModesSelectProps> = (props) => {
   const { inputMode, setInputMode } = props;
 
+  const { track } = useDefinedContext(AnalyticsContext);
   const { columns } = useDefinedContext(ResultContext);
 
   const options: ButtonSelectProps<InputMode>['options'] = [
@@ -50,7 +52,10 @@ export const InputModesSelect: React.FC<InputModesSelectProps> = (props) => {
 
   return (
     <ButtonSelect<InputMode>
-      onChange={(newValue) => setInputMode(newValue)}
+      onChange={(newValue) => {
+        setInputMode(newValue);
+        track('query_input_modes_select', { value: newValue });
+      }}
       options={options}
       selectedButton={{ variant: 'highlighted' }}
       value={inputMode}
