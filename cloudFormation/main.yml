@@ -46,13 +46,6 @@ Resources:
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/codeStarConnections.yml"
 
-  CognitoStack:
-    Type: "AWS::CloudFormation::Stack"
-    DeletionPolicy: "Delete"
-    UpdateReplacePolicy: "Delete"
-    Properties:
-      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/cognito.yml"
-
   ElasticBeanstalkStack:
     Type: "AWS::CloudFormation::Stack"
     DeletionPolicy: "Delete"
@@ -73,13 +66,6 @@ Resources:
     DependsOn:
       - CloudFrontStack
       - S3Stack
-
-  PinpointStack:
-    Type: "AWS::CloudFormation::Stack"
-    DeletionPolicy: "Delete"
-    UpdateReplacePolicy: "Delete"
-    Properties:
-      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/pinpoint.yml"
 
   RDSStack:
     Type: "AWS::CloudFormation::Stack"

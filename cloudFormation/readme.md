@@ -44,12 +44,7 @@ To build for macOS and sign, ensure Apple Developer certificate is available in 
    1. Locate team ID here https://developer.apple.com/account#MembershipDetailsCard
    2. Generate app-specific password here https://account.apple.com/account/manage
 
-### 6. Set UI env vars
-
-- `VITE_AWS_COGNITO_IDENTITY_POOL_ID`
-- `VITE_AWS_PINPOINT_APP_ID`
-
-### 7. Create ACM certificates
+### 6. Create ACM certificates
 
 In the AWS console, go to Certificate Manager, Request a certificate, and request a certificate for the following domains in both us-east-1 and eu-central-1 regions:
 
@@ -60,7 +55,7 @@ Replace `AcmCertificateArn` value in CloudFormation files with the ARN from us-e
 
 Replace the certificate ARN in the Elastic Beanstalk Stack with the ARN from eu-central-1.
 
-### 8. Setup production DB access
+### 7. Setup production DB access
 
 1. Get key pair ID
 
