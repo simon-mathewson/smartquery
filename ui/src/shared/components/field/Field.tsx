@@ -16,6 +16,7 @@ export const Field: React.FC<PropsWithChildren<FieldProps>> = (props) => {
 
   const [controlId] = useState(uuid());
   const [labelId] = useState(uuid());
+  const [hintId] = useState(uuid());
 
   return (
     <FieldContext.Provider
@@ -23,6 +24,7 @@ export const Field: React.FC<PropsWithChildren<FieldProps>> = (props) => {
         () => ({
           controlHtmlProps: {
             'aria-labelledby': label === undefined ? undefined : labelId,
+            'aria-describedby': hint === undefined ? undefined : hintId,
             id: controlId,
           },
         }),
@@ -36,7 +38,11 @@ export const Field: React.FC<PropsWithChildren<FieldProps>> = (props) => {
           </label>
         )}
         <div className="flex gap-2 overflow-hidden">{children}</div>
-        {hint && <div className="px-1 text-xs text-textTertiary">{hint}</div>}
+        {hint && (
+          <div className="px-1 text-xs text-textTertiary" id={hintId}>
+            {hint}
+          </div>
+        )}
         {error && <div className="px-1 text-xs text-danger">{error}</div>}
       </div>
     </FieldContext.Provider>

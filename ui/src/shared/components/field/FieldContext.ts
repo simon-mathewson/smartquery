@@ -3,6 +3,7 @@ import React from 'react';
 export type FieldContextProps = {
   controlHtmlProps: {
     'aria-labelledby'?: string;
+    'aria-describedby'?: string;
     id: string;
   };
 };

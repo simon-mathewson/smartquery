@@ -6,10 +6,11 @@ import { TestApp } from '~/test/componentTests/TestApp';
 
 test('Field renders label and children', async ({ mount }) => {
   const label = 'Name';
+  const hint = 'This is a hint';
 
   const $ = await mount(
     <TestApp>
-      <Field label={label}>
+      <Field hint={hint} label={label}>
         <Input />
       </Field>
     </TestApp>,
@@ -27,6 +28,7 @@ test('Field renders label and children', async ({ mount }) => {
   expect($.getByText(label)).toHaveAttribute('for', controlId);
   expect(input).toHaveAttribute('id', controlId);
   expect(input).toHaveAccessibleName(label);
+  expect(input).toHaveAccessibleDescription(hint);
 
   await $.update(
     <TestApp>
@@ -37,4 +39,5 @@ test('Field renders label and children', async ({ mount }) => {
   );
 
   await expect($.locator('label')).not.toBeAttached();
+  await expect($.getByText(hint)).not.toBeAttached();
 });

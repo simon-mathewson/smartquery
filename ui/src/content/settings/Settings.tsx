@@ -11,13 +11,14 @@ import { AuthContext } from '../auth/Context';
 import { Button } from '~/shared/components/button/Button';
 import { LogoutOutlined } from '@mui/icons-material';
 import { AnalyticsContext } from '../analytics/Context';
+import { Toggle } from '~/shared/components/toggle/Toggle';
 
 export type SettingsProps = {
   close: () => Promise<void>;
 };
 
 export const Settings: React.FC<SettingsProps> = ({ close }) => {
-  const { track } = useDefinedContext(AnalyticsContext);
+  const { track, ...analytics } = useDefinedContext(AnalyticsContext);
   const { logOut, user } = useDefinedContext(AuthContext);
   const { modePreference, setModePreference } = useDefinedContext(ThemeContext);
   const { googleAiApiKey, setGoogleAiApiKey } = useDefinedContext(AiContext);
@@ -67,6 +68,20 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
         />
       </Field>
       <AddToDesktop />
+      <Field>
+        <Toggle
+          hint="Help improve Dabase"
+          label="Share anonymous usage data"
+          onChange={(value) => {
+            if (value) {
+              analytics.allow();
+            } else {
+              analytics.deny();
+            }
+          }}
+          value={analytics.isConsentGranted}
+        />
+      </Field>
       {user && (
         <Button
           htmlProps={{
