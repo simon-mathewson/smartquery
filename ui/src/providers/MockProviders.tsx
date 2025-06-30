@@ -1,24 +1,26 @@
-import type { PropsWithChildren } from 'react';
-import type { DeepPartial } from 'ts-essentials';
-import { AiMockProvider } from '~/content/ai/MockProvider';
-import { CloudApiMockProvider } from '~/content/cloud/api/MockProvider';
-import { LinkApiMockProvider } from '~/content/link/api/MockProvider';
-import { ThemeProvider } from '~/content/theme/Provider';
-import { EscapeStackProvider } from '~/shared/hooks/useEscape/useStack/Provider';
-import { ToastProvider } from '~/content/toast/Provider';
-import { LinkProvider } from '~/content/link/Provider';
-import { SqliteProvider } from '~/content/sqlite/Provider';
-import { EditProvider } from '~/content/edit/Provider';
-import { QueriesProvider } from '~/content/tabs/queries/Provider';
-import { TabsProvider } from '~/content/tabs/Provider';
-import { DragAndDropProvider } from '~/content/dragAndDrop/Provider';
 import { AddToDesktopProvider } from '~/content/settings/addToDesktop/Provider';
+import { AiMockProvider } from '~/content/ai/MockProvider';
+import { AnalyticsMockProvider } from '~/content/analytics/MockProvider';
 import { AuthMockProvider } from '~/content/auth/MockProvider';
+import { CloudApiMockProvider } from '~/content/cloud/api/MockProvider';
 import { ConnectionsMockProvider } from '~/content/connections/MockProvider';
-import type { ContextTypes } from './ContextTypes';
+import { DragAndDropProvider } from '~/content/dragAndDrop/Provider';
+import { EditProvider } from '~/content/edit/Provider';
+import { EscapeStackProvider } from '~/shared/hooks/useEscape/useStack/Provider';
+import { LinkApiMockProvider } from '~/content/link/api/MockProvider';
+import { LinkProvider } from '~/content/link/Provider';
 import { ProviderStack } from './ProviderStack';
+import { QueriesProvider } from '~/content/tabs/queries/Provider';
+import { SqliteProvider } from '~/content/sqlite/Provider';
+import { TabsProvider } from '~/content/tabs/Provider';
+import { ThemeProvider } from '~/content/theme/Provider';
+import { ToastProvider } from '~/content/toast/Provider';
+import type { ContextTypes } from './ContextTypes';
+import type { DeepPartial } from 'ts-essentials';
+import type { PropsWithChildren } from 'react';
 
 const mockProviders = {
+  AnalyticsProvider: AnalyticsMockProvider,
   ThemeProvider,
   AiProvider: AiMockProvider,
   EscapeStackProvider,
