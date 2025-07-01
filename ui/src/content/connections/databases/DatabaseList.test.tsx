@@ -23,7 +23,6 @@ test.describe('DatabaseList', () => {
       activeConnection.database,
     );
 
-    await $.page().waitForFunction(() => document.fonts.ready);
     await expect($).toHaveScreenshot('initial.png');
   });
 
