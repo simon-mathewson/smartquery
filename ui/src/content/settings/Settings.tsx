@@ -1,5 +1,5 @@
 import React from 'react';
-import { GitHub } from '@mui/icons-material';
+import { GitHub, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Field } from '~/shared/components/field/Field';
 import type { ThemeModePreference } from '../theme/types';
@@ -13,6 +13,7 @@ import { Button } from '~/shared/components/button/Button';
 import { LogoutOutlined } from '@mui/icons-material';
 import { AnalyticsContext } from '../analytics/Context';
 import { Toggle } from '~/shared/components/toggle/Toggle';
+import { routes } from '~/router/routes';
 
 export type SettingsProps = {
   close: () => Promise<void>;
@@ -83,13 +84,13 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           value={analytics.isConsentGranted}
         />
       </Field>
-      <Field label="Ask questions and share your feedback, feature requests, and bug reports for Dabase:">
+      <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
         <Button
           color="secondary"
           element="a"
           htmlProps={{
             className: 'w-full',
-            href: 'https://github.com/simon-mathewson/dabase-community/discussions',
+            href: import.meta.env.VITE_DISCUSSIONS_URL,
             target: '_blank',
           }}
           icon={<GitHub />}
@@ -108,6 +109,35 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           icon={<LogoutOutlined />}
           label="Log out"
         />
+      )}
+
+      {!user && (
+        <>
+          <Button
+            element="link"
+            htmlProps={{
+              href: routes.signup(),
+              onClick: () => {
+                track('settings_sign_up');
+                void close();
+              },
+            }}
+            icon={<PersonAddAlt1Outlined />}
+            label="Sign up"
+          />
+          <Button
+            element="link"
+            htmlProps={{
+              href: routes.login(),
+              onClick: () => {
+                track('settings_log_in');
+                void close();
+              },
+            }}
+            icon={<VpnKeyOutlined />}
+            label="Log in"
+          />
+        </>
       )}
     </div>
   );
