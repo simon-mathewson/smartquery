@@ -3,6 +3,7 @@ import { spy } from 'tinyspy';
 import type { SignInModalProps } from './SignInModal';
 import { getSignInModalProps } from './SignInModal.mocks';
 import { SignInModalStory } from './SignInModal.story';
+import { animationOptions } from '~/shared/components/overlayCard/constants';
 
 test.describe('SignInModal', () => {
   test('allows canceling sign in', async ({ mount }) => {
@@ -150,6 +151,7 @@ test.describe('SignInModal', () => {
 
     const $ = await mount(<SignInModalStory componentProps={props} />);
 
+    await $.page().waitForTimeout(animationOptions.duration);
     await expect($).toHaveScreenshot('sshPassword.png');
 
     await expect(

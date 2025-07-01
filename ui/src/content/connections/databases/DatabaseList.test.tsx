@@ -4,6 +4,10 @@ import { postgresConnectionMock, getContextMock } from '../mocks';
 import type { ActiveConnection } from '~/shared/types';
 import type { Connections } from '../useConnections';
 
+test.use({
+  viewport: { width: 500, height: 400 },
+});
+
 test.describe('DatabaseList', () => {
   test('should render list of databases', async ({ mount }) => {
     const connections = getContextMock();

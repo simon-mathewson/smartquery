@@ -26,6 +26,10 @@ export default defineConfig({
         },
       },
     },
+    launchOptions: {
+      // Ensure consistency between headed and headless mode by always showing scrollbars.
+      ignoreDefaultArgs: ['--hide-scrollbars'],
+    },
   },
   projects: [
     {
@@ -38,7 +42,6 @@ export default defineConfig({
   ],
   expect: {
     toHaveScreenshot: {
-      threshold: 0.3,
       maxDiffPixels: 10,
     },
   },
