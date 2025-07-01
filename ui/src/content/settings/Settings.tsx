@@ -68,6 +68,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           }}
         />
       </Field>
+      <AddToDesktop />
       <Field>
         <Toggle
           hint="Help improve Dabase"
@@ -82,9 +83,8 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           value={analytics.isConsentGranted}
         />
       </Field>
-      <Field hint="Help, feature requests, bug reports">
+      <Field label="Ask questions and share your feedback, feature requests, and bug reports for Dabase:">
         <Button
-          align="left"
           color="secondary"
           element="a"
           htmlProps={{
@@ -96,7 +96,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           label="GitHub Discussions"
         />
       </Field>
-      <AddToDesktop />
       {user && (
         <Button
           htmlProps={{
