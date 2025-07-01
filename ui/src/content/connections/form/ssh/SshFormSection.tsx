@@ -7,6 +7,7 @@ import { CredentialInput } from '~/shared/components/credentialInput/CredentialI
 import { isNil } from 'lodash';
 import { defaultSshPort } from '../constants';
 import classNames from 'classnames';
+import { Toggle } from '~/shared/components/toggle/Toggle';
 
 export type SshFormSectionProps = {
   formValues: Pick<Extract<FormValues, { type: 'remote' }>, 'credentialStorage' | 'ssh'>;
@@ -25,9 +26,8 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
   return (
     <div className={classNames('grid gap-2', htmlProps?.className)}>
       <Field>
-        <ButtonSelect<true>
-          equalWidth
-          fullWidth
+        <Toggle
+          label="Connect via SSH"
           onChange={(newSshEnabled) =>
             setFormValue(
               'ssh',
@@ -44,13 +44,7 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
                 : null,
             )
           }
-          options={[
-            {
-              button: { label: 'Connect via SSH' },
-              value: true,
-            },
-          ]}
-          value={formValues.ssh !== null || undefined}
+          value={Boolean(formValues.ssh)}
         />
       </Field>
       {formValues.ssh && (

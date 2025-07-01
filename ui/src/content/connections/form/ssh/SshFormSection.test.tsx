@@ -37,7 +37,7 @@ test.describe('SshFormSection', () => {
       />,
     );
 
-    const toggle = $.getByRole('radio', { name: 'Connect via SSH' });
+    const toggle = $.getByRole('checkbox', { name: 'Connect via SSH' });
 
     await expect(toggle).toHaveAttribute('aria-checked', 'false');
 

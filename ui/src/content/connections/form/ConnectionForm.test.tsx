@@ -191,7 +191,7 @@ test.describe('ConnectionForm', () => {
 
     await fillOutForm($);
 
-    await $.getByRole('radio', { name: 'Connect via SSH' }).uncheck();
+    await $.getByRole('checkbox', { name: 'Connect via SSH' }).uncheck();
 
     await $.getByRole('button', { name: 'Save' }).click();
 
