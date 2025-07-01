@@ -49,7 +49,7 @@ phases:
       - |
         if [ $CODEBUILD_BUILD_SUCCEEDING -eq 0 ]; then
           echo "Build failed, skipping deployment"
-          exit 0
+          exit 1
         fi
 
       - cd ../cloudFormation
