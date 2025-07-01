@@ -69,7 +69,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           }}
         />
       </Field>
-      <AddToDesktop />
       <Field>
         <Toggle
           hint="Help improve Dabase"
@@ -97,6 +96,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           label="GitHub Discussions"
         />
       </Field>
+      <AddToDesktop />
       {user && (
         <Button
           htmlProps={{
@@ -110,7 +110,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           label="Log out"
         />
       )}
-
       {!user && (
         <>
           <Button
