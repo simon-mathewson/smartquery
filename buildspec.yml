@@ -46,7 +46,8 @@ phases:
   post_build:
     commands:
       # Skip deployment if previous phase failed, continue to next phase to upload test artifacts
-      - if [ $CODEBUILD_BUILD_SUCCEEDING -eq 0 ]; then
+      - |
+        if [ $CODEBUILD_BUILD_SUCCEEDING -eq 0 ]; then
           echo "Build failed, skipping deployment"
           exit 0
         fi
