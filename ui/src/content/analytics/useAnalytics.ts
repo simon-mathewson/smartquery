@@ -17,21 +17,25 @@ export const useAnalytics = () => {
 
   const allow = useCallback(() => {
     setIsConsentGranted(true);
-  }, []);
+  }, [setIsConsentGranted]);
 
   const deny = useCallback(() => {
     setIsConsentGranted(false);
-  }, []);
+  }, [setIsConsentGranted]);
 
   const track = useCallback(
     (event: string, props?: Record<string, string | number | boolean | null | undefined>) => {
+      if (!isConsentGranted) {
+        return;
+      }
+
       if (import.meta.env.PROD) {
         ReactGa.event(event, props);
       } else {
         console.log('event', event, props);
       }
     },
-    [],
+    [isConsentGranted],
   );
 
   // Update analytics consent
@@ -63,12 +67,16 @@ export const useAnalytics = () => {
 
   // Track page views
   useEffect(() => {
+    if (!isConsentGranted) {
+      return;
+    }
+
     if (import.meta.env.PROD) {
       ReactGa.send({ hitType: 'pageview', page: location });
     } else {
       console.log('pageview', location);
     }
-  }, [location]);
+  }, [isConsentGranted, location]);
 
   return {
     allow,
