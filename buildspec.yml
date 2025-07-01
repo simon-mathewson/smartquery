@@ -105,3 +105,8 @@ reports:
     files:
       - "ui/test-ct-report.xml"
     file-format: "JUNITXML"
+
+artifacts:
+  files:
+    - 'ui/test-results/**/*'
+  name: $CODEBUILD_BUILD_NUMBER/test-results
