@@ -1,4 +1,5 @@
 import React from 'react';
+import { GitHub } from '@mui/icons-material';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Field } from '~/shared/components/field/Field';
 import type { ThemeModePreference } from '../theme/types';
@@ -67,7 +68,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           }}
         />
       </Field>
-      <AddToDesktop />
       <Field>
         <Toggle
           hint="Help improve Dabase"
@@ -82,6 +82,21 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           value={analytics.isConsentGranted}
         />
       </Field>
+      <Field hint="Help, feature requests, bug reports">
+        <Button
+          align="left"
+          color="secondary"
+          element="a"
+          htmlProps={{
+            className: 'w-full',
+            href: 'https://github.com/simon-mathewson/dabase-community/discussions',
+            target: '_blank',
+          }}
+          icon={<GitHub />}
+          label="GitHub Discussions"
+        />
+      </Field>
+      <AddToDesktop />
       {user && (
         <Button
           htmlProps={{
