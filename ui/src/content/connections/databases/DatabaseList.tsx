@@ -7,11 +7,13 @@ import classNames from 'classnames';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
+import { Loading } from '~/shared/components/loading/Loading';
 
 export const DatabaseList: React.FC = () => {
   const [_, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
-  const { activeConnection, activeConnectionDatabases } = useDefinedContext(ConnectionsContext);
+  const { activeConnection, activeConnectionDatabases, isLoadingActiveConnectionDatabases } =
+    useDefinedContext(ConnectionsContext);
 
   const [labelId] = useState(uuid);
 
@@ -24,6 +26,8 @@ export const DatabaseList: React.FC = () => {
     );
   }, [activeConnection, activeConnectionDatabases]);
 
+  const isLoading = isLoadingActiveConnectionDatabases || !activeConnection;
+
   return (
     <div
       className={classNames('grid gap-2', {
@@ -32,13 +36,14 @@ export const DatabaseList: React.FC = () => {
       })}
     >
       <div className="h-full w-px bg-border" />
-      <div>
+      <div className="relative">
         <h2
           className="mb-2 overflow-hidden text-ellipsis whitespace-nowrap py-2 pl-1 text-sm font-medium text-textPrimary"
           id={labelId}
         >
           Databases
         </h2>
+        {isLoading && <Loading />}
         <List
           htmlProps={{ 'aria-labelledby': labelId }}
           items={activeConnectionDatabases.map((database) => ({
@@ -65,13 +70,14 @@ export const DatabaseList: React.FC = () => {
       {activeConnection?.engine === 'postgres' && (
         <>
           <div className="h-full w-px bg-border" />
-          <div>
+          <div className="relative">
             <h2
               className="mb-2 overflow-hidden text-ellipsis whitespace-nowrap py-2 pl-1 text-sm font-medium text-textPrimary"
               id={labelId}
             >
               Schemas
             </h2>
+            {isLoading && <Loading />}
             <List
               htmlProps={{ 'aria-labelledby': labelId }}
               items={schemas.map((schema) => ({

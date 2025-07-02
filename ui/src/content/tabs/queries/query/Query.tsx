@@ -15,6 +15,7 @@ import { QueryContext, ResultContext } from './Context';
 import { QueriesContext } from '../Context';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { Loading } from '~/shared/components/loading/Loading';
 
 export const Query: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -96,11 +97,7 @@ export const Query: React.FC = () => {
           <BottomToolbar handleRowCreationRef={handleRowCreationRef} />
         </>
       )}
-      {!result && query.isLoading && (
-        <div className="flex h-full w-full items-center justify-center py-8">
-          <CircularProgress className="!text-primary" />
-        </div>
-      )}
+      {!result && query.isLoading && <Loading large />}
     </div>
   );
 };

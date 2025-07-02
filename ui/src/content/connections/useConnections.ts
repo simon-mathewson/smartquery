@@ -96,6 +96,8 @@ export const useConnections = (props: UseConnectionsProps) => {
   const [activeConnection, setActiveConnection] = useState<ActiveConnection | null>(null);
 
   const [activeConnectionDatabases, setActiveConnectionDatabases] = useState<Database[]>([]);
+  const [isLoadingActiveConnectionDatabases, setIsLoadingActiveConnectionDatabases] =
+    useState(false);
 
   const addConnection = useCallback(
     async (connection: Connection, onSuccess?: () => void) => {
@@ -299,20 +301,26 @@ export const useConnections = (props: UseConnectionsProps) => {
         );
       }
 
-      await linkApi.sendQuery.mutate({ clientId, statements }).then(([dbRows, schemaRows]) => {
-        setActiveConnectionDatabases(
-          dbRows.map((dbRow) => {
-            const db = String(dbRow.db);
-            return {
-              name: db,
-              schemas:
-                schemaRows
-                  ?.filter((schemaRow) => db === String(schemaRow.db))
-                  .map((schemaRow) => String(schemaRow.schema)) ?? [],
-            };
-          }),
-        );
-      });
+      setIsLoadingActiveConnectionDatabases(true);
+
+      try {
+        await linkApi.sendQuery.mutate({ clientId, statements }).then(([dbRows, schemaRows]) => {
+          setActiveConnectionDatabases(
+            dbRows.map((dbRow) => {
+              const db = String(dbRow.db);
+              return {
+                name: db,
+                schemas:
+                  schemaRows
+                    ?.filter((schemaRow) => db === String(schemaRow.db))
+                    .map((schemaRow) => String(schemaRow.schema)) ?? [],
+              };
+            }),
+          );
+        });
+      } finally {
+        setIsLoadingActiveConnectionDatabases(false);
+      }
     },
     [linkApi.sendQuery],
   );
@@ -509,6 +517,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       connectRemote,
       connections,
       disconnectRemote,
+      isLoadingActiveConnectionDatabases,
       removeConnection,
       updateConnection,
     }),
@@ -520,6 +529,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       connectRemote,
       connections,
       disconnectRemote,
+      isLoadingActiveConnectionDatabases,
       removeConnection,
       updateConnection,
     ],
