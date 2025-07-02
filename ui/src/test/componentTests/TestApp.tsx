@@ -19,12 +19,10 @@ export const TestApp: React.FC<TestAppProps> = (props) => {
   const navigateSpy = props.navigateSpy ?? spy();
 
   return (
-    <React.StrictMode>
-      <ErrorBoundary>
-        <MockProviders mockOverrides={providerOverrides}>
-          <Router hook={() => ['', navigateSpy]}>{children}</Router>
-        </MockProviders>
-      </ErrorBoundary>
-    </React.StrictMode>
+    <ErrorBoundary>
+      <MockProviders mockOverrides={providerOverrides}>
+        <Router hook={() => ['', navigateSpy]}>{children}</Router>
+      </MockProviders>
+    </ErrorBoundary>
   );
 };

@@ -5,11 +5,13 @@ import { useMemo, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import classNames from 'classnames';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { useLocation } from 'wouter';
+import { routes } from '~/router/routes';
 
 export const DatabaseList: React.FC = () => {
+  const [_, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
-  const { activeConnection, activeConnectionDatabases, connect } =
-    useDefinedContext(ConnectionsContext);
+  const { activeConnection, activeConnectionDatabases } = useDefinedContext(ConnectionsContext);
 
   const [labelId] = useState(uuid);
 
@@ -49,7 +51,13 @@ export const DatabaseList: React.FC = () => {
 
             track('database_list_select');
 
-            return connect(activeConnection.id, { database });
+            navigate(
+              routes.database({
+                connectionId: activeConnection.id,
+                database,
+                schema: '',
+              }),
+            );
           }}
           selectedValue={activeConnection?.database ?? null}
         />
@@ -77,16 +85,22 @@ export const DatabaseList: React.FC = () => {
                 track('database_list_select_schema');
 
                 if (schema === activeConnection.schema) {
-                  return connect(activeConnection.id, {
-                    database: activeConnection.database,
-                    schema: undefined,
-                  });
+                  return navigate(
+                    routes.database({
+                      connectionId: activeConnection.id,
+                      database: activeConnection.database,
+                      schema: '',
+                    }),
+                  );
                 }
 
-                return connect(activeConnection.id, {
-                  database: activeConnection.database,
-                  schema,
-                });
+                return navigate(
+                  routes.database({
+                    connectionId: activeConnection.id,
+                    database: activeConnection.database,
+                    schema,
+                  }),
+                );
               }}
               selectedValue={activeConnection?.schema ?? null}
             />

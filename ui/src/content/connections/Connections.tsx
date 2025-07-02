@@ -9,6 +9,8 @@ import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';
 import { v4 as uuid } from 'uuid';
 import { AnalyticsContext } from '../analytics/Context';
+import { useLocation } from 'wouter';
+import { routes } from '~/router/routes';
 
 export type ConnectionsProps = {
   hideDatabases?: boolean;
@@ -18,8 +20,9 @@ export type ConnectionsProps = {
 export const Connections: React.FC<ConnectionsProps> = (props) => {
   const { hideDatabases, htmlProps } = props;
 
+  const [_, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
-  const { activeConnection, connect, connections } = useDefinedContext(ConnectionsContext);
+  const { activeConnection, connections } = useDefinedContext(ConnectionsContext);
 
   const [isAddingOrEditing, setIsAddingOrEditing] = useState(() => connections.length === 0);
 
@@ -87,13 +90,20 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                     : undefined,
                 label: connection.name,
                 selectedVariant: 'primary',
-                value: connection.id,
+                value: connection,
               }))}
               onSelect={(connection) => {
-                connect(connection);
+                navigate(
+                  routes.database({
+                    connectionId: connection.id,
+                    database: connection.database,
+                    schema: connection.engine === 'postgres' ? connection.schema ?? '' : '',
+                  }),
+                );
+
                 track('connections_select');
               }}
-              selectedValue={activeConnection?.id ?? null}
+              selectedValue={connections.find((c) => c.id === activeConnection?.id) ?? null}
             />
           </div>
           {!hideDatabases && <DatabaseList />}

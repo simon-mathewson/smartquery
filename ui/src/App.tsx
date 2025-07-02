@@ -7,12 +7,10 @@ import { Footer } from './content/footer/Footer';
 import { Router } from './router/router';
 
 export const App: React.FC = () => (
-  <React.StrictMode>
-    <ErrorBoundary>
-      <Providers>
-        <Router />
-        <Footer />
-      </Providers>
-    </ErrorBoundary>
-  </React.StrictMode>
+  <ErrorBoundary>
+    <Providers>
+      <Router />
+      <Footer />
+    </Providers>
+  </ErrorBoundary>
 );

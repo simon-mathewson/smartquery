@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { ActiveConnection, Database } from '~/shared/types';
 import type { Connection, RemoteConnection } from '@/types/connection';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { useLocation, useRoute } from 'wouter';
 import { routes } from '~/router/routes';
 import type { ModalControl } from '~/shared/components/modal/types';
@@ -446,14 +445,6 @@ export const useConnections = (props: UseConnectionsProps) => {
           await getDatabases(connection, newClientId);
         }
 
-        navigate(
-          routes.database({
-            connectionId: connection.id,
-            database: selectedDatabase,
-            schema: selectedSchema ?? '',
-          }),
-        );
-
         window.document.title = `${
           selectedSchema ? `${selectedSchema} – ` : ''
         }${selectedDatabase} – ${connection.name}`;
@@ -472,16 +463,14 @@ export const useConnections = (props: UseConnectionsProps) => {
     [connections, disconnect, toast, navigate, getSqliteDb, getDatabases, connectRemote],
   );
 
-  useEffectOnce(
-    () => {
-      // If user is not logged in, connect to the initial connection. Otherwise, let the cloud
-      // connection query's onComplete handle the initial connection.
-      if (connectionIdParam) {
-        void connect(connectionIdParam, { database: databaseParam, schema: schemaParam });
-      }
-    },
-    { enabled: !isInitializingAuth && (!user || cloudConnectionsQuery.hasRun) },
-  );
+  const isReady = !isInitializingAuth && (!user || cloudConnectionsQuery.hasRun);
+
+  // Connect based on URL params
+  useEffect(() => {
+    if (connectionIdParam && isReady) {
+      void connect(connectionIdParam, { database: databaseParam, schema: schemaParam });
+    }
+  }, [connectionIdParam, databaseParam, schemaParam, isReady]);
 
   // Disconnect when closing tab
   useEffect(() => {
