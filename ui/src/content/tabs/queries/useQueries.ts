@@ -340,7 +340,7 @@ export const useQueries = () => {
       if (!skipRun) {
         setTimeout(() => {
           void runQuery(newQuery.id);
-        });
+        }, 100);
       }
     },
     [activeConnection, addTab, runQuery, setQueries],
