@@ -143,6 +143,10 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
       ],
     });
 
+    if (response.text?.trim() === ';') {
+      return undefined;
+    }
+
     return response.text ?? undefined;
   }
 
