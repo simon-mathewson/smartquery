@@ -28,7 +28,6 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       try {
         await onSubmit?.();
       } catch (error) {
-        console.error(error);
         if (error instanceof Error) {
           setError(getErrorMessage(error));
         }

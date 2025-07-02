@@ -17,6 +17,7 @@ import { getTableStatement } from './utils/getTableStatement';
 import { convertSqliteResultsToRecords } from '~/shared/utils/sqlite/sqlite';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { ToastContext } from '~/content/toast/Context';
+import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 
 export const useQueries = () => {
   const toast = useDefinedContext(ToastContext);
@@ -162,11 +163,23 @@ export const useQueries = () => {
             totalRows,
           },
         }));
+      } catch (error) {
+        console.error(error);
+
+        if (error instanceof Error) {
+          toast.add({
+            color: 'danger',
+            description: getErrorMessage(error),
+            title: 'Query failed',
+          });
+        }
+
+        throw error;
       } finally {
         onFinishLoading(id);
       }
     },
-    [activeConnection, linkApi, onFinishLoading, onStartLoading],
+    [activeConnection, linkApi, onFinishLoading, onStartLoading, toast.add],
   );
 
   const runQuery = useCallback(
@@ -250,6 +263,18 @@ export const useQueries = () => {
             title: 'Query completed',
           });
         }
+      } catch (error) {
+        console.error(error);
+
+        if (error instanceof Error) {
+          toast.add({
+            color: 'danger',
+            description: getErrorMessage(error),
+            title: 'Query failed',
+          });
+        }
+
+        throw error;
       } finally {
         onFinishLoading(id);
       }
@@ -263,7 +288,7 @@ export const useQueries = () => {
       requestFileHandlePermission,
       runSelectQuery,
       storeSqliteContent,
-      toast,
+      toast.add,
     ],
   );
 

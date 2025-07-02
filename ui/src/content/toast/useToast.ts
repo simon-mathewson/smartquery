@@ -31,7 +31,7 @@ export const useToast = () => {
 
     latestToastTimeoutRef.current = setTimeout(() => {
       setQueue((prev) => prev.slice(1));
-    }, 3000) as unknown as number;
+    }, 5000) as unknown as number;
   }, [queue]);
 
   return useMemo(() => ({ queue, add, remove }), [queue, add, remove]);
