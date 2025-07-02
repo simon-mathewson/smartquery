@@ -170,7 +170,10 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             options={(['mysql', 'postgres', 'sqlite'] as const).map((engine, index) => ({
               button: {
                 label: engineLabels[engine],
-                htmlProps: { autoFocus: index === 0 },
+                htmlProps: {
+                  autoFocus: index === 0,
+                  disabled: Boolean(connectionToEditId),
+                },
               },
               value: engine,
             }))}
@@ -200,8 +203,8 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 htmlProps: {
                   autoFocus: index === 0,
                   disabled:
-                    (isCloudConnection && storageLocation === 'local') ||
-                    (formValues.type === 'file' && storageLocation === 'cloud'),
+                    (storageLocation === 'local' && isCloudConnection) ||
+                    (storageLocation === 'cloud' && (formValues.type === 'file' || !user)),
                 },
               },
               value: storageLocation,
