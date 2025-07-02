@@ -96,5 +96,41 @@ import { PrismaClient } from '../generated';
     },
   });
 
+  await prisma.connection.create({
+    data: {
+      database: 'pfmegrnargs',
+      dbUser: 'postgres',
+      engine: 'postgres',
+      host: 'hh-pgsql-public.ebi.ac.uk',
+      name: 'RNAcentral',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: 'NWDMCE5xdipIjRrp',
+      port: 5432,
+    },
+  });
+
+  await prisma.connection.create({
+    data: {
+      database: 'Rfam',
+      dbUser: 'rfamro',
+      engine: 'postgres',
+      host: 'mysql-rfam-public.ebi.ac.uk',
+      name: 'Rfam',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: '',
+      port: 4497,
+    },
+  });
+
   console.info('Seeding complete.');
 })();
