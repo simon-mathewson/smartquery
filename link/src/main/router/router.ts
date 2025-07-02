@@ -1,6 +1,6 @@
 import { initTRPC } from '@trpc/server';
 import { uniqueId } from 'lodash';
-import superjson from 'superjson';
+import superjson from '@/superjson/superjson';
 import { z } from 'zod';
 import { MySqlClient, PostgresClient } from '../../../prisma';
 import { createSshTunnel } from '../utils/createSshTunnel';
@@ -92,7 +92,9 @@ export const router = trpc.router({
         input: { clientId, statements },
       } = props;
 
-      console.info('Processing query', statements);
+      if (import.meta.env.DEV) {
+        console.info('Processing query', statements);
+      }
 
       const client = clients[clientId];
       const { prisma } = client;
@@ -103,7 +105,9 @@ export const router = trpc.router({
         ),
       );
 
-      console.info('Executed queries', results);
+      if (import.meta.env.DEV) {
+        console.info('Executed queries', results.length);
+      }
 
       return results;
     }),

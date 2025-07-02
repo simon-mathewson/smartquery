@@ -7,9 +7,11 @@
   },
   "dependencies": {
     "@prisma/client": "5.7.1",
+    "superjson": "1.12.4",
     "zod": "3.23.8"
   },
   "devDependencies": {
+    "@types/node": "^24.0.10",
     "typescript": "5.8.2"
   },
   "packageManager": "pnpm@9.0.6+sha512.f6d863130973207cb7a336d6b439a242a26ac8068077df530d6a86069419853dc1ffe64029ec594a9c505a3a410d19643c870aba6776330f5cfddcf10a9c1617"
