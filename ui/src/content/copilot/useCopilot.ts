@@ -41,6 +41,7 @@ export const useCopilot = () => {
       setIsLoading(true);
 
       abortControllerRef.current.abort();
+      abortControllerRef.current = new AbortController();
 
       const threadWithUserMessage = [
         ...thread,
@@ -79,9 +80,28 @@ export const useCopilot = () => {
 
         setInput('');
       } catch (error) {
+        if (
+          error instanceof Error &&
+          (error.message.startsWith('exception AbortError:') ||
+            error.message === 'BodyStreamBuffer was aborted')
+        ) {
+          return;
+        }
+
+        const getMessage = (error: unknown) => {
+          if (error instanceof Error) {
+            if (error.message.includes('The model is overloaded. Please try again later.')) {
+              return 'The model is overloaded. Please try again later.';
+            }
+
+            return error.message;
+          }
+          return 'Unknown error';
+        };
+
         toast.add({
           title: 'Error while generating response',
-          description: error instanceof Error ? error.message : 'Unknown error',
+          description: getMessage(error),
           color: 'danger',
         });
         console.error(error);

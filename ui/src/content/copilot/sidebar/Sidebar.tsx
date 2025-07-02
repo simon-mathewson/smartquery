@@ -15,6 +15,7 @@ import { CircularProgress } from '@mui/material';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { assert } from 'ts-essentials';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { useCallback, useRef } from 'react';
 
 export const CopilotSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -33,6 +34,25 @@ export const CopilotSidebar: React.FC = () => {
     stopGenerating,
     thread,
   } = useDefinedContext(CopilotContext);
+
+  const threadContainerRef = useRef<HTMLDivElement>(null);
+
+  const submit = useCallback(
+    (inputToSend: string) => {
+      void sendMessage(inputToSend);
+
+      track('copilot_send_message');
+
+      // Scroll user message into view, not response
+      setTimeout(() => {
+        threadContainerRef.current?.scrollTo({
+          top: threadContainerRef.current?.scrollHeight,
+          behavior: 'smooth',
+        });
+      });
+    },
+    [sendMessage, track],
+  );
 
   return (
     <Card
@@ -66,7 +86,7 @@ export const CopilotSidebar: React.FC = () => {
           />
         }
       />
-      <div className="flex flex-col gap-4 overflow-auto px-1">
+      <div className="flex flex-col gap-4 overflow-auto px-1" ref={threadContainerRef}>
         {thread.map((message, index) => {
           const textParts = message.parts?.map((part) => part.text).filter(isNotUndefined);
 
@@ -115,9 +135,7 @@ export const CopilotSidebar: React.FC = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            void sendMessage(input);
-
-            track('copilot_send_message');
+            submit(input);
           }}
         >
           <Field>
@@ -142,7 +160,7 @@ export const CopilotSidebar: React.FC = () => {
                         textarea.selectionStart = textarea.selectionEnd = cursorPosition + 1;
                       }, 0);
                     } else if (input.length !== 0) {
-                      void sendMessage(input);
+                      void submit(input);
                     }
                   }
                 },
@@ -159,17 +177,16 @@ export const CopilotSidebar: React.FC = () => {
                   },
                 }}
                 icon={<Stop />}
+                key="stop"
               />
             ) : (
               <Button
                 htmlProps={{
                   disabled: input.length === 0,
-                  onClick: () => {
-                    track('copilot_send_message');
-                  },
                   type: 'submit',
                 }}
                 icon={<Send />}
+                key="send"
               />
             )}
           </Field>
