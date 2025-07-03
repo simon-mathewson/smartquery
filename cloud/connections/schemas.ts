@@ -2,7 +2,7 @@ import { remoteConnectionSchema } from '@/types/connection';
 import { z } from 'zod';
 
 export const createConnectionInputSchema = z.object({
-  connection: remoteConnectionSchema.omit({ id: true, ssh: true }).extend({
+  connection: remoteConnectionSchema.omit({ ssh: true }).extend({
     ssh: remoteConnectionSchema.shape.ssh.unwrap().nullable(),
     type: z.literal('remote'),
   }),

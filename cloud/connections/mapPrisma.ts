@@ -38,7 +38,7 @@ export const mapPrismaToConnection = (c: DbConnection) => {
 export const mapConnectionToPrisma = (
   c: CreateConnectionInput['connection'],
 ): Prisma.ConnectionCreateWithoutUserInput => ({
-  ...omit(c, 'credentialStorage', 'id', 'ssh', 'storageLocation', 'type', 'user'),
+  ...omit(c, 'credentialStorage', 'ssh', 'storageLocation', 'type', 'user'),
   dbUser: c.user,
   encryptCredentials: c.credentialStorage === 'encrypted',
   ...(c.ssh

@@ -31,6 +31,8 @@ import { Setup as LinkSetup } from '~/content/link/setup/Setup';
 import { sqliteDemoConnectionId } from '~/content/home/constants';
 import { AuthContext } from '~/content/auth/Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { useLocation } from 'wouter';
+import { routes } from '~/router/routes';
 
 export type ConnectionFormProps = {
   connectionToEditId?: string;
@@ -53,6 +55,7 @@ const storageLocationLabels = {
 export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { connectionToEditId, exit, hideBackButton, htmlProps } = props;
 
+  const [_, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
 
@@ -104,14 +107,23 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
       await storeSqliteContent(finalFormValues.fileHandle, finalFormValues.id);
     }
 
-    connectionToEdit
-      ? updateConnection(connectionToEdit.id, connection, exit)
-      : addConnection(connection, exit);
-
     if (connectionToEdit) {
       track('connection_form_update');
+      void updateConnection(connectionToEdit.id, connection, exit);
     } else {
       track('connection_form_add');
+      await addConnection(connection, () =>
+        setTimeout(() => {
+          exit();
+          navigate(
+            routes.database({
+              connectionId: connection.id,
+              database: connection.database,
+              schema: connection.engine === 'postgres' ? connection.schema : '',
+            }),
+          );
+        }),
+      );
     }
   };
 

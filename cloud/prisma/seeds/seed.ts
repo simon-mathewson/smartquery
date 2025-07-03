@@ -86,7 +86,7 @@ import { PrismaClient } from '../generated';
           email: 'test@dabase.dev',
         },
       },
-      encryptCredentials: true,
+      encryptCredentials: false,
       password: '',
       port: 5432,
       schema: 'public',
