@@ -12,7 +12,7 @@ ADD
 ALTER TABLE
   "Connection"
 ADD
-  COLUMN "userId_new" UUID NOT NULL;
+  COLUMN "userId_new" UUID;
 
 -- Copy data from old columns to new columns
 UPDATE
@@ -29,6 +29,28 @@ UPDATE
   "Connection"
 SET
   "userId_new" = "userId" :: UUID;
+
+-- Make all new columns NOT NULL after data is copied
+ALTER TABLE
+  "Connection"
+ALTER COLUMN
+  "userId_new"
+SET
+  NOT NULL;
+
+ALTER TABLE
+  "User"
+ALTER COLUMN
+  "id_new"
+SET
+  NOT NULL;
+
+ALTER TABLE
+  "Connection"
+ALTER COLUMN
+  "id_new"
+SET
+  NOT NULL;
 
 -- Drop foreign key constraint
 ALTER TABLE

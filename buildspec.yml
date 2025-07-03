@@ -66,6 +66,7 @@ phases:
       - export DABASE_CLOUD_DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
       - chmod +x ./scripts/build-database-url.sh
       - export DATABASE_URL=$(./scripts/build-database-url.sh)
+      - pnpm prisma migrate resolve --rolled-back "20250703153749_use_uuid_type_for_id_columns"
       - pnpm prisma migrate deploy
 
       # Deploy server
