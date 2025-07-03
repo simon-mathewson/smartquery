@@ -41,6 +41,7 @@ test.describe('SqlEditor', () => {
     const editor = $.getByRole('textbox');
 
     const newValue = 'SELECT * FROM "table" WHERE column = 2';
+    await editor.clear();
     await editor.fill(newValue);
 
     expect(props.onChange.calls.slice(-1)[0]).toEqual([newValue]);
