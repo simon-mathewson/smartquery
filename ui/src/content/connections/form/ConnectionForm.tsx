@@ -177,6 +177,10 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
               setFormValue('type', value === 'sqlite' ? 'file' : 'remote');
               if (value === 'sqlite') {
                 setFormValue('storageLocation', 'local');
+
+                if (formValues.type === 'remote' && formValues.credentialStorage === 'encrypted') {
+                  setFormValue('credentialStorage', 'alwaysAsk');
+                }
               }
             }}
             options={(['mysql', 'postgres', 'sqlite'] as const).map((engine, index) => ({
@@ -262,7 +266,10 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           />
         </Field>
         {formValues.engine === 'sqlite' ? (
-          <Field label="Database file">
+          <Field
+            hint="Database will be read from and written to the file system."
+            label="Database file"
+          >
             {formValues.id === sqliteDemoConnectionId ? (
               <div className="flex w-full items-center gap-2">
                 <FileIcon className="!text-[20px] text-textTertiary" />
