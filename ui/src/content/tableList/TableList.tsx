@@ -81,7 +81,9 @@ export const TableList: React.FC = () => {
       query
         .map((q) => {
           const result = q.id in queryResults ? queryResults[q.id] : null;
-          return result?.table ? { name: result.table, schema: result.schema } : undefined;
+          return result?.table
+            ? tables.find((t) => t.name === result.table && t.schema === result.schema)
+            : undefined;
         })
         .filter(isNotUndefined),
     ),
@@ -141,7 +143,11 @@ export const TableList: React.FC = () => {
         }))}
         multiple
         onSelect={(table) => {
-          addQuery(getQuery(table));
+          addQuery(getQuery(table), {
+            // Unless table is already selected, open tab that already contains this query if
+            // applicable
+            openIfExists: !selectedTables.includes(table),
+          });
           track('table_list_select');
         }}
         selectedValues={selectedTables}

@@ -24,7 +24,21 @@ export const useTabs = () => {
   const activeTab = useMemo(() => tabs.find((t) => t.id === activeTabId), [tabs, activeTabId]);
 
   const addTab = useCallback(
-    (queries: Query[][], afterActive?: boolean) => {
+    (queries: Query[][], options?: { afterActive?: boolean; openIfExists?: boolean }) => {
+      const { afterActive, openIfExists } = options ?? {};
+
+      if (openIfExists) {
+        const existingTab = tabs.find((t) =>
+          t.queries.every((c, columnIndex) =>
+            c.every((q, rowIndex) => q.sql === queries[columnIndex][rowIndex].sql),
+          ),
+        );
+        if (existingTab) {
+          setActiveTabId(existingTab.id);
+          return;
+        }
+      }
+
       const id = uuid.v4();
 
       setTabs((currentTabs) => {

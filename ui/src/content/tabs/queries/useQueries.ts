@@ -297,12 +297,13 @@ export const useQueries = () => {
       query: AddQueryOptions,
       options?: {
         afterActiveTab?: boolean;
+        openIfExists?: boolean;
         position?: { column: number; row?: number };
         skipRun?: boolean;
         tabId?: string;
       },
     ) => {
-      const { position, tabId, afterActiveTab, skipRun } = options ?? {};
+      const { position, tabId, afterActiveTab, skipRun, openIfExists } = options ?? {};
 
       assert(activeConnection);
 
@@ -312,7 +313,7 @@ export const useQueries = () => {
       });
 
       if (!tabId) {
-        addTab([[newQuery]], afterActiveTab);
+        addTab([[newQuery]], { afterActive: afterActiveTab, openIfExists });
       } else {
         setQueries((currentQueries) => {
           if (!position) {
