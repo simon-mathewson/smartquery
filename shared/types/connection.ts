@@ -40,10 +40,18 @@ export const fileConnectionSchema = baseConnectionSchema.extend({
 
 export type FileConnection = z.infer<typeof fileConnectionSchema>;
 
-export const connectionSchema = z.discriminatedUnion("type", [
-  remoteConnectionSchema,
-  fileConnectionSchema,
-]);
+export const connectionSchema = z
+  .discriminatedUnion("type", [remoteConnectionSchema, fileConnectionSchema])
+  .refine(
+    (conn) =>
+      conn.type !== "remote" ||
+      conn.credentialStorage !== "encrypted" ||
+      Boolean(conn.password),
+    {
+      message:
+        "Password is required when credential storage is set to encrypted",
+    }
+  );
 
 export type Connection = z.infer<typeof connectionSchema>;
 
