@@ -61,6 +61,7 @@ export const getContextMock = () =>
     connectRemote: spy(),
     connections: [mysqlConnectionMock, postgresConnectionMock, sqliteConnectionMock] as const,
     disconnectRemote: spy(),
+    isLoadingActiveConnectionDatabases: false,
     removeConnection: spy(),
     updateConnection: spy(),
   }) satisfies Connections;
