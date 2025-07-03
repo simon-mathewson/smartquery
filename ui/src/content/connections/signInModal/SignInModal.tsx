@@ -143,7 +143,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
           <Button
             htmlProps={{
               disabled: isConnecting,
-              onClick: close,
+              onClick: () => close(),
             }}
             label="Cancel"
           />

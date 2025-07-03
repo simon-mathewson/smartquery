@@ -91,7 +91,7 @@ export const UserPasswordModal: React.FC<UserPasswordModalProps> = (props) => {
               <Button
                 htmlProps={{
                   disabled: isProcessing,
-                  onClick: close,
+                  onClick: () => close(),
                 }}
                 label="Cancel"
               />

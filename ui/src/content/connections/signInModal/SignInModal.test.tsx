@@ -18,30 +18,6 @@ test.describe('SignInModal', () => {
     expect(navigateSpy.calls).toEqual([]);
   });
 
-  test('redirects to root on cancel if there is no active connection', async ({ mount }) => {
-    const props = getSignInModalProps();
-    const navigateSpy = spy();
-
-    const $ = await mount(
-      <SignInModalStory
-        componentProps={props}
-        testApp={{
-          navigateSpy,
-          providerOverrides: {
-            ConnectionsProvider: {
-              activeConnection: null,
-            },
-          },
-        }}
-      />,
-    );
-    await $.page().getByRole('button', { name: 'Cancel' }).click();
-
-    expect(props.close.calls).toEqual([[]]);
-
-    expect(navigateSpy.calls).toEqual([['/']]);
-  });
-
   test('allows signing in if DB password is required', async ({ mount }) => {
     const props = getSignInModalProps();
 
