@@ -1,17 +1,13 @@
 import { Key } from '@mui/icons-material';
 import { useCallback, useEffect, useState } from 'react';
-import { useLocation } from 'wouter';
 import { assert } from 'ts-essentials';
-import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { Field } from '~/shared/components/field/Field';
 import { Input } from '~/shared/components/input/Input';
 import { ErrorMessage } from '~/shared/components/errorMessage/ErrorMessage';
 import { Modal } from '~/shared/components/modal/Modal';
 import type { ModalControl } from '~/shared/components/modal/types';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { isAuthError } from '~/shared/utils/prisma/prisma';
-import { ConnectionsContext } from '../Context';
 import { getCredentialUsername } from '../utils';
 import type { SignInModalInput } from './types';
 import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
@@ -20,10 +16,6 @@ export type SignInModalProps = ModalControl<SignInModalInput>;
 
 export const SignInModal: React.FC<SignInModalProps> = (props) => {
   const { close, input } = props;
-
-  const [, navigate] = useLocation();
-
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const [password, setPassword] = useState('');
   const [sshPassword, setSshPassword] = useState('');
@@ -151,12 +143,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
           <Button
             htmlProps={{
               disabled: isConnecting,
-              onClick: () => {
-                close();
-                if (!activeConnection) {
-                  navigate(routes.root());
-                }
-              },
+              onClick: close,
             }}
             label="Cancel"
           />

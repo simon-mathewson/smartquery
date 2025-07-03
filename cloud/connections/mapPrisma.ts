@@ -4,9 +4,17 @@ import { CreateConnectionInput } from './schemas';
 import { omit } from 'lodash';
 
 export const mapPrismaToConnection = (c: DbConnection) => {
+  const credentialStorage = (() => {
+    if (c.encryptCredentials) {
+      return 'encrypted';
+    }
+
+    return c.password === null ? 'alwaysAsk' : 'plain';
+  })();
+
   return {
     ...c,
-    credentialStorage: c.encryptCredentials ? 'encrypted' : 'plain',
+    credentialStorage,
     engine: c.engine,
     host: c.host!,
     port: c.port!,
@@ -15,9 +23,9 @@ export const mapPrismaToConnection = (c: DbConnection) => {
       c.sshHost && c.sshPort && c.dbUser
         ? {
             host: c.sshHost,
-            password: c.sshPassword ?? undefined,
+            password: c.sshPassword ?? (c.sshUsePrivateKey ? undefined : null),
             port: c.sshPort,
-            privateKey: c.sshPrivateKey ?? undefined,
+            privateKey: c.sshPrivateKey ?? (c.sshUsePrivateKey ? null : undefined),
             user: c.sshUser!,
           }
         : null,
@@ -39,6 +47,7 @@ export const mapConnectionToPrisma = (
         sshPassword: c.ssh.password,
         sshPort: c.ssh.port,
         sshPrivateKey: c.ssh.privateKey,
+        sshUsePrivateKey: c.ssh.privateKey !== undefined,
         sshUser: c.ssh.user,
       }
     : null),

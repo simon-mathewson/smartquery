@@ -26,13 +26,17 @@ export const DatabaseList: React.FC = () => {
     );
   }, [activeConnection, activeConnectionDatabases]);
 
-  const isLoading = isLoadingActiveConnectionDatabases || !activeConnection;
+  const isLoading = isLoadingActiveConnectionDatabases;
+
+  if (!activeConnection) {
+    return null;
+  }
 
   return (
     <div
       className={classNames('grid gap-2', {
-        'grid-cols-[max-content_192px_max-content_192px]': activeConnection?.engine === 'postgres',
-        'grid-cols-[max-content_192px]': activeConnection?.engine !== 'postgres',
+        'grid-cols-[max-content_192px_max-content_192px]': activeConnection.engine === 'postgres',
+        'grid-cols-[max-content_192px]': activeConnection.engine !== 'postgres',
       })}
     >
       <div className="h-full w-px bg-border" />
@@ -52,8 +56,6 @@ export const DatabaseList: React.FC = () => {
             value: database.name,
           }))}
           onSelect={(database) => {
-            if (!activeConnection) return;
-
             track('database_list_select');
 
             navigate(
@@ -64,10 +66,10 @@ export const DatabaseList: React.FC = () => {
               }),
             );
           }}
-          selectedValue={activeConnection?.database ?? null}
+          selectedValue={activeConnection.database}
         />
       </div>
-      {activeConnection?.engine === 'postgres' && (
+      {activeConnection.engine === 'postgres' && (
         <>
           <div className="h-full w-px bg-border" />
           <div className="relative">
@@ -86,8 +88,6 @@ export const DatabaseList: React.FC = () => {
                 value: schema,
               }))}
               onSelect={(schema) => {
-                if (!activeConnection) return;
-
                 track('database_list_select_schema');
 
                 if (schema === activeConnection.schema) {
@@ -108,7 +108,7 @@ export const DatabaseList: React.FC = () => {
                   }),
                 );
               }}
-              selectedValue={activeConnection?.schema ?? null}
+              selectedValue={activeConnection.schema}
             />
           </div>
         </>

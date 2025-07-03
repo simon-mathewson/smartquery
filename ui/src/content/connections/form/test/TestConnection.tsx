@@ -10,6 +10,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { assert } from 'ts-essentials';
 import { ConnectionsContext } from '../../Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { ConnectCanceledError } from '../../connectAbortedError';
 
 export type TestConnectionProps = {
   formValues: FormValues;
@@ -83,6 +84,10 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
         engine: connection.engine,
       });
     } catch (error) {
+      if (error instanceof ConnectCanceledError) {
+        return;
+      }
+
       track('connection_form_test_connection_fail', {
         is_new: isNewConnection,
         engine: connection.engine,

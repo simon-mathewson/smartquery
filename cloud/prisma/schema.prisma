@@ -29,6 +29,7 @@ model Connection {
   sshPort            Int?
   sshPrivateKey      String?
   sshPrivateKeyNonce String?
+  sshUsePrivateKey   Boolean?
   sshUser            String?
   user               User     @relation(fields: [userId], references: [id])
   userId             String

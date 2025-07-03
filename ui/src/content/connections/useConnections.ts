@@ -16,6 +16,7 @@ import { CloudApiContext } from '../cloud/api/Context';
 import { omit, sortBy } from 'lodash';
 import { AuthContext } from '../auth/Context';
 import type { UserPasswordModalInput } from './UserPasswordModal/types';
+import { ConnectCanceledError } from './connectAbortedError';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -350,17 +351,20 @@ export const useConnections = (props: UseConnectionsProps) => {
             password: string;
             sshPassword: string | undefined;
             sshPrivateKey: string | undefined;
-          }>((resolve) => {
-            signInModal.open({
-              connection,
-              onSignIn: async (enteredCredentials) =>
-                resolve({
-                  password: enteredCredentials.password ?? storedCredentials.password,
-                  sshPassword: enteredCredentials.sshPassword ?? storedCredentials.sshPassword,
-                  sshPrivateKey:
-                    enteredCredentials.sshPrivateKey ?? storedCredentials.sshPrivateKey,
-                }),
-            });
+          }>((resolve, reject) => {
+            signInModal.open(
+              {
+                connection,
+                onSignIn: async (enteredCredentials) =>
+                  resolve({
+                    password: enteredCredentials.password ?? storedCredentials.password,
+                    sshPassword: enteredCredentials.sshPassword ?? storedCredentials.sshPassword,
+                    sshPrivateKey:
+                      enteredCredentials.sshPrivateKey ?? storedCredentials.sshPrivateKey,
+                  }),
+              },
+              { onClose: () => reject(new ConnectCanceledError()) },
+            );
           });
         }
 
@@ -372,30 +376,33 @@ export const useConnections = (props: UseConnectionsProps) => {
             password: string;
             sshPassword: string | undefined;
             sshPrivateKey: string | undefined;
-          }>((resolve) => {
-            userPasswordModal.open({
-              mode: 'decrypt',
-              onSubmit: async (userPassword) => {
-                const decryptedConnection = await cloudApi.connections.decryptCredentials.mutate({
-                  id: connection.id,
-                  userPassword,
-                });
+          }>((resolve, reject) => {
+            userPasswordModal.open(
+              {
+                mode: 'decrypt',
+                onSubmit: async (userPassword) => {
+                  const decryptedConnection = await cloudApi.connections.decryptCredentials.mutate({
+                    id: connection.id,
+                    userPassword,
+                  });
 
-                assert(decryptedConnection.type === 'remote');
+                  assert(decryptedConnection.type === 'remote');
 
-                resolve({
-                  password: skipDecryption.password
-                    ? storedCredentials.password
-                    : decryptedConnection.password ?? '',
-                  sshPassword: skipDecryption.ssh
-                    ? storedCredentials.sshPassword
-                    : decryptedConnection.ssh?.password ?? undefined,
-                  sshPrivateKey: skipDecryption.ssh
-                    ? storedCredentials.sshPrivateKey
-                    : decryptedConnection.ssh?.privateKey ?? undefined,
-                });
+                  resolve({
+                    password: skipDecryption.password
+                      ? storedCredentials.password
+                      : decryptedConnection.password ?? '',
+                    sshPassword: skipDecryption.ssh
+                      ? storedCredentials.sshPassword
+                      : decryptedConnection.ssh?.password ?? undefined,
+                    sshPrivateKey: skipDecryption.ssh
+                      ? storedCredentials.sshPrivateKey
+                      : decryptedConnection.ssh?.privateKey ?? undefined,
+                  });
+                },
               },
-            });
+              { onClose: () => reject(new ConnectCanceledError()) },
+            );
           });
         }
 
@@ -473,13 +480,15 @@ export const useConnections = (props: UseConnectionsProps) => {
           selectedSchema ? `${selectedSchema} – ` : ''
         }${selectedDatabase} – ${connection.name}`;
       } catch (error) {
-        console.error(error);
+        if (!(error instanceof ConnectCanceledError)) {
+          console.error(error);
 
-        toast.add({
-          color: 'danger',
-          description: (error as Error).message,
-          title: 'Failed to connect to database',
-        });
+          toast.add({
+            color: 'danger',
+            description: (error as Error).message,
+            title: 'Failed to connect to database',
+          });
+        }
 
         navigate(routes.root());
       }

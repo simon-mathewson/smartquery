@@ -92,6 +92,7 @@ import { PrismaClient } from '../generated';
       schema: 'public',
       sshHost: 'bastion.dabase.dev',
       sshPort: 22,
+      sshUsePrivateKey: true,
       sshUser: 'ec2-user',
     },
   });
