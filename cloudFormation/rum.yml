@@ -1,0 +1,11 @@
+Resources:
+  RUMAppMonitorDabase:
+    Type: AWS::RUM::AppMonitor
+    Properties:
+      AppMonitorConfiguration: 
+          AllowCookies: True
+          EnableXRay: True
+          GuestRoleArn: !ImportValue CognitoIAMRoleArn
+          IdentityPoolId: !ImportValue CognitoIdentityPoolId
+      Domain: dabase.dev
+      Name: Dabase
