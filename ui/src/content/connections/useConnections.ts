@@ -326,7 +326,14 @@ export const useConnections = (props: UseConnectionsProps) => {
   );
 
   const connectRemote = useCallback(
-    async (connection: RemoteConnection, options?: { skipDecryption?: boolean }) => {
+    async (
+      connection: RemoteConnection,
+      options?: {
+        skipDecryption?: { password: boolean; ssh: boolean };
+      },
+    ) => {
+      const skipDecryption = options?.skipDecryption ?? { password: false, ssh: false };
+
       const { password, sshPassword, sshPrivateKey } = await (async () => {
         const storedCredentials = {
           password: connection.password ?? '',
@@ -357,7 +364,10 @@ export const useConnections = (props: UseConnectionsProps) => {
           });
         }
 
-        if (connection.credentialStorage === 'encrypted' && !options?.skipDecryption) {
+        if (
+          connection.credentialStorage === 'encrypted' &&
+          !(skipDecryption.password && skipDecryption.ssh)
+        ) {
           return new Promise<{
             password: string;
             sshPassword: string | undefined;
@@ -374,9 +384,15 @@ export const useConnections = (props: UseConnectionsProps) => {
                 assert(decryptedConnection.type === 'remote');
 
                 resolve({
-                  password: decryptedConnection.password ?? '',
-                  sshPassword: decryptedConnection.ssh?.password ?? undefined,
-                  sshPrivateKey: decryptedConnection.ssh?.privateKey ?? undefined,
+                  password: skipDecryption.password
+                    ? storedCredentials.password
+                    : decryptedConnection.password ?? '',
+                  sshPassword: skipDecryption.ssh
+                    ? storedCredentials.sshPassword
+                    : decryptedConnection.ssh?.password ?? undefined,
+                  sshPrivateKey: skipDecryption.ssh
+                    ? storedCredentials.sshPrivateKey
+                    : decryptedConnection.ssh?.privateKey ?? undefined,
                 });
               },
             });

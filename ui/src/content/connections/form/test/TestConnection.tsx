@@ -19,7 +19,7 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
   const { formValues } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
-  const { connectRemote, disconnectRemote } = useDefinedContext(ConnectionsContext);
+  const { connections, connectRemote, disconnectRemote } = useDefinedContext(ConnectionsContext);
 
   const [isTesting, setIsTesting] = useState(false);
   const [hasSucceeded, setHasSucceeded] = useState(false);
@@ -38,6 +38,30 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     const connection = getConnectionFromForm({ ...formValues, id: formValues.id || 'id' });
     assert(connection.type === 'remote');
 
+    const existingConnection = connections.find((c) => c.id === connection.id);
+    if (existingConnection) {
+      assert(existingConnection.type === 'remote');
+      assert(!isNewConnection);
+    }
+
+    const skipDecryptPassword = existingConnection
+      ? existingConnection.password !== connection.password
+      : true;
+    const skipDecryptSsh = (() => {
+      if (!connection.ssh) {
+        return true;
+      }
+
+      if (!existingConnection) {
+        return true;
+      }
+
+      return (
+        existingConnection.ssh?.password !== connection.ssh.password ||
+        existingConnection.ssh?.privateKey !== connection.ssh.privateKey
+      );
+    })();
+
     track('connection_form_test_connection', {
       is_new: isNewConnection,
       engine: connection.engine,
@@ -48,7 +72,9 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     setHasSucceeded(false);
 
     try {
-      const clientId = await connectRemote(connection, { skipDecryption: isNewConnection });
+      const clientId = await connectRemote(connection, {
+        skipDecryption: { password: skipDecryptPassword, ssh: skipDecryptSsh },
+      });
       await disconnectRemote(clientId);
       setHasSucceeded(true);
 

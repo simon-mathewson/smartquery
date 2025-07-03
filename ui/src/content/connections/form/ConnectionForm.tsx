@@ -95,13 +95,13 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
     event.preventDefault();
 
-    formValues.id ||= uuid();
+    const finalFormValues = { ...formValues, id: formValues.id || uuid() };
 
-    const connection = getConnectionFromForm(formValues);
+    const connection = getConnectionFromForm(finalFormValues);
 
-    if (formValues.type === 'file') {
-      assert(formValues.fileHandle);
-      await storeSqliteContent(formValues.fileHandle, formValues.id);
+    if (finalFormValues.type === 'file') {
+      assert(finalFormValues.fileHandle);
+      await storeSqliteContent(finalFormValues.fileHandle, finalFormValues.id);
     }
 
     connectionToEdit
@@ -221,14 +221,13 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 fullWidth
                 onChange={(value) => setFormValue('credentialStorage', value)}
                 options={[
-                  ...(formValues.storageLocation === 'cloud'
-                    ? ([
-                        {
-                          button: { label: 'Encrypted' },
-                          value: 'encrypted',
-                        },
-                      ] as const)
-                    : []),
+                  {
+                    button: {
+                      htmlProps: { disabled: formValues.storageLocation !== 'cloud' },
+                      label: 'Encrypted',
+                    },
+                    value: 'encrypted',
+                  },
                   {
                     button: { label: 'Always ask' },
                     value: 'alwaysAsk',
