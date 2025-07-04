@@ -1,9 +1,14 @@
 #!/bin/sh
 
-DB_USERNAME=postgres
+# Extract username and password from secret JSON
+DB_USERNAME=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.username')
+DB_PASSWORD=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.password')
+DB_HOST=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.host')
+DB_NAME=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.dbname')
+DB_PORT=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.port')
 
 # URL encode the password
-ENCODED_PASSWORD=$(echo "$DABASE_CLOUD_DB_SECRET" | awk 'BEGIN { for (i = 0; i <= 255; i++) ord[sprintf("%c", i)] = i }
+ENCODED_PASSWORD=$(echo "$DB_PASSWORD" | awk 'BEGIN { for (i = 0; i <= 255; i++) ord[sprintf("%c", i)] = i }
 {
     for (i = 1; i <= length($0); i++) {
         c = substr($0, i, 1)
@@ -13,4 +18,4 @@ ENCODED_PASSWORD=$(echo "$DABASE_CLOUD_DB_SECRET" | awk 'BEGIN { for (i = 0; i <
 }')
 
 # Output the complete DATABASE_URL
-echo "postgresql://${DB_USERNAME}:${ENCODED_PASSWORD}@${DABASE_CLOUD_DB_ENDPOINT}/dabase_cloud?schema=public" 
+echo "postgresql://${DB_USERNAME}:${ENCODED_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public" 

@@ -86,9 +86,6 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: JWT_SECRET
           Value: !ImportValue DabaseCloudJwtSecretArn
-        - Namespace: aws:elasticbeanstalk:application:environment
-          OptionName: DABASE_CLOUD_DB_ENDPOINT
-          Value: !ImportValue DabaseCloudDbEndpoint
         - Namespace: aws:elasticbeanstalk:cloudwatch:logs
           OptionName: StreamLogs
           Value: true

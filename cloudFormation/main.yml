@@ -81,6 +81,8 @@ Resources:
     UpdateReplacePolicy: "Delete"
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/rds.yml"
+      Parameters:
+        DabaseCloudDbSecretArn: !ImportValue DabaseCloudDbSecretArn
     DependsOn:
       - SecretsManagerStack
       - VPCStack

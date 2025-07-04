@@ -77,19 +77,9 @@ SSH User: ec2-user
 SSH Host: bastion.dabase.dev
 SSH Port: 22
 SSH Key: ~/.ssh/dabase-bastion-key.pem
-DB Host: [See DabaseCloudDbEndpoint](https://eu-central-1.console.aws.amazon.com/cloudformation/home?region=eu-central-1#/exports)
-DB Port: 5432
-DB User: postgres
-DB Name: dabase_cloud
 
-DB Password:
-
-1. Get secret ARN: [See DabaseCloudDbSecretArn](https://eu-central-1.console.aws.amazon.com/cloudformation/home?region=eu-central-1#/exports)
-2. Get secret:
-
-```sh
-aws secretsmanager get-secret-value --secret-id '<DABASE_CLOUD_DB_SECRET_ARN>' --query SecretString --output text --region eu-central-1 | cat
-```
+DB Password, username, host, port, and name are stored in the secret manager:
+https://eu-central-1.console.aws.amazon.com/secretsmanager/secret?name=dabase-cloud-db-secret&region=eu-central-1
 
 ### 8. Update RUM script
 

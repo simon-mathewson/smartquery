@@ -1,6 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'RDS PostgreSQL database for Dabase Cloud'
 
+Parameters:
+  DabaseCloudDbSecretArn:
+    Type: String
+
 Resources:
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
@@ -15,10 +19,8 @@ Resources:
     Properties:
       DBName: dabase_cloud
       Engine: postgres
-      MasterUsername: postgres
-      ManageMasterUserPassword: true
-      MasterUserSecret:
-        SecretArn: !ImportValue DabaseCloudDbSecretArn
+      MasterUsername: !Sub '{{resolve:secretsmanager:${DabaseCloudDbSecretArn}::username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${DabaseCloudDbSecretArn}::password}}'
       DBInstanceClass: db.t3.micro
       AllocatedStorage: 20
       MultiAZ: false
@@ -30,6 +32,14 @@ Resources:
       PreferredBackupWindow: '03:00-04:00'
       PreferredMaintenanceWindow: 'sun:04:00-sun:05:00'
       StorageEncrypted: true
+
+  # Populates secret with connection info
+  DBInstanceSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !ImportValue DabaseCloudDbSecretArn
+      TargetId: !Ref DBInstance
+      TargetType: AWS::RDS::DBInstance
 
 Outputs:
   DBEndpoint:

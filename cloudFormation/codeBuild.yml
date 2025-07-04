@@ -13,8 +13,6 @@ Resources:
             Value: !ImportValue CloudFrontDistributionDabaseAbout
           - Name: "DABASE_CLOUD_DB_SECRET_ARN"
             Value: !ImportValue DabaseCloudDbSecretArn
-          - Name: "DABASE_CLOUD_DB_ENDPOINT"
-            Value: !ImportValue DabaseCloudDbEndpoint
         Image: "aws/codebuild/standard:7.0"
         PrivilegedMode: true
         Type: "LINUX_CONTAINER"
