@@ -1,11 +1,9 @@
 #!/bin/sh
 
-# Extract username and password from secret JSON
-DB_USERNAME=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.username')
-DB_PASSWORD=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.password')
+DB_USERNAME=postgres
 
 # URL encode the password
-ENCODED_PASSWORD=$(echo "$DB_PASSWORD" | awk 'BEGIN { for (i = 0; i <= 255; i++) ord[sprintf("%c", i)] = i }
+ENCODED_PASSWORD=$(echo "$DABASE_CLOUD_DB_SECRET" | awk 'BEGIN { for (i = 0; i <= 255; i++) ord[sprintf("%c", i)] = i }
 {
     for (i = 1; i <= length($0); i++) {
         c = substr($0, i, 1)

@@ -25,6 +25,7 @@ Resources:
       - CloudFrontStack
       - IamStack
       - RDSStack
+      - SecretsManagerStack
       - VPCStack
 
   CodePipelineStack:
@@ -81,6 +82,7 @@ Resources:
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/rds.yml"
     DependsOn:
+      - SecretsManagerStack
       - VPCStack
 
   Route53Stack:

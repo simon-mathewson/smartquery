@@ -16,7 +16,9 @@ Resources:
       DBName: dabase_cloud
       Engine: postgres
       MasterUsername: postgres
-      ManageMasterUserPassword: True
+      ManageMasterUserPassword: true
+      MasterUserSecret:
+        SecretArn: !ImportValue DabaseCloudDbSecretArn
       DBInstanceClass: db.t3.micro
       AllocatedStorage: 20
       MultiAZ: false
@@ -35,9 +37,3 @@ Outputs:
     Value: !GetAtt DBInstance.Endpoint.Address
     Export:
       Name: DabaseCloudDbEndpoint
-
-  DBSecretArn:
-    Description: 'Database secret ARN'
-    Value: !GetAtt DBInstance.MasterUserSecret.SecretArn
-    Export:
-      Name: DabaseCloudDbSecretArn
