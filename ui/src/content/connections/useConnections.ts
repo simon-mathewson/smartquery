@@ -503,6 +503,7 @@ export const useConnections = (props: UseConnectionsProps) => {
     if (connectionIdParam && isReady) {
       void connect(connectionIdParam, { database: databaseParam, schema: schemaParam });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionIdParam, databaseParam, schemaParam, isReady]);
 
   // Disconnect when closing tab

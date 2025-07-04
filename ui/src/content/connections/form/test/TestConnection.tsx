@@ -46,7 +46,8 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     }
 
     const skipDecryptPassword = existingConnection
-      ? existingConnection.password !== connection.password
+      ? existingConnection.password !== connection.password ||
+        existingConnection.credentialStorage !== 'encrypted'
       : true;
     const skipDecryptSsh = (() => {
       if (!connection.ssh) {
@@ -59,7 +60,8 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
 
       return (
         existingConnection.ssh?.password !== connection.ssh.password ||
-        existingConnection.ssh?.privateKey !== connection.ssh.privateKey
+        existingConnection.ssh?.privateKey !== connection.ssh.privateKey ||
+        existingConnection.credentialStorage !== 'encrypted'
       );
     })();
 
