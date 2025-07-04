@@ -12,6 +12,7 @@ import { List } from '~/shared/components/list/List';
 import { uniq } from 'lodash';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { Loading } from '~/shared/components/loading/Loading';
 
 type Table = { name: string; schema: string | undefined };
 
@@ -19,11 +20,13 @@ export const TableList: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const linkApi = useDefinedContext(LinkApiContext);
 
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const { activeConnection, isLoadingActiveConnectionDatabases } =
+    useDefinedContext(ConnectionsContext);
   const { activeTab } = useDefinedContext(TabsContext);
   const { addQuery, queryResults } = useDefinedContext(QueriesContext);
 
   const [tables, setTables] = useState<Table[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!activeConnection) return;
@@ -57,22 +60,28 @@ export const TableList: React.FC = () => {
       }
     })();
 
-    if (type === 'remote') {
-      linkApi.sendQuery
-        .mutate({ clientId: activeConnection.clientId, statements: [tableNamesStatement] })
-        .then(([rows]) => {
-          setTables(
-            rows.map(({ t, s }) => ({ name: String(t), schema: s ? String(s) : undefined })),
-          );
-        });
-    } else {
-      const [result] = activeConnection.sqliteDb.exec(tableNamesStatement);
-      setTables(
-        result.values.map(([tableName]) => ({
-          name: String(tableName),
-          schema: undefined,
-        })),
-      );
+    setIsLoading(true);
+
+    try {
+      if (type === 'remote') {
+        linkApi.sendQuery
+          .mutate({ clientId: activeConnection.clientId, statements: [tableNamesStatement] })
+          .then(([rows]) => {
+            setTables(
+              rows.map(({ t, s }) => ({ name: String(t), schema: s ? String(s) : undefined })),
+            );
+          });
+      } else {
+        const [result] = activeConnection.sqliteDb.exec(tableNamesStatement);
+        setTables(
+          result.values.map(([tableName]) => ({
+            name: String(tableName),
+            schema: undefined,
+          })),
+        );
+      }
+    } finally {
+      setIsLoading(false);
     }
   }, [activeConnection, linkApi]);
 
@@ -129,29 +138,33 @@ export const TableList: React.FC = () => {
   });
 
   return (
-    <div className="flex w-full flex-col gap-1 overflow-auto py-2">
-      <List<Table>
-        emptyPlaceholder="This database is empty."
-        items={tables.map((table) => ({
-          className: classNames({
-            '!opacity-50': isDragging,
-          }),
-          label: table.name,
-          onMouseDown: getHandleMouseDown(table),
-          selectedVariant: 'secondary',
-          value: table,
-        }))}
-        multiple
-        onSelect={(table) => {
-          addQuery(getQuery(table), {
-            // Unless table is already selected, open tab that already contains this query if
-            // applicable
-            openIfExists: !selectedTables.includes(table),
-          });
-          track('table_list_select');
-        }}
-        selectedValues={selectedTables}
-      />
+    <div className="relative flex w-full grow flex-col gap-1 overflow-auto py-2">
+      {isLoading || isLoadingActiveConnectionDatabases ? (
+        <Loading />
+      ) : (
+        <List<Table>
+          emptyPlaceholder="This database is empty."
+          items={tables.map((table) => ({
+            className: classNames({
+              '!opacity-50': isDragging,
+            }),
+            label: table.name,
+            onMouseDown: getHandleMouseDown(table),
+            selectedVariant: 'secondary',
+            value: table,
+          }))}
+          multiple
+          onSelect={(table) => {
+            addQuery(getQuery(table), {
+              // Unless table is already selected, open tab that already contains this query if
+              // applicable
+              openIfExists: !selectedTables.includes(table),
+            });
+            track('table_list_select');
+          }}
+          selectedValues={selectedTables}
+        />
+      )}
     </div>
   );
 };

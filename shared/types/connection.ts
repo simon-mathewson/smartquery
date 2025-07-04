@@ -51,7 +51,10 @@ export const connectionSchema = z
       message:
         "Password is required when credential storage is set to encrypted",
     }
-  );
+  )
+  .refine((conn) => conn.engine !== "postgres" || Boolean(conn.schema), {
+    message: "Schema is required when engine is set to postgres",
+  });
 
 export type Connection = z.infer<typeof connectionSchema>;
 

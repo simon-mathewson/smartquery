@@ -100,7 +100,7 @@ import { PrismaClient } from '../generated';
   await prisma.connection.create({
     data: {
       database: 'pfmegrnargs',
-      dbUser: 'postgres',
+      dbUser: 'reader',
       engine: 'postgres',
       host: 'hh-pgsql-public.ebi.ac.uk',
       name: 'RNAcentral',
@@ -112,6 +112,7 @@ import { PrismaClient } from '../generated';
       encryptCredentials: false,
       password: 'NWDMCE5xdipIjRrp',
       port: 5432,
+      schema: 'rnacen',
     },
   });
 
@@ -119,7 +120,7 @@ import { PrismaClient } from '../generated';
     data: {
       database: 'Rfam',
       dbUser: 'rfamro',
-      engine: 'postgres',
+      engine: 'mysql',
       host: 'mysql-rfam-public.ebi.ac.uk',
       name: 'Rfam',
       user: {

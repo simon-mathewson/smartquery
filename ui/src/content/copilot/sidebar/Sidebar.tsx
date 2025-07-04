@@ -126,9 +126,9 @@ export const CopilotSidebar: React.FC = () => {
         {hasSchemaDefinitions && (
           <div className="mb-2 mt-1 flex w-max items-center gap-2 rounded-lg bg-primaryHighlight px-2 py-1 text-xs font-[500] text-textSecondary">
             <Language className="!h-4 !w-4" />
-            <span className="font-mono">
+            <span>
               {activeConnection.database}
-              {activeConnection.engine === 'postgres' && ` • ${activeConnection.schema}`}
+              {activeConnection.engine === 'postgres' && ` ⁠– ${activeConnection.schema}`}
             </span>
           </div>
         )}

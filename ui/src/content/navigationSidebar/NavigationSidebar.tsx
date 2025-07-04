@@ -36,8 +36,9 @@ export const NavigationSidebar: React.FC = () => {
               <div className="truncate text-sm font-medium leading-tight text-textPrimary">
                 {activeConnection.name}
               </div>
-              <div className="truncate font-mono text-xs font-medium leading-tight text-textSecondary">
+              <div className="truncate text-xs font-medium leading-tight text-textTertiary">
                 {activeConnection.database}
+                {activeConnection.engine === 'postgres' && ` ⁠– ${activeConnection.schema}`}
               </div>
             </>
           )}
