@@ -1,4 +1,4 @@
-import { AnalyticsContextType } from '~/content/analytics/Context';
+import type { AnalyticsContextType } from '~/content/analytics/Context';
 import type { AddToDesktopContextType } from '~/content/settings/addToDesktop/Context';
 import type { AiContextType } from '~/content/ai/Context';
 import type { AuthContextType } from '~/content/auth/Context';
@@ -14,6 +14,7 @@ import type { SqliteContextType } from '~/content/sqlite/Context';
 import type { TabsContextType } from '~/content/tabs/Context';
 import type { ThemeContextType } from '~/content/theme/Context';
 import type { ToastContextType } from '~/content/toast/Context';
+import type { ErrorTrackingContextType } from '~/content/errors/tracking/Context';
 
 export type ContextTypes = {
   AddToDesktopProvider: AddToDesktopContextType;
@@ -24,6 +25,7 @@ export type ContextTypes = {
   ConnectionsProvider: ConnectionsContextType;
   DragAndDropProvider: DragAndDropContextType;
   EditProvider: EditContextType;
+  ErrorTrackingProvider: ErrorTrackingContextType;
   EscapeStackProvider: EscapeStackContextType;
   LinkApiProvider: LinkApiContextType;
   LinkProvider: LinkContextType;

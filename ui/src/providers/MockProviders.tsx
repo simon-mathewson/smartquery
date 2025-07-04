@@ -18,8 +18,10 @@ import { ToastProvider } from '~/content/toast/Provider';
 import type { ContextTypes } from './ContextTypes';
 import type { DeepPartial } from 'ts-essentials';
 import type { PropsWithChildren } from 'react';
+import { ErrorTrackingMockProvider } from '~/content/errors/tracking/MockProvider';
 
 const mockProviders = {
+  ErrorTrackingProvider: ErrorTrackingMockProvider,
   AnalyticsProvider: AnalyticsMockProvider,
   ThemeProvider,
   AiProvider: AiMockProvider,

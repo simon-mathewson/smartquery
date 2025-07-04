@@ -4,8 +4,14 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 import { VitePWA } from 'vite-plugin-pwa';
+import { execSync } from 'node:child_process';
 
 export default defineConfig({
+  define: {
+    'import.meta.env.VITE_VERSION': JSON.stringify(
+      execSync('git rev-parse --short HEAD', { encoding: 'utf8' }),
+    ),
+  },
   plugins: [
     react(),
     svgr(),

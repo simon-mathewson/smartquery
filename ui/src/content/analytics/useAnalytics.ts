@@ -1,7 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import ReactGa from 'react-ga4';
 import { useLocation } from 'wouter';
-import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { ErrorTrackingContext } from '../errors/tracking/Context';
 
 if (import.meta.env.PROD) {
   ReactGa.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS_ID);
@@ -10,18 +11,7 @@ if (import.meta.env.PROD) {
 export const useAnalytics = () => {
   const [location] = useLocation();
 
-  const [isConsentGranted, setIsConsentGranted] = useStoredState(
-    'useAnalytics.isConsentGranted',
-    false,
-  );
-
-  const allow = useCallback(() => {
-    setIsConsentGranted(true);
-  }, [setIsConsentGranted]);
-
-  const deny = useCallback(() => {
-    setIsConsentGranted(false);
-  }, [setIsConsentGranted]);
+  const { isConsentGranted } = useDefinedContext(ErrorTrackingContext);
 
   const track = useCallback(
     (event: string, props?: Record<string, string | number | boolean | null | undefined>) => {
@@ -78,10 +68,5 @@ export const useAnalytics = () => {
     }
   }, [isConsentGranted, location]);
 
-  return {
-    allow,
-    deny,
-    isConsentGranted,
-    track,
-  };
+  return { track };
 };

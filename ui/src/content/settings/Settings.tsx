@@ -14,13 +14,15 @@ import { LogoutOutlined } from '@mui/icons-material';
 import { AnalyticsContext } from '../analytics/Context';
 import { Toggle } from '~/shared/components/toggle/Toggle';
 import { routes } from '~/router/routes';
+import { ErrorTrackingContext } from '../errors/tracking/Context';
 
 export type SettingsProps = {
   close: () => Promise<void>;
 };
 
 export const Settings: React.FC<SettingsProps> = ({ close }) => {
-  const { track, ...analytics } = useDefinedContext(AnalyticsContext);
+  const { isConsentGranted, setIsConsentGranted } = useDefinedContext(ErrorTrackingContext);
+  const { track } = useDefinedContext(AnalyticsContext);
   const { logOut, user } = useDefinedContext(AuthContext);
   const { modePreference, setModePreference } = useDefinedContext(ThemeContext);
   const { googleAiApiKey, setGoogleAiApiKey } = useDefinedContext(AiContext);
@@ -73,14 +75,8 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
         <Toggle
           hint="Help improve Dabase"
           label="Share anonymous usage data"
-          onChange={(value) => {
-            if (value) {
-              analytics.allow();
-            } else {
-              analytics.deny();
-            }
-          }}
-          value={analytics.isConsentGranted}
+          onChange={(value) => setIsConsentGranted(Boolean(value))}
+          value={isConsentGranted}
         />
       </Field>
       <Field label="Ask questions and share your feedback, feature requests, and bug reports:">

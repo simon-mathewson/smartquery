@@ -18,8 +18,10 @@ import { ToastProvider } from '../content/toast/Provider';
 import React from 'react';
 import type { ContextTypes } from './ContextTypes';
 import type { PropsWithChildren } from 'react';
+import { ErrorTrackingProvider } from '~/content/errors/tracking/Provider';
 
 const providers = {
+  ErrorTrackingProvider,
   AnalyticsProvider,
   ThemeProvider,
   AiProvider,

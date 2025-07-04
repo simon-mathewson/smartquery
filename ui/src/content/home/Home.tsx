@@ -47,7 +47,7 @@ export const Home: React.FC = () => {
     window.location.pathname = routes.database(routeParams);
 
     track('home_open_demo_database');
-  }, [addConnection, connections, storeSqliteContent]);
+  }, [addConnection, connections, storeSqliteContent, track]);
 
   const actions = useMemo(
     () => [
@@ -86,7 +86,7 @@ export const Home: React.FC = () => {
           ]
         : []),
     ],
-    [connections.length, openDemoDatabase, user],
+    [connections.length, openDemoDatabase, track, user],
   );
 
   return (
