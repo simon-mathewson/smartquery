@@ -5,14 +5,12 @@ import { ErrorBoundary } from './content/errorBoundary/ErrorBoundary';
 import { Providers } from './providers/Providers';
 import { Footer } from './content/footer/Footer';
 import { Router } from './router/router';
-import { setUpRum } from './setUpRum';
+import { setUpErrorTracking } from './setUpErrorTracking';
 
-if (import.meta.env.PROD) {
-  setUpRum();
-}
+const errorTracking = setUpErrorTracking();
 
 export const App: React.FC = () => (
-  <ErrorBoundary>
+  <ErrorBoundary errorTracking={errorTracking}>
     <Providers>
       <Router />
       <Footer />
