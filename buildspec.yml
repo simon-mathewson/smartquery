@@ -27,7 +27,7 @@ phases:
       - zip -r application.zip .ebextensions .env.production dist package.json prisma/generated Procfile scripts
 
       - cd ../ui
-      - export VITE_VERSION=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}
+      - export VITE_VERSION=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
       - pnpm typecheck
       - pnpm lint
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
