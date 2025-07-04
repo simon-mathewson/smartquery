@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import type { OverlayCardProps } from './OverlayCard';
-import { animationVerticalOffset, overlayCardMargin } from './constants';
+import type { OverlayProps } from './Overlay';
+import { animationVerticalOffset, overlayMargin } from './constants';
 import { animate } from './animate';
 
 export type UseStylesProps = Pick<
-  OverlayCardProps,
+  OverlayProps,
   'align' | 'anchorRef' | 'matchTriggerWidth' | 'position'
 >;
 
@@ -34,33 +34,33 @@ export const useStyles = (props: UseStylesProps) => {
     updateStyles();
   }, 10);
 
-  const cardRef = useRef<HTMLDivElement | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const backgroundRef = useRef<HTMLDivElement | null>(null);
 
   const updateStylesBasedOnAnchor = useCallback(
     (anchor: HTMLElement) => {
-      const card = wrapperRef.current;
-      if (!card) return;
+      const overlay = wrapperRef.current;
+      if (!overlay) return;
 
       const anchorRect = anchor.getBoundingClientRect();
 
-      const cardWidth = card.offsetWidth;
+      const overlayWidth = overlay.offsetWidth;
 
       const unboundedLeft = {
         left: anchorRect.left,
-        center: anchorRect.left + anchorRect.width / 2 - cardWidth / 2,
-        right: anchorRect.right - cardWidth,
+        center: anchorRect.left + anchorRect.width / 2 - overlayWidth / 2,
+        right: anchorRect.right - overlayWidth,
       }[align];
 
       const left = Math.max(
-        overlayCardMargin,
-        Math.min(window.innerWidth - cardWidth - overlayCardMargin, unboundedLeft),
+        overlayMargin,
+        Math.min(window.innerWidth - overlayWidth - overlayMargin, unboundedLeft),
       );
 
-      const spaceBelow = window.innerHeight - anchorRect.bottom - overlayCardMargin * 2;
-      const spaceAbove = anchorRect.top - overlayCardMargin * 2;
-      const scrollHeight = card.scrollHeight;
+      const spaceBelow = window.innerHeight - anchorRect.bottom - overlayMargin * 2;
+      const spaceAbove = anchorRect.top - overlayMargin * 2;
+      const scrollHeight = overlay.scrollHeight;
 
       const newShowAbove = (() => {
         if (!scrollHeight || scrollHeight <= spaceBelow) return false;
@@ -69,12 +69,10 @@ export const useStyles = (props: UseStylesProps) => {
 
       animateFromBottomRef.current = newShowAbove;
 
-      const top = newShowAbove ? undefined : anchorRect.top + anchorRect.height + overlayCardMargin;
-      const bottom = newShowAbove
-        ? window.innerHeight - anchorRect.top + overlayCardMargin
-        : undefined;
+      const top = newShowAbove ? undefined : anchorRect.top + anchorRect.height + overlayMargin;
+      const bottom = newShowAbove ? window.innerHeight - anchorRect.top + overlayMargin : undefined;
 
-      Object.assign(card.style, {
+      Object.assign(overlay.style, {
         bottom: bottom ? `${bottom}px` : '',
         left: `${left}px`,
         maxHeight: newShowAbove ? `${spaceAbove}px` : `${spaceBelow}px`,
@@ -86,28 +84,28 @@ export const useStyles = (props: UseStylesProps) => {
   );
 
   const updateStylesBasedOnPosition = useCallback(() => {
-    const card = wrapperRef.current;
-    if (!card) return;
+    const overlay = wrapperRef.current;
+    if (!overlay) return;
 
-    const cardWidth = card.offsetWidth;
-    const cardHeight = card.offsetHeight;
+    const overlayWidth = overlay.offsetWidth;
+    const overlayHeight = overlay.offsetHeight;
 
     const positionX = position?.x ?? 'center';
     const positionY = position?.y ?? 'center';
 
     const left = {
-      left: overlayCardMargin,
-      center: window.innerWidth / 2 - cardWidth / 2,
-      right: window.innerWidth - cardWidth - overlayCardMargin,
+      left: overlayMargin,
+      center: window.innerWidth / 2 - overlayWidth / 2,
+      right: window.innerWidth - overlayWidth - overlayMargin,
     }[positionX];
 
     const top = {
-      top: overlayCardMargin,
-      center: window.innerHeight / 2 - cardHeight / 2,
-      bottom: window.innerHeight - cardHeight - overlayCardMargin,
+      top: overlayMargin,
+      center: window.innerHeight / 2 - overlayHeight / 2,
+      bottom: window.innerHeight - overlayHeight - overlayMargin,
     }[positionY];
 
-    Object.assign(card.style, {
+    Object.assign(overlay.style, {
       left: `${left}px`,
       top: `${top}px`,
       width: '',
@@ -168,7 +166,7 @@ export const useStyles = (props: UseStylesProps) => {
 
   const registerContent = useCallback(
     (element: HTMLDivElement | null) => {
-      cardRef.current = element;
+      overlayRef.current = element;
 
       if (!element) return;
 

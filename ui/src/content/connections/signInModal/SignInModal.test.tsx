@@ -3,7 +3,7 @@ import { spy } from 'tinyspy';
 import type { SignInModalProps } from './SignInModal';
 import { getSignInModalProps } from './SignInModal.mocks';
 import { SignInModalStory } from './SignInModal.story';
-import { animationOptions } from '~/shared/components/overlayCard/constants';
+import { animationOptions } from '~/shared/components/overlay/constants';
 
 test.describe('SignInModal', () => {
   test('allows canceling sign in', async ({ mount }) => {

@@ -2,7 +2,7 @@ import type { MountResult } from '@playwright/experimental-ct-react';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { ConnectionFormStory } from './ConnectionForm.story';
 import { spy } from 'tinyspy';
-import { animationOptions } from '~/shared/components/overlayCard/constants';
+import { animationOptions } from '~/shared/components/overlay/constants';
 
 const getProps = () => ({ exit: spy() });
 

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { ModalStory } from './Modal.story';
-import { animationOptions } from '../overlayCard/constants';
+import { animationOptions } from '../overlay/constants';
 import { spy } from 'tinyspy';
 
 test.describe('Modal', () => {

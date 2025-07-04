@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { OverlayCardProps } from './OverlayCard';
+import type { OverlayProps } from './Overlay';
 import { useStyles } from './useStyles';
 import { isNotNull, isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { useEscape } from '~/shared/hooks/useEscape/useEscape';
@@ -7,7 +7,7 @@ import { mergeRefs } from 'react-merge-refs';
 import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
 import { useKeyboardNavigation } from './useKeyboardNavigation';
 
-export const useOverlayCard = (props: OverlayCardProps) => {
+export const useOverlay = (props: OverlayProps) => {
   const {
     align,
     closeOnOutsideClick = true,

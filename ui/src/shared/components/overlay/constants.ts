@@ -1,4 +1,4 @@
-export const overlayCardMargin = 8;
+export const overlayMargin = 8;
 
 export const animationVerticalOffset = 16;
 
