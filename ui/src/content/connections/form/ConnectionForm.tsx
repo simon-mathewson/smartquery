@@ -55,7 +55,7 @@ const storageLocationLabels = {
 export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { connectionToEditId, exit, hideBackButton, htmlProps } = props;
 
-  const [_, navigate] = useLocation();
+  const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
 

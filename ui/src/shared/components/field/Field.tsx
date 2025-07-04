@@ -28,7 +28,7 @@ export const Field: React.FC<PropsWithChildren<FieldProps>> = (props) => {
             id: controlId,
           },
         }),
-        [controlId, label, labelId],
+        [controlId, hint, hintId, label, labelId],
       )}
     >
       <div className={classNames('grid gap-1 focus-within:text-primary', htmlProps?.className)}>

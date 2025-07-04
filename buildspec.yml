@@ -22,11 +22,13 @@ phases:
       - cd ../cloud
       - pnpm prisma generate
       - pnpm typecheck
+      - pnpm lint
       - pnpm build
       - zip -r application.zip .ebextensions .env.production dist package.json prisma/generated Procfile scripts
 
       - cd ../ui
       - pnpm typecheck
+      - pnpm lint
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
       - pnpm playwright install --with-deps chromium
       - NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
@@ -34,10 +36,12 @@ phases:
 
       - cd ../about
       - pnpm typecheck
+      - pnpm lint
       - pnpm build
 
       - cd ../link
       - pnpm typecheck
+      - pnpm lint
       - pnpm db:generate
       - pnpm test:db:up
       - sleep 15

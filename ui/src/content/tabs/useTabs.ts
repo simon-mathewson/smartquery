@@ -52,7 +52,7 @@ export const useTabs = () => {
       });
       setActiveTabId(id);
     },
-    [activeTabId, setActiveTabId, setTabs],
+    [activeTabId, setActiveTabId, setTabs, tabs],
   );
 
   const removeTab = useCallback(

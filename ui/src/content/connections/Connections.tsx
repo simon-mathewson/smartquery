@@ -20,7 +20,7 @@ export type ConnectionsProps = {
 export const Connections: React.FC<ConnectionsProps> = (props) => {
   const { hideDatabases, htmlProps } = props;
 
-  const [_, navigate] = useLocation();
+  const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection, connections } = useDefinedContext(ConnectionsContext);
 

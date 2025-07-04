@@ -3,7 +3,7 @@ import type * as monacoType from 'monaco-editor';
 import { assert } from 'ts-essentials';
 import type { useAi } from '~/content/ai/useAi';
 import developerPrompt from './developerPrompt.txt?raw';
-import { AnalyticsContextType } from '~/content/analytics/Context';
+import type { AnalyticsContextType } from '~/content/analytics/Context';
 
 export class AiSuggestionWidget implements editorType.IContentWidget {
   private static readonly ID = 'editor.widget.aiSuggestion';

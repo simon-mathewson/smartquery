@@ -69,10 +69,11 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
     activeConnection,
     clearChanges,
     getSqliteContent,
-    linkApi,
+    linkApi.sendQuery,
     refetchActiveTabSelectQueries,
     requestFileHandlePermission,
     storeSqliteContent,
+    track,
     userSql,
   ]);
 

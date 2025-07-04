@@ -10,7 +10,7 @@ import { routes } from '~/router/routes';
 import { Loading } from '~/shared/components/loading/Loading';
 
 export const DatabaseList: React.FC = () => {
-  const [_, navigate] = useLocation();
+  const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection, activeConnectionDatabases, isLoadingActiveConnectionDatabases } =
     useDefinedContext(ConnectionsContext);

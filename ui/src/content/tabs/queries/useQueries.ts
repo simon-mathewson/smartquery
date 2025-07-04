@@ -179,7 +179,7 @@ export const useQueries = () => {
         onFinishLoading(id);
       }
     },
-    [activeConnection, linkApi, onFinishLoading, onStartLoading, toast.add],
+    [activeConnection, linkApi.sendQuery, onFinishLoading, onStartLoading, toast],
   );
 
   const runQuery = useCallback(
@@ -282,13 +282,13 @@ export const useQueries = () => {
     [
       activeConnection,
       getSqliteContent,
-      linkApi,
+      linkApi.sendQuery,
       onFinishLoading,
       onStartLoading,
       requestFileHandlePermission,
       runSelectQuery,
       storeSqliteContent,
-      toast.add,
+      toast,
     ],
   );
 
@@ -396,14 +396,14 @@ export const useQueries = () => {
         runQuery(query.id);
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab?.id, runQuery]);
+  }, [activeTab, runQuery]);
 
   // Refetch select queries when active tab changes
   useEffect(() => {
     if (!activeConnection) return;
     refetchActiveTabSelectQueries();
-  }, [activeConnection, refetchActiveTabSelectQueries]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab?.id]);
 
   return useMemo(
     () => ({

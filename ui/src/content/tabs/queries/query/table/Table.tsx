@@ -82,7 +82,7 @@ export const Table: React.FC<TableProps> = (props) => {
         track('query_create_row');
       }, 200);
     };
-  }, [createChanges, handleRowCreationRef, query.id, rows.length, setSelection, table]);
+  }, [createChanges, handleRowCreationRef, query.id, rows.length, setSelection, table, track]);
 
   const visibleColumns = columns
     ? columns.filter(({ isVisible }) => isVisible)

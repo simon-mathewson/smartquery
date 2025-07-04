@@ -46,7 +46,7 @@ export const Setup: React.FC<SetupProps> = (props) => {
       }
       setCheckingLinkStatus(false);
     });
-  }, [link]);
+  }, [link, track]);
 
   if (hidden) {
     return null;
