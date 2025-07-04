@@ -5,41 +5,48 @@ import { ConnectionsContext } from '../connections/Context';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { Connections } from '../connections/Connections';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { Button } from '~/shared/components/button/Button';
+import { Logo } from '~/shared/components/logo/Logo';
+import { routes } from '~/router/routes';
 
 export const NavigationSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const connectionsTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const homeButtonRef = useRef<HTMLAnchorElement | null>(null);
 
   return (
-    <div className="sticky top-0 flex h-[calc(100vh-90px)] grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-2 px-2 pt-2">
-      <button
-        className="grid w-full cursor-pointer select-none gap-1 rounded-lg p-2 text-left text-sm hover:bg-secondaryHighlight"
-        ref={connectionsTriggerRef}
-        onClick={() => {
-          track('navigation_sidebar_open_connections');
-        }}
-      >
-        {activeConnection && (
-          <>
-            <div className="text-md truncate font-medium leading-tight text-textPrimary">
-              {activeConnection.name}
-            </div>
-            {activeConnection.type === 'remote' && (
-              <div className="truncate text-xs leading-tight text-textSecondary">
-                {activeConnection.user}@{activeConnection.host}:{activeConnection.port}
+    <div className="sticky top-0 flex h-[calc(100vh-90px)] grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-1 px-2 pt-2">
+      <div className="flex w-full items-center">
+        <Button
+          element="link"
+          htmlProps={{ href: routes.root(), ref: homeButtonRef }}
+          icon={<Logo htmlProps={{ className: 'w-8 h-8' }} />}
+        />
+        <button
+          className="grid w-full cursor-pointer select-none gap-[2px] rounded-lg p-[6px] text-left text-sm hover:bg-secondaryHighlight"
+          ref={connectionsTriggerRef}
+          onClick={() => {
+            track('navigation_sidebar_open_connections');
+          }}
+        >
+          {activeConnection && (
+            <>
+              <div className="truncate text-sm font-medium leading-tight text-textPrimary">
+                {activeConnection.name}
               </div>
-            )}
-            <div className="truncate font-mono text-xs font-medium leading-tight text-textSecondary">
-              {activeConnection.database}
-            </div>
-          </>
-        )}
-      </button>
+              <div className="truncate font-mono text-xs font-medium leading-tight text-textSecondary">
+                {activeConnection.database}
+              </div>
+            </>
+          )}
+        </button>
+      </div>
 
       <OverlayCard
         align="left"
+        anchorRef={homeButtonRef}
         htmlProps={{ className: 'w-max p-2 shadow-2xl' }}
         triggerRef={connectionsTriggerRef}
       >

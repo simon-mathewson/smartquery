@@ -2,8 +2,6 @@ import classNames from 'classnames';
 import React, { useState } from 'react';
 import type { Color } from '~/content/theme/types';
 import { v4 as uuid } from 'uuid';
-import type { BrowserLocationHook } from 'wouter/use-browser-location';
-import type { LinkProps } from 'wouter';
 import { Link } from 'wouter';
 
 type BaseProps = {
@@ -35,7 +33,7 @@ export type ButtonDivProps = BaseProps & {
 
 export type ButtonLinkProps = BaseProps & {
   element: 'link';
-  htmlProps?: React.HTMLProps<LinkProps<BrowserLocationHook>>;
+  htmlProps?: React.HTMLProps<HTMLAnchorElement>;
 };
 
 export type ButtonProps = ButtonButtonProps | ButtonAnchorProps | ButtonDivProps | ButtonLinkProps;
