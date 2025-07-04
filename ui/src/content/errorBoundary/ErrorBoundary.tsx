@@ -8,10 +8,9 @@ import { AiMockProvider } from '../ai/MockProvider';
 import { AnalyticsMockProvider } from '../analytics/MockProvider';
 import type { AwsRum } from 'aws-rum-web';
 
-export const ErrorBoundary: React.FC<PropsWithChildren<{ errorTracking: AwsRum | null }>> = ({
-  children,
-  errorTracking,
-}) => {
+export type ErrorBoundaryProps = PropsWithChildren<{ errorTracking?: AwsRum | null }>;
+
+export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ children, errorTracking }) => {
   return (
     // The error boundary wraps the entire app including providers to catch all errors.
     // Therefore the theme provider is needed here again to render the error boundary.
