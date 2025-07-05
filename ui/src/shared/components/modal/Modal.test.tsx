@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { ModalStory } from './Modal.story';
-import { animationOptions } from '../overlay/constants';
+import { defaultStyleOptions } from '../overlay/styleOptions';
 import { spy } from 'tinyspy';
 
 test.describe('Modal', () => {
@@ -16,7 +16,7 @@ test.describe('Modal', () => {
 
     const $ = await mount(<ModalStory componentProps={props} />);
 
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
     await expect($.page()).toHaveScreenshot('modal.png');
 
@@ -45,7 +45,7 @@ test.describe('Modal', () => {
 
     // Should not close on outside click
     await $.page().mouse.click(0, 0);
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
     expect(close.calls).toEqual([]);
   });

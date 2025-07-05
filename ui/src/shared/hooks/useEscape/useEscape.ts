@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { HtmlRef } from '~/shared/types';
 import { useDefinedContext } from '../useDefinedContext/useDefinedContext';
 import { EscapeStackContext } from './useStack/Context';
@@ -75,5 +75,5 @@ export const useEscape = (props: UseEscapeProps) => {
     };
   }, [isTopLevel, handler]);
 
-  return { isTopLevel };
+  return useMemo(() => ({ isTopLevel }), [isTopLevel]);
 };

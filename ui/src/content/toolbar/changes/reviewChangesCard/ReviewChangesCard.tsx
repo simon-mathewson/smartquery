@@ -9,6 +9,7 @@ import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { splitSqlStatements } from '~/shared/utils/sql/sql';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { useOverlay } from '~/shared/components/overlay/useOverlay';
 
 export type ReviewChangesCardProps = {
   triggerRef: React.RefObject<HTMLButtonElement>;
@@ -77,8 +78,13 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
     userSql,
   ]);
 
+  const overlay = useOverlay({
+    align: 'right',
+    triggerRef,
+  });
+
   return (
-    <OverlayCard align="right" htmlProps={{ className: 'p-3' }} triggerRef={triggerRef}>
+    <OverlayCard htmlProps={{ className: 'p-3' }} overlay={overlay}>
       {() => (
         <div className="w-[592px]">
           <SqlEditor onChange={(sql) => setUserSql(sql)} onSubmit={handleSubmit} value={userSql} />

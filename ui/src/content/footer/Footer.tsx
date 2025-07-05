@@ -6,6 +6,7 @@ import { Settings } from '../settings/Settings';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../auth/Context';
 import { AnalyticsContext } from '../analytics/Context';
+import { useOverlay } from '~/shared/components/overlay/useOverlay';
 
 export const Footer: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -14,15 +15,16 @@ export const Footer: React.FC = () => {
 
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
+  const overlay = useOverlay({
+    align: 'center',
+    darkenBackground: true,
+    triggerRef,
+    onOpen: () => track('open_settings'),
+  });
+
   return (
     <>
-      <OverlayCard
-        align="center"
-        htmlProps={{ className: 'w-[340px]' }}
-        darkenBackground
-        triggerRef={triggerRef}
-        onOpen={() => track('open_settings')}
-      >
+      <OverlayCard htmlProps={{ className: 'w-[340px]' }} overlay={overlay}>
         {({ close }) => <Settings close={close} />}
       </OverlayCard>
       <div className="fixed bottom-2 left-2 w-[224px]">

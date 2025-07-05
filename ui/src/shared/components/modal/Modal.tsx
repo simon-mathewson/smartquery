@@ -2,6 +2,7 @@ import { useState, type PropsWithChildren } from 'react';
 import { OverlayCard } from '../overlayCard/OverlayCard';
 import type { ModalControl } from './types';
 import { v4 as uuid } from 'uuid';
+import { useOverlay } from '../overlay/useOverlay';
 
 export type ModalProps = PropsWithChildren<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,10 +19,15 @@ export const Modal = (props: ModalProps) => {
   const [titleId] = useState(() => uuid());
   const [subtitleId] = useState(() => uuid());
 
+  const overlay = useOverlay({
+    closeOnOutsideClick: false,
+    darkenBackground: true,
+    isOpen,
+    onClose: close,
+  });
+
   return (
     <OverlayCard
-      closeOnOutsideClick={false}
-      darkenBackground
       htmlProps={{
         ...htmlProps,
         'aria-describedby': subtitleId,
@@ -29,8 +35,7 @@ export const Modal = (props: ModalProps) => {
         'aria-modal': true,
         role: 'dialog',
       }}
-      isOpen={isOpen}
-      onClose={close}
+      overlay={overlay}
     >
       {() => (
         <>

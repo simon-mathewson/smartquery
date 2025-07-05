@@ -2,7 +2,7 @@ import type { MountResult } from '@playwright/experimental-ct-react';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { ConnectionFormStory } from './ConnectionForm.story';
 import { spy } from 'tinyspy';
-import { animationOptions } from '~/shared/components/overlay/constants';
+import { defaultStyleOptions } from '~/shared/components/overlay/styleOptions';
 
 const getProps = () => ({ exit: spy() });
 
@@ -230,7 +230,7 @@ test.describe('ConnectionForm', () => {
     );
 
     await $.getByRole('button', { name: 'Delete connection' }).click();
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
     await $.page().getByRole('menu').getByRole('menuitem', { name: 'Delete connection' }).click();
 
     expect(removeConnection.calls).toEqual([['2']]);

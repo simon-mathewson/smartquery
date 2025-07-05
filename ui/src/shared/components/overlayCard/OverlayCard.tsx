@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '../card/Card';
-import { Overlay, OverlayChildrenControlProps, OverlayProps } from '../overlay/Overlay';
+import type { OverlayChildrenControlProps, OverlayProps } from '../overlay/Overlay';
+import { Overlay } from '../overlay/Overlay';
 
 export type OverlayCardProps = Omit<OverlayProps, 'children'> & {
   children: (props: OverlayChildrenControlProps) => React.ReactNode;

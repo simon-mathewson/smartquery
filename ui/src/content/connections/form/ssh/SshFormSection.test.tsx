@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { spy } from 'tinyspy';
 import type { SshFormSectionProps } from './SshFormSection';
-import { SshFormSection } from './SshFormSection';
 import { SshFormSectionStory } from './SshFormSection.story';
 
 export const getProps = () =>
@@ -58,7 +57,7 @@ test.describe('SshFormSection', () => {
       ],
     ]);
 
-    await $.update(<SshFormSection {...props} />);
+    await $.update(<SshFormSectionStory componentProps={props} />);
 
     await expect(toggle).toHaveAttribute('aria-checked', 'true');
 

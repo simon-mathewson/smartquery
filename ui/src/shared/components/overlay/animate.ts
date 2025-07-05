@@ -1,9 +1,10 @@
-import { animationOptions } from './constants';
+import type { StyleOptions } from './styleOptions';
 
 export const animate = async (
   el: HTMLElement,
   fromStyles: Record<string, string | number>,
   toStyles: Record<string, string | number>,
+  animationOptions: StyleOptions['animationOptions'],
 ) => {
   await el.animate([fromStyles, toStyles], animationOptions).finished;
 

@@ -4,11 +4,16 @@ import { TestApp } from '~/test/componentTests/TestApp';
 import { Button } from '../button/Button';
 import { Input } from '../input/Input';
 import { OverlayCard } from './OverlayCard';
+import { useOverlay } from '../overlay/useOverlay';
 
-export const OverlayCardStory: React.FC<StoryProps> = ({ testApp }) => (
-  <TestApp {...testApp}>
+export const OverlayCardStoryInner: React.FC = () => {
+  const overlay = useOverlay({
+    isOpen: true,
+  });
+
+  return (
     <div className="flex h-screen items-center justify-center">
-      <OverlayCard isOpen>
+      <OverlayCard overlay={overlay}>
         {() => (
           <>
             <div>Content</div>
@@ -18,5 +23,13 @@ export const OverlayCardStory: React.FC<StoryProps> = ({ testApp }) => (
         )}
       </OverlayCard>
     </div>
-  </TestApp>
-);
+  );
+};
+
+export const OverlayCardStory: React.FC<StoryProps> = ({ testApp }) => {
+  return (
+    <TestApp {...testApp}>
+      <OverlayCardStoryInner />
+    </TestApp>
+  );
+};

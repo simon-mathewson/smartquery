@@ -8,6 +8,7 @@ import { AnalyticsContext } from '~/content/analytics/Context';
 import { Button } from '~/shared/components/button/Button';
 import { Logo } from '~/shared/components/logo/Logo';
 import { routes } from '~/router/routes';
+import { useOverlay } from '~/shared/components/overlay/useOverlay';
 
 export const NavigationSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -15,6 +16,13 @@ export const NavigationSidebar: React.FC = () => {
 
   const connectionsTriggerRef = useRef<HTMLButtonElement | null>(null);
   const homeButtonRef = useRef<HTMLAnchorElement | null>(null);
+
+  const connectionsOverlay = useOverlay({
+    align: 'left',
+    anchorRef: homeButtonRef,
+    darkenBackground: true,
+    triggerRef: connectionsTriggerRef,
+  });
 
   return (
     <div className="sticky top-0 flex h-[calc(100vh-90px)] grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-1 px-2 pt-2">
@@ -45,12 +53,7 @@ export const NavigationSidebar: React.FC = () => {
         </button>
       </div>
 
-      <OverlayCard
-        align="left"
-        anchorRef={homeButtonRef}
-        htmlProps={{ className: 'w-max p-2 shadow-2xl' }}
-        triggerRef={connectionsTriggerRef}
-      >
+      <OverlayCard htmlProps={{ className: 'w-max p-2 shadow-2xl' }} overlay={connectionsOverlay}>
         {() => <Connections />}
       </OverlayCard>
 

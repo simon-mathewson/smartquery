@@ -1,13 +1,32 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { OverlayProps } from './Overlay';
 import { useStyles } from './useStyles';
 import { isNotNull, isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { mergeRefs } from 'react-merge-refs';
-import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
 import { useKeyboardNavigation } from './useKeyboardNavigation';
+import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
+import type { StyleOptions } from './styleOptions';
 
-export const useOverlay = (props: OverlayProps) => {
+export type UseOverlayProps = {
+  align?: 'left' | 'center' | 'right';
+  anchorRef?: React.MutableRefObject<HTMLElement | null>;
+  closeOnOutsideClick?: boolean;
+  darkenBackground?: boolean;
+  isOpen?: boolean;
+  matchTriggerWidth?: boolean;
+  onClose?: () => void;
+  onOpen?: () => void;
+  position?: {
+    x: 'left' | 'center' | 'right';
+    y: 'top' | 'center' | 'bottom';
+  };
+  styleOptions?: Partial<StyleOptions>;
+  triggerRef?: React.MutableRefObject<HTMLElement | null>;
+};
+
+export type OverlayControl = ReturnType<typeof useOverlay>;
+
+export const useOverlay = (props: UseOverlayProps) => {
   const {
     align,
     closeOnOutsideClick = true,
@@ -19,6 +38,7 @@ export const useOverlay = (props: OverlayProps) => {
     position,
     triggerRef,
     anchorRef = triggerRef,
+    styleOptions,
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -30,11 +50,11 @@ export const useOverlay = (props: OverlayProps) => {
     anchorRef,
     matchTriggerWidth,
     position,
+    styleOptions,
   });
 
   const {
     animateOutBackground,
-    animateInWrapper,
     animateOutWrapper,
     backgroundRef,
     registerContent,
@@ -104,7 +124,7 @@ export const useOverlay = (props: OverlayProps) => {
     return () => {
       trigger.removeEventListener('click', handleClick);
     };
-  }, [animateInWrapper, close, isOpen, open, triggerRef, updateStyles]);
+  }, [close, isOpen, open, triggerRef]);
 
   const localRef = useRef<HTMLDivElement | null>(null);
 
@@ -132,10 +152,12 @@ export const useOverlay = (props: OverlayProps) => {
     () => ({
       childrenProps,
       close,
+      darkenBackground,
       isOpen,
+      open,
       ref,
       styles,
     }),
-    [childrenProps, close, isOpen, ref, styles],
+    [childrenProps, close, darkenBackground, isOpen, open, ref, styles],
   );
 };

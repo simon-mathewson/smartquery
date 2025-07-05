@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import { OverlayPortal } from '../overlayPortal/OverlayPortal';
-import { useOverlay } from './useOverlay';
+import type { OverlayControl } from './useOverlay';
 
 export type OverlayChildrenControlProps = {
   close: () => Promise<void>;
@@ -18,32 +18,23 @@ export type OverlayChildrenProps = {
 };
 
 export type OverlayProps = {
-  align?: 'left' | 'center' | 'right';
-  anchorRef?: React.MutableRefObject<HTMLElement | null>;
   children: (props: OverlayChildrenProps) => React.ReactNode;
-  closeOnOutsideClick?: boolean;
-  darkenBackground?: boolean;
+  overlay: OverlayControl;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
-  isOpen?: boolean;
-  matchTriggerWidth?: boolean;
-  onClose?: () => void;
-  onOpen?: () => void;
-  position?: {
-    x: 'left' | 'center' | 'right';
-    y: 'top' | 'center' | 'bottom';
-  };
-  triggerRef?: React.MutableRefObject<HTMLElement | null>;
 };
 
 export const Overlay: React.FC<OverlayProps> = (props) => {
-  const { children, darkenBackground, htmlProps } = props;
-
   const {
-    childrenProps: childrenControlProps,
-    isOpen,
-    ref,
-    styles: { animateInBackground, animateInWrapper, backgroundRef, wrapperRef },
-  } = useOverlay(props);
+    children,
+    overlay: {
+      childrenProps: childrenControlProps,
+      darkenBackground,
+      isOpen,
+      ref,
+      styles: { animateInBackground, animateInWrapper, backgroundRef, wrapperRef },
+    },
+    htmlProps,
+  } = props;
 
   const childrenProps = useMemo(
     () =>

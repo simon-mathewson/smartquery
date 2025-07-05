@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { v4 as uuid } from 'uuid';
 import { FieldContext } from '../field/FieldContext';
 import { List } from '../list/List';
+import { useOverlay } from '../overlay/useOverlay';
 
 export type SelectProps<T extends string> = {
   htmlProps?: React.HTMLProps<HTMLButtonElement>;
@@ -27,6 +28,13 @@ export function Select<T extends string>(props: SelectProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
 
   const [listboxId] = useState(uuid);
+
+  const overlay = useOverlay({
+    matchTriggerWidth: true,
+    onClose: () => setIsOpen(false),
+    onOpen: () => setIsOpen(true),
+    triggerRef,
+  });
 
   return (
     <>
@@ -60,13 +68,7 @@ export function Select<T extends string>(props: SelectProps<T>) {
         </div>
         <ExpandMore className="text-secondary" />
       </button>
-      <OverlayCard
-        htmlProps={{ className: '!p-0' }}
-        matchTriggerWidth
-        onClose={() => setIsOpen(false)}
-        onOpen={() => setIsOpen(true)}
-        triggerRef={triggerRef}
-      >
+      <OverlayCard htmlProps={{ className: '!p-0' }} overlay={overlay}>
         {({ close }) => (
           <List
             htmlProps={{

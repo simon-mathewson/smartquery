@@ -25,6 +25,7 @@ export const InputModesSelect: React.FC<InputModesSelectProps> = (props) => {
         icon: <Code />,
         variant: 'default',
       },
+      tooltip: 'SQL',
       value: 'editor',
     },
   ];
@@ -37,6 +38,7 @@ export const InputModesSelect: React.FC<InputModesSelectProps> = (props) => {
           icon: <Search />,
           variant: 'default',
         },
+        tooltip: 'Search',
         value: 'search',
       },
       {
@@ -45,6 +47,7 @@ export const InputModesSelect: React.FC<InputModesSelectProps> = (props) => {
           icon: <FilterListOutlined />,
           variant: 'default',
         },
+        tooltip: 'Filters',
         value: 'filters',
       },
     );

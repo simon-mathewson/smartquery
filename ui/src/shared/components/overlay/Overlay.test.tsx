@@ -1,9 +1,9 @@
 import type { MountResult } from '@playwright/experimental-ct-react';
 import { expect, test } from '@playwright/experimental-ct-react';
-import { OverlayStory } from './Overlay.story';
-import { animationOptions, overlayMargin } from './constants';
-import type { OverlayProps } from './Overlay';
 import { spy } from 'tinyspy';
+import { defaultStyleOptions } from './styleOptions';
+import { OverlayStory } from './Overlay.story';
+import type { UseOverlayProps } from './useOverlay';
 
 test.describe('Overlay', () => {
   const getOverlay = ($: MountResult) => $.page().locator('#overlay > div > div');
@@ -19,7 +19,7 @@ test.describe('Overlay', () => {
         trigger
       />,
     );
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
     await expect($.page()).toHaveScreenshot('overlay.png');
 
@@ -42,7 +42,7 @@ test.describe('Overlay', () => {
 
     const closeButton = overlay.getByRole('button', { name: 'Close' });
     await closeButton.click();
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
     await expect(overlay).not.toBeAttached();
 
     expect(onClose.calls).toEqual([[]]);
@@ -59,7 +59,7 @@ test.describe('Overlay', () => {
     const trigger = getTrigger($);
 
     await trigger.click();
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
     await expect(overlay).toBeVisible();
 
     // Expect first control to be focused
@@ -77,7 +77,7 @@ test.describe('Overlay', () => {
 
     // Allow closing the overlay overlay with Escape
     await $.page().keyboard.press('Escape');
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
     await expect(overlay).not.toBeAttached();
 
     await expect(trigger).toBeFocused();
@@ -92,7 +92,7 @@ test.describe('Overlay', () => {
         trigger={{ htmlProps: { className: 'fixed bottom-0' } }}
       />,
     );
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
     const overlay = getOverlay($);
 
@@ -100,7 +100,8 @@ test.describe('Overlay', () => {
 
     const trigger = getTrigger($);
     expect(await overlay.evaluate((el) => el.getBoundingClientRect().bottom)).toBeCloseTo(
-      (await trigger.evaluate((el) => el.getBoundingClientRect().top)) - overlayMargin,
+      (await trigger.evaluate((el) => el.getBoundingClientRect().top)) -
+        defaultStyleOptions.overlayMargin,
       -0.5,
     );
     expect(await overlay.evaluate((el) => el.getBoundingClientRect().left)).toBeCloseTo(
@@ -121,7 +122,7 @@ test.describe('Overlay', () => {
         trigger={{ htmlProps: { className: 'fixed right-0' } }}
       />,
     );
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
     const overlay = getOverlay($);
 
@@ -129,12 +130,13 @@ test.describe('Overlay', () => {
 
     const trigger = getTrigger($);
     expect(await overlay.evaluate((el) => el.getBoundingClientRect().top)).toBeCloseTo(
-      (await trigger.evaluate((el) => el.getBoundingClientRect().bottom)) + overlayMargin,
+      (await trigger.evaluate((el) => el.getBoundingClientRect().bottom)) +
+        defaultStyleOptions.overlayMargin,
       -0.5,
     );
     expect(
       await overlay.evaluate((el) => window.innerWidth - el.getBoundingClientRect().right),
-    ).toBeCloseTo(overlayMargin, -0.5);
+    ).toBeCloseTo(defaultStyleOptions.overlayMargin, -0.5);
   });
 
   test.describe('allows aligning the overlay relative to the trigger', () => {
@@ -150,7 +152,7 @@ test.describe('Overlay', () => {
             trigger
           />,
         );
-        await $.page().waitForTimeout(animationOptions.duration);
+        await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
         const overlay = getOverlay($);
         await expect(overlay).toBeVisible();
@@ -195,7 +197,7 @@ test.describe('Overlay', () => {
     { x: 'left', y: 'bottom' },
     { x: 'center', y: 'bottom' },
     { x: 'right', y: 'bottom' },
-  ] satisfies OverlayProps['position'][];
+  ] satisfies UseOverlayProps['position'][];
 
   test.describe('allows specifying the position of the overlay without trigger', () => {
     scenarios.forEach((position) => {
@@ -209,7 +211,7 @@ test.describe('Overlay', () => {
             }}
           />,
         );
-        await $.page().waitForTimeout(animationOptions.duration);
+        await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
         const overlay = getOverlay($);
         await expect(overlay).toBeVisible();
@@ -221,25 +223,31 @@ test.describe('Overlay', () => {
 
         switch (position.y) {
           case 'top':
-            expect(overlayRect.top).toBeCloseTo(overlayMargin, -0.5);
+            expect(overlayRect.top).toBeCloseTo(defaultStyleOptions.overlayMargin, -0.5);
             break;
           case 'center':
             expect(overlayRect.top).toBeCloseTo(windowHeight - overlayRect.bottom, -0.5);
             break;
           case 'bottom':
-            expect(overlayRect.bottom).toBeCloseTo(windowHeight - overlayMargin, -0.5);
+            expect(overlayRect.bottom).toBeCloseTo(
+              windowHeight - defaultStyleOptions.overlayMargin,
+              -0.5,
+            );
             break;
         }
 
         switch (position.x) {
           case 'left':
-            expect(overlayRect.left).toBeCloseTo(overlayMargin, -0.5);
+            expect(overlayRect.left).toBeCloseTo(defaultStyleOptions.overlayMargin, -0.5);
             break;
           case 'center':
             expect(overlayRect.left).toBeCloseTo(windowWidth - overlayRect.right, -0.5);
             break;
           case 'right':
-            expect(overlayRect.right).toBeCloseTo(windowWidth - overlayMargin, -0.5);
+            expect(overlayRect.right).toBeCloseTo(
+              windowWidth - defaultStyleOptions.overlayMargin,
+              -0.5,
+            );
             break;
         }
       });
@@ -256,13 +264,13 @@ test.describe('Overlay', () => {
         trigger
       />,
     );
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
     const overlay = getOverlay($);
     await expect(overlay).toBeVisible();
 
     await $.page().mouse.click(0, 0);
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
     await expect(overlay).not.toBeAttached();
 
     // Allows disable closing on outside click
@@ -280,7 +288,7 @@ test.describe('Overlay', () => {
     await expect(newOverlay).toBeVisible();
 
     await $.page().mouse.click(0, 0);
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
     await expect(newOverlay).toBeVisible();
   });
 
@@ -295,18 +303,20 @@ test.describe('Overlay', () => {
         trigger
       />,
     );
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
     const overlay = getOverlay($);
     await expect(overlay).toBeVisible();
 
     const anchor = $.page().locator('.bg-red-500');
     expect(await overlay.evaluate((el) => el.getBoundingClientRect().top)).toBeCloseTo(
-      (await anchor.evaluate((el) => el.getBoundingClientRect().bottom)) + overlayMargin,
+      (await anchor.evaluate((el) => el.getBoundingClientRect().bottom)) +
+        defaultStyleOptions.overlayMargin,
       -0.5,
     );
     expect(await overlay.evaluate((el) => el.getBoundingClientRect().left)).toBeCloseTo(
-      (await anchor.evaluate((el) => el.getBoundingClientRect().left)) + overlayMargin,
+      (await anchor.evaluate((el) => el.getBoundingClientRect().left)) +
+        defaultStyleOptions.overlayMargin,
       -0.5,
     );
   });
@@ -318,7 +328,7 @@ test.describe('Overlay', () => {
         trigger={{ htmlProps: { className: 'w-[150px]' } }}
       />,
     );
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
     const overlay = getOverlay($);
     await expect(overlay).toBeVisible();
@@ -340,7 +350,7 @@ test.describe('Overlay', () => {
         trigger
       />,
     );
-    await $.page().waitForTimeout(animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
     const background = $.page().locator('.fixed');
     await expect(background).toHaveCSS('background-color', 'rgba(0, 0, 0, 0.5)');
@@ -356,7 +366,7 @@ test.describe('Overlay', () => {
         trigger
       />,
     );
-    await $$.page().waitForTimeout(animationOptions.duration);
+    await $$.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
 
     await expect(background).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   });

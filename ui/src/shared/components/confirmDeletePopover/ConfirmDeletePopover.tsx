@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { OverlayCard } from '../overlayCard/OverlayCard';
 import { v4 as uuid } from 'uuid';
 import { Button } from '../button/Button';
+import { useOverlay } from '../overlay/useOverlay';
 
 export type ConfirmDeletePopoverProps = {
   onConfirm: () => void;
@@ -29,18 +30,22 @@ export const ConfirmDeletePopover: React.FC<ConfirmDeletePopoverProps> = (props)
     [isOpen, menuId, text],
   );
 
+  const overlay = useOverlay({
+    align: 'right',
+    onClose: () => setIsOpen(false),
+    onOpen: () => setIsOpen(true),
+    triggerRef,
+  });
+
   return (
     <>
       {renderTrigger(triggerProps)}
       <OverlayCard
-        align="right"
         htmlProps={{
           id: menuId,
           role: 'menu',
         }}
-        onClose={() => setIsOpen(false)}
-        onOpen={() => setIsOpen(true)}
-        triggerRef={triggerRef}
+        overlay={overlay}
       >
         {() => (
           <Button

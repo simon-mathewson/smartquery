@@ -7,6 +7,7 @@ import { ResultContext } from '../../Context';
 import type { EditOverlayFieldProps } from './field/Field';
 import { EditOverlayField } from './field/Field';
 import { getPrimaryKeys } from '../../../utils/primaryKeys';
+import { useOverlay } from '~/shared/components/overlay/useOverlay';
 
 export type EditModalProps = {
   columnCount: number;
@@ -60,17 +61,18 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
     );
   }, [columnCount, columns, rows, selection, table]);
 
+  const overlay = useOverlay({
+    align: 'center',
+    anchorRef: selectionActionsPopoverRef,
+    onClose: () => setIsEditing(false),
+    onOpen: () => setIsEditing(true),
+    triggerRef: editButtonRef,
+  });
+
   if (selection.length === 0) return null;
 
   return (
-    <OverlayCard
-      align="center"
-      anchorRef={selectionActionsPopoverRef}
-      htmlProps={{ className: 'p-3' }}
-      onClose={() => setIsEditing(false)}
-      onOpen={() => setIsEditing(true)}
-      triggerRef={editButtonRef}
-    >
+    <OverlayCard htmlProps={{ className: 'p-3' }} overlay={overlay}>
       {() => (
         <div className="no-scrollbar grid w-full min-w-[320px] max-w-[360px] gap-2">
           {columnFields?.map((fieldProps, index) => (

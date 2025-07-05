@@ -6,6 +6,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { ToastContext } from './Context';
 import { useEffect, useRef, useState } from 'react';
 import type { ToastProps } from './useToast';
+import { useOverlay } from '~/shared/components/overlay/useOverlay';
 
 export const Toast: React.FC = () => {
   const { queue, remove } = useDefinedContext(ToastContext);
@@ -44,6 +45,16 @@ export const Toast: React.FC = () => {
     setCurrentToast(nextToast);
   }, [currentToast, queue]);
 
+  const overlay = useOverlay({
+    isOpen: Boolean(currentToast),
+    onClose: () => {
+      if (currentToast) {
+        remove(currentToast.id);
+      }
+    },
+    position: { x: 'center', y: 'bottom' },
+  });
+
   if (!currentToast) {
     return null;
   }
@@ -64,9 +75,7 @@ export const Toast: React.FC = () => {
         onClick: () => remove(id),
         ...htmlProps,
       }}
-      isOpen
-      onClose={() => remove(id)}
-      position={{ x: 'center', y: 'bottom' }}
+      overlay={overlay}
     >
       {({ close, open }) => {
         closeRef.current = close;

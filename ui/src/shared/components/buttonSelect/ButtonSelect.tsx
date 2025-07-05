@@ -4,11 +4,12 @@ import { Button } from '../button/Button';
 import type { XOR } from 'ts-essentials';
 import { useContext } from 'react';
 import { FieldContext } from '../field/FieldContext';
+import { Tooltip } from '../tooltip/Tooltip';
 
 export type ButtonSelectProps<T> = {
   equalWidth?: boolean;
   fullWidth?: boolean;
-  options: Array<{ button: ButtonButtonProps; value: T }>;
+  options: Array<{ button: ButtonButtonProps; tooltip?: string; value: T }>;
   selectedButton?: ButtonProps;
 } & XOR<
   {
@@ -43,28 +44,32 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
       })}
       role="radiogroup"
     >
-      {options.map(({ button, value }, index) => (
-        <Button
-          color="secondary"
-          variant="highlighted"
-          {...button}
-          {...(value === selectedValue ? selectedButton : {})}
-          element="button"
-          htmlProps={{
-            ...button.htmlProps,
-            'aria-checked': value === selectedValue,
-            className: classNames({ 'grow basis-0': equalWidth, 'w-full': fullWidth }),
-            onClick: () => {
-              if (required) {
-                onChange(value);
-                return;
-              }
-              onChange(value === selectedValue ? undefined : value);
-            },
-            role: 'radio',
-          }}
-          key={index}
-        />
+      {options.map(({ button, tooltip, value }, index) => (
+        <Tooltip<HTMLButtonElement> text={tooltip} key={index}>
+          {(tooltip) => (
+            <Button
+              color="secondary"
+              variant="highlighted"
+              {...button}
+              {...(value === selectedValue ? selectedButton : {})}
+              element="button"
+              htmlProps={{
+                ...button.htmlProps,
+                ...tooltip.htmlProps,
+                'aria-checked': value === selectedValue,
+                className: classNames({ 'grow basis-0': equalWidth, 'w-full': fullWidth }),
+                onClick: () => {
+                  if (required) {
+                    onChange(value);
+                    return;
+                  }
+                  onChange(value === selectedValue ? undefined : value);
+                },
+                role: 'radio',
+              }}
+            />
+          )}
+        </Tooltip>
       ))}
     </div>
   );

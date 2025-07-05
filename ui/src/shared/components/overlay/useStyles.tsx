@@ -1,30 +1,29 @@
+import { merge } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import type { OverlayProps } from './Overlay';
-import { animationVerticalOffset, overlayMargin } from './constants';
 import { animate } from './animate';
+import { defaultStyleOptions } from './styleOptions';
+import type { UseOverlayProps } from './useOverlay';
 
 export type UseStylesProps = Pick<
-  OverlayProps,
-  'align' | 'anchorRef' | 'matchTriggerWidth' | 'position'
+  UseOverlayProps,
+  'align' | 'anchorRef' | 'matchTriggerWidth' | 'position' | 'styleOptions'
 >;
 
-const getInStyles = () =>
-  ({
-    opacity: '1',
-    transform: 'translateY(0)',
-  }) as const;
-
-const getOutStyles = (animateFromBottom: boolean) =>
-  ({
-    opacity: '0',
-    transform: animateFromBottom
-      ? `translateY(${animationVerticalOffset}px)`
-      : `translateY(-${animationVerticalOffset}px)`,
-  }) as const;
-
 export const useStyles = (props: UseStylesProps) => {
-  const { align = 'left', anchorRef, matchTriggerWidth, position } = props;
+  const {
+    align = 'left',
+    anchorRef,
+    matchTriggerWidth,
+    position,
+    styleOptions: styleOptionsProp,
+  } = props;
+
+  const styleOptions = useMemo(
+    () => merge(defaultStyleOptions, styleOptionsProp),
+    [styleOptionsProp],
+  );
+  const { overlayMargin, animationVerticalOffset, animationOptions } = styleOptions;
 
   const animateFromBottomRef = useRef(position?.y === 'bottom');
 
@@ -80,7 +79,7 @@ export const useStyles = (props: UseStylesProps) => {
         width: matchTriggerWidth ? `${anchorRect.width}px` : '',
       });
     },
-    [align, matchTriggerWidth],
+    [align, matchTriggerWidth, overlayMargin],
   );
 
   const updateStylesBasedOnPosition = useCallback(() => {
@@ -110,7 +109,7 @@ export const useStyles = (props: UseStylesProps) => {
       top: `${top}px`,
       width: '',
     });
-  }, [position]);
+  }, [overlayMargin, position?.x, position?.y]);
 
   const updateStyles = useCallback(() => {
     const anchor = anchorRef?.current;
@@ -128,8 +127,9 @@ export const useStyles = (props: UseStylesProps) => {
         background,
         { backgroundColor: 'rgba(0, 0, 0, 0)' },
         { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+        animationOptions,
       ),
-    [],
+    [animationOptions],
   );
 
   const animateOutBackground = useCallback(async () => {
@@ -140,21 +140,47 @@ export const useStyles = (props: UseStylesProps) => {
       background,
       { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
       { backgroundColor: 'rgba(0, 0, 0, 0)' },
+      animationOptions,
     );
-  }, []);
+  }, [animationOptions]);
+
+  const getInStyles = useCallback(
+    () =>
+      ({
+        opacity: '1',
+        transform: 'translateY(0)',
+      }) as const,
+    [],
+  );
+
+  const getOutStyles = useCallback(
+    (animateFromBottom: boolean) =>
+      ({
+        opacity: '0',
+        transform: animateFromBottom
+          ? `translateY(${animationVerticalOffset}px)`
+          : `translateY(-${animationVerticalOffset}px)`,
+      }) as const,
+    [animationVerticalOffset],
+  );
 
   const animateInWrapper = useCallback(
     (wrapper: HTMLElement) =>
-      animate(wrapper, getOutStyles(animateFromBottomRef.current), getInStyles()),
-    [],
+      animate(wrapper, getOutStyles(animateFromBottomRef.current), getInStyles(), animationOptions),
+    [animationOptions, getInStyles, getOutStyles],
   );
 
   const animateOutWrapper = useCallback(async () => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
-    await animate(wrapper, getInStyles(), getOutStyles(animateFromBottomRef.current));
-  }, []);
+    await animate(
+      wrapper,
+      getInStyles(),
+      getOutStyles(animateFromBottomRef.current),
+      animationOptions,
+    );
+  }, [animationOptions, getInStyles, getOutStyles]);
 
   useEffect(() => {
     window.addEventListener('resize', updateStyles);
