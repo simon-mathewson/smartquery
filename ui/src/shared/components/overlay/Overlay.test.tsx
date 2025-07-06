@@ -274,7 +274,8 @@ test.describe('Overlay', () => {
     await expect(overlay).not.toBeAttached();
 
     // Allows disable closing on outside click
-    await $.update(
+    await $.unmount();
+    const $2 = await mount(
       <OverlayStory
         componentProps={{
           htmlProps: { className: 'w-[200px]' },
@@ -287,8 +288,8 @@ test.describe('Overlay', () => {
     const newOverlay = getOverlay($);
     await expect(newOverlay).toBeVisible();
 
-    await $.page().mouse.click(0, 0);
-    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
+    await $2.page().mouse.click(0, 0);
+    await $2.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
     await expect(newOverlay).toBeVisible();
   });
 
