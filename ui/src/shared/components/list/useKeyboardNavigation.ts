@@ -73,7 +73,13 @@ export const useKeyboardNavigation = () => {
     }
 
     // Focus first item starting with the pressed key
-    if (/^[\p{L}|\p{N}]$/u.test(event.key)) {
+    if (
+      /^[\p{L}|\p{N}]$/u.test(event.key) &&
+      !event.altKey &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.shiftKey
+    ) {
       event.preventDefault();
 
       const firstEl = Array.from(event.currentTarget.children).find((el) => {
