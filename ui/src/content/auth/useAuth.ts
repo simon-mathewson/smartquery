@@ -32,7 +32,7 @@ export const useAuth = () => {
 
       if (!props.silent) {
         toast.add({
-          title: 'Successfully logged out',
+          title: 'Logout successful',
           color: 'success',
         });
 
