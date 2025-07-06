@@ -2,13 +2,7 @@ import { assert, type XOR } from 'ts-essentials';
 import classNames from 'classnames';
 import React, { useCallback } from 'react';
 import { type Column, type Value } from '~/shared/types';
-import {
-  isDateTimeType,
-  isEnumType,
-  isNumberType,
-  isTextType,
-  isTimeType,
-} from '~/shared/dataTypes/utils';
+import { isDateTimeType, isEnumType, isNumberType, isTimeType } from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { QueryContext } from '../../Context';
 import type { CreateValue } from '~/content/edit/types';
@@ -85,7 +79,7 @@ export const Cell: React.FC<CellProps> = (props) => {
           operator: '=',
           left: { type: 'column_ref', column: foreignKey.column, table: null },
           right: {
-            type: isTextType(column.dataType) ? 'single_quote_string' : 'number',
+            type: isNumberType(column.dataType) ? 'number' : 'single_quote_string',
             value,
           },
         },
