@@ -14,6 +14,7 @@ export const AddToDesktop: React.FC = () => {
 
   return (
     <Button
+      align="left"
       color="primary"
       htmlProps={{
         onClick: () => {

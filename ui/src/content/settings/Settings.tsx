@@ -1,5 +1,5 @@
 import React from 'react';
-import { PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
+import { GitHub, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Field } from '~/shared/components/field/Field';
 import type { ThemeModePreference } from '../theme/types';
@@ -78,9 +78,24 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           value={isConsentGranted}
         />
       </Field>
+      <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
+        <Button
+          align="left"
+          color="secondary"
+          element="a"
+          htmlProps={{
+            className: 'w-full',
+            href: import.meta.env.VITE_GITHUB_DISCUSSIONS_URL,
+            target: '_blank',
+          }}
+          icon={<GitHub />}
+          label="GitHub Discussions"
+        />
+      </Field>
       <AddToDesktop />
       {user && (
         <Button
+          align="left"
           htmlProps={{
             onClick: () => {
               void close();
@@ -95,6 +110,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
       {!user && (
         <>
           <Button
+            align="left"
             element="link"
             htmlProps={{
               href: routes.signup(),
@@ -107,6 +123,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
             label="Sign up"
           />
           <Button
+            align="left"
             element="link"
             htmlProps={{
               href: routes.login(),
