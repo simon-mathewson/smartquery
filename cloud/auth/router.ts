@@ -5,7 +5,8 @@ import crypto from 'crypto';
 import { z } from 'zod';
 import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import { trpc } from '../trpc';
-import { createAuthToken } from './authToken';
+import { createAccessToken } from './accessToken';
+import { createRefreshToken, verifyRefreshToken } from './refreshToken';
 import { deriveKeyEncryptionKeyFromPassword } from './deriveKeyEncryptionKeyFromPassword';
 import { encrypt } from './encrypt';
 import { hashPassword } from './hashPassword';
@@ -39,18 +40,91 @@ export const authRouter = trpc.router({
 
       await verifyPassword(user, password);
 
-      const token = createAuthToken({ userId: user.id });
+      const accessToken = createAccessToken(user.id);
+      const { token: refreshToken, id: refreshTokenId } = await createRefreshToken(
+        { userId: user.id },
+        prisma,
+      );
 
-      setCookie('authToken', token, {
+      setCookie('accessToken', accessToken, {
         httpOnly: true,
-        maxAge: 60 * 60 * 24,
+        maxAge: 15 * 60, // 15 minutes
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      });
+
+      setCookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: '/trpc/auth.refresh', // Crucial: Only sent to refresh endpoint
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      });
+
+      setCookie('refreshTokenId', refreshTokenId, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 30, // 30 days
         path: '/',
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
       });
     }),
-  logOut: trpc.procedure.mutation(async ({ ctx: { setCookie } }) => {
-    setCookie('authToken', '', {
+  refresh: trpc.procedure.mutation(async ({ ctx: { prisma, getCookie, setCookie } }) => {
+    const refreshToken = getCookie('refreshToken');
+
+    if (!refreshToken) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'No refresh token provided',
+      });
+    }
+
+    try {
+      const { userId } = await verifyRefreshToken(refreshToken, prisma);
+
+      const newAccessToken = createAccessToken(userId);
+
+      setCookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        maxAge: 15 * 60, // 15 minutes
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      });
+    } catch {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Invalid refresh token',
+      });
+    }
+  }),
+  logOut: trpc.procedure.mutation(async ({ ctx: { setCookie, getCookie, prisma } }) => {
+    const refreshTokenId = getCookie('refreshTokenId');
+
+    if (refreshTokenId) {
+      await prisma.refreshToken.deleteMany({
+        where: { id: refreshTokenId },
+      });
+    }
+
+    setCookie('accessToken', '', {
+      httpOnly: true,
+      maxAge: 0,
+      path: '/',
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    setCookie('refreshToken', '', {
+      httpOnly: true,
+      maxAge: 0,
+      path: '/trpc/auth.refresh',
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    setCookie('refreshTokenId', '', {
       httpOnly: true,
       maxAge: 0,
       path: '/',

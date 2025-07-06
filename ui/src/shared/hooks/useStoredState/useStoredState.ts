@@ -28,5 +28,22 @@ export const useStoredState = <T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
+  // Listen for storage changes from other tabs
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === key && event.newValue !== null) {
+        const parsedValue = superjson.parse<T>(event.newValue);
+        const migratedValue = migrations.reduce(
+          (value, migration) => migration(value),
+          parsedValue,
+        );
+        setState(migratedValue);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [key, migrations]);
+
   return [state, setState] as const;
 };

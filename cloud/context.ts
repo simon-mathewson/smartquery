@@ -1,7 +1,7 @@
 import type { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import * as cookie from 'cookie';
 import { PrismaClient, User } from '~/prisma/generated/client';
-import { verifyAuthToken } from './auth/authToken';
+import { verifyAccessToken } from './auth/accessToken';
 
 export type Context = {
   getCookie: ReturnType<typeof createGetCookie>;
@@ -22,10 +22,10 @@ export const createContext = async ({
   const setCookie = createSetCookie(res);
 
   const getUser = async () => {
-    const authToken = getCookie('authToken');
-    if (!authToken) return null;
+    const accessToken = getCookie('accessToken');
+    if (!accessToken) return null;
 
-    const decoded = verifyAuthToken(authToken);
+    const decoded = verifyAccessToken(accessToken);
 
     // Return null if not found, let `isAuthorized` throw to trigger client side logout
     return prisma.user.findUnique({
@@ -53,5 +53,9 @@ export const createGetCookie = (req: CreateExpressContextOptions['req']) => (nam
 export const createSetCookie =
   (res: CreateExpressContextOptions['res']) =>
   (name: string, value: string, options?: cookie.SerializeOptions) => {
-    res.setHeader('Set-Cookie', cookie.serialize(name, value, options));
+    const existingCookies = res.getHeader('Set-Cookie') as string[] | undefined;
+    res.setHeader('Set-Cookie', [
+      ...(existingCookies ?? []),
+      cookie.serialize(name, value, options),
+    ]);
   };

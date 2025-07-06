@@ -534,6 +534,13 @@ export const useConnections = (props: UseConnectionsProps) => {
     }
   }, [disconnect, dbRouteParams]);
 
+  // Disconnect and navigate home if active connection can't be found (can happen after logout)
+  useEffect(() => {
+    if (activeConnection && !connections.find((c) => c.id === activeConnection.id)) {
+      navigate(routes.root());
+    }
+  }, [activeConnection, connections, navigate]);
+
   return useMemo(
     () => ({
       activeConnection,

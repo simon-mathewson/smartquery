@@ -33,19 +33,34 @@ model Connection {
   sshUser            String?
   user               User     @relation(fields: [userId], references: [id])
   userId             String   @db.Uuid
+
+  @@index([userId])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  token     String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid
+
+  @@index([token])
+  @@index([userId])
 }
 
 model User {
-  id                     String       @id @default(uuid()) @db.Uuid
-  createdAt              DateTime     @default(now())
-  updatedAt              DateTime     @updatedAt
+  id                     String         @id @default(uuid()) @db.Uuid
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
   connections            Connection[]
   dataEncryptionKey      String
   dataEncryptionKeyNonce String
-  email                  String       @unique
+  email                  String         @unique
   keyEncryptionKeySalt   String
   password               String
   passwordSalt           String
+  refreshTokens          RefreshToken[]
 }
 
 enum Engine {
