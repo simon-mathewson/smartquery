@@ -9,7 +9,7 @@ const getProps = () => ({ exit: spy() });
 const fillOutForm = async ($: MountResult) => {
   await $.getByRole('textbox', { name: 'Name' }).fill('My connection');
   await $.getByRole('textbox', { name: 'Host' }).first().fill('localhost');
-  await $.getByRole('textbox', { name: 'Port' }).first().fill('1234');
+  await $.getByRole('spinbutton', { name: 'Port' }).first().fill('1234');
   await $.getByRole('textbox', { name: 'User' }).first().fill('user');
   await $.getByRole('textbox', { name: 'Default database' }).fill('db');
   await $.getByRole('textbox', { name: 'Default schema' }).fill('public');
@@ -114,9 +114,9 @@ test.describe('ConnectionForm', () => {
           await $.getByRole('radio', { name }).click();
         }
 
-        await $.getByRole('textbox', { name: 'Port' }).clear();
+        await $.getByRole('spinbutton', { name: 'Port' }).clear();
 
-        await expect($.getByRole('textbox', { name: 'Port' })).toHaveAttribute(
+        await expect($.getByRole('spinbutton', { name: 'Port' })).toHaveAttribute(
           'placeholder',
           String(port),
         );
@@ -229,7 +229,7 @@ test.describe('ConnectionForm', () => {
       />,
     );
 
-    await $.getByRole('button', { name: 'Delete connection' }).click();
+    await $.getByRole('button', { name: 'Delete' }).click();
     await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
     await $.page().getByRole('menu').getByRole('menuitem', { name: 'Delete connection' }).click();
 

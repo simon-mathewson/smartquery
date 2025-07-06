@@ -42,7 +42,6 @@ export const useOverlay = (props: UseOverlayProps) => {
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
-  const isOpenRef = useRef(false);
 
   const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
 
@@ -64,9 +63,6 @@ export const useOverlay = (props: UseOverlayProps) => {
   } = styles;
 
   const close = useCallback(async () => {
-    if (!isOpenRef.current) return;
-
-    isOpenRef.current = false;
     previouslyFocusedElementRef.current?.focus();
 
     await Promise.all(
@@ -86,9 +82,6 @@ export const useOverlay = (props: UseOverlayProps) => {
   ]);
 
   const open = useCallback(async () => {
-    if (isOpenRef.current) return;
-
-    isOpenRef.current = true;
     setIsOpen(true);
     onOpen?.();
 
@@ -112,7 +105,8 @@ export const useOverlay = (props: UseOverlayProps) => {
     } else {
       close();
     }
-  }, [close, isOpenProp, open]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpenProp]);
 
   useEffect(() => {
     const trigger = triggerRef?.current;

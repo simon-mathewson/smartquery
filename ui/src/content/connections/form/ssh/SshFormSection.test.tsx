@@ -80,7 +80,7 @@ test.describe('SshFormSection', () => {
 
     await expect($.getByRole('textbox', { name: 'Host' })).not.toBeAttached();
 
-    await expect($.getByRole('textbox', { name: 'Port' })).not.toBeAttached();
+    await expect($.getByRole('spinbutton', { name: 'Port' })).not.toBeAttached();
 
     await expect(
       $.getByRole('radiogroup', { name: 'Credential type' }).getByRole('radio', { checked: true }),
@@ -98,7 +98,7 @@ test.describe('SshFormSection', () => {
 
     await expect($.getByRole('textbox', { name: 'Host' })).toHaveValue('localhost');
 
-    await expect($.getByRole('textbox', { name: 'Port' })).toHaveValue('22');
+    await expect($.getByRole('spinbutton', { name: 'Port' })).toHaveValue('22');
 
     await expect(
       $.getByRole('radiogroup', { name: 'Credential type' }).getByRole('radio', { checked: true }),
@@ -116,7 +116,7 @@ test.describe('SshFormSection', () => {
 
     expect(props.setFormValue.calls.slice(-1)).toEqual([['ssh.host', 'example.com']]);
 
-    await $.getByRole('textbox', { name: 'Port' }).fill('2222');
+    await $.getByRole('spinbutton', { name: 'Port' }).fill('2222');
 
     expect(props.setFormValue.calls.slice(-1)).toEqual([['ssh.port', 2222]]);
 

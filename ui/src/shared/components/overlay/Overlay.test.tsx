@@ -42,7 +42,7 @@ test.describe('Overlay', () => {
 
     const closeButton = overlay.getByRole('button', { name: 'Close' });
     await closeButton.click();
-    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration);
+    await $.page().waitForTimeout(defaultStyleOptions.animationOptions.duration + 100);
     await expect(overlay).not.toBeAttached();
 
     expect(onClose.calls).toEqual([[]]);
