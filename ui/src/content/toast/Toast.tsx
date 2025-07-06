@@ -80,7 +80,7 @@ export const Toast: React.FC = () => {
     >
       {() => (
         <>
-          <div className="flex flex-col justify-center gap-1 px-1">
+          <div className="flex flex-col justify-center gap-[2px] px-1">
             <div className="text-sm font-medium text-white">{title}</div>
             {description && <div className="text-xs text-whiteHover">{description}</div>}
           </div>

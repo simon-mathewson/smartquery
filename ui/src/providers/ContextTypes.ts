@@ -15,6 +15,7 @@ import type { TabsContextType } from '~/content/tabs/Context';
 import type { ThemeContextType } from '~/content/theme/Context';
 import type { ToastContextType } from '~/content/toast/Context';
 import type { ErrorTrackingContextType } from '~/content/errors/tracking/Context';
+import type { UpdateAvailableContextType } from '~/content/updateAvailable/Context';
 
 export type ContextTypes = {
   AddToDesktopProvider: AddToDesktopContextType;
@@ -34,4 +35,5 @@ export type ContextTypes = {
   TabsProvider: TabsContextType;
   ThemeProvider: ThemeContextType;
   ToastProvider: ToastContextType;
+  UpdateAvailableProvider: UpdateAvailableContextType;
 };

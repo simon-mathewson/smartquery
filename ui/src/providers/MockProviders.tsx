@@ -19,6 +19,7 @@ import type { ContextTypes } from './ContextTypes';
 import type { DeepPartial } from 'ts-essentials';
 import type { PropsWithChildren } from 'react';
 import { ErrorTrackingMockProvider } from '~/content/errors/tracking/MockProvider';
+import { UpdateAvailableMockProvider } from '~/content/updateAvailable/MockProvider';
 
 const mockProviders = {
   ErrorTrackingProvider: ErrorTrackingMockProvider,
@@ -27,6 +28,7 @@ const mockProviders = {
   AiProvider: AiMockProvider,
   EscapeStackProvider,
   ToastProvider,
+  UpdateAvailableProvider: UpdateAvailableMockProvider,
   CloudApiProvider: CloudApiMockProvider,
   AuthProvider: AuthMockProvider,
   LinkApiProvider: LinkApiMockProvider,

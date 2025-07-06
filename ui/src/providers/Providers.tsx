@@ -19,6 +19,7 @@ import React from 'react';
 import type { ContextTypes } from './ContextTypes';
 import type { PropsWithChildren } from 'react';
 import { ErrorTrackingProvider } from '~/content/errors/tracking/Provider';
+import { UpdateAvailableProvider } from '~/content/updateAvailable/Provider';
 
 const providers = {
   ErrorTrackingProvider,
@@ -27,6 +28,7 @@ const providers = {
   AiProvider,
   EscapeStackProvider,
   ToastProvider,
+  UpdateAvailableProvider,
   CloudApiProvider,
   AuthProvider,
   LinkApiProvider,
