@@ -2,10 +2,14 @@
   "name": "dabase-link",
   "productName": "Dabase Link",
   "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
+  "description": "Background service for Dabase",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://www.electronjs.org",
+  "homepage": "https://about.dabase.dev",
+  "author": {
+    "name": "Simon Mathewson",
+    "email": "dabase@simonmathewson.com"
+  },
+  "license": "UNLICENSED",
   "scripts": {
     "prebuild:all": "pnpm run typecheck",
     "build:all": "pnpm build:node && pnpm run build:linux && pnpm run build:mac && pnpm run build:win",
