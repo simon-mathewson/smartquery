@@ -20,7 +20,7 @@ export const useStyles = (props: UseStylesProps) => {
   } = props;
 
   const styleOptions = useMemo(
-    () => merge(defaultStyleOptions, styleOptionsProp),
+    () => merge({}, defaultStyleOptions, styleOptionsProp),
     [styleOptionsProp],
   );
   const { overlayMargin, animationVerticalOffset, animationOptions } = styleOptions;
