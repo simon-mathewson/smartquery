@@ -10,12 +10,14 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { splitSqlStatements } from '~/shared/utils/sql/sql';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
+import { ToastContext } from '~/content/toast/Context';
 
 export type ReviewChangesCardProps = {
   triggerRef: React.RefObject<HTMLButtonElement>;
 };
 
 export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
+  const toast = useDefinedContext(ToastContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { triggerRef } = props;
 
@@ -35,6 +37,8 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
 
   const handleSubmit = useCallback(async () => {
     if (!activeConnection) return;
+
+    track('toolbar_changes_submit');
 
     if (activeConnection.engine === 'sqlite') {
       const fileHandle = await getSqliteContent(activeConnection.id);
@@ -61,9 +65,12 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
       });
     }
 
-    clearChanges();
+    toast.add({
+      color: 'success',
+      title: 'Changes saved',
+    });
 
-    track('toolbar_changes_submit');
+    clearChanges();
 
     refetchActiveTabSelectQueries();
   }, [
@@ -74,6 +81,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
     refetchActiveTabSelectQueries,
     requestFileHandlePermission,
     storeSqliteContent,
+    toast,
     track,
     userSql,
   ]);
