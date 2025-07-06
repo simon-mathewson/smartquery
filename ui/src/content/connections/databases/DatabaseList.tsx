@@ -59,7 +59,7 @@ export const DatabaseList: React.FC = () => {
             track('database_list_select');
 
             navigate(
-              routes.database({
+              routes.connection({
                 connectionId: activeConnection.id,
                 database,
                 schema: '',
@@ -92,7 +92,7 @@ export const DatabaseList: React.FC = () => {
 
                 if (schema === activeConnection.schema) {
                   return navigate(
-                    routes.database({
+                    routes.connection({
                       connectionId: activeConnection.id,
                       database: activeConnection.database,
                       schema: '',
@@ -101,7 +101,7 @@ export const DatabaseList: React.FC = () => {
                 }
 
                 return navigate(
-                  routes.database({
+                  routes.connection({
                     connectionId: activeConnection.id,
                     database: activeConnection.database,
                     schema,

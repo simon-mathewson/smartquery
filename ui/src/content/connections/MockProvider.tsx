@@ -5,8 +5,8 @@ import { ConnectionsContext } from './Context';
 import { getContextMock } from './mocks';
 import { SignInModal } from './signInModal/SignInModal';
 import type { SignInModalInput } from './signInModal/types';
-import type { UserPasswordModalInput } from './UserPasswordModal/types';
-import { UserPasswordModal } from './UserPasswordModal/UserPasswordModal';
+import type { UserPasswordModalInput } from './userPasswordModal/types';
+import { UserPasswordModal } from './userPasswordModal/UserPasswordModal';
 
 export const ConnectionsMockProvider: React.FC<MockProviderProps<ConnectionsContextType>> = (
   props,

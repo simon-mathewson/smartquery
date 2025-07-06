@@ -5,8 +5,8 @@ import { ConnectionsContext } from './Context';
 import { SignInModal } from './signInModal/SignInModal';
 import { useModal } from '~/shared/components/modal/useModal';
 import type { SignInModalInput } from './signInModal/types';
-import { UserPasswordModal } from './UserPasswordModal/UserPasswordModal';
-import type { UserPasswordModalInput } from './UserPasswordModal/types';
+import { UserPasswordModal } from './userPasswordModal/UserPasswordModal';
+import type { UserPasswordModalInput } from './userPasswordModal/types';
 
 export const ConnectionsProvider: React.FC<PropsWithChildren> = (props) => {
   const { children } = props;

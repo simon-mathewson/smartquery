@@ -1,11 +1,11 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { ConnectionsContext } from '../connections/Context';
-import { NavigationSidebar } from '../navigationSidebar/NavigationSidebar';
+import { ConnectionsContext } from '../Context';
+import { NavigationSidebar } from '../../navigationSidebar/NavigationSidebar';
 import { DatabaseContent } from './Content';
-import { CopilotProvider } from '../copilot/Provider';
+import { CopilotProvider } from '../../copilot/Provider';
 import { Loading } from '~/shared/components/loading/Loading';
 
-export const Database: React.FC = () => {
+export const Connection: React.FC = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   return (

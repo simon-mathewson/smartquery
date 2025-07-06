@@ -15,7 +15,7 @@ import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { CloudApiContext } from '../cloud/api/Context';
 import { omit, sortBy } from 'lodash';
 import { AuthContext } from '../auth/Context';
-import type { UserPasswordModalInput } from './UserPasswordModal/types';
+import type { UserPasswordModalInput } from './userPasswordModal/types';
 import { ConnectCanceledError } from './connectAbortedError';
 
 export type Connections = ReturnType<typeof useConnections>;
@@ -76,13 +76,13 @@ export const useConnections = (props: UseConnectionsProps) => {
     connectionId: string;
     database: string;
     schema: undefined;
-  }>(routes.database({ schema: '' }));
+  }>(routes.connection({ schema: '' }));
 
   const [, dbRouteParamsWithSchema] = useRoute<{
     connectionId: string;
     database: string;
     schema: string;
-  }>(routes.database());
+  }>(routes.connection());
 
   const dbRouteParams = dbRouteParamsWithSchema ?? dbRouteParamsWithoutSchema;
 

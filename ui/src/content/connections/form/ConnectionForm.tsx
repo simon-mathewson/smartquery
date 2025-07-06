@@ -111,7 +111,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         setTimeout(() => {
           exit();
           navigate(
-            routes.database({
+            routes.connection({
               connectionId: connection.id,
               database: connection.database,
               schema: connection.engine === 'postgres' ? connection.schema : '',

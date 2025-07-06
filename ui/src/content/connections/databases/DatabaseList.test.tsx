@@ -46,7 +46,7 @@ test.describe('DatabaseList', () => {
 
     expect(navigateSpy.calls).toEqual([
       [
-        routes.database({
+        routes.connection({
           connectionId: activeConnection.id,
           database: activeConnectionDatabases[1].name,
           schema: '',

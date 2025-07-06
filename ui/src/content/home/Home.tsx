@@ -27,7 +27,7 @@ export const Home: React.FC = () => {
     const routeParams = { connectionId: sqliteDemoConnectionId, database: 'demo', schema: '' };
 
     if (hasDemoConnection) {
-      window.location.pathname = routes.database(routeParams);
+      window.location.pathname = routes.connection(routeParams);
       return;
     }
 
@@ -44,7 +44,7 @@ export const Home: React.FC = () => {
       type: 'file',
     });
 
-    window.location.pathname = routes.database(routeParams);
+    window.location.pathname = routes.connection(routeParams);
 
     track('home_open_demo_database');
   }, [addConnection, connections, storeSqliteContent, track]);
