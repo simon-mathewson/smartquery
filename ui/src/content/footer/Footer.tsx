@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
       <OverlayCard htmlProps={{ className: 'w-[340px]' }} overlay={overlay}>
         {({ close }) => <Settings close={close} />}
       </OverlayCard>
-      <div className="fixed bottom-2 left-2 w-[224px]">
+      <div className="fixed bottom-2 left-2 w-[208px]">
         <Button
           align="left"
           color="secondary"
@@ -48,6 +48,7 @@ export const Footer: React.FC = () => {
               target: '_blank',
             }}
             icon={<GitHub />}
+            tooltip="Ask questions and share your feedback, feature requests, and bug reports on GitHub Discussions"
           />
           <div className="flex flex-col gap-[2px] pt-1">
             <div className="text-xs text-textTertiary">© 2025 Simon Mathewson</div>

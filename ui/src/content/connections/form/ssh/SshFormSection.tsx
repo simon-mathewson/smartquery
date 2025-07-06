@@ -68,7 +68,6 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
           </div>
           <Field label="Credential type">
             <ButtonSelect<'privateKey' | 'password'>
-              equalWidth
               fullWidth
               onChange={(value) => setFormValue('ssh.credentialType', value)}
               options={[

@@ -4,10 +4,8 @@ import { Button } from '../button/Button';
 import type { XOR } from 'ts-essentials';
 import { useContext } from 'react';
 import { FieldContext } from '../field/FieldContext';
-import { Tooltip } from '../tooltip/Tooltip';
 
 export type ButtonSelectProps<T> = {
-  equalWidth?: boolean;
   fullWidth?: boolean;
   options: Array<{ button: ButtonButtonProps; tooltip?: string; value: T }>;
   selectedButton?: ButtonProps;
@@ -25,7 +23,6 @@ export type ButtonSelectProps<T> = {
 
 export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
   const {
-    equalWidth,
     fullWidth,
     onChange,
     options,
@@ -39,37 +36,35 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
   return (
     <div
       {...fieldContext?.controlHtmlProps}
-      className={classNames('flex gap-2 rounded-lg', {
-        'w-full': fullWidth,
+      className={classNames('gap-2 rounded-lg', {
+        'grid w-full grid-cols-[repeat(auto-fit,minmax(0,1fr))]': fullWidth,
+        'flex flex-wrap': !fullWidth,
       })}
       role="radiogroup"
     >
       {options.map(({ button, tooltip, value }, index) => (
-        <Tooltip<HTMLButtonElement> text={tooltip} key={index}>
-          {(tooltip) => (
-            <Button
-              color="secondary"
-              variant="highlighted"
-              {...button}
-              {...(value === selectedValue ? selectedButton : {})}
-              element="button"
-              htmlProps={{
-                ...button.htmlProps,
-                ...tooltip.htmlProps,
-                'aria-checked': value === selectedValue,
-                className: classNames({ 'grow basis-0': equalWidth, 'w-full': fullWidth }),
-                onClick: () => {
-                  if (required) {
-                    onChange(value);
-                    return;
-                  }
-                  onChange(value === selectedValue ? undefined : value);
-                },
-                role: 'radio',
-              }}
-            />
-          )}
-        </Tooltip>
+        <Button
+          color="secondary"
+          key={index}
+          tooltip={tooltip}
+          variant="highlighted"
+          {...button}
+          {...(value === selectedValue ? selectedButton : {})}
+          element="button"
+          htmlProps={{
+            ...button.htmlProps,
+            'aria-checked': value === selectedValue,
+            className: classNames({ 'w-full': fullWidth }),
+            onClick: () => {
+              if (required) {
+                onChange(value);
+                return;
+              }
+              onChange(value === selectedValue ? undefined : value);
+            },
+            role: 'radio',
+          }}
+        />
       ))}
     </div>
   );

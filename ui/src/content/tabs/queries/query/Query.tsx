@@ -16,6 +16,7 @@ import { QueriesContext } from '../Context';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { Loading } from '~/shared/components/loading/Loading';
+import { Tooltip } from '~/shared/components/tooltip/Tooltip';
 
 export const Query: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -60,15 +61,20 @@ export const Query: React.FC = () => {
           <>
             {result && query.select && (
               <div className="relative h-fit w-fit">
-                <Button
-                  htmlProps={{
-                    onClick: () => {
-                      runQuery(query.id);
-                      track('query_reload');
-                    },
-                  }}
-                  icon={<Refresh />}
-                />
+                <Tooltip<HTMLButtonElement> text="Reload">
+                  {({ htmlProps }) => (
+                    <Button
+                      htmlProps={{
+                        ...htmlProps,
+                        onClick: () => {
+                          runQuery(query.id);
+                          track('query_reload');
+                        },
+                      }}
+                      icon={<Refresh />}
+                    />
+                  )}
+                </Tooltip>
                 {query.isLoading && (
                   <CircularProgress
                     className="absolute left-[4px] top-[4px] !text-primary"
@@ -77,16 +83,21 @@ export const Query: React.FC = () => {
                 )}
               </div>
             )}
-            <Button
-              color="secondary"
-              htmlProps={{
-                onClick: () => {
-                  removeQuery(query.id);
-                  track('query_close');
-                },
-              }}
-              icon={<Close />}
-            />
+            <Tooltip<HTMLButtonElement> text="Close">
+              {({ htmlProps }) => (
+                <Button
+                  color="secondary"
+                  htmlProps={{
+                    ...htmlProps,
+                    onClick: () => {
+                      removeQuery(query.id);
+                      track('query_close');
+                    },
+                  }}
+                  icon={<Close />}
+                />
+              )}
+            </Tooltip>
           </>
         }
       />

@@ -16,6 +16,7 @@ import { ConnectionsContext } from '~/content/connections/Context';
 import { assert } from 'ts-essentials';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { useCallback, useRef } from 'react';
+import { Tooltip } from '~/shared/components/tooltip/Tooltip';
 
 export const CopilotSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -69,6 +70,7 @@ export const CopilotSidebar: React.FC = () => {
                 },
               }}
               icon={<DeleteOutline />}
+              tooltip="Clear thread"
             />
           ) : null
         }
@@ -83,6 +85,7 @@ export const CopilotSidebar: React.FC = () => {
               },
             }}
             icon={<Close />}
+            tooltip="Close"
           />
         }
       />
@@ -124,13 +127,23 @@ export const CopilotSidebar: React.FC = () => {
           </div>
         )}
         {hasSchemaDefinitions && (
-          <div className="mb-2 mt-1 flex w-max items-center gap-2 rounded-lg bg-primaryHighlight px-2 py-1 text-xs font-[500] text-textSecondary">
-            <Language className="!h-4 !w-4" />
-            <span>
-              {activeConnection.database}
-              {activeConnection.engine === 'postgres' && ` ⁠– ${activeConnection.schema}`}
-            </span>
-          </div>
+          <Tooltip<HTMLDivElement> text="Schema defiinitions of this database are passed to the AI as context">
+            {({ htmlProps }) => (
+              <div
+                {...htmlProps}
+                className={classNames(
+                  'mb-2 mt-1 flex w-max items-center gap-2 rounded-lg bg-primaryHighlight px-2 py-1 text-xs font-[500] text-textSecondary',
+                  htmlProps.className,
+                )}
+              >
+                <Language className="!h-4 !w-4" />
+                <span>
+                  {activeConnection.database}
+                  {activeConnection.engine === 'postgres' && ` ⁠– ${activeConnection.schema}`}
+                </span>
+              </div>
+            )}
+          </Tooltip>
         )}
         <form
           onSubmit={(e) => {
@@ -178,6 +191,7 @@ export const CopilotSidebar: React.FC = () => {
                 }}
                 icon={<Stop />}
                 key="stop"
+                tooltip="Stop generating"
               />
             ) : (
               <Button
@@ -187,6 +201,7 @@ export const CopilotSidebar: React.FC = () => {
                 }}
                 icon={<Send />}
                 key="send"
+                tooltip="Send"
               />
             )}
           </Field>

@@ -14,7 +14,6 @@ export const BooleanField: React.FC<BooleanFieldProps> = (props) => {
 
   return (
     <ButtonSelect<boolean | null>
-      equalWidth
       fullWidth
       onChange={(newValue) => {
         if (newValue === undefined && !isNullable) return;

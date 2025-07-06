@@ -53,6 +53,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
                 },
               }}
               icon={<ArrowBack />}
+              tooltip="Previous page"
             />
             <Button
               color="primary"
@@ -64,6 +65,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
                 },
               }}
               icon={<ArrowForward />}
+              tooltip="Next page"
             />
           </>
         )

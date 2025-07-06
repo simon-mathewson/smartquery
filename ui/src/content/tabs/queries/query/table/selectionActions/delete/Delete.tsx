@@ -39,6 +39,7 @@ export const Delete: React.FC<DeleteProps> = (props) => {
         },
       }}
       icon={<DeleteOutlined />}
+      tooltip="Delete"
     />
   );
 };

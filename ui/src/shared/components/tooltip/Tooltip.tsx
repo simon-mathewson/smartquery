@@ -1,17 +1,18 @@
 import classNames from 'classnames';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Overlay } from '../overlay/Overlay';
 import type { UseOverlayProps } from '../overlay/useOverlay';
 import { useOverlay } from '../overlay/useOverlay';
 
 export type TooltipProps<T extends HTMLElement> = {
   children: (childrenProps: { htmlProps: React.HTMLProps<T> }) => React.ReactNode;
-  text?: string;
   overlayProps?: UseOverlayProps;
+  role?: 'label' | 'description';
+  text?: string;
 };
 
 export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
-  const { children, text, overlayProps } = props;
+  const { children, overlayProps, role = 'label', text } = props;
 
   const anchorRef = useRef<T>(null);
 
@@ -26,13 +27,26 @@ export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
     },
   });
 
-  const onMouseEnter = useCallback(() => {
+  const onPointerEnter = useCallback(() => {
     overlay.open();
+
+    const listener = (moveEvent: MouseEvent) => {
+      if (moveEvent.target instanceof Node && anchorRef.current?.contains(moveEvent.target)) {
+        return;
+      }
+
+      overlay.close();
+      document.removeEventListener('mousemove', listener);
+    };
+
+    document.addEventListener('mousemove', listener, { passive: true });
   }, [overlay]);
 
-  const onMouseLeave = useCallback(() => {
-    overlay.close();
-  }, [overlay]);
+  useEffect(() => {
+    const close = overlay.close;
+    document.addEventListener('wheel', close, { passive: true });
+    return () => document.removeEventListener('wheel', close);
+  }, [overlay.close]);
 
   if (!text) {
     return children({ htmlProps: { ref: anchorRef } });
@@ -40,15 +54,20 @@ export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
 
   return (
     <>
-      <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-        {children({ htmlProps: { ref: anchorRef } })}
-      </div>
+      {children({
+        htmlProps: {
+          'aria-label': role === 'label' ? text : undefined,
+          'aria-description': role === 'description' ? text : undefined,
+          onPointerEnter,
+          ref: anchorRef,
+        },
+      })}
       <Overlay overlay={overlay}>
         {({ root }) => (
           <div
             {...root.htmlProps}
             className={classNames(
-              'rounded-xl bg-background bg-opacity-80 px-1.5 py-0.5 text-xs font-medium text-textPrimary light:dark dark:light',
+              '!pointer-events-none max-w-[160px] rounded-lg bg-background px-1.5 py-0.5 text-center text-xs font-medium text-textPrimary light:bg-opacity-70 light:dark dark:bg-opacity-80 dark:light',
               root.htmlProps.className,
             )}
           >

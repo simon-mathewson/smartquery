@@ -80,6 +80,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
         color="secondary"
         icon={<Close />}
         size="small"
+        tooltip="Remove"
       />
     </div>
   );

@@ -4,7 +4,12 @@ import { Button } from '../button/Button';
 import { autoFocusClass } from '~/shared/utils/focusFirstControl/focusFirstControl';
 
 export type ListItemProps<T> = {
-  actions?: Array<{ icon: React.ReactNode; label: string; onClick: () => void }>;
+  actions?: Array<{
+    icon: React.ReactNode;
+    label: string;
+    onClick: () => void;
+    tooltip?: string;
+  }>;
   autoFocus?: boolean;
   hint?: string;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
@@ -85,6 +90,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
           }}
           icon={action.icon}
           key={index}
+          tooltip={action.tooltip}
         />
       ))}
     </div>

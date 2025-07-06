@@ -187,6 +187,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
                 ref: editButtonRef,
               }}
               icon={<EditOutlined />}
+              tooltip="Edit"
             />
             {!isEntireSelectionDeleted &&
               selection.every((row) => row.length === 0) &&
@@ -217,6 +218,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
                   },
                 }}
                 icon={<Undo />}
+                tooltip="Undo"
               />
             )}
           </div>

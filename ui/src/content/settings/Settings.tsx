@@ -1,5 +1,5 @@
 import React from 'react';
-import { GitHub, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
+import { PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Field } from '~/shared/components/field/Field';
 import type { ThemeModePreference } from '../theme/types';
@@ -34,7 +34,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
       </div>
       <Field label="Theme">
         <ButtonSelect<ThemeModePreference>
-          equalWidth
           fullWidth
           onChange={(value) => {
             setModePreference(value);
@@ -77,19 +76,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           label="Share anonymous usage data"
           onChange={(value) => setIsConsentGranted(Boolean(value))}
           value={isConsentGranted}
-        />
-      </Field>
-      <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
-        <Button
-          color="secondary"
-          element="a"
-          htmlProps={{
-            className: 'w-full',
-            href: import.meta.env.VITE_DISCUSSIONS_URL,
-            target: '_blank',
-          }}
-          icon={<GitHub />}
-          label="GitHub Discussions"
         />
       </Field>
       <AddToDesktop />

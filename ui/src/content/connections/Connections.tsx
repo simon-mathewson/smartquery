@@ -82,6 +82,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                       setIsAddingOrEditing(true);
                       track('connections_edit');
                     },
+                    tooltip: 'Edit',
                   },
                 ],
                 hint:

@@ -60,7 +60,6 @@ export const Setup: React.FC<SetupProps> = (props) => {
       </div>
       <div className="flex flex-col gap-2">
         <ButtonSelect<Os>
-          equalWidth
           fullWidth
           onChange={setOs}
           options={[

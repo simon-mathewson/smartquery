@@ -85,6 +85,7 @@ export const Filters: React.FC = () => {
               htmlProps={{ disabled: !isValid, type: 'submit' }}
               icon={<Send />}
               variant="filled"
+              tooltip="Apply"
             />
           )}
         </div>
@@ -96,6 +97,7 @@ export const Filters: React.FC = () => {
             htmlProps={{ disabled: !isValid, type: 'submit' }}
             icon={<Send />}
             variant="filled"
+            tooltip="Apply"
           />
         </div>
       )}

@@ -7,14 +7,12 @@ import { TabsContext } from '../tabs/Context';
 import { Tabs } from './tabs/Tabs';
 import { QueriesContext } from '../tabs/queries/Context';
 import { CopilotContext } from '../copilot/Context';
-import { ToastContext } from '../toast/Context';
 import { EditContext } from '../edit/Context';
 import classNames from 'classnames';
 import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const Toolbar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
-  const toast = useDefinedContext(ToastContext);
 
   const { tabs } = useDefinedContext(TabsContext);
   const { addQuery } = useDefinedContext(QueriesContext);
@@ -34,23 +32,15 @@ export const Toolbar: React.FC = () => {
         }}
         icon={<Add />}
         label={tabs.length ? undefined : 'New query'}
+        tooltip="New query"
       />
       {allChanges.length > 0 && <Changes />}
       <Button
         color="primary"
         htmlProps={{
           className: classNames({ 'ml-auto': !allChanges.length }),
+          disabled: !copilot.isEnabled,
           onClick: () => {
-            if (!copilot.isEnabled) {
-              track('toolbar_open_copilot_hint');
-
-              toast.add({
-                title: 'To use copilot, add your Google AI API key in Settings',
-                color: 'primary',
-              });
-              return;
-            }
-
             track('toolbar_open_copilot');
 
             copilot.setIsOpen(!copilot.isOpen);
@@ -58,6 +48,9 @@ export const Toolbar: React.FC = () => {
         }}
         icon={<AutoAwesome />}
         label="Copilot"
+        tooltip={
+          copilot.isEnabled ? undefined : 'To use copilot, add your Google AI API key in Settings'
+        }
         variant={copilot.isOpen ? 'highlighted' : 'default'}
       />
     </div>

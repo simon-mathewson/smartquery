@@ -47,11 +47,6 @@ const engineLabels = {
   sqlite: 'SQLite',
 };
 
-const storageLocationLabels = {
-  cloud: 'Cloud',
-  local: 'Local',
-};
-
 export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { connectionToEditId, exit, hideBackButton, htmlProps } = props;
 
@@ -144,7 +139,11 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         <Header
           left={
             !hideBackButton && (
-              <Button htmlProps={{ 'aria-label': 'Cancel', onClick: exit }} icon={<ArrowBack />} />
+              <Button
+                htmlProps={{ 'aria-label': 'Cancel', onClick: exit }}
+                icon={<ArrowBack />}
+                tooltip="Cancel"
+              />
             )
           }
           middle={
@@ -161,7 +160,12 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                   exit();
                 }}
                 renderTrigger={(htmlProps) => (
-                  <Button color="danger" htmlProps={htmlProps} icon={<DeleteOutline />} />
+                  <Button
+                    color="danger"
+                    htmlProps={htmlProps}
+                    icon={<DeleteOutline />}
+                    tooltip="Delete"
+                  />
                 )}
                 text="Delete connection"
               />
@@ -170,7 +174,6 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         />
         <Field label="Engine">
           <ButtonSelect<FormValues['engine'] | null>
-            equalWidth
             fullWidth
             onChange={(value) => {
               setFormValue('engine', value);
@@ -201,7 +204,6 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         )}
         <Field label="Storage location">
           <ButtonSelect<FormValues['storageLocation'] | null>
-            equalWidth
             fullWidth
             onChange={(value) => {
               setFormValue('storageLocation', value);
@@ -213,18 +215,39 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 setFormValue('credentialStorage', 'alwaysAsk');
               }
             }}
-            options={(['cloud', 'local'] as const).map((storageLocation, index) => ({
-              button: {
-                label: storageLocationLabels[storageLocation],
-                htmlProps: {
-                  autoFocus: index === 0,
-                  disabled:
-                    (storageLocation === 'local' && isCloudConnection) ||
-                    (storageLocation === 'cloud' && (formValues.type === 'file' || !user)),
+            options={[
+              {
+                button: {
+                  label: 'Cloud',
+                  htmlProps: {
+                    autoFocus: true,
+                    disabled: formValues.type === 'file' || !user,
+                  },
+                  tooltip: (() => {
+                    if (formValues.type === 'file') {
+                      return 'Storing SQLite in cloud is not supported';
+                    } else if (!user) {
+                      return 'Log in to store in your account and sync across devices';
+                    } else {
+                      return 'Store in your account to sync across devices';
+                    }
+                  })(),
                 },
+                value: 'cloud',
               },
-              value: storageLocation,
-            }))}
+              {
+                button: {
+                  label: 'Local',
+                  htmlProps: {
+                    disabled: isCloudConnection,
+                  },
+                  tooltip: isCloudConnection
+                    ? 'Switching to local storage not supported for cloud connections'
+                    : 'Store on this device only',
+                },
+                value: 'local',
+              },
+            ]}
             required
             value={formValues.storageLocation}
           />
@@ -233,7 +256,6 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           <>
             <Field label="Password storage">
               <ButtonSelect<'alwaysAsk' | 'encrypted' | 'plain'>
-                equalWidth
                 fullWidth
                 onChange={(value) => setFormValue('credentialStorage', value)}
                 options={[
@@ -241,15 +263,27 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                     button: {
                       htmlProps: { disabled: formValues.storageLocation !== 'cloud' },
                       label: 'Encrypted',
+                      tooltip:
+                        formValues.storageLocation !== 'cloud'
+                          ? 'Only supported when storing in cloud'
+                          : 'Stores credentials in your account and encrypts them based on your main password. Requires entering main password every time you connect. Storing and auto-filling main password with browser keychain is supported.',
                     },
                     value: 'encrypted',
                   },
                   {
-                    button: { label: 'Always ask' },
+                    button: {
+                      label: 'Always ask',
+                      tooltip:
+                        'Does not store credentials, requires entering them every time you connect. Storing and auto-filling credentials with browser keychain is supported.',
+                    },
                     value: 'alwaysAsk',
                   },
                   {
-                    button: { label: 'Plain' },
+                    button: {
+                      label: 'Plain',
+                      tooltip:
+                        'Stores credentials in plain text. Do not use for sensitive credentials.',
+                    },
                     value: 'plain',
                   },
                 ]}
