@@ -332,6 +332,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 <Input
                   htmlProps={{
                     placeholder: formValues.engine ? String(getDefaultPort(formValues.engine)) : '',
+                    type: 'number',
                     value: formValues.port === null ? '' : String(formValues.port ?? ''),
                   }}
                   onChange={(value) => setFormValue('port', value ? Number(value) : null)}

@@ -60,6 +60,7 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
               <Input
                 htmlProps={{
                   placeholder: String(defaultSshPort),
+                  type: 'number',
                   value: isNil(formValues.ssh?.port) ? '' : String(formValues.ssh.port),
                 }}
                 onChange={(value) => setFormValue('ssh.port', value ? Number(value) : null)}
