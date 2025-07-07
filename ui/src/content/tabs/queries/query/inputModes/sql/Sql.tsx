@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { QueriesContext } from '../../../Context';
 import { QueryContext } from '../../Context';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
 export const Sql: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -20,12 +21,13 @@ export const Sql: React.FC = () => {
 
   const valueRef = useRef(value);
 
-  useEffect(() => {
-    // Don't overwrite value if this is a draft query
-    if (!query.sql) return;
-    setValue(query.sql);
-    valueRef.current = query.sql;
-  }, [query.sql, setValue]);
+  // Set value to query.sql unless user has entered query
+  useEffectOnce(() => {
+    if (!value.trim() && query.sql) {
+      setValue(query.sql);
+      valueRef.current = query.sql;
+    }
+  });
 
   const onChange = useCallback(
     (newValue: string) => {
