@@ -25,6 +25,8 @@ export const useUpdateAvailable = () => {
           })
           .then((version) => {
             if (version !== import.meta.env.VITE_VERSION) {
+              clearInterval(intervalRef.current);
+
               track('update_available');
 
               toast.add({
