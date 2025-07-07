@@ -5,7 +5,19 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { ErrorTrackingContext } from '../errors/tracking/Context';
 
 if (import.meta.env.PROD) {
-  ReactGa.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS_ID);
+  ReactGa.gtag('consent', 'default', {
+    ad_personalization: 'denied',
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    analytics_storage: 'denied',
+  });
+
+  ReactGa.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS_ID, {
+    gtagOptions: {
+      // Ensure all page views are tracked by us
+      send_page_view: false,
+    },
+  });
 }
 
 export const useAnalytics = () => {
@@ -33,9 +45,9 @@ export const useAnalytics = () => {
     if (isConsentGranted) {
       if (import.meta.env.PROD) {
         ReactGa.gtag('consent', 'update', {
-          ad_user_data: 'granted',
           ad_personalization: 'granted',
           ad_storage: 'granted',
+          ad_user_data: 'granted',
           analytics_storage: 'granted',
         });
       } else {
@@ -43,10 +55,10 @@ export const useAnalytics = () => {
       }
     } else {
       if (import.meta.env.PROD) {
-        ReactGa.gtag('consent', 'default', {
+        ReactGa.gtag('consent', 'update', {
+          ad_personalization: 'denied',
           ad_storage: 'denied',
           ad_user_data: 'denied',
-          ad_personalization: 'denied',
           analytics_storage: 'denied',
         });
       } else {
