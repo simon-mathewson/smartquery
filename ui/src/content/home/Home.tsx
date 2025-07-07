@@ -1,53 +1,21 @@
-import React, { useCallback, useMemo } from 'react';
-import { Card } from '~/shared/components/card/Card';
-import { Connections } from '../connections/Connections';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { ConnectionsContext } from '../connections/Context';
-import { SqliteContext } from '../sqlite/Context';
-import { sqliteDemoConnectionId } from './constants';
+import { PersonAddAlt1Outlined, ScienceOutlined, VpnKeyOutlined } from '@mui/icons-material';
+import React, { useMemo } from 'react';
+import { Link, useLocation } from 'wouter';
 import { routes } from '~/router/routes';
-import Add from '~/shared/icons/Add.svg?react';
-import { ScienceOutlined, PersonAddAlt1Outlined, VpnKeyOutlined } from '@mui/icons-material';
+import { Card } from '~/shared/components/card/Card';
 import { Page } from '~/shared/components/page/Page';
-import { Link } from 'wouter';
-import { AuthContext } from '../auth/Context';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import Add from '~/shared/icons/Add.svg?react';
 import { AnalyticsContext } from '../analytics/Context';
+import { AuthContext } from '../auth/Context';
+import { Connections } from '../connections/Connections';
+import { ConnectionsContext } from '../connections/Context';
 
 export const Home: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
-  const { connections, addConnection } = useDefinedContext(ConnectionsContext);
-  const { storeSqliteContent } = useDefinedContext(SqliteContext);
-
-  const openDemoDatabase = useCallback(async () => {
-    const hasDemoConnection = connections.some(
-      (connection) => connection.id === sqliteDemoConnectionId,
-    );
-
-    const routeParams = { connectionId: sqliteDemoConnectionId, database: 'demo', schema: '' };
-
-    if (hasDemoConnection) {
-      window.location.pathname = routes.connection(routeParams);
-      return;
-    }
-
-    const response = await fetch('/demo.sqlite');
-    const buffer = await response.arrayBuffer();
-    await storeSqliteContent(buffer, sqliteDemoConnectionId);
-
-    addConnection({
-      database: 'demo',
-      engine: 'sqlite',
-      id: sqliteDemoConnectionId,
-      name: 'Demo',
-      storageLocation: 'local',
-      type: 'file',
-    });
-
-    window.location.pathname = routes.connection(routeParams);
-
-    track('home_open_demo_database');
-  }, [addConnection, connections, storeSqliteContent, track]);
+  const { connections } = useDefinedContext(ConnectionsContext);
+  const [, navigate] = useLocation();
 
   const actions = useMemo(
     () => [
@@ -55,7 +23,7 @@ export const Home: React.FC = () => {
         hint: 'See how Dabase works with dummy data',
         icon: ScienceOutlined,
         label: 'Open demo database',
-        onClick: openDemoDatabase,
+        onClick: () => navigate(routes.demo()),
       },
       ...(connections.length === 0
         ? [
@@ -86,7 +54,7 @@ export const Home: React.FC = () => {
           ]
         : []),
     ],
-    [connections.length, openDemoDatabase, track, user],
+    [connections.length, navigate, track, user],
   );
 
   return (

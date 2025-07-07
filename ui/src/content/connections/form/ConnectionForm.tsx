@@ -28,7 +28,7 @@ import { v4 as uuid } from 'uuid';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
 import { Setup as LinkSetup } from '~/content/link/setup/Setup';
-import { sqliteDemoConnectionId } from '~/content/home/constants';
+import { sqliteDemoConnectionId } from '~/content/demo/constants';
 import { AuthContext } from '~/content/auth/Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { useLocation } from 'wouter';
