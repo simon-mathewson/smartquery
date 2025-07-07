@@ -93,6 +93,7 @@ phases:
 
       - cd ../ui
       - aws s3 sync dist s3://dabase-ui
+      - aws s3 cp s3://dabase-ui/version s3://dabase-ui/version --content-type text/plain
       - aws cloudfront create-invalidation --distribution-id $DABASE_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
 
       - cd ../about

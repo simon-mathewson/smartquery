@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ToastContext } from '../toast/Context';
 import { useAnalytics } from '../analytics/useAnalytics';
 import { assert } from 'ts-essentials';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
 export const useUpdateAvailable = () => {
   const { track } = useAnalytics();
@@ -10,7 +11,7 @@ export const useUpdateAvailable = () => {
 
   const intervalRef = useRef<number | undefined>(undefined);
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (!import.meta.env.PROD) {
       return;
     }
@@ -29,6 +30,7 @@ export const useUpdateAvailable = () => {
               toast.add({
                 color: 'primary',
                 description: 'Refresh or click here to update',
+                duration: Infinity,
                 title: 'Update available',
                 htmlProps: {
                   onClick: () => {

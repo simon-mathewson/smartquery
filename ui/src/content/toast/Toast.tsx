@@ -84,7 +84,16 @@ export const Toast: React.FC = () => {
             <div className="text-sm font-medium text-white">{title}</div>
             {description && <div className="text-xs text-whiteHover">{description}</div>}
           </div>
-          <Button color="white" htmlProps={{ onClick: () => remove(id) }} icon={<Close />} />
+          <Button
+            color="white"
+            htmlProps={{
+              onClick: (event) => {
+                event.stopPropagation();
+                remove(id);
+              },
+            }}
+            icon={<Close />}
+          />
         </>
       )}
     </OverlayCard>

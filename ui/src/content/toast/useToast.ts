@@ -5,6 +5,7 @@ export type ToastProps = {
   color?: 'danger' | 'primary' | 'success';
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
   description?: string;
+  duration?: number;
   id: string;
   title: string;
 };
@@ -25,7 +26,7 @@ export const useToast = () => {
   useEffect(() => {
     clearTimeout(latestToastTimeoutRef.current);
 
-    if (queue.length === 0) {
+    if (queue.length === 0 || queue[0].duration === Infinity) {
       return;
     }
 
