@@ -210,6 +210,39 @@ const PrivacyPolicy: React.FC = () => {
                 </li>
               </ul>
             </div>
+
+            <div>
+              <h4 className="text-lg font-semibold text-gray-800 mb-1">
+                f) AWS CloudWatch RUM
+              </h4>
+              <p>
+                To monitor the performance of our application, identify and
+                troubleshoot errors, and understand user interaction patterns,
+                we use AWS CloudWatch Real-User Monitoring (RUM).
+              </p>
+              <ul className="list-disc list-inside space-y-1 pl-4 mt-2">
+                <li>
+                  <strong>Legal Basis:</strong> We will only use AWS CloudWatch
+                  RUM if you have given your explicit consent (Art. 6(1)(a)
+                  GDPR), which you can manage through the cookie/consent
+                  settings on our website. You can withdraw your consent at any
+                  time.
+                </li>
+                <li>
+                  <strong>Data Collected:</strong> RUM collects data about your
+                  user session, including performance timings (e.g., page load
+                  speed), client-side errors, device information (browser, OS,
+                  device type), and user interactions within the application.
+                  This helps us diagnose issues and improve the user experience.
+                </li>
+                <li>
+                  <strong>Data Processor:</strong> The data is processed by
+                  Amazon Web Services (AWS) on our behalf. We have a data
+                  processing agreement (DPA) in place with AWS. The data is
+                  processed within the EU.
+                </li>
+              </ul>
+            </div>
           </div>
         </section>
         <section>
