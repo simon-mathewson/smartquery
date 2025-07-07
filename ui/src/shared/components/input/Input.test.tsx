@@ -32,16 +32,6 @@ test('Input renders and allows changing text', async ({ mount }) => {
   await expect($).toHaveValue(props.htmlProps.value);
   await expect($).toBeFocused();
 
-  // Expect value to be selected
-  const selectionStart = await $.evaluate(
-    () => (document.activeElement as HTMLInputElement).selectionStart,
-  );
-  const selectionEnd = await $.evaluate(
-    () => (document.activeElement as HTMLInputElement).selectionEnd,
-  );
-  expect(selectionStart).toBe(0);
-  expect(selectionEnd).toBe(props.htmlProps.value.length);
-
   const newValue = 'New text';
   await $.fill(newValue);
   expect(onChange.calls.at(-1)?.[0]).toBe(newValue);

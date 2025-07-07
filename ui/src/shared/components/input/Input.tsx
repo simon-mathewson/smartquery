@@ -56,12 +56,6 @@ export const Input: React.FC<InputProps> = (props) => {
     return undefined;
   }, [inputType]);
 
-  // Select value on focus
-  const onFocus = useCallback((event: React.FocusEvent) => {
-    const element = event.target as HTMLInputElement | HTMLTextAreaElement;
-    element.select();
-  }, []);
-
   // Prevent changing the value on scroll
   const onWheel = useCallback((event: WheelEvent) => {
     if (
@@ -103,7 +97,6 @@ export const Input: React.FC<InputProps> = (props) => {
         },
       )}
       onChange={onChange}
-      onFocus={onFocus}
       ref={mergeRefs(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [registerElement, htmlProps?.ref as React.RefObject<any> | undefined].filter(
