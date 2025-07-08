@@ -34,16 +34,27 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-092ff8e60e2d51e19  # Amazon Linux 2023 AMI
-      InstanceType: t2.micro
+      InstanceType: t3.nano
       KeyName: !Ref BastionKeyPair
       SubnetId: !ImportValue DabaseCloudPublicSubnet1
       SecurityGroupIds:
         - !ImportValue DabaseCloudBastionSecurityGroup
       IamInstanceProfile: !Ref BastionInstanceProfile
 
+  BastionElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  BastionEIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt BastionElasticIP.AllocationId
+      InstanceId: !Ref BastionHost
+
 Outputs:
   BastionPublicIP:
     Description: Public IP address of the bastion host
-    Value: !GetAtt BastionHost.PublicIp
+    Value: !Ref BastionElasticIP
     Export:
       Name: DabaseCloudBastionPublicIP
