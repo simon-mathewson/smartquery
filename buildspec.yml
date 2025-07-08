@@ -29,7 +29,7 @@ phases:
       - cd ../ui
       - export VITE_VERSION=$(echo -n $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
       - echo VITE_VERSION=$VITE_VERSION >> .env
-      - echo $VITE_VERSION > public/version
+      - echo -n $VITE_VERSION > public/version
       - pnpm typecheck
       - pnpm lint
       - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
