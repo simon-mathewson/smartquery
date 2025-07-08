@@ -69,7 +69,7 @@ test.describe('ConnectionForm', () => {
           type: 'remote',
           user: 'user',
         },
-        null, // TODO: Figure out why this is null
+        { onSuccess: undefined }, // Undefined because function can't be transferred to Playwright
       ],
     ]);
   });
@@ -128,7 +128,7 @@ test.describe('ConnectionForm', () => {
             {
               port,
             },
-            null, // TODO: Figure out why this is null
+            { onSuccess: undefined }, // Undefined because function can't be transferred to Playwright
           ],
         ]);
       });
@@ -174,7 +174,7 @@ test.describe('ConnectionForm', () => {
           type: 'remote',
           user: 'user',
         },
-        null, // TODO: Figure out why this is null
+        { onSuccess: undefined }, // Undefined because function can't be transferred to Playwright
       ],
     ]);
   });
@@ -213,7 +213,7 @@ test.describe('ConnectionForm', () => {
           type: 'remote',
           user: 'user',
         },
-        null, // TODO: Figure out why this is null
+        null, // null because function can't be transferred to Playwright
       ],
     ]);
   });
