@@ -506,10 +506,6 @@ export const useConnections = (props: UseConnectionsProps) => {
 
           await getDatabases(connection, newClientId);
         }
-
-        window.document.title = `${
-          selectedSchema ? `${selectedSchema} – ` : ''
-        }${selectedDatabase} – ${connection.name}`;
       } catch (error) {
         if (!(error instanceof ConnectCanceledError)) {
           console.error(error);

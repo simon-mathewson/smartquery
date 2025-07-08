@@ -8,6 +8,7 @@ import { AnalyticsMockProvider } from '../../analytics/MockProvider';
 import { ThemeProvider } from '../../theme/Provider';
 import { ErrorTrackingContext } from '../tracking/Context';
 import { ErrorBoundaryFallback } from './Fallback';
+import { EscapeStackProvider } from '~/shared/hooks/useEscape/useStack/Provider';
 
 export type ErrorBoundaryProps = PropsWithChildren;
 
@@ -21,14 +22,16 @@ export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ children }) => {
       {/* Also include AI and analytics mock providers to satisfy code editor */}
       <AnalyticsMockProvider>
         <AiMockProvider>
-          <ReactErrorBoundary
-            FallbackComponent={ErrorBoundaryFallback}
-            onError={(error) => {
-              errorTracking.trackError(error);
-            }}
-          >
-            {children}
-          </ReactErrorBoundary>
+          <EscapeStackProvider>
+            <ReactErrorBoundary
+              FallbackComponent={ErrorBoundaryFallback}
+              onError={(error) => {
+                errorTracking.trackError(error);
+              }}
+            >
+              {children}
+            </ReactErrorBoundary>
+          </EscapeStackProvider>
         </AiMockProvider>
       </AnalyticsMockProvider>
     </ThemeProvider>
