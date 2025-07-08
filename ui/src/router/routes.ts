@@ -4,7 +4,7 @@ export const routes = {
     `/conn/${params?.connectionId ?? ':connectionId'}${
       params?.database !== '' ? `/${params?.database ?? ':database'}` : ''
     }${params?.schema !== '' ? `/${params?.schema ?? ':schema'}` : ''}`,
-  demo: () => '/demo',
+  demo: () => '/conn/demo/demo',
   login: () => '/login',
   root: () => '/',
   signup: () => '/signup',

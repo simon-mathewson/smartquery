@@ -1,6 +1,6 @@
 import { PersonAddAlt1Outlined, ScienceOutlined, VpnKeyOutlined } from '@mui/icons-material';
 import React, { useMemo } from 'react';
-import { Link, useLocation } from 'wouter';
+import { Link } from 'wouter';
 import { routes } from '~/router/routes';
 import { Card } from '~/shared/components/card/Card';
 import { Page } from '~/shared/components/page/Page';
@@ -15,7 +15,6 @@ export const Home: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
   const { connections } = useDefinedContext(ConnectionsContext);
-  const [, navigate] = useLocation();
 
   const actions = useMemo(
     () => [
@@ -23,7 +22,10 @@ export const Home: React.FC = () => {
         hint: 'See how Dabase works with dummy data',
         icon: ScienceOutlined,
         label: 'Open demo database',
-        onClick: () => navigate(routes.demo()),
+        route: routes.demo(),
+        onClick: () => {
+          track('home_open_demo_database');
+        },
       },
       ...(connections.length === 0
         ? [
@@ -54,7 +56,7 @@ export const Home: React.FC = () => {
           ]
         : []),
     ],
-    [connections.length, navigate, track, user],
+    [connections.length, track, user],
   );
 
   return (

@@ -17,6 +17,7 @@ import { omit, sortBy } from 'lodash';
 import { AuthContext } from '../auth/Context';
 import type { UserPasswordModalInput } from './userPasswordModal/types';
 import { ConnectCanceledError } from './connectAbortedError';
+import { sqliteDemoConnectionId } from './constants';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -34,7 +35,7 @@ export const useConnections = (props: UseConnectionsProps) => {
   const linkApi = useDefinedContext(LinkApiContext);
   const { user, isInitializing: isInitializingAuth } = useDefinedContext(AuthContext);
   const toast = useDefinedContext(ToastContext);
-  const { getSqliteDb } = useDefinedContext(SqliteContext);
+  const { getSqliteDb, storeSqliteContent } = useDefinedContext(SqliteContext);
 
   const [localConnections, setLocalConnections] = useStoredState<Connection[]>(
     'connections',
@@ -101,7 +102,7 @@ export const useConnections = (props: UseConnectionsProps) => {
     useState(false);
 
   const addConnection = useCallback(
-    async (connection: Connection, onSuccess?: () => void) => {
+    async (connection: Connection, options?: { onSuccess?: () => void; skipToast?: boolean }) => {
       try {
         if (connection.storageLocation === 'local') {
           setLocalConnections([...localConnections, connection]);
@@ -128,12 +129,14 @@ export const useConnections = (props: UseConnectionsProps) => {
           await cloudConnectionsQuery.run();
         }
 
-        toast.add({
-          color: 'success',
-          title: 'Connection added',
-        });
+        if (!options?.skipToast) {
+          toast.add({
+            color: 'success',
+            title: 'Connection added',
+          });
+        }
 
-        onSuccess?.();
+        options?.onSuccess?.();
       } catch (error) {
         console.error(error);
 
@@ -424,6 +427,31 @@ export const useConnections = (props: UseConnectionsProps) => {
     [signInModal, userPasswordModal, cloudApi, linkApi],
   );
 
+  const getDemoConnection = useCallback(async () => {
+    const demoConnection = connections.find((c) => c.id === sqliteDemoConnectionId);
+
+    if (demoConnection) {
+      return demoConnection;
+    }
+
+    const response = await fetch('/demo.sqlite');
+    const buffer = await response.arrayBuffer();
+    await storeSqliteContent(buffer, sqliteDemoConnectionId);
+
+    const newDemoConnection = {
+      database: 'demo',
+      engine: 'sqlite',
+      id: sqliteDemoConnectionId,
+      name: 'Demo',
+      storageLocation: 'local',
+      type: 'file',
+    } satisfies Connection;
+
+    await addConnection(newDemoConnection, { skipToast: true });
+
+    return newDemoConnection;
+  }, [addConnection, connections, storeSqliteContent]);
+
   const connect = useCallback(
     async (
       id: string,
@@ -432,7 +460,10 @@ export const useConnections = (props: UseConnectionsProps) => {
         schema?: string;
       },
     ) => {
-      const connection = connections.find((c) => c.id === id);
+      const connection =
+        id === sqliteDemoConnectionId
+          ? await getDemoConnection()
+          : connections.find((c) => c.id === id);
 
       if (!connection) {
         toast.add({ color: 'danger', title: `Connection with id ${id} not found` });
@@ -493,7 +524,16 @@ export const useConnections = (props: UseConnectionsProps) => {
         navigate(routes.root());
       }
     },
-    [connections, disconnect, toast, navigate, getSqliteDb, getDatabases, connectRemote],
+    [
+      connections,
+      getDemoConnection,
+      disconnect,
+      toast,
+      navigate,
+      getSqliteDb,
+      getDatabases,
+      connectRemote,
+    ],
   );
 
   const isReady = !isInitializingAuth && (!user || cloudConnectionsQuery.hasRun);

@@ -28,7 +28,7 @@ import { v4 as uuid } from 'uuid';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
 import { Setup as LinkSetup } from '~/content/link/setup/Setup';
-import { sqliteDemoConnectionId } from '~/content/demo/constants';
+import { sqliteDemoConnectionId } from '~/content/connections/constants';
 import { AuthContext } from '~/content/auth/Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { useLocation } from 'wouter';
@@ -107,18 +107,19 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
       void updateConnection(connectionToEdit.id, connection, exit);
     } else {
       track('connection_form_add');
-      await addConnection(connection, () =>
-        setTimeout(() => {
-          exit();
-          navigate(
-            routes.connection({
-              connectionId: connection.id,
-              database: connection.database,
-              schema: connection.engine === 'postgres' ? connection.schema : '',
-            }),
-          );
-        }),
-      );
+      await addConnection(connection, {
+        onSuccess: () =>
+          setTimeout(() => {
+            exit();
+            navigate(
+              routes.connection({
+                connectionId: connection.id,
+                database: connection.database,
+                schema: connection.engine === 'postgres' ? connection.schema : '',
+              }),
+            );
+          }),
+      });
     }
   };
 

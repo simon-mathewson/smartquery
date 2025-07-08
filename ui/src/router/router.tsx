@@ -6,7 +6,6 @@ import { AddConnectionPage } from '~/content/connections/addConnectionPage/AddCo
 import { Connection } from '~/content/connections/page/Connection';
 import { Home } from '~/content/home/Home';
 import { routes } from './routes';
-import { Demo } from '~/content/demo/Demo';
 
 export const Router: React.FC = () => {
   return (
@@ -16,7 +15,6 @@ export const Router: React.FC = () => {
       <Route path={routes.connection()} component={Connection} />
       <Route path={routes.connection({ schema: '' })} component={Connection} />
       <Route path={routes.connection({ schema: '', database: '' })} component={Connection} />
-      <Route path={routes.demo()} component={Demo} />
       <Route path={routes.login()} component={Login} />
       <Route path={routes.signup()} component={Signup} />
     </Switch>
