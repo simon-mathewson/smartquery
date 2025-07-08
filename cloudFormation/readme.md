@@ -83,6 +83,6 @@ https://eu-central-1.console.aws.amazon.com/secretsmanager/secret?name=dabase-cl
 
 ### 8. Update RUM script
 
-Update `ui/src/setUpRum.ts` according to JS snippet displayed in https://eu-central-1.console.aws.amazon.com/cloudwatch/home?region=eu-central-1#rum:dashboard/Dabase?tab=configuration
+Update `ui/src/setUpRum.ts` according to JS snippet displayed in https://eu-central-1.console.aws.amazon.com/cloudwatch/home?region=eu-central-1#rum:dashboard/Dabase?tab=configuration.
 
 Replace `APPLICATION_VERSION` with `import.meta.env.VITE_VERSION`.
