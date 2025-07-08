@@ -64,4 +64,3 @@ Resources:
       TTL: "300"
       ResourceRecords:
         - !ImportValue DabaseCloudBastionPublicIP
-      

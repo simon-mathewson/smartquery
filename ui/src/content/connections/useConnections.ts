@@ -61,7 +61,7 @@ export const useConnections = (props: UseConnectionsProps) => {
   );
 
   const cloudConnectionsQuery = useCloudQuery(() => cloudApi.connections.list.query(), {
-    disabled: !user,
+    disabled: !user || isInitializingAuth,
   });
 
   const connections = useMemo(
