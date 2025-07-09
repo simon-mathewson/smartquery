@@ -12,15 +12,35 @@ phases:
       - export IS_SHARED_UNCHANGED=0
       - export IS_UI_UNCHANGED=0
 
-      # Get source from last build
-      - export SOURCE_OUTPUT_PATH=s3://dabase-codepipeline/dabase/SourceOutp/
-      - export LAST_SOURCE_DIR=$(aws s3 ls $SOURCE_OUTPUT_PATH | sort | tail -n 2 | head -n 1 | awk '{print $4}')
+      # Find last successful build
       - |
-        if [ -z "$LAST_SOURCE_DIR" ]; then
-          echo "No previous build sources found. Building all packages."
+        set -e  # Exit immediately if any command fails
+        export MAX_ITEMS=20
+        export BUILD_IDS=$(aws codebuild list-builds-for-project --project-name dabase --sort-order DESCENDING --max-items $MAX_ITEMS)
+        export INDEX=0
+        while [ $INDEX -lt $MAX_ITEMS ]; do
+          export CURRENT_BUILD_ID=$(echo $BUILD_IDS | jq -r --arg index $INDEX '.ids[$index | tonumber]')
+          export CURRENT_BUILD=$(aws codebuild batch-get-builds --ids $CURRENT_BUILD_ID)
+          export CURRENT_BUILD_SUCCEEDED=$(echo $CURRENT_BUILD | jq -r '.builds[0].buildStatus')
+          echo "Current build: $CURRENT_BUILD_ID, Succeeded: $CURRENT_BUILD_SUCCEEDED"
+
+          if [ "$CURRENT_BUILD_ID" != "$CODEBUILD_BUILD_ID" ] && [ "$CURRENT_BUILD_SUCCEEDED" == "SUCCEEDED" ]; then
+            echo "Last successful build: $CURRENT_BUILD_ID"
+            export LAST_SUCCESSFUL_BUILD_SOURCE=$(echo $CURRENT_BUILD | jq -r '.builds[0].sourceVersion')
+            export LAST_SUCCESSFUL_BUILD_SOURCE=$(echo $LAST_SUCCESSFUL_BUILD_SOURCE | sed 's|arn:aws:s3:::||')
+            export LAST_SUCCESSFUL_BUILD_SOURCE="s3://$LAST_SUCCESSFUL_BUILD_SOURCE"
+            break
+          fi
+          export INDEX=$((INDEX + 1))
+        done
+      - export LAST_SUCCESSFUL_BUILD_SOURCE="s3://dabase-codepipeline/dabase/SourceOutp/xUPIMFx"
+
+      - |
+        set -e  # Exit immediately if any command fails
+        if [ -z "$LAST_SUCCESSFUL_BUILD_SOURCE" ]; then
+          echo "No previous successful build found. Building all packages."
         else
-          export LAST_SOURCE_PATH=$SOURCE_OUTPUT_PATH$LAST_SOURCE_DIR
-          aws s3 cp $LAST_SOURCE_PATH last_source.zip
+          aws s3 cp $LAST_SUCCESSFUL_BUILD_SOURCE last_source.zip
           rm -rf last_source
           unzip last_source.zip -d last_source
 
@@ -85,6 +105,7 @@ phases:
 
       - cd shared # Always navigate to shared to enable upcoming cd ../
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_SHARED -eq 1 ]; then
           echo "Shared package is unchanged. Skipping install."
         else
@@ -92,6 +113,7 @@ phases:
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_ABOUT -eq 1 ]; then
           echo "About package is unchanged. Skipping install."
         else
@@ -100,6 +122,7 @@ phases:
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_CLOUD -eq 1 ]; then
           echo "Cloud package is unchanged. Skipping install."
         else
@@ -108,6 +131,7 @@ phases:
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_LINK -eq 1 ]; then
           echo "Link package is unchanged. Skipping install."
         else
@@ -116,6 +140,7 @@ phases:
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_UI -eq 1 ]; then
           echo "UI package is unchanged. Skipping install."
         else
@@ -126,6 +151,7 @@ phases:
   build:
     commands:
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_ABOUT -eq 1 ]; then
           echo "About package is unchanged. Skipping build."
         else
@@ -136,6 +162,7 @@ phases:
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_CLOUD -eq 1 ]; then
           echo "Cloud package is unchanged. Skipping build."
         else
@@ -148,6 +175,7 @@ phases:
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_LINK -eq 1 ]; then
           echo "Link package is unchanged. Skipping build."
 
@@ -165,6 +193,7 @@ phases:
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_UI -eq 1 ]; then
           echo "UI package is unchanged. Skipping build."
 
@@ -204,12 +233,14 @@ phases:
     commands:
       # Skip deployment if previous phase failed, continue to next phase to upload test artifacts
       - |
+        set -e  # Exit immediately if any command fails
         if [ $CODEBUILD_BUILD_SUCCEEDING -eq 0 ]; then
           echo "Build failed, skipping deployment"
           exit 1
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_ABOUT -eq 1 ]; then
           echo "About package is unchanged. Skipping deployment."
         else
@@ -219,6 +250,7 @@ phases:
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_CLOUD_FORMATION -eq 1 ]; then
           echo "CloudFormation package is unchanged. Skipping deployment."
         else
@@ -232,6 +264,7 @@ phases:
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_CLOUD -eq 1 ]; then
           echo "Cloud package is unchanged. Skipping deployment."
         else
@@ -259,6 +292,7 @@ phases:
         fi
 
       - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_UI -eq 1 ]; then
           echo "UI package is unchanged. Skipping deployment."
         else
