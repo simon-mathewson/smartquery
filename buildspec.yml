@@ -150,6 +150,9 @@ phases:
       - |
         if [ $SKIP_LINK -eq 1 ]; then
           echo "Link package is unchanged. Skipping build."
+
+          # Add empty test results to prevent artifacts upload failure
+          touch ../link/test-report.xml
         else
           cd ../link
           pnpm typecheck
@@ -165,8 +168,10 @@ phases:
         if [ $SKIP_UI -eq 1 ]; then
           echo "UI package is unchanged. Skipping build."
 
-          # Add empty test results file to prevent artifacts upload failure
-          touch ui/test-results/empty
+          # Add empty test results to prevent artifacts upload failure
+          touch ../ui/test-results/empty
+          touch ../ui/test-ct-report.xml
+          touch ../ui/test-report.xml
         else
           # Initialize cloud types, they are needed for UI build because of the tRPC router import
           if [ $SKIP_CLOUD -eq 1 ]; then
