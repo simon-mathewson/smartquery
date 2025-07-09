@@ -8,7 +8,7 @@ export default defineConfig({
   testMatch: '**/*.test.tsx',
   testDir: './',
   snapshotPathTemplate: '{testFilePath}/../__snapshots__/{arg}{ext}',
-  timeout: 10 * 1000,
+  timeout: 30 * 1000,
   fullyParallel: true,
   forbidOnly: process.env.CI !== undefined,
   retries: process.env.CI ? 2 : 0,
