@@ -33,7 +33,6 @@ phases:
           fi
           export INDEX=$((INDEX + 1))
         done
-      - export LAST_SUCCESSFUL_BUILD_SOURCE="s3://dabase-codepipeline/dabase/SourceOutp/xUPIMFx"
 
       - |
         set -e  # Exit immediately if any command fails
