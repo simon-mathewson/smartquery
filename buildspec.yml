@@ -5,51 +5,184 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      - export IS_ABOUT_UNCHANGED=0
+      - export IS_CLOUD_UNCHANGED=0
+      - export IS_CLOUD_FORMATION_UNCHANGED=0
+      - export IS_LINK_UNCHANGED=0
+      - export IS_SHARED_UNCHANGED=0
+      - export IS_UI_UNCHANGED=0
+
+      # Get source from last build
+      - export SOURCE_OUTPUT_PATH=s3://dabase-codepipeline/dabase/SourceOutp/
+      - export LAST_SOURCE_DIR=$(aws s3 ls $SOURCE_OUTPUT_PATH | sort | tail -n 1 | awk '{print $4}')
+      - |
+        if [ -z "$LAST_SOURCE_DIR" ]; then
+          echo "No previous build sources found. Building all packages."
+        else
+          export LAST_SOURCE_PATH=$SOURCE_OUTPUT_PATH$LAST_SOURCE_DIR
+          aws s3 cp $LAST_SOURCE_PATH last_source.zip
+          rm -rf last_source
+          unzip last_source.zip -d last_source
+
+          diff -r last_source/about about
+          diff -r last_source/cloud cloud
+          diff -r last_source/cloudFormation cloudFormation
+          diff -r last_source/link link
+          diff -r last_source/shared shared
+          diff -r last_source/ui ui
+
+          if diff -r last_source/about about >/dev/null 2>&1; then
+            export IS_ABOUT_UNCHANGED=1
+          fi
+          
+          if diff -r last_source/cloud cloud >/dev/null 2>&1; then
+            export IS_CLOUD_UNCHANGED=1
+          fi
+          
+          if diff -r last_source/cloudFormation cloudFormation >/dev/null 2>&1; then
+            export IS_CLOUD_FORMATION_UNCHANGED=1
+          fi
+          
+          if diff -r last_source/link link >/dev/null 2>&1; then
+            export IS_LINK_UNCHANGED=1
+          fi
+          
+          if diff -r last_source/shared shared >/dev/null 2>&1; then
+            export IS_SHARED_UNCHANGED=1
+          fi
+          
+          if diff -r last_source/ui ui >/dev/null 2>&1; then
+            export IS_UI_UNCHANGED=1
+          fi
+        fi
+
+      - |
+        echo "IS_ABOUT_UNCHANGED: $IS_ABOUT_UNCHANGED"
+        echo "IS_CLOUD_UNCHANGED: $IS_CLOUD_UNCHANGED"
+        echo "IS_CLOUD_FORMATION_UNCHANGED: $IS_CLOUD_FORMATION_UNCHANGED"
+        echo "IS_LINK_UNCHANGED: $IS_LINK_UNCHANGED"
+        echo "IS_SHARED_UNCHANGED: $IS_SHARED_UNCHANGED"
+        echo "IS_UI_UNCHANGED: $IS_UI_UNCHANGED"
+
+      - |
+        export SKIP_ABOUT=$(($IS_ABOUT_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_SHARED_UNCHANGED))
+        export SKIP_CLOUD=$(($IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_SHARED_UNCHANGED))
+        export SKIP_CLOUD_FORMATION=$(($IS_CLOUD_FORMATION_UNCHANGED))
+        export SKIP_LINK=$(($IS_LINK_UNCHANGED * $IS_SHARED_UNCHANGED))
+        export SKIP_UI=$(($IS_UI_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_LINK_UNCHANGED * $IS_SHARED_UNCHANGED))
+
+      - |
+        echo "SKIP_ABOUT: $SKIP_ABOUT"
+        echo "SKIP_CLOUD: $SKIP_CLOUD"
+        echo "SKIP_CLOUD_FORMATION: $SKIP_CLOUD_FORMATION"
+        echo "SKIP_LINK: $SKIP_LINK"
+        echo "SKIP_UI: $SKIP_UI"
+
       - npm i -g corepack@latest
       - corepack enable pnpm
+
       - cd shared
       - pnpm install
-      - cd ../cloud
-      - pnpm install
-      - cd ../link
-      - pnpm install
-      - cd ../ui
-      - pnpm install
-      - cd ../about
-      - pnpm install
+
+      - |
+        if [ $SKIP_ABOUT -eq 1 ]; then
+          echo "About package is unchanged. Skipping install."
+        else
+          cd ../about
+          pnpm install
+        fi
+
+      - |
+        if [ $SKIP_CLOUD -eq 1 ]; then
+          echo "Cloud package is unchanged. Skipping install."
+        else
+          cd ../cloud
+          pnpm install
+        fi
+
+      - |
+        if [ $SKIP_LINK -eq 1 ]; then
+          echo "Link package is unchanged. Skipping install."
+        else
+          cd ../link
+          pnpm install
+        fi
+
+      - |
+        if [ $SKIP_UI -eq 1 ]; then
+          echo "UI package is unchanged. Skipping install."
+        else
+          cd ../ui
+          pnpm install
+        fi
+
   build:
     commands:
-      - cd ../cloud
-      - pnpm prisma generate
-      - pnpm typecheck
-      - pnpm lint
-      - pnpm build
-      - zip -r application.zip .ebextensions .env.production dist package.json prisma/generated Procfile scripts
+      - |
+        if [ $SKIP_ABOUT -eq 1 ]; then
+          echo "About package is unchanged. Skipping build."
+        else
+          cd ../about
+          pnpm typecheck
+          pnpm lint
+          pnpm build
+        fi
 
-      - cd ../ui
-      - export VITE_VERSION=$(echo -n $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
-      - echo VITE_VERSION=$VITE_VERSION >> .env
-      - echo -n $VITE_VERSION > public/version
-      - pnpm typecheck
-      - pnpm lint
-      - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
-      - pnpm playwright install --with-deps chromium
-      - NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
-      - pnpm build
+      - |
+        if [ $SKIP_CLOUD -eq 1 ]; then
+          echo "Cloud package is unchanged. Skipping build."
+        else
+          cd ../cloud
+          pnpm prisma generate
+          pnpm typecheck
+          pnpm lint
+          pnpm build
+          zip -r application.zip .ebextensions .env.production dist package.json prisma/generated Procfile scripts
+        fi
 
-      - cd ../about
-      - pnpm typecheck
-      - pnpm lint
-      - pnpm build
+      - |
+        if [ $SKIP_LINK -eq 1 ]; then
+          echo "Link package is unchanged. Skipping build."
+        else
+          cd ../link
+          pnpm typecheck
+          pnpm lint
+          pnpm db:generate
+          pnpm test:db:up
+          sleep 15
+          pnpm test -- --watch false --reporter junit --outputFile test-report.xml
+          pnpm build:node
+        fi
 
-      - cd ../link
-      - pnpm typecheck
-      - pnpm lint
-      - pnpm db:generate
-      - pnpm test:db:up
-      - sleep 15
-      - pnpm test -- --watch false --reporter junit --outputFile test-report.xml
-      - pnpm build:node
+      - |
+        if [ $SKIP_UI -eq 1 ]; then
+          echo "UI package is unchanged. Skipping build."
+        else
+          # Initialize cloud types, they are needed for UI build because of the tRPC router import
+          if [ $SKIP_CLOUD -eq 1 ]; then
+            cd ../cloud
+            pnpm install
+            pnpm prisma generate
+          fi
+
+          # Initialize link types, they are needed for UI build because of the tRPC router import
+          if [ $SKIP_LINK -eq 1 ]; then
+            cd ../link
+            pnpm install
+            pnpm db:generate
+          fi
+
+          cd ../ui
+          export VITE_VERSION=$(echo -n $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
+          echo VITE_VERSION=$VITE_VERSION >> .env
+          echo -n $VITE_VERSION > public/version
+          pnpm typecheck
+          pnpm lint
+          pnpm test -- --watch false --reporter junit --outputFile test-report.xml
+          pnpm playwright install --with-deps chromium
+          NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
+          pnpm build
+        fi
   post_build:
     commands:
       # Skip deployment if previous phase failed, continue to next phase to upload test artifacts
@@ -59,47 +192,64 @@ phases:
           exit 1
         fi
 
-      - cd ../cloudFormation
-      - aws s3 sync . s3://dabase-cloudformation --delete
-      - >
-        aws cloudformation deploy \
-          --stack-name dabase-2025-01-18-19-40-48 \
-          --template-file main.yml \
-          --capabilities CAPABILITY_NAMED_IAM
+      - |
+        if [ $SKIP_ABOUT -eq 1 ]; then
+          echo "About package is unchanged. Skipping deployment."
+        else
+          cd ../about
+          aws s3 sync out s3://dabase-about
+          aws cloudfront create-invalidation --distribution-id $DABASE_ABOUT_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+        fi
 
-      - cd ../cloud
+      - |
+        if [ $SKIP_CLOUD_FORMATION -eq 1 ]; then
+          echo "CloudFormation package is unchanged. Skipping deployment."
+        else
+          cd ../cloudFormation
+          aws s3 sync . s3://dabase-cloudformation --delete
 
-      # Run migrations
-      - export DABASE_CLOUD_DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
-      - chmod +x ./scripts/build-database-url.sh
-      - export DATABASE_URL=$(./scripts/build-database-url.sh)
-      - pnpm prisma migrate deploy
+          aws cloudformation deploy \
+            --stack-name dabase-2025-01-18-19-40-48 \
+            --template-file main.yml \
+            --capabilities CAPABILITY_NAMED_IAM
+        fi
 
-      # Deploy server
-      - aws s3 cp application.zip s3://dabase-cloud-source/$CODEBUILD_BUILD_NUMBER.zip
-      - >
-        aws elasticbeanstalk create-application-version \
-          --application-name dabase-cloud \
-          --version-label $CODEBUILD_BUILD_NUMBER \
-          --source-bundle S3Bucket=dabase-cloud-source,S3Key=$CODEBUILD_BUILD_NUMBER.zip
-      - >
-        aws elasticbeanstalk update-environment \
-          --environment-name dabase-cloud \
-          --version-label $CODEBUILD_BUILD_NUMBER
+      - |
+        if [ $SKIP_CLOUD -eq 1 ]; then
+          echo "Cloud package is unchanged. Skipping deployment."
+        else
+          cd ../cloud
 
-      - >
-        aws elasticbeanstalk wait environment-updated \
-          --environment-name dabase-cloud \
-          --version-label $CODEBUILD_BUILD_NUMBER
+          # Run migrations
+          export DABASE_CLOUD_DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
+          chmod +x ./scripts/build-database-url.sh
+          export DATABASE_URL=$(./scripts/build-database-url.sh)
+          pnpm prisma migrate deploy
 
-      - cd ../ui
-      - aws s3 sync dist s3://dabase-ui
-      - aws s3 cp s3://dabase-ui/version s3://dabase-ui/version --content-type text/plain
-      - aws cloudfront create-invalidation --distribution-id $DABASE_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+          # Deploy server
+          aws s3 cp application.zip s3://dabase-cloud-source/$CODEBUILD_BUILD_NUMBER.zip
+          aws elasticbeanstalk create-application-version \
+            --application-name dabase-cloud \
+            --version-label $CODEBUILD_BUILD_NUMBER \
+            --source-bundle S3Bucket=dabase-cloud-source,S3Key=$CODEBUILD_BUILD_NUMBER.zip
+          aws elasticbeanstalk update-environment \
+            --environment-name dabase-cloud \
+            --version-label $CODEBUILD_BUILD_NUMBER
 
-      - cd ../about
-      - aws s3 sync out s3://dabase-about
-      - aws cloudfront create-invalidation --distribution-id $DABASE_ABOUT_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+          aws elasticbeanstalk wait environment-updated \
+            --environment-name dabase-cloud \
+            --version-label $CODEBUILD_BUILD_NUMBER
+        fi
+
+      - |
+        if [ $SKIP_UI -eq 1 ]; then
+          echo "UI package is unchanged. Skipping deployment."
+        else
+          cd ../ui
+          aws s3 sync dist s3://dabase-ui
+          aws s3 cp s3://dabase-ui/version s3://dabase-ui/version --content-type text/plain
+          aws cloudfront create-invalidation --distribution-id $DABASE_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+        fi
 
 reports:
   link:
