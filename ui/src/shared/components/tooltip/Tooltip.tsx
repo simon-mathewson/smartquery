@@ -43,10 +43,14 @@ export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
   }, [overlay]);
 
   useEffect(() => {
+    if (!overlay.isOpen) {
+      return;
+    }
+
     const close = overlay.close;
     document.addEventListener('wheel', close, { passive: true });
     return () => document.removeEventListener('wheel', close);
-  }, [overlay.close]);
+  }, [overlay.close, overlay.isOpen]);
 
   if (!text) {
     return children({ htmlProps: { ref: anchorRef } });
