@@ -24,7 +24,7 @@ phases:
           export CURRENT_BUILD_SUCCEEDED=$(echo $CURRENT_BUILD | jq -r '.builds[0].buildStatus')
           echo "Current build: $CURRENT_BUILD_ID, Succeeded: $CURRENT_BUILD_SUCCEEDED"
 
-          if [ "$CURRENT_BUILD_ID" != "$CODEBUILD_BUILD_ID" ] && [ "$CURRENT_BUILD_SUCCEEDED" == "SUCCEEDED" ]; then
+          if [ "$CURRENT_BUILD_ID" != "$CODEBUILD_BUILD_ID" ] && [ "$CURRENT_BUILD_SUCCEEDED" = "SUCCEEDED" ]; then
             echo "Last successful build: $CURRENT_BUILD_ID"
             export LAST_SUCCESSFUL_BUILD_SOURCE=$(echo $CURRENT_BUILD | jq -r '.builds[0].sourceVersion')
             export LAST_SUCCESSFUL_BUILD_SOURCE=$(echo $LAST_SUCCESSFUL_BUILD_SOURCE | sed 's|arn:aws:s3:::||')
