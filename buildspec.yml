@@ -44,13 +44,6 @@ phases:
           rm -rf last_source
           unzip last_source.zip -d last_source
 
-          diff -r last_source/about about
-          diff -r last_source/cloud cloud
-          diff -r last_source/cloudFormation cloudFormation
-          diff -r last_source/link link
-          diff -r last_source/shared shared
-          diff -r last_source/ui ui
-
           if diff -r last_source/about about >/dev/null 2>&1; then
             export IS_ABOUT_UNCHANGED=1
           fi
