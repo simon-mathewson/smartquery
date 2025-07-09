@@ -8,7 +8,7 @@ export const AddConnectionPage: React.FC = () => {
   const [, navigate] = useLocation();
 
   return (
-    <Page>
+    <Page title="Add connection">
       <Card htmlProps={{ className: 'flex flex-col p-3' }}>
         <ConnectionForm exit={() => navigate(routes.root())} />
       </Card>

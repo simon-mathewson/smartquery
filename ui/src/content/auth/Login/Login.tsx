@@ -26,7 +26,7 @@ export const Login: React.FC = () => {
   );
 
   return (
-    <Page>
+    <Page title="Login">
       <Card htmlProps={{ className: 'w-full' }}>
         <Header
           left={<Button element="link" htmlProps={{ href: routes.root() }} icon={<ArrowBack />} />}

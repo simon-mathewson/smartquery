@@ -60,7 +60,7 @@ export const Home: React.FC = () => {
   );
 
   return (
-    <Page>
+    <Page title="Home">
       {connections.length > 0 && (
         <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
           <Connections hideDatabases htmlProps={{ className: 'flex flex-col gap-2' }} />

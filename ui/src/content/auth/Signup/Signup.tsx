@@ -28,7 +28,7 @@ export const Signup: React.FC = () => {
   );
 
   return (
-    <Page>
+    <Page title="Signup">
       <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
         <Header
           left={<Button element="link" htmlProps={{ href: routes.root() }} icon={<ArrowBack />} />}
