@@ -69,6 +69,7 @@ phases:
         export SKIP_CLOUD=$(($IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_SHARED_UNCHANGED))
         export SKIP_CLOUD_FORMATION=$(($IS_CLOUD_FORMATION_UNCHANGED))
         export SKIP_LINK=$(($IS_LINK_UNCHANGED * $IS_SHARED_UNCHANGED))
+        export SKIP_SHARED=$(($IS_ABOUT_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_LINK_UNCHANGED * $IS_UI_UNCHANGED))
         export SKIP_UI=$(($IS_UI_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_LINK_UNCHANGED * $IS_SHARED_UNCHANGED))
 
       - |
@@ -76,13 +77,19 @@ phases:
         echo "SKIP_CLOUD: $SKIP_CLOUD"
         echo "SKIP_CLOUD_FORMATION: $SKIP_CLOUD_FORMATION"
         echo "SKIP_LINK: $SKIP_LINK"
+        echo "SKIP_SHARED: $SKIP_SHARED"
         echo "SKIP_UI: $SKIP_UI"
 
       - npm i -g corepack@latest
       - corepack enable pnpm
 
-      - cd shared
-      - pnpm install
+      - cd shared # Always navigate to shared to enable upcoming cd ../
+      - |
+        if [ $SKIP_SHARED -eq 1 ]; then
+          echo "Shared package is unchanged. Skipping install."
+        else
+          pnpm install
+        fi
 
       - |
         if [ $SKIP_ABOUT -eq 1 ]; then
@@ -157,6 +164,9 @@ phases:
       - |
         if [ $SKIP_UI -eq 1 ]; then
           echo "UI package is unchanged. Skipping build."
+
+          # Add empty test results file to prevent artifacts upload failure
+          touch ui/test-results/empty
         else
           # Initialize cloud types, they are needed for UI build because of the tRPC router import
           if [ $SKIP_CLOUD -eq 1 ]; then
