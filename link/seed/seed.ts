@@ -22,7 +22,7 @@ export const seed = async () => {
       engine: 'postgres',
       host: 'localhost',
       password: 'password',
-      port: Number(process.env.VITE_POSTGRESQL_PORT),
+      port: Number(process.env.VITE_POSTGRES_PORT),
       user: 'postgres',
     },
   ];

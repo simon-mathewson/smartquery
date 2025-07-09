@@ -1,3 +1,5 @@
+import path from 'node:path';
+import fs from 'node:fs';
 import { PrismaClient } from '../generated';
 
 (async () => {
@@ -34,6 +36,56 @@ import { PrismaClient } from '../generated';
       password: 'password',
       port: 5433,
       schema: 'public',
+    },
+  });
+
+  const sshKey = fs.readFileSync(path.join(__dirname, '../../../link/test_ssh_key.pem'), 'utf8');
+
+  await prisma.connection.create({
+    data: {
+      database: 'postgres_db',
+      dbUser: 'postgres',
+      engine: 'postgres',
+      host: 'postgres',
+      name: 'postgres_db SSH',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: 'password',
+      port: 5432,
+      schema: 'public',
+      sshHost: 'localhost',
+      sshPort: 2222,
+      sshPrivateKey: sshKey,
+      sshUsePrivateKey: true,
+      sshUser: 'root',
+    },
+  });
+
+  await prisma.connection.create({
+    data: {
+      database: 'mysql_db',
+      dbUser: 'root',
+      engine: 'mysql',
+      host: 'mysql',
+      name: 'mysql_db SSH',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: 'password',
+      port: 3306,
+      schema: 'mysql_db',
+      sshHost: 'localhost',
+      sshPort: 2222,
+      sshPrivateKey: sshKey,
+      sshUsePrivateKey: true,
+      sshUser: 'root',
     },
   });
 

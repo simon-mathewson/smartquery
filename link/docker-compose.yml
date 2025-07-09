@@ -1,11 +1,4 @@
 services:
-  postgres:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres_db
-    ports:
-      - '${VITE_POSTGRESQL_PORT}:5432'
   mysql:
     image: mysql
     environment:
@@ -13,3 +6,34 @@ services:
       MYSQL_ROOT_PASSWORD: password
     ports:
       - '${VITE_MYSQL_PORT}:3306'
+    networks:
+      - shared
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres_db
+    ports:
+      - '${VITE_POSTGRES_PORT}:5432'
+    networks:
+      - shared
+
+  ssh:
+    image: quay.io/panubo/sshd:1.9.0
+    ports:
+      - '${VITE_POSTGRES_SSH_PORT}:22'
+    volumes:
+      - ./test_ssh_key.pub:/root/.ssh/authorized_keys:ro
+    environment:
+      SSH_ENABLE_ROOT: true
+      TCP_FORWARDING: true
+    depends_on:
+      - postgres
+      - mysql
+    networks:
+      - shared
+
+networks:
+  shared:
+    driver: bridge

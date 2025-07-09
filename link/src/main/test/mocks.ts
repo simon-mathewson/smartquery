@@ -24,7 +24,7 @@ export const mocks = {
       engine: 'postgres',
       name: 'Postgres',
       password: 'password',
-      port: Number(import.meta.env.VITE_POSTGRESQL_PORT),
+      port: Number(import.meta.env.VITE_POSTGRES_PORT),
       ssh: null,
       storageLocation: 'local',
       type: 'remote',
