@@ -14,7 +14,7 @@ phases:
 
       # Get source from last build
       - export SOURCE_OUTPUT_PATH=s3://dabase-codepipeline/dabase/SourceOutp/
-      - export LAST_SOURCE_DIR=$(aws s3 ls $SOURCE_OUTPUT_PATH | sort | tail -n 1 | awk '{print $4}')
+      - export LAST_SOURCE_DIR=$(aws s3 ls $SOURCE_OUTPUT_PATH | sort | tail -n 2 | head -n 1 | awk '{print $4}')
       - |
         if [ -z "$LAST_SOURCE_DIR" ]; then
           echo "No previous build sources found. Building all packages."
