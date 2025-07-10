@@ -5,6 +5,7 @@ import { Footer } from './content/footer/Footer';
 import { Providers } from './providers/Providers';
 import { Router } from './router/router';
 import { Helmet } from 'react-helmet';
+import { ConsentModal } from './content/consentModal/ConsentModal';
 
 export const App: React.FC = () => {
   const description =
@@ -24,6 +25,7 @@ export const App: React.FC = () => {
         <meta property="og:url" content={import.meta.env.VITE_UI_URL} />
       </Helmet>
       <Providers>
+        <ConsentModal />
         <Router />
         <Footer />
       </Providers>

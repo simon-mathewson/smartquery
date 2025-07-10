@@ -87,19 +87,6 @@ export const Home: React.FC = () => {
           );
         })}
       </div>
-      {connections.length === 0 && (
-        <div className="px-4 text-xs text-textTertiary">
-          By using Dabase, you agree to the{' '}
-          <a className="underline" href={import.meta.env.VITE_TERMS_URL} target="_blank">
-            Terms of Use
-          </a>{' '}
-          and the{' '}
-          <a className="underline" href={import.meta.env.VITE_PRIVACY_URL} target="_blank">
-            Privacy Policy
-          </a>
-          .
-        </div>
-      )}
     </Page>
   );
 };

@@ -75,7 +75,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           hint="Help improve Dabase"
           label="Share anonymous usage data"
           onChange={(value) => setIsConsentGranted(Boolean(value))}
-          value={isConsentGranted}
+          value={isConsentGranted ?? false}
         />
       </Field>
       <Field label="Ask questions and share your feedback, feature requests, and bug reports:">

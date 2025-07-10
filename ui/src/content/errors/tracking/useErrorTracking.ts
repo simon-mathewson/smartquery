@@ -7,9 +7,9 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 export const useErrorTracking = () => {
   const [rum, setRum] = useState<AwsRum | null>(null);
 
-  const [isConsentGranted, setIsConsentGranted] = useStoredState(
-    'useErrorTracking.isConsentGranted',
-    false,
+  const [isConsentGranted, setIsConsentGranted] = useStoredState<boolean | undefined>(
+    'useErrorTracking.isConsentGranted.v2',
+    undefined,
   );
 
   const trackError = useCallback((error: unknown) => rum?.recordError(error), [rum]);
