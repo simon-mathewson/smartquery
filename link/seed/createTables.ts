@@ -119,5 +119,13 @@ export const createTables = async (connection: Connection) => {
     )
   `);
 
+  await prisma.$queryRawUnsafe(`
+    CREATE TABLE many (
+      id ${intAutoIncrementType},
+      text TEXT NOT NULL,
+      PRIMARY KEY (id)
+    )
+  `);
+
   await prisma.$disconnect();
 };

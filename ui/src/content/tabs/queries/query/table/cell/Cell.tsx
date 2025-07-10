@@ -101,7 +101,7 @@ export const Cell: React.FC<CellProps> = (props) => {
     <div
       tabIndex={-1}
       className={classNames(
-        'group flex h-8 max-w-[240px] select-none items-center justify-between gap-2 px-2 transition-colors duration-100',
+        'group flex h-8 select-none items-center justify-between gap-2 px-2 transition-colors duration-100',
         (() => {
           if (type === 'header') return undefined;
 
@@ -129,7 +129,7 @@ export const Cell: React.FC<CellProps> = (props) => {
           return 'data-[row-hover=true]:bg-secondaryHighlight ';
         })(),
         {
-          'sticky top-0 z-30 h-10 border-b bg-card': type === 'header',
+          'h-10 border-b bg-card': type === 'header',
           'cursor-pointer': type === 'header' && query.select,
           '-mt-[1px] border-y py-2': type === 'body',
           'z-10 border-y-whiteHighlightHover': type === 'body' && selected,

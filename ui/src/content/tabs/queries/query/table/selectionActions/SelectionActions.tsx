@@ -55,12 +55,20 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       return row.length === 0 ? columnCount - 1 : Math.max(max, Math.max(...row));
     }, 0);
 
-    const topLeftCell = tableRef.current.querySelector<HTMLDivElement>(
-      `[data-cell-column="${firstColumn}"][data-cell-row="${firstRow}"]`,
-    );
-    const bottomRightCell = tableRef.current.querySelector<HTMLDivElement>(
-      `[data-cell-column="${lastColumn}"][data-cell-row="${lastRow}"]`,
-    );
+    // Find the top left and bottom right cells of the selection. Fall back to first and last visible
+    // cells of the column in case selection corners were unmounted by virtualization.
+    const topLeftCell =
+      tableRef.current.querySelector<HTMLDivElement>(
+        `[data-cell-column="${firstColumn}"][data-cell-row="${firstRow}"]`,
+      ) ??
+      tableRef.current.querySelectorAll<HTMLDivElement>(`[data-cell-column="${firstColumn}"]`)[0];
+    const bottomRightCell =
+      tableRef.current.querySelector<HTMLDivElement>(
+        `[data-cell-column="${lastColumn}"][data-cell-row="${lastRow}"]`,
+      ) ??
+      Array.from(
+        tableRef.current.querySelectorAll<HTMLDivElement>(`[data-cell-column="${lastColumn}"]`),
+      ).slice(-1)[0];
 
     if (!topLeftCell || !bottomRightCell) return null;
 

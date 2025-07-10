@@ -11,7 +11,7 @@ export const useSelection = () => {
 
   const [selection, setSelection] = useState<number[][]>([]);
 
-  const tableContentRef = useRef<HTMLDivElement | null>(null);
+  const tableRef = useRef<HTMLDivElement | null>(null);
 
   const selectionActionsRef = useRef<HTMLDivElement | null>(null);
 
@@ -19,7 +19,7 @@ export const useSelection = () => {
     active: selection.length > 0,
     clickOutside: {
       additionalRefs: useMemo(() => [selectionActionsRef], []),
-      ref: tableContentRef,
+      ref: tableRef,
     },
     handler: () => {
       setSelection([]);
@@ -174,6 +174,6 @@ export const useSelection = () => {
     selection,
     selectionActionsRef,
     setSelection,
-    tableContentRef,
+    tableRef,
   };
 };

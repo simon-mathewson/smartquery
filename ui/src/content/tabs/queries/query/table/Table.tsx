@@ -11,6 +11,9 @@ import { QueryContext, ResultContext } from '../Context';
 import { useCopyPaste } from './copyPaste/useCopyPaste';
 import { useSorting } from './sorting/useSorting';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { median } from '~/shared/utils/math/median';
+import { useVirtualization } from './useVirtualization';
+import { CELL_HEIGHT } from './cell/constants';
 
 export type TableProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
@@ -28,7 +31,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const { handleCellClick, selection, selectionActionsRef, setSelection, tableContentRef } =
+  const { handleCellClick, selection, selectionActionsRef, setSelection, tableRef } =
     useSelection();
 
   const rowsToCreate = useMemo(
@@ -37,7 +40,7 @@ export const Table: React.FC<TableProps> = (props) => {
     [createChanges, table],
   );
 
-  const tableRef = useRef<HTMLDivElement | null>(null);
+  const tableContentRef = useRef<HTMLDivElement | null>(null);
 
   useCopyPaste(selection, rowsToCreate, tableRef);
 
@@ -93,6 +96,29 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const isTableEmpty = rows.length === 0 && rowsToCreate.length === 0;
 
+  // Compute column width based on median value length
+  const columnWidths = useMemo(
+    () =>
+      visibleColumns.map((column) => {
+        if (!rows.length) return '1fr';
+
+        const columnName = typeof column === 'object' ? column.name : column;
+
+        const sampleSize = Math.max(rows.length, 1_000);
+        const sample = [...rows].sort(() => Math.random() - 0.5).slice(0, sampleSize);
+        const medianLength = median(sample.map((row) => String(row[columnName]).length));
+        const finalWidth = Math.max(Math.min(medianLength, 60), 10);
+
+        return `${finalWidth}ch`;
+      }),
+    [visibleColumns, rows],
+  );
+
+  const { topRowsHiddenCount, visibleRowCount, bottomRowsHiddenCount } = useVirtualization(
+    rows,
+    tableRef,
+  );
+
   return (
     <>
       <div className="relative flex grow flex-col items-start overflow-hidden px-2">
@@ -103,9 +129,9 @@ export const Table: React.FC<TableProps> = (props) => {
           ref={tableRef}
         >
           <div
-            className="grid auto-rows-max"
+            className="sticky top-0 z-30 grid auto-rows-max"
             ref={tableContentRef}
-            style={{ gridTemplateColumns: `repeat(${visibleColumns.length}, 1fr)` }}
+            style={{ gridTemplateColumns: columnWidths.join(' ') }}
           >
             {visibleColumns.map((column) => {
               const columnName = typeof column === 'object' ? column.name : column;
@@ -119,7 +145,27 @@ export const Table: React.FC<TableProps> = (props) => {
                 />
               );
             })}
+          </div>
+          <div
+            className="col-span-full h-0"
+            style={{
+              height: topRowsHiddenCount * CELL_HEIGHT,
+            }}
+          />
+          <div
+            className="grid auto-rows-max"
+            ref={tableContentRef}
+            style={{ gridTemplateColumns: columnWidths.join(' ') }}
+          >
             {rows.map((row, rowIndex) => {
+              const rowNumber = rowIndex + 1;
+              if (
+                rowNumber <= topRowsHiddenCount ||
+                rowNumber >= topRowsHiddenCount + visibleRowCount
+              ) {
+                return null;
+              }
+
               return visibleColumns.map((column, columnIndex) => {
                 const columnName = typeof column === 'object' ? column.name : column;
                 const value = row[columnName];
@@ -153,6 +199,14 @@ export const Table: React.FC<TableProps> = (props) => {
               });
             })}
             {rowsToCreate.map((row, rowIndex) => {
+              const rowNumber = rowIndex + 1 + rows.length;
+              if (
+                rowNumber <= topRowsHiddenCount ||
+                rowNumber >= topRowsHiddenCount + visibleRowCount
+              ) {
+                return null;
+              }
+
               return visibleColumns.map((column, columnIndex) => {
                 const columnName = typeof column === 'object' ? column.name : column;
                 const value = row[columnName];
@@ -184,6 +238,12 @@ export const Table: React.FC<TableProps> = (props) => {
               tableRef={tableRef}
             />
           )}
+          <div
+            className="col-span-full h-0"
+            style={{
+              height: bottomRowsHiddenCount * CELL_HEIGHT,
+            }}
+          />
         </div>
         {isTableEmpty && (
           <div className="sticky left-0 w-full py-4 pl-2 text-xs">This table is empty.</div>

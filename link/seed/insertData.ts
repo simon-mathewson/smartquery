@@ -1,6 +1,8 @@
 import { createClient } from './createClient';
 import type { Connection } from './types';
 import { faker } from '@faker-js/faker';
+import fs from 'fs';
+import path from 'path';
 
 export const insertData = async (connection: Connection) => {
   const { engine } = connection;
@@ -136,6 +138,18 @@ export const insertData = async (connection: Connection) => {
     INSERT INTO simple (id)
     VALUES
       (1), (2), (3)
+  `);
+
+  const manyTableData = JSON.parse(
+    fs.readFileSync(path.join(__dirname, 'manyTableData.json'), 'utf8'),
+  ) as { id: number; text: string }[];
+
+  await prisma.$queryRawUnsafe(`
+    INSERT INTO many (text)
+    VALUES
+      ${Array(1000)
+        .fill(0)
+        .map(() => manyTableData.map((text) => `('${text}')`).join())}
   `);
 
   await prisma.$disconnect();
