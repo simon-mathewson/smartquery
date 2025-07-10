@@ -92,6 +92,9 @@ phases:
         echo "SKIP_SHARED: $SKIP_SHARED"
         echo "SKIP_UI: $SKIP_UI"
 
+      # Important: Remove last_source to avoid storage issues
+      - rm -rf last_source last_source.zip
+
       - npm i -g corepack@latest
       - corepack enable pnpm
 
