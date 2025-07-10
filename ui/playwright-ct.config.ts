@@ -12,7 +12,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: process.env.CI !== undefined,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  workers: process.env.CI ? 3 : undefined,
   reporter: process.env.CI ? [['junit', { outputFile: 'test-ct-report.xml' }], ['list']] : 'html',
   use: {
     trace: 'on-first-retry',
