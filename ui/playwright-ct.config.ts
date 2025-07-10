@@ -9,7 +9,7 @@ export default defineConfig({
   testDir: './',
   snapshotPathTemplate: '{testFilePath}/../__snapshots__/{arg}{ext}',
   timeout: 30 * 1000,
-  fullyParallel: process.env.CI ? false : true,
+  fullyParallel: true,
   forbidOnly: process.env.CI !== undefined,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
@@ -29,19 +29,6 @@ export default defineConfig({
     launchOptions: {
       // Ensure consistency between headed and headless mode by always showing scrollbars.
       ignoreDefaultArgs: ['--hide-scrollbars'],
-      // args: process.env.CI
-      //   ? [
-      //       '--disable-dev-shm-usage',
-      //       '--disable-gpu',
-      //       '--no-sandbox',
-      //       '--disable-setuid-sandbox',
-      //       '--disable-background-timer-throttling',
-      //       '--disable-backgrounding-occluded-windows',
-      //       '--disable-renderer-backgrounding',
-      //       '--disable-features=TranslateUI',
-      //       '--disable-ipc-flooding-protection',
-      //     ]
-      //   : [],
     },
   },
   projects: [
