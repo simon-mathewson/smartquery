@@ -218,7 +218,7 @@ phases:
           pnpm lint
           pnpm test -- --watch false --reporter junit --outputFile test-report.xml
           pnpm playwright install --with-deps chromium
-          NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
+          NODE_OPTIONS=--max-old-space-size=4096 CI=true pnpm playwright test -c playwright-ct.config.ts --workers=1
           pnpm build
         fi
   post_build:
