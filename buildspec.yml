@@ -92,7 +92,6 @@ phases:
         echo "SKIP_SHARED: $SKIP_SHARED"
         echo "SKIP_UI: $SKIP_UI"
 
-      # Important: Remove last_source to avoid storage issues
       - rm -rf last_source last_source.zip
 
       - npm i -g corepack@latest
@@ -221,7 +220,7 @@ phases:
           pnpm lint
           pnpm test -- --watch false --reporter junit --outputFile test-report.xml
           pnpm playwright install --with-deps chromium
-          NODE_OPTIONS=--max-old-space-size=3072 CI=true pnpm playwright test -c playwright-ct.config.ts
+          CI=true pnpm playwright test -c playwright-ct.config.ts
           pnpm build
         fi
   post_build:
