@@ -39,6 +39,7 @@ export type ConnectionFormProps = {
   exit: () => void;
   hideBackButton?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLElement>;
+  overrideInitialValues?: Partial<FormValues>;
 };
 
 const engineLabels = {
@@ -48,7 +49,7 @@ const engineLabels = {
 };
 
 export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
-  const { connectionToEditId, exit, hideBackButton, htmlProps } = props;
+  const { connectionToEditId, exit, hideBackButton, htmlProps, overrideInitialValues } = props;
 
   const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
@@ -70,9 +71,13 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
   useEffectOnce(() => {
     getInitialFormValues({ connectionToEdit, getSqliteContent, user }).then((initialFormValues) => {
-      setFormValues(initialFormValues);
+      const finalInitialFormValues = {
+        ...initialFormValues,
+        ...overrideInitialValues,
+      } as FormValues;
+      setFormValues(finalInitialFormValues);
       setIsCloudConnection(
-        initialFormValues.storageLocation === 'cloud' && connectionToEdit !== null,
+        finalInitialFormValues.storageLocation === 'cloud' && connectionToEdit !== null,
       );
     });
   });
@@ -136,7 +141,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
   return (
     <>
-      <form className="grid w-[320px] gap-2" onSubmit={onSubmit} ref={formRef} {...htmlProps}>
+      <form className="grid w-full gap-2" onSubmit={onSubmit} ref={formRef} {...htmlProps}>
         <Header
           left={
             !hideBackButton && (

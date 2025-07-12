@@ -15,10 +15,11 @@ import { routes } from '~/router/routes';
 export type ConnectionsProps = {
   hideDatabases?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
+  shouldNavigate?: boolean;
 };
 
 export const Connections: React.FC<ConnectionsProps> = (props) => {
-  const { hideDatabases, htmlProps } = props;
+  const { hideDatabases, htmlProps, shouldNavigate } = props;
 
   const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
@@ -34,7 +35,10 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
     <>
       {isAddingOrEditing ? (
         <ConnectionForm
-          htmlProps={htmlProps}
+          htmlProps={{
+            ...htmlProps,
+            className: classNames(htmlProps?.className, { 'w-[320px]': !hideDatabases }),
+          }}
           connectionToEditId={connectionToEditId}
           hideBackButton={connections.length === 0}
           exit={() => {
@@ -59,9 +63,13 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                 Connections
               </div>
               <Button
+                element={shouldNavigate ? 'link' : 'button'}
                 htmlProps={{
+                  href: shouldNavigate ? routes.addConnection() : undefined,
                   onClick: () => {
-                    setIsAddingOrEditing(true);
+                    if (!shouldNavigate) {
+                      setIsAddingOrEditing(true);
+                    }
                     track('connections_add');
                   },
                 }}
