@@ -16,12 +16,11 @@ export const getMySqlEnumValuesFromColumnType = (columnType: string) => {
 export const getColumnsStatement = (props: {
   connection: Connection;
   select: Select;
-  table: string;
 }): [string, string] => {
   const {
     connection: { engine },
     select,
-    table,
+    select: { table },
   } = props;
 
   if (engine === 'sqlite') {

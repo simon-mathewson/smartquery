@@ -89,7 +89,6 @@ export const useQueries = () => {
       const [columnsStatement, constraintsStatement] = getColumnsStatement({
         connection: activeConnection,
         select,
-        table: select.table,
       });
 
       const totalRowsStatement = getTotalRowsStatement({

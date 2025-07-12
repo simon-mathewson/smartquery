@@ -17,6 +17,7 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { Loading } from '~/shared/components/loading/Loading';
 import { Tooltip } from '~/shared/components/tooltip/Tooltip';
+import { ViewColumnsButton } from './viewColumnsButton/ViewColumnsButton';
 
 export const Query: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -50,7 +51,12 @@ export const Query: React.FC = () => {
     >
       <Header
         left={
-          result ? <InputModesSelect inputMode={inputMode} setInputMode={setInputMode} /> : null
+          result ? (
+            <>
+              <InputModesSelect inputMode={inputMode} setInputMode={setInputMode} />{' '}
+              <ViewColumnsButton />
+            </>
+          ) : null
         }
         middle={
           <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
