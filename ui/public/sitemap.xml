@@ -7,4 +7,16 @@
     <loc>https://dabase.dev/conn/demo/demo</loc>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://dabase.dev/connect-to-mysql</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://dabase.dev/connect-to-postgres</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://dabase.dev/open-sqlite</loc>
+    <priority>0.8</priority>
+  </url>
 </urlset>
