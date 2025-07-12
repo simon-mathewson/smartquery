@@ -7,13 +7,14 @@ import { ErrorMessage } from '../errorMessage/ErrorMessage';
 import { QueryContext } from '~/content/tabs/queries/query/Context';
 
 export type SqlEditorProps = {
+  isSubmitDisabled?: boolean;
   onChange?: (sql: string) => void;
   onSubmit?: () => Promise<void>;
   value: string;
 };
 
 export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
-  const { onChange, onSubmit, value } = props;
+  const { isSubmitDisabled, onChange, onSubmit, value } = props;
 
   const query = useContext(QueryContext);
 
@@ -53,7 +54,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         <Button
           htmlProps={{
             className: 'ml-auto w-36',
-            disabled: !value?.trim() || query?.query.isLoading,
+            disabled: !value?.trim() || query?.query.isLoading || isSubmitDisabled,
             type: 'submit',
           }}
           icon={<Send />}
