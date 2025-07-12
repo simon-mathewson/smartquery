@@ -27,7 +27,7 @@ export const OpenSqlite: React.FC = () => {
             exit={() => {
               navigate(routes.root());
             }}
-            overrideInitialValues={{ engine: 'sqlite', type: 'file' }}
+            overrideInitialValues={{ engine: 'sqlite', storageLocation: 'local', type: 'file' }}
           />
         </Card>
         <WelcomeActions hideAddConnection />
