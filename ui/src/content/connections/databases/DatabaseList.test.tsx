@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { DatabaseListStory } from './DatabaseList.story';
-import { postgresConnectionMock, getContextMock } from '../mocks';
+import { postgresConnectionMock, getConnectionsMock } from '../mocks';
 import type { ActiveConnection } from '~/shared/types';
 import type { Connections } from '../useConnections';
 import { spy } from 'tinyspy';
 import { routes } from '~/router/routes';
+import { getActiveConnectionMock } from '../activeConnection/mocks';
+import type { ActiveConnectionContextType } from '../activeConnection/Context';
 
 test.use({
   viewport: { width: 500, height: 400 },
@@ -12,7 +14,7 @@ test.use({
 
 test.describe('DatabaseList', () => {
   test('should render list of databases', async ({ mount }) => {
-    const connections = getContextMock();
+    const connections = getConnectionsMock();
     const { activeConnection } = connections;
 
     const $ = await mount(
@@ -30,25 +32,19 @@ test.describe('DatabaseList', () => {
 
   test('should allow connecting to a database', async ({ mount }) => {
     const navigateSpy = spy();
-    const connections = getContextMock();
-    const { activeConnection, activeConnectionDatabases } = connections;
 
-    const $ = await mount(
-      <DatabaseListStory
-        testApp={{
-          providerOverrides: { ConnectionsProvider: connections },
-          navigateSpy,
-        }}
-      />,
-    );
+    const { activeConnection } = getConnectionsMock();
+    const { databases } = getActiveConnectionMock();
 
-    await $.getByRole('option', { name: activeConnectionDatabases[1].name }).click();
+    const $ = await mount(<DatabaseListStory testApp={{ navigateSpy }} />);
+
+    await $.getByRole('option', { name: databases[1].name }).click();
 
     expect(navigateSpy.calls).toEqual([
       [
         routes.connection({
           connectionId: activeConnection.id,
-          database: activeConnectionDatabases[1].name,
+          database: databases[1].name,
           schema: '',
         }),
       ],
@@ -57,24 +53,35 @@ test.describe('DatabaseList', () => {
 
   test('should render list of schemas', async ({ mount }) => {
     const connections = {
-      ...getContextMock(),
+      ...getConnectionsMock(),
       activeConnection: {
         ...postgresConnectionMock,
         clientId: '2',
         credentialStorage: 'plain',
       } satisfies ActiveConnection,
-      activeConnectionDatabases: [{ name: 'postgres', schemas: ['public', 'information_schema'] }],
     } satisfies Connections;
-    const { activeConnection } = connections;
+
+    const activeConnection = {
+      ...getActiveConnectionMock(),
+      activeConnection: connections.activeConnection,
+      databases: [{ name: 'postgres', schemas: ['public', 'information_schema'] }],
+    } satisfies ActiveConnectionContextType;
 
     const $ = await mount(
-      <DatabaseListStory testApp={{ providerOverrides: { ConnectionsProvider: connections } }} />,
+      <DatabaseListStory
+        testApp={{
+          providerOverrides: {
+            ActiveConnectionProvider: activeConnection,
+            ConnectionsProvider: connections,
+          },
+        }}
+      />,
     );
 
     await expect($.getByRole('heading', { level: 2 }).last()).toHaveText('Schemas');
 
     await expect($.getByRole('option', { selected: true }).last()).toHaveText(
-      activeConnection.schema!,
+      connections.activeConnection.schema,
     );
 
     await expect($).toHaveScreenshot('withSchemas.png');

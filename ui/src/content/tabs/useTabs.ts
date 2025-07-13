@@ -1,16 +1,15 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 import * as uuid from 'uuid';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { Query } from '~/shared/types';
 import { type Tab } from '~/shared/types';
-import { ConnectionsContext } from '../connections/Context';
+import { ActiveConnectionContext } from '../connections/activeConnection/Context';
 
 export const useTabs = () => {
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const activeConnectionContext = useContext(ActiveConnectionContext);
 
-  const localStorageSuffix = activeConnection
-    ? `${activeConnection.id}-${activeConnection.database}`
+  const localStorageSuffix = activeConnectionContext
+    ? `${activeConnectionContext.activeConnection.id}-${activeConnectionContext.activeConnection.database}`
     : '';
 
   const [tabs, setTabs] = useStoredState<Tab[]>(`tabs-${localStorageSuffix}`, [], sessionStorage);

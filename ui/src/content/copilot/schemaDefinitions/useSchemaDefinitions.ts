@@ -1,7 +1,5 @@
 import { omit } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { assert } from 'ts-essentials';
-import { ConnectionsContext } from '~/content/connections/Context';
 import { LinkApiContext } from '~/content/link/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
@@ -10,14 +8,14 @@ import { DateTime } from 'luxon';
 import { ToastContext } from '~/content/toast/Context';
 import { getStatements } from './getStatements';
 import { convertSqliteResultsToRecords } from '~/shared/utils/sqlite/sqlite';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 
 export const useSchemaDefinitions = () => {
   const toast = useDefinedContext(ToastContext);
 
   const linkApi = useDefinedContext(LinkApiContext);
 
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
-  assert(activeConnection);
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
   const { engine, id, database } = activeConnection;
 

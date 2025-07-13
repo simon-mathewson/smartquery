@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
-import { ConnectionsContext } from '~/content/connections/Context';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import { QueriesContext } from '../../Context';
@@ -8,7 +8,7 @@ import { getLimitAndOffset, setLimitAndOffset } from '../../utils/limitAndOffset
 import { QueryContext, ResultContext } from '../Context';
 
 export const usePagination = () => {
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
   const { updateQuery } = useDefinedContext(QueriesContext);
 

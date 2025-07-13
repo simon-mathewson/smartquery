@@ -1,35 +1,34 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { addQuotes } from '~/shared/utils/sql/sql';
+import { ActiveConnectionContext } from '../connections/activeConnection/Context';
 import type {
   AggregatedCreateChanges,
-  AggregatedUpdateChanges,
   AggregatedDeleteChanges,
-  Location,
+  AggregatedUpdateChanges,
   CreateChange,
-  DeleteChange,
-  UpdateChange,
   CreateChangeInput,
+  DeleteChange,
+  Location,
+  UpdateChange,
 } from './types';
 import { doChangeLocationsMatch, getValueString } from './utils';
-import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { ConnectionsContext } from '../connections/Context';
-import { addQuotes } from '~/shared/utils/sql/sql';
 
 export const useEdit = () => {
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const activeConnectionContext = useContext(ActiveConnectionContext);
 
   const [createChanges, setCreateChanges] = useStoredState<CreateChange[]>(
-    `createChanges-${activeConnection?.id}`,
+    `createChanges-${activeConnectionContext?.activeConnection.id}`,
     [],
     sessionStorage,
   );
   const [deleteChanges, setDeleteChanges] = useStoredState<DeleteChange[]>(
-    `deleteChanges-${activeConnection?.id}`,
+    `deleteChanges-${activeConnectionContext?.activeConnection.id}`,
     [],
     sessionStorage,
   );
   const [updateChanges, setUpdateChanges] = useStoredState<UpdateChange[]>(
-    `updateChanges-${activeConnection?.id}`,
+    `updateChanges-${activeConnectionContext?.activeConnection.id}`,
     [],
     sessionStorage,
   );
@@ -166,7 +165,9 @@ export const useEdit = () => {
   );
 
   const sql = useMemo(() => {
-    if (!activeConnection) return '';
+    if (!activeConnectionContext) return '';
+
+    const { activeConnection } = activeConnectionContext;
 
     const { engine } = activeConnection;
 
@@ -314,7 +315,7 @@ export const useEdit = () => {
     });
 
     return [...deleteStatements, ...createStatements, ...updateStatements].join('\n\n');
-  }, [activeConnection, createChanges, deleteChanges, updateChanges]);
+  }, [activeConnectionContext, createChanges, deleteChanges, updateChanges]);
 
   const allChanges = useMemo(
     () => [...createChanges, ...deleteChanges, ...updateChanges],

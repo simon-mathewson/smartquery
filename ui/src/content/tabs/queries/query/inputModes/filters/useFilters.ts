@@ -1,6 +1,5 @@
 import { cloneDeep } from 'lodash';
 import { useCallback, useMemo } from 'react';
-import { ConnectionsContext } from '~/content/connections/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import { QueriesContext } from '../../../Context';
@@ -8,9 +7,10 @@ import { getLimitAndOffset, setLimitAndOffset } from '../../../utils/limitAndOff
 import { QueryContext, ResultContext } from '../../Context';
 import type { Filter } from './types';
 import { getAstFromFilters, getFiltersFromAst } from './utils';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 
 export const useFilters = () => {
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
   const { updateQuery } = useDefinedContext(QueriesContext);
 
@@ -23,7 +23,7 @@ export const useFilters = () => {
 
   const applyFilters = useCallback(
     async (filters: Filter[]) => {
-      if (!activeConnection || !columns || !select) return;
+      if (!columns || !select) return;
 
       const newStatement = cloneDeep(select.parsed);
 

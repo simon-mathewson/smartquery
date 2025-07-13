@@ -1,18 +1,18 @@
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import classNames from 'classnames';
+import { uniq } from 'lodash';
 import React, { useEffect, useState } from 'react';
-import { ConnectionsContext } from '../connections/Context';
+import { assert } from 'ts-essentials';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { List } from '~/shared/components/list/List';
+import { Loading } from '~/shared/components/loading/Loading';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { addQuotes } from '~/shared/utils/sql/sql';
+import { isNotUndefined } from '~/shared/utils/typescript/typescript';
+import { ActiveConnectionContext } from '../connections/activeConnection/Context';
+import { useDrag } from '../dragAndDrop/useDrag/useDrag';
 import { LinkApiContext } from '../link/api/Context';
 import { TabsContext } from '../tabs/Context';
 import { QueriesContext } from '../tabs/queries/Context';
-import { useDrag } from '../dragAndDrop/useDrag/useDrag';
-import { addQuotes } from '~/shared/utils/sql/sql';
-import { assert } from 'ts-essentials';
-import classNames from 'classnames';
-import { List } from '~/shared/components/list/List';
-import { uniq } from 'lodash';
-import { isNotUndefined } from '~/shared/utils/typescript/typescript';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { Loading } from '~/shared/components/loading/Loading';
 
 type Table = { name: string; schema: string | undefined };
 
@@ -20,8 +20,7 @@ export const TableList: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const linkApi = useDefinedContext(LinkApiContext);
 
-  const { activeConnection, isLoadingActiveConnectionDatabases } =
-    useDefinedContext(ConnectionsContext);
+  const { activeConnection, isLoadingDatabases } = useDefinedContext(ActiveConnectionContext);
   const { activeTab } = useDefinedContext(TabsContext);
   const { addQuery, queryResults } = useDefinedContext(QueriesContext);
 
@@ -29,8 +28,6 @@ export const TableList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!activeConnection) return;
-
     const { database, engine, type } = activeConnection;
 
     const tableNamesStatement = (() => {
@@ -139,7 +136,7 @@ export const TableList: React.FC = () => {
 
   return (
     <div className="relative flex w-full grow flex-col gap-1 overflow-auto py-2">
-      {isLoading || isLoadingActiveConnectionDatabases ? (
+      {isLoading || isLoadingDatabases ? (
         <Loading />
       ) : (
         <List<Table>

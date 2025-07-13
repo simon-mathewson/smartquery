@@ -1,6 +1,5 @@
 import { List } from '~/shared/components/list/List';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { ConnectionsContext } from '../Context';
 import { useMemo, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import classNames from 'classnames';
@@ -8,25 +7,21 @@ import { AnalyticsContext } from '~/content/analytics/Context';
 import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
 import { Loading } from '~/shared/components/loading/Loading';
+import { ActiveConnectionContext } from '../activeConnection/Context';
 
 export const DatabaseList: React.FC = () => {
   const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
-  const { activeConnection, activeConnectionDatabases, isLoadingActiveConnectionDatabases } =
-    useDefinedContext(ConnectionsContext);
+  const { activeConnection, databases, isLoadingDatabases } =
+    useDefinedContext(ActiveConnectionContext);
 
   const [labelId] = useState(uuid);
 
   const schemas = useMemo(() => {
-    if (!activeConnection || activeConnection.engine !== 'postgres') return [];
+    if (activeConnection.engine !== 'postgres') return [];
 
-    return (
-      activeConnectionDatabases.find((database) => database.name === activeConnection.database)
-        ?.schemas ?? []
-    );
-  }, [activeConnection, activeConnectionDatabases]);
-
-  const isLoading = isLoadingActiveConnectionDatabases;
+    return databases.find((database) => database.name === activeConnection.database)?.schemas ?? [];
+  }, [activeConnection, databases]);
 
   if (!activeConnection) {
     return null;
@@ -47,10 +42,10 @@ export const DatabaseList: React.FC = () => {
         >
           Databases
         </h2>
-        {isLoading && <Loading />}
+        {isLoadingDatabases && <Loading />}
         <List
           htmlProps={{ 'aria-labelledby': labelId }}
-          items={activeConnectionDatabases.map((database) => ({
+          items={databases.map((database) => ({
             label: database.name,
             selectedVariant: 'primary',
             value: database.name,
@@ -79,7 +74,7 @@ export const DatabaseList: React.FC = () => {
             >
               Schemas
             </h2>
-            {isLoading && <Loading />}
+            {isLoadingDatabases && <Loading />}
             <List
               htmlProps={{ 'aria-labelledby': labelId }}
               items={schemas.map((schema) => ({

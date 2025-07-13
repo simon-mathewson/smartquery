@@ -16,8 +16,10 @@ import type { ThemeContextType } from '~/content/theme/Context';
 import type { ToastContextType } from '~/content/toast/Context';
 import type { ErrorTrackingContextType } from '~/content/errors/tracking/Context';
 import type { UpdateAvailableContextType } from '~/content/updateAvailable/Context';
+import type { ActiveConnectionContextType } from '~/content/connections/activeConnection/Context';
 
 export type ContextTypes = {
+  ActiveConnectionProvider: ActiveConnectionContextType;
   AddToDesktopProvider: AddToDesktopContextType;
   AiProvider: AiContextType;
   AnalyticsProvider: AnalyticsContextType;

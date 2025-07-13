@@ -12,16 +12,14 @@ import classNames from 'classnames';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { MessagePart } from './MessagePart/MessagePart';
 import { CircularProgress } from '@mui/material';
-import { ConnectionsContext } from '~/content/connections/Context';
-import { assert } from 'ts-essentials';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { useCallback, useRef } from 'react';
 import { Tooltip } from '~/shared/components/tooltip/Tooltip';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 
 export const CopilotSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
-  assert(activeConnection, 'No active connection');
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
   const {
     clearThread,

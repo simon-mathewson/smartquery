@@ -115,7 +115,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
               selectedValue={connections.find((c) => c.id === activeConnection?.id) ?? null}
             />
           </div>
-          {!hideDatabases && <DatabaseList />}
+          {!hideDatabases && activeConnection && <DatabaseList />}
         </div>
       )}
     </>

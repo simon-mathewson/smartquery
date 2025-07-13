@@ -48,20 +48,14 @@ export const sqliteConnectionMock = {
   type: 'file',
 } satisfies FileConnection;
 
-export const getContextMock = () =>
+export const getConnectionsMock = () =>
   ({
     activeConnection: { clientId: '1', ...mysqlConnectionMock } as ActiveConnection,
-    activeConnectionDatabases: [
-      { name: 'development', schemas: [] },
-      { name: 'test', schemas: [] },
-      { name: 'staging', schemas: [] },
-    ],
     addConnection: spy(),
     connect: spy(),
     connectRemote: spy(),
     connections: [mysqlConnectionMock, postgresConnectionMock, sqliteConnectionMock] as const,
     disconnectRemote: spy(),
-    isLoadingActiveConnectionDatabases: false,
     removeConnection: spy(),
     updateConnection: spy(),
   }) satisfies Connections;

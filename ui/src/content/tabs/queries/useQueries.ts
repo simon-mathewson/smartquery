@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
-import { ConnectionsContext } from '~/content/connections/Context';
 import { LinkApiContext } from '~/content/link/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { DbValue, Row, TableType } from '~/shared/types';
@@ -18,13 +17,14 @@ import { convertSqliteResultsToRecords } from '~/shared/utils/sqlite/sqlite';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { ToastContext } from '~/content/toast/Context';
 import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 
 export const useQueries = () => {
   const toast = useDefinedContext(ToastContext);
 
   const linkApi = useDefinedContext(LinkApiContext);
 
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const activeConnectionContext = useContext(ActiveConnectionContext);
 
   const { activeTab, addTab, setTabs, tabs } = useDefinedContext(TabsContext);
 
@@ -73,9 +73,10 @@ export const useQueries = () => {
 
   const runSelectQuery = useCallback(
     async (id: string) => {
-      if (!activeConnection) {
+      if (!activeConnectionContext) {
         throw new Error('No active connection');
       }
+      const { activeConnection } = activeConnectionContext;
 
       const query = queriesRef.current.find((q) => q.id === id);
       assert(query);
@@ -178,14 +179,15 @@ export const useQueries = () => {
         onFinishLoading(id);
       }
     },
-    [activeConnection, linkApi.sendQuery, onFinishLoading, onStartLoading, toast],
+    [activeConnectionContext, linkApi.sendQuery, onFinishLoading, onStartLoading, toast],
   );
 
   const runQuery = useCallback(
     async (id: string) => {
-      if (!activeConnection) {
+      if (!activeConnectionContext) {
         throw new Error('No active connection');
       }
+      const { activeConnection } = activeConnectionContext;
 
       const query = queriesRef.current.find((q) => q.id === id);
       assert(query);
@@ -279,7 +281,7 @@ export const useQueries = () => {
       }
     },
     [
-      activeConnection,
+      activeConnectionContext,
       getSqliteContent,
       linkApi.sendQuery,
       onFinishLoading,
@@ -304,7 +306,8 @@ export const useQueries = () => {
     ) => {
       const { position, tabId, afterActiveTab, skipRun, openIfExists } = options ?? {};
 
-      assert(activeConnection);
+      assert(activeConnectionContext);
+      const { activeConnection } = activeConnectionContext;
 
       const newQuery = getNewQuery({
         addQueryOptions: query,
@@ -343,7 +346,7 @@ export const useQueries = () => {
         }, 100);
       }
     },
-    [activeConnection, addTab, runQuery, setQueries],
+    [activeConnectionContext, addTab, runQuery, setQueries],
   );
 
   const removeQuery = useCallback(
@@ -360,7 +363,8 @@ export const useQueries = () => {
     async (props: { id: string; run?: boolean; sql: string }) => {
       const { id, run, sql } = props;
 
-      assert(activeConnection);
+      assert(activeConnectionContext);
+      const { activeConnection } = activeConnectionContext;
 
       setQueries((currentQueries) =>
         currentQueries.map((currentColumn) =>
@@ -384,7 +388,7 @@ export const useQueries = () => {
         );
       }
     },
-    [activeConnection, runQuery, setQueries],
+    [activeConnectionContext, runQuery, setQueries],
   );
 
   const refetchActiveTabSelectQueries = useCallback(() => {
@@ -399,7 +403,7 @@ export const useQueries = () => {
 
   // Refetch select queries when active tab changes
   useEffect(() => {
-    if (!activeConnection) return;
+    if (!activeConnectionContext) return;
     refetchActiveTabSelectQueries();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab?.id]);

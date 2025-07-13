@@ -11,7 +11,7 @@ import { ArrowForward, ArrowUpward, ArrowDownward } from '@mui/icons-material';
 import { Button } from '~/shared/components/button/Button';
 import { QueriesContext } from '../../../Context';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
-import { ConnectionsContext } from '~/content/connections/Context';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 
 export type CellProps = {
   column: Column | string;
@@ -52,8 +52,7 @@ export const Cell: React.FC<CellProps> = (props) => {
     value,
   } = props;
 
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
-  assert(activeConnection);
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
   const { addQuery } = useDefinedContext(QueriesContext);
 

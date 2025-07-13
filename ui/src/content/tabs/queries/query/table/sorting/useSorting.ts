@@ -1,7 +1,6 @@
 import { cloneDeep } from 'lodash';
 import type NodeSqlParser from 'node-sql-parser';
 import { useCallback, useMemo } from 'react';
-import { ConnectionsContext } from '~/content/connections/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import { QueriesContext } from '../../../Context';
@@ -9,10 +8,11 @@ import { getLimitAndOffset, setLimitAndOffset } from '../../../utils/limitAndOff
 import { QueryContext } from '../../Context';
 import { getSortedColumnFromAst } from './utils';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 
 export const useSorting = () => {
   const { track } = useDefinedContext(AnalyticsContext);
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
   const { updateQuery } = useDefinedContext(QueriesContext);
   const { query } = useDefinedContext(QueryContext);
 
@@ -23,7 +23,7 @@ export const useSorting = () => {
 
   const toggleSort = useCallback(
     (columnName: string) => {
-      if (!query.select || !activeConnection) return;
+      if (!query.select) return;
 
       const newSortDirection = (() => {
         if (sortedColumn?.columnName !== columnName) return 'ASC';

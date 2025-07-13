@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ConnectionsContext } from '~/content/connections/Context';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import { EditContext } from '~/content/edit/Context';
+import { LinkApiContext } from '~/content/link/api/Context';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
-import { LinkApiContext } from '~/content/link/api/Context';
+import { ToastContext } from '~/content/toast/Context';
+import { useOverlay } from '~/shared/components/overlay/useOverlay';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { splitSqlStatements } from '~/shared/utils/sql/sql';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { useOverlay } from '~/shared/components/overlay/useOverlay';
-import { ToastContext } from '~/content/toast/Context';
 
 export type ReviewChangesCardProps = {
   triggerRef: React.RefObject<HTMLButtonElement>;
@@ -25,7 +25,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   const { getSqliteContent, requestFileHandlePermission, storeSqliteContent } =
     useDefinedContext(SqliteContext);
 
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
   const { refetchActiveTabSelectQueries } = useDefinedContext(QueriesContext);
   const { clearChanges, sql } = useDefinedContext(EditContext);
 
@@ -36,8 +36,6 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   }, [sql]);
 
   const handleSubmit = useCallback(async () => {
-    if (!activeConnection) return;
-
     track('toolbar_changes_submit');
 
     if (activeConnection.engine === 'sqlite') {

@@ -1,6 +1,6 @@
 import { cloneDeep, get, isEqualWith } from 'lodash';
 import { useCallback, useMemo } from 'react';
-import { ConnectionsContext } from '~/content/connections/Context';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import { QueriesContext } from '../../../Context';
@@ -9,7 +9,7 @@ import { QueryContext, ResultContext } from '../../Context';
 import { getWhere } from './utils';
 
 export const useSearch = () => {
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
   const { updateQuery } = useDefinedContext(QueriesContext);
 
@@ -22,7 +22,7 @@ export const useSearch = () => {
 
   const search = useCallback(
     async (searchValue: string) => {
-      if (!activeConnection || !columns || !select) return;
+      if (!columns || !select) return;
 
       const newStatement = cloneDeep(select.parsed);
 
@@ -47,7 +47,7 @@ export const useSearch = () => {
   );
 
   const searchValue = useMemo(() => {
-    if (!activeConnection || !columns || !select) return undefined;
+    if (!columns || !select) return undefined;
 
     const searchWhere = getWhere({
       columns,

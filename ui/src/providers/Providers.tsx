@@ -20,6 +20,7 @@ import type { ContextTypes } from './ContextTypes';
 import type { PropsWithChildren } from 'react';
 import { ErrorTrackingProvider } from '~/content/errors/tracking/Provider';
 import { UpdateAvailableProvider } from '~/content/updateAvailable/Provider';
+import { ActiveConnectionProvider } from '~/content/connections/activeConnection/Provider';
 
 const providers = {
   ErrorTrackingProvider,
@@ -35,6 +36,7 @@ const providers = {
   LinkProvider,
   SqliteProvider,
   ConnectionsProvider,
+  ActiveConnectionProvider,
   EditProvider,
   TabsProvider,
   QueriesProvider,

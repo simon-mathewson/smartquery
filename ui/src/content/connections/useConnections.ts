@@ -1,23 +1,23 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import type { ActiveConnection, Database } from '~/shared/types';
 import type { Connection, RemoteConnection } from '@/types/connection';
+import { omit, sortBy } from 'lodash';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { assert } from 'ts-essentials';
 import { useLocation, useRoute } from 'wouter';
 import { routes } from '~/router/routes';
 import type { ModalControl } from '~/shared/components/modal/types';
-import type { SignInModalInput } from './signInModal/types';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { LinkApiContext } from '../link/api/Context';
-import { ToastContext } from '../toast/Context';
-import { SqliteContext } from '../sqlite/Context';
-import { assert } from 'ts-essentials';
 import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
-import { CloudApiContext } from '../cloud/api/Context';
-import { omit, sortBy } from 'lodash';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import type { ActiveConnection } from '~/shared/types';
 import { AuthContext } from '../auth/Context';
-import type { UserPasswordModalInput } from './userPasswordModal/types';
+import { CloudApiContext } from '../cloud/api/Context';
+import { LinkApiContext } from '../link/api/Context';
+import { SqliteContext } from '../sqlite/Context';
+import { ToastContext } from '../toast/Context';
 import { ConnectCanceledError } from './connectAbortedError';
 import { sqliteDemoConnectionId } from './constants';
+import type { SignInModalInput } from './signInModal/types';
+import type { UserPasswordModalInput } from './userPasswordModal/types';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -96,10 +96,6 @@ export const useConnections = (props: UseConnectionsProps) => {
   const previousRouteParamsRef = useRef<typeof dbRouteParams | undefined>(undefined);
 
   const [activeConnection, setActiveConnection] = useState<ActiveConnection | null>(null);
-
-  const [activeConnectionDatabases, setActiveConnectionDatabases] = useState<Database[]>([]);
-  const [isLoadingActiveConnectionDatabases, setIsLoadingActiveConnectionDatabases] =
-    useState(false);
 
   const addConnection = useCallback(
     async (connection: Connection, options?: { onSuccess?: () => void; skipToast?: boolean }) => {
@@ -235,7 +231,6 @@ export const useConnections = (props: UseConnectionsProps) => {
     }
 
     setActiveConnection(null);
-    setActiveConnectionDatabases([]);
   }, [activeConnection, disconnectRemote]);
 
   const removeConnection = useCallback(
@@ -280,53 +275,6 @@ export const useConnections = (props: UseConnectionsProps) => {
       disconnect,
       navigate,
     ],
-  );
-
-  const getDatabases = useCallback(
-    async (connection: Connection, clientId?: string) => {
-      if (connection.engine === 'sqlite') {
-        return setActiveConnectionDatabases([{ name: connection.database, schemas: [] }]);
-      }
-
-      assert(clientId);
-
-      const databasesStatement = {
-        mysql:
-          "SELECT schema_name AS db FROM information_schema.schemata WHERE schema_name NOT IN ('information_schema', 'performance_schema', 'sys') ORDER BY schema_name ASC",
-        postgres:
-          'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC',
-      }[connection.engine];
-
-      const statements = [databasesStatement];
-
-      if (connection.engine === 'postgres') {
-        statements.push(
-          "SELECT schema_name AS schema, catalog_name AS db FROM information_schema.schemata WHERE schema_name <> 'information_schema' AND schema_name NOT LIKE 'pg_%' ORDER BY schema_name ASC",
-        );
-      }
-
-      setIsLoadingActiveConnectionDatabases(true);
-
-      try {
-        await linkApi.sendQuery.mutate({ clientId, statements }).then(([dbRows, schemaRows]) => {
-          setActiveConnectionDatabases(
-            dbRows.map((dbRow) => {
-              const db = String(dbRow.db);
-              return {
-                name: db,
-                schemas:
-                  schemaRows
-                    ?.filter((schemaRow) => db === String(schemaRow.db))
-                    .map((schemaRow) => String(schemaRow.schema)) ?? [],
-              };
-            }),
-          );
-        });
-      } finally {
-        setIsLoadingActiveConnectionDatabases(false);
-      }
-    },
-    [linkApi.sendQuery],
   );
 
   const connectRemote = useCallback(
@@ -482,8 +430,6 @@ export const useConnections = (props: UseConnectionsProps) => {
           } satisfies ActiveConnection;
 
           setActiveConnection(activeConnection);
-
-          await getDatabases(connection);
         }
 
         const selectedDatabase = overrides?.database ?? connection.database;
@@ -503,8 +449,6 @@ export const useConnections = (props: UseConnectionsProps) => {
             database: selectedDatabase,
             schema: selectedSchema,
           } satisfies ActiveConnection);
-
-          await getDatabases(connection, newClientId);
         }
       } catch (error) {
         if (!(error instanceof ConnectCanceledError)) {
@@ -520,16 +464,7 @@ export const useConnections = (props: UseConnectionsProps) => {
         navigate(routes.root());
       }
     },
-    [
-      connections,
-      getDemoConnection,
-      disconnect,
-      toast,
-      navigate,
-      getSqliteDb,
-      getDatabases,
-      connectRemote,
-    ],
+    [connections, getDemoConnection, disconnect, toast, navigate, getSqliteDb, connectRemote],
   );
 
   const isReady = !isInitializingAuth && (!user || cloudConnectionsQuery.hasRun);
@@ -580,25 +515,21 @@ export const useConnections = (props: UseConnectionsProps) => {
   return useMemo(
     () => ({
       activeConnection,
-      activeConnectionDatabases,
       addConnection,
       connect,
       connectRemote,
       connections,
       disconnectRemote,
-      isLoadingActiveConnectionDatabases,
       removeConnection,
       updateConnection,
     }),
     [
       activeConnection,
-      activeConnectionDatabases,
       addConnection,
       connect,
       connectRemote,
       connections,
       disconnectRemote,
-      isLoadingActiveConnectionDatabases,
       removeConnection,
       updateConnection,
     ],

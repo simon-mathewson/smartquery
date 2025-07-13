@@ -4,17 +4,16 @@ import { AiContext } from '../ai/Context';
 import type { Content } from '@google/genai';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
-import { ConnectionsContext } from '../connections/Context';
 import { getSystemInstructions } from './systemInstruction';
 import { ToastContext } from '../toast/Context';
 import { cloneDeep } from 'lodash';
 import { useSchemaDefinitions } from './schemaDefinitions/useSchemaDefinitions';
+import { ActiveConnectionContext } from '../connections/activeConnection/Context';
 
 export const useCopilot = () => {
   const toast = useDefinedContext(ToastContext);
 
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
-  assert(activeConnection);
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
   const { googleAi } = useDefinedContext(AiContext);
 

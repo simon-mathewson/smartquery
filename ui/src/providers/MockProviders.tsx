@@ -20,6 +20,7 @@ import type { DeepPartial } from 'ts-essentials';
 import type { PropsWithChildren } from 'react';
 import { ErrorTrackingMockProvider } from '~/content/errors/tracking/MockProvider';
 import { UpdateAvailableMockProvider } from '~/content/updateAvailable/MockProvider';
+import { ActiveConnectionMockProvider } from '~/content/connections/activeConnection/MockProvider';
 
 const mockProviders = {
   ErrorTrackingProvider: ErrorTrackingMockProvider,
@@ -35,6 +36,7 @@ const mockProviders = {
   LinkProvider,
   SqliteProvider,
   ConnectionsProvider: ConnectionsMockProvider,
+  ActiveConnectionProvider: ActiveConnectionMockProvider,
   EditProvider,
   TabsProvider,
   QueriesProvider,
