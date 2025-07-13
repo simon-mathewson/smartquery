@@ -33,7 +33,7 @@ export const Connection: React.FC = () => {
         </Helmet>
       )}
       <div className="relative grid h-full grid-cols-[224px_1fr] bg-background">
-        {!activeConnection && <Loading large />}
+        {!activeConnection && <Loading size="large" />}
         <NavigationSidebar />
         <div className="flex h-full flex-col overflow-hidden pb-3 pl-1 pr-3">
           {activeConnection && (

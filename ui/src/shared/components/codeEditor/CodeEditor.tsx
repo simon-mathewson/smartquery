@@ -1,6 +1,6 @@
 import Editor from '@monaco-editor/react';
 import classNames from 'classnames';
-import React from 'react';
+import React, { useRef } from 'react';
 import { ThemeContext } from '~/content/theme/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getIsWindows } from '~/shared/utils/getIsWindows/getIsWindows';
@@ -8,6 +8,7 @@ import { AiSuggestionWidget } from './aiSuggestion/widget';
 import { AiContext } from '~/content/ai/Context';
 import type { editor } from 'monaco-editor';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { Loading } from '../loading/Loading';
 
 export type CodeEditorProps = {
   autoFocus?: boolean;
@@ -40,6 +41,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   const { mode } = useDefinedContext(ThemeContext);
   const ai = useDefinedContext(AiContext);
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const initialHeight = large ? 80 : 30;
+
   return (
     <Editor
       className={classNames(
@@ -50,10 +55,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         },
       )}
       defaultLanguage={language}
+      loading={<Loading size={large ? 'default' : 'small'} />}
       onChange={(value) => onChange?.(value ?? '')}
       onMount={(editor, monaco) => {
         const setHeight = () => {
-          const contentHeight = Math.max(large ? 80 : 30, editor.getContentHeight());
+          const contentHeight = Math.max(initialHeight, editor.getContentHeight());
 
           editor.getContainerDomNode().style.height = `${contentHeight}px`;
 
@@ -101,7 +107,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         }
 
         if (!readOnly) {
-          new AiSuggestionWidget(editor, monaco, ai, track);
+          new AiSuggestionWidget(editor, monaco, ai, track, language);
         }
       }}
       options={{
@@ -130,7 +136,15 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       theme={mode === 'light' ? 'vs' : 'vs-dark'}
       value={value}
       wrapperProps={{
-        style: { overflow: 'hidden', width: '100%' },
+        ref: wrapperRef,
+        style: {
+          overflow: 'hidden',
+          width: '100%',
+
+          // Needed for loading indicator
+          height: initialHeight,
+          position: 'relative',
+        },
       }}
     />
   );
