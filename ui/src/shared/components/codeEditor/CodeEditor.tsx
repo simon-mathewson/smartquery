@@ -61,7 +61,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         const setHeight = () => {
           const contentHeight = Math.max(initialHeight, editor.getContentHeight());
 
-          editor.getContainerDomNode().style.height = `${contentHeight}px`;
+          const wrapper = wrapperRef.current;
+
+          if (wrapper) {
+            wrapper.style.height = `${contentHeight}px`;
+          }
 
           editor.layout({
             width: editor.getContainerDomNode().clientWidth,
