@@ -63,7 +63,7 @@ Resources:
           MinimumProtocolVersion: "TLSv1.2_2021"
           SslSupportMethod: "sni-only"
           AcmCertificateArn: "arn:aws:acm:us-east-1:339712876040:certificate/03ebcb0f-f956-448b-b64e-f2e2c9425a97"
-        PriceClass: "PriceClass_100"
+        PriceClass: "PriceClass_All"
         DefaultCacheBehavior:
           Compress: true
           TrustedKeyGroups: []
@@ -141,7 +141,7 @@ Resources:
           MinimumProtocolVersion: "TLSv1.2_2021"
           SslSupportMethod: "sni-only"
           AcmCertificateArn: "arn:aws:acm:us-east-1:339712876040:certificate/03ebcb0f-f956-448b-b64e-f2e2c9425a97"
-        PriceClass: "PriceClass_100"
+        PriceClass: "PriceClass_All"
         DefaultCacheBehavior:
           Compress: true
           TrustedKeyGroups: []
