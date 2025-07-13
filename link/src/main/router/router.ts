@@ -97,6 +97,11 @@ export const router = trpc.router({
       }
 
       const client = clients[clientId];
+
+      if (!client) {
+        throw new Error('Client not found');
+      }
+
       const { prisma } = client;
 
       const results = await (prisma as PostgresClient).$transaction(

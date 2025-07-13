@@ -65,7 +65,8 @@ export const TableList: React.FC = () => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [activeConnection, runQuery]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeConnection]);
 
   const selectedTables = uniq(
     activeTab?.queries.flatMap((query) =>

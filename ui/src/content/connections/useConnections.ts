@@ -430,6 +430,8 @@ export const useConnections = (props: UseConnectionsProps) => {
           } satisfies ActiveConnection;
 
           setActiveConnection(activeConnection);
+
+          return activeConnection;
         }
 
         const selectedDatabase = overrides?.database ?? connection.database;
@@ -443,12 +445,16 @@ export const useConnections = (props: UseConnectionsProps) => {
             schema: selectedSchema,
           });
 
-          setActiveConnection({
+          const newActiveConnection = {
             ...connection,
             clientId: newClientId,
             database: selectedDatabase,
             schema: selectedSchema,
-          } satisfies ActiveConnection);
+          } satisfies ActiveConnection;
+
+          setActiveConnection(newActiveConnection);
+
+          return newActiveConnection;
         }
       } catch (error) {
         if (!(error instanceof ConnectCanceledError)) {
@@ -462,6 +468,8 @@ export const useConnections = (props: UseConnectionsProps) => {
         }
 
         navigate(routes.root());
+
+        return null;
       }
     },
     [connections, getDemoConnection, disconnect, toast, navigate, getSqliteDb, connectRemote],
@@ -517,8 +525,8 @@ export const useConnections = (props: UseConnectionsProps) => {
       activeConnection,
       addConnection,
       connect,
-      connectRemote,
       connections,
+      connectRemote,
       disconnectRemote,
       removeConnection,
       updateConnection,

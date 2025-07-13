@@ -142,23 +142,11 @@ export const useQueries = () => {
             totalRows,
           },
         }));
-      } catch (error) {
-        console.error(error);
-
-        if (error instanceof Error) {
-          toast.add({
-            color: 'danger',
-            description: getErrorMessage(error),
-            title: 'Query failed',
-          });
-        }
-
-        throw error;
       } finally {
         onFinishLoading(id);
       }
     },
-    [activeConnectionContext, onFinishLoading, onStartLoading, toast],
+    [activeConnectionContext, onFinishLoading, onStartLoading],
   );
 
   const runUserQuery = useCallback(

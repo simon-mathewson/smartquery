@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { Database, DbValue } from '~/shared/types';
+import type { ActiveConnection, Database, DbValue } from '~/shared/types';
 import { LinkApiContext } from '../../link/api/Context';
 import { ConnectionsContext } from '../Context';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { convertSqliteResultsToRecords } from './convertSqliteResultsToRecords';
 import { getSelectFromStatement } from '~/content/tabs/queries/utils/parse';
+import { ToastContext } from '~/content/toast/Context';
+import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
+import { TRPCClientError } from '@trpc/client';
 
 export const useActiveConnection = () => {
+  const toast = useDefinedContext(ToastContext);
   const linkApi = useDefinedContext(LinkApiContext);
-  const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const { activeConnection, connect } = useDefinedContext(ConnectionsContext);
   const { getSqliteContent, requestFileHandlePermission, storeSqliteContent } =
     useDefinedContext(SqliteContext);
 
@@ -18,24 +22,64 @@ export const useActiveConnection = () => {
   const [isLoadingDatabases, setIsLoadingDatabases] = useState(false);
 
   const runQuery = useCallback(
-    async (statements: string[], options?: { skipSqliteWrite?: boolean }) => {
-      assert(activeConnection);
+    async (
+      statements: string[],
+      options?: { overrideActiveConnection?: ActiveConnection; skipSqliteWrite?: boolean },
+    ) => {
+      const currentConnection = options?.overrideActiveConnection ?? activeConnection;
 
-      if (activeConnection.engine !== 'sqlite') {
-        return linkApi.sendQuery.mutate({
-          clientId: activeConnection.clientId,
-          statements,
-        });
+      assert(currentConnection);
+
+      if (currentConnection.engine !== 'sqlite') {
+        try {
+          return await linkApi.sendQuery.mutate({
+            clientId: currentConnection.clientId,
+            statements,
+          });
+        } catch (error) {
+          console.error(error);
+
+          if (
+            error instanceof TRPCClientError &&
+            (error.message.includes('Server has closed the connection.') ||
+              error.message.includes("Can't reach database server at ") ||
+              error.message.includes('Client not found') ||
+              error.message.includes(
+                "Cannot destructure property 'prisma' of 'client' as it is undefined.",
+              ))
+          ) {
+            const newConnection = await connect(currentConnection.id, {
+              database: currentConnection.database,
+              schema: currentConnection.schema,
+            });
+
+            if (newConnection) {
+              return runQuery(statements, { overrideActiveConnection: newConnection });
+            } else {
+              throw error;
+            }
+          }
+
+          if (error instanceof Error) {
+            toast.add({
+              color: 'danger',
+              description: getErrorMessage(error),
+              title: 'Query failed',
+            });
+          }
+
+          throw error;
+        }
       }
 
       let fileHandle: FileSystemFileHandle | ArrayBuffer | null = null;
 
       const hasOnlySelectStatements = statements.every((statement) =>
-        getSelectFromStatement({ connection: activeConnection, statement }),
+        getSelectFromStatement({ connection: currentConnection, statement }),
       );
 
       if (!hasOnlySelectStatements && !options?.skipSqliteWrite) {
-        fileHandle = await getSqliteContent(activeConnection.id);
+        fileHandle = await getSqliteContent(currentConnection.id);
 
         if (fileHandle instanceof FileSystemFileHandle) {
           await requestFileHandlePermission(fileHandle);
@@ -43,18 +87,18 @@ export const useActiveConnection = () => {
       }
 
       const results = convertSqliteResultsToRecords(
-        statements.map((statement) => activeConnection.sqliteDb.exec(statement)[0]),
+        statements.map((statement) => currentConnection.sqliteDb.exec(statement)[0]),
       ) as Record<string, DbValue>[][];
 
       if (fileHandle) {
-        const updatedDb = activeConnection.sqliteDb.export();
+        const updatedDb = currentConnection.sqliteDb.export();
 
         if (fileHandle instanceof FileSystemFileHandle) {
           const writable = await fileHandle.createWritable();
           await writable.write(updatedDb);
           await writable.close();
         } else {
-          await storeSqliteContent(updatedDb, activeConnection.id);
+          await storeSqliteContent(updatedDb, currentConnection.id);
         }
       }
 
@@ -62,10 +106,12 @@ export const useActiveConnection = () => {
     },
     [
       activeConnection,
+      connect,
       getSqliteContent,
       linkApi.sendQuery,
       requestFileHandlePermission,
       storeSqliteContent,
+      toast,
     ],
   );
 
@@ -119,7 +165,8 @@ export const useActiveConnection = () => {
     } else {
       setDatabases([]);
     }
-  }, [activeConnection, getDatabases]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeConnection]);
 
   return useMemo(
     () => (activeConnection ? { activeConnection, databases, isLoadingDatabases, runQuery } : null),
