@@ -1,21 +1,17 @@
 import { omit } from 'lodash';
+import { DateTime } from 'luxon';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { LinkApiContext } from '~/content/link/api/Context';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import { ToastContext } from '~/content/toast/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import type { SchemaDefinitions } from './types';
-import { DateTime } from 'luxon';
-import { ToastContext } from '~/content/toast/Context';
 import { getStatements } from './getStatements';
-import { convertSqliteResultsToRecords } from '~/shared/utils/sqlite/sqlite';
-import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import type { SchemaDefinitions } from './types';
 
 export const useSchemaDefinitions = () => {
   const toast = useDefinedContext(ToastContext);
 
-  const linkApi = useDefinedContext(LinkApiContext);
-
-  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
+  const { activeConnection, runQuery } = useDefinedContext(ActiveConnectionContext);
 
   const { engine, id, database } = activeConnection;
 
@@ -41,8 +37,8 @@ export const useSchemaDefinitions = () => {
 
     try {
       if ('sqliteDb' in activeConnection) {
-        const [sqliteResults] = convertSqliteResultsToRecords([
-          activeConnection.sqliteDb.exec('SELECT type, name, tbl_name, sql FROM sqlite_master')[0],
+        const [sqliteResults] = await runQuery([
+          'SELECT type, name, tbl_name, sql FROM sqlite_master',
         ]);
 
         const sqliteDefinitions = {
@@ -57,10 +53,7 @@ export const useSchemaDefinitions = () => {
         return sqliteDefinitions;
       }
 
-      const results = await linkApi.sendQuery.mutate({
-        clientId: activeConnection.clientId,
-        statements: getStatements(activeConnection),
-      });
+      const results = await runQuery(getStatements(activeConnection));
 
       const [tables, columns, tableConstraints, views] = results;
 
@@ -97,13 +90,7 @@ export const useSchemaDefinitions = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [
-    activeConnection,
-    setStoredSchemaDefinitions,
-    storedSchemaDefinitions,
-    toast,
-    linkApi.sendQuery,
-  ]);
+  }, [storedSchemaDefinitions, activeConnection, runQuery, setStoredSchemaDefinitions, toast]);
 
   // Fetch schema definitions when active connection changes
   useEffect(() => {

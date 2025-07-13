@@ -10,7 +10,6 @@ import { addQuotes } from '~/shared/utils/sql/sql';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { ActiveConnectionContext } from '../connections/activeConnection/Context';
 import { useDrag } from '../dragAndDrop/useDrag/useDrag';
-import { LinkApiContext } from '../link/api/Context';
 import { TabsContext } from '../tabs/Context';
 import { QueriesContext } from '../tabs/queries/Context';
 
@@ -18,9 +17,9 @@ type Table = { name: string; schema: string | undefined };
 
 export const TableList: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
-  const linkApi = useDefinedContext(LinkApiContext);
 
-  const { activeConnection, isLoadingDatabases } = useDefinedContext(ActiveConnectionContext);
+  const { activeConnection, isLoadingDatabases, runQuery } =
+    useDefinedContext(ActiveConnectionContext);
   const { activeTab } = useDefinedContext(TabsContext);
   const { addQuery, queryResults } = useDefinedContext(QueriesContext);
 
@@ -28,7 +27,7 @@ export const TableList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const { database, engine, type } = activeConnection;
+    const { database, engine } = activeConnection;
 
     const tableNamesStatement = (() => {
       switch (engine) {
@@ -59,28 +58,14 @@ export const TableList: React.FC = () => {
 
     setIsLoading(true);
 
-    try {
-      if (type === 'remote') {
-        linkApi.sendQuery
-          .mutate({ clientId: activeConnection.clientId, statements: [tableNamesStatement] })
-          .then(([rows]) => {
-            setTables(
-              rows.map(({ t, s }) => ({ name: String(t), schema: s ? String(s) : undefined })),
-            );
-          });
-      } else {
-        const [result] = activeConnection.sqliteDb.exec(tableNamesStatement);
-        setTables(
-          result.values.map(([tableName]) => ({
-            name: String(tableName),
-            schema: undefined,
-          })),
-        );
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [activeConnection, linkApi]);
+    runQuery([tableNamesStatement], { skipSqliteWrite: true })
+      .then(([rows]) => {
+        setTables(rows.map(({ t, s }) => ({ name: String(t), schema: s ? String(s) : undefined })));
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [activeConnection, runQuery]);
 
   const selectedTables = uniq(
     activeTab?.queries.flatMap((query) =>

@@ -4,7 +4,7 @@ import { getAstForSql } from '~/shared/utils/sqlParser/getAstForSql';
 import type { Select } from '../types';
 import type NodeSqlParser from 'node-sql-parser';
 
-const getSelectFromStatement = (props: {
+export const getSelectFromStatement = (props: {
   connection: Connection;
   statement: string;
 }): Select | null => {

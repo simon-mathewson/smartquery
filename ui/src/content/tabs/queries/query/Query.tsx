@@ -21,7 +21,7 @@ import { ViewColumnsButton } from './viewColumnsButton/ViewColumnsButton';
 
 export const Query: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
-  const { removeQuery, runQuery } = useDefinedContext(QueriesContext);
+  const { removeQuery, runUserQuery } = useDefinedContext(QueriesContext);
 
   const { columnIndex, query, rowIndex } = useDefinedContext(QueryContext);
 
@@ -73,7 +73,7 @@ export const Query: React.FC = () => {
                       htmlProps={{
                         ...htmlProps,
                         onClick: () => {
-                          runQuery(query.id);
+                          runUserQuery(query.id);
                           track('query_reload');
                         },
                       }}

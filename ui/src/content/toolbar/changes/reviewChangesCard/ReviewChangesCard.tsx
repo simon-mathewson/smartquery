@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import { EditContext } from '~/content/edit/Context';
-import { LinkApiContext } from '~/content/link/api/Context';
-import { SqliteContext } from '~/content/sqlite/Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
 import { ToastContext } from '~/content/toast/Context';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
@@ -21,11 +19,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { triggerRef } = props;
 
-  const linkApi = useDefinedContext(LinkApiContext);
-  const { getSqliteContent, requestFileHandlePermission, storeSqliteContent } =
-    useDefinedContext(SqliteContext);
-
-  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
+  const { runQuery } = useDefinedContext(ActiveConnectionContext);
   const { refetchActiveTabSelectQueries } = useDefinedContext(QueriesContext);
   const { clearChanges, sql } = useDefinedContext(EditContext);
 
@@ -38,30 +32,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
   const handleSubmit = useCallback(async () => {
     track('toolbar_changes_submit');
 
-    if (activeConnection.engine === 'sqlite') {
-      const fileHandle = await getSqliteContent(activeConnection.id);
-
-      if (fileHandle instanceof FileSystemFileHandle) {
-        await requestFileHandlePermission(fileHandle);
-      }
-
-      activeConnection.sqliteDb.run(splitSqlStatements(userSql).join(';'));
-
-      const updatedDb = activeConnection.sqliteDb.export();
-
-      if (fileHandle instanceof FileSystemFileHandle) {
-        const writable = await fileHandle.createWritable();
-        await writable.write(updatedDb);
-        await writable.close();
-      } else {
-        await storeSqliteContent(updatedDb, activeConnection.id);
-      }
-    } else {
-      await linkApi.sendQuery.mutate({
-        clientId: activeConnection.clientId,
-        statements: splitSqlStatements(userSql),
-      });
-    }
+    await runQuery(splitSqlStatements(userSql));
 
     toast.add({
       color: 'success',
@@ -71,18 +42,7 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
     clearChanges();
 
     refetchActiveTabSelectQueries();
-  }, [
-    activeConnection,
-    clearChanges,
-    getSqliteContent,
-    linkApi.sendQuery,
-    refetchActiveTabSelectQueries,
-    requestFileHandlePermission,
-    storeSqliteContent,
-    toast,
-    track,
-    userSql,
-  ]);
+  }, [clearChanges, refetchActiveTabSelectQueries, runQuery, toast, track, userSql]);
 
   const overlay = useOverlay({
     align: 'right',

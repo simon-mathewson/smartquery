@@ -1,35 +1,27 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
-import { LinkApiContext } from '~/content/link/api/Context';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import { ToastContext } from '~/content/toast/Context';
+import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { DbValue, Row, TableType } from '~/shared/types';
+import type { Row, TableType } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
 import { isNotNull } from '~/shared/utils/typescript/typescript';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
 import { getColumnsFromResult, getColumnsStatement } from './utils/columns';
-import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
 import { convertDbValue } from './utils/convertPrismaValue';
 import { getNewQuery } from './utils/getNewQuery';
-import { parseQuery } from './utils/parse';
 import { getTableStatement } from './utils/getTableStatement';
-import { convertSqliteResultsToRecords } from '~/shared/utils/sqlite/sqlite';
-import { SqliteContext } from '~/content/sqlite/Context';
-import { ToastContext } from '~/content/toast/Context';
-import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
-import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
+import { parseQuery } from './utils/parse';
 
 export const useQueries = () => {
   const toast = useDefinedContext(ToastContext);
 
-  const linkApi = useDefinedContext(LinkApiContext);
-
   const activeConnectionContext = useContext(ActiveConnectionContext);
 
   const { activeTab, addTab, setTabs, tabs } = useDefinedContext(TabsContext);
-
-  const { getSqliteContent, requestFileHandlePermission, storeSqliteContent } =
-    useDefinedContext(SqliteContext);
 
   const [queryResults, setQueryResults] = useState<Record<string, QueryResult>>({});
 
@@ -71,12 +63,10 @@ export const useQueries = () => {
     [setQueries],
   );
 
-  const runSelectQuery = useCallback(
+  const runUserSelectQuery = useCallback(
     async (id: string) => {
-      if (!activeConnectionContext) {
-        throw new Error('No active connection');
-      }
-      const { activeConnection } = activeConnectionContext;
+      assert(activeConnectionContext);
+      const { activeConnection, runQuery } = activeConnectionContext;
 
       const query = queriesRef.current.find((q) => q.id === id);
       assert(query);
@@ -116,18 +106,7 @@ export const useQueries = () => {
       onStartLoading(id);
 
       try {
-        const results = (
-          activeConnection.engine === 'sqlite'
-            ? convertSqliteResultsToRecords(
-                statementsWithMetadataFiltered.map(
-                  (statement) => activeConnection.sqliteDb.exec(statement)[0],
-                ),
-              )
-            : await linkApi.sendQuery.mutate({
-                clientId: activeConnection.clientId,
-                statements: statementsWithMetadataFiltered,
-              })
-        ) as Record<string, DbValue>[][];
+        const results = await runQuery(statementsWithMetadataFiltered, { skipSqliteWrite: true });
 
         const [firstSelectResult, columnsResult, constraintsResult, tableResult, totalRowsResult] =
           results;
@@ -179,15 +158,15 @@ export const useQueries = () => {
         onFinishLoading(id);
       }
     },
-    [activeConnectionContext, linkApi.sendQuery, onFinishLoading, onStartLoading, toast],
+    [activeConnectionContext, onFinishLoading, onStartLoading, toast],
   );
 
-  const runQuery = useCallback(
+  const runUserQuery = useCallback(
     async (id: string) => {
       if (!activeConnectionContext) {
         throw new Error('No active connection');
       }
-      const { activeConnection } = activeConnectionContext;
+      const { runQuery } = activeConnectionContext;
 
       const query = queriesRef.current.find((q) => q.id === id);
       assert(query);
@@ -197,42 +176,13 @@ export const useQueries = () => {
       if (!statements) return;
 
       if (select && statements.length === 1) {
-        return runSelectQuery(id);
+        return runUserSelectQuery(id);
       }
 
       onStartLoading(id);
 
       try {
-        const results = await (async () => {
-          if (activeConnection.engine !== 'sqlite') {
-            return linkApi.sendQuery.mutate({
-              clientId: activeConnection.clientId,
-              statements,
-            });
-          }
-
-          const fileHandle = await getSqliteContent(activeConnection.id);
-
-          if (fileHandle instanceof FileSystemFileHandle) {
-            await requestFileHandlePermission(fileHandle);
-          }
-
-          const results = convertSqliteResultsToRecords(
-            statements.map((statement) => activeConnection.sqliteDb.exec(statement)[0]),
-          ) as Record<string, DbValue>[][];
-
-          const updatedDb = activeConnection.sqliteDb.export();
-
-          if (fileHandle instanceof FileSystemFileHandle) {
-            const writable = await fileHandle.createWritable();
-            await writable.write(updatedDb);
-            await writable.close();
-          } else {
-            await storeSqliteContent(updatedDb, activeConnection.id);
-          }
-
-          return results;
-        })();
+        const results = await runQuery(statements);
 
         const rawRows = results.find((result) => result.length) ?? null;
         const rows = rawRows
@@ -280,17 +230,7 @@ export const useQueries = () => {
         onFinishLoading(id);
       }
     },
-    [
-      activeConnectionContext,
-      getSqliteContent,
-      linkApi.sendQuery,
-      onFinishLoading,
-      onStartLoading,
-      requestFileHandlePermission,
-      runSelectQuery,
-      storeSqliteContent,
-      toast,
-    ],
+    [activeConnectionContext, onFinishLoading, onStartLoading, runUserSelectQuery, toast],
   );
 
   const addQuery = useCallback(
@@ -342,11 +282,11 @@ export const useQueries = () => {
 
       if (!skipRun) {
         setTimeout(() => {
-          void runQuery(newQuery.id);
+          void runUserQuery(newQuery.id);
         }, 100);
       }
     },
-    [activeConnectionContext, addTab, runQuery, setQueries],
+    [activeConnectionContext, addTab, runUserQuery, setQueries],
   );
 
   const removeQuery = useCallback(
@@ -383,12 +323,12 @@ export const useQueries = () => {
       if (run) {
         return new Promise<void>((resolve) =>
           setTimeout(() => {
-            resolve(runQuery(id));
+            resolve(runUserQuery(id));
           }),
         );
       }
     },
-    [activeConnectionContext, runQuery, setQueries],
+    [activeConnectionContext, runUserQuery, setQueries],
   );
 
   const refetchActiveTabSelectQueries = useCallback(() => {
@@ -396,10 +336,10 @@ export const useQueries = () => {
 
     activeTab.queries.flat().forEach((query) => {
       if (query.select) {
-        runQuery(query.id);
+        runUserQuery(query.id);
       }
     });
-  }, [activeTab, runQuery]);
+  }, [activeTab, runUserQuery]);
 
   // Refetch select queries when active tab changes
   useEffect(() => {
@@ -414,9 +354,9 @@ export const useQueries = () => {
       queryResults,
       refetchActiveTabSelectQueries,
       removeQuery,
-      runQuery,
+      runUserQuery,
       updateQuery,
     }),
-    [addQuery, queryResults, refetchActiveTabSelectQueries, removeQuery, runQuery, updateQuery],
+    [addQuery, queryResults, refetchActiveTabSelectQueries, removeQuery, runUserQuery, updateQuery],
   );
 };
