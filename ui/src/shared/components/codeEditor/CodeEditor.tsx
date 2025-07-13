@@ -44,6 +44,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const initialHeight = large ? 80 : 30;
+  const fontSize = 12;
+  const lineHeight = 18;
+  const paddingTop = large ? 12 : 6;
+  const paddingBottom = large ? 12 : 6;
 
   return (
     <Editor
@@ -111,13 +115,25 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         }
 
         if (!readOnly) {
-          new AiSuggestionWidget(editor, monaco, ai, track, language);
+          new AiSuggestionWidget(
+            editor,
+            monaco,
+            ai,
+            track,
+            wrapperRef,
+            lineHeight,
+            paddingTop,
+            fontSize,
+            language,
+          );
         }
       }}
       options={{
         folding: false,
+        fontSize,
         glyphMargin: true,
         lineDecorationsWidth: hideLineNumbers ? 0 : 16,
+        lineHeight,
         lineNumbers: hideLineNumbers ? 'off' : undefined,
         lineNumbersMinChars: 2,
         minimap: { enabled: false },
@@ -125,8 +141,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         renderLineHighlight: readOnly ? 'none' : 'line',
         renderLineHighlightOnlyWhenFocus: true,
         padding: {
-          top: 12,
-          bottom: 12,
+          top: paddingTop,
+          bottom: paddingBottom,
         },
         readOnly,
         scrollbar: {

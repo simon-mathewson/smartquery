@@ -23,6 +23,10 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
     private readonly monaco: typeof monacoType,
     private readonly ai: ReturnType<typeof useAi>,
     private readonly track: AnalyticsContextType['track'],
+    private readonly wrapperRef: React.RefObject<HTMLDivElement>,
+    private readonly lineHeight: number,
+    private readonly paddingTop: number,
+    private readonly fontSize: number,
     private readonly language?: 'json' | 'sql',
   ) {
     const update = async (positionProp?: editorType.ICursorPositionChangedEvent['position']) => {
@@ -148,7 +152,9 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
       return undefined;
     }
 
-    return response.text ?? undefined;
+    // Gemini will return escaped newline characters even when telling it not to. Therefore, we are
+    // replacing them here.
+    return response.text?.replace(/\\n/g, '\n') ?? undefined;
   }
 
   getId(): string {
@@ -158,34 +164,45 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
   getDomNode(): HTMLElement {
     this.domNode?.remove();
 
-    const cursorPosition = this.editor.getPosition();
-    const cursorColumn = cursorPosition ? cursorPosition.column - 1 : 0;
-    const leftPadding = Array(cursorColumn).fill(' ').join('');
-
     this.domNode = document.createElement('div');
-    this.domNode.textContent = leftPadding + (this.suggestion ?? '');
     this.domNode.classList.add(
-      'w-max',
-      'pointer-events-none',
+      'break-all',
       'font-italic',
       'opacity-50',
-      'whitespace-pre-wrap',
+      'pointer-events-none',
+      'w-max',
+      'whitespace-break-spaces',
     );
 
     this.editor.applyFontInfo(this.domNode);
+
+    const wrapper = this.wrapperRef.current;
+    assert(wrapper);
+    const cursor = wrapper.querySelector<HTMLDivElement>('.cursor');
+    assert(cursor);
+    const characterWidth = (7.23 / 12) * this.fontSize;
+
+    const code = wrapper.querySelector<HTMLDivElement>('.view-lines');
+    assert(code);
+
+    const paddingRight = Math.round(2 * characterWidth);
+    const codeWidth = code.offsetWidth - paddingRight;
+    const codeWidthWithoutPartialCharacters = codeWidth - (codeWidth % characterWidth);
+
+    const actualColumn = Math.ceil(cursor.offsetLeft / characterWidth);
+    const actualLine = (cursor.offsetTop - this.paddingTop) / this.lineHeight;
+    const paddingSize =
+      actualLine * (codeWidthWithoutPartialCharacters / characterWidth) + actualColumn;
+
+    this.domNode.textContent = Array(paddingSize).fill(' ').join('') + (this.suggestion ?? '');
+    this.domNode.style.paddingRight = `${paddingRight}px`;
 
     return this.domNode;
   }
 
   getPosition(): editorType.IContentWidgetPosition | null {
-    const cursorPosition = this.editor.getPosition();
-
-    if (!cursorPosition) {
-      return null;
-    }
-
     return {
-      position: { lineNumber: cursorPosition.lineNumber, column: 0 },
+      position: { lineNumber: 0, column: 0 },
       preference: [this.monaco.editor.ContentWidgetPositionPreference.EXACT],
     };
   }
