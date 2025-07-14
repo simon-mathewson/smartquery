@@ -12,6 +12,7 @@ export type UseOverlayProps = {
   anchorRef?: React.MutableRefObject<HTMLElement | null>;
   closeOnOutsideClick?: boolean;
   darkenBackground?: boolean;
+  disableFocusOnOpen?: boolean;
   isOpen?: boolean;
   matchTriggerWidth?: boolean;
   onClose?: () => void;
@@ -31,6 +32,7 @@ export const useOverlay = (props: UseOverlayProps) => {
     align,
     closeOnOutsideClick = true,
     darkenBackground,
+    disableFocusOnOpen,
     isOpen: isOpenProp,
     matchTriggerWidth = false,
     onClose,
@@ -63,7 +65,9 @@ export const useOverlay = (props: UseOverlayProps) => {
   } = styles;
 
   const close = useCallback(async () => {
-    previouslyFocusedElementRef.current?.focus();
+    if (!disableFocusOnOpen) {
+      previouslyFocusedElementRef.current?.focus();
+    }
 
     await Promise.all(
       [animateOutWrapper(), darkenBackground ? animateOutBackground() : null].filter(isNotNull),
@@ -76,6 +80,7 @@ export const useOverlay = (props: UseOverlayProps) => {
     animateOutBackground,
     animateOutWrapper,
     backgroundRef,
+    disableFocusOnOpen,
     darkenBackground,
     onClose,
     wrapperRef,
@@ -85,18 +90,20 @@ export const useOverlay = (props: UseOverlayProps) => {
     setIsOpen(true);
     onOpen?.();
 
-    setTimeout(() => {
-      updateStyles();
+    if (!disableFocusOnOpen) {
+      setTimeout(() => {
+        updateStyles();
 
-      if (localRef.current) {
-        focusFirstControl(localRef.current);
+        if (localRef.current) {
+          focusFirstControl(localRef.current);
+        }
+      });
+
+      if (document.activeElement instanceof HTMLElement) {
+        previouslyFocusedElementRef.current = document.activeElement;
       }
-    });
-
-    if (document.activeElement instanceof HTMLElement) {
-      previouslyFocusedElementRef.current = document.activeElement;
     }
-  }, [onOpen, updateStyles]);
+  }, [disableFocusOnOpen, onOpen, updateStyles]);
 
   useEffect(() => {
     if (isOpenProp === undefined) return;

@@ -16,6 +16,7 @@ export const Toast: React.FC = () => {
   const overlay = useOverlay({
     isOpen: Boolean(currentToast),
     closeOnOutsideClick: false,
+    disableFocusOnOpen: true,
     onClose: () => {
       if (currentToast) {
         remove(currentToast.id);
