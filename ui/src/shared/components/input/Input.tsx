@@ -8,7 +8,9 @@ import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 
 export type InputProps = {
   hidden?: boolean;
+  icon?: React.ReactNode;
   onChange?: (value: string) => void;
+  small?: boolean;
 } & (
   | {
       element?: 'input';
@@ -21,7 +23,14 @@ export type InputProps = {
 );
 
 export const Input: React.FC<InputProps> = (props) => {
-  const { element: Element = 'input', hidden, htmlProps, onChange: onChangeProp } = props;
+  const {
+    element: Element = 'input',
+    hidden,
+    htmlProps,
+    icon,
+    onChange: onChangeProp,
+    small,
+  } = props;
 
   const { mode } = useTheme();
   const fieldContext = useContext(FieldContext);
@@ -83,28 +92,43 @@ export const Input: React.FC<InputProps> = (props) => {
   );
 
   return (
-    <Element
-      role={getRole()}
-      {...(hidden ? {} : fieldContext?.controlHtmlProps)}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      {...(htmlProps as any)}
-      className={classNames(
-        'block w-full rounded-lg border-[1px] border-border bg-background px-2 py-[7px] text-sm font-medium text-textSecondary outline-none focus:border-primary disabled:opacity-50',
-        htmlProps?.className,
-        {
-          'resize-none overflow-hidden focus:overflow-auto': Element === 'textarea',
-          hidden,
-        },
+    <div className={classNames('group relative w-full', { hidden })}>
+      {icon && (
+        <div
+          className={classNames(
+            'icon-wrapper pointer-events-none absolute left-0 top-0 flex h-[36px] w-[36px] items-center justify-center text-textTertiary group-focus-within:text-primary [&_svg]:h-[20px] [&_svg]:w-[20px]',
+            {
+              'h-[28px] w-[28px] [&_svg]:h-[20px] [&_svg]:w-[20px]': small,
+            },
+          )}
+        >
+          {icon}
+        </div>
       )}
-      onChange={onChange}
-      ref={mergeRefs(
+      <Element
+        role={getRole()}
+        {...(hidden ? {} : fieldContext?.controlHtmlProps)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        [registerElement, htmlProps?.ref as React.RefObject<any> | undefined].filter(
-          isNotUndefined,
-        ),
-      )}
-      rows={Element === 'textarea' ? 1 : undefined}
-      style={{ colorScheme: mode }}
-    />
+        {...(htmlProps as any)}
+        className={classNames(
+          'block w-full rounded-lg border-[1px] border-border bg-background px-2 py-[7px] text-sm font-medium text-textSecondary outline-none focus:border-primary disabled:opacity-50',
+          htmlProps?.className,
+          {
+            'resize-none overflow-hidden focus:overflow-auto': Element === 'textarea',
+            'pl-[36px]': icon,
+            '!py-[5px] !pl-[28px] text-xs': small,
+          },
+        )}
+        onChange={onChange}
+        ref={mergeRefs(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          [registerElement, htmlProps?.ref as React.RefObject<any> | undefined].filter(
+            isNotUndefined,
+          ),
+        )}
+        rows={Element === 'textarea' ? 1 : undefined}
+        style={{ colorScheme: mode }}
+      />
+    </div>
   );
 };

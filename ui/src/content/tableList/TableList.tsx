@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { uniq } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { List } from '~/shared/components/list/List';
@@ -120,6 +120,12 @@ export const TableList: React.FC = () => {
     },
   });
 
+  const [search, setSearch] = useState('');
+
+  const filteredTables = useMemo(() => {
+    return tables.filter((table) => table.name.toLowerCase().includes(search.toLowerCase()));
+  }, [search, tables]);
+
   return (
     <div className="relative flex w-full grow flex-col gap-1 overflow-auto py-2">
       {isLoading || isLoadingDatabases ? (
@@ -127,7 +133,7 @@ export const TableList: React.FC = () => {
       ) : (
         <List<Table>
           emptyPlaceholder="This database is empty."
-          items={tables.map((table) => ({
+          items={filteredTables.map((table) => ({
             className: classNames({
               '!opacity-50': isDragging,
             }),
@@ -146,6 +152,9 @@ export const TableList: React.FC = () => {
             track('table_list_select');
           }}
           selectedValues={selectedTables}
+          search={search}
+          searchPlaceholder="Tables"
+          setSearch={setSearch}
         />
       )}
     </div>

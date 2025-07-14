@@ -28,12 +28,13 @@ test('Input renders and allows changing text', async ({ mount }) => {
 
   await expect($.page()).toHaveScreenshot('input.png');
 
-  await expect($).toHaveRole('textbox');
-  await expect($).toHaveValue(props.htmlProps.value);
-  await expect($).toBeFocused();
+  const element = $.getByRole('textbox');
+  await expect(element).toBeAttached();
+  await expect(element).toHaveValue(props.htmlProps.value);
+  await expect(element).toBeFocused();
 
   const newValue = 'New text';
-  await $.fill(newValue);
+  await element.fill(newValue);
   expect(onChange.calls.at(-1)?.[0]).toBe(newValue);
 
   await $.update(
@@ -62,11 +63,12 @@ test('Textarea resizes', async ({ mount }) => {
 
   await expect($.page()).toHaveScreenshot('textarea.png');
 
+  const element = $.getByRole('textbox');
   // Trigger onChange
-  await $.fill(props.htmlProps.value);
+  await element.fill(props.htmlProps.value);
 
-  expect($).toHaveRole('textbox');
-  expect($).toHaveValue(props.htmlProps.value);
+  expect(element).toBeAttached();
+  expect(element).toHaveValue(props.htmlProps.value);
 
   expect(await getHeight($.page())).toBe(36);
 
@@ -79,7 +81,7 @@ test('Textarea resizes', async ({ mount }) => {
     </TestApp>,
   );
   // Trigger onChange
-  await $.fill(valueWithLineBreaks);
+  await element.fill(valueWithLineBreaks);
 
   expect(await getHeight($.page())).toBe(200);
 
@@ -91,7 +93,7 @@ test('Textarea resizes', async ({ mount }) => {
     </TestApp>,
   );
   // Trigger onChange
-  await $.fill(shorterValueWithLineBreaks);
+  await element.fill(shorterValueWithLineBreaks);
 
   expect(await getHeight($.page())).toBeLessThan(200);
 });

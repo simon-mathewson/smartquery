@@ -1,6 +1,8 @@
 import classNames from 'classnames';
 import { ListItem, type ListItemProps } from './Item';
 import { useKeyboardNavigation } from './useKeyboardNavigation';
+import { Input } from '../input/Input';
+import SearchIcon from '~/shared/icons/Search.svg?react';
 
 export type ListProps<T> = {
   autoFocusFirstItem?: boolean;
@@ -8,16 +10,25 @@ export type ListProps<T> = {
   emptyPlaceholder?: string;
   items: Omit<ListItemProps<T>, 'onSelect' | 'selected'>[];
   onSelect?: (value: T) => void;
+  search?: string;
+  searchPlaceholder?: string;
+  setSearch?: (value: string) => void;
 } & ({ multiple?: false; selectedValue: T | null } | { multiple: true; selectedValues: T[] });
 
 export function List<T>(props: ListProps<T>) {
-  const { autoFocusFirstItem, emptyPlaceholder, htmlProps, items, multiple, onSelect } = props;
+  const {
+    autoFocusFirstItem,
+    emptyPlaceholder,
+    htmlProps,
+    items,
+    multiple,
+    onSelect,
+    search,
+    searchPlaceholder,
+    setSearch,
+  } = props;
 
   const { onKeyDown } = useKeyboardNavigation();
-
-  if (items.length === 0) {
-    return <div className="py-1 text-center text-xs">{emptyPlaceholder}</div>;
-  }
 
   const getAutoFocus = (item: (typeof items)[number], index: number) => {
     if (
@@ -34,27 +45,47 @@ export function List<T>(props: ListProps<T>) {
   };
 
   return (
-    <div
-      {...htmlProps}
-      aria-multiselectable={multiple}
-      className={classNames('flex w-full flex-col gap-1', htmlProps?.className)}
-      onKeyDown={onKeyDown}
-      role="listbox"
-      tabIndex={0}
-    >
-      {items.map((item, index) => (
-        <ListItem<T>
-          key={index}
-          {...item}
-          autoFocus={getAutoFocus(item, index)}
-          onSelect={() => onSelect?.(item.value)}
-          selected={
-            multiple
-              ? props.selectedValues.includes(item.value)
-              : props.selectedValue === item.value
-          }
+    <>
+      {search !== undefined && setSearch && (
+        <Input
+          htmlProps={{
+            'aria-label': searchPlaceholder,
+            className: 'mb-1',
+            placeholder: searchPlaceholder,
+            type: 'search',
+            value: search,
+          }}
+          icon={<SearchIcon />}
+          onChange={setSearch}
+          small
         />
-      ))}
-    </div>
+      )}
+      {items.length === 0 ? (
+        <div className="py-1 text-center text-xs">{search ? 'No results' : emptyPlaceholder}</div>
+      ) : (
+        <div
+          {...htmlProps}
+          aria-multiselectable={multiple}
+          className={classNames('flex w-full flex-col gap-1', htmlProps?.className)}
+          onKeyDown={onKeyDown}
+          role="listbox"
+          tabIndex={0}
+        >
+          {items.map((item, index) => (
+            <ListItem<T>
+              key={index}
+              {...item}
+              autoFocus={getAutoFocus(item, index)}
+              onSelect={() => onSelect?.(item.value)}
+              selected={
+                multiple
+                  ? props.selectedValues.includes(item.value)
+                  : props.selectedValue === item.value
+              }
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 }

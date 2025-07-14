@@ -27,26 +27,30 @@ scenarios.forEach((scenario) => {
 
     await expect($).toHaveScreenshot(`alphanumeric-${scenario.dataType}.png`);
 
-    expect($).toHaveRole(scenario.dataType === 'int' ? 'spinbutton' : 'textbox');
+    const role = scenario.dataType === 'int' ? 'spinbutton' : 'textbox';
 
-    const tagName = await $.evaluate((node) => node.tagName);
+    const element = $.getByRole(role);
+    expect(element).toBeAttached();
+
+    const tag = await element.evaluate((node) => node.tagName);
+
     if (dataType === 'varchar') {
-      expect(tagName).toBe('TEXTAREA');
+      expect(tag).toBe('TEXTAREA');
     } else {
-      expect(tagName).toBe('INPUT');
+      expect(tag).toBe('INPUT');
 
       if (dataType === 'datetime') {
-        await expect($).toHaveAttribute('type', 'datetime-local');
+        await expect(element).toHaveAttribute('type', 'datetime-local');
       } else if (dataType === 'time') {
-        await expect($).toHaveAttribute('type', 'time');
+        await expect(element).toHaveAttribute('type', 'time');
       } else {
-        await expect($).toHaveAttribute('type', 'number');
+        await expect(element).toHaveAttribute('type', 'number');
       }
     }
 
-    await expect($).toHaveValue(stringValue);
+    await expect(element).toHaveValue(stringValue);
 
-    await $.clear();
+    await element.clear();
     expect(onChange.calls.at(-1)?.[0]).toBe('');
   });
 });
