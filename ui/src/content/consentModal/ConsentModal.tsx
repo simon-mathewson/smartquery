@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '~/shared/components/button/Button';
 import { Modal } from '~/shared/components/modal/Modal';
 import { useModal } from '~/shared/components/modal/useModal';
@@ -6,10 +6,14 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { ErrorTrackingContext } from '../errors/tracking/Context';
 import { ToastContext } from '../toast/Context';
 import type { ToastProps } from '../toast/useToast';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { detectAdBlocker } from './detectAdBlocker';
+import { ErrorMessage } from '~/shared/components/errorMessage/ErrorMessage';
 
 export const ConsentModal: React.FC = () => {
   const errorTracking = useDefinedContext(ErrorTrackingContext);
   const toast = useDefinedContext(ToastContext);
+  const [isAdBlockerEnabled, setIsAdBlockerEnabled] = useState(false);
 
   const modal = useModal();
 
@@ -20,6 +24,10 @@ export const ConsentModal: React.FC = () => {
       });
     }
   }, [errorTracking.isConsentGranted, modal]);
+
+  useEffectOnce(() => {
+    detectAdBlocker().then(setIsAdBlockerEnabled);
+  });
 
   const successToast = {
     color: 'success',
@@ -54,6 +62,12 @@ export const ConsentModal: React.FC = () => {
           We also ask for your consent to collect anonymous analytics data to help us improve your
           experience.
         </p>
+        {isAdBlockerEnabled && (
+          <ErrorMessage htmlProps={{ className: 'mt-3' }}>
+            Please disable your ad blocker for this site to help us improve your experience. We will
+            never show ads.
+          </ErrorMessage>
+        )}
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <Button htmlProps={{ onClick: () => finalize(false) }} label="Decline analytics" />
