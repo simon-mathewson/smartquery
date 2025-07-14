@@ -16,13 +16,6 @@ export const App: React.FC = () => {
       <Helmet>
         <title>Dabase</title>
         <meta name="description" content={description} />
-        <meta property="og:title" content="Dabase" />
-        <meta property="og:description" content={description} />
-        <meta
-          property="og:image"
-          content={`${import.meta.env.VITE_UI_URL}/apple-touch-icon-180x180.png`}
-        />
-        <meta property="og:url" content={import.meta.env.VITE_UI_URL} />
       </Helmet>
       <Providers>
         <ConsentModal />

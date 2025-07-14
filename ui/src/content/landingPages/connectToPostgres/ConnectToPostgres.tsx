@@ -18,10 +18,8 @@ export const ConnectToPostgres: React.FC = () => {
     <>
       <Helmet>
         <meta name="description" content={description} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
       </Helmet>
-      <Page title="Connect to Postgres">
+      <Page title={title}>
         <Card htmlProps={{ className: 'w-full' }}>
           <ConnectionForm
             exit={() => {

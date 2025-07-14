@@ -28,8 +28,6 @@ export const Connection: React.FC = () => {
       {activeConnection?.id === sqliteDemoConnectionId && (
         <Helmet>
           <meta name="description" content={demoDescription} />
-          <meta property="og:title" content={title} />
-          <meta property="og:description" content={demoDescription} />
         </Helmet>
       )}
       <div className="relative grid h-full grid-cols-[224px_1fr] bg-background">

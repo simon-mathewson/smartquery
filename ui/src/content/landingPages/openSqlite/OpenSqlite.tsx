@@ -18,8 +18,6 @@ export const OpenSqlite: React.FC = () => {
     <>
       <Helmet>
         <meta name="description" content={description} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
       </Helmet>
       <Page title={title}>
         <Card htmlProps={{ className: 'w-full' }}>
