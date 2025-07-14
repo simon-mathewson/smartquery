@@ -74,7 +74,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
           },
         },
         icon: <DataObject />,
-        tooltip: `Format code${jsonDisabled ? ' (JSON invalid)' : ''}`,
+        tooltip: `Format${jsonDisabled ? ' (JSON invalid)' : ''}`,
       });
     }
 
