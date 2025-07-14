@@ -98,10 +98,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   return (
     <>
       {actions.length > 0 && (
-        <div className="sticky top-0 z-10 flex justify-end">
+        <div className="pointer-events-none sticky top-0 z-10 flex justify-end">
           <div
             className={classNames(
-              'flex h-max justify-end gap-2 rounded-bl-[18px] bg-background pt-2',
+              'pointer-events-auto flex h-max justify-end gap-2 rounded-bl-[18px] bg-background pt-2',
               {
                 'pb-1 pl-1 pr-2': !large,
                 'p-2 pr-0': large,
