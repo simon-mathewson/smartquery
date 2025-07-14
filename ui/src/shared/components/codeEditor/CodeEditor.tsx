@@ -104,7 +104,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
               'pointer-events-auto flex h-max justify-end gap-2 rounded-bl-[18px] bg-background pt-2',
               {
                 'pb-1 pl-1 pr-2': !large,
-                'p-2 pr-0': large,
+                'p-2 pb-0 pr-0': large,
               },
             )}
           >
