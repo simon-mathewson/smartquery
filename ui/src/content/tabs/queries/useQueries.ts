@@ -228,11 +228,11 @@ export const useQueries = () => {
         afterActiveTab?: boolean;
         openIfExists?: boolean;
         position?: { column: number; row?: number };
-        skipRun?: boolean;
+        runNonSelect?: boolean;
         tabId?: string;
       },
     ) => {
-      const { position, tabId, afterActiveTab, skipRun, openIfExists } = options ?? {};
+      const { position, tabId, afterActiveTab, runNonSelect, openIfExists } = options ?? {};
 
       assert(activeConnectionContext);
       const { activeConnection } = activeConnectionContext;
@@ -268,7 +268,7 @@ export const useQueries = () => {
         }, tabId);
       }
 
-      if (!skipRun) {
+      if (runNonSelect) {
         setTimeout(() => {
           void runUserQuery(newQuery.id);
         }, 100);

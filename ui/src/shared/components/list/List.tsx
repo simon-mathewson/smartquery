@@ -66,7 +66,7 @@ export function List<T>(props: ListProps<T>) {
         <div
           {...htmlProps}
           aria-multiselectable={multiple}
-          className={classNames('flex w-full flex-col gap-1', htmlProps?.className)}
+          className={classNames('flex w-full flex-col gap-1 overflow-y-auto', htmlProps?.className)}
           onKeyDown={onKeyDown}
           role="listbox"
           tabIndex={0}

@@ -127,7 +127,7 @@ export const TableList: React.FC = () => {
   }, [search, tables]);
 
   return (
-    <div className="relative flex w-full grow flex-col gap-1 overflow-auto py-2">
+    <div className="relative flex w-full grow flex-col gap-1 overflow-hidden py-2">
       {isLoading || isLoadingDatabases ? (
         <Loading />
       ) : (

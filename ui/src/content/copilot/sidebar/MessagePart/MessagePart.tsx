@@ -29,7 +29,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
                 initialInputMode: 'editor',
                 sql: code,
               },
-              { afterActiveTab: true },
+              { afterActiveTab: true, runNonSelect: true },
             );
           },
         },
@@ -46,7 +46,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
                 initialInputMode: 'editor',
                 sql: code,
               },
-              { afterActiveTab: true, skipRun: true },
+              { afterActiveTab: true },
             );
           },
         },
