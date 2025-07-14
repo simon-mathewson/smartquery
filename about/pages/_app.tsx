@@ -16,7 +16,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-        <meta property="og:image" content="https://about.dabase.dev/logo.png" />
+        <meta
+          property="og:image"
+          content="https://about.dabase.dev/open-graph-logo.png"
+        />
         <meta property="og:url" content="https://about.dabase.dev" />
       </Head>
       <Component {...pageProps} />
