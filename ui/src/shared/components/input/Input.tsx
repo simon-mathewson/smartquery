@@ -98,7 +98,7 @@ export const Input: React.FC<InputProps> = (props) => {
           className={classNames(
             'icon-wrapper pointer-events-none absolute left-0 top-0 flex h-[36px] w-[36px] items-center justify-center text-textTertiary group-focus-within:text-primary [&_svg]:h-[20px] [&_svg]:w-[20px]',
             {
-              'h-[28px] w-[28px] [&_svg]:h-[20px] [&_svg]:w-[20px]': small,
+              '!h-[28px] !w-[28px] [&_svg]:!h-[16px] [&_svg]:!w-[16px]': small,
             },
           )}
         >
