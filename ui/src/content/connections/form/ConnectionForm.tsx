@@ -33,6 +33,7 @@ import { AuthContext } from '~/content/auth/Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
+import classNames from 'classnames';
 
 export type ConnectionFormProps = {
   connectionToEditId?: string;
@@ -141,7 +142,12 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
   return (
     <>
-      <form className="grid w-full gap-2" onSubmit={onSubmit} ref={formRef} {...htmlProps}>
+      <form
+        {...htmlProps}
+        className={classNames('grid gap-2', htmlProps?.className)}
+        onSubmit={onSubmit}
+        ref={formRef}
+      >
         <Header
           left={
             !hideBackButton && (
