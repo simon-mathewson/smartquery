@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 
 export default function App({ Component, pageProps }: AppProps) {
   const title =
@@ -9,10 +9,10 @@ export default function App({ Component, pageProps }: AppProps) {
   const description =
     "AI-powered, browser-based database UI for Postgres, MySQL, and SQLite. The AI copilot can answer questions and generate SQL queries tailored to your database. View and edit your data in a user-friendly interface.";
 
-  const windowRef = useRef<Window | null>(null);
+  const [win, setWin] = useState<Window | null>(null);
 
   useEffect(() => {
-    windowRef.current = window;
+    setWin(window);
   }, []);
 
   return (
@@ -23,11 +23,16 @@ export default function App({ Component, pageProps }: AppProps) {
 
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-        <meta
-          property="og:image"
-          content={`${windowRef.current?.location.origin}/apple-touch-icon-180x180.png`}
-        />
-        <meta property="og:url" content={windowRef.current?.location.origin} />
+
+        {win && (
+          <>
+            <meta
+              property="og:image"
+              content={`${win.location.origin}/apple-touch-icon-180x180.png`}
+            />
+            <meta property="og:url" content={win.location.origin} />
+          </>
+        )}
       </Head>
       <Component {...pageProps} />
     </>
