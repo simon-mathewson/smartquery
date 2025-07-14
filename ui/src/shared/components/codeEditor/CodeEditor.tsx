@@ -1,7 +1,7 @@
 import Editor from '@monaco-editor/react';
 import classNames from 'classnames';
 import type { editor } from 'monaco-editor';
-import React, { useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { AiContext } from '~/content/ai/Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { ThemeContext } from '~/content/theme/Context';
@@ -11,11 +11,15 @@ import type { ButtonProps } from '../button/Button';
 import { Button } from '../button/Button';
 import { Loading } from '../loading/Loading';
 import { AiSuggestionWidget } from './aiSuggestion/widget';
+import { DataObject } from '@mui/icons-material';
+import { includes } from 'lodash';
+import { formatJson, isValidJson } from '~/shared/utils/json/json';
+import { format as formatSql } from 'sql-formatter';
 
 export type CodeEditorProps = {
-  actions?: ButtonProps[];
   autoFocus?: boolean;
   editorOptions?: editor.IStandaloneEditorConstructionOptions | undefined;
+  getActions?: (editor: editor.IStandaloneCodeEditor) => ButtonProps[];
   hideLineNumbers?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
   language?: 'json' | 'sql';
@@ -29,9 +33,9 @@ export type CodeEditorProps = {
 
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   const {
-    actions,
     autoFocus,
     editorOptions,
+    getActions,
     hideLineNumbers,
     htmlProps,
     language,
@@ -47,19 +51,67 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  const [editor, setEditor] = useState<editor.IStandaloneCodeEditor | null>(null);
+
+  const actions = useMemo(() => {
+    const actionList: ButtonProps[] = [];
+
+    if (!readOnly && editor && includes(['sql', 'json'], language) && value) {
+      const jsonDisabled = language === 'json' && !isValidJson(value);
+
+      actionList.push({
+        htmlProps: {
+          disabled: jsonDisabled,
+          onClick: () => {
+            switch (language) {
+              case 'json':
+                editor.setValue(formatJson(value));
+                break;
+              case 'sql':
+                editor.setValue(formatSql(value));
+                break;
+            }
+          },
+        },
+        icon: <DataObject />,
+        tooltip: `Format code${jsonDisabled ? ' (JSON invalid)' : ''}`,
+      });
+    }
+
+    if (getActions && editor) {
+      actionList.push(...getActions(editor));
+    }
+
+    return actionList;
+  }, [editor, getActions, language, readOnly, value]);
+
   const initialHeight = large ? 80 : 30;
   const fontSize = 12;
   const lineHeight = 18;
-  const paddingTop = large ? 12 : 6;
+  const paddingTop = (() => {
+    if (actions.length) return 0;
+
+    return large ? 12 : 6;
+  })();
   const paddingBottom = large ? 12 : 6;
 
   return (
     <>
-      {actions && (
-        <div className="flex justify-end gap-2 pr-2 pt-2">
-          {actions.map((action, index) => (
-            <Button color="secondary" key={index} size="small" {...action} />
-          ))}
+      {actions.length > 0 && (
+        <div className="sticky top-0 z-10 flex justify-end">
+          <div
+            className={classNames(
+              'flex h-max justify-end gap-2 rounded-bl-[18px] bg-background pt-2',
+              {
+                'pb-1 pl-1 pr-2': !large,
+                'p-2 pr-0': large,
+              },
+            )}
+          >
+            {actions.map((action, index) => (
+              <Button color="secondary" key={index} size="small" {...action} />
+            ))}
+          </div>
         </div>
       )}
       <Editor
@@ -74,6 +126,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         loading={<Loading size={large ? 'default' : 'small'} />}
         onChange={(value) => onChange?.(value ?? '')}
         onMount={(editor, monaco) => {
+          setEditor(editor);
+
           const setHeight = () => {
             const contentHeight = Math.max(initialHeight, editor.getContentHeight());
 

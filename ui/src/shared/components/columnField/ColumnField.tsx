@@ -75,7 +75,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
                     value: stringValue === undefined ? '' : stringValue,
                   }}
                   htmlProps={{ className: 'max-h-[200px]' }}
-                  language="sql"
+                  language="json"
                   onChange={onChange}
                 />
               );

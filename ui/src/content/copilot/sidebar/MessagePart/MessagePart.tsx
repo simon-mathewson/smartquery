@@ -34,6 +34,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
           },
         },
         icon: <Play />,
+        tooltip: 'Run',
       },
       {
         htmlProps: {
@@ -50,6 +51,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
           },
         },
         icon: <Add />,
+        tooltip: 'Add tab',
       },
       {
         htmlProps: {
@@ -64,6 +66,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
           },
         },
         icon: <ContentCopyOutlined />,
+        tooltip: 'Copy',
       },
     ] satisfies ButtonProps[];
 
@@ -83,7 +86,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
             return match ? (
               <div className="overflow-hidden rounded-xl border border-border bg-background">
                 <CodeEditor
-                  actions={showActions ? getSqlActions(code) : undefined}
+                  getActions={showActions ? () => getSqlActions(code) : undefined}
                   editorOptions={{
                     padding: {
                       top: showActions ? 4 : 12,

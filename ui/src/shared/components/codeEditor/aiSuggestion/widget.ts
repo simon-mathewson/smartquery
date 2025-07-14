@@ -190,9 +190,9 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
     const codeWidthWithoutPartialCharacters = codeWidth - (codeWidth % characterWidth);
 
     const actualColumn = Math.ceil(cursor.offsetLeft / characterWidth);
-    const actualLine = (cursor.offsetTop - this.paddingTop) / this.lineHeight;
+    const actualLine = Math.ceil((cursor.offsetTop - this.paddingTop) / this.lineHeight);
     const paddingSize =
-      actualLine * (codeWidthWithoutPartialCharacters / characterWidth) + actualColumn;
+      actualLine * Math.round(codeWidthWithoutPartialCharacters / characterWidth) + actualColumn;
 
     this.domNode.textContent = Array(paddingSize).fill(' ').join('') + (this.suggestion ?? '');
     this.domNode.style.paddingRight = `${paddingRight}px`;
