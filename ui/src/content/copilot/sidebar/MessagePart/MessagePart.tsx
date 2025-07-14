@@ -3,10 +3,71 @@ import { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { CodeEditor } from '~/shared/components/codeEditor/CodeEditor';
-import { CodeActions } from './CodeActions/CodeActions';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { QueriesContext } from '~/content/tabs/queries/Context';
+import Play from '~/shared/icons/Play.svg?react';
+import Add from '~/shared/icons/Add.svg?react';
+import type { ButtonProps } from '~/shared/components/button/Button';
+import { ContentCopyOutlined } from '@mui/icons-material';
+import { ToastContext } from '~/content/toast/Context';
 
-export const MessagePart: React.FC<{ part: Part }> = ({ part }) =>
-  useMemo(() => {
+export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
+  const { track } = useDefinedContext(AnalyticsContext);
+  const toast = useDefinedContext(ToastContext);
+  const { addQuery } = useDefinedContext(QueriesContext);
+
+  const getSqlActions = (code: string) =>
+    [
+      {
+        htmlProps: {
+          onClick: () => {
+            track('copilot_run_query');
+
+            addQuery(
+              {
+                initialInputMode: 'editor',
+                sql: code,
+              },
+              { afterActiveTab: true },
+            );
+          },
+        },
+        icon: <Play />,
+      },
+      {
+        htmlProps: {
+          onClick: () => {
+            track('copilot_add_query');
+
+            addQuery(
+              {
+                initialInputMode: 'editor',
+                sql: code,
+              },
+              { afterActiveTab: true, skipRun: true },
+            );
+          },
+        },
+        icon: <Add />,
+      },
+      {
+        htmlProps: {
+          onClick: () => {
+            track('copilot_copy_query');
+
+            navigator.clipboard.writeText(code);
+            toast.add({
+              title: 'Copied to clipboard',
+              color: 'success',
+            });
+          },
+        },
+        icon: <ContentCopyOutlined />,
+      },
+    ] satisfies ButtonProps[];
+
+  return useMemo(() => {
     return (
       <ReactMarkdown
         components={{
@@ -21,8 +82,8 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) =>
 
             return match ? (
               <div className="overflow-hidden rounded-xl border border-border bg-background">
-                {showActions && <CodeActions code={code} />}
                 <CodeEditor
+                  actions={showActions ? getSqlActions(code) : undefined}
                   editorOptions={{
                     padding: {
                       top: showActions ? 4 : 12,
@@ -47,4 +108,6 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) =>
         {part.text}
       </ReactMarkdown>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [part.text]);
+};
