@@ -1,31 +1,62 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Route, Switch } from 'wouter';
-import { Login } from '~/content/auth/Login/Login';
-import { Signup } from '~/content/auth/Signup/Signup';
-import { AddConnectionPage } from '~/content/connections/addConnectionPage/AddConnectionPage';
-import { Connection } from '~/content/connections/page/Connection';
-import { Home } from '~/content/home/Home';
 import { routes } from './routes';
-import { ConnectToPostgres } from '~/content/landingPages/connectToPostgres/ConnectToPostgres';
-import { OpenSqlite } from '~/content/landingPages/openSqlite/OpenSqlite';
-import { ConnectToMysql } from '~/content/landingPages/connectToMysql/ConnectToMysql';
+import { Loading } from '~/shared/components/loading/Loading';
+
+// Lazy load all components
+const Login = React.lazy(() =>
+  import('~/content/auth/Login/Login').then((module) => ({ default: module.Login })),
+);
+const Signup = React.lazy(() =>
+  import('~/content/auth/Signup/Signup').then((module) => ({ default: module.Signup })),
+);
+const AddConnectionPage = React.lazy(() =>
+  import('~/content/connections/addConnectionPage/AddConnectionPage').then((module) => ({
+    default: module.AddConnectionPage,
+  })),
+);
+const Connection = React.lazy(() =>
+  import('~/content/connections/page/Connection').then((module) => ({
+    default: module.Connection,
+  })),
+);
+const Home = React.lazy(() =>
+  import('~/content/home/Home').then((module) => ({ default: module.Home })),
+);
+const ConnectToPostgres = React.lazy(() =>
+  import('~/content/landingPages/connectToPostgres/ConnectToPostgres').then((module) => ({
+    default: module.ConnectToPostgres,
+  })),
+);
+const OpenSqlite = React.lazy(() =>
+  import('~/content/landingPages/openSqlite/OpenSqlite').then((module) => ({
+    default: module.OpenSqlite,
+  })),
+);
+const ConnectToMysql = React.lazy(() =>
+  import('~/content/landingPages/connectToMysql/ConnectToMysql').then((module) => ({
+    default: module.ConnectToMysql,
+  })),
+);
 
 export const Router: React.FC = () => {
   return (
-    <Switch>
-      <Route path={routes.root()} component={Home} />
+    <Suspense fallback={<Loading size="large" />}>
+      <Switch>
+        <Route path={routes.root()} component={Home} />
 
-      <Route path={routes.addConnection()} component={AddConnectionPage} />
-      <Route path={routes.connection()} component={Connection} />
-      <Route path={routes.connection({ schema: '' })} component={Connection} />
-      <Route path={routes.connection({ schema: '', database: '' })} component={Connection} />
+        <Route path={routes.addConnection()} component={AddConnectionPage} />
+        <Route path={routes.connection()} component={Connection} />
+        <Route path={routes.connection({ schema: '' })} component={Connection} />
+        <Route path={routes.connection({ schema: '', database: '' })} component={Connection} />
 
-      <Route path={routes.login()} component={Login} />
-      <Route path={routes.signup()} component={Signup} />
+        <Route path={routes.login()} component={Login} />
+        <Route path={routes.signup()} component={Signup} />
 
-      <Route path={routes.connectToMysql()} component={ConnectToMysql} />
-      <Route path={routes.connectToPostgres()} component={ConnectToPostgres} />
-      <Route path={routes.openSqlite()} component={OpenSqlite} />
-    </Switch>
+        <Route path={routes.connectToMysql()} component={ConnectToMysql} />
+        <Route path={routes.connectToPostgres()} component={ConnectToPostgres} />
+        <Route path={routes.openSqlite()} component={OpenSqlite} />
+      </Switch>
+    </Suspense>
   );
 };
