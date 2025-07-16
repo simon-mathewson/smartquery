@@ -79,6 +79,7 @@
     "tw-colors": "^3.3.1",
     "typescript": "^5.8.2",
     "vite": "^5.2.0",
+    "vite-bundle-analyzer": "^1.1.0",
     "vite-plugin-circular-dependency": "^0.3.1",
     "vite-plugin-pwa": "^0.19.0",
     "vitest": "^2.0.5"

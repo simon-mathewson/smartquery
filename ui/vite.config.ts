@@ -1,3 +1,4 @@
+import { analyzer } from 'vite-bundle-analyzer';
 import circularDependencies from 'vite-plugin-circular-dependency';
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
@@ -7,6 +8,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
+    analyzer(),
     react(),
     svgr(),
     circularDependencies({ outputFilePath: 'circularDependencies.json' }),
