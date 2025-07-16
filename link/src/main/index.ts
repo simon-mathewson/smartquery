@@ -11,6 +11,10 @@ import { autoUpdater } from 'electron-updater';
 
 Object.assign(console, log.functions);
 
+process.on('uncaughtException', (error) => {
+  console.error(error);
+});
+
 app.whenReady().then(() => {
   // Set app user model ID for Windows
   // https://learn.microsoft.com/en-us/windows/win32/shell/appids
