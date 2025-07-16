@@ -25,9 +25,12 @@ export const ConsentModal: React.FC = () => {
     }
   }, [errorTracking.isConsentGranted, modal]);
 
-  useEffectOnce(() => {
-    detectAdBlocker().then(setIsAdBlockerEnabled);
-  });
+  useEffectOnce(
+    () => {
+      detectAdBlocker().then(setIsAdBlockerEnabled);
+    },
+    { enabled: modal.isOpen },
+  );
 
   const successToast = {
     color: 'success',
