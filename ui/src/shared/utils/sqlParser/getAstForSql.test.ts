@@ -19,25 +19,27 @@ const postgresSelectStatement = `
 
 describe('getAstForSql', () => {
   describe('parses SQL select statement', () => {
-    test('MySQL', () => {
-      expect(getAstForSql({ engine: 'mysql', statement: mysqlSelectStatement })).toMatchSnapshot();
+    test('MySQL', async () => {
+      expect(
+        await getAstForSql({ engine: 'mysql', statement: mysqlSelectStatement }),
+      ).toMatchSnapshot();
     });
 
-    test('PostgreSQL', () => {
+    test('PostgreSQL', async () => {
       expect(
-        getAstForSql({ engine: 'postgres', statement: postgresSelectStatement }),
+        await getAstForSql({ engine: 'postgres', statement: postgresSelectStatement }),
       ).toMatchSnapshot();
     });
   });
 
-  test('returns null for invalid SQL', () => {
-    expect(getAstForSql({ engine: 'mysql', statement: postgresSelectStatement })).toBeNull();
+  test('returns null for invalid SQL', async () => {
+    expect(await getAstForSql({ engine: 'mysql', statement: postgresSelectStatement })).toBeNull();
   });
 
-  test('parses first statement if multiple statements are provided', () => {
+  test('parses first statement if multiple statements are provided', async () => {
     const testKeyword = 'TEST123';
 
-    const ast = getAstForSql({
+    const ast = await getAstForSql({
       engine: 'mysql',
       statement: `${mysqlSelectStatement}; SELECT * FROM \`${testKeyword}\``,
     });

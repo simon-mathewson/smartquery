@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useRef } from 'react';
 import type { SqlJsStatic } from 'sql.js';
-import initSqlite from 'sql.js';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
 import { ToastContext } from '../toast/Context';
@@ -14,15 +13,16 @@ export const useSqlite = () => {
 
   const sqliteRef = useRef<SqlJsStatic | null>(null);
 
-  const getSqlite = useCallback((): Promise<SqlJsStatic> => {
+  const getSqlite = useCallback(async (): Promise<SqlJsStatic> => {
     if (sqliteRef.current) return Promise.resolve(sqliteRef.current);
 
-    return initSqlite({
+    const initSqlite = (await import('sql.js')).default;
+    const sqlite = await initSqlite({
       locateFile: () => `${location.origin}/sql-wasm.wasm`,
-    }).then((sqlite) => {
-      sqliteRef.current = sqlite;
-      return sqlite;
     });
+
+    sqliteRef.current = sqlite;
+    return sqlite;
   }, []);
 
   const storeSqliteContent = useCallback(

@@ -22,7 +22,7 @@ export const useSorting = () => {
   );
 
   const toggleSort = useCallback(
-    (columnName: string) => {
+    async (columnName: string) => {
       if (!query.select) return;
 
       const newSortDirection = (() => {
@@ -48,7 +48,7 @@ export const useSorting = () => {
         setLimitAndOffset(newStatement, limitAndOffset.limit);
       }
 
-      const sql = getSqlForAst(newStatement, activeConnection.engine);
+      const sql = await getSqlForAst(newStatement, activeConnection.engine);
 
       void updateQuery({ id: query.id, run: true, sql });
 

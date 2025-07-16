@@ -144,7 +144,7 @@ export const TableList: React.FC = () => {
           }))}
           multiple
           onSelect={(table) => {
-            addQuery(getQuery(table), {
+            void addQuery(getQuery(table), {
               // Unless table is already selected, open tab that already contains this query if
               // applicable
               openIfExists: !selectedTables.includes(table),

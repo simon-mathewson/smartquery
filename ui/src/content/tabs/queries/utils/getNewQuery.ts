@@ -4,7 +4,7 @@ import type { Connection } from '@/types/connection';
 import type { AddQueryOptions } from '../types';
 import { parseQuery } from './parse';
 
-export const getNewQuery = (props: {
+export const getNewQuery = async (props: {
   addQueryOptions: AddQueryOptions;
   connection: Connection;
 }) => {
@@ -18,6 +18,6 @@ export const getNewQuery = (props: {
     isLoading: false,
     initialInputMode,
     sql: sql ?? null,
-    ...(sql ? parseQuery({ connection, sql }) : { select: null, statements: null }),
+    ...(sql ? await parseQuery({ connection, sql }) : { select: null, statements: null }),
   } satisfies Query;
 };

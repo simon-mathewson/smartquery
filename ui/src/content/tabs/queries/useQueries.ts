@@ -82,7 +82,7 @@ export const useQueries = () => {
         select,
       });
 
-      const totalRowsStatement = getTotalRowsStatement({
+      const totalRowsStatement = await getTotalRowsStatement({
         connection: activeConnection,
         select,
       });
@@ -222,7 +222,7 @@ export const useQueries = () => {
   );
 
   const addQuery = useCallback(
-    (
+    async (
       query: AddQueryOptions,
       options?: {
         afterActiveTab?: boolean;
@@ -237,7 +237,7 @@ export const useQueries = () => {
       assert(activeConnectionContext);
       const { activeConnection } = activeConnectionContext;
 
-      const newQuery = getNewQuery({
+      const newQuery = await getNewQuery({
         addQueryOptions: query,
         connection: activeConnection,
       });

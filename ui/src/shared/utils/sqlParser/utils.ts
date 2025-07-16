@@ -1,7 +1,6 @@
-import NodeSqlParser from 'node-sql-parser';
 import type { Connection } from '@/types/connection';
 
-export const sqlParser = new NodeSqlParser.Parser();
+export const getSqlParser = () => import('node-sql-parser').then((m) => new m.Parser());
 
 export const getParserOptions = (engine: Connection['engine']) => ({
   database: {

@@ -4,14 +4,14 @@ import { getAstForSql } from '~/shared/utils/sqlParser/getAstForSql';
 import type { Select } from '../types';
 import type NodeSqlParser from 'node-sql-parser';
 
-export const getSelectFromStatement = (props: {
+export const getSelectFromStatement = async (props: {
   connection: Connection;
   statement: string;
-}): Select | null => {
+}): Promise<Select | null> => {
   const { connection, statement } = props;
   const { engine, database: connectionDatabase } = connection;
 
-  const parsed = getAstForSql({ engine, statement });
+  const parsed = await getAstForSql({ engine, statement });
 
   if (
     !parsed ||
@@ -41,20 +41,20 @@ export const getSelectFromStatement = (props: {
   };
 };
 
-export const parseQuery = (props: {
+export const parseQuery = async (props: {
   connection: Connection;
   sql: string;
-}): {
+}): Promise<{
   select: Select | null;
   statements: string[] | null;
-} => {
+}> => {
   const { connection, sql } = props;
 
   const statements = splitSqlStatements(sql);
 
   const select =
     statements.length === 1
-      ? getSelectFromStatement({ connection, statement: statements[0] })
+      ? await getSelectFromStatement({ connection, statement: statements[0] })
       : null;
 
   return {

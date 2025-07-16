@@ -74,9 +74,11 @@ export const useActiveConnection = () => {
 
       let fileHandle: FileSystemFileHandle | ArrayBuffer | null = null;
 
-      const hasOnlySelectStatements = statements.every((statement) =>
-        getSelectFromStatement({ connection: currentConnection, statement }),
-      );
+      const hasOnlySelectStatements = await Promise.all(
+        statements.map((statement) =>
+          getSelectFromStatement({ connection: currentConnection, statement }),
+        ),
+      ).then((results) => results.every((result) => result !== null));
 
       if (!hasOnlySelectStatements && !options?.skipSqliteWrite) {
         fileHandle = await getSqliteContent(currentConnection.id);

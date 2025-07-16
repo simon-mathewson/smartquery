@@ -63,12 +63,12 @@ export const Cell: React.FC<CellProps> = (props) => {
     selection[rowIndex] &&
     (selection[rowIndex].length === 0 || selection[rowIndex].includes(columnIndex));
 
-  const openForeignTable = useCallback(() => {
+  const openForeignTable = useCallback(async () => {
     assert(typeof column === 'object' && column.foreignKey);
 
     const { foreignKey } = column;
 
-    const sql = getSqlForAst(
+    const sql = await getSqlForAst(
       {
         type: 'select',
         columns: [{ expr: { type: 'column_ref', column: '*' } }],
@@ -159,7 +159,7 @@ export const Cell: React.FC<CellProps> = (props) => {
         : {
             onClick: () => {
               if (!query.select) return;
-              sorting.toggleSort((column as Column).name);
+              void sorting.toggleSort((column as Column).name);
             },
           })}
     >

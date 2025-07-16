@@ -13,10 +13,10 @@ export const ViewColumnsButton: React.FC = () => {
   const { addQuery } = useDefinedContext(QueriesContext);
   const { query } = useDefinedContext(QueryContext);
 
-  const onClick = useCallback(() => {
+  const onClick = useCallback(async () => {
     assert(query.select);
 
-    const sql = getSql({
+    const sql = await getSql({
       engine: activeConnection.engine,
       select: query.select,
       table: query.select.table,

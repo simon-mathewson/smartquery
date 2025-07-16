@@ -1,7 +1,7 @@
 import Editor from '@monaco-editor/react';
 import classNames from 'classnames';
 import type { editor } from 'monaco-editor';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AiContext } from '~/content/ai/Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { ThemeContext } from '~/content/theme/Context';
@@ -14,7 +14,6 @@ import { AiSuggestionWidget } from './aiSuggestion/widget';
 import { DataObject } from '@mui/icons-material';
 import { includes } from 'lodash';
 import { formatJson, isValidJson } from '~/shared/utils/json/json';
-import { format as formatSql } from 'sql-formatter';
 
 export type CodeEditorProps = {
   autoFocus?: boolean;
@@ -53,11 +52,15 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
 
   const [editor, setEditor] = useState<editor.IStandaloneCodeEditor | null>(null);
 
-  const actions = useMemo(() => {
+  const [actions, setActions] = useState<ButtonProps[]>([]);
+
+  const buildActions = useCallback(async (): Promise<ButtonProps[]> => {
     const actionList: ButtonProps[] = [];
 
     if (!readOnly && editor && includes(['sql', 'json'], language) && value) {
       const jsonDisabled = language === 'json' && !isValidJson(value);
+
+      const { format: formatSql } = await import('sql-formatter');
 
       actionList.push({
         htmlProps: {
@@ -84,6 +87,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
 
     return actionList;
   }, [editor, getActions, language, readOnly, value]);
+
+  useEffect(() => {
+    void buildActions().then(setActions);
+  }, [buildActions]);
 
   const initialHeight = large ? 80 : 30;
   const fontSize = 12;

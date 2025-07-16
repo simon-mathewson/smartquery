@@ -3,7 +3,7 @@ import type { Connection } from '@/types/connection';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import type { Select } from '../types';
 
-export const getTotalRowsStatement = (props: { connection: Connection; select: Select }) => {
+export const getTotalRowsStatement = async (props: { connection: Connection; select: Select }) => {
   const { connection, select } = props;
 
   const totalQuery = cloneDeep(select.parsed);
@@ -18,7 +18,7 @@ export const getTotalRowsStatement = (props: { connection: Connection; select: S
   ];
 
   try {
-    const statement = getSqlForAst(totalQuery, connection.engine);
+    const statement = await getSqlForAst(totalQuery, connection.engine);
     return statement;
   } catch (error) {
     console.error(error);

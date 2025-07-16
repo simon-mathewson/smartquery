@@ -1,7 +1,9 @@
 import type NodeSqlParser from 'node-sql-parser';
 
-import { getParserOptions, sqlParser } from './utils';
+import { getParserOptions, getSqlParser } from './utils';
 import type { Connection } from '@/types/connection';
 
-export const getSqlForAst = (ast: NodeSqlParser.AST, engine: Connection['engine']) =>
-  sqlParser.sqlify(ast, getParserOptions(engine));
+export const getSqlForAst = async (ast: NodeSqlParser.AST, engine: Connection['engine']) => {
+  const sqlParser = await getSqlParser();
+  return sqlParser.sqlify(ast, getParserOptions(engine));
+};
