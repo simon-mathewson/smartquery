@@ -81,11 +81,11 @@ const ast = {
 } satisfies NodeSqlParser.AST;
 
 describe('getSqlForAst generates SQL for AST', () => {
-  test('MySQL', () => {
-    expect(getSqlForAst(ast, 'mysql')).toMatchSnapshot();
+  test('MySQL', async () => {
+    expect(await getSqlForAst(ast, 'mysql')).toMatchSnapshot();
   });
 
-  test('PostgreSQL', () => {
-    expect(getSqlForAst(ast, 'postgres')).toMatchSnapshot();
+  test('PostgreSQL', async () => {
+    expect(await getSqlForAst(ast, 'postgres')).toMatchSnapshot();
   });
 });
