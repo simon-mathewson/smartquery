@@ -35,6 +35,8 @@ pnpm build:all
 pnpm run publish
 ```
 
+If building fails with hdiutil error, enable IDE under macOS settings -> Privacy & Security -> App Management.
+
 To build for macOS and sign, ensure Apple Developer certificate is available in keychain:
 
 1. Open XCode
