@@ -3,7 +3,7 @@ import { MySqlClient, PostgresClient } from '../../../prisma';
 import { trpcClient } from '../test/utils/getTrpcClient';
 import { initialContext } from '../utils/setUpServer/context';
 import { setUpServer } from '../utils/setUpServer/setUpServer';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { mocks } from '../test/mocks';
 import { seed } from '../../../seed/seed';
 

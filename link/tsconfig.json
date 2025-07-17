@@ -5,7 +5,7 @@
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "module": "ES2022",
     "strict": true,
     "target": "ES2021",

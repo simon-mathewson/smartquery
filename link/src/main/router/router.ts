@@ -1,5 +1,5 @@
 import { initTRPC } from '@trpc/server';
-import { uniqueId } from 'lodash';
+import { uniqueId } from 'lodash-es';
 import superjson from '@/superjson/superjson';
 import { z } from 'zod';
 import { MySqlClient, PostgresClient } from '../../../prisma';

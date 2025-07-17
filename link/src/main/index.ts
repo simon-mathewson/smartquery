@@ -1,18 +1,23 @@
 import 'reflect-metadata';
 
-import log from 'electron-log/main';
+import log from 'electron-log';
 import { electronApp } from '@electron-toolkit/utils';
-import { app } from 'electron';
+import { app, shell } from 'electron';
 import { createTray } from './utils/createTray';
 import { setUpServer } from './utils/setUpServer/setUpServer';
 import { initialContext } from './utils/setUpServer/context';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { autoUpdater } from 'electron-updater';
+import unhandled from 'electron-unhandled';
 
 Object.assign(console, log.functions);
 
-process.on('uncaughtException', (error) => {
-  console.error(error);
+unhandled({
+  showDialog: true,
+  logger: log.error,
+  reportButton: () => {
+    shell.openExternal(import.meta.env.VITE_GITHUB_DISCUSSIONS_URL);
+  },
 });
 
 app.whenReady().then(() => {

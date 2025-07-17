@@ -1,7 +1,7 @@
 const artifactName = '${name}_${version}_${arch}.${ext}';
 const artifactNameWindows = '${name}_${version}_${arch}_setup.${ext}';
 
-module.exports = {
+export default {
   appId: 'dev.dabase.link',
   asarUnpack: ['resources/**'],
   extraResources: [
