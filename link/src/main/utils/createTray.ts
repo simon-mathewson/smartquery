@@ -21,7 +21,7 @@ export const createTray = () => {
 
   contextMenuItems.push(
     {
-      label: `Dabase Link ${import.meta.env.VITE_VERSION}`,
+      label: `Dabase Link ${import.meta.env.VITE_LINK_VERSION}`,
       enabled: false,
     },
     { type: 'separator' },

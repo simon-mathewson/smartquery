@@ -217,9 +217,9 @@ phases:
           fi
 
           cd ../ui
-          export VITE_VERSION=$(echo -n $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
-          echo VITE_VERSION=$VITE_VERSION >> .env
-          echo -n $VITE_VERSION > public/version
+          export VITE_UI_VERSION=$(echo -n $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
+          echo VITE_UI_VERSION=$VITE_UI_VERSION >> .env
+          echo -n $VITE_UI_VERSION > public/version
           pnpm typecheck
           pnpm lint
           pnpm test -- --watch false --reporter junit --outputFile test-report.xml

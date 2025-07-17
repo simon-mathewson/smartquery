@@ -6,7 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_PORT: string;
   readonly VITE_POSTGRES_PORT: string;
   readonly VITE_UI_URL: string;
-  readonly VITE_VERSION: string;
+  readonly VITE_LINK_VERSION: string;
 }
 
 interface ImportMeta {

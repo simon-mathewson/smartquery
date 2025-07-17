@@ -24,7 +24,7 @@ export const useUpdateAvailable = () => {
             return res.text();
           })
           .then((version) => {
-            if (version !== import.meta.env.VITE_VERSION) {
+            if (version !== import.meta.env.VITE_UI_VERSION) {
               clearInterval(intervalRef.current);
 
               track('update_available');

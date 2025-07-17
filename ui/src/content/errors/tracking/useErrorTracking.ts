@@ -36,7 +36,7 @@ export const useErrorTracking = () => {
     const APPLICATION_ID: string = 'd51e93b1-3986-44e8-b1d7-5d450b83b77c';
     const APPLICATION_REGION: string = 'eu-central-1';
 
-    setRum(new AwsRum(APPLICATION_ID, import.meta.env.VITE_VERSION, APPLICATION_REGION, config));
+    setRum(new AwsRum(APPLICATION_ID, import.meta.env.VITE_UI_VERSION, APPLICATION_REGION, config));
   }, [isConsentGranted]);
 
   useEffect(() => {

@@ -27,7 +27,7 @@ app.whenReady().then(() => {
 
   // Hide the dock icon on macOS
   if (process.platform === 'darwin') {
-    app.dock.hide();
+    app.dock?.hide();
   }
 
   if (import.meta.env.PROD) {
