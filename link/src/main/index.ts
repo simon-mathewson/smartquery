@@ -7,7 +7,7 @@ import { createTray } from './utils/createTray';
 import { setUpServer } from './utils/setUpServer/setUpServer';
 import { initialContext } from './utils/setUpServer/context';
 import { cloneDeep } from 'lodash-es';
-import { autoUpdater } from 'electron-updater';
+import electronUpdater from 'electron-updater';
 import unhandled from 'electron-unhandled';
 
 Object.assign(console, log.functions);
@@ -31,7 +31,7 @@ app.whenReady().then(() => {
   }
 
   if (import.meta.env.PROD) {
-    autoUpdater.checkForUpdatesAndNotify();
+    electronUpdater.autoUpdater.checkForUpdatesAndNotify();
   }
 
   createTray();
