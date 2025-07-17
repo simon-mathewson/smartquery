@@ -9,7 +9,6 @@ import classNames from 'classnames';
 import { List } from '~/shared/components/list/List';
 import { v4 as uuid } from 'uuid';
 import { AnalyticsContext } from '../analytics/Context';
-import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
 
 export type ConnectionsProps = {
@@ -21,7 +20,6 @@ export type ConnectionsProps = {
 export const Connections: React.FC<ConnectionsProps> = (props) => {
   const { hideDatabases, htmlProps, shouldNavigate } = props;
 
-  const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection, connections } = useDefinedContext(ConnectionsContext);
 
@@ -97,21 +95,18 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                   connection.type === 'remote'
                     ? `${connection.user}@${connection.host}:${connection.port}`
                     : undefined,
-                label: connection.name,
-                selectedVariant: 'primary',
-                value: connection,
-              }))}
-              onSelect={(connection) => {
-                navigate(
-                  routes.connection({
+                htmlProps: {
+                  href: routes.connection({
                     connectionId: connection.id,
                     database: connection.database,
                     schema: connection.engine === 'postgres' ? connection.schema ?? '' : '',
                   }),
-                );
-
-                track('connections_select');
-              }}
+                },
+                label: connection.name,
+                selectedVariant: 'primary',
+                value: connection,
+              }))}
+              onSelect={() => track('connections_select')}
               selectedValue={connections.find((c) => c.id === activeConnection?.id) ?? null}
             />
           </div>

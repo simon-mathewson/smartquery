@@ -7,10 +7,6 @@ import svgr from 'vite-plugin-svgr';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  optimizeDeps: {
-    // Prevent bundling due to type imports, ensure modules are lazy-loaded
-    exclude: ['node-sql-parser', 'sql-formatter', 'sql.js'],
-  },
   plugins: [
     analyzer({ enabled: process.env.CI !== 'true' }),
     react(),

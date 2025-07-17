@@ -38,17 +38,17 @@ test.describe('DatabaseList', () => {
 
     const $ = await mount(<DatabaseListStory testApp={{ navigateSpy }} />);
 
-    await $.getByRole('option', { name: databases[1].name }).click();
-
-    expect(navigateSpy.calls).toEqual([
-      [
-        routes.connection({
-          connectionId: activeConnection.id,
-          database: databases[1].name,
-          schema: '',
-        }),
-      ],
-    ]);
+    expect(
+      await $.getByRole('option', { name: databases[1].name }).evaluate(
+        (el) => (el as HTMLAnchorElement).href,
+      ),
+    ).toMatch(
+      routes.connection({
+        connectionId: activeConnection.id,
+        database: databases[1].name,
+        schema: '',
+      }),
+    );
   });
 
   test('should render list of schemas', async ({ mount }) => {
@@ -85,5 +85,17 @@ test.describe('DatabaseList', () => {
     );
 
     await expect($).toHaveScreenshot('withSchemas.png');
+
+    expect(
+      await $.getByRole('option', { name: connections.activeConnection.schema }).evaluate(
+        (el) => (el as HTMLAnchorElement).href,
+      ),
+    ).toMatch(
+      routes.connection({
+        connectionId: connections.activeConnection.id,
+        database: connections.activeConnection.database,
+        schema: connections.activeConnection.schema,
+      }),
+    );
   });
 });

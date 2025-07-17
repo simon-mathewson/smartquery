@@ -4,13 +4,11 @@ import { useMemo, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import classNames from 'classnames';
 import { AnalyticsContext } from '~/content/analytics/Context';
-import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
 import { Loading } from '~/shared/components/loading/Loading';
 import { ActiveConnectionContext } from '../activeConnection/Context';
 
 export const DatabaseList: React.FC = () => {
-  const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection, databases, isLoadingDatabases } =
     useDefinedContext(ActiveConnectionContext);
@@ -46,21 +44,18 @@ export const DatabaseList: React.FC = () => {
         <List
           htmlProps={{ 'aria-labelledby': labelId }}
           items={databases.map((database) => ({
+            htmlProps: {
+              href: routes.connection({
+                connectionId: activeConnection.id,
+                database: database.name,
+                schema: '',
+              }),
+            },
             label: database.name,
             selectedVariant: 'primary',
             value: database.name,
           }))}
-          onSelect={(database) => {
-            track('database_list_select');
-
-            navigate(
-              routes.connection({
-                connectionId: activeConnection.id,
-                database,
-                schema: '',
-              }),
-            );
-          }}
+          onSelect={() => track('database_list_select')}
           selectedValue={activeConnection.database}
         />
       </div>
@@ -78,31 +73,18 @@ export const DatabaseList: React.FC = () => {
             <List
               htmlProps={{ 'aria-labelledby': labelId }}
               items={schemas.map((schema) => ({
-                label: schema,
-                selectedVariant: 'primary',
-                value: schema,
-              }))}
-              onSelect={(schema) => {
-                track('database_list_select_schema');
-
-                if (schema === activeConnection.schema) {
-                  return navigate(
-                    routes.connection({
-                      connectionId: activeConnection.id,
-                      database: activeConnection.database,
-                      schema: '',
-                    }),
-                  );
-                }
-
-                return navigate(
-                  routes.connection({
+                htmlProps: {
+                  href: routes.connection({
                     connectionId: activeConnection.id,
                     database: activeConnection.database,
                     schema,
                   }),
-                );
-              }}
+                },
+                label: schema,
+                selectedVariant: 'primary',
+                value: schema,
+              }))}
+              onSelect={() => track('database_list_select_schema')}
               selectedValue={activeConnection.schema}
             />
           </div>
