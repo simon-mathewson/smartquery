@@ -294,17 +294,14 @@ export const useQueries = () => {
       assert(activeConnectionContext);
       const { activeConnection } = activeConnectionContext;
 
+      const updatedQuery = {
+        sql: sql.trim(),
+        ...(await parseQuery({ connection: activeConnection, sql })),
+      };
+
       setQueries((currentQueries) =>
         currentQueries.map((currentColumn) =>
-          currentColumn.map((q) =>
-            q.id === id
-              ? {
-                  ...q,
-                  sql: sql.trim(),
-                  ...parseQuery({ connection: activeConnection, sql }),
-                }
-              : q,
-          ),
+          currentColumn.map((q) => (q.id === id ? { ...q, ...updatedQuery } : q)),
         ),
       );
 
