@@ -1,0 +1,79 @@
+Resources:
+  CloudWebACL:
+    Type: "AWS::WAFv2::WebACL"
+    Properties:
+      DataProtectionConfig:
+        DataProtections:
+          - Action: SUBSTITUTION
+            Field:
+              FieldType: BODY
+      DefaultAction:
+        Allow: {}
+      Name: 'cloud-web-acl'
+      OnSourceDDoSProtectionConfig:
+        ALBLowReputationMode: ALWAYS_ON
+      Rules:
+        - Name: 'AWSManagedRulesCommonRuleSet'
+          OverrideAction:
+            None: {}
+          Priority: 1
+          Statement:
+            ManagedRuleGroupStatement:
+              Name: AWSManagedRulesCommonRuleSet
+              VendorName: AWS
+          VisibilityConfig:
+            CloudWatchMetricsEnabled: true
+            MetricName: 'AWSManagedRulesCommonRuleSet'
+            SampledRequestsEnabled: true
+        - Name: 'AWSManagedRulesKnownBadInputsRuleSet'
+          OverrideAction:
+            None: {}
+          Priority: 2
+          Statement:
+            ManagedRuleGroupStatement:
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+              VendorName: AWS
+          VisibilityConfig:
+            CloudWatchMetricsEnabled: true
+            MetricName: 'AWSManagedRulesKnownBadInputsRuleSet'
+            SampledRequestsEnabled: true
+        - Name: 'AWSManagedRulesAmazonIpReputationList'
+          OverrideAction:
+            None: {}
+          Priority: 3
+          Statement:
+            ManagedRuleGroupStatement:
+              Name: AWSManagedRulesAmazonIpReputationList
+              VendorName: AWS
+          VisibilityConfig:
+            CloudWatchMetricsEnabled: true
+            MetricName: 'AWSManagedRulesAmazonIpReputationList'
+            SampledRequestsEnabled: true
+        # - Action:
+        #     Captcha: {}
+        #   Name: 'signup-captcha'
+        #   Priority: 4
+        #   Statement:
+        #     ByteMatchStatement:
+        #       FieldToMatch:
+        #         UriPath: {}
+        #       PositionalConstraint: STARTS_WITH
+        #       SearchString: '/trpc/auth.signUp'
+        #       TextTransformations:
+        #         - Priority: 1
+        #           Type: NONE
+        #   VisibilityConfig:
+        #     CloudWatchMetricsEnabled: true
+        #     MetricName: 'signup-captcha'
+        #     SampledRequestsEnabled: true
+      Scope: REGIONAL
+      VisibilityConfig:
+        CloudWatchMetricsEnabled: true
+        MetricName: 'signup-captcha'
+        SampledRequestsEnabled: true
+  
+  CloudWebACLAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      ResourceArn: !ImportValue CloudLoadBalancerArn
+      WebACLArn: !GetAtt CloudWebACL.Arn

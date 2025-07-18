@@ -39,6 +39,40 @@ Resources:
                   - secretsmanager:GetSecretValue
                 Resource: "*"
 
+  CloudLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: dabase-cloud-elb
+      Scheme: internet-facing
+      SecurityGroups:
+        - !ImportValue DabaseCloudELBSecurityGroup
+      Subnets:
+        - !ImportValue DabaseCloudPublicSubnet1
+        - !ImportValue DabaseCloudPublicSubnet2
+
+  # Needed because a default rule with target group is needed, not actually used because EB
+  # creates its own target group.
+  CloudLoadBalancerTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckPath: /health
+      Name: dabase-cloud-elb-target-group
+      Port: 8080
+      Protocol: HTTP
+      VpcId: !ImportValue DabaseCloudVpcId
+
+  CloudLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: arn:aws:acm:eu-central-1:339712876040:certificate/5e69726a-f435-4939-9606-bfcc32690c86
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref CloudLoadBalancerTargetGroup
+      LoadBalancerArn: !Ref CloudLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+
   ElasticBeanstalkEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
     DependsOn: ElasticBeanstalkApplication
@@ -68,9 +102,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:environment
           OptionName: LoadBalancerType
           Value: application
-        - Namespace: aws:elbv2:loadbalancer
-          OptionName: SecurityGroups
-          Value: !ImportValue DabaseCloudELBSecurityGroup
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: LoadBalancerIsShared
+          Value: true
         - Namespace: aws:ec2:vpc
           OptionName: VPCId
           Value: !ImportValue DabaseCloudVpcId
@@ -89,18 +123,15 @@ Resources:
         - Namespace: aws:elasticbeanstalk:cloudwatch:logs
           OptionName: StreamLogs
           Value: true
+        - Namespace: aws:elbv2:loadbalancer
+          OptionName: SharedLoadBalancer
+          Value: !Ref CloudLoadBalancer
         - Namespace: aws:elbv2:listener:443
-          OptionName: ListenerEnabled
-          Value: true
-        - Namespace: aws:elbv2:listener:443
-          OptionName: Protocol
-          Value: HTTPS
-        - Namespace: aws:elbv2:listener:443
-          OptionName: SSLCertificateArns
-          Value: arn:aws:acm:eu-central-1:339712876040:certificate/5e69726a-f435-4939-9606-bfcc32690c86
-        - Namespace: aws:elbv2:listener:default
-          OptionName: ListenerEnabled
-          Value: false
+          OptionName: Rules
+          Value: default,hostheaders
+        - Namespace: aws:elbv2:listenerrule:hostheaders
+          OptionName: HostHeaders
+          Value: cloud.dabase.dev
         - Namespace: aws:elasticbeanstalk:application
           OptionName: 'Application Healthcheck URL'
           Value: HTTPS:443/health
@@ -117,3 +148,9 @@ Outputs:
     Value: !GetAtt ElasticBeanstalkEnvironment.EndpointURL
     Export:
       Name: DabaseCloudElasticBeanstalkEndpointUrl
+
+  CloudLoadBalancerArn:
+    Description: "Cloud Load Balancer ARN"
+    Value: !Ref CloudLoadBalancer
+    Export:
+      Name: CloudLoadBalancerArn
