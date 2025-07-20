@@ -92,7 +92,7 @@ export function Select<T extends string>(props: SelectProps<T>) {
             }))}
             onSelect={(value) => {
               onChange(value);
-              close();
+              void close();
             }}
             selectedValue={selectedValue}
           />

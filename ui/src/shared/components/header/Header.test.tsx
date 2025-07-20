@@ -13,8 +13,8 @@ test('should display all components', async ({ mount }) => {
 
   await expect($.page()).toHaveScreenshot('header.png');
 
-  expect($).toContainText('Left');
-  expect($).toContainText('Middle');
+  await expect($).toContainText('Left');
+  await expect($).toContainText('Middle');
 
   await expect($.getByRole('button')).toBeAttached();
   await expect($).toHaveCSS('height', '36px');

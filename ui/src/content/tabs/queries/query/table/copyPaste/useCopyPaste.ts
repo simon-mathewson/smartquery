@@ -25,7 +25,7 @@ export const useCopyPaste = (
       if (event.key === 'c' && (event.ctrlKey || event.metaKey)) {
         event.preventDefault();
         const tsv = getTsvFromSelection(selection, [...rows, ...rowsToCreate]);
-        navigator.clipboard.writeText(tsv);
+        void navigator.clipboard.writeText(tsv);
 
         track('table_copy');
       }

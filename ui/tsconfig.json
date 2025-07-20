@@ -30,9 +30,11 @@
     "./playwright-ct.config.ts",
     "./playwright.config.ts",
     "./playwright/**/*.ts", // Be more specific if playright only contains .ts files
+    "./pwa-assets-config.ts",
     "./src/**/*.ts", // Only include .ts files within src
     "./src/**/*.tsx", // Include .tsx files for react components
     "./tailwind.config.ts",
+    "./vitest.config.ts",
     "../shared/**/*.ts"
   ],
   "exclude": [

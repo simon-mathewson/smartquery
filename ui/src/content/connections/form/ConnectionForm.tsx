@@ -71,16 +71,18 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const [isCloudConnection, setIsCloudConnection] = useState<boolean>();
 
   useEffectOnce(() => {
-    getInitialFormValues({ connectionToEdit, getSqliteContent, user }).then((initialFormValues) => {
-      const finalInitialFormValues = {
-        ...initialFormValues,
-        ...overrideInitialValues,
-      } as FormValues;
-      setFormValues(finalInitialFormValues);
-      setIsCloudConnection(
-        finalInitialFormValues.storageLocation === 'cloud' && connectionToEdit !== null,
-      );
-    });
+    void getInitialFormValues({ connectionToEdit, getSqliteContent, user }).then(
+      (initialFormValues) => {
+        const finalInitialFormValues = {
+          ...initialFormValues,
+          ...overrideInitialValues,
+        } as FormValues;
+        setFormValues(finalInitialFormValues);
+        setIsCloudConnection(
+          finalInitialFormValues.storageLocation === 'cloud' && connectionToEdit !== null,
+        );
+      },
+    );
   });
 
   const setFormValue = (key: string, value: unknown) => {
@@ -167,7 +169,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             connectionToEdit && (
               <ConfirmDeletePopover
                 onConfirm={() => {
-                  removeConnection(connectionToEdit.id);
+                  void removeConnection(connectionToEdit.id);
                   track('connection_form_delete');
                   exit();
                 }}

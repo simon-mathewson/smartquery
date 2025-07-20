@@ -93,7 +93,7 @@ export const Cell: React.FC<CellProps> = (props) => {
       activeConnection.engine,
     );
 
-    addQuery({ sql, initialInputMode: 'filters' }, { afterActiveTab: true });
+    void addQuery({ sql, initialInputMode: 'filters' }, { afterActiveTab: true });
   }, [activeConnection.engine, addQuery, column, value]);
 
   return (

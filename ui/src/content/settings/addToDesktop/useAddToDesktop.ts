@@ -5,7 +5,7 @@ export const useAddToDesktop = () => {
   const [promptEvent, setPromptEvent] = useState<BeforeInstallPromptEvent | null>(null);
 
   const install = useCallback(() => {
-    promptEvent?.prompt();
+    void promptEvent?.prompt();
   }, [promptEvent]);
 
   useEffect(() => {

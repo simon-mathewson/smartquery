@@ -144,7 +144,7 @@ export const useAuth = () => {
   );
 
   useEffectOnce(() => {
-    getCurrentUser();
+    void getCurrentUser();
   });
 
   return useMemo(

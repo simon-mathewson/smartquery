@@ -26,7 +26,10 @@ export const useSqlite = () => {
   }, []);
 
   const storeSqliteContent = useCallback(
-    async (fileOrFileHandle: FileSystemFileHandle | ArrayBuffer, id: string) =>
+    async (
+      fileOrFileHandle: FileSystemFileHandle | ArrayBuffer | Uint8Array<ArrayBufferLike>,
+      id: string,
+    ) =>
       new Promise<void>((resolve, reject) => {
         const request = indexedDB.open(indexedDbConnection, 1);
 

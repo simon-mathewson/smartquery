@@ -26,7 +26,7 @@ export const SignInModalStory: React.FC<SignInModalStoryProps> = ({
                   }
                 : async (credentials) => {
                     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
-                    componentProps.input?.onSignIn(credentials);
+                    void componentProps.input?.onSignIn(credentials);
                   },
             }
           : undefined

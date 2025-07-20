@@ -18,7 +18,7 @@ export const useUpdateAvailable = () => {
 
     intervalRef.current = setInterval(
       () => {
-        fetch('/version')
+        void fetch('/version')
           .then((res) => {
             assert(res.ok, 'Failed to fetch version');
             return res.text();

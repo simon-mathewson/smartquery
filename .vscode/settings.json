@@ -8,10 +8,11 @@
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },
-  "typescript.tsdk": "link/node_modules/typescript/lib",
+  "eslint.workingDirectories": ["about", "cloud", "link", "shared", "ui"],
   "search.exclude": {
     "link/dist": true,
     "link/out": true,
     "link/prisma/client": true
-  }
+  },
+  "typescript.tsdk": "link/node_modules/typescript/lib"
 }

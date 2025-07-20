@@ -73,7 +73,7 @@ export const Query: React.FC = () => {
                       htmlProps={{
                         ...htmlProps,
                         onClick: () => {
-                          runUserQuery(query.id);
+                          void runUserQuery(query.id);
                           track('query_reload');
                         },
                       }}

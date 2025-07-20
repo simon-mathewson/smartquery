@@ -163,7 +163,7 @@ export const useActiveConnection = () => {
 
   useEffect(() => {
     if (activeConnection) {
-      getDatabases();
+      void getDatabases();
     } else {
       setDatabases([]);
     }

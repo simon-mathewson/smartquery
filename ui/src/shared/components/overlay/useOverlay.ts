@@ -108,9 +108,9 @@ export const useOverlay = (props: UseOverlayProps) => {
   useEffect(() => {
     if (isOpenProp === undefined) return;
     if (isOpenProp) {
-      open();
+      void open();
     } else {
-      close();
+      void close();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenProp]);
@@ -121,9 +121,9 @@ export const useOverlay = (props: UseOverlayProps) => {
 
     const handleClick = () => {
       if (isOpen) {
-        close();
+        void close();
       } else {
-        open();
+        void open();
       }
     };
 

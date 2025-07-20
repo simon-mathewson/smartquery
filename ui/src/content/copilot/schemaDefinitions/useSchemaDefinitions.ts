@@ -94,7 +94,7 @@ export const useSchemaDefinitions = () => {
 
   // Fetch schema definitions when active connection changes
   useEffect(() => {
-    getSchemaDefinitions();
+    void getSchemaDefinitions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConnection]);
 

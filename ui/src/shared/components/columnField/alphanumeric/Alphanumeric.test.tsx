@@ -30,7 +30,7 @@ scenarios.forEach((scenario) => {
     const role = scenario.dataType === 'int' ? 'spinbutton' : 'textbox';
 
     const element = $.getByRole(role);
-    expect(element).toBeAttached();
+    await expect(element).toBeAttached();
 
     const tag = await element.evaluate((node) => node.tagName);
 

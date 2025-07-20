@@ -321,7 +321,7 @@ export const useQueries = () => {
 
     activeTab.queries.flat().forEach((query) => {
       if (query.select) {
-        runUserQuery(query.id);
+        void runUserQuery(query.id);
       }
     });
   }, [activeTab, runUserQuery]);

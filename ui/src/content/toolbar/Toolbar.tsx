@@ -26,7 +26,7 @@ export const Toolbar: React.FC = () => {
         align="left"
         htmlProps={{
           onClick: () => {
-            addQuery({ initialInputMode: 'editor' });
+            void addQuery({ initialInputMode: 'editor' });
             track('toolbar_new_query');
           },
         }}

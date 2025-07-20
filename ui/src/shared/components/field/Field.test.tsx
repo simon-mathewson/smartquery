@@ -25,10 +25,10 @@ test('Field renders label and children', async ({ mount }) => {
   expect(controlId).not.toBeNull();
   assert(controlId !== null);
 
-  expect($.getByText(label)).toHaveAttribute('for', controlId);
-  expect(input).toHaveAttribute('id', controlId);
-  expect(input).toHaveAccessibleName(label);
-  expect(input).toHaveAccessibleDescription(hint);
+  await expect($.getByText(label)).toHaveAttribute('for', controlId);
+  await expect(input).toHaveAttribute('id', controlId);
+  await expect(input).toHaveAccessibleName(label);
+  await expect(input).toHaveAccessibleDescription(hint);
 
   await $.update(
     <TestApp>

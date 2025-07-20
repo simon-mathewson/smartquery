@@ -17,7 +17,7 @@ export const TestConnectionStory = ({
         activeConnection: null,
         connectRemote: (input) =>
           new Promise((resolve, reject) => {
-            testApp?.providerOverrides?.ConnectionsProvider?.connectRemote?.(input);
+            void testApp?.providerOverrides?.ConnectionsProvider?.connectRemote?.(input);
             setTimeout(() => {
               if (shouldFail) {
                 reject(new Error('Failed to connect'));
@@ -28,7 +28,7 @@ export const TestConnectionStory = ({
           }),
         disconnectRemote: (input) =>
           new Promise((resolve) => {
-            testApp?.providerOverrides?.ConnectionsProvider?.disconnectRemote?.(input);
+            void testApp?.providerOverrides?.ConnectionsProvider?.disconnectRemote?.(input);
             resolve();
           }),
       },

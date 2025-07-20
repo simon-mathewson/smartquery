@@ -48,7 +48,7 @@ export const Toast: React.FC = () => {
       void overlay.close().then(() => {
         setTimeout(() => {
           setCurrentToast(nextToast);
-          overlay.open();
+          void overlay.open();
         }, 0);
       });
       return;

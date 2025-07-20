@@ -52,7 +52,7 @@ export const Filters: React.FC = () => {
       onSubmit={(event) => {
         event.preventDefault();
 
-        applyFilters(formFilters as Filter[]);
+        void applyFilters(formFilters as Filter[]);
 
         track('query_filters_submit');
       }}

@@ -58,7 +58,7 @@ export const TableList: React.FC = () => {
 
     setIsLoading(true);
 
-    runQuery([tableNamesStatement], { skipSqliteWrite: true })
+    void runQuery([tableNamesStatement], { skipSqliteWrite: true })
       .then(([rows]) => {
         setTables(rows.map(({ t, s }) => ({ name: String(t), schema: s ? String(s) : undefined })));
       })
@@ -111,7 +111,7 @@ export const TableList: React.FC = () => {
 
       assert(activeTab);
 
-      addQuery(getQuery(table), {
+      void addQuery(getQuery(table), {
         position: { column, row: horizontal ? row : undefined },
         tabId: activeTab.id,
       });

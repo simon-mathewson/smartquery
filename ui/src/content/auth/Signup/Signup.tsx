@@ -33,7 +33,7 @@ export const Signup: React.FC = () => {
         },
       });
     },
-    [auth, email, password],
+    [auth, captchaModal, email, password],
   );
 
   return (

@@ -22,7 +22,7 @@ export const Search: React.FC = () => {
       onSubmit={(event) => {
         event.preventDefault();
 
-        search(value);
+        void search(value);
         setIsChanged(false);
 
         track('query_search_submit');

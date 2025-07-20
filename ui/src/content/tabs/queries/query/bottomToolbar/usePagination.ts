@@ -46,7 +46,7 @@ export const usePagination = () => {
       throw new Error('Cannot go past the last page');
     }
 
-    updateQueryOffset(newOffset);
+    void updateQueryOffset(newOffset);
   }, [limitAndOffset, totalRows, updateQueryOffset]);
 
   const previous = useCallback(async () => {
@@ -54,7 +54,7 @@ export const usePagination = () => {
 
     const newOffset = Math.max((limitAndOffset.offset ?? 0) - limitAndOffset.limit, 0);
 
-    updateQueryOffset(newOffset);
+    void updateQueryOffset(newOffset);
   }, [limitAndOffset, totalRows, updateQueryOffset]);
 
   return useMemo(

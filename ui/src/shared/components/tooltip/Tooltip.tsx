@@ -28,14 +28,14 @@ export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
   });
 
   const onPointerEnter = useCallback(() => {
-    overlay.open();
+    void overlay.open();
 
     const listener = (moveEvent: MouseEvent) => {
       if (moveEvent.target instanceof Node && anchorRef.current?.contains(moveEvent.target)) {
         return;
       }
 
-      overlay.close();
+      void overlay.close();
       document.removeEventListener('mousemove', listener);
     };
 

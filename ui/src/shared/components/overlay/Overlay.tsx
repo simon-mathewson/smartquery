@@ -68,7 +68,7 @@ export const Overlay: React.FC<OverlayProps> = (props) => {
             setTimeout(() => {
               if (background && !backgroundRef.current) {
                 if (darkenBackground) {
-                  animateInBackground(background);
+                  void animateInBackground(background);
                 }
                 backgroundRef.current = background;
               }
@@ -80,7 +80,7 @@ export const Overlay: React.FC<OverlayProps> = (props) => {
             ref={(wrapper) => {
               setTimeout(() => {
                 if (wrapper && !wrapperRef.current) {
-                  animateInWrapper(wrapper);
+                  void animateInWrapper(wrapper);
                   wrapperRef.current = wrapper;
                 }
               }, 10);

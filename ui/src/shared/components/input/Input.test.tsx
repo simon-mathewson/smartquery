@@ -67,8 +67,8 @@ test('Textarea resizes', async ({ mount }) => {
   // Trigger onChange
   await element.fill(props.htmlProps.value);
 
-  expect(element).toBeAttached();
-  expect(element).toHaveValue(props.htmlProps.value);
+  await expect(element).toBeAttached();
+  await expect(element).toHaveValue(props.htmlProps.value);
 
   expect(await getHeight($.page())).toBe(36);
 

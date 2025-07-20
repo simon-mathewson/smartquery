@@ -27,7 +27,7 @@ export const ConsentModal: React.FC = () => {
 
   useEffectOnce(
     () => {
-      detectAdBlocker().then(setIsAdBlockerEnabled);
+      void detectAdBlocker().then(setIsAdBlockerEnabled);
     },
     { enabled: modal.isOpen },
   );

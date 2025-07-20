@@ -49,7 +49,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
                 disabled: previousDisabled,
                 onClick: () => {
                   track('table_pagination_previous');
-                  previous();
+                  void previous();
                 },
               }}
               icon={<ArrowBack />}
@@ -61,7 +61,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
                 disabled: nextDisabled,
                 onClick: () => {
                   track('table_pagination_next');
-                  next();
+                  void next();
                 },
               }}
               icon={<ArrowForward />}

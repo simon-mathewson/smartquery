@@ -17,7 +17,7 @@ test('Null', async ({ mount }) => {
 
   await expect($).toHaveScreenshot('null.png');
 
-  expect($).toHaveRole('radiogroup');
+  await expect($).toHaveRole('radiogroup');
 
   const button = $.getByRole('radio', { name: 'NULL' });
 

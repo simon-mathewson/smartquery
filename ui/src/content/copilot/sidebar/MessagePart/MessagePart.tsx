@@ -24,7 +24,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
           onClick: () => {
             track('copilot_run_query');
 
-            addQuery(
+            void addQuery(
               {
                 initialInputMode: 'editor',
                 sql: code,
@@ -41,7 +41,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
           onClick: () => {
             track('copilot_add_query');
 
-            addQuery(
+            void addQuery(
               {
                 initialInputMode: 'editor',
                 sql: code,
@@ -58,7 +58,7 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
           onClick: () => {
             track('copilot_copy_query');
 
-            navigator.clipboard.writeText(code);
+            void navigator.clipboard.writeText(code);
             toast.add({
               title: 'Copied to clipboard',
               color: 'success',
