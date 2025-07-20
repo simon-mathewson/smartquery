@@ -54,14 +54,24 @@ Resources:
           Name: 'signup-captcha'
           Priority: 4
           Statement:
-            ByteMatchStatement:
-              FieldToMatch:
-                UriPath: {}
-              PositionalConstraint: STARTS_WITH
-              SearchString: '/trpc/auth.signUp'
-              TextTransformations:
-                - Priority: 1
-                  Type: NONE
+            AndStatement:
+              Statements:
+                - ByteMatchStatement:
+                    FieldToMatch:
+                      UriPath: {}
+                    PositionalConstraint: STARTS_WITH
+                    SearchString: '/trpc/auth.signUp'
+                    TextTransformations:
+                      - Priority: 1
+                        Type: NONE
+                - ByteMatchStatement:
+                    FieldToMatch:
+                      Method: {}
+                    PositionalConstraint: EXACTLY
+                    SearchString: 'POST'
+                    TextTransformations:
+                      - Priority: 1
+                        Type: NONE
           VisibilityConfig:
             CloudWatchMetricsEnabled: true
             MetricName: 'signup-captcha'
