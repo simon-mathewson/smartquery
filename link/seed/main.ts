@@ -1,5 +1,5 @@
 import { seed } from './seed';
 
-(async () => {
+void (async () => {
   await seed();
 })();

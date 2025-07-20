@@ -1,6 +1,7 @@
 import type { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import * as cookie from 'cookie';
-import { PrismaClient, User } from '~/prisma/generated/client';
+import type { User } from '~/prisma/generated/client';
+import { PrismaClient } from '~/prisma/generated/client';
 import { verifyAccessToken } from './auth/accessToken';
 
 export type Context = {

@@ -21,8 +21,8 @@ describe('router', () => {
   afterEach(async () => {
     await Promise.all(
       Object.values(context.clients).map((client) => {
-        client.prisma.$disconnect();
-        client.sshTunnel?.shutdown();
+        void client.prisma.$disconnect();
+        void client.sshTunnel?.shutdown();
       }),
     );
   });
@@ -118,7 +118,7 @@ describe('router', () => {
               statements: ['UPDATE simple SET id = 10 WHERE id = 3', 'Invalid Query'],
             });
 
-            expect(invalidQuery).rejects.toThrowError();
+            await expect(invalidQuery).rejects.toThrowError();
 
             const response = await trpcClient.sendQuery.mutate({
               clientId: mysqlClientId,

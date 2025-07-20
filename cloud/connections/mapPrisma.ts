@@ -1,6 +1,6 @@
-import { Connection } from '@/types/connection';
-import { Connection as DbConnection, Prisma } from '~/prisma/generated';
-import { CreateConnectionInput } from './schemas';
+import type { Connection } from '@/types/connection';
+import type { Connection as DbConnection, Prisma } from '~/prisma/generated';
+import type { CreateConnectionInput } from './schemas';
 import { omit } from 'lodash';
 
 export const mapPrismaToConnection = (c: DbConnection) => {

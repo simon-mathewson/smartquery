@@ -1,5 +1,15 @@
 {
-  "include": ["electron.vite.config.*", "seed", "src", "prisma", "../shared/**/*.ts"],
+  "include": [
+    ".eslintrc.cjs",
+    "electron-builder.ts",
+    "electron.vite.config.*",
+    "seed",
+    "src",
+    "prettier.config.cjs",
+    "prisma",
+    "../shared/**/*.ts",
+    "vitest.config.ts"
+  ],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,

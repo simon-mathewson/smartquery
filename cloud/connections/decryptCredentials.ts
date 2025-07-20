@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import assert from 'node:assert';
 import { decrypt } from '~/auth/decrypt';
 import { deriveKeyEncryptionKeyFromPassword } from '~/auth/deriveKeyEncryptionKeyFromPassword';
-import { Connection, PrismaClient } from '~/prisma/generated';
+import type { Connection, PrismaClient } from '~/prisma/generated';
 import { bytesToUtf8, hexToBytes } from '@noble/ciphers/utils';
 
 export const decryptCredentials = async (props: {

@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { PrismaClient } from '../generated';
 
-(async () => {
+void (async () => {
   console.info('Seeding database...');
 
   const prisma = new PrismaClient();

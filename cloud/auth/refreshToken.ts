@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
 
 export const createRefreshToken = async (payload: { userId: string }, prisma: PrismaClient) => {

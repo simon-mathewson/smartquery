@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { User } from '~/prisma/generated';
+import type { User } from '~/prisma/generated';
 import { hashPassword } from './hashPassword';
 
 export const verifyPassword = async (user: User, password: string) => {

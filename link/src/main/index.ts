@@ -16,11 +16,11 @@ unhandled({
   showDialog: true,
   logger: log.error,
   reportButton: () => {
-    shell.openExternal(import.meta.env.VITE_GITHUB_DISCUSSIONS_URL);
+    void shell.openExternal(import.meta.env.VITE_GITHUB_DISCUSSIONS_URL);
   },
 });
 
-app.whenReady().then(() => {
+void app.whenReady().then(() => {
   // Set app user model ID for Windows
   // https://learn.microsoft.com/en-us/windows/win32/shell/appids
   electronApp.setAppUserModelId('dev.dabase.link');
@@ -31,7 +31,7 @@ app.whenReady().then(() => {
   }
 
   if (import.meta.env.PROD) {
-    electronUpdater.autoUpdater.checkForUpdatesAndNotify();
+    void electronUpdater.autoUpdater.checkForUpdatesAndNotify();
   }
 
   createTray();

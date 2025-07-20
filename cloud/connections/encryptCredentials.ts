@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import { decrypt } from '~/auth/decrypt';
 import { deriveKeyEncryptionKeyFromPassword } from '~/auth/deriveKeyEncryptionKeyFromPassword';
 import { encrypt } from '~/auth/encrypt';
-import { Connection, Prisma, PrismaClient } from '~/prisma/generated';
+import type { Connection, Prisma, PrismaClient } from '~/prisma/generated';
 import { bytesToHex, hexToBytes } from '@noble/ciphers/utils';
 
 export const encryptCredentials = async (props: {
