@@ -17,6 +17,9 @@ export default defineConfig({
         enabled: true,
       },
       registerType: 'autoUpdate',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,sqlite,svg,ttf,wasm}'],
+      },
       manifest: {
         name: 'Dabase',
         short_name: 'Dabase',
