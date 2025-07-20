@@ -7,26 +7,23 @@ export const cloudApiClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       fetch: (input: RequestInfo | URL, init?: RequestInit) => {
-        const fetchToUse = (() => {
+        const [fetchToUse, initToUse] = (() => {
           if (
             typeof init?.headers === 'object' &&
-            (init.headers as Record<string, string>)['use-waf-fetch'] === 'true'
+            (init.headers as Record<string, string>)['use-waf-fetch'] === 'true' &&
+            import.meta.env.PROD
           ) {
             assert(window.AwsWafIntegration, 'AwsWafIntegration not loaded');
 
             delete (init.headers as Record<string, string>)['use-waf-fetch'];
 
-            return window.AwsWafIntegration.fetch;
+            return [window.AwsWafIntegration.fetch, init] as const;
           }
 
-          return fetch;
+          return [fetch, { ...init, credentials: 'include' }] as const;
         })();
 
-        return fetchToUse(input, {
-          ...init,
-          // Sends cookies cross-origin
-          credentials: 'include',
-        });
+        return fetchToUse(input, initToUse);
       },
       headers({ opList }) {
         if (opList[0]?.context.useWafFetch) {
