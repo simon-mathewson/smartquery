@@ -49,27 +49,29 @@ Resources:
             CloudWatchMetricsEnabled: true
             MetricName: 'AWSManagedRulesAmazonIpReputationList'
             SampledRequestsEnabled: true
-        # - Action:
-        #     Captcha: {}
-        #   Name: 'signup-captcha'
-        #   Priority: 4
-        #   Statement:
-        #     ByteMatchStatement:
-        #       FieldToMatch:
-        #         UriPath: {}
-        #       PositionalConstraint: STARTS_WITH
-        #       SearchString: '/trpc/auth.signUp'
-        #       TextTransformations:
-        #         - Priority: 1
-        #           Type: NONE
-        #   VisibilityConfig:
-        #     CloudWatchMetricsEnabled: true
-        #     MetricName: 'signup-captcha'
-        #     SampledRequestsEnabled: true
+        - Action:
+            Captcha: {}
+          Name: 'signup-captcha'
+          Priority: 4
+          Statement:
+            ByteMatchStatement:
+              FieldToMatch:
+                UriPath: {}
+              PositionalConstraint: STARTS_WITH
+              SearchString: '/trpc/auth.signUp'
+              TextTransformations:
+                - Priority: 1
+                  Type: NONE
+          VisibilityConfig:
+            CloudWatchMetricsEnabled: true
+            MetricName: 'signup-captcha'
+            SampledRequestsEnabled: true
       Scope: REGIONAL
+      TokenDomains:
+        - dabase.dev
       VisibilityConfig:
         CloudWatchMetricsEnabled: true
-        MetricName: 'signup-captcha'
+        MetricName: 'cloud-web-acl'
         SampledRequestsEnabled: true
   
   CloudWebACLAssociation:

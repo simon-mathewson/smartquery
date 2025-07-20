@@ -123,7 +123,7 @@ export const useAuth = () => {
   const signUp = useCallback(
     async (email: string, password: string) => {
       try {
-        await cloudApi.auth.signUp.mutate({ email, password });
+        await cloudApi.auth.signUp.mutate({ email, password }, { context: { useWafFetch: true } });
 
         toast.add({
           title: 'Signup successful',
