@@ -9,6 +9,7 @@ export default {
   output: {
     file: 'dist/bundle.js',
     format: 'cjs',
+    inlineDynamicImports: true,
     sourcemap: true,
   },
   plugins: [
