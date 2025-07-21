@@ -1,0 +1,35 @@
+Resources:
+  EmailIdentity:
+    Type: AWS::SES::EmailIdentity
+    Properties:
+      DkimAttributes:
+        SigningEnabled: true
+      EmailIdentity: dabase.dev
+      FeedbackAttributes:
+        EmailForwardingEnabled: true
+
+Outputs:
+  DkimDNSTokenName1:
+    Value: !GetAtt EmailIdentity.DkimDNSTokenName1
+    Export:
+      Name: DkimDNSTokenName1
+  DkimDNSTokenValue1:
+    Value: !GetAtt EmailIdentity.DkimDNSTokenValue1
+    Export:
+      Name: DkimDNSTokenValue1
+  DkimDNSTokenName2:
+    Value: !GetAtt EmailIdentity.DkimDNSTokenName2
+    Export:
+      Name: DkimDNSTokenName2
+  DkimDNSTokenValue2:
+    Value: !GetAtt EmailIdentity.DkimDNSTokenValue2
+    Export:
+      Name: DkimDNSTokenValue2
+  DkimDNSTokenName3:
+    Value: !GetAtt EmailIdentity.DkimDNSTokenName3
+    Export:
+      Name: DkimDNSTokenName3
+  DkimDNSTokenValue3:
+    Value: !GetAtt EmailIdentity.DkimDNSTokenValue3
+    Export:
+      Name: DkimDNSTokenValue3

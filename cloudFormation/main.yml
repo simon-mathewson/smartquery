@@ -97,6 +97,7 @@ Resources:
       - BastionStack
       - CloudFrontStack
       - ElasticBeanstalkStack
+      - SESStack
 
   RUMStack:
     Type: "AWS::CloudFormation::Stack"
@@ -113,6 +114,13 @@ Resources:
     UpdateReplacePolicy: "Delete"
     Properties:
       TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/s3.yml"
+
+  SESStack:
+    Type: "AWS::CloudFormation::Stack"
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TemplateURL: "https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/ses.yml"
 
   SecretsManagerStack:
     Type: "AWS::CloudFormation::Stack"

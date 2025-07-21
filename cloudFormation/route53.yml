@@ -4,21 +4,6 @@ Resources:
     Properties:
       Name: "dabase.dev."
 
-  Route53RecordSetEmail:
-    Type: "AWS::Route53::RecordSet"
-    DependsOn: Route53HostedZoneDabase
-    Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "dabase.dev."
-      Type: "MX"
-      TTL: "3600"
-      ResourceRecords:
-        - "1 SMTP.GOOGLE.COM"
-        - "5 ALT1.ASPMX.L.GOOGLE.COM"
-        - "5 ALT2.ASPMX.L.GOOGLE.COM"
-        - "10 ALT3.ASPMX.L.GOOGLE.COM"
-        - "10 ALT4.ASPMX.L.GOOGLE.COM"
-
   Route53RecordSetDabaseUi:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
@@ -64,3 +49,71 @@ Resources:
       TTL: "300"
       ResourceRecords:
         - !ImportValue DabaseCloudBastionPublicIP
+
+  Route53RecordSetSesDkim1:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: !ImportValue DkimDNSTokenName1
+      Type: "CNAME"
+      TTL: "3600"
+      ResourceRecords:
+        - !ImportValue DkimDNSTokenValue1
+
+  Route53RecordSetSesDkim2:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: !ImportValue DkimDNSTokenName2
+      Type: "CNAME"
+      TTL: "3600"
+      ResourceRecords:
+        - !ImportValue DkimDNSTokenValue2
+
+  Route53RecordSetSesDkim3:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: !ImportValue DkimDNSTokenName3
+      Type: "CNAME"
+      TTL: "3600"
+      ResourceRecords:
+        - !ImportValue DkimDNSTokenValue3
+
+  Route53RecordSetDmarc:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "_dmarc.dabase.dev."
+      Type: "TXT"
+      TTL: "3600"
+      ResourceRecords:
+        - '"v=DMARC1; p=reject; rua=mailto:dmarc@dabase.dev"'
+
+  Route53RecordSetSpaceshipMx:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "dabase.dev."
+      Type: "MX"
+      TTL: "3600"
+      ResourceRecords:
+        - "0 mx1.efwd.spaceship.net."
+        - "0 mx2.efwd.spaceship.net."
+
+  Route53RecordSetSpaceshipSpf:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "dabase.dev."
+      Type: "TXT"
+      TTL: "3600"
+      ResourceRecords:
+        - '"v=spf1 include:spf.efwd.spaceship.net ~all"'
+
