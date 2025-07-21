@@ -4,6 +4,14 @@ import cors from 'cors';
 import { appRouter } from './router';
 import { createContext } from './context';
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
 const app = express();
 
 app.use(
