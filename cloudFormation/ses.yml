@@ -34,6 +34,6 @@ Outputs:
     Export:
       Name: DkimDNSTokenValue3
   SESEmailIdentityArn:
-    Value: !Ref EmailIdentity
+    Value: !Sub 'arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/${EmailIdentity}'
     Export:
       Name: SESEmailIdentityArn

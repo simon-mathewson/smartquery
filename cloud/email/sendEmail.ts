@@ -9,8 +9,9 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
   }
 
   assert(process.env.SES_EMAIL_IDENTITY_ARN, 'SES_EMAIL_IDENTITY_ARN is not set');
+  assert(process.env.AWS_REGION, 'AWS_REGION is not set');
 
-  const client = new SESClient();
+  const client = new SESClient({ region: process.env.AWS_REGION });
 
   const input = {
     Source: 'no-reply@dabase.dev',

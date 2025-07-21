@@ -123,6 +123,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: SES_EMAIL_IDENTITY_ARN
           Value: !ImportValue SESEmailIdentityArn
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AWS_REGION
+          Value: !Ref AWS::Region
         - Namespace: aws:elasticbeanstalk:cloudwatch:logs
           OptionName: StreamLogs
           Value: true
