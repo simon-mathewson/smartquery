@@ -28,7 +28,7 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier
-        # - arn:aws:iam::aws:policy/AmazonRDSDataFullAccess
+        - arn:aws:iam::aws:policy/AmazonSESFullAccess
       Policies:
         - PolicyName: RdsSecretAccess
           PolicyDocument:
@@ -120,6 +120,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: JWT_SECRET
           Value: !ImportValue DabaseCloudJwtSecretArn
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SES_EMAIL_IDENTITY_ARN
+          Value: !ImportValue SESEmailIdentityArn
         - Namespace: aws:elasticbeanstalk:cloudwatch:logs
           OptionName: StreamLogs
           Value: true

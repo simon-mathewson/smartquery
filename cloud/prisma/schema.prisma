@@ -61,6 +61,10 @@ model User {
   password               String
   passwordSalt           String
   refreshTokens          RefreshToken[]
+  isEmailVerified        Boolean        @default(false)
+  emailVerificationToken String?        @unique
+
+  @@index([emailVerificationToken])
 }
 
 enum Engine {

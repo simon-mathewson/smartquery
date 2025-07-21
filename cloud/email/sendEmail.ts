@@ -1,0 +1,41 @@
+import type { SendEmailCommandInput } from '@aws-sdk/client-ses';
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import assert from 'node:assert';
+
+export const sendEmail = async (to: string, subject: string, body: string) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Skipping sending email', { to, subject, body });
+    return;
+  }
+
+  assert(process.env.SES_EMAIL_IDENTITY_ARN, 'SES_EMAIL_IDENTITY_ARN is not set');
+
+  const client = new SESClient();
+
+  const input = {
+    Source: 'no-reply@dabase.dev',
+    Destination: { ToAddresses: [to] },
+    Message: {
+      Subject: {
+        Data: subject,
+        Charset: 'UTF-8',
+      },
+      Body: {
+        Text: {
+          Data: body,
+          Charset: 'UTF-8',
+        },
+        Html: {
+          Data: body,
+          Charset: 'UTF-8',
+        },
+      },
+    },
+    ReturnPath: 'email-feedback@dabase.dev',
+    SourceArn: process.env.SES_EMAIL_IDENTITY_ARN,
+  } satisfies SendEmailCommandInput;
+
+  const command = new SendEmailCommand(input);
+
+  await client.send(command);
+};

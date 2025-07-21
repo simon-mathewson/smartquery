@@ -11,6 +11,7 @@ import { deriveKeyEncryptionKeyFromPassword } from './deriveKeyEncryptionKeyFrom
 import { encrypt } from './encrypt';
 import { hashPassword } from './hashPassword';
 import { verifyPassword } from './verifyPassword';
+import { sendEmail } from '~/email/sendEmail';
 
 export const authRouter = trpc.router({
   currentUser: trpc.procedure
@@ -70,35 +71,6 @@ export const authRouter = trpc.router({
         secure: process.env.NODE_ENV === 'production',
       });
     }),
-  refresh: trpc.procedure.mutation(async ({ ctx: { prisma, getCookie, setCookie } }) => {
-    const refreshToken = getCookie('refreshToken');
-
-    if (!refreshToken) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'No refresh token provided',
-      });
-    }
-
-    try {
-      const { userId } = await verifyRefreshToken(refreshToken, prisma);
-
-      const newAccessToken = createAccessToken(userId);
-
-      setCookie('accessToken', newAccessToken, {
-        httpOnly: true,
-        maxAge: 15 * 60, // 15 minutes
-        path: '/',
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
-      });
-    } catch {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'Invalid refresh token',
-      });
-    }
-  }),
   logOut: trpc.procedure.mutation(async ({ ctx: { setCookie, getCookie, prisma } }) => {
     const refreshTokenId = getCookie('refreshTokenId');
 
@@ -132,6 +104,35 @@ export const authRouter = trpc.router({
       secure: process.env.NODE_ENV === 'production',
     });
   }),
+  refresh: trpc.procedure.mutation(async ({ ctx: { prisma, getCookie, setCookie } }) => {
+    const refreshToken = getCookie('refreshToken');
+
+    if (!refreshToken) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'No refresh token provided',
+      });
+    }
+
+    try {
+      const { userId } = await verifyRefreshToken(refreshToken, prisma);
+
+      const newAccessToken = createAccessToken(userId);
+
+      setCookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        maxAge: 15 * 60, // 15 minutes
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      });
+    } catch {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Invalid refresh token',
+      });
+    }
+  }),
   signUp: trpc.procedure
     .input(
       z.object({
@@ -159,15 +160,52 @@ export const authRouter = trpc.router({
         keyEncryptionKey,
       );
 
+      const emailVerificationToken = crypto.randomBytes(32).toString('hex');
+
       await prisma.user.create({
         data: {
           dataEncryptionKey: bytesToHex(encryptedDataEncryptionKey),
           dataEncryptionKeyNonce: bytesToHex(dataEncryptionKeyNonce),
           email,
+          emailVerificationToken,
           keyEncryptionKeySalt: bytesToHex(keyEncryptionKeySalt),
           password: hashedPassword,
           passwordSalt: salt,
         },
+      });
+
+      const verificationLink = `${process.env.UI_URL}/verify-email?token=${emailVerificationToken}`;
+
+      void sendEmail(
+        email,
+        'Please verify your email – Welcome to Dabase!',
+        `Welcome to Dabase!\n\nPlease verify your email by clicking the following link:\n${verificationLink}\n\n\nhttps://dabase.dev\nThe AI-powered, browser-based database UI.`,
+      );
+    }),
+  verifyEmail: trpc.procedure
+    .input(z.string())
+    .mutation(async ({ input: token, ctx: { prisma } }) => {
+      const user = await prisma.user.findUnique({
+        where: { emailVerificationToken: token },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found',
+        });
+      }
+
+      if (user.isEmailVerified) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Email already verified',
+        });
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { isEmailVerified: true },
       });
     }),
 });

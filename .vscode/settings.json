@@ -8,6 +8,9 @@
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
   "eslint.workingDirectories": ["about", "cloud", "link", "shared", "ui"],
   "search.exclude": {
     "link/dist": true,

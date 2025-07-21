@@ -10,6 +10,11 @@ const Login = React.lazy(() =>
 const Signup = React.lazy(() =>
   import('~/content/auth/Signup/Signup').then((module) => ({ default: module.Signup })),
 );
+const VerifyEmail = React.lazy(() =>
+  import('~/content/auth/VerifyEmail/VerifyEmail').then((module) => ({
+    default: module.VerifyEmail,
+  })),
+);
 const AddConnectionPage = React.lazy(() =>
   import('~/content/connections/addConnectionPage/AddConnectionPage').then((module) => ({
     default: module.AddConnectionPage,
@@ -52,6 +57,7 @@ export const Router: React.FC = () => {
 
         <Route path={routes.login()} component={Login} />
         <Route path={routes.signup()} component={Signup} />
+        <Route path={routes.verifyEmail()} component={VerifyEmail} />
 
         <Route path={routes.connectToMysql()} component={ConnectToMysql} />
         <Route path={routes.connectToPostgres()} component={ConnectToPostgres} />

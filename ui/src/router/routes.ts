@@ -9,6 +9,7 @@ export const routes = {
 
   login: () => '/login',
   signup: () => '/signup',
+  verifyEmail: () => '/verify-email',
 
   connectToPostgres: () => '/connect-to-postgres',
   connectToMysql: () => '/connect-to-mysql',

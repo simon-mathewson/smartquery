@@ -63,6 +63,7 @@ Resources:
     DependsOn:
       - RDSStack
       - SecretsManagerStack
+      - SESStack
       - VPCStack
 
   IamStack:

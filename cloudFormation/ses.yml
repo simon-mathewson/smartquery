@@ -33,3 +33,7 @@ Outputs:
     Value: !GetAtt EmailIdentity.DkimDNSTokenValue3
     Export:
       Name: DkimDNSTokenValue3
+  SESEmailIdentityArn:
+    Value: !Ref EmailIdentity
+    Export:
+      Name: SESEmailIdentityArn
