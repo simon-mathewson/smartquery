@@ -6,6 +6,7 @@ import { createContext } from './context';
 
 const app = express();
 
+console.log(process.env.UI_URL);
 app.use(
   cors({
     origin: process.env.UI_URL,

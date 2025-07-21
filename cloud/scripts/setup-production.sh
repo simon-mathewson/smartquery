@@ -9,4 +9,5 @@ export DATABASE_URL=$(./scripts/build-database-url.sh)
 set -a
 source .env.production
 set +a
+echo $UI_URL
 node dist/bundle.js
