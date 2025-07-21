@@ -1,17 +1,14 @@
 import { TRPCError } from '@trpc/server';
 
-import { bytesToHex } from '@noble/ciphers/utils';
 import crypto from 'crypto';
 import { z } from 'zod';
+import { sendEmail } from '~/email/sendEmail';
 import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import { trpc } from '../trpc';
 import { createAccessToken } from './accessToken';
 import { createRefreshToken, verifyRefreshToken } from './refreshToken';
-import { deriveKeyEncryptionKeyFromPassword } from './deriveKeyEncryptionKeyFromPassword';
-import { encrypt } from './encrypt';
-import { hashPassword } from './hashPassword';
+import { setUpUserPassword } from './setUpUserPassword';
 import { verifyPassword } from './verifyPassword';
-import { sendEmail } from '~/email/sendEmail';
 
 export const authRouter = trpc.router({
   currentUser: trpc.procedure
@@ -133,6 +130,58 @@ export const authRouter = trpc.router({
       });
     }
   }),
+  requestResetPassword: trpc.procedure
+    .input(z.string().email())
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      const email = input;
+
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found',
+        });
+      }
+
+      const resetPasswordToken = crypto.randomBytes(32).toString('hex');
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { resetPasswordToken },
+      });
+
+      const verificationLink = `${process.env.UI_URL}/reset-password?token=${resetPasswordToken}`;
+
+      void sendEmail(
+        email,
+        'Reset your password – Dabase',
+        `Someone requested a password reset for your Dabase account. If this was you, please click the following link:\n${verificationLink}\n\nIf this was not you, please ignore this email.\n\nNote that after changing your password, your encrypted connection credentials will no longer be usable and have to be re-entered.`,
+      );
+    }),
+  resetPassword: trpc.procedure
+    .input(z.object({ token: z.string(), password: z.string().min(12) }))
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      const { token, password } = input;
+
+      const user = await prisma.user.findUnique({
+        where: { resetPasswordToken: token },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found',
+        });
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: await setUpUserPassword(password),
+      });
+    }),
   signUp: trpc.procedure
     .input(
       z.object({
@@ -143,34 +192,13 @@ export const authRouter = trpc.router({
     .mutation(async ({ input, ctx: { prisma } }) => {
       const { email, password } = input;
 
-      const salt = crypto.randomBytes(16).toString('hex');
-
-      const hashedPassword = await hashPassword(password, salt);
-
-      const dataEncryptionKey = crypto.randomBytes(32);
-      const keyEncryptionKeySalt = crypto.randomBytes(16);
-
-      const keyEncryptionKey = await deriveKeyEncryptionKeyFromPassword(
-        password,
-        keyEncryptionKeySalt,
-      );
-
-      const { ciphertext: encryptedDataEncryptionKey, nonce: dataEncryptionKeyNonce } = encrypt(
-        dataEncryptionKey,
-        keyEncryptionKey,
-      );
-
       const emailVerificationToken = crypto.randomBytes(32).toString('hex');
 
       await prisma.user.create({
         data: {
-          dataEncryptionKey: bytesToHex(encryptedDataEncryptionKey),
-          dataEncryptionKeyNonce: bytesToHex(dataEncryptionKeyNonce),
+          ...(await setUpUserPassword(password)),
           email,
           emailVerificationToken,
-          keyEncryptionKeySalt: bytesToHex(keyEncryptionKeySalt),
-          password: hashedPassword,
-          passwordSalt: salt,
         },
       });
 
@@ -179,7 +207,7 @@ export const authRouter = trpc.router({
       void sendEmail(
         email,
         'Please verify your email – Welcome to Dabase!',
-        `Welcome to Dabase!\n\nPlease verify your email by clicking the following link:\n${verificationLink}\n\n\nhttps://dabase.dev\nThe AI-powered, browser-based database UI.`,
+        `Welcome to Dabase!\n\nPlease verify your email by clicking the following link:\n${verificationLink}`,
       );
     }),
   verifyEmail: trpc.procedure

@@ -11,7 +11,9 @@ import { routes } from '~/router/routes';
 import { Page } from '~/shared/components/page/Page';
 import { AuthContext } from '../Context';
 import { useModal } from '~/shared/components/modal/useModal';
+import type { CaptchaModalInput } from '~/shared/components/captcha/Modal';
 import { CaptchaModal } from '~/shared/components/captcha/Modal';
+import { PasswordFields } from '../PasswordFields';
 
 export const Signup: React.FC = () => {
   const auth = useDefinedContext(AuthContext);
@@ -20,7 +22,7 @@ export const Signup: React.FC = () => {
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
 
-  const captchaModal = useModal<{ onSuccess: () => void }>();
+  const captchaModal = useModal<CaptchaModalInput>();
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -58,35 +60,12 @@ export const Signup: React.FC = () => {
                 onChange={setEmail}
               />
             </Field>
-            <Field
-              hint="At least 12 characters. Your password will be used to encrypt your database credentials."
-              label="Password"
-            >
-              <Input
-                htmlProps={{
-                  autoComplete: 'new-password',
-                  minLength: 12,
-                  type: 'password',
-                  value: password,
-                }}
-                onChange={setPassword}
-              />
-            </Field>
-            <Field
-              label="Repeat password"
-              error={
-                repeatPassword && repeatPassword !== password ? "Passwords don't match" : undefined
-              }
-            >
-              <Input
-                htmlProps={{
-                  autoComplete: 'new-password',
-                  type: 'password',
-                  value: repeatPassword,
-                }}
-                onChange={setRepeatPassword}
-              />
-            </Field>
+            <PasswordFields
+              password={password}
+              repeatPassword={repeatPassword}
+              setPassword={setPassword}
+              setRepeatPassword={setRepeatPassword}
+            />
             <Button
               htmlProps={{
                 disabled: repeatPassword !== password || !email || !password,

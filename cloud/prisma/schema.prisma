@@ -63,8 +63,10 @@ model User {
   refreshTokens          RefreshToken[]
   isEmailVerified        Boolean        @default(false)
   emailVerificationToken String?        @unique
+  resetPasswordToken     String?        @unique
 
   @@index([emailVerificationToken])
+  @@index([resetPasswordToken])
 }
 
 enum Engine {

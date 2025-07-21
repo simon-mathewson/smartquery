@@ -10,6 +10,9 @@ export const routes = {
   login: () => '/login',
   signup: () => '/signup',
   verifyEmail: () => '/verify-email',
+  requestResetPassword: (email?: string) =>
+    `/request-reset-password${email ? `?email=${email}` : ''}`,
+  resetPassword: () => '/reset-password',
 
   connectToPostgres: () => '/connect-to-postgres',
   connectToMysql: () => '/connect-to-mysql',

@@ -30,11 +30,13 @@ export const useToast = () => {
       return;
     }
 
+    const currentToast = queue[0];
+
     latestToastTimeoutRef.current = setTimeout(
       () => {
         setQueue((prev) => prev.slice(1));
       },
-      queue[0].color === 'success' ? 3000 : 5000,
+      currentToast.color === 'success' && !currentToast.description ? 3000 : 6000,
     ) as unknown as number;
   }, [queue]);
 

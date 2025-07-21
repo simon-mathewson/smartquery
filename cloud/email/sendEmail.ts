@@ -2,6 +2,8 @@ import type { SendEmailCommandInput } from '@aws-sdk/client-ses';
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import assert from 'node:assert';
 
+const footer = '\n\n\nhttps://dabase.dev\nThe AI-powered, browser-based database UI.';
+
 export const sendEmail = async (to: string, subject: string, body: string) => {
   if (process.env.NODE_ENV === 'development') {
     console.log('Skipping sending email', { to, subject, body });
@@ -13,6 +15,8 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
 
   const client = new SESClient({ region: process.env.AWS_REGION });
 
+  const message = `${body}${footer}`;
+
   const input = {
     Source: 'no-reply@dabase.dev',
     Destination: { ToAddresses: [to] },
@@ -23,11 +27,11 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
       },
       Body: {
         Text: {
-          Data: body,
+          Data: message,
           Charset: 'UTF-8',
         },
         Html: {
-          Data: body,
+          Data: message,
           Charset: 'UTF-8',
         },
       },

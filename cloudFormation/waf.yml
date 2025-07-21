@@ -58,20 +58,30 @@ Resources:
               Statements:
                 - ByteMatchStatement:
                     FieldToMatch:
-                      UriPath: {}
-                    PositionalConstraint: STARTS_WITH
-                    SearchString: '/trpc/auth.signUp'
-                    TextTransformations:
-                      - Priority: 1
-                        Type: NONE
-                - ByteMatchStatement:
-                    FieldToMatch:
                       Method: {}
                     PositionalConstraint: EXACTLY
                     SearchString: 'POST'
                     TextTransformations:
                       - Priority: 1
                         Type: NONE
+                - OrStatement:
+                    Statements:
+                      - ByteMatchStatement:
+                          FieldToMatch:
+                            UriPath: {}
+                          PositionalConstraint: STARTS_WITH
+                          SearchString: '/trpc/auth.signUp'
+                          TextTransformations:
+                            - Priority: 1
+                              Type: NONE
+                      - ByteMatchStatement:
+                          FieldToMatch:
+                            UriPath: {}
+                          PositionalConstraint: STARTS_WITH
+                          SearchString: '/trpc/auth.requestResetPassword'
+                          TextTransformations:
+                            - Priority: 1
+                              Type: NONE
           VisibilityConfig:
             CloudWatchMetricsEnabled: true
             MetricName: 'signup-captcha'

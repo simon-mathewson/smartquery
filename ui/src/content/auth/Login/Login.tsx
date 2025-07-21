@@ -55,9 +55,16 @@ export const Login: React.FC = () => {
             />
           </Field>
           <Button
+            element="link"
+            htmlProps={{
+              className: 'mt-2',
+              href: routes.requestResetPassword(email),
+            }}
+            label="Reset password"
+          />
+          <Button
             htmlProps={{
               disabled: !email || !password,
-              className: 'mt-4',
               type: 'submit',
             }}
             icon={<ArrowForwardOutlined />}

@@ -4,8 +4,12 @@ import { Loading } from '~/shared/components/loading/Loading';
 import { Modal } from '~/shared/components/modal/Modal';
 import type { ModalControl } from '~/shared/components/modal/types';
 
+export type CaptchaModalInput = {
+  onSuccess: () => void;
+};
+
 export type CaptchaModalProps = {
-  modalControl: ModalControl<{ onSuccess: () => void }>;
+  modalControl: ModalControl<CaptchaModalInput>;
 };
 
 export const CaptchaModal: React.FC<CaptchaModalProps> = ({ modalControl }) => {
