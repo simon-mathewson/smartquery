@@ -136,9 +136,9 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
               <Toggle
                 label="Key encrypted with passphrase"
                 onChange={(newPassphraseEnabled) =>
-                  setFormValue('ssh.privateKeyPassphrase', newPassphraseEnabled ? '' : null)
+                  setFormValue('ssh.privateKeyPassphrase', newPassphraseEnabled ? '' : undefined)
                 }
-                value={typeof formValues.ssh.privateKeyPassphrase === 'string'}
+                value={formValues.ssh.privateKeyPassphrase !== undefined}
               />
             </Field>
           )}

@@ -57,7 +57,9 @@ export const getInitialFormValues = async (props: {
             password: connectionToEdit.ssh.password ?? '',
             privateKey: connectionToEdit.ssh.privateKey ?? '',
             privateKeyPassphrase:
-              connectionToEdit.ssh.privateKeyPassphrase === null ? '' : undefined,
+              connectionToEdit.ssh.privateKeyPassphrase === undefined
+                ? undefined
+                : connectionToEdit.ssh.privateKeyPassphrase ?? '',
           }
         : null,
       type: 'remote',
@@ -128,7 +130,9 @@ export const getConnectionFromForm = (formArg: FormValues) => {
           connection.ssh.password = null;
         } else {
           connection.ssh.privateKey = null;
-          connection.ssh.privateKeyPassphrase = null;
+          if (typeof connection.ssh.privateKeyPassphrase === 'string') {
+            connection.ssh.privateKeyPassphrase = null;
+          }
         }
       }
 

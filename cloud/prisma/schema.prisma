@@ -10,30 +10,31 @@ datasource db {
 }
 
 model Connection {
-  id                      String   @id @default(uuid()) @db.Uuid
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
-  database                String
-  dbUser                  String
-  encryptCredentials      Boolean
-  engine                  Engine
-  host                    String
-  name                    String
-  password                String?
-  passwordNonce           String?
-  port                    Int
-  schema                  String?
-  sshHost                 String?
-  sshPassword             String?
-  sshPasswordNonce        String?
-  sshPort                 Int?
-  sshPrivateKey           String?
-  sshPrivateKeyNonce      String?
-  sshUsePrivateKey        Boolean?
-  sshUser                 String?
-  user                    User     @relation(fields: [userId], references: [id])
-  userId                  String   @db.Uuid
-  sshPrivateKeyPassphrase String?
+  id                         String   @id @default(uuid()) @db.Uuid
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+  database                   String
+  dbUser                     String
+  encryptCredentials         Boolean
+  engine                     Engine
+  host                       String
+  name                       String
+  password                   String?
+  passwordNonce              String?
+  port                       Int
+  schema                     String?
+  sshHost                    String?
+  sshPassword                String?
+  sshPasswordNonce           String?
+  sshPort                    Int?
+  sshPrivateKey              String?
+  sshPrivateKeyNonce         String?
+  sshUsePrivateKey           Boolean?
+  sshUser                    String?
+  user                       User     @relation(fields: [userId], references: [id])
+  userId                     String   @db.Uuid
+  sshPrivateKeyPassphrase    String?
+  useSshPrivateKeyPassphrase Boolean  @default(false)
 
   @@index([userId])
 }
