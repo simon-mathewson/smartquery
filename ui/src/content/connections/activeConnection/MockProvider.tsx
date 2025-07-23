@@ -9,10 +9,8 @@ export const ActiveConnectionMockProvider: React.FC<
   const { children, overrides } = props;
 
   return (
-    <>
-      <ActiveConnectionContext.Provider value={Object.assign(getActiveConnectionMock(), overrides)}>
-        {children}
-      </ActiveConnectionContext.Provider>
-    </>
+    <ActiveConnectionContext.Provider value={Object.assign(getActiveConnectionMock(), overrides)}>
+      {children}
+    </ActiveConnectionContext.Provider>
   );
 };
