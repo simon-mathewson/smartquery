@@ -96,23 +96,34 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const isTableEmpty = rows.length === 0 && rowsToCreate.length === 0;
 
-  // Compute column width based on median value length
-  const columnWidths = useMemo(
+  const [columnWidths, setColumnWidths] = useState<string[] | null>(null);
+
+  const visibleColumnNamesKey = useMemo(
     () =>
+      JSON.stringify(
+        visibleColumns.map((column) => (typeof column === 'object' ? column.name : column)),
+      ),
+    [visibleColumns],
+  );
+
+  // Compute column width based on median value length
+  useEffect(() => {
+    setColumnWidths(
       visibleColumns.map((column) => {
         if (!rows.length) return '1fr';
 
         const columnName = typeof column === 'object' ? column.name : column;
 
-        const sampleSize = Math.max(rows.length, 1_000);
+        const sampleSize = Math.max(rows.length, 1000);
         const sample = [...rows].sort(() => Math.random() - 0.5).slice(0, sampleSize);
         const medianLength = median(sample.map((row) => String(row[columnName]).length));
         const finalWidth = Math.max(Math.min(medianLength, 60), 10);
 
         return `${finalWidth}ch`;
       }),
-    [visibleColumns, rows],
-  );
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibleColumnNamesKey]);
 
   const { topRowsHiddenCount, visibleRowCount, bottomRowsHiddenCount } = useVirtualization(
     rows,
@@ -131,7 +142,7 @@ export const Table: React.FC<TableProps> = (props) => {
           <div
             className="sticky top-0 z-30 grid auto-rows-max"
             ref={tableContentRef}
-            style={{ gridTemplateColumns: columnWidths.join(' ') }}
+            style={{ gridTemplateColumns: columnWidths?.join(' ') ?? '1fr' }}
           >
             {visibleColumns.map((column) => {
               const columnName = typeof column === 'object' ? column.name : column;
@@ -155,7 +166,7 @@ export const Table: React.FC<TableProps> = (props) => {
           <div
             className="grid auto-rows-max"
             ref={tableContentRef}
-            style={{ gridTemplateColumns: columnWidths.join(' ') }}
+            style={{ gridTemplateColumns: columnWidths?.join(' ') ?? '1fr' }}
           >
             {rows.map((row, rowIndex) => {
               const rowNumber = rowIndex + 1;
