@@ -66,6 +66,7 @@ model User {
   resetPasswordToken     String?        @unique
   connections            Connection[]
   refreshTokens          RefreshToken[]
+  subscription           Subscription?
 
   @@index([emailVerificationToken])
   @@index([resetPasswordToken])
@@ -74,4 +75,8 @@ model User {
 enum Engine {
   mysql
   postgres
+}
+
+enum Subscription {
+  plus
 }
