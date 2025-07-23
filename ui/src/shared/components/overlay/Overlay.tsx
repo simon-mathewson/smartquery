@@ -65,25 +65,21 @@ export const Overlay: React.FC<OverlayProps> = (props) => {
             },
           )}
           ref={(background) => {
-            setTimeout(() => {
-              if (background && !backgroundRef.current) {
-                if (darkenBackground) {
-                  void animateInBackground(background);
-                }
-                backgroundRef.current = background;
+            if (background && !backgroundRef.current) {
+              if (darkenBackground) {
+                void animateInBackground(background);
               }
-            }, 10);
+              backgroundRef.current = background;
+            }
           }}
         >
           <div
             className="absolute opacity-0"
             ref={(wrapper) => {
-              setTimeout(() => {
-                if (wrapper && !wrapperRef.current) {
-                  void animateInWrapper(wrapper);
-                  wrapperRef.current = wrapper;
-                }
-              }, 10);
+              if (wrapper && !wrapperRef.current) {
+                void animateInWrapper(wrapper);
+                wrapperRef.current = wrapper;
+              }
             }}
           >
             {children(childrenProps)}
