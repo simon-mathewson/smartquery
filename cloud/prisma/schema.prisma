@@ -1,7 +1,7 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
   output        = "generated"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -10,7 +10,6 @@ datasource db {
 }
 
 model Connection {
-  id                         String   @id @default(uuid()) @db.Uuid
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
   database                   String
@@ -20,21 +19,22 @@ model Connection {
   host                       String
   name                       String
   password                   String?
-  passwordNonce              String?
   port                       Int
   schema                     String?
   sshHost                    String?
   sshPassword                String?
-  sshPasswordNonce           String?
   sshPort                    Int?
   sshPrivateKey              String?
+  sshUser                    String?
+  passwordNonce              String?
+  sshPasswordNonce           String?
   sshPrivateKeyNonce         String?
   sshUsePrivateKey           Boolean?
-  sshUser                    String?
-  user                       User     @relation(fields: [userId], references: [id])
+  id                         String   @id @default(uuid()) @db.Uuid
   userId                     String   @db.Uuid
   sshPrivateKeyPassphrase    String?
   useSshPrivateKeyPassphrase Boolean  @default(false)
+  user                       User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -44,28 +44,28 @@ model RefreshToken {
   createdAt DateTime @default(now())
   expiresAt DateTime
   token     String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([token])
   @@index([userId])
 }
 
 model User {
-  id                     String         @id @default(uuid()) @db.Uuid
   createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
-  connections            Connection[]
-  dataEncryptionKey      String
-  dataEncryptionKeyNonce String
   email                  String         @unique
-  keyEncryptionKeySalt   String
   password               String
   passwordSalt           String
-  refreshTokens          RefreshToken[]
+  dataEncryptionKey      String
+  dataEncryptionKeyNonce String
+  keyEncryptionKeySalt   String
+  id                     String         @id @default(uuid()) @db.Uuid
   isEmailVerified        Boolean        @default(false)
   emailVerificationToken String?        @unique
   resetPasswordToken     String?        @unique
+  connections            Connection[]
+  refreshTokens          RefreshToken[]
 
   @@index([emailVerificationToken])
   @@index([resetPasswordToken])
