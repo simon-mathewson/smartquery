@@ -1,7 +1,7 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { CopilotContext } from '../../copilot/Context';
+import { CopilotContext } from '../../ai/copilot/Context';
 import { Queries } from '../../tabs/queries/Queries';
-import { CopilotSidebar } from '../../copilot/sidebar/Sidebar';
+import { CopilotSidebar } from '../../ai/copilot/sidebar/Sidebar';
 import { Toolbar } from '../../toolbar/Toolbar';
 
 export const DatabaseContent: React.FC = () => {

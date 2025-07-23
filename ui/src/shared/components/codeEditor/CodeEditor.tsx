@@ -19,6 +19,7 @@ export type CodeEditorProps = {
   autoFocus?: boolean;
   editorOptions?: editor.IStandaloneEditorConstructionOptions | undefined;
   getActions?: (editor: editor.IStandaloneCodeEditor) => ButtonProps[];
+  getAdditionalSystemInstructions?: () => Promise<string | null>;
   hideLineNumbers?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
   language?: 'json' | 'sql';
@@ -35,6 +36,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     autoFocus,
     editorOptions,
     getActions,
+    getAdditionalSystemInstructions,
     hideLineNumbers,
     htmlProps,
     language,
@@ -197,6 +199,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
               lineHeight,
               paddingTop,
               fontSize,
+              getAdditionalSystemInstructions,
               language,
             );
           }

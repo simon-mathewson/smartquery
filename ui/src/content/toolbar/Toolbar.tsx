@@ -6,7 +6,7 @@ import { Changes } from './changes/Changes';
 import { TabsContext } from '../tabs/Context';
 import { Tabs } from './tabs/Tabs';
 import { QueriesContext } from '../tabs/queries/Context';
-import { CopilotContext } from '../copilot/Context';
+import { CopilotContext } from '../ai/copilot/Context';
 import { EditContext } from '../edit/Context';
 import classNames from 'classnames';
 import { AnalyticsContext } from '~/content/analytics/Context';

@@ -5,6 +5,9 @@ import { CodeEditor } from '../codeEditor/CodeEditor';
 import { getErrorMessage } from './utils';
 import { ErrorMessage } from '../errorMessage/ErrorMessage';
 import { QueryContext } from '~/content/tabs/queries/query/Context';
+import { useSchemaDefinitions } from '~/content/ai/schemaDefinitions/useSchemaDefinitions';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import { isNotNull } from '~/shared/utils/typescript/typescript';
 
 export type SqlEditorProps = {
   isSubmitDisabled?: boolean;
@@ -16,7 +19,11 @@ export type SqlEditorProps = {
 export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const { isSubmitDisabled, onChange, onSubmit, value } = props;
 
+  const activeConnection = useContext(ActiveConnectionContext)?.activeConnection;
+
   const query = useContext(QueryContext);
+
+  const { getSchemaDefinitionsInstruction } = useSchemaDefinitions();
 
   const [error, setError] = useState<string | undefined>();
 
@@ -37,11 +44,25 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     [onSubmit],
   );
 
+  const getAdditionalSystemInstructions = useCallback(
+    async () =>
+      [
+        activeConnection
+          ? `The engine is ${activeConnection.engine}. When generating SQL, use quotes as necessary, particularly to ensure correct casing.`
+          : null,
+        await getSchemaDefinitionsInstruction(),
+      ]
+        .filter(isNotNull)
+        .join('\n\n') || null,
+    [activeConnection, getSchemaDefinitionsInstruction],
+  );
+
   return (
     <form className="flex flex-col gap-3" onSubmit={submitQuery}>
       <div className="max-h-[200px] w-full overflow-auto overflow-x-hidden rounded-lg border border-border bg-background pr-2">
         <CodeEditor
           autoFocus
+          getAdditionalSystemInstructions={getAdditionalSystemInstructions}
           language="sql"
           large
           onChange={onChange}

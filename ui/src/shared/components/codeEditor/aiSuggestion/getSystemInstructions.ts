@@ -1,6 +1,9 @@
-export const getSystemInstructions = (language?: 'json' | 'sql') =>
+export const getSystemInstructions = (
+  additionalSystemInstructions: string | null,
+  language?: 'json' | 'sql',
+) =>
   [
-    `You are an AI assistant that provides ${
+    `You are an AI assistant in a code editor that provides valid and unformatted ${
       language ? `${language} ` : ''
     }inline code completions. Given a code snippet, return only the exact code to insert at the end of the snippet. Consider the cursor to be at the end of the provided snippet.`,
     'Do not include markdown, explanations, comments, or any additional text.',
@@ -8,4 +11,5 @@ export const getSystemInstructions = (language?: 'json' | 'sql') =>
     'Do not escape slashes if a special character should be rendered.',
     'If the insertion should start on a new line, begin your response with a newline character.',
     'If the code is already complete, return nothing.',
+    ...(additionalSystemInstructions ? [`\n\n${additionalSystemInstructions}`] : []),
   ].join('\n');

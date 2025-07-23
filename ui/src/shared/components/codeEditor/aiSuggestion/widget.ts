@@ -27,6 +27,7 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
     private readonly lineHeight: number,
     private readonly paddingTop: number,
     private readonly fontSize: number,
+    private readonly getAdditionalSystemInstructions?: () => Promise<string | null>,
     private readonly language?: 'json' | 'sql',
   ) {
     const update = async (positionProp?: editorType.ICursorPositionChangedEvent['position']) => {
@@ -133,11 +134,15 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
       return undefined;
     }
 
+    const additionalSystemInstructions = this.getAdditionalSystemInstructions
+      ? await this.getAdditionalSystemInstructions()
+      : null;
+
     const response = await this.ai.googleAi.models.generateContent({
       model: 'gemini-2.0-flash',
       config: {
         abortSignal: this.getSuggestionAbortController.signal,
-        systemInstruction: getSystemInstructions(this.language),
+        systemInstruction: getSystemInstructions(additionalSystemInstructions, this.language),
         temperature: 0,
       },
       contents: [
@@ -152,9 +157,14 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
       return undefined;
     }
 
-    // Gemini will return escaped newline characters even when telling it not to. Therefore, we are
-    // replacing them here.
-    return response.text?.replace(/\\n/g, '\n') ?? undefined;
+    return (
+      response.text
+        // Gemini will return escaped newline characters even when telling it not to. Therefore, we are
+        // replacing them here.
+        ?.replace(/\\n/g, '\n')
+        // Remove unwanted markdown formatting
+        .replace(/(^```sql[\s]*)|(\s*```)/g, '') ?? undefined
+    );
   }
 
   getId(): string {

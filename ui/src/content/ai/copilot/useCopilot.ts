@@ -1,14 +1,14 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import { AiContext } from '../ai/Context';
+import { AiContext } from '../Context';
 import type { Content } from '@google/genai';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { getSystemInstructions } from './systemInstruction';
-import { ToastContext } from '../toast/Context';
+import { ToastContext } from '../../toast/Context';
 import { cloneDeep } from 'lodash';
-import { useSchemaDefinitions } from './schemaDefinitions/useSchemaDefinitions';
-import { ActiveConnectionContext } from '../connections/activeConnection/Context';
+import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
+import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
 
 export const useCopilot = () => {
   const toast = useDefinedContext(ToastContext);
@@ -28,7 +28,7 @@ export const useCopilot = () => {
   const [input, setInput] = useState('');
 
   const {
-    getSchemaDefinitions,
+    getSchemaDefinitionsInstruction,
     isLoading: isLoadingSchemaDefinitions,
     hasSchemaDefinitions,
   } = useSchemaDefinitions();
@@ -53,13 +53,16 @@ export const useCopilot = () => {
       setThread(threadWithUserMessage);
 
       try {
-        const schemaDefinitions = await getSchemaDefinitions();
+        const schemaDefinitionsInstruction = await getSchemaDefinitionsInstruction();
 
         const response = await googleAi.models.generateContentStream({
           model: 'gemini-2.0-flash',
           config: {
             abortSignal: abortControllerRef.current.signal,
-            systemInstruction: getSystemInstructions(activeConnection, schemaDefinitions),
+            systemInstruction: getSystemInstructions(
+              activeConnection,
+              schemaDefinitionsInstruction,
+            ),
           },
           contents: threadWithUserMessage,
         });
@@ -108,7 +111,7 @@ export const useCopilot = () => {
         setIsLoading(false);
       }
     },
-    [activeConnection, getSchemaDefinitions, googleAi, setThread, thread, toast],
+    [activeConnection, getSchemaDefinitionsInstruction, googleAi, setThread, thread, toast],
   );
 
   const stopGenerating = useCallback(() => {

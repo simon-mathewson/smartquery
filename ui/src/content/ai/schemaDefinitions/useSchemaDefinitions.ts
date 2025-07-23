@@ -7,6 +7,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { getStatements } from './getStatements';
 import type { SchemaDefinitions } from './types';
+import superjson from '@/superjson/superjson';
 
 export const useSchemaDefinitions = () => {
   const toast = useDefinedContext(ToastContext);
@@ -25,7 +26,7 @@ export const useSchemaDefinitions = () => {
       null,
     );
 
-  const getSchemaDefinitions = useCallback(async () => {
+  const getAndRefreshSchemaDefinitions = useCallback(async () => {
     if (
       storedSchemaDefinitions &&
       DateTime.fromJSDate(storedSchemaDefinitions.createdAt).diffNow().minutes < 5
@@ -94,16 +95,26 @@ export const useSchemaDefinitions = () => {
 
   // Fetch schema definitions when active connection changes
   useEffect(() => {
-    void getSchemaDefinitions();
+    void getAndRefreshSchemaDefinitions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConnection]);
 
+  const getSchemaDefinitionsInstruction = useCallback(async () => {
+    const schemaDefinitions = await getAndRefreshSchemaDefinitions();
+
+    if (!schemaDefinitions) return null;
+
+    return `The schema definitions are as follows:\n\n${superjson.stringify(
+      schemaDefinitions.definitions,
+    )}\n\n`;
+  }, [getAndRefreshSchemaDefinitions]);
+
   return useMemo(
     () => ({
-      getSchemaDefinitions,
+      getSchemaDefinitionsInstruction,
       hasSchemaDefinitions: storedSchemaDefinitions !== null,
       isLoading,
     }),
-    [getSchemaDefinitions, isLoading, storedSchemaDefinitions],
+    [getSchemaDefinitionsInstruction, isLoading, storedSchemaDefinitions],
   );
 };

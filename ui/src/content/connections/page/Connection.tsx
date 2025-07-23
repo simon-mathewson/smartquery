@@ -2,7 +2,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { ConnectionsContext } from '../Context';
 import { NavigationSidebar } from '../../navigationSidebar/NavigationSidebar';
 import { DatabaseContent } from './Content';
-import { CopilotProvider } from '../../copilot/Provider';
+import { CopilotProvider } from '../../ai/copilot/Provider';
 import { Loading } from '~/shared/components/loading/Loading';
 import { Helmet } from 'react-helmet';
 import { sqliteDemoConnectionId } from '../constants';
