@@ -17,6 +17,7 @@ export const createSshTunnel = async (connection: RemoteConnection) => {
     endPort: ssh.port,
     password: ssh.password ?? undefined,
     privateKey: ssh.privateKey ?? undefined,
+    passphrase: ssh.privateKeyPassphrase ?? undefined,
     username: ssh.user,
   });
 

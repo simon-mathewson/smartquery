@@ -143,8 +143,11 @@ test.describe('SshFormSection', () => {
       />,
     );
 
-    await expect($.getByRole('textbox', { name: 'Private key' })).not.toBeAttached();
-    await expect($.getByRole('textbox', { name: 'Password' })).not.toBeAttached();
+    const privateKeyInput = $.getByRole('textbox', { name: 'Private key' }).last();
+    const passwordInput = $.getByRole('textbox', { name: 'Password' }).last();
+
+    await expect(privateKeyInput).not.toBeAttached();
+    await expect(passwordInput).not.toBeAttached();
 
     await $.update(
       <SshFormSectionStory
@@ -159,9 +162,9 @@ test.describe('SshFormSection', () => {
       />,
     );
 
-    await expect($.getByRole('textbox', { name: 'Private key' })).not.toBeAttached();
+    await expect(privateKeyInput).not.toBeAttached();
 
-    await $.getByRole('textbox', { name: 'Password' }).fill('test');
+    await passwordInput.fill('test');
 
     expect(props.setFormValue.calls.slice(-1)).toEqual([['ssh.password', 'test']]);
 
@@ -181,10 +184,52 @@ test.describe('SshFormSection', () => {
       />,
     );
 
-    await expect($.getByRole('textbox', { name: 'Password' })).not.toBeAttached();
+    await expect(passwordInput).not.toBeAttached();
 
-    await $.getByRole('textbox', { name: 'Private key' }).fill('private key');
+    await privateKeyInput.fill('private key');
 
     expect(props.setFormValue.calls.slice(-1)).toEqual([['ssh.privateKey', 'private key']]);
+  });
+
+  test('allows specifying private key passphrase', async ({ mount }) => {
+    const props = {
+      ...getProps(),
+      formValues: {
+        ...getProps().formValues,
+        ssh: { ...getProps().formValues.ssh, credentialType: 'privateKey' },
+      },
+    } satisfies SshFormSectionProps;
+
+    const $ = await mount(<SshFormSectionStory componentProps={props} />);
+
+    const privateKeyInput = $.getByRole('textbox', { name: 'Private key' }).last();
+    const passphraseInput = $.getByRole('textbox', { name: 'Passphrase' }).last();
+
+    await expect(privateKeyInput).toBeAttached();
+    await expect(passphraseInput).not.toBeAttached();
+
+    const toggle = $.getByRole('checkbox', { name: 'Key encrypted with passphrase' });
+    await expect(toggle).not.toBeChecked();
+
+    await $.update(
+      <SshFormSectionStory
+        componentProps={{
+          ...props,
+          formValues: {
+            ...props.formValues,
+            ssh: { ...props.formValues.ssh, privateKeyPassphrase: '' },
+          },
+        }}
+      />,
+    );
+
+    await expect(passphraseInput).toBeAttached();
+    await expect(toggle).toBeChecked();
+
+    await passphraseInput.fill('passphrase');
+
+    expect(props.setFormValue.calls.slice(-1)).toEqual([
+      ['ssh.privateKeyPassphrase', 'passphrase'],
+    ]);
   });
 });

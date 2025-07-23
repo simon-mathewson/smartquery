@@ -39,7 +39,28 @@ void (async () => {
     },
   });
 
-  const sshKey = fs.readFileSync(path.join(__dirname, '../../../link/test_ssh_key.pem'), 'utf8');
+  await prisma.connection.create({
+    data: {
+      database: 'mysql_db',
+      dbUser: 'root',
+      engine: 'mysql',
+      host: 'localhost',
+      name: 'mysql_db',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: 'password',
+      port: 3307,
+    },
+  });
+
+  const sshKey = fs.readFileSync(
+    path.join(__dirname, '../../../link/docker-compose/ssh_key.pem'),
+    'utf8',
+  );
 
   await prisma.connection.create({
     data: {
@@ -47,7 +68,7 @@ void (async () => {
       dbUser: 'postgres',
       engine: 'postgres',
       host: 'postgres',
-      name: 'postgres_db SSH',
+      name: 'postgres_db SSH with key',
       user: {
         connect: {
           email: 'test@dabase.dev',
@@ -71,7 +92,7 @@ void (async () => {
       dbUser: 'root',
       engine: 'mysql',
       host: 'mysql',
-      name: 'mysql_db SSH',
+      name: 'mysql_db SSH with key',
       user: {
         connect: {
           email: 'test@dabase.dev',
@@ -89,13 +110,18 @@ void (async () => {
     },
   });
 
+  const sshKeyWithPassphrase = fs.readFileSync(
+    path.join(__dirname, '../../../link/docker-compose/ssh_key_with_passphrase.pem'),
+    'utf8',
+  );
+
   await prisma.connection.create({
     data: {
-      database: 'mysql_db',
-      dbUser: 'root',
-      engine: 'mysql',
-      host: 'localhost',
-      name: 'mysql_db',
+      database: 'postgres_db',
+      dbUser: 'postgres',
+      engine: 'postgres',
+      host: 'postgres',
+      name: 'postgres_db SSH with key and passphrase',
       user: {
         connect: {
           email: 'test@dabase.dev',
@@ -103,7 +129,85 @@ void (async () => {
       },
       encryptCredentials: false,
       password: 'password',
-      port: 3307,
+      port: 5432,
+      schema: 'public',
+      sshHost: 'localhost',
+      sshPort: 2223,
+      sshPrivateKey: sshKeyWithPassphrase,
+      sshPrivateKeyPassphrase: 'testpassphrase',
+      sshUsePrivateKey: true,
+      sshUser: 'root',
+    },
+  });
+
+  await prisma.connection.create({
+    data: {
+      database: 'mysql_db',
+      dbUser: 'root',
+      engine: 'mysql',
+      host: 'mysql',
+      name: 'mysql_db SSH with key and passphrase',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: 'password',
+      port: 3306,
+      schema: 'mysql_db',
+      sshHost: 'localhost',
+      sshPort: 2223,
+      sshPrivateKey: sshKeyWithPassphrase,
+      sshPrivateKeyPassphrase: 'testpassphrase',
+      sshUsePrivateKey: true,
+      sshUser: 'root',
+    },
+  });
+
+  await prisma.connection.create({
+    data: {
+      database: 'postgres_db',
+      dbUser: 'postgres',
+      engine: 'postgres',
+      host: 'postgres',
+      name: 'postgres_db SSH with password',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: 'password',
+      port: 5432,
+      schema: 'public',
+      sshHost: 'localhost',
+      sshPort: 2224,
+      sshPassword: 'password',
+      sshUser: 'root',
+    },
+  });
+
+  await prisma.connection.create({
+    data: {
+      database: 'mysql_db',
+      dbUser: 'root',
+      engine: 'mysql',
+      host: 'mysql',
+      name: 'mysql_db SSH with password',
+      user: {
+        connect: {
+          email: 'test@dabase.dev',
+        },
+      },
+      encryptCredentials: false,
+      password: 'password',
+      port: 3306,
+      schema: 'mysql_db',
+      sshHost: 'localhost',
+      sshPort: 2224,
+      sshPassword: 'password',
+      sshUser: 'root',
     },
   });
 

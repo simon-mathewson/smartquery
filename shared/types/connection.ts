@@ -24,6 +24,7 @@ export const remoteConnectionSchema = baseConnectionSchema.extend({
       password: z.string().nullable().optional(),
       port: z.number(),
       privateKey: z.string().nullable().optional(),
+      privateKeyPassphrase: z.string().nullable().optional(),
       user: z.string().trim().min(1),
     })
     .nullable(),

@@ -6,5 +6,6 @@ export type SignInModalInput = {
     password?: string;
     sshPassword?: string;
     sshPrivateKey?: string;
+    sshPrivateKeyPassphrase?: string;
   }) => Promise<void>;
 };

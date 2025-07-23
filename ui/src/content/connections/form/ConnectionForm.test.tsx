@@ -148,12 +148,13 @@ test.describe('ConnectionForm', () => {
     await fillOutForm($);
 
     await expect($.getByRole('radio', { name: 'Always ask', checked: true })).toBeAttached();
-    await expect($.getByRole('textbox', { name: 'Password' })).not.toBeAttached();
+    const passwordInput = $.getByRole('textbox', { name: 'Password' }).last();
+    await expect(passwordInput).not.toBeAttached();
 
     await $.getByRole('radio', { name: 'Plain' }).click();
-    await expect($.getByRole('textbox', { name: 'Password' })).toBeAttached();
+    await expect(passwordInput).toBeAttached();
 
-    await $.getByRole('textbox', { name: 'Password' }).fill('password');
+    await passwordInput.fill('password');
 
     await $.getByRole('button', { name: 'Add' }).click();
 

@@ -24,7 +24,6 @@ test('shows credential input and hidden username input', async ({ mount }) => {
   await expect($.page()).toHaveScreenshot('credentialInput.png');
 
   const hiddenUsernameInput = $.locator('input').first();
-  await expect(hiddenUsernameInput).not.toBeVisible();
   await expect(hiddenUsernameInput).toHaveAttribute('autocomplete', 'username');
   await expect(hiddenUsernameInput).toHaveValue(props.username);
 

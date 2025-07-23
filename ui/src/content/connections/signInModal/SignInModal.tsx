@@ -8,7 +8,7 @@ import { ErrorMessage } from '~/shared/components/errorMessage/ErrorMessage';
 import { Modal } from '~/shared/components/modal/Modal';
 import type { ModalControl } from '~/shared/components/modal/types';
 import { isAuthError } from '~/shared/utils/prisma/prisma';
-import { getCredentialUsername } from '../utils';
+import { getCredentialId, getUserHandle } from '../utils';
 import type { SignInModalInput } from './types';
 import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
 
@@ -20,6 +20,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
   const [password, setPassword] = useState('');
   const [sshPassword, setSshPassword] = useState('');
   const [sshPrivateKey, setSshPrivateKey] = useState('');
+  const [sshPrivateKeyPassphrase, setSshPrivateKeyPassphrase] = useState('');
 
   const [isConnecting, setIsConnecting] = useState(false);
   const [showAuthFailed, setShowAuthFailed] = useState(false);
@@ -46,6 +47,11 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
             connection.credentialStorage === 'alwaysAsk' && connection.ssh?.privateKey !== undefined
               ? sshPrivateKey
               : undefined,
+          sshPrivateKeyPassphrase:
+            connection.credentialStorage === 'alwaysAsk' &&
+            connection.ssh?.privateKeyPassphrase !== undefined
+              ? sshPrivateKeyPassphrase
+              : undefined,
         });
 
         close();
@@ -57,7 +63,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
         setIsConnecting(false);
       }
     },
-    [close, input, password, sshPassword, sshPrivateKey],
+    [close, input, password, sshPassword, sshPrivateKey, sshPrivateKeyPassphrase],
   );
 
   useEffect(() => {
@@ -65,6 +71,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
       setPassword('');
       setSshPassword('');
       setSshPrivateKey('');
+      setSshPrivateKeyPassphrase('');
     }
   }, [props.isOpen]);
 
@@ -72,8 +79,8 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
 
   const { connection } = input;
 
-  const username = getCredentialUsername(connection);
-  const sshUsername = connection.ssh ? getCredentialUsername(connection.ssh) : undefined;
+  const userHandle = getUserHandle(connection);
+  const passwordId = getCredentialId(connection, 'password');
 
   const showDbLogin = connection.credentialStorage === 'alwaysAsk';
 
@@ -89,7 +96,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
           <form onSubmit={onSubmit}>
             <fieldset disabled={isConnecting} className="flex flex-col gap-2">
               <Field label="User">
-                <Input htmlProps={{ disabled: true, value: username }} />
+                <Input htmlProps={{ disabled: true, value: userHandle }} />
               </Field>
               <Field label="Password">
                 <CredentialInput
@@ -97,7 +104,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
                   isExistingCredential
                   onChange={setPassword}
                   showAddToKeychain
-                  username={username}
+                  username={passwordId}
                 />
               </Field>
               {/* Enable submit on enter despite actual submit button being outside form */}
@@ -109,7 +116,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
           <form onSubmit={onSubmit}>
             <fieldset className="flex flex-col gap-2" disabled={isConnecting}>
               <Field label="SSH User">
-                <Input htmlProps={{ disabled: true, value: sshUsername }} />
+                <Input htmlProps={{ disabled: true, value: getUserHandle(connection.ssh) }} />
               </Field>
               {connection.ssh.password !== undefined && (
                 <Field label="SSH Password">
@@ -118,7 +125,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
                     isExistingCredential
                     onChange={setSshPassword}
                     showAddToKeychain
-                    username={sshUsername as string}
+                    username={getCredentialId(connection.ssh, 'sshPassword')}
                   />
                 </Field>
               )}
@@ -129,7 +136,18 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
                     isExistingCredential
                     onChange={setSshPrivateKey}
                     showAddToKeychain
-                    username={sshUsername as string}
+                    username={getCredentialId(connection.ssh, 'sshPrivateKey')}
+                  />
+                </Field>
+              )}
+              {connection.ssh.privateKeyPassphrase !== undefined && (
+                <Field label="Passphrase">
+                  <CredentialInput
+                    htmlProps={{ value: sshPrivateKeyPassphrase }}
+                    isExistingCredential
+                    onChange={setSshPrivateKeyPassphrase}
+                    showAddToKeychain
+                    username={getCredentialId(connection.ssh, 'sshPrivateKeyPassphrase')}
                   />
                 </Field>
               )}

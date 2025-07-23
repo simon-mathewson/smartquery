@@ -286,11 +286,12 @@ export const useConnections = (props: UseConnectionsProps) => {
     ) => {
       const skipDecryption = options?.skipDecryption ?? { password: false, ssh: false };
 
-      const { password, sshPassword, sshPrivateKey } = await (async () => {
+      const { password, sshPassword, sshPrivateKey, sshPrivateKeyPassphrase } = await (async () => {
         const storedCredentials = {
           password: connection.password ?? '',
           sshPassword: connection.ssh?.password ?? undefined,
           sshPrivateKey: connection.ssh?.privateKey ?? undefined,
+          sshPrivateKeyPassphrase: connection.ssh?.privateKeyPassphrase ?? undefined,
         };
 
         if (
@@ -302,6 +303,7 @@ export const useConnections = (props: UseConnectionsProps) => {
             password: string;
             sshPassword: string | undefined;
             sshPrivateKey: string | undefined;
+            sshPrivateKeyPassphrase: string | undefined;
           }>((resolve, reject) => {
             signInModal.open(
               {
@@ -312,6 +314,9 @@ export const useConnections = (props: UseConnectionsProps) => {
                     sshPassword: enteredCredentials.sshPassword ?? storedCredentials.sshPassword,
                     sshPrivateKey:
                       enteredCredentials.sshPrivateKey ?? storedCredentials.sshPrivateKey,
+                    sshPrivateKeyPassphrase:
+                      enteredCredentials.sshPrivateKeyPassphrase ??
+                      storedCredentials.sshPrivateKeyPassphrase,
                   }),
               },
               { onClose: () => reject(new ConnectCanceledError()) },
@@ -327,6 +332,7 @@ export const useConnections = (props: UseConnectionsProps) => {
             password: string;
             sshPassword: string | undefined;
             sshPrivateKey: string | undefined;
+            sshPrivateKeyPassphrase: string | undefined;
           }>((resolve, reject) => {
             userPasswordModal.open(
               {
@@ -349,6 +355,9 @@ export const useConnections = (props: UseConnectionsProps) => {
                     sshPrivateKey: skipDecryption.ssh
                       ? storedCredentials.sshPrivateKey
                       : decryptedConnection.ssh?.privateKey ?? undefined,
+                    sshPrivateKeyPassphrase: skipDecryption.ssh
+                      ? storedCredentials.sshPrivateKeyPassphrase
+                      : decryptedConnection.ssh?.privateKeyPassphrase ?? undefined,
                   });
                 },
               },
@@ -368,6 +377,7 @@ export const useConnections = (props: UseConnectionsProps) => {
               ...connection.ssh,
               password: sshPassword,
               privateKey: sshPrivateKey,
+              privateKeyPassphrase: sshPrivateKeyPassphrase,
             }
           : null,
       });

@@ -11,6 +11,7 @@ export type InputProps = {
   icon?: React.ReactNode;
   onChange?: (value: string) => void;
   small?: boolean;
+  wrapperProps?: React.HTMLProps<HTMLDivElement>;
 } & (
   | {
       element?: 'input';
@@ -30,6 +31,7 @@ export const Input: React.FC<InputProps> = (props) => {
     icon,
     onChange: onChangeProp,
     small,
+    wrapperProps,
   } = props;
 
   const { mode } = useTheme();
@@ -92,7 +94,7 @@ export const Input: React.FC<InputProps> = (props) => {
   );
 
   return (
-    <div className={classNames('group relative w-full', { hidden })}>
+    <div className={classNames('group relative w-full', { hidden })} {...wrapperProps}>
       {icon && (
         <div
           className={classNames(

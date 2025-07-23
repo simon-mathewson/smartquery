@@ -1,0 +1,70 @@
+services:
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: mysql_db
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - '${VITE_MYSQL_PORT}:3306'
+    networks:
+      - shared
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres_db
+    ports:
+      - '${VITE_POSTGRES_PORT}:5432'
+    networks:
+      - shared
+
+  ssh_with_key:
+    image: quay.io/panubo/sshd:1.9.0
+    ports:
+      - '${VITE_SSH_WITH_KEY_PORT}:22'
+    volumes:
+      - ./ssh_key.pub:/root/.ssh/authorized_keys:ro
+    environment:
+      SSH_ENABLE_ROOT: true
+      TCP_FORWARDING: true
+    depends_on:
+      - postgres
+      - mysql
+    networks:
+      - shared
+
+  ssh_with_key_and_passphrase:
+    image: quay.io/panubo/sshd:1.9.0
+    ports:
+      - '${VITE_SSH_WITH_KEY_AND_PASSPHRASE_PORT}:22'
+    volumes:
+      - ./ssh_key_with_passphrase.pub:/root/.ssh/authorized_keys:ro
+    environment:
+      SSH_ENABLE_ROOT: true
+      TCP_FORWARDING: true
+    depends_on:
+      - postgres
+      - mysql
+    networks:
+      - shared
+
+  ssh_with_password:
+    image: quay.io/panubo/sshd:1.9.0
+    ports:
+      - '${VITE_SSH_WITH_PASSWORD_PORT}:22'
+    environment:
+      SSH_ENABLE_ROOT: true
+      TCP_FORWARDING: true
+      SSH_ENABLE_ROOT_PASSWORD_AUTH: true
+    volumes:
+      - ./setpasswd.sh:/etc/entrypoint.d/setpasswd.sh
+    depends_on:
+      - postgres
+      - mysql
+    networks:
+      - shared
+
+networks:
+  shared:
+    driver: bridge

@@ -37,12 +37,13 @@ export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
   return (
     <>
       <Input
-        hidden
         htmlProps={{
           autoComplete: 'username',
           readOnly: true,
+          tabIndex: -1,
           value: username,
         }}
+        wrapperProps={{ className: 'absolute h-0 w-0 overflow-hidden' }}
       />
       <div className="flex w-full items-center gap-2">
         <Input
@@ -65,7 +66,11 @@ export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
           onChange={(newValue) => onChange?.(replacePlaceholdersWithLineBreaks(newValue))}
         />
         {getIsCredentialsApiAvailable() && showAddToKeychain && (
-          <Button htmlProps={{ onClick: storeInKeyChain }} icon={<EnhancedEncryptionOutlined />} />
+          <Button
+            htmlProps={{ onClick: storeInKeyChain }}
+            icon={<EnhancedEncryptionOutlined />}
+            tooltip="Add to keychain"
+          />
         )}
       </div>
     </>

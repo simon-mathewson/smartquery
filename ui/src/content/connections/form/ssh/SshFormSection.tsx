@@ -2,7 +2,7 @@ import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Field } from '~/shared/components/field/Field';
 import { type FormValues } from '../utils';
 import { Input } from '~/shared/components/input/Input';
-import { getCredentialUsername } from '~/content/connections/utils';
+import { getCredentialId } from '~/content/connections/utils';
 import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
 import { isNil } from 'lodash';
 import { defaultSshPort } from '../constants';
@@ -70,7 +70,12 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
           <Field label="Credential type">
             <ButtonSelect<'privateKey' | 'password'>
               fullWidth
-              onChange={(value) => setFormValue('ssh.credentialType', value)}
+              onChange={(value) => {
+                setFormValue('ssh.credentialType', value);
+                if (value !== 'privateKey') {
+                  setFormValue('ssh.privateKeyPassphrase', null);
+                }
+              }}
               options={[
                 {
                   button: { label: 'Password' },
@@ -97,10 +102,13 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
             <Field label="Password">
               <CredentialInput
                 onChange={(value) => setFormValue('ssh.password', value)}
-                username={getCredentialUsername({
-                  ...formValues.ssh,
-                  port: formValues.ssh.port ?? defaultSshPort,
-                })}
+                username={getCredentialId(
+                  {
+                    ...formValues.ssh,
+                    port: formValues.ssh.port ?? defaultSshPort,
+                  },
+                  'sshPassword',
+                )}
                 htmlProps={{
                   value:
                     formValues.credentialStorage === 'alwaysAsk' ? '' : formValues.ssh.password,
@@ -112,11 +120,40 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
             <Field label="Private key">
               <CredentialInput
                 onChange={(value) => setFormValue('ssh.privateKey', value)}
-                username={getCredentialUsername({
-                  ...formValues.ssh,
-                  port: formValues.ssh.port ?? defaultSshPort,
-                })}
+                username={getCredentialId(
+                  {
+                    ...formValues.ssh,
+                    port: formValues.ssh.port ?? defaultSshPort,
+                  },
+                  'sshPrivateKey',
+                )}
                 htmlProps={{ value: formValues.ssh.privateKey }}
+              />
+            </Field>
+          )}
+          {formValues.ssh?.credentialType === 'privateKey' && (
+            <Field>
+              <Toggle
+                label="Key encrypted with passphrase"
+                onChange={(newPassphraseEnabled) =>
+                  setFormValue('ssh.privateKeyPassphrase', newPassphraseEnabled ? '' : null)
+                }
+                value={typeof formValues.ssh.privateKeyPassphrase === 'string'}
+              />
+            </Field>
+          )}
+          {showPrivateKeyField && typeof formValues.ssh.privateKeyPassphrase === 'string' && (
+            <Field label="Passphrase">
+              <CredentialInput
+                onChange={(value) => setFormValue('ssh.privateKeyPassphrase', value)}
+                username={getCredentialId(
+                  {
+                    ...formValues.ssh,
+                    port: formValues.ssh.port ?? defaultSshPort,
+                  },
+                  'sshPrivateKeyPassphrase',
+                )}
+                htmlProps={{ value: formValues.ssh.privateKeyPassphrase }}
               />
             </Field>
           )}

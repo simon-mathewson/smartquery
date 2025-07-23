@@ -7,7 +7,7 @@ import {
 import { cloneDeep, set } from 'lodash';
 import React, { useRef, useState } from 'react';
 import { ConnectionsContext } from '~/content/connections/Context';
-import { getCredentialUsername } from '~/content/connections/utils';
+import { getCredentialId } from '~/content/connections/utils';
 import { Button } from '~/shared/components/button/Button';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/ConfirmDeletePopover';
@@ -364,12 +364,15 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 <CredentialInput
                   htmlProps={{ value: formValues.password }}
                   onChange={(value) => setFormValue('password', value)}
-                  username={getCredentialUsername({
-                    ...formValues,
-                    port:
-                      formValues.port ??
-                      (formValues.engine ? getDefaultPort(formValues.engine) : -1),
-                  })}
+                  username={getCredentialId(
+                    {
+                      ...formValues,
+                      port:
+                        formValues.port ??
+                        (formValues.engine ? getDefaultPort(formValues.engine) : -1),
+                    },
+                    'password',
+                  )}
                 />
               </Field>
             )}
