@@ -113,6 +113,7 @@ export const TableList: React.FC = () => {
 
       void addQuery(getQuery(table), {
         position: { column, row: horizontal ? row : undefined },
+        run: true,
         tabId: activeTab.id,
       });
 
