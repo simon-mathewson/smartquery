@@ -184,9 +184,10 @@ phases:
           pnpm typecheck
           pnpm lint
           pnpm db:generate
-          pnpm test:db:up
+          pnpm db:up:test
           sleep 15
           pnpm test -- --watch false --reporter junit --outputFile test-report.xml
+          pnpm db:down:test
           pnpm build:node
         fi
 
