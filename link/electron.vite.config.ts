@@ -6,6 +6,11 @@ import { dirname, join } from 'node:path';
 export default {
   main: {
     build: {
+      rollupOptions: {
+        input: {
+          main: join(__dirname, './src/main/index.mts'),
+        },
+      },
       commonjsOptions: {
         include: [/prisma\/client/],
       },

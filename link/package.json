@@ -4,7 +4,7 @@
   "version": "1.0.2",
   "description": "Background service for Dabase",
   "type": "module",
-  "main": "./out/main/index.js",
+  "main": "./out/main/main.js",
   "homepage": "https://about.dabase.dev",
   "author": {
     "name": "Simon Mathewson",
@@ -39,21 +39,22 @@
   "dependencies": {
     "@electron-toolkit/preload": "2.0.0",
     "@electron-toolkit/utils": "2.0.0",
+    "@prisma/client": "6.9.0",
     "@trpc/client": "11.1.4",
-    "find-free-ports": "3.1.1",
     "@trpc/server": "11.1.4",
     "@types/lodash-es": "4.17.12",
     "cors": "2.8.5",
+    "dabase-shared": "file:../shared",
     "electron-log": "5.4.1",
     "electron-store": "8.2.0",
     "electron-unhandled": "5.0.0",
     "electron-updater": "6.6.2",
-    "node-ssh-forward": "0.7.2",
+    "find-free-ports": "3.1.1",
     "lodash-es": "4.17.21",
-    "node-sql-parser": "4.18.0",
+    "node-ssh-forward": "0.7.2",
     "reflect-metadata": "0.2.2",
     "superjson": "1.12.4",
-    "zod": "3.22.4"
+    "zod": "3.23.8"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "1.0.1",
