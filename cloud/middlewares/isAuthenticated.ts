@@ -14,3 +14,17 @@ export const isAuthenticated = trpc.middleware(async (opts) => {
     },
   });
 });
+
+export const isAuthenticatedAndPlus = trpc.middleware(async (opts) => {
+  const { ctx } = opts;
+
+  if (!ctx.user || ctx.user.subscription !== 'plus') {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+
+  return opts.next({
+    ctx: {
+      user: ctx.user,
+    },
+  });
+});

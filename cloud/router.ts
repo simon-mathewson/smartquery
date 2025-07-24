@@ -1,15 +1,12 @@
-import { initTRPC } from '@trpc/server';
-import superjson from 'superjson';
-
-import type { Context } from './context';
 import { authRouter } from './auth/router';
 import { connectionsRouter } from './connections/router';
-
-const trpc = initTRPC.context<Context>().create({ transformer: superjson });
+import { trpc } from '~/trpc';
+import { connectorRouter } from './connector/router';
 
 export const appRouter = trpc.router({
   auth: authRouter,
   connections: connectionsRouter,
+  connector: connectorRouter,
 });
 
 export type AppRouter = typeof appRouter;

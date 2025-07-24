@@ -3,8 +3,10 @@ import * as cookie from 'cookie';
 import type { User } from '~/prisma/generated/client';
 import { PrismaClient } from '~/prisma/generated/client';
 import { verifyAccessToken } from './auth/accessToken';
+import type { Connector } from '@/connector/types';
 
 export type Context = {
+  connectors: Record<string, Connector>;
   getCookie: ReturnType<typeof createGetCookie>;
   setCookie: ReturnType<typeof createSetCookie>;
   prisma: PrismaClient;
@@ -35,6 +37,7 @@ export const createContext = async ({
   };
 
   return {
+    connectors: {},
     getCookie,
     setCookie,
     prisma,
