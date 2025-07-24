@@ -1,9 +1,10 @@
 import classNames from 'classnames';
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { FieldContext } from '../field/FieldContext';
 import { v4 as uuid } from 'uuid';
 
 export type ToggleProps = {
+  disabled?: boolean;
   hint?: string;
   label: string;
   onChange: (value: boolean) => void;
@@ -11,20 +12,31 @@ export type ToggleProps = {
 };
 
 export const Toggle: React.FC<ToggleProps> = (props) => {
-  const { hint, label, onChange, value } = props;
+  const { disabled, hint, label, onChange: onChangeProp, value } = props;
 
   const fieldContext = useContext(FieldContext);
 
   const [labelId] = useState(uuid());
   const [hintId] = useState(uuid());
 
+  const onChange = useCallback(
+    (value: boolean) => {
+      if (disabled) return;
+      onChangeProp(value);
+    },
+    [disabled, onChangeProp],
+  );
+
   return (
     <div
       {...fieldContext?.controlHtmlProps}
       aria-checked={value}
+      aria-disabled={disabled}
       aria-labelledby={fieldContext?.controlHtmlProps['aria-labelledby'] ?? labelId}
       aria-describedby={fieldContext?.controlHtmlProps['aria-describedby'] ?? hintId}
-      className="flex w-full cursor-pointer items-center gap-3 rounded-lg py-2"
+      className={classNames('flex w-full cursor-pointer items-center gap-3 rounded-lg py-2', {
+        '!cursor-default opacity-50': disabled,
+      })}
       onClick={() => onChange(!value)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -38,7 +50,7 @@ export const Toggle: React.FC<ToggleProps> = (props) => {
     >
       <div
         className={classNames(
-          'relative flex h-5 w-10 rounded-full bg-background shadow-[inset_0_0_0_1px_theme(colors.border)] transition-all ease-linear',
+          'relative flex h-5 w-10 flex-shrink-0 rounded-full bg-background shadow-[inset_0_0_0_1px_theme(colors.border)] transition-all ease-linear',
           {
             'bg-primary': value,
           },

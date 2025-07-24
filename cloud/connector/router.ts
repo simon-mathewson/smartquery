@@ -5,16 +5,16 @@ import { disconnect } from '@/connector/disconnect';
 import { runQuery } from '@/connector/runQuery';
 import { trpc } from '~/trpc';
 import { isAuthenticatedAndPlus } from '~/middlewares/isAuthenticated';
+import type { Connector } from '@/connector/types';
+
+const connectors: Record<string, Connector> = {};
 
 export const connectorRouter = trpc.router({
   connectDb: trpc.procedure
     .input(remoteConnectionSchema)
     .use(isAuthenticatedAndPlus)
     .mutation(async (props) => {
-      const {
-        ctx: { connectors },
-        input: connection,
-      } = props;
+      const { input: connection } = props;
 
       const connector = await connect(connection);
 
@@ -30,10 +30,7 @@ export const connectorRouter = trpc.router({
     .input(z.string())
     .use(isAuthenticatedAndPlus)
     .mutation(async (props) => {
-      const {
-        ctx: { connectors },
-        input: connectorId,
-      } = props;
+      const { input: connectorId } = props;
       if (!(connectorId in connectors)) return;
 
       await disconnect(connectors[connectorId]);
@@ -56,7 +53,6 @@ export const connectorRouter = trpc.router({
     .use(isAuthenticatedAndPlus)
     .mutation(async (props) => {
       const {
-        ctx: { connectors },
         input: { statements },
       } = props;
 
@@ -67,7 +63,7 @@ export const connectorRouter = trpc.router({
       }
 
       if (process.env.NODE_ENV === 'development') {
-        console.info('Processing query', statements);
+        console.info(`Processing ${statements.length} queries`);
       }
 
       if (!(connectorId in connectors)) {

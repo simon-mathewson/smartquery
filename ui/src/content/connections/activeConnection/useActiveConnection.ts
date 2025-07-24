@@ -10,9 +10,11 @@ import { getSelectFromStatement } from '~/content/tabs/queries/utils/parse';
 import { ToastContext } from '~/content/toast/Context';
 import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 import { TRPCClientError } from '@trpc/client';
+import { CloudApiContext } from '~/content/cloud/api/Context';
 
 export const useActiveConnection = () => {
   const toast = useDefinedContext(ToastContext);
+  const cloudApi = useDefinedContext(CloudApiContext);
   const linkApi = useDefinedContext(LinkApiContext);
   const { activeConnection, connect } = useDefinedContext(ConnectionsContext);
   const { getSqliteContent, requestFileHandlePermission, storeSqliteContent } =
@@ -32,8 +34,12 @@ export const useActiveConnection = () => {
 
       if (currentConnection.engine !== 'sqlite') {
         try {
-          return await linkApi.sendQuery.mutate({
-            clientId: currentConnection.clientId,
+          const endpoint = currentConnection.connectedViaCloud
+            ? cloudApi.connector.sendQuery.mutate
+            : linkApi.sendQuery.mutate;
+
+          return await endpoint({
+            connectorId: currentConnection.connectorId,
             statements,
           });
         } catch (error) {
@@ -108,9 +114,10 @@ export const useActiveConnection = () => {
     },
     [
       activeConnection,
+      cloudApi,
       connect,
       getSqliteContent,
-      linkApi.sendQuery,
+      linkApi,
       requestFileHandlePermission,
       storeSqliteContent,
       toast,

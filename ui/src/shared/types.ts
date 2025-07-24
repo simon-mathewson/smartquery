@@ -12,7 +12,7 @@ export type ConnectInput = inferRouterInputs<typeof router>['connectDb'];
 export { SqliteDatabase };
 
 export type ActiveConnection =
-  | (RemoteConnection & { clientId: string })
+  | (RemoteConnection & { connectedViaCloud: boolean; connectorId: string })
   | (FileConnection & { sqliteDb: SqliteDatabase });
 
 export type Database = {

@@ -13,7 +13,13 @@ import { verifyPassword } from './verifyPassword';
 export const authRouter = trpc.router({
   currentUser: trpc.procedure
     .use(isAuthenticated)
-    .output(z.object({ id: z.string(), email: z.string() }))
+    .output(
+      z.object({
+        id: z.string(),
+        email: z.string(),
+        subscription: z.enum(['plus']).nullable(),
+      }),
+    )
     .query(async ({ ctx: { user } }) => user),
   logIn: trpc.procedure
     .input(

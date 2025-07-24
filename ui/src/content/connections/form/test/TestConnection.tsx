@@ -75,10 +75,10 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     setHasSucceeded(false);
 
     try {
-      const clientId = await connectRemote(connection, {
+      const { connectedViaCloud, connectorId } = await connectRemote(connection, {
         skipDecryption: { password: skipDecryptPassword, ssh: skipDecryptSsh },
       });
-      await disconnectRemote(clientId);
+      await disconnectRemote({ connectedViaCloud, connectorId });
       setHasSucceeded(true);
 
       track('connection_form_test_connection_succeess', {

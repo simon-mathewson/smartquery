@@ -15,6 +15,7 @@ import { AnalyticsContext } from '../analytics/Context';
 import { Toggle } from '~/shared/components/toggle/Toggle';
 import { routes } from '~/router/routes';
 import { ErrorTrackingContext } from '../errors/tracking/Context';
+import { ConnectionsContext } from '../connections/Context';
 
 export type SettingsProps = {
   close: () => Promise<void>;
@@ -26,6 +27,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
   const { logOut, user } = useDefinedContext(AuthContext);
   const { modePreference, setModePreference } = useDefinedContext(ThemeContext);
   const { googleAiApiKey, setGoogleAiApiKey } = useDefinedContext(AiContext);
+  const { connectViaCloud, setConnectViaCloud } = useDefinedContext(ConnectionsContext);
 
   return (
     <div className="flex flex-col gap-2">
@@ -78,6 +80,17 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           value={isConsentGranted ?? false}
         />
       </Field>
+      {user?.subscription === 'plus' && (
+        <Field>
+          <Toggle
+            disabled={user.subscription !== 'plus'}
+            hint="Use our servers for remote connections. Local connections still require Dabase Link."
+            label="Connect via Cloud"
+            onChange={(value) => setConnectViaCloud(value)}
+            value={connectViaCloud ?? false}
+          />
+        </Field>
+      )}
       <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
         <Button
           align="left"

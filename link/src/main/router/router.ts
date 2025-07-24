@@ -63,7 +63,7 @@ export const router = trpc.router({
       }
 
       if (import.meta.env.DEV) {
-        console.info('Processing query', statements);
+        console.info(`Processing ${statements.length} queries`);
       }
 
       if (!(connectorId in connectors)) {

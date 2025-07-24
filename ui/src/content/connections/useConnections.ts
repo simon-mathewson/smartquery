@@ -73,6 +73,24 @@ export const useConnections = (props: UseConnectionsProps) => {
     [localConnections, cloudConnectionsQuery],
   );
 
+  const [connectViaCloud, setConnectViaCloud] = useStoredState<boolean | null>(
+    'useConnections.connectViaCloud',
+    null,
+  );
+
+  // Initialize connectViaCloud
+  useEffect(() => {
+    if (isInitializingAuth || !user) return;
+
+    if (user.subscription === 'plus') {
+      if (connectViaCloud === null) {
+        setConnectViaCloud(true);
+      }
+    } else {
+      setConnectViaCloud(null);
+    }
+  }, [connectViaCloud, isInitializingAuth, setConnectViaCloud, user]);
+
   const [, dbRouteParamsWithoutSchema] = useRoute<{
     connectionId: string;
     database: string;
@@ -215,17 +233,23 @@ export const useConnections = (props: UseConnectionsProps) => {
   );
 
   const disconnectRemote = useCallback(
-    async (clientId: string) => {
-      await linkApi.disconnectDb.mutate(clientId);
+    async (props: { connectedViaCloud: boolean; connectorId: string }) => {
+      const { connectedViaCloud, connectorId } = props;
+
+      const endpoint = connectedViaCloud
+        ? cloudApi.connector.disconnectDb.mutate
+        : linkApi.disconnectDb.mutate;
+
+      await endpoint(connectorId);
     },
-    [linkApi],
+    [cloudApi, linkApi],
   );
 
   const disconnect = useCallback(async () => {
     if (!activeConnection) return;
 
     if (activeConnection.type === 'remote') {
-      await disconnectRemote(activeConnection.clientId);
+      await disconnectRemote(activeConnection);
     } else {
       activeConnection.sqliteDb.close();
     }
@@ -369,7 +393,17 @@ export const useConnections = (props: UseConnectionsProps) => {
         return storedCredentials;
       })();
 
-      return linkApi.connectDb.mutate({
+      const localHosts = ['localhost', '127.0.0.1', '::1'];
+
+      const connectedViaCloud =
+        connectViaCloud === true &&
+        !localHosts.includes(connection.ssh ? connection.ssh.host : connection.host);
+
+      const endpoint = connectedViaCloud
+        ? cloudApi.connector.connectDb.mutate
+        : linkApi.connectDb.mutate;
+
+      const connectorId = await endpoint({
         ...connection,
         password,
         ssh: connection.ssh
@@ -381,8 +415,10 @@ export const useConnections = (props: UseConnectionsProps) => {
             }
           : null,
       });
+
+      return { connectedViaCloud, connectorId };
     },
-    [signInModal, userPasswordModal, cloudApi, linkApi],
+    [connectViaCloud, cloudApi, linkApi, signInModal, userPasswordModal],
   );
 
   const getDemoConnection = useCallback(async () => {
@@ -449,7 +485,7 @@ export const useConnections = (props: UseConnectionsProps) => {
           overrides?.schema ?? (connection.type === 'remote' ? connection.schema : undefined);
 
         if (connection.type === 'remote') {
-          const newClientId = await connectRemote({
+          const { connectorId: newConnectorId, connectedViaCloud } = await connectRemote({
             ...connection,
             database: selectedDatabase,
             schema: selectedSchema,
@@ -457,7 +493,8 @@ export const useConnections = (props: UseConnectionsProps) => {
 
           const newActiveConnection = {
             ...connection,
-            clientId: newClientId,
+            connectedViaCloud,
+            connectorId: newConnectorId,
             database: selectedDatabase,
             schema: selectedSchema,
           } satisfies ActiveConnection;
@@ -536,19 +573,23 @@ export const useConnections = (props: UseConnectionsProps) => {
       addConnection,
       connect,
       connections,
+      connectViaCloud,
       connectRemote,
       disconnectRemote,
       removeConnection,
+      setConnectViaCloud,
       updateConnection,
     }),
     [
       activeConnection,
       addConnection,
       connect,
+      connectViaCloud,
       connectRemote,
       connections,
       disconnectRemote,
       removeConnection,
+      setConnectViaCloud,
       updateConnection,
     ],
   );
