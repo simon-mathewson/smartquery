@@ -44,23 +44,15 @@ export const connectorRouter = trpc.router({
   sendQuery: trpc.procedure
     .input(
       z.object({
-        /** @deprecated Use connectorId instead */
-        clientId: z.string().optional(),
-        connectorId: z.string().optional(),
+        connectorId: z.string(),
         statements: z.array(z.string()),
       }),
     )
     .use(isAuthenticatedAndPlus)
     .mutation(async (props) => {
       const {
-        input: { statements },
+        input: { connectorId, statements },
       } = props;
-
-      const connectorId = props.input.clientId ?? props.input.connectorId;
-
-      if (!connectorId) {
-        throw new Error('Connector ID is required');
-      }
 
       if (process.env.NODE_ENV === 'development') {
         console.info(`Processing ${statements.length} queries`);

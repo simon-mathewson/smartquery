@@ -42,11 +42,11 @@ describe('router', () => {
 
         expect(Object.keys(context.connectors)).toHaveLength(1);
 
-        const [clientId, client] = clients[0];
+        const [connectorId, client] = clients[0];
 
-        expect(clientId).toBe(response);
-        expect(clientId).toBeTypeOf('string');
-        expect(clientId).toBeTruthy();
+        expect(connectorId).toBe(response);
+        expect(connectorId).toBeTypeOf('string');
+        expect(connectorId).toBeTruthy();
 
         expect(client.connection).toMatchObject(connection);
         expect(client.prisma).toBeInstanceOf(PrismaClient);
@@ -57,19 +57,19 @@ describe('router', () => {
 
   describe('disconnectDb', () => {
     describe('disconnects from the database', async () => {
-      const spyOnDisconnect = (clientId: string) => {
-        const client = context.connectors[clientId];
+      const spyOnDisconnect = (connectorId: string) => {
+        const client = context.connectors[connectorId];
         return vi.spyOn(client.prisma, '$disconnect');
       };
 
       test.each([mocks.connections.mysql, mocks.connections.postgres])(
         '$engine',
         async (connection) => {
-          const clientId = await trpcClient.connectDb.mutate(connection);
+          const connectorId = await trpcClient.connectDb.mutate(connection);
 
-          const disconnectSpy = spyOnDisconnect(clientId);
+          const disconnectSpy = spyOnDisconnect(connectorId);
 
-          await trpcClient.disconnectDb.mutate(clientId);
+          await trpcClient.disconnectDb.mutate(connectorId);
 
           expect(disconnectSpy).toHaveBeenCalledTimes(1);
           expect(Object.keys(context.connectors)).toHaveLength(0);
@@ -86,10 +86,10 @@ describe('router', () => {
         test.each([mocks.connections.mysql, mocks.connections.postgres])(
           '$engine',
           async (connection) => {
-            const mysqlClientId = await trpcClient.connectDb.mutate(connection);
+            const mysqlConnectorId = await trpcClient.connectDb.mutate(connection);
 
             const response = await trpcClient.sendQuery.mutate({
-              clientId: mysqlClientId,
+              connectorId: mysqlConnectorId,
               statements: [
                 'SELECT * FROM simple',
                 'UPDATE simple SET id = 10 WHERE id = 3',
@@ -111,17 +111,17 @@ describe('router', () => {
         test.each([mocks.connections.mysql, mocks.connections.postgres])(
           '$engine',
           async (connection) => {
-            const mysqlClientId = await trpcClient.connectDb.mutate(connection);
+            const mysqlConnectorId = await trpcClient.connectDb.mutate(connection);
 
             const invalidQuery = trpcClient.sendQuery.mutate({
-              clientId: mysqlClientId,
+              connectorId: mysqlConnectorId,
               statements: ['UPDATE simple SET id = 10 WHERE id = 3', 'Invalid Query'],
             });
 
             await expect(invalidQuery).rejects.toThrowError();
 
             const response = await trpcClient.sendQuery.mutate({
-              clientId: mysqlClientId,
+              connectorId: mysqlConnectorId,
               statements: ['SELECT * FROM simple WHERE id = 10'],
             });
 

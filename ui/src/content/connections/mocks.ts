@@ -50,12 +50,18 @@ export const sqliteConnectionMock = {
 
 export const getConnectionsMock = () =>
   ({
-    activeConnection: { clientId: '1', ...mysqlConnectionMock } as ActiveConnection,
+    activeConnection: {
+      connectedViaCloud: false,
+      connectorId: '1',
+      ...mysqlConnectionMock,
+    } as ActiveConnection,
     addConnection: spy(),
     connect: spy(),
     connectRemote: spy(),
+    connectViaCloud: false,
     connections: [mysqlConnectionMock, postgresConnectionMock, sqliteConnectionMock] as const,
     disconnectRemote: spy(),
     removeConnection: spy(),
+    setConnectViaCloud: spy(),
     updateConnection: spy(),
   }) satisfies Connections;

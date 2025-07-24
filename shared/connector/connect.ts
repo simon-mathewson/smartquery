@@ -18,7 +18,7 @@ export const connect = async (
     user,
   } = connection;
 
-  const clientId = uniqueId();
+  const connectorId = uniqueId();
 
   const { sshLocalHost, sshLocalPort, sshTunnel } = ssh
     ? await createSshTunnel(connection)
@@ -62,7 +62,7 @@ export const connect = async (
 
   return {
     connection,
-    id: clientId,
+    id: connectorId,
     prisma: client,
     sshTunnel,
   };

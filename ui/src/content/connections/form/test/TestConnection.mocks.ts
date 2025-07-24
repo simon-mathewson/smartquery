@@ -37,7 +37,10 @@ export const getValidFormValues = () =>
 
 export const getMockConnectionsContext = () =>
   ({
-    connectRemote: spy(async () => ''),
+    connectRemote: spy(async () => ({
+      connectedViaCloud: false,
+      connectorId: '',
+    })),
     disconnectRemote: spy(async () => {}),
   }) as const;
 

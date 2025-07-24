@@ -22,7 +22,10 @@ export const TestConnectionStory = ({
               if (shouldFail) {
                 reject(new Error('Failed to connect'));
               } else {
-                resolve('1');
+                resolve({
+                  connectedViaCloud: false,
+                  connectorId: '1',
+                });
               }
             }, 400);
           }),

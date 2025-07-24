@@ -1,7 +1,7 @@
 import type { ActiveConnection } from '~/shared/types';
 
 export const getStatements = (
-  activeConnection: Extract<ActiveConnection, { clientId: string }>,
+  activeConnection: Extract<ActiveConnection, { connectorId: string }>,
 ) => {
   const { engine, database } = activeConnection;
 
