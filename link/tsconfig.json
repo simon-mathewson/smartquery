@@ -6,7 +6,6 @@
     "seed",
     "src",
     "prettier.config.cjs",
-    "prisma",
     "../shared/**/*.ts",
     "vitest.config.ts"
   ],

@@ -6,7 +6,7 @@ export default {
   asarUnpack: ['resources/**'],
   extraResources: [
     {
-      from: 'prisma/client/postgres',
+      from: '../shared/connector/prisma/client/postgres',
       to: '.prisma/client',
       filter: ['*.node'],
     },

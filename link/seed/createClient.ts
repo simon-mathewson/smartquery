@@ -1,4 +1,4 @@
-import { MySqlClient, PostgresClient } from '../prisma';
+import { MySqlClient, PostgresClient } from '@/connector/prisma';
 import type { Connection } from './types';
 
 export const createClient = async (

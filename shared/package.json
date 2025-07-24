@@ -3,15 +3,22 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
+    "db:generate": "prisma generate --schema=connector/prisma/mysql.prisma && prisma generate --schema=connector/prisma/postgres.prisma",
+    "postinstall": "pnpm db:generate",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
     "@prisma/client": "5.7.1",
+    "find-free-ports": "3.1.1",
+    "lodash-es": "4.17.21",
+    "node-ssh-forward": "0.7.2",
     "superjson": "1.12.4",
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^24.0.10",
+    "@types/lodash-es": "4.17.12",
+    "@types/node": "24.0.10",
+    "prisma": "5.7.1",
     "typescript": "5.8.2"
   },
   "packageManager": "pnpm@9.0.6+sha512.f6d863130973207cb7a336d6b439a242a26ac8068077df530d6a86069419853dc1ffe64029ec594a9c505a3a410d19643c870aba6776330f5cfddcf10a9c1617"

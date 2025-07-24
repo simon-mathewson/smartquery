@@ -3,9 +3,14 @@
     "lib": ["esnext", "dom"],
     "target": "esnext",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
-    "moduleResolution": "node",
-    "skipLibCheck": true
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "exclude": ["node_modules"]
 }

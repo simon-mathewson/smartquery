@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { MySqlClient, PostgresClient } from '../../../prisma';
+import { MySqlClient, PostgresClient } from '@/connector/prisma';
 import { trpcClient } from '../test/utils/getTrpcClient';
 import { initialContext } from '../utils/setUpServer/context';
 import { setUpServer } from '../utils/setUpServer/setUpServer';
@@ -20,7 +20,7 @@ describe('router', () => {
 
   afterEach(async () => {
     await Promise.all(
-      Object.values(context.clients).map((client) => {
+      Object.values(context.connectors).map((client) => {
         void client.prisma.$disconnect();
         void client.sshTunnel?.shutdown();
       }),
@@ -38,9 +38,9 @@ describe('router', () => {
         expect(response).toBeTypeOf('string');
         expect(response).toBeTruthy();
 
-        const clients = Object.entries(context.clients);
+        const clients = Object.entries(context.connectors);
 
-        expect(Object.keys(context.clients)).toHaveLength(1);
+        expect(Object.keys(context.connectors)).toHaveLength(1);
 
         const [clientId, client] = clients[0];
 
@@ -58,7 +58,7 @@ describe('router', () => {
   describe('disconnectDb', () => {
     describe('disconnects from the database', async () => {
       const spyOnDisconnect = (clientId: string) => {
-        const client = context.clients[clientId];
+        const client = context.connectors[clientId];
         return vi.spyOn(client.prisma, '$disconnect');
       };
 
@@ -72,7 +72,7 @@ describe('router', () => {
           await trpcClient.disconnectDb.mutate(clientId);
 
           expect(disconnectSpy).toHaveBeenCalledTimes(1);
-          expect(Object.keys(context.clients)).toHaveLength(0);
+          expect(Object.keys(context.connectors)).toHaveLength(0);
         },
       );
     });

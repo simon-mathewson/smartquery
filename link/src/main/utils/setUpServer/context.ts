@@ -1,7 +1,7 @@
-import type { Clients } from '../../types';
+import type { Connector } from '@/connector/types';
 
-export type Context = { clients: Clients };
+export type Context = { connectors: { [connectionId: string]: Connector } };
 
 export const initialContext: Context = {
-  clients: {},
+  connectors: {},
 };

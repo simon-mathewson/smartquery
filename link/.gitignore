@@ -3,7 +3,6 @@ build
 dist
 out
 *.log*
-prisma/client
 .env.local
 .env.*.local
 electron-builder.env

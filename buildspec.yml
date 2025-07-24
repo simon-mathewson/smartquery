@@ -183,7 +183,6 @@ phases:
           cd ../link
           pnpm typecheck
           pnpm lint
-          pnpm db:generate
           pnpm db:up:test
           sleep 15
           pnpm test -- --watch false --reporter junit --outputFile test-report.xml
@@ -214,7 +213,6 @@ phases:
           if [ $SKIP_LINK -eq 1 ]; then
             cd ../link
             pnpm install
-            pnpm db:generate
           fi
 
           cd ../ui
