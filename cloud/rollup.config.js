@@ -17,6 +17,7 @@ export default {
     tsConfigPaths(),
     typescript({
       tsconfig: './tsconfig.json',
+      exclude: ['shared/node_modules/**'],
     }),
     commonjs(),
     json(),
