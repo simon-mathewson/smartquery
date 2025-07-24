@@ -85,6 +85,7 @@ phases:
         export SKIP_CLOUD=$(($IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_SHARED_UNCHANGED))
         export SKIP_CLOUD_FORMATION=$(($IS_CLOUD_FORMATION_UNCHANGED))
         export SKIP_LINK=$(($IS_LINK_UNCHANGED * $IS_SHARED_UNCHANGED))
+        export SKIP_SHARED=$(($IS_ABOUT_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_LINK_UNCHANGED * $IS_UI_UNCHANGED))
         export SKIP_UI=$(($IS_UI_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_LINK_UNCHANGED * $IS_SHARED_UNCHANGED))
 
       - |
@@ -92,6 +93,7 @@ phases:
         echo "SKIP_CLOUD: $SKIP_CLOUD"
         echo "SKIP_CLOUD_FORMATION: $SKIP_CLOUD_FORMATION"
         echo "SKIP_LINK: $SKIP_LINK"
+        echo "SKIP_SHARED: $SKIP_SHARED"
         echo "SKIP_UI: $SKIP_UI"
 
       - rm -rf last_source last_source.zip
@@ -100,6 +102,13 @@ phases:
       - corepack enable pnpm
 
       - cd shared # Always navigate to shared to enable upcoming cd ../
+      - |
+        set -e  # Exit immediately if any command fails
+        if [ $SKIP_SHARED -eq 1 ]; then
+          echo "Shared package is unchanged. Skipping install."
+        else
+          pnpm install
+        fi
 
       - |
         set -e  # Exit immediately if any command fails
