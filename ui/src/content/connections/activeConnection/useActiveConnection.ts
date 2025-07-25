@@ -14,7 +14,7 @@ import { CloudApiContext } from '~/content/cloud/api/Context';
 
 export const useActiveConnection = () => {
   const toast = useDefinedContext(ToastContext);
-  const cloudApi = useDefinedContext(CloudApiContext);
+  const { cloudApi } = useDefinedContext(CloudApiContext);
   const linkApi = useDefinedContext(LinkApiContext);
   const { activeConnection, connect } = useDefinedContext(ConnectionsContext);
   const { getSqliteContent, requestFileHandlePermission, storeSqliteContent } =

@@ -94,3 +94,8 @@ Replace `APPLICATION_VERSION` with `import.meta.env.VITE_UI_VERSION`.
 Update `VITE_AWS_WAF_CAPTCHA_SCRIPT_URL` according to JS script URL displayed in https://us-east-1.console.aws.amazon.com/wafv2/homev2/application-integ-sdks?region=eu-central-1.
 
 Create an API key with domain `dabase.dev` in the console as update `VITE_AWS_WAF_CAPTCHA_API_KEY` accordingly.
+
+### 10. Set Google AI API key secret
+
+Get API Key from https://aistudio.google.com/apikey and insert it into the secret manager:
+https://eu-central-1.console.aws.amazon.com/secretsmanager/listsecrets?region=eu-central-1

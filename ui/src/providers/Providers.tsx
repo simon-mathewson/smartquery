@@ -23,16 +23,16 @@ import { UpdateAvailableProvider } from '~/content/updateAvailable/Provider';
 import { ActiveConnectionProvider } from '~/content/connections/activeConnection/Provider';
 
 const providers = {
-  ErrorTrackingProvider,
-  AnalyticsProvider,
   ThemeProvider,
+  ErrorTrackingProvider,
+  CloudApiProvider,
+  LinkApiProvider,
+  AnalyticsProvider,
+  ToastProvider,
+  AuthProvider,
   AiProvider,
   EscapeStackProvider,
-  ToastProvider,
   UpdateAvailableProvider,
-  CloudApiProvider,
-  AuthProvider,
-  LinkApiProvider,
   LinkProvider,
   SqliteProvider,
   ConnectionsProvider,

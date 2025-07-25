@@ -12,7 +12,7 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 export const useAuth = () => {
   const [, navigate] = useLocation();
 
-  const cloudApi = useDefinedContext(CloudApiContext);
+  const { cloudApi } = useDefinedContext(CloudApiContext);
   const toast = useDefinedContext(ToastContext);
 
   const [isInitializing, setIsInitializing] = useState(true);

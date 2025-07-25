@@ -50,28 +50,30 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           value={modePreference}
         />
       </Field>
-      <Field
-        hint={
-          <>
-            Get a free key at{' '}
-            <a className="underline" href="https://aistudio.google.com/apikey" target="_blank">
-              aistudio.google.com/apikey
-            </a>
-          </>
-        }
-        label="Google AI API Key"
-      >
-        <Input
-          onChange={(value) => {
-            setGoogleAiApiKey(value);
-            track('settings_google_ai_api_key', { value: Boolean(value) });
-          }}
-          htmlProps={{
-            type: 'password',
-            value: googleAiApiKey,
-          }}
-        />
-      </Field>
+      {user?.subscription !== 'plus' && (
+        <Field
+          hint={
+            <>
+              Get a free key at{' '}
+              <a className="underline" href="https://aistudio.google.com/apikey" target="_blank">
+                aistudio.google.com/apikey
+              </a>
+            </>
+          }
+          label="Google AI API Key"
+        >
+          <Input
+            onChange={(value) => {
+              setGoogleAiApiKey(value);
+              track('settings_google_ai_api_key', { value: Boolean(value) });
+            }}
+            htmlProps={{
+              type: 'password',
+              value: googleAiApiKey,
+            }}
+          />
+        </Field>
+      )}
       <Field>
         <Toggle
           hint="Help improve Dabase"

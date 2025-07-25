@@ -31,7 +31,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const [, navigate] = useLocation();
 
-  const cloudApi = useDefinedContext(CloudApiContext);
+  const { cloudApi } = useDefinedContext(CloudApiContext);
   const linkApi = useDefinedContext(LinkApiContext);
   const { user, isInitializing: isInitializingAuth } = useDefinedContext(AuthContext);
   const toast = useDefinedContext(ToastContext);

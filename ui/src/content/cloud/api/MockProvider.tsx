@@ -6,7 +6,15 @@ export const CloudApiMockProvider: React.FC<MockProviderProps<CloudApiContextTyp
   const { children, overrides } = props;
 
   return (
-    <CloudApiContext.Provider value={Object.assign({} as CloudApiContextType, overrides)}>
+    <CloudApiContext.Provider
+      value={Object.assign(
+        {
+          cloudApi: {},
+          cloudApiStream: {},
+        } as CloudApiContextType,
+        overrides,
+      )}
+    >
       {children}
     </CloudApiContext.Provider>
   );

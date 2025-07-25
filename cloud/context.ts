@@ -4,14 +4,16 @@ import type { User } from '~/prisma/generated/client';
 import { PrismaClient } from '~/prisma/generated/client';
 import { verifyAccessToken } from './auth/accessToken';
 import type { Connector } from '@/connector/types';
+import { GoogleGenAI } from '@google/genai';
 
 export type Context = {
   connectors: Record<string, Connector>;
   getCookie: ReturnType<typeof createGetCookie>;
-  setCookie: ReturnType<typeof createSetCookie>;
+  googleAi: GoogleGenAI;
   prisma: PrismaClient;
   req: CreateExpressContextOptions['req'];
   res: CreateExpressContextOptions['res'];
+  setCookie: ReturnType<typeof createSetCookie>;
   user: User | null;
 };
 
@@ -20,6 +22,8 @@ export const createContext = async ({
   res,
 }: CreateExpressContextOptions): Promise<Context> => {
   const prisma = new PrismaClient();
+
+  const googleAi = new GoogleGenAI({ apiKey: process.env.GOOGLE_AI_API_KEY });
 
   const getCookie = createGetCookie(req);
   const setCookie = createSetCookie(res);
@@ -38,6 +42,7 @@ export const createContext = async ({
 
   return {
     connectors: {},
+    googleAi,
     getCookie,
     setCookie,
     prisma,

@@ -9,7 +9,10 @@ export const AiMockProvider: React.FC<MockProviderProps<AiContextType>> = (props
     <AiContext.Provider
       value={Object.assign(
         {
-          googleAi: null,
+          enabled: false,
+          generateContent: async function* () {
+            yield '';
+          },
           googleAiApiKey: undefined,
           setGoogleAiApiKey: () => {},
         },

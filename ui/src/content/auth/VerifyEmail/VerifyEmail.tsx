@@ -12,7 +12,7 @@ import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 
 export const VerifyEmail: React.FC = () => {
   const [, navigate] = useLocation();
-  const cloudApi = useDefinedContext(CloudApiContext);
+  const { cloudApi } = useDefinedContext(CloudApiContext);
   const toast = useDefinedContext(ToastContext);
 
   const [searchParams] = useSearchParams();

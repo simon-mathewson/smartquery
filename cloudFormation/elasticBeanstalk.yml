@@ -118,6 +118,9 @@ Resources:
           OptionName: DABASE_CLOUD_DB_SECRET
           Value: !ImportValue DabaseCloudDbSecretArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
+          OptionName: GOOGLE_AI_API_KEY
+          Value: !ImportValue DabaseCloudGoogleAiApiKeyArn
+        - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: JWT_SECRET
           Value: !ImportValue DabaseCloudJwtSecretArn
         - Namespace: aws:elasticbeanstalk:application:environment

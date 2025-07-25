@@ -71,5 +71,3 @@ export const connectorRouter = trpc.router({
       return results;
     }),
 });
-
-export type Router = typeof connectorRouter;

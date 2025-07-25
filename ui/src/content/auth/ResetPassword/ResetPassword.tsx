@@ -14,7 +14,7 @@ import { AuthContext } from '../Context';
 import { PasswordFields } from '../PasswordFields';
 
 export const ResetPassword: React.FC = () => {
-  const cloudApi = useDefinedContext(CloudApiContext);
+  const { cloudApi } = useDefinedContext(CloudApiContext);
   const toast = useDefinedContext(ToastContext);
   const auth = useDefinedContext(AuthContext);
 

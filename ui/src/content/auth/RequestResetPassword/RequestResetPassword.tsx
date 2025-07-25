@@ -18,7 +18,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 export const RequestResetPassword: React.FC = () => {
   const [, navigate] = useLocation();
 
-  const cloudApi = useDefinedContext(CloudApiContext);
+  const { cloudApi } = useDefinedContext(CloudApiContext);
   const toast = useDefinedContext(ToastContext);
 
   const [searchParams] = useSearchParams();

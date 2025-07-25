@@ -1,7 +1,6 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { AiContext } from '../Context';
-import type { Content } from '@google/genai';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { getSystemInstructions } from './systemInstruction';
@@ -9,17 +8,18 @@ import { ToastContext } from '../../toast/Context';
 import { cloneDeep } from 'lodash';
 import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
 import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
+import type { AiTextContent } from '@/types/ai';
 
 export const useCopilot = () => {
   const toast = useDefinedContext(ToastContext);
 
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
-  const { googleAi } = useDefinedContext(AiContext);
+  const ai = useDefinedContext(AiContext);
 
   const [isOpen, setIsOpen] = useStoredState<boolean>('useCopilot.isOpen', false);
 
-  const [thread, setThread] = useStoredState<Content[]>('useCopilot.thread', []);
+  const [thread, setThread] = useStoredState<AiTextContent[]>('useCopilot.thread', []);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,7 +35,7 @@ export const useCopilot = () => {
 
   const sendMessage = useCallback(
     async (message: string) => {
-      assert(googleAi);
+      assert(ai.enabled);
 
       setIsLoading(true);
 
@@ -48,34 +48,28 @@ export const useCopilot = () => {
           role: 'user',
           parts: [{ text: message }],
         },
-      ] satisfies Content[];
+      ] satisfies AiTextContent[];
 
       setThread(threadWithUserMessage);
 
       try {
         const schemaDefinitionsInstruction = await getSchemaDefinitionsInstruction();
 
-        const response = await googleAi.models.generateContentStream({
-          model: 'gemini-2.0-flash',
-          config: {
-            abortSignal: abortControllerRef.current.signal,
-            systemInstruction: getSystemInstructions(
-              activeConnection,
-              schemaDefinitionsInstruction,
-            ),
-          },
+        const response = await ai.generateContent({
+          abortSignal: abortControllerRef.current.signal,
           contents: threadWithUserMessage,
+          systemInstructions: getSystemInstructions(activeConnection, schemaDefinitionsInstruction),
         });
 
         const responseContent = {
           role: 'model',
           parts: [{ text: '' }],
-        } satisfies Content;
+        } satisfies AiTextContent;
 
         setThread((contents) => [...contents, responseContent]);
 
         for await (const chunk of response) {
-          responseContent!.parts[0]!.text! += chunk.text;
+          responseContent!.parts[0]!.text! += chunk ?? '';
 
           setThread((contents) => [...contents.slice(0, -1), cloneDeep(responseContent)]);
         }
@@ -111,7 +105,7 @@ export const useCopilot = () => {
         setIsLoading(false);
       }
     },
-    [activeConnection, getSchemaDefinitionsInstruction, googleAi, setThread, thread, toast],
+    [ai, activeConnection, getSchemaDefinitionsInstruction, setThread, thread, toast],
   );
 
   const stopGenerating = useCallback(() => {
@@ -124,13 +118,11 @@ export const useCopilot = () => {
     setThread([]);
   }, [setThread, stopGenerating]);
 
-  const isEnabled = googleAi !== null;
-
   return useMemo(
     () => ({
       clearThread,
       input,
-      isEnabled,
+      isEnabled: ai.enabled,
       isLoading,
       isLoadingSchemaDefinitions,
       hasSchemaDefinitions,
@@ -144,7 +136,7 @@ export const useCopilot = () => {
     [
       clearThread,
       input,
-      isEnabled,
+      ai.enabled,
       isLoading,
       isLoadingSchemaDefinitions,
       hasSchemaDefinitions,
