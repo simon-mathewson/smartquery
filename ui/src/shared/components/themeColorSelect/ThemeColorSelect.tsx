@@ -25,14 +25,15 @@ export const ThemeColorSelect: React.FC<ThemeColorSelectProps> = ({ value, onCha
     >
       {primaryColors.map((option) => {
         const colorValue = colors[option][mode === 'dark' ? 500 : 600];
+        const label = option.charAt(0).toUpperCase() + option.slice(1);
 
         return (
-          <Tooltip<HTMLDivElement> key={option} text={option}>
+          <Tooltip<HTMLDivElement> key={option} text={label}>
             {(tooltipProps) => (
               <div
                 {...tooltipProps.htmlProps}
                 aria-checked={value === option}
-                aria-label={option}
+                aria-label={label}
                 className={classNames(
                   'flex h-6 w-6 cursor-pointer items-center justify-center rounded-full !outline-offset-2 transition-all hover:scale-125',
                 )}
