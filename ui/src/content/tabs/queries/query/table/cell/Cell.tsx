@@ -208,14 +208,14 @@ export const Cell: React.FC<CellProps> = (props) => {
           {!sorting.sortedColumn ||
           sorting.sortedColumn.columnName !== (column as Column).name ||
           sorting.sortedColumn.direction === 'ASC' ? (
-            <ArrowUpward
+            <ArrowDownward
               className={classNames('!h-4 !w-4 text-primary', {
                 '!hidden opacity-0 group-hover:!block group-hover:opacity-50':
                   sorting.sortedColumn?.columnName !== (column as Column).name,
               })}
             />
           ) : (
-            <ArrowDownward className="!hidden !h-4 !w-4 text-primary group-hover:!block" />
+            <ArrowUpward className="!hidden !h-4 !w-4 text-primary group-hover:!block" />
           )}
         </>
       )}
