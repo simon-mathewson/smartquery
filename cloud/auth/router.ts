@@ -212,7 +212,7 @@ export const authRouter = trpc.router({
 
       void sendEmail(
         email,
-        'Please verify your email – Welcome to Dabase!',
+        'Welcome to Dabase! – Please verify your email',
         `Welcome to Dabase!\n\nPlease verify your email by clicking the following link:\n${verificationLink}`,
       );
     }),

@@ -18,7 +18,7 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
   const message = `${body}${footer}`;
 
   const input = {
-    Source: 'no-reply@dabase.dev',
+    Source: '"Dabase" <no-reply@dabase.dev>',
     Destination: { ToAddresses: [to] },
     Message: {
       Subject: {
@@ -31,7 +31,7 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
           Charset: 'UTF-8',
         },
         Html: {
-          Data: message,
+          Data: message.replace(/\n/g, '<br>'),
           Charset: 'UTF-8',
         },
       },
