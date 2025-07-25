@@ -36,7 +36,7 @@ export function ButtonSelect<T>(props: ButtonSelectProps<T>) {
   return (
     <div
       {...fieldContext?.controlHtmlProps}
-      className={classNames('gap-2 rounded-lg', {
+      className={classNames('gap-2 rounded-lg pb-1', {
         'grid w-full grid-cols-[repeat(auto-fit,minmax(0,1fr))]': fullWidth,
         'flex flex-wrap': !fullWidth,
       })}
