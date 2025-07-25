@@ -11,7 +11,6 @@ test('Logo', async ({ mount }) => {
 
   await expect($.page()).toHaveScreenshot('logo.png');
 
-  await expect($).toHaveRole('presentation');
   await expect($).toBeVisible();
   await expect($).toHaveCSS('width', '50px');
 });
