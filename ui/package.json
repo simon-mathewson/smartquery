@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "clear-snapshots": "find . -type d -name '__snapshots__' -exec rm -rf {} +",
     "dev": "vite",
     "e2e": "pnpm dotenv -e .env.test -- playwright test --ui",
     "build": "tsc && vite build",

@@ -86,14 +86,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           />
         </Field>
       )}
-      <Field>
-        <Toggle
-          hint="Help improve Dabase"
-          label="Share anonymous usage data"
-          onChange={(value) => setIsConsentGranted(Boolean(value))}
-          value={isConsentGranted ?? false}
-        />
-      </Field>
       {user?.subscription === 'plus' && (
         <Field>
           <Toggle
@@ -105,6 +97,14 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           />
         </Field>
       )}
+      <Field>
+        <Toggle
+          hint="Help improve Dabase"
+          label="Share anonymous usage data"
+          onChange={(value) => setIsConsentGranted(Boolean(value))}
+          value={isConsentGranted ?? false}
+        />
+      </Field>
       <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
         <Button
           align="left"

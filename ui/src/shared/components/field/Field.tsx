@@ -31,7 +31,7 @@ export const Field: React.FC<PropsWithChildren<FieldProps>> = (props) => {
         [controlId, hint, hintId, label, labelId],
       )}
     >
-      <div className={classNames('grid gap-1 focus-within:text-primary', htmlProps?.className)}>
+      <div className={classNames('grid gap-1 focus-within:text-primary pb-1', htmlProps?.className)}>
         {label && (
           <label className="block pl-1 text-xs font-medium" htmlFor={controlId} id={labelId}>
             {label}

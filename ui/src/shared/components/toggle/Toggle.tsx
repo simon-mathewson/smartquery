@@ -34,7 +34,7 @@ export const Toggle: React.FC<ToggleProps> = (props) => {
       aria-disabled={disabled}
       aria-labelledby={fieldContext?.controlHtmlProps['aria-labelledby'] ?? labelId}
       aria-describedby={fieldContext?.controlHtmlProps['aria-describedby'] ?? hintId}
-      className={classNames('flex w-full cursor-pointer items-center gap-3 rounded-lg py-2', {
+      className={classNames('flex w-full cursor-pointer items-center gap-3 rounded-lg', {
         '!cursor-default opacity-50': disabled,
       })}
       onClick={() => onChange(!value)}

@@ -15,8 +15,7 @@ test.describe('TestConnection', () => {
     await expect($).toHaveText('Test connection');
     await expect($).toHaveRole('button');
     await expect($).toBeDisabled();
-    // To do: Fix for CI
-    // await expect($).toHaveScreenshot('disabled.png');
+    await expect($).toHaveScreenshot('disabled.png');
 
     await $.update(
       <TestConnectionStory
@@ -29,8 +28,7 @@ test.describe('TestConnection', () => {
     );
 
     await expect($).not.toBeDisabled();
-    // To do: Fix for CI
-    // await expect($).toHaveScreenshot('enabled.png');
+    await expect($).toHaveScreenshot('enabled.png');
   });
 
   test('should indicate that test succeeded', async ({ mount }) => {
@@ -47,13 +45,11 @@ test.describe('TestConnection', () => {
     await $.click();
 
     await expect($).toHaveText('Testing connection...');
-    // To do: Fix for CI
-    // await expect($).toHaveScreenshot('testing.png');
+    await expect($).toHaveScreenshot('testing.png');
     await expect($).toBeDisabled();
 
     await expect($).toHaveText('Connection succeeded');
-    // To do: Fix for CI
-    // await expect($).toHaveScreenshot('success.png');
+    await expect($).toHaveScreenshot('success.png');
     await expect($).not.toBeDisabled();
 
     expect(props.testApp.providerOverrides.ConnectionsProvider.connectRemote.calls).toEqual([
@@ -79,13 +75,11 @@ test.describe('TestConnection', () => {
     await $.click();
 
     await expect($).toHaveText('Testing connection...');
-    // To do: Fix for CI
-    // await expect($).toHaveScreenshot('testing.png');
+    await expect($).toHaveScreenshot('testing.png');
     await expect($).toBeDisabled();
 
     await expect($).toHaveText('Connection failed');
-    // To do: Fix for CI
-    // await expect($).toHaveScreenshot('failed.png');
+    await expect($).toHaveScreenshot('failed.png');
     await expect($).not.toBeDisabled();
 
     expect(props.testApp.providerOverrides.ConnectionsProvider.connectRemote.calls).toEqual([
