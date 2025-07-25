@@ -86,7 +86,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
         <Field>
           <Toggle
             disabled={user.subscription !== 'plus'}
-            hint="Use our servers for remote connections. Local connections still require Dabase Link."
+            hint="Use Dabase servers for remote connections. Local connections still require Dabase Link."
             label="Connect via Cloud"
             onChange={(value) => setConnectViaCloud(value)}
             value={connectViaCloud ?? false}
