@@ -1,5 +1,5 @@
 import React from 'react';
-import LogoSvg from '../../../../public/logo.svg?react';
+import LogoSvg from './logo.svg?react';
 import classNames from 'classnames';
 
 export type LogoProps = {
