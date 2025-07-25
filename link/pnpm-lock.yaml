@@ -22,13 +22,13 @@ importers:
         version: 2.0.0(electron@37.2.2)
       '@prisma/client':
         specifier: 6.9.0
-        version: 6.9.0(prisma@6.9.0(typescript@5.8.2))(typescript@5.8.2)
+        version: 6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)
       '@trpc/client':
         specifier: 11.1.4
-        version: 11.1.4(@trpc/server@11.1.4(typescript@5.8.2))(typescript@5.8.2)
+        version: 11.1.4(@trpc/server@11.1.4(typescript@5.8.3))(typescript@5.8.3)
       '@trpc/server':
         specifier: 11.1.4
-        version: 11.1.4(typescript@5.8.2)
+        version: 11.1.4(typescript@5.8.3)
       '@types/lodash-es':
         specifier: 4.17.12
         version: 4.17.12
@@ -37,7 +37,7 @@ importers:
         version: 2.8.5
       dabase-shared:
         specifier: file:../shared
-        version: file:../shared(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.2))(typescript@5.8.2))(find-free-ports@3.1.1)(lodash-es@4.17.21)(node-ssh-forward@0.7.2)(superjson@1.12.4)(typescript@5.8.2)(zod@3.23.8)
+        version: file:../shared(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(find-free-ports@3.1.1)(lodash-es@4.17.21)(node-ssh-forward@0.7.2)(superjson@1.12.4)(typescript@5.8.3)(zod@3.23.8)
       electron-log:
         specifier: 5.4.1
         version: 5.4.1
@@ -74,7 +74,7 @@ importers:
         version: 1.0.1(eslint@8.47.0)(prettier@3.5.1)
       '@electron-toolkit/eslint-config-ts':
         specifier: 1.0.0
-        version: 1.0.0(eslint@8.47.0)(typescript@5.8.2)
+        version: 1.0.0(eslint@8.47.0)(typescript@5.8.3)
       '@electron-toolkit/tsconfig':
         specifier: 1.0.1
         version: 1.0.1(@types/node@24.0.14)
@@ -116,13 +116,13 @@ importers:
         version: 8.47.0
       ts-essentials:
         specifier: 9.4.2
-        version: 9.4.2(typescript@5.8.2)
+        version: 9.4.2(typescript@5.8.3)
       tsx:
         specifier: 4.20.3
         version: 4.20.3
       typescript:
-        specifier: 5.8.2
-        version: 5.8.2
+        specifier: 5.8.3
+        version: 5.8.3
       vitest:
         specifier: 1.6.0
         version: 1.6.0(@types/node@24.0.14)(@vitest/ui@1.6.0)
@@ -2985,8 +2985,8 @@ packages:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
 
-  typescript@5.8.2:
-    resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
+  typescript@5.8.3:
+    resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -3336,13 +3336,13 @@ snapshots:
     transitivePeerDependencies:
       - '@types/eslint'
 
-  '@electron-toolkit/eslint-config-ts@1.0.0(eslint@8.47.0)(typescript@5.8.2)':
+  '@electron-toolkit/eslint-config-ts@1.0.0(eslint@8.47.0)(typescript@5.8.3)':
     dependencies:
-      '@typescript-eslint/eslint-plugin': 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.47.0)(typescript@5.8.2))(eslint@8.47.0)(typescript@5.8.2)
-      '@typescript-eslint/parser': 6.21.0(eslint@8.47.0)(typescript@5.8.2)
+      '@typescript-eslint/eslint-plugin': 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.47.0)(typescript@5.8.3))(eslint@8.47.0)(typescript@5.8.3)
+      '@typescript-eslint/parser': 6.21.0(eslint@8.47.0)(typescript@5.8.3)
       eslint: 8.47.0
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
@@ -3740,10 +3740,10 @@ snapshots:
 
   '@polka/url@1.0.0-next.28': {}
 
-  '@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.2))(typescript@5.8.2)':
+  '@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)':
     optionalDependencies:
-      prisma: 6.9.0(typescript@5.8.2)
-      typescript: 5.8.2
+      prisma: 6.9.0(typescript@5.8.3)
+      typescript: 5.8.3
 
   '@prisma/config@6.9.0':
     dependencies:
@@ -3892,14 +3892,14 @@ snapshots:
 
   '@tootallnate/once@2.0.0': {}
 
-  '@trpc/client@11.1.4(@trpc/server@11.1.4(typescript@5.8.2))(typescript@5.8.2)':
+  '@trpc/client@11.1.4(@trpc/server@11.1.4(typescript@5.8.3))(typescript@5.8.3)':
     dependencies:
-      '@trpc/server': 11.1.4(typescript@5.8.2)
-      typescript: 5.8.2
+      '@trpc/server': 11.1.4(typescript@5.8.3)
+      typescript: 5.8.3
 
-  '@trpc/server@11.1.4(typescript@5.8.2)':
+  '@trpc/server@11.1.4(typescript@5.8.3)':
     dependencies:
-      typescript: 5.8.2
+      typescript: 5.8.3
 
   '@types/cacheable-request@6.0.3':
     dependencies:
@@ -3972,13 +3972,13 @@ snapshots:
       '@types/node': 24.0.14
     optional: true
 
-  '@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.47.0)(typescript@5.8.2))(eslint@8.47.0)(typescript@5.8.2)':
+  '@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.47.0)(typescript@5.8.3))(eslint@8.47.0)(typescript@5.8.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.1
-      '@typescript-eslint/parser': 6.21.0(eslint@8.47.0)(typescript@5.8.2)
+      '@typescript-eslint/parser': 6.21.0(eslint@8.47.0)(typescript@5.8.3)
       '@typescript-eslint/scope-manager': 6.21.0
-      '@typescript-eslint/type-utils': 6.21.0(eslint@8.47.0)(typescript@5.8.2)
-      '@typescript-eslint/utils': 6.21.0(eslint@8.47.0)(typescript@5.8.2)
+      '@typescript-eslint/type-utils': 6.21.0(eslint@8.47.0)(typescript@5.8.3)
+      '@typescript-eslint/utils': 6.21.0(eslint@8.47.0)(typescript@5.8.3)
       '@typescript-eslint/visitor-keys': 6.21.0
       debug: 4.4.0
       eslint: 8.47.0
@@ -3986,22 +3986,22 @@ snapshots:
       ignore: 5.3.2
       natural-compare: 1.4.0
       semver: 7.7.1
-      ts-api-utils: 1.4.3(typescript@5.8.2)
+      ts-api-utils: 1.4.3(typescript@5.8.3)
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@6.21.0(eslint@8.47.0)(typescript@5.8.2)':
+  '@typescript-eslint/parser@6.21.0(eslint@8.47.0)(typescript@5.8.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 6.21.0
       '@typescript-eslint/types': 6.21.0
-      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.8.2)
+      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.8.3)
       '@typescript-eslint/visitor-keys': 6.21.0
       debug: 4.4.0
       eslint: 8.47.0
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
@@ -4010,21 +4010,21 @@ snapshots:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/visitor-keys': 6.21.0
 
-  '@typescript-eslint/type-utils@6.21.0(eslint@8.47.0)(typescript@5.8.2)':
+  '@typescript-eslint/type-utils@6.21.0(eslint@8.47.0)(typescript@5.8.3)':
     dependencies:
-      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.8.2)
-      '@typescript-eslint/utils': 6.21.0(eslint@8.47.0)(typescript@5.8.2)
+      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.8.3)
+      '@typescript-eslint/utils': 6.21.0(eslint@8.47.0)(typescript@5.8.3)
       debug: 4.4.0
       eslint: 8.47.0
-      ts-api-utils: 1.4.3(typescript@5.8.2)
+      ts-api-utils: 1.4.3(typescript@5.8.3)
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
   '@typescript-eslint/types@6.21.0': {}
 
-  '@typescript-eslint/typescript-estree@6.21.0(typescript@5.8.2)':
+  '@typescript-eslint/typescript-estree@6.21.0(typescript@5.8.3)':
     dependencies:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/visitor-keys': 6.21.0
@@ -4033,20 +4033,20 @@ snapshots:
       is-glob: 4.0.3
       minimatch: 9.0.3
       semver: 7.7.1
-      ts-api-utils: 1.4.3(typescript@5.8.2)
+      ts-api-utils: 1.4.3(typescript@5.8.3)
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@6.21.0(eslint@8.47.0)(typescript@5.8.2)':
+  '@typescript-eslint/utils@6.21.0(eslint@8.47.0)(typescript@5.8.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.4.1(eslint@8.47.0)
       '@types/json-schema': 7.0.15
       '@types/semver': 7.5.8
       '@typescript-eslint/scope-manager': 6.21.0
       '@typescript-eslint/types': 6.21.0
-      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.8.2)
+      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.8.3)
       eslint: 8.47.0
       semver: 7.7.1
     transitivePeerDependencies:
@@ -4567,7 +4567,7 @@ snapshots:
   config-file-ts@0.2.8-rc1:
     dependencies:
       glob: 10.4.5
-      typescript: 5.8.2
+      typescript: 5.8.3
 
   console-control-strings@1.1.0: {}
 
@@ -4602,13 +4602,13 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  dabase-shared@file:../shared(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.2))(typescript@5.8.2))(find-free-ports@3.1.1)(lodash-es@4.17.21)(node-ssh-forward@0.7.2)(superjson@1.12.4)(typescript@5.8.2)(zod@3.23.8):
+  dabase-shared@file:../shared(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(find-free-ports@3.1.1)(lodash-es@4.17.21)(node-ssh-forward@0.7.2)(superjson@1.12.4)(typescript@5.8.3)(zod@3.23.8):
     dependencies:
-      '@prisma/client': 6.9.0(prisma@6.9.0(typescript@5.8.2))(typescript@5.8.2)
+      '@prisma/client': 6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)
       find-free-ports: 3.1.1
       lodash-es: 4.17.21
       node-ssh-forward: 0.7.2
-      prisma: 6.9.0(typescript@5.8.2)
+      prisma: 6.9.0(typescript@5.8.3)
       superjson: 1.12.4
       zod: 3.23.8
     transitivePeerDependencies:
@@ -5912,12 +5912,12 @@ snapshots:
       ansi-styles: 5.2.0
       react-is: 18.3.1
 
-  prisma@6.9.0(typescript@5.8.2):
+  prisma@6.9.0(typescript@5.8.3):
     dependencies:
       '@prisma/config': 6.9.0
       '@prisma/engines': 6.9.0
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 5.8.3
 
   proc-log@2.0.1: {}
 
@@ -6269,13 +6269,13 @@ snapshots:
     dependencies:
       utf8-byte-length: 1.0.5
 
-  ts-api-utils@1.4.3(typescript@5.8.2):
+  ts-api-utils@1.4.3(typescript@5.8.3):
     dependencies:
-      typescript: 5.8.2
+      typescript: 5.8.3
 
-  ts-essentials@9.4.2(typescript@5.8.2):
+  ts-essentials@9.4.2(typescript@5.8.3):
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 5.8.3
 
   tslib@2.8.1: {}
 
@@ -6301,7 +6301,7 @@ snapshots:
 
   type-fest@2.19.0: {}
 
-  typescript@5.8.2: {}
+  typescript@5.8.3: {}
 
   ufo@1.5.4: {}
 
