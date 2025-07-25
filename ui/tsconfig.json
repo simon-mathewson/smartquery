@@ -23,7 +23,9 @@
     "paths": {
       "~/*": ["./src/*"],
       "@/*": ["../shared/*"]
-    }
+    },
+
+    "types": ["vite-plugin-pwa/client"]
   },
   "include": [
     "./globals.d.ts",
