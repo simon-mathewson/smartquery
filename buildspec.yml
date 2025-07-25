@@ -165,11 +165,10 @@ phases:
           echo "Cloud package is unchanged. Skipping build."
         else
           cd ../cloud
-          pnpm prisma generate
           pnpm typecheck
           pnpm lint
           pnpm build
-          zip -r application.zip .ebextensions .env.production dist package.json prisma/generated Procfile scripts
+          zip -r application.zip .ebextensions .env.production dist package.json prisma/generated prisma/schema.prisma Procfile scripts
         fi
 
       - |
