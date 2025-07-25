@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { ThemeMode, ThemeModePreference } from './types';
+import type colors from 'tailwindcss/colors';
 
 const systemDarkModeQuery = '(prefers-color-scheme: dark)';
 
@@ -39,15 +40,26 @@ export const useTheme = () => {
     };
   }, [handleDarkModeChange]);
 
-  useEffect(() => {
-    if (mode === 'dark') {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-    }
-  }, [mode]);
+  const [primaryColor, setPrimaryColor] = useStoredState<keyof typeof colors>(
+    'useTheme.primaryColor',
+    'blue',
+  );
 
-  return { mode, modePreference, setModePreference };
+  const currentClassNames = useRef<string[]>([]);
+
+  useEffect(() => {
+    if (currentClassNames.current.length) {
+      document.documentElement.classList.remove(...currentClassNames.current);
+    }
+
+    const classNames = [`${primaryColor}-${mode}`, mode];
+    document.documentElement.classList.add(...classNames);
+
+    currentClassNames.current = classNames;
+  }, [mode, primaryColor]);
+
+  return useMemo(
+    () => ({ mode, modePreference, setModePreference, primaryColor, setPrimaryColor }),
+    [mode, modePreference, primaryColor, setModePreference, setPrimaryColor],
+  );
 };

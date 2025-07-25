@@ -63,7 +63,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { addConnection, connections, removeConnection, updateConnection } =
     useDefinedContext(ConnectionsContext);
   const connectionToEdit = connectionToEditId
-    ? connections.find((connection) => connection.id === connectionToEditId) ?? null
+    ? (connections.find((connection) => connection.id === connectionToEditId) ?? null)
     : null;
 
   const [formValues, setFormValues] = useState<FormValues>();

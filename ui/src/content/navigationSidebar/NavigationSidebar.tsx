@@ -30,7 +30,7 @@ export const NavigationSidebar: React.FC = () => {
         <Button
           element="link"
           htmlProps={{ href: routes.root(), ref: homeButtonRef }}
-          icon={<Logo htmlProps={{ className: 'w-8 h-8' }} />}
+          icon={<Logo htmlProps={{ className: 'w-6 h-6' }} />}
         />
         <button
           className="grid w-full cursor-pointer select-none gap-[2px] rounded-lg p-[6px] text-left text-sm hover:bg-secondaryHighlight"

@@ -22,8 +22,8 @@ export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
     anchorRef,
     closeOnOutsideClick: false,
     styleOptions: {
-      overlayMargin: 4,
-      animationVerticalOffset: 8,
+      overlayMargin: 8,
+      animationVerticalOffset: 16,
     },
   });
 

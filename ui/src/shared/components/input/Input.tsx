@@ -1,10 +1,11 @@
 import classNames from 'classnames';
 import { includes } from 'lodash';
 import React, { useCallback, useContext } from 'react';
-import { useTheme } from '~/content/theme/useTheme';
 import { FieldContext } from '../field/FieldContext';
 import { mergeRefs } from 'react-merge-refs';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { ThemeContext } from '~/content/theme/Context';
 
 export type InputProps = {
   hidden?: boolean;
@@ -34,7 +35,7 @@ export const Input: React.FC<InputProps> = (props) => {
     wrapperProps,
   } = props;
 
-  const { mode } = useTheme();
+  const { mode } = useDefinedContext(ThemeContext);
   const fieldContext = useContext(FieldContext);
 
   const updateHeight = useCallback(

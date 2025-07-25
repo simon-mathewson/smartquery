@@ -32,7 +32,7 @@ export const Toolbar: React.FC = () => {
         }}
         icon={<Add />}
         label={tabs.length ? undefined : 'New query'}
-        tooltip="New query"
+        tooltip={tabs.length ? 'New query' : undefined}
       />
       {allChanges.length > 0 && <Changes />}
       <Button

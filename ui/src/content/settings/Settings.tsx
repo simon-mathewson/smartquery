@@ -16,6 +16,7 @@ import { Toggle } from '~/shared/components/toggle/Toggle';
 import { routes } from '~/router/routes';
 import { ErrorTrackingContext } from '../errors/tracking/Context';
 import { ConnectionsContext } from '../connections/Context';
+import { ThemeColorSelect } from '~/shared/components/themeColorSelect/ThemeColorSelect';
 
 export type SettingsProps = {
   close: () => Promise<void>;
@@ -25,7 +26,8 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
   const { isConsentGranted, setIsConsentGranted } = useDefinedContext(ErrorTrackingContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { logOut, user } = useDefinedContext(AuthContext);
-  const { modePreference, setModePreference } = useDefinedContext(ThemeContext);
+  const { modePreference, setModePreference, primaryColor, setPrimaryColor } =
+    useDefinedContext(ThemeContext);
   const { googleAiApiKey, setGoogleAiApiKey } = useDefinedContext(AiContext);
   const { connectViaCloud, setConnectViaCloud } = useDefinedContext(ConnectionsContext);
 
@@ -50,6 +52,16 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           value={modePreference}
         />
       </Field>
+      {user?.subscription === 'plus' && (
+        <Field label="Theme color">
+          <ThemeColorSelect
+            onChange={(value) => {
+              setPrimaryColor(value);
+            }}
+            value={primaryColor}
+          />
+        </Field>
+      )}
       {user?.subscription !== 'plus' && (
         <Field
           hint={
