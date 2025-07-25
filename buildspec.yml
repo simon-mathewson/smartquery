@@ -19,7 +19,7 @@ phases:
       # Find last successful build
       - |
         set -e  # Exit immediately if any command fails
-        export MAX_ITEMS=20
+        export MAX_ITEMS=100
         export BUILD_IDS=$(aws codebuild list-builds-for-project --project-name dabase --sort-order DESCENDING --max-items $MAX_ITEMS)
         export INDEX=0
         while [ $INDEX -lt $MAX_ITEMS ]; do
