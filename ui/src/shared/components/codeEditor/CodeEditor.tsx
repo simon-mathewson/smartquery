@@ -257,10 +257,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         width: editorRef.current.getContainerDomNode().clientWidth,
         height: contentHeight,
       });
-
-      setTimeout(() => {
-        editorRef.current?.getContainerDomNode().querySelector('.current-line')?.scrollIntoView();
-      });
     };
 
     editorRef.current.onDidContentSizeChange(setHeight);
