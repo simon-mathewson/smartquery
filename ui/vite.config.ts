@@ -19,6 +19,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,sqlite,svg,ttf,wasm}'],
+        maximumFileSizeToCacheInBytes: 5 * 1024 ** 2, // 5 MB
       },
       manifest: {
         name: 'Dabase',
