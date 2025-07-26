@@ -1,6 +1,5 @@
 import * as monaco from 'monaco-editor';
 import classNames from 'classnames';
-import type { editor } from 'monaco-editor';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AiContext } from '~/content/ai/Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
@@ -17,6 +16,34 @@ import { formatJson, isValidJson } from '~/shared/utils/json/json';
 import type { Engine } from '@/types/connection';
 import { sqliteKeywords } from './sqliteKeywords';
 import { LanguageIdEnum } from 'monaco-sql-languages';
+import type { editor } from 'monaco-editor';
+
+// Define custom themes to fix quote color issues
+const defineCustomThemes = () => {
+  // Light theme
+  monaco.editor.defineTheme('vs-custom', {
+    base: 'vs',
+    inherit: true,
+    rules: [
+      { token: 'string', foreground: 'a31515' }, // Dark red for strings in light mode
+      { token: 'string.sql', foreground: 'a31515' },
+      { token: 'string.json', foreground: 'a31515' },
+    ],
+    colors: {},
+  });
+
+  // Dark theme
+  monaco.editor.defineTheme('vs-dark-custom', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'string', foreground: 'ce9178' }, // Light orange for strings in dark mode
+      { token: 'string.sql', foreground: 'ce9178' },
+      { token: 'string.json', foreground: 'ce9178' },
+    ],
+    colors: {},
+  });
+};
 
 export type CodeEditorProps = {
   autoFocus?: boolean;
@@ -146,10 +173,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   useEffect(() => {
     if (!hostRef.current || editorRef.current) return;
 
+    // Define custom themes if not already defined
+    defineCustomThemes();
+
     const options: editor.IStandaloneEditorConstructionOptions = {
       value: value || '',
       language: getMonacoLanguage(),
-      theme: mode === 'light' ? 'vs' : 'vs-dark',
+      theme: mode === 'light' ? 'vs-custom' : 'vs-dark-custom',
       folding: false,
       fontSize,
       glyphMargin: true,
@@ -302,7 +332,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
 
   useEffect(() => {
     if (editorRef.current) {
-      monaco.editor.setTheme(mode === 'light' ? 'vs' : 'vs-dark');
+      monaco.editor.setTheme(mode === 'light' ? 'vs-custom' : 'vs-dark-custom');
     }
   }, [mode]);
 
@@ -332,7 +362,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       <div
         ref={containerRef}
         className={classNames(
-          'pr-2 [&_.margin]:!bg-background [&_.monaco-editor-background]:!bg-background [&_.monaco-editor]:!bg-background [&_.monaco-editor]:!outline-none [&_.suggest-widget>.message]:text-[12px]',
+          'pr-2 [&_.margin]:!bg-background [&_.monaco-editor-background]:!bg-background [&_.monaco-editor]:!bg-background [&_.monaco-editor]:!outline-none [&_.sticky-widget]:!bg-background [&_.suggest-widget>.message]:text-[12px]',
           htmlProps?.className,
           {
             '[&_.monaco-editor_.cursors-layer_>_.cursor]:!hidden': readOnly,
