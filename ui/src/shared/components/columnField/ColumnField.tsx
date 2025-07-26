@@ -71,10 +71,8 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
                 <CodeInput
                   editorProps={{
                     autoFocus,
-                    // placeholder,
                     value: stringValue === undefined ? '' : stringValue,
                   }}
-                  htmlProps={{ className: 'max-h-[200px]' }}
                   language="json"
                   onChange={onChange}
                 />

@@ -14,9 +14,6 @@ importers:
       '@google/genai':
         specifier: 0.12.0
         version: 0.12.0
-      '@monaco-editor/react':
-        specifier: 4.7.0
-        version: 4.7.0(monaco-editor@0.52.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@mui/icons-material':
         specifier: 5.14.16
         version: 5.14.16(@mui/material@5.14.20(@emotion/react@11.11.1(@types/react@18.2.45)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.45)(react@18.2.0))(@types/react@18.2.45)(react@18.2.0))(@types/react@18.2.45)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.2.45)(react@18.2.0)
@@ -47,8 +44,11 @@ importers:
       luxon:
         specifier: 3.4.4
         version: 3.4.4
+      monaco-editor:
+        specifier: 0.52.2
+        version: 0.52.2
       monaco-sql-languages:
-        specifier: ^0.15.1
+        specifier: 0.15.1
         version: 0.15.1(antlr4ng-cli@1.0.7)(monaco-editor@0.52.2)
       node-sql-parser:
         specifier: 4.18.0
@@ -174,9 +174,6 @@ importers:
       lodash:
         specifier: 4.17.21
         version: 4.17.21
-      monaco-editor:
-        specifier: 0.52.2
-        version: 0.52.2
       postcss:
         specifier: 8.4.31
         version: 8.4.31
@@ -1104,16 +1101,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
-
-  '@monaco-editor/loader@1.5.0':
-    resolution: {integrity: sha512-hKoGSM+7aAc7eRTRjpqAZucPmoNOC4UUbknb/VNoTkEIkCPhqV8LfbsgM1webRM7S/z21eHEx9Fkwx8Z/C/+Xw==}
-
-  '@monaco-editor/react@4.7.0':
-    resolution: {integrity: sha512-cyzXQCtO47ydzxpQtCGSQGOC8Gk3ZUeBXFAxD+CWXYFo5OqZyZUonFl0DwUlTyAfRHntBfw2p3w4s9R6oe1eCA==}
-    peerDependencies:
-      monaco-editor: '>= 0.25.0 < 1'
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   '@mui/base@5.0.0-beta.26':
     resolution: {integrity: sha512-gPMRKC84VRw+tjqYoyBzyrBUqHQucMXdlBpYazHa5rCXrb91fYEQk5SqQ2U5kjxx9QxZxTBvWAmZ6DblIgaGhQ==}
@@ -3767,9 +3754,6 @@ packages:
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
 
-  state-local@1.0.7:
-    resolution: {integrity: sha512-HTEHMNieakEnoe33shBYcZ7NX83ACUjCu8c40iOGEZsngj9zRnkqS9j1pqQPXwobB0ZcVTk27REb7COQ0UR59w==}
-
   std-env@3.7.0:
     resolution: {integrity: sha512-JPbdCEQLj1w5GilpiHAx3qJvFndqybBysA3qUOnznweH4QbNYUsW/ea8QzSrnh0vNsezMMw5bcVool8lM0gwzg==}
 
@@ -5325,17 +5309,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
-
-  '@monaco-editor/loader@1.5.0':
-    dependencies:
-      state-local: 1.0.7
-
-  '@monaco-editor/react@4.7.0(monaco-editor@0.52.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@monaco-editor/loader': 1.5.0
-      monaco-editor: 0.52.2
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
 
   '@mui/base@5.0.0-beta.26(@types/react@18.2.45)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -8351,8 +8324,6 @@ snapshots:
       ssh2-streams: 0.4.10
 
   stackback@0.0.2: {}
-
-  state-local@1.0.7: {}
 
   std-env@3.7.0: {}
 

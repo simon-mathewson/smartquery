@@ -59,12 +59,13 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   return (
     <form className="flex flex-col gap-3" onSubmit={submitQuery}>
-      <div className="max-h-[200px] w-full overflow-auto overflow-x-hidden rounded-lg border border-border bg-background pr-2">
+      <div className="max-h-[200px] w-full overflow-hidden rounded-lg border border-border bg-background">
         <CodeEditor
           autoFocus
           getAdditionalSystemInstructions={getAdditionalSystemInstructions}
           language={activeConnection?.engine ?? 'sql'}
           large
+          maxHeight={200}
           onChange={onChange}
           submit={submitQuery}
           value={value}
