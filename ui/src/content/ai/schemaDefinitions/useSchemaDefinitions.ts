@@ -6,7 +6,7 @@ import { ToastContext } from '~/content/toast/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { getStatements } from './getStatements';
-import type { SchemaDefinitions } from './types';
+import type { RemoteSchemaDefinitions, SchemaDefinitions, SqliteSchemaDefinitions } from './types';
 import superjson from '@/superjson/superjson';
 
 export const useSchemaDefinitions = () => {
@@ -26,72 +26,73 @@ export const useSchemaDefinitions = () => {
       null,
     );
 
-  const getAndRefreshSchemaDefinitions = useCallback(async () => {
-    if (
-      storedSchemaDefinitions &&
-      DateTime.fromJSDate(storedSchemaDefinitions.createdAt).diffNow().minutes < 5
-    ) {
-      return storedSchemaDefinitions;
-    }
-
-    setIsLoading(true);
-
-    try {
-      if ('sqliteDb' in activeConnection) {
-        const [sqliteResults] = await runQuery([
-          'SELECT type, name, tbl_name, sql FROM sqlite_master',
-        ]);
-
-        const sqliteDefinitions = {
-          createdAt: new Date(),
-          definitions: {
-            tables: sqliteResults,
-          },
-        } satisfies SchemaDefinitions;
-
-        setStoredSchemaDefinitions(sqliteDefinitions);
-
-        return sqliteDefinitions;
+  const getAndRefreshSchemaDefinitions =
+    useCallback(async (): Promise<SchemaDefinitions | null> => {
+      if (
+        storedSchemaDefinitions &&
+        DateTime.fromJSDate(storedSchemaDefinitions.createdAt).diffNow().minutes < 5
+      ) {
+        return storedSchemaDefinitions;
       }
 
-      const results = await runQuery(getStatements(activeConnection));
+      setIsLoading(true);
 
-      const [tables, columns, tableConstraints, views] = results;
+      try {
+        if ('sqliteDb' in activeConnection) {
+          const [sqliteResults] = await runQuery([
+            'SELECT type, name, tbl_name, sql FROM sqlite_master',
+          ]);
 
-      const processedTables = tables.map((table) => {
-        return {
-          ...table,
-          columns: columns
-            .filter((column) => column.table_name === table.table_name)
-            .map((column) => omit(column, 'table_name')),
-          tableConstraints: tableConstraints
-            .filter((constraint) => constraint.table_name === table.table_name)
-            .map((constraint) => omit(constraint, 'table_name')),
-        };
-      });
+          const sqliteDefinitions = {
+            createdAt: new Date(),
+            definitions: {
+              tables: sqliteResults as SqliteSchemaDefinitions['definitions']['tables'],
+            },
+          } satisfies SchemaDefinitions;
 
-      const newSchemaDefinitions = {
-        createdAt: new Date(),
-        definitions: {
-          tables: processedTables,
-          views,
-        },
-      } satisfies SchemaDefinitions;
+          setStoredSchemaDefinitions(sqliteDefinitions);
 
-      setStoredSchemaDefinitions(newSchemaDefinitions);
+          return sqliteDefinitions;
+        }
 
-      return newSchemaDefinitions;
-    } catch (error) {
-      toast.add({
-        title: 'Error fetching schema definitions',
-        description: error instanceof Error ? error.message : 'Unknown error',
-        color: 'danger',
-      });
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [storedSchemaDefinitions, activeConnection, runQuery, setStoredSchemaDefinitions, toast]);
+        const results = await runQuery(getStatements(activeConnection));
+
+        const [tables, columns, tableConstraints, views] = results;
+
+        const processedTables = tables.map((table) => {
+          return {
+            ...table,
+            columns: columns
+              .filter((column) => column.table_name === table.table_name)
+              .map((column) => omit(column, 'table_name')),
+            tableConstraints: tableConstraints
+              .filter((constraint) => constraint.table_name === table.table_name)
+              .map((constraint) => omit(constraint, 'table_name')),
+          };
+        });
+
+        const newSchemaDefinitions = {
+          createdAt: new Date(),
+          definitions: {
+            tables: processedTables as RemoteSchemaDefinitions['definitions']['tables'],
+            views,
+          },
+        } satisfies RemoteSchemaDefinitions;
+
+        setStoredSchemaDefinitions(newSchemaDefinitions);
+
+        return newSchemaDefinitions;
+      } catch (error) {
+        toast.add({
+          title: 'Error fetching schema definitions',
+          description: error instanceof Error ? error.message : 'Unknown error',
+          color: 'danger',
+        });
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    }, [storedSchemaDefinitions, activeConnection, runQuery, setStoredSchemaDefinitions, toast]);
 
   // Fetch schema definitions when active connection changes
   useEffect(() => {
@@ -111,10 +112,16 @@ export const useSchemaDefinitions = () => {
 
   return useMemo(
     () => ({
+      getAndRefreshSchemaDefinitions,
       getSchemaDefinitionsInstruction,
       hasSchemaDefinitions: storedSchemaDefinitions !== null,
       isLoading,
     }),
-    [getSchemaDefinitionsInstruction, isLoading, storedSchemaDefinitions],
+    [
+      getAndRefreshSchemaDefinitions,
+      getSchemaDefinitionsInstruction,
+      isLoading,
+      storedSchemaDefinitions,
+    ],
   );
 };

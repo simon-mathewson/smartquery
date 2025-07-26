@@ -89,7 +89,6 @@ export const MessagePart: React.FC<{ part: Part }> = ({ part }) => {
                   getActions={showActions ? () => getSqlActions(code) : undefined}
                   editorOptions={{
                     padding: {
-                      top: showActions ? 4 : 12,
                       bottom: 12,
                     },
                   }}
