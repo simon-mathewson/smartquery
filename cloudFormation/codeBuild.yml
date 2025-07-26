@@ -5,7 +5,7 @@ Resources:
       Artifacts:
         Type: "CODEPIPELINE"
       Environment:
-        ComputeType: "BUILD_GENERAL1_MEDIUM"
+        ComputeType: "BUILD_GENERAL1_LARGE"
         EnvironmentVariables:
           - Name: "DABASE_UI_CLOUDFRONT_DISTRIBUTION_ID"
             Value: !ImportValue CloudFrontDistributionDabaseUi
