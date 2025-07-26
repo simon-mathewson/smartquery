@@ -34,14 +34,18 @@ export const useActiveConnection = () => {
 
       if (currentConnection.engine !== 'sqlite') {
         try {
-          const endpoint = currentConnection.connectedViaCloud
-            ? cloudApi.connector.sendQuery.mutate
-            : linkApi.sendQuery.mutate;
-
-          return await endpoint({
-            connectorId: currentConnection.connectorId,
-            statements,
-          });
+          if (currentConnection.connectedViaCloud) {
+            return await cloudApi.connector.sendQuery.mutate({
+              connectorId: currentConnection.connectorId,
+              statements,
+            });
+          } else {
+            return await linkApi.sendQuery.mutate({
+              clientId: currentConnection.connectorId,
+              connectorId: currentConnection.connectorId,
+              statements,
+            });
+          }
         } catch (error) {
           console.error(error);
 
