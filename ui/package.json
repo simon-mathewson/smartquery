@@ -7,7 +7,7 @@
     "clear-snapshots": "find . -type d -name '__snapshots__' -exec find {} -name '*.png' -delete \\;",
     "dev": "vite",
     "e2e": "pnpm dotenv -e .env.test -- playwright test --ui",
-    "build": "tsc && vite build",
+    "build": "tsc && NODE_OPTIONS='--max-old-space-size=8192' vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "generate-pwa-assets": "pwa-assets-generator -c pwa-assets-config.ts",
     "preview": "vite preview",
