@@ -21,6 +21,11 @@ Resources:
             ManagedRuleGroupStatement:
               Name: AWSManagedRulesCommonRuleSet
               VendorName: AWS
+              RuleActionOverrides:
+                - ActionToUse:
+                    Allow: {}
+                  # Disable body size restriction to allow AI generate content requests
+                  Name: SizeRestrictions_BODY
           VisibilityConfig:
             CloudWatchMetricsEnabled: true
             MetricName: 'AWSManagedRulesCommonRuleSet'
