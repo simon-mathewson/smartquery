@@ -14,5 +14,6 @@ module.exports = {
       'warn',
       { ignoreRestSiblings: true, argsIgnorePattern: '^_' },
     ],
+    '@typescript-eslint/switch-exhaustiveness-check': 'error',
   },
 };

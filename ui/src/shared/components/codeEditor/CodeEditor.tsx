@@ -14,6 +14,9 @@ import { AiSuggestionWidget } from './aiSuggestion/widget';
 import { DataObject } from '@mui/icons-material';
 import { includes } from 'lodash';
 import { formatJson, isValidJson } from '~/shared/utils/json/json';
+import type { Engine } from '@/types/connection';
+import { sqliteKeywords } from './sqliteKeywords';
+import { LanguageIdEnum } from 'monaco-sql-languages';
 
 export type CodeEditorProps = {
   autoFocus?: boolean;
@@ -22,7 +25,7 @@ export type CodeEditorProps = {
   getAdditionalSystemInstructions?: () => Promise<string | null>;
   hideLineNumbers?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
-  language?: 'json' | 'sql';
+  language?: 'json' | 'sql' | Engine;
   large?: boolean;
   onChange?: (value: string) => void;
   placeholder?: string;
@@ -59,7 +62,12 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   const buildActions = useCallback(async (): Promise<ButtonProps[]> => {
     const actionList: ButtonProps[] = [];
 
-    if (!readOnly && editor && includes(['sql', 'json'], language) && value) {
+    if (
+      !readOnly &&
+      editor &&
+      includes(['sql', 'json', 'sqlite', 'mysql', 'postgres'], language) &&
+      value
+    ) {
       const jsonDisabled = language === 'json' && !isValidJson(value);
 
       const { format: formatSql } = await import('sql-formatter');
@@ -72,8 +80,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
               case 'json':
                 editor.setValue(formatJson(value));
                 break;
+              case 'mysql':
+              case 'postgres':
+              case 'sqlite':
               case 'sql':
                 editor.setValue(formatSql(value));
+                break;
+              default:
                 break;
             }
           },
@@ -104,6 +117,21 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   })();
   const paddingBottom = large ? 12 : 6;
 
+  const monacoLanguage = (() => {
+    switch (language) {
+      case 'json':
+        return 'json';
+      case 'sqlite':
+        return 'sql';
+      case 'mysql':
+        return LanguageIdEnum.MYSQL;
+      case 'postgres':
+        return LanguageIdEnum.PG;
+      default:
+        return undefined;
+    }
+  })();
+
   return (
     <>
       {actions.length > 0 && (
@@ -131,11 +159,34 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
             '[&_.monaco-editor_.cursors-layer_>_.cursor]:!hidden': readOnly,
           },
         )}
-        defaultLanguage={language}
+        language={monacoLanguage}
         loading={<Loading size={large ? 'default' : 'small'} />}
         onChange={(value) => onChange?.(value ?? '')}
         onMount={(editor, monaco) => {
           setEditor(editor);
+
+          if (language === 'sqlite') {
+            monaco.languages.registerCompletionItemProvider('sql', {
+              provideCompletionItems: (_, position) => {
+                return {
+                  incomplete: true,
+                  suggestions: sqliteKeywords.map((keyword) => ({
+                    insertText: keyword,
+                    label: keyword,
+                    kind: monaco.languages.CompletionItemKind.Keyword,
+                    range: {
+                      startLineNumber: position.lineNumber,
+                      startColumn: position.column,
+                      endLineNumber: position.lineNumber,
+                      endColumn: position.column,
+                    },
+                  })),
+                };
+              },
+            });
+          }
+
+          console.log(language, window.MonacoEnvironment, LanguageIdEnum);
 
           const setHeight = () => {
             const contentHeight = Math.max(initialHeight, editor.getContentHeight());

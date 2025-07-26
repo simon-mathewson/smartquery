@@ -63,7 +63,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         <CodeEditor
           autoFocus
           getAdditionalSystemInstructions={getAdditionalSystemInstructions}
-          language="sql"
+          language={activeConnection?.engine ?? 'sql'}
           large
           onChange={onChange}
           submit={submitQuery}

@@ -1,6 +1,8 @@
+import type { CodeEditorProps } from '../CodeEditor';
+
 export const getSystemInstructions = (
   additionalSystemInstructions: string | null,
-  language?: 'json' | 'sql',
+  language?: CodeEditorProps['language'],
 ) =>
   [
     `You are an AI assistant in a code editor that provides valid and unformatted ${

@@ -4,6 +4,7 @@ import { assert } from 'ts-essentials';
 import type { useAi } from '~/content/ai/useAi';
 import type { AnalyticsContextType } from '~/content/analytics/Context';
 import { getSystemInstructions } from './getSystemInstructions';
+import type { CodeEditorProps } from '../CodeEditor';
 
 export class AiSuggestionWidget implements editorType.IContentWidget {
   private static readonly ID = 'editor.widget.aiSuggestion';
@@ -28,7 +29,7 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
     private readonly paddingTop: number,
     private readonly fontSize: number,
     private readonly getAdditionalSystemInstructions?: () => Promise<string | null>,
-    private readonly language?: 'json' | 'sql',
+    private readonly language?: CodeEditorProps['language'],
   ) {
     const update = async (positionProp?: editorType.ICursorPositionChangedEvent['position']) => {
       const position = positionProp ?? editor.getPosition();
