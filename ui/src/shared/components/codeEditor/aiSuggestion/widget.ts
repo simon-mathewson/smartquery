@@ -25,9 +25,7 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
     private readonly ai: ReturnType<typeof useAi>,
     private readonly track: AnalyticsContextType['track'],
     private readonly wrapperRef: React.RefObject<HTMLDivElement>,
-    private readonly lineHeight: number,
-    private readonly paddingTop: number,
-    private readonly fontSize: number,
+    private readonly options: monacoType.editor.IEditorOptions,
     private readonly getAdditionalSystemInstructions?: () => Promise<string | null>,
     private readonly language?: CodeEditorProps['language'],
   ) {
@@ -194,7 +192,7 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
     assert(wrapper);
     const cursor = wrapper.querySelector<HTMLDivElement>('.cursor');
     assert(cursor);
-    const characterWidth = (7.23 / 12) * this.fontSize;
+    const characterWidth = (7.23 / 12) * this.options.fontSize!;
 
     const code = wrapper.querySelector<HTMLDivElement>('.view-lines');
     assert(code);
@@ -204,7 +202,9 @@ export class AiSuggestionWidget implements editorType.IContentWidget {
     const codeWidthWithoutPartialCharacters = codeWidth - (codeWidth % characterWidth);
 
     const actualColumn = Math.ceil(cursor.offsetLeft / characterWidth);
-    const actualLine = Math.ceil((cursor.offsetTop - this.paddingTop) / this.lineHeight);
+    const actualLine = Math.ceil(
+      (cursor.offsetTop - this.options.padding!.top!) / this.options.lineHeight!,
+    );
     const paddingSize =
       actualLine * Math.round(codeWidthWithoutPartialCharacters / characterWidth) + actualColumn;
 
