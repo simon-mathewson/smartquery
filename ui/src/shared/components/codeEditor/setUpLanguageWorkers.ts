@@ -1,20 +1,25 @@
+import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 import 'monaco-sql-languages/esm/languages/mysql/mysql.contribution';
 import 'monaco-sql-languages/esm/languages/pgsql/pgsql.contribution';
 
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-import PGSQLWorker from 'monaco-sql-languages/esm/languages/pgsql/pgsql.worker?worker';
-import MySQLWorker from 'monaco-sql-languages/esm/languages/mysql/mysql.worker?worker';
+import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
+import PostgresWorker from 'monaco-sql-languages/esm/languages/pgsql/pgsql.worker?worker';
+import MysqlWorker from 'monaco-sql-languages/esm/languages/mysql/mysql.worker?worker';
+
 import { LanguageIdEnum } from 'monaco-sql-languages';
 
 self.MonacoEnvironment = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getWorker(_: any, label: string) {
-    if (label === LanguageIdEnum.PG) {
-      return new PGSQLWorker();
+  getWorker(_: unknown, label: string) {
+    switch (label) {
+      case LanguageIdEnum.PG:
+        return new PostgresWorker();
+      case LanguageIdEnum.MYSQL:
+        return new MysqlWorker();
+      case 'json':
+        return new JsonWorker();
+      default:
+        return new EditorWorker();
     }
-    if (label === LanguageIdEnum.MYSQL) {
-      return new MySQLWorker();
-    }
-    return new EditorWorker();
   },
 };

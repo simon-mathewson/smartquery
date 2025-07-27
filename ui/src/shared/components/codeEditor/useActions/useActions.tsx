@@ -25,26 +25,26 @@ export const useActions = (props: {
 
     const actionList: ButtonProps[] = [];
 
-    if (!readOnly && includes(['sql', 'json', 'sqlite', 'mysql', 'postgres'], language) && value) {
-      const jsonDisabled = language === 'json' && !isValidJson(value);
+    if (!readOnly && includes(['sql', 'json', 'sqlite', 'mysql', 'postgres'], language)) {
+      const disabled = !value || (language === 'json' && !isValidJson(value));
 
       const { format: formatSql } = await import('sql-formatter');
 
       actionList.push({
         htmlProps: {
-          disabled: jsonDisabled,
+          disabled,
           onClick: () => {
             if (!editorRef.current) return;
 
             switch (language) {
               case 'json':
-                editorRef.current.setValue(formatJson(value));
+                editorRef.current.setValue(formatJson(value!));
                 break;
               case 'mysql':
               case 'postgres':
               case 'sqlite':
               case 'sql':
-                editorRef.current.setValue(formatSql(value));
+                editorRef.current.setValue(formatSql(value!));
                 break;
               default:
                 break;
@@ -52,7 +52,7 @@ export const useActions = (props: {
           },
         },
         icon: <DataObject />,
-        tooltip: `Format${jsonDisabled ? ' (JSON invalid)' : ''}`,
+        tooltip: language === 'json' ? `Format${disabled ? ' (JSON invalid)' : ''}` : 'Format',
       });
     }
 
