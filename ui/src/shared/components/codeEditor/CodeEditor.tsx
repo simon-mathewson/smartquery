@@ -1,44 +1,23 @@
-import * as monaco from 'monaco-editor';
+import type { Engine } from '@/types/connection';
+import { DataObject } from '@mui/icons-material';
 import classNames from 'classnames';
+import { includes } from 'lodash';
+import type { editor } from 'monaco-editor';
+import * as monaco from 'monaco-editor';
+import { LanguageIdEnum } from 'monaco-sql-languages';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AiContext } from '~/content/ai/Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { ThemeContext } from '~/content/theme/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { getIsWindows } from '~/shared/utils/getIsWindows/getIsWindows';
+import { formatJson, isValidJson } from '~/shared/utils/json/json';
 import type { ButtonProps } from '../button/Button';
 import { Button } from '../button/Button';
 import { Loading } from '../loading/Loading';
 import { AiSuggestionWidget } from './aiSuggestion/widget';
-import { DataObject } from '@mui/icons-material';
-import { includes, uniqBy } from 'lodash';
-import { formatJson, isValidJson } from '~/shared/utils/json/json';
-import type { Engine } from '@/types/connection';
-import { sqliteKeywords } from './sqliteKeywords';
-import type { ICompletionItem } from 'monaco-sql-languages';
-import { EntityContextType, LanguageIdEnum, setupLanguageFeatures } from 'monaco-sql-languages';
-import type { editor } from 'monaco-editor';
-
-import 'monaco-sql-languages/esm/languages/mysql/mysql.contribution';
-import 'monaco-sql-languages/esm/languages/pgsql/pgsql.contribution';
-
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-import PGSQLWorker from 'monaco-sql-languages/esm/languages/pgsql/pgsql.worker?worker';
-import MySQLWorker from 'monaco-sql-languages/esm/languages/mysql/mysql.worker?worker';
-import { useSchemaDefinitions } from '~/content/ai/schemaDefinitions/useSchemaDefinitions';
-
-self.MonacoEnvironment = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getWorker(_: any, label: string) {
-    if (label === LanguageIdEnum.PG) {
-      return new PGSQLWorker();
-    }
-    if (label === LanguageIdEnum.MYSQL) {
-      return new MySQLWorker();
-    }
-    return new EditorWorker();
-  },
-};
+import './setUpLanguageWorkers';
+import { useAutocomplete } from './useAutocomplete/useAutocomplete';
 
 // Define custom themes to fix quote color issues
 const defineCustomThemes = () => {
@@ -104,15 +83,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
   const { mode } = useDefinedContext(ThemeContext);
   const ai = useDefinedContext(AiContext);
 
-  const { getAndRefreshSchemaDefinitions } = useSchemaDefinitions();
-
-  const hostRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const editorRef = useRef<editor.IStandaloneCodeEditor>();
-  const [actions, setActions] = useState<ButtonProps[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const getMonacoLanguage = useCallback(() => {
+  const monacoLanguage = (() => {
     switch (language) {
       case 'json':
         return 'json';
@@ -125,7 +96,17 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       default:
         return 'sql';
     }
-  }, [language]);
+  })();
+
+  const { setUpAutocomplete } = useAutocomplete();
+
+  const hostRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<editor.IStandaloneCodeEditor>();
+  const disposablesRef = useRef<monaco.IDisposable[]>([]);
+
+  const [actions, setActions] = useState<ButtonProps[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const initialHeight = large ? 80 : 30;
   const fontSize = 12;
@@ -193,55 +174,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     }
   }, [getActions, getPaddingTop, language, readOnly, value]);
 
-  const getSuggestionsFromSchemaDefinitions = useCallback(async () => {
-    const schemaDefinitions = await getAndRefreshSchemaDefinitions();
-
-    const suggestions: {
-      syntaxContextType: EntityContextType;
-      completionItem: ICompletionItem;
-    }[] = [];
-
-    if (schemaDefinitions) {
-      suggestions.push(
-        ...schemaDefinitions.definitions.tables.map((table) => {
-          const tableName = 'name' in table ? table.name : table.table_name;
-
-          return {
-            syntaxContextType: EntityContextType.TABLE,
-            completionItem: {
-              detail: 'Table',
-              insertText: tableName,
-              kind: monaco.languages.CompletionItemKind.Class,
-              label: tableName,
-              sortText: `1${tableName}`,
-            } satisfies ICompletionItem,
-          };
-        }),
-      );
-
-      suggestions.push(
-        ...schemaDefinitions.definitions.tables.flatMap((table) => {
-          if (!('columns' in table)) return [];
-
-          return table.columns.map((column) => {
-            return {
-              syntaxContextType: EntityContextType.COLUMN,
-              completionItem: {
-                detail: 'Column',
-                insertText: column.column_name,
-                kind: monaco.languages.CompletionItemKind.Field,
-                label: column.column_name,
-                sortText: `0${column.column_name}`,
-              },
-            };
-          });
-        }),
-      );
-    }
-
-    return uniqBy(suggestions, 'completionItem.insertText');
-  }, [getAndRefreshSchemaDefinitions]);
-
   // Initialize editor
   useEffect(() => {
     if (!hostRef.current || editorRef.current) return;
@@ -251,7 +183,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
 
     const options: editor.IStandaloneEditorConstructionOptions = {
       value: value || '',
-      language: getMonacoLanguage(),
+      language: monacoLanguage,
       theme: mode === 'light' ? 'vs-custom' : 'vs-dark-custom',
       folding: false,
       fontSize,
@@ -281,71 +213,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     editorRef.current = monaco.editor.create(hostRef.current, options);
     setIsLoading(false);
 
-    const disposables: monaco.IDisposable[] = [];
-
-    // Set up SQLite completion provider
-    if (language === 'sqlite') {
-      const sqliteCompletionProvider = monaco.languages.registerCompletionItemProvider('sql', {
-        provideCompletionItems: async (_, position) => {
-          const range = {
-            startLineNumber: position.lineNumber,
-            startColumn: position.column,
-            endLineNumber: position.lineNumber,
-            endColumn: position.column,
-          };
-
-          const suggestions: ICompletionItem[] = sqliteKeywords.map((keyword) => ({
-            detail: 'Keyword',
-            insertText: keyword,
-            kind: monaco.languages.CompletionItemKind.Keyword,
-            label: keyword,
-            range,
-            sortText: `2${keyword}`,
-          }));
-
-          suggestions.push(
-            ...(await getSuggestionsFromSchemaDefinitions()).map(
-              (suggestion) => suggestion.completionItem,
-            ),
-          );
-
-          return { suggestions: suggestions as monaco.languages.CompletionItem[] };
-        },
-      });
-
-      disposables.push(sqliteCompletionProvider);
-    } else if (includes<string>([LanguageIdEnum.MYSQL, LanguageIdEnum.PG], getMonacoLanguage())) {
-      setupLanguageFeatures(getMonacoLanguage() as LanguageIdEnum, {
-        completionItems: {
-          completionService: async (_, __, ___, syntaxContext) => {
-            if (!syntaxContext) {
-              return Promise.resolve([]);
-            }
-            const { keywords, syntax } = syntaxContext;
-            const keywordsCompletionItems: ICompletionItem[] = keywords.map((kw) => ({
-              insertText: kw,
-              detail: 'Keyword',
-              kind: monaco.languages.CompletionItemKind.Keyword,
-              label: kw,
-              sortText: '2' + kw,
-            }));
-
-            const filteredSuggestions: ICompletionItem[] = [];
-
-            const allSyntaxCompletionItems = await getSuggestionsFromSchemaDefinitions();
-            syntax.forEach((item) => {
-              filteredSuggestions.push(
-                ...allSyntaxCompletionItems
-                  .filter((suggestion) => suggestion.syntaxContextType === item.syntaxContextType)
-                  .map((suggestion) => suggestion.completionItem),
-              );
-            });
-
-            return [...filteredSuggestions, ...keywordsCompletionItems];
-          },
-        },
-      });
-    }
+    disposablesRef.current.push(...setUpAutocomplete({ language, monacoLanguage }));
 
     editorRef.current.onDidChangeModelContent(() => {
       const currentValue = editorRef.current?.getValue() || '';
@@ -430,8 +298,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         editorRef.current.dispose();
         editorRef.current = undefined;
       }
-
-      disposables.forEach((disposable) => disposable.dispose());
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      disposablesRef.current.forEach((disposable) => disposable.dispose());
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -439,10 +307,14 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
 
   useEffect(() => {
     const model = editorRef.current?.getModel();
-    if (model && model.getLanguageId() !== getMonacoLanguage()) {
-      monaco.editor.setModelLanguage(model, getMonacoLanguage());
+
+    if (model && model.getLanguageId() !== monacoLanguage) {
+      monaco.editor.setModelLanguage(model, monacoLanguage);
+
+      const disposables = setUpAutocomplete({ language, monacoLanguage });
+      disposablesRef.current.push(...disposables);
     }
-  }, [language, getMonacoLanguage]);
+  }, [language, monacoLanguage, setUpAutocomplete]);
 
   useEffect(() => {
     if (editorRef.current && value !== undefined) {
