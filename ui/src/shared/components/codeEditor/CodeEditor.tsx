@@ -193,62 +193,54 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     }
   }, [getActions, getPaddingTop, language, readOnly, value]);
 
-  const getSuggestionsFromSchemaDefinitions = useCallback(
-    async (range: {
-      startLineNumber: number;
-      startColumn: number;
-      endLineNumber: number;
-      endColumn: number;
-    }) => {
-      const schemaDefinitions = await getAndRefreshSchemaDefinitions();
+  const getSuggestionsFromSchemaDefinitions = useCallback(async () => {
+    const schemaDefinitions = await getAndRefreshSchemaDefinitions();
 
-      const suggestions: {
-        syntaxContextType: EntityContextType;
-        completionItem: monaco.languages.CompletionItem;
-      }[] = [];
+    const suggestions: {
+      syntaxContextType: EntityContextType;
+      completionItem: ICompletionItem;
+    }[] = [];
 
-      if (schemaDefinitions) {
-        suggestions.push(
-          ...schemaDefinitions.definitions.tables.map((table) => {
-            const tableName = 'name' in table ? table.name : table.table_name;
+    if (schemaDefinitions) {
+      suggestions.push(
+        ...schemaDefinitions.definitions.tables.map((table) => {
+          const tableName = 'name' in table ? table.name : table.table_name;
 
+          return {
+            syntaxContextType: EntityContextType.TABLE,
+            completionItem: {
+              detail: 'Table',
+              insertText: tableName,
+              kind: monaco.languages.CompletionItemKind.Class,
+              label: tableName,
+              sortText: `1${tableName}`,
+            } satisfies ICompletionItem,
+          };
+        }),
+      );
+
+      suggestions.push(
+        ...schemaDefinitions.definitions.tables.flatMap((table) => {
+          if (!('columns' in table)) return [];
+
+          return table.columns.map((column) => {
             return {
-              syntaxContextType: EntityContextType.TABLE,
+              syntaxContextType: EntityContextType.COLUMN,
               completionItem: {
-                insertText: tableName,
-                label: tableName,
-                kind: monaco.languages.CompletionItemKind.Class,
-                range,
-                sortText: `1${tableName}`,
+                detail: 'Column',
+                insertText: column.column_name,
+                kind: monaco.languages.CompletionItemKind.Field,
+                label: column.column_name,
+                sortText: `0${column.column_name}`,
               },
             };
-          }),
-        );
+          });
+        }),
+      );
+    }
 
-        suggestions.push(
-          ...schemaDefinitions.definitions.tables.flatMap((table) => {
-            if (!('columns' in table)) return [];
-
-            return table.columns.map((column) => {
-              return {
-                syntaxContextType: EntityContextType.COLUMN,
-                completionItem: {
-                  insertText: column.column_name,
-                  label: column.column_name,
-                  kind: monaco.languages.CompletionItemKind.Field,
-                  range,
-                  sortText: `0${column.column_name}`,
-                },
-              };
-            });
-          }),
-        );
-      }
-
-      return uniqBy(suggestions, 'completionItem.insertText');
-    },
-    [getAndRefreshSchemaDefinitions],
-  );
+    return uniqBy(suggestions, 'completionItem.insertText');
+  }, [getAndRefreshSchemaDefinitions]);
 
   // Initialize editor
   useEffect(() => {
@@ -289,9 +281,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     editorRef.current = monaco.editor.create(hostRef.current, options);
     setIsLoading(false);
 
+    const disposables: monaco.IDisposable[] = [];
+
     // Set up SQLite completion provider
     if (language === 'sqlite') {
-      monaco.languages.registerCompletionItemProvider('sql', {
+      const sqliteCompletionProvider = monaco.languages.registerCompletionItemProvider('sql', {
         provideCompletionItems: async (_, position) => {
           const range = {
             startLineNumber: position.lineNumber,
@@ -300,50 +294,45 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
             endColumn: position.column,
           };
 
-          const suggestions: monaco.languages.CompletionItem[] = sqliteKeywords.map((keyword) => ({
+          const suggestions: ICompletionItem[] = sqliteKeywords.map((keyword) => ({
+            detail: 'Keyword',
             insertText: keyword,
-            label: keyword,
             kind: monaco.languages.CompletionItemKind.Keyword,
+            label: keyword,
             range,
-            sortText: `1${keyword}`,
+            sortText: `2${keyword}`,
           }));
 
           suggestions.push(
-            ...(await getSuggestionsFromSchemaDefinitions(range)).map(
+            ...(await getSuggestionsFromSchemaDefinitions()).map(
               (suggestion) => suggestion.completionItem,
             ),
           );
 
-          return {
-            incomplete: true,
-            suggestions,
-          };
+          return { suggestions: suggestions as monaco.languages.CompletionItem[] };
         },
       });
+
+      disposables.push(sqliteCompletionProvider);
     } else if (includes<string>([LanguageIdEnum.MYSQL, LanguageIdEnum.PG], getMonacoLanguage())) {
       setupLanguageFeatures(getMonacoLanguage() as LanguageIdEnum, {
         completionItems: {
-          completionService: async (_, position, __, syntaxContext) => {
+          completionService: async (_, __, ___, syntaxContext) => {
             if (!syntaxContext) {
               return Promise.resolve([]);
             }
             const { keywords, syntax } = syntaxContext;
             const keywordsCompletionItems: ICompletionItem[] = keywords.map((kw) => ({
-              label: kw,
+              insertText: kw,
+              detail: 'Keyword',
               kind: monaco.languages.CompletionItemKind.Keyword,
-              detail: 'keyword',
+              label: kw,
               sortText: '2' + kw,
             }));
 
             const filteredSuggestions: ICompletionItem[] = [];
 
-            const allSyntaxCompletionItems = await getSuggestionsFromSchemaDefinitions({
-              startLineNumber: position.lineNumber,
-              startColumn: position.column,
-              endLineNumber: position.lineNumber,
-              endColumn: position.column,
-            });
-
+            const allSyntaxCompletionItems = await getSuggestionsFromSchemaDefinitions();
             syntax.forEach((item) => {
               filteredSuggestions.push(
                 ...allSyntaxCompletionItems
@@ -435,6 +424,16 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     }
 
     void buildActions();
+
+    return () => {
+      if (editorRef.current) {
+        editorRef.current.dispose();
+        editorRef.current = undefined;
+      }
+
+      disposables.forEach((disposable) => disposable.dispose());
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -471,15 +470,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       editorRef.current.updateOptions(editorOptions);
     }
   }, [editorOptions]);
-
-  useEffect(() => {
-    return () => {
-      if (editorRef.current) {
-        editorRef.current.dispose();
-        editorRef.current = undefined;
-      }
-    };
-  }, []);
 
   return (
     <>
