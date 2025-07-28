@@ -76,14 +76,7 @@ export const useAuth = () => {
       setUser(user);
     } catch (error) {
       if (isUserUnauthorizedError(error)) {
-        try {
-          await cloudApi.auth.refresh.mutate();
-          const user = await cloudApi.auth.currentUser.query();
-          setUser(user);
-        } catch {
-          await logOut({ silent: true });
-        }
-
+        await logOut({ silent: true });
         return;
       }
 
@@ -91,7 +84,7 @@ export const useAuth = () => {
     } finally {
       setIsInitializing(false);
     }
-  }, [cloudApi.auth.currentUser, cloudApi.auth.refresh, logOut, setUser]);
+  }, [cloudApi, logOut, setUser]);
 
   const logIn = useCallback(
     async (email: string, password: string, props: { skipToast?: boolean } = {}) => {
@@ -144,7 +137,7 @@ export const useAuth = () => {
   );
 
   useEffectOnce(() => {
-    void getCurrentUser();
+    void cloudApi.auth.refresh.mutate().then(() => getCurrentUser());
   });
 
   return useMemo(
