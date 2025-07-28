@@ -99,6 +99,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
                   // When clicking the button while the editor collpases, mouse up will be outside of
                   // button and not trigger click.
                   onMouseDown: submitQuery,
+                  onClick: (event) => event.preventDefault(),
 
                   type: 'submit',
                 }}

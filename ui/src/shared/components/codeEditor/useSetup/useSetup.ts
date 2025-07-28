@@ -171,8 +171,10 @@ export const useSetup = (props: {
     editorRef.current.getModel()?.setEOL(monaco.editor.EndOfLineSequence.LF);
 
     if (autoFocus) {
-      editorRef.current.focus();
-      onFocus?.();
+      setTimeout(() => {
+        editorRef.current?.focus();
+        onFocus?.();
+      }, 100);
     }
     if (onFocus) {
       disposablesRef.current.push(editorRef.current.onDidFocusEditorText(onFocus));

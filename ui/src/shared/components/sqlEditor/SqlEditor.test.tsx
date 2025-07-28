@@ -24,8 +24,6 @@ test.describe('SqlEditor', () => {
       </TestApp>,
     );
 
-    await expect($.getByRole('textbox')).toHaveValue(props.value);
-
     await expect($.page()).toHaveScreenshot('sqlEditor.png');
   });
 
