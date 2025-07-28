@@ -11,15 +11,19 @@ import { useSetup } from './useSetup/useSetup';
 
 export type CodeEditorProps = {
   autoFocus?: boolean;
+  bottomToolbar?: React.ReactNode;
   editorOptions?: editor.IStandaloneEditorConstructionOptions | undefined;
   getActions?: (editor: editor.IStandaloneCodeEditor) => ButtonProps[];
   getAdditionalSystemInstructions?: () => Promise<string | null>;
+  height?: number;
   hideLineNumbers?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
   language?: 'json' | 'sql' | Engine;
   large?: boolean;
   maxHeight?: number;
+  onBlur?: () => void;
   onChange?: (value: string) => void;
+  onFocus?: () => void;
   placeholder?: string;
   readOnly?: boolean;
   submit?: () => void;
@@ -27,7 +31,7 @@ export type CodeEditorProps = {
 };
 
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
-  const { htmlProps, large, maxHeight, readOnly } = props;
+  const { bottomToolbar, htmlProps, large, maxHeight, readOnly } = props;
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
@@ -37,6 +41,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     editorProps: props,
     editorRef,
     hasActions: actions.length > 0,
+    hasBottomToolbar: Boolean(bottomToolbar),
   });
 
   useActions({ editorRef, editorProps: props, isInitialized, setActions });
@@ -45,10 +50,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     <div
       ref={containerRef}
       className={classNames(
-        'pr-2 [&_.margin]:!bg-background [&_.monaco-editor-background]:!bg-background [&_.monaco-editor]:!bg-background [&_.monaco-editor]:!outline-none [&_.sticky-widget]:!bg-background [&_.suggest-widget>.message]:text-[12px]',
+        'pr-2 transition-all ease-in-out [&_.margin]:!bg-background [&_.monaco-editor-background]:!bg-background [&_.monaco-editor]:!bg-background [&_.monaco-editor]:!outline-none [&_.scroll-decoration]:hidden [&_.scrollbar.vertical]:!w-[12px] [&_.scrollbar.vertical_.slider]:!w-[10px] [&_.scrollbar.vertical_.slider]:!rounded-[5px] [&_.scrollbar.vertical_.slider]:!bg-black/10 hover:[&_.scrollbar.vertical_.slider]:!bg-black/20 dark:[&_.scrollbar.vertical_.slider]:!bg-white/5 hover:dark:[&_.scrollbar.vertical_.slider]:!bg-white/10 [&_.sticky-widget]:!bg-background [&_.suggest-widget>.message]:text-[12px]',
         htmlProps?.className,
         {
           '[&_.monaco-editor_.cursors-layer_>_.cursor]:!hidden': readOnly,
+          hidden: !isInitialized,
         },
       )}
       style={{
@@ -60,7 +66,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     >
       {isLoading && <Loading size={large ? 'default' : 'small'} />}
       {!isLoading && actions.length > 0 && (
-        <div className="pointer-events-none absolute left-0 right-0 top-0 z-10 flex justify-end">
+        <div className="pointer-events-none absolute left-0 right-0 top-0 z-20 flex justify-end">
           <div
             className={classNames(
               'pointer-events-auto flex h-max justify-end gap-2 rounded-bl-[18px] bg-background pt-2',
@@ -77,6 +83,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         </div>
       )}
       <div
+        className="transition-all ease-in-out"
         ref={hostRef}
         style={{
           height: '100%',
@@ -85,6 +92,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
           overflow: 'auto',
         }}
       />
+      {bottomToolbar && (
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20">
+          {bottomToolbar}
+        </div>
+      )}
     </div>
   );
 };

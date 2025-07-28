@@ -11,10 +11,7 @@ export const Card: React.FC<CardProps> = (props) => {
   return (
     <div
       {...htmlProps}
-      className={classNames(
-        'overflow-auto rounded-xl border border-border bg-card p-2',
-        htmlProps?.className,
-      )}
+      className={classNames('rounded-xl border border-border bg-card p-2', htmlProps?.className)}
     >
       {children}
     </div>

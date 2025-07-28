@@ -53,7 +53,10 @@ export const NavigationSidebar: React.FC = () => {
         </button>
       </div>
 
-      <OverlayCard htmlProps={{ className: 'w-max p-2 shadow-2xl' }} overlay={connectionsOverlay}>
+      <OverlayCard
+        htmlProps={{ className: 'w-max p-2 shadow-2xl overflow-auto' }}
+        overlay={connectionsOverlay}
+      >
         {() => <Connections />}
       </OverlayCard>
 

@@ -67,7 +67,7 @@ export const Toast: React.FC = () => {
     <OverlayCard
       htmlProps={{
         className: classNames(
-          'grid w-72 grid-cols-[1fr_max-content] gap-2 p-1 align-top cursor-pointer border-none',
+          'grid w-72 grid-cols-[1fr_max-content] gap-2 p-1 align-top cursor-pointer border-none overflow-hidden',
           {
             'bg-danger': color === 'danger',
             'bg-primary': color === 'primary',
@@ -81,7 +81,7 @@ export const Toast: React.FC = () => {
     >
       {() => (
         <>
-          <div className="flex flex-col justify-center gap-[2px] px-1">
+          <div className="flex w-full flex-col justify-center gap-[2px] overflow-hidden px-1">
             <div className="text-sm font-medium text-white">{title}</div>
             {description && <div className="text-xs text-whiteHover">{description}</div>}
           </div>

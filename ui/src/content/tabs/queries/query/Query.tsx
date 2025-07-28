@@ -41,7 +41,7 @@ export const Query: React.FC = () => {
   return (
     <div
       className={classNames(
-        'relative ml-3 mt-3 flex min-h-[240px] flex-col justify-start gap-2 overflow-hidden rounded-xl border border-border bg-card p-2',
+        'relative ml-3 mt-3 flex min-h-[240px] flex-col justify-start gap-2 rounded-xl border border-border bg-card p-2',
         {
           '!ml-0': columnIndex === 0,
           '!mt-0': rowIndex === 0,
