@@ -1,17 +1,15 @@
+import type { editor } from 'monaco-editor';
 import * as monaco from 'monaco-editor';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { setUpThemes } from './setUpThemes';
-import type { editor } from 'monaco-editor';
-import type { CodeEditorProps } from '../CodeEditor';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { ThemeContext } from '~/content/theme/Context';
-import { useAutocomplete } from '../useAutocomplete/useAutocomplete';
-import { getIsWindows } from '~/shared/utils/getIsWindows/getIsWindows';
-import { AiSuggestionWidget } from '../aiSuggestion/widget';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { AiContext } from '~/content/ai/Context';
 import { assert } from 'ts-essentials';
+import { ThemeContext } from '~/content/theme/Context';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { getIsWindows } from '~/shared/utils/getIsWindows/getIsWindows';
+import type { CodeEditorProps } from '../CodeEditor';
 import { getMonacoLanguage } from '../getMonacoLanguage';
+import { setUpThemes } from './setUpThemes';
+import { useAiInlineCompletions } from '../useAiInlineCompletions/useAiInlineCompletions';
+import { useAutocomplete } from '../useAutocomplete/useAutocomplete';
 
 export const useSetup = (props: {
   editorProps: CodeEditorProps;
@@ -43,8 +41,6 @@ export const useSetup = (props: {
   } = props;
 
   const { mode } = useDefinedContext(ThemeContext);
-  const { track } = useDefinedContext(AnalyticsContext);
-  const ai = useDefinedContext(AiContext);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
@@ -88,13 +84,20 @@ export const useSetup = (props: {
   );
 
   const { setUpAutocomplete } = useAutocomplete();
+  const { setUpAiInlineCompletions } = useAiInlineCompletions({
+    getAdditionalSystemInstructions,
+  });
 
-  const setUpLanguage = useCallback(
+  const setUpCompletions = useCallback(
     (monacoLanguage: string) => {
-      const disposables = setUpAutocomplete({ language, monacoLanguage });
-      disposablesRef.current.push(...disposables);
+      if (options.readOnly) {
+        return;
+      }
+
+      disposablesRef.current.push(...setUpAutocomplete({ language, monacoLanguage }));
+      disposablesRef.current.push(...setUpAiInlineCompletions({ language, monacoLanguage }));
     },
-    [language, setUpAutocomplete],
+    [language, options.readOnly, setUpAiInlineCompletions, setUpAutocomplete],
   );
 
   const setHeight = useCallback(() => {
@@ -137,7 +140,7 @@ export const useSetup = (props: {
 
     setIsLoading(false);
 
-    disposablesRef.current.push(...setUpAutocomplete({ language, monacoLanguage }));
+    setUpCompletions(monacoLanguage);
 
     editorRef.current.onDidChangeModelContent(() => {
       const currentValue = editorRef.current?.getValue() || '';
@@ -183,19 +186,6 @@ export const useSetup = (props: {
       disposablesRef.current.push(editorRef.current.onDidBlurEditorText(onBlur));
     }
 
-    if (!readOnly) {
-      new AiSuggestionWidget(
-        editorRef.current,
-        monaco,
-        ai,
-        track,
-        hostRef,
-        options,
-        getAdditionalSystemInstructions,
-        language,
-      );
-    }
-
     setIsInitialized(true);
 
     return () => {
@@ -220,7 +210,7 @@ export const useSetup = (props: {
     if (model && model.getLanguageId() !== monacoLanguage) {
       monaco.editor.setModelLanguage(model, monacoLanguage);
 
-      setUpLanguage(monacoLanguage);
+      setUpCompletions(monacoLanguage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInitialized, monacoLanguage]);

@@ -20,18 +20,25 @@ export const aiRouter = trpc.router({
         signal,
       } = props;
 
-      const response = await ctx.googleAi.models.generateContentStream({
-        model: 'gemini-2.0-flash',
-        contents,
-        config: {
-          abortSignal: signal,
-          systemInstruction: systemInstructions,
-          temperature,
-        },
-      });
+      try {
+        const response = await ctx.googleAi.models.generateContentStream({
+          model: 'gemini-2.0-flash',
+          contents,
+          config: {
+            abortSignal: signal,
+            systemInstruction: systemInstructions,
+            temperature,
+          },
+        });
 
-      for await (const chunk of response) {
-        yield chunk.text;
+        for await (const chunk of response) {
+          yield chunk.text;
+        }
+      } catch (error) {
+        if (error instanceof Error && error.message.startsWith('exception AbortError:')) {
+          return;
+        }
+        throw error;
       }
     }),
 });

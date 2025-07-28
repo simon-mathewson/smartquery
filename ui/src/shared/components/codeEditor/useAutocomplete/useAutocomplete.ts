@@ -109,7 +109,7 @@ export const useAutocomplete = () => {
               );
             });
 
-            return [...syntaxItems, ...keywordItems];
+            return uniqBy([...syntaxItems, ...keywordItems], 'insertText');
           },
         },
       });

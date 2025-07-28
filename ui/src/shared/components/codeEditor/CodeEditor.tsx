@@ -69,10 +69,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         <div className="pointer-events-none absolute left-0 right-0 top-0 z-20 flex justify-end">
           <div
             className={classNames(
-              'pointer-events-auto flex h-max justify-end gap-2 rounded-bl-[18px] bg-background pt-2',
+              'pointer-events-auto flex h-max justify-end gap-2 rounded-bl-[18px] bg-background pr-2 pt-2',
               {
-                'pb-1 pl-1 pr-4': !large,
-                'p-2 pb-0 pr-2': large,
+                'pb-1 pl-1': !large,
+                'p-2 pb-0': large,
               },
             )}
           >
