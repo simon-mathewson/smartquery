@@ -125,7 +125,7 @@ export const CopilotSidebar: React.FC = () => {
           </div>
         )}
         {hasSchemaDefinitions && (
-          <Tooltip<HTMLDivElement> text="Schema defiinitions of this database are passed to the AI as context">
+          <Tooltip<HTMLDivElement> text="Schema definitions of this database are passed to the AI as context">
             {({ htmlProps }) => (
               <div
                 {...htmlProps}
