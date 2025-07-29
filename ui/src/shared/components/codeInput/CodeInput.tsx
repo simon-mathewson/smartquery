@@ -16,7 +16,7 @@ export const CodeInput: React.FC<CodeInputProps> = (props) => {
     <div
       {...htmlProps}
       className={classNames(
-        'max-h-[200px] min-h-[36px] w-full overflow-hidden rounded-lg border-[1.5px] border-border bg-background focus-within:overflow-auto focus:border-primary',
+        'max-h-[200px] min-h-[36px] w-full overflow-hidden rounded-lg border-[1.5px] border-border bg-background focus:border-primary',
         {
           'cursor-pointer opacity-50': editorProps?.readOnly,
         },
@@ -27,6 +27,7 @@ export const CodeInput: React.FC<CodeInputProps> = (props) => {
         {...editorProps}
         hideLineNumbers
         language={language}
+        height={64}
         maxHeight={200}
         onChange={onChange}
       />

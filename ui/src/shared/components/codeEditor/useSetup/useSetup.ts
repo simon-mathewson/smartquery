@@ -100,29 +100,37 @@ export const useSetup = (props: {
     [language, options.readOnly, setUpAiInlineCompletions, setUpAutocomplete],
   );
 
+  const isFirstHeightChangedEvent = useRef(true);
+
   const setHeight = useCallback(() => {
     assert(editorRef.current);
 
     const initialHeight = height ?? (large ? 80 : 30);
 
-    const contentHeight = Math.min(
-      maxHeight ?? Infinity,
-      Math.max(initialHeight, editorRef.current.getContentHeight()),
-    );
+    // The first change event is triggered with incorrect content height
+    const contentHeight = isFirstHeightChangedEvent.current
+      ? initialHeight
+      : editorRef.current.getContentHeight();
+
+    if (isFirstHeightChangedEvent.current) {
+      isFirstHeightChangedEvent.current = false;
+    }
+
+    const newHeight = Math.min(maxHeight ?? Infinity, Math.max(initialHeight, contentHeight));
 
     // Update the container height
     if (containerRef.current) {
-      containerRef.current.style.height = `${contentHeight}px`;
+      containerRef.current.style.height = `${newHeight}px`;
     }
 
     // Update the host div height
     if (hostRef.current) {
-      hostRef.current.style.height = `${contentHeight}px`;
+      hostRef.current.style.height = `${newHeight}px`;
     }
 
     editorRef.current.layout({
       width: editorRef.current.getContainerDomNode().clientWidth,
-      height: contentHeight,
+      height: newHeight,
     });
   }, [editorRef, height, large, maxHeight]);
 

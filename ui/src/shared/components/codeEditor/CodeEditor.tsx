@@ -83,13 +83,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         </div>
       )}
       <div
-        className="transition-all ease-in-out"
+        className="h-full w-full overflow-auto transition-all ease-in-out"
         ref={hostRef}
         style={{
-          height: '100%',
-          width: '100%',
           maxHeight: `${maxHeight}px`,
-          overflow: 'auto',
         }}
       />
       {bottomToolbar && (
