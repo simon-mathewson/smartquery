@@ -168,7 +168,11 @@ phases:
           pnpm typecheck
           pnpm lint
           pnpm build
-          zip -r application.zip .ebextensions .env.production dist package.json prisma/generated prisma/schema.prisma Procfile scripts
+          mv node_modules node_modules_backup
+          mkdir node_modules # Keep empty node_modules to prevent EB from installing deps
+          zip -r application.zip .ebextensions .env.production dist node_modules package.json prisma/generated prisma/schema.prisma Procfile scripts
+          rm -rf node_modules
+          mv node_modules_backup node_modules
         fi
 
       - |
