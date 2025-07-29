@@ -24,7 +24,7 @@ export const Footer: React.FC = () => {
 
   return (
     <>
-      <OverlayCard htmlProps={{ className: 'w-[340px]' }} overlay={overlay}>
+      <OverlayCard htmlProps={{ className: 'w-[340px] overflow-auto' }} overlay={overlay}>
         {({ close }) => <Settings close={close} />}
       </OverlayCard>
       <div className="fixed bottom-2 left-2 w-[208px]">
