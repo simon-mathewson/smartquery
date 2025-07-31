@@ -22,7 +22,7 @@ export const aiRouter = trpc.router({
 
       try {
         const response = await ctx.googleAi.models.generateContentStream({
-          model: 'gemini-2.0-flash',
+          model: 'gemini-2.5-flash',
           contents,
           config: {
             abortSignal: signal,
