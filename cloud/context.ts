@@ -6,6 +6,8 @@ import { verifyAccessToken } from './auth/accessToken';
 import type { Connector } from '@/connector/types';
 import { GoogleGenAI } from '@google/genai';
 
+export type CurrentUser = User & { subscription: Subscription | null };
+
 export type Context = {
   connectors: Record<string, Connector>;
   getCookie: ReturnType<typeof createGetCookie>;
@@ -14,7 +16,7 @@ export type Context = {
   req: CreateExpressContextOptions['req'];
   res: CreateExpressContextOptions['res'];
   setCookie: ReturnType<typeof createSetCookie>;
-  user: (User & { subscription: Subscription | null }) | null;
+  user: CurrentUser | null;
 };
 
 export const createContext = async ({
