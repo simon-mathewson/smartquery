@@ -9,6 +9,9 @@ import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { isUserUnauthorizedError } from './isUserUnauthorizedError';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 
+const TOKEN_EXPIRY_DURATION = 15 * 60 * 1000; // 15 minutes
+const REFRESH_INTERVAL = 14 * 60 * 1000; // 14 minutes (1 minute before expiry)
+
 export const useAuth = () => {
   const [, navigate] = useLocation();
 
@@ -18,6 +21,7 @@ export const useAuth = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [user, setUser] = useStoredState<User | null>('useAuth.user', null);
   const refreshIntervalRef = useRef<number | null>(null);
+  const lastRefreshTimeRef = useRef<number>(Date.now());
 
   const logOut = useCallback(
     async (props: { silent?: boolean } = {}) => {
@@ -42,6 +46,20 @@ export const useAuth = () => {
     [cloudApi.auth.logOut, navigate, setUser, toast],
   );
 
+  const refreshAuth = useCallback(async () => {
+    try {
+      await cloudApi.auth.refresh.mutate();
+      lastRefreshTimeRef.current = Date.now();
+    } catch {
+      await logOut({ silent: true });
+    }
+  }, [cloudApi.auth.refresh, logOut]);
+
+  const shouldRefreshToken = useCallback(() => {
+    const timeSinceLastRefresh = Date.now() - lastRefreshTimeRef.current;
+    return timeSinceLastRefresh > TOKEN_EXPIRY_DURATION;
+  }, []);
+
   // Effect to automatically refresh access token 1 minute before expiry
   useEffect(() => {
     if (!user) return;
@@ -51,16 +69,9 @@ export const useAuth = () => {
     }
 
     // Set up interval to refresh token every 14 minutes (1 minute before 15-minute expiry)
-    refreshIntervalRef.current = setInterval(
-      async () => {
-        try {
-          await cloudApi.auth.refresh.mutate();
-        } catch {
-          await logOut({ silent: true });
-        }
-      },
-      14 * 60 * 1000,
-    ) as unknown as number;
+    refreshIntervalRef.current = setInterval(async () => {
+      await refreshAuth();
+    }, REFRESH_INTERVAL) as unknown as number;
 
     return () => {
       if (refreshIntervalRef.current) {
@@ -68,23 +79,37 @@ export const useAuth = () => {
         refreshIntervalRef.current = null;
       }
     };
-  }, [cloudApi.auth.refresh, logOut, user]);
+  }, [refreshAuth, user]);
+
+  // Effect to refresh auth when user returns to tab after being inactive
+  useEffect(() => {
+    if (!user) return;
+
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible' && shouldRefreshToken()) {
+        await refreshAuth();
+      }
+    };
+
+    const handleFocus = async () => {
+      if (shouldRefreshToken()) {
+        await refreshAuth();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [refreshAuth, shouldRefreshToken, user]);
 
   const getCurrentUser = useCallback(async () => {
-    try {
-      const user = await cloudApi.auth.currentUser.query();
-      setUser(user);
-    } catch (error) {
-      if (isUserUnauthorizedError(error)) {
-        await logOut({ silent: true });
-        return;
-      }
-
-      throw error;
-    } finally {
-      setIsInitializing(false);
-    }
-  }, [cloudApi, logOut, setUser]);
+    const user = await cloudApi.auth.currentUser.query();
+    setUser(user);
+  }, [cloudApi, setUser]);
 
   const logIn = useCallback(
     async (email: string, password: string, props: { skipToast?: boolean } = {}) => {
@@ -137,7 +162,18 @@ export const useAuth = () => {
   );
 
   useEffectOnce(() => {
-    void cloudApi.auth.refresh.mutate().then(() => getCurrentUser());
+    void cloudApi.auth.refresh
+      .mutate()
+      .then(() => getCurrentUser())
+      .catch((error) => {
+        if (isUserUnauthorizedError(error)) {
+          void logOut({ silent: true });
+          return;
+        }
+
+        throw error;
+      })
+      .finally(() => setIsInitializing(false));
   });
 
   return useMemo(
