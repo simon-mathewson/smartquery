@@ -4,8 +4,8 @@ import type { inferRouterInputs } from '@trpc/server';
 import type { router } from '../../../link/src/main/router/router';
 import type { Database as SqliteDatabase, SqlValue as SqliteValue } from 'sql.js';
 import type { InputMode } from '~/content/tabs/queries/query/types';
-import type { FileConnection, RemoteConnection } from '@/types/connection';
-import type { PrismaValue } from '@/types/prisma';
+import type { FileConnection, RemoteConnection } from '@/connections/types';
+import type { PrismaValue } from '@/prisma/types';
 
 export type ConnectInput = inferRouterInputs<typeof router>['connectDb'];
 

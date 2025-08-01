@@ -1,4 +1,4 @@
-import type { Connection } from '@/types/connection';
+import type { Connection } from '@/connections/types';
 
 export const getSqlParser = () => import('node-sql-parser').then((m) => new m.Parser());
 

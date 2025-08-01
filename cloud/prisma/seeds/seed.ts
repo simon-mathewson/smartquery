@@ -30,7 +30,110 @@ void (async () => {
       password:
         '5172332a5b34fbbafecf69a277f3022e45215916fba3f38ff8a61cb0072a5dbb6f6c3ca7923e7b2c8467d21659ef276a31220bb8e9ae47b380c9d1f0dc02c244',
       passwordSalt: '31c7bc712b3c556d63dda05d49ec172d',
-      subscription: 'plus',
+    },
+  });
+
+  await prisma.subscription.create({
+    data: {
+      startDate: new Date(),
+      type: 'plus',
+      userId: plusUser.id,
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 20_438,
+      type: 'queryDurationSeconds',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 1_843,
+      type: 'queryDurationSeconds',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 147_483_648,
+      type: 'queryResponseBytes',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 847_484_438,
+      type: 'queryResponseBytes',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 332_328,
+      type: 'aiChatInputTokens',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 237_249,
+      type: 'aiChatInputTokens',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 4_238,
+      type: 'aiChatOutputTokens',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 13_832,
+      type: 'aiChatOutputTokens',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 4_423_843,
+      type: 'aiInlineCompletionInputTokens',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 9_843_243,
+      type: 'aiInlineCompletionInputTokens',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 234_438,
+      type: 'aiInlineCompletionOutputTokens',
+      subscription: { connect: { userId: plusUser.id } },
+    },
+  });
+
+  await prisma.usage.create({
+    data: {
+      amount: 185_328,
+      type: 'aiInlineCompletionOutputTokens',
+      subscription: { connect: { userId: plusUser.id } },
     },
   });
 

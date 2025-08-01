@@ -1,6 +1,6 @@
 import * as uuid from 'uuid';
 import type { Query } from '~/shared/types';
-import type { Connection } from '@/types/connection';
+import type { Connection } from '@/connections/types';
 import type { AddQueryOptions } from '../types';
 import { parseQuery } from './parse';
 

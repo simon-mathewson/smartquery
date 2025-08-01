@@ -1,4 +1,4 @@
-import type { Engine } from '@/types/connection';
+import type { Engine } from '@/connections/types';
 import classNames from 'classnames';
 import type { editor } from 'monaco-editor';
 import React, { useRef, useState } from 'react';

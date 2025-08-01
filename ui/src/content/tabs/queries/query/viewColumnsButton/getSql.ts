@@ -1,4 +1,4 @@
-import type { Engine } from '@/types/connection';
+import type { Engine } from '@/connections/types';
 import type { Select } from '../../types';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 

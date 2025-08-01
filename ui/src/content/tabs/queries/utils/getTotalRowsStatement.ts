@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import type { Connection } from '@/types/connection';
+import type { Connection } from '@/connections/types';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import type { Select } from '../types';
 

@@ -1,4 +1,4 @@
-import type { AiTextContent } from '@/types/ai';
+import type { AiTextContent } from '@/ai/types';
 import { GoogleGenAI } from '@google/genai';
 import { useCallback, useMemo, useState } from 'react';
 import { assert } from 'ts-essentials';
@@ -33,7 +33,7 @@ export const useAi = () => {
     }) => {
       const { abortSignal, contents, systemInstructions, temperature } = props;
 
-      if (auth.user?.subscription === 'plus') {
+      if (auth.user?.subscription?.type === 'plus') {
         return cloudApiStream.ai.generateContent.mutate(
           { contents, systemInstructions, temperature },
           { signal: abortSignal },
@@ -61,7 +61,7 @@ export const useAi = () => {
     [auth.user?.subscription, cloudApiStream, googleAi],
   );
 
-  const enabled = auth.user?.subscription === 'plus' || Boolean(googleAi);
+  const enabled = auth.user?.subscription?.type === 'plus' || Boolean(googleAi);
 
   return useMemo(
     () => ({

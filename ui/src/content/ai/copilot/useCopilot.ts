@@ -8,7 +8,7 @@ import { ToastContext } from '../../toast/Context';
 import { cloneDeep } from 'lodash';
 import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
 import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
-import type { AiTextContent } from '@/types/ai';
+import type { AiTextContent } from '@/ai/types';
 
 export const useCopilot = () => {
   const toast = useDefinedContext(ToastContext);

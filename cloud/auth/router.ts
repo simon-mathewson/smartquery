@@ -17,7 +17,7 @@ export const authRouter = trpc.router({
       z.object({
         id: z.string(),
         email: z.string(),
-        subscription: z.enum(['plus']).nullable(),
+        subscription: z.object({ type: z.enum(['plus']) }).nullable(),
       }),
     )
     .query(async ({ ctx: { user } }) => user),

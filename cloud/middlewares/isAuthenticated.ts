@@ -18,7 +18,7 @@ export const isAuthenticated = trpc.middleware(async (opts) => {
 export const isAuthenticatedAndPlus = trpc.middleware(async (opts) => {
   const { ctx } = opts;
 
-  if (!ctx.user || ctx.user.subscription !== 'plus') {
+  if (!ctx.user || ctx.user.subscription?.type !== 'plus') {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
 

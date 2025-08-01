@@ -1,6 +1,6 @@
 import { Connector } from "./types";
 import { PostgresClient } from "./prisma";
-import { PrismaValue } from "@/types/prisma";
+import { PrismaValue } from "@/prisma/types";
 
 export const runQuery = async (connector: Connector, statements: string[]) => {
   const { prisma } = connector;

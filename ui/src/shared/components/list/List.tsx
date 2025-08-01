@@ -8,12 +8,14 @@ export type ListProps<T> = {
   autoFocusFirstItem?: boolean;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
   emptyPlaceholder?: string;
-  items: Omit<ListItemProps<T>, 'onSelect' | 'selected'>[];
+  items: Array<
+    Omit<ListItemProps<T>, 'onSelect' | 'selected'> & Partial<Pick<ListItemProps<T>, 'onSelect'>>
+  >;
   onSelect?: (value: T) => void;
   search?: string;
   searchPlaceholder?: string;
   setSearch?: (value: string) => void;
-} & ({ multiple?: false; selectedValue: T | null } | { multiple: true; selectedValues: T[] });
+} & ({ multiple?: false; selectedValue?: T | null } | { multiple: true; selectedValues: T[] });
 
 export function List<T>(props: ListProps<T>) {
   const {
@@ -74,9 +76,9 @@ export function List<T>(props: ListProps<T>) {
           {items.map((item, index) => (
             <ListItem<T>
               key={index}
+              onSelect={() => onSelect?.(item.value)}
               {...item}
               autoFocus={getAutoFocus(item, index)}
-              onSelect={() => onSelect?.(item.value)}
               selected={
                 multiple
                   ? props.selectedValues.includes(item.value)

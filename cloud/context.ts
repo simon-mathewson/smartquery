@@ -1,6 +1,6 @@
 import type { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import * as cookie from 'cookie';
-import type { User } from '~/prisma/generated/client';
+import type { Subscription, User } from '~/prisma/generated/client';
 import { PrismaClient } from '~/prisma/generated/client';
 import { verifyAccessToken } from './auth/accessToken';
 import type { Connector } from '@/connector/types';
@@ -14,7 +14,7 @@ export type Context = {
   req: CreateExpressContextOptions['req'];
   res: CreateExpressContextOptions['res'];
   setCookie: ReturnType<typeof createSetCookie>;
-  user: User | null;
+  user: (User & { subscription: Subscription | null }) | null;
 };
 
 export const createContext = async ({
@@ -37,6 +37,7 @@ export const createContext = async ({
     // Return null if not found, let `isAuthorized` throw to trigger client side logout
     return prisma.user.findUnique({
       where: { id: decoded.userId },
+      include: { subscription: true },
     });
   };
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { remoteConnectionSchema } from '@/types/connection';
+import { remoteConnectionSchema } from '@/connections/types';
 import { connect } from '@/connector/connect';
 import { disconnect } from '@/connector/disconnect';
 import { runQuery } from '@/connector/runQuery';

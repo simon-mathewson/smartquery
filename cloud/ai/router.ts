@@ -1,4 +1,4 @@
-import { aiTextContentSchema } from '@/types/ai';
+import { aiTextContentSchema } from '@/ai/types';
 import { z } from 'zod';
 import { isAuthenticatedAndPlus } from '~/middlewares/isAuthenticated';
 import { trpc } from '~/trpc';

@@ -2,8 +2,12 @@ import { cloneDeep } from 'lodash';
 import { assert } from 'ts-essentials';
 import { z } from 'zod';
 import type { User } from '~/content/auth/types';
-import type { Connection, Engine } from '@/types/connection';
-import { connectionSchema, fileConnectionSchema, remoteConnectionSchema } from '@/types/connection';
+import type { Connection, Engine } from '@/connections/types';
+import {
+  connectionSchema,
+  fileConnectionSchema,
+  remoteConnectionSchema,
+} from '@/connections/types';
 
 export const formSchema = z.discriminatedUnion('type', [
   remoteConnectionSchema.extend({

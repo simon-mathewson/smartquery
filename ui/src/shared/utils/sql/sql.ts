@@ -1,4 +1,4 @@
-import type { Engine } from '@/types/connection';
+import type { Engine } from '@/connections/types';
 
 export const addQuotes = (engine: Engine, value: string) => {
   if (engine === 'mysql') return `\`${value}\``;

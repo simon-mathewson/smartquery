@@ -1,4 +1,4 @@
-import type { Connection } from '@/types/connection';
+import type { Connection } from '@/connections/types';
 import type { Connection as DbConnection, Prisma } from '~/prisma/generated';
 import type { CreateConnectionInput } from './schemas';
 import { omit } from 'lodash';

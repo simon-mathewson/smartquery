@@ -1,4 +1,4 @@
-import { remoteConnectionSchema } from '@/types/connection';
+import { remoteConnectionSchema } from '@/connections/types';
 import { z } from 'zod';
 
 export const createConnectionInputSchema = z.object({

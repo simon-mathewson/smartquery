@@ -1,7 +1,7 @@
 import { SSHConnection } from "node-ssh-forward";
 import findFreePorts from "find-free-ports";
 
-import type { RemoteConnection } from "@/types/connection";
+import type { RemoteConnection } from "@/connections/types";
 import assert from "assert";
 
 export const createSshTunnel = async (connection: RemoteConnection) => {

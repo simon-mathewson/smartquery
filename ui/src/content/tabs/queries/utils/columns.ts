@@ -2,7 +2,7 @@ import { sortBy } from 'lodash';
 import type NodeSqlParser from 'node-sql-parser';
 import type { DataType } from '~/shared/dataTypes/types';
 import type { Column, DbValue } from '~/shared/types';
-import type { Connection } from '@/types/connection';
+import type { Connection } from '@/connections/types';
 import type { Select } from '../types';
 
 export const getMySqlEnumValuesFromColumnType = (columnType: string) => {

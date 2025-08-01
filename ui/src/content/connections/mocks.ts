@@ -1,4 +1,4 @@
-import type { Connection, FileConnection } from '@/types/connection';
+import type { Connection, FileConnection } from '@/connections/types';
 import { spy } from 'tinyspy';
 import type { ActiveConnection } from '~/shared/types';
 import type { Connections } from './useConnections';

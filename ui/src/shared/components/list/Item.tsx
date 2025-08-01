@@ -14,6 +14,7 @@ export type ListItemProps<T> = {
   autoFocus?: boolean;
   hint?: string;
   htmlProps?: React.HTMLProps<HTMLDivElement> | React.HTMLProps<HTMLAnchorElement>;
+  icon?: React.ReactNode;
   label?: string;
   onMouseDown?: React.MouseEventHandler<HTMLElement>;
   onSelect: () => void;
@@ -28,6 +29,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
     autoFocus,
     hint,
     htmlProps,
+    icon,
     label,
     onMouseDown,
     onSelect,
@@ -50,6 +52,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
             selectedVariant === 'secondary' && selected,
           'hover:bg-secondaryHighlight focus:bg-secondaryHighlight': !selected,
           [autoFocusClass]: autoFocus,
+          '!grid-cols-[max-content_1fr_max-content] [&_svg]:text-textTertiary': icon,
         },
         htmlProps?.className,
       )}
@@ -58,6 +61,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
       role="option"
       tabIndex={0}
     >
+      {icon && <div className="pr-2">{icon}</div>}
       <div className="flex flex-col justify-center overflow-hidden">
         <div
           className={classNames(

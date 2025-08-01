@@ -51,6 +51,28 @@ model RefreshToken {
   @@index([userId])
 }
 
+model Subscription {
+  createdAt DateTime         @default(now())
+  startDate DateTime         @db.Date
+  type      SubscriptionType
+  userId    String           @unique @db.Uuid
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usages    Usage[]
+
+  @@index([userId])
+}
+
+model Usage {
+  id           String       @id @default(uuid()) @db.Uuid
+  userId       String       @db.Uuid
+  subscription Subscription @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  createdAt    DateTime     @default(now())
+  type         UsageType
+  amount       Int
+
+  @@index([userId, type, createdAt])
+}
+
 model User {
   createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
@@ -77,6 +99,15 @@ enum Engine {
   postgres
 }
 
-enum Subscription {
+enum SubscriptionType {
   plus
+}
+
+enum UsageType {
+  aiChatInputTokens
+  aiChatOutputTokens
+  aiInlineCompletionInputTokens
+  aiInlineCompletionOutputTokens
+  queryDurationSeconds
+  queryResponseBytes
 }

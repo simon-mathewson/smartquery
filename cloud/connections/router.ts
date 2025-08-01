@@ -1,6 +1,6 @@
 import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import { trpc } from '../trpc';
-import { connectionSchema } from '@/types/connection';
+import { connectionSchema } from '@/connections/types';
 import { z } from 'zod';
 import { mapConnectionToPrisma, mapPrismaToConnection } from './mapPrisma';
 import { createConnectionInputSchema, updateConnectionInputSchema } from './schemas';

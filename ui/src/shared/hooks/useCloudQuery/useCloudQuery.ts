@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useCloudQuery = <T extends any[] | []>(
+export const useCloudQuery = <T>(
   query: () => Promise<T>,
   props: { disabled?: boolean; emptyValue?: T },
 ) => {

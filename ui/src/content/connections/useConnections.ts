@@ -1,4 +1,4 @@
-import type { Connection, RemoteConnection } from '@/types/connection';
+import type { Connection, RemoteConnection } from '@/connections/types';
 import { omit, sortBy } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
@@ -82,7 +82,7 @@ export const useConnections = (props: UseConnectionsProps) => {
   useEffect(() => {
     if (isInitializingAuth || !user) return;
 
-    if (user.subscription === 'plus') {
+    if (user.subscription?.type === 'plus') {
       if (connectViaCloud === null) {
         setConnectViaCloud(true);
       }

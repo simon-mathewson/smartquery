@@ -1,4 +1,4 @@
-import type { RemoteConnection } from '@/types/connection';
+import type { RemoteConnection } from '@/connections/types';
 
 export type SignInModalInput = {
   connection: RemoteConnection;

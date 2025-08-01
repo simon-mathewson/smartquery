@@ -2,7 +2,7 @@ import { initTRPC } from '@trpc/server';
 import superjson from '@/superjson/superjson';
 import { z } from 'zod';
 import type { Context } from '../utils/setUpServer/context';
-import { remoteConnectionSchema } from '@/types/connection';
+import { remoteConnectionSchema } from '@/connections/types';
 import { connect } from '@/connector/connect';
 import { disconnect } from '@/connector/disconnect';
 import { runQuery } from '@/connector/runQuery';
