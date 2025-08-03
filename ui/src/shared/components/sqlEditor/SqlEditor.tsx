@@ -1,4 +1,4 @@
-import { Send } from '@mui/icons-material';
+import { Send, Undo } from '@mui/icons-material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Button } from '~/shared/components/button/Button';
 import { CodeEditor } from '../codeEditor/CodeEditor';
@@ -11,14 +11,18 @@ import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { useDebouncedCallback } from 'use-debounce';
 
 export type SqlEditorProps = {
+  isResetDisabled?: boolean;
   isSubmitDisabled?: boolean;
   onChange?: (sql: string) => void;
+  onKeyDown?: () => void;
+  onReset?: () => void;
   onSubmit?: () => Promise<void>;
   value: string;
 };
 
 export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
-  const { isSubmitDisabled, onChange, onSubmit, value } = props;
+  const { isResetDisabled, isSubmitDisabled, onChange, onKeyDown, onReset, onSubmit, value } =
+    props;
 
   const activeConnection = useContext(ActiveConnectionContext)?.activeConnection;
 
@@ -90,10 +94,24 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       >
         <CodeEditor
           bottomToolbar={
-            <div className="flex items-end justify-between px-2.5 py-3">
+            <div className="flex justify-end gap-3 px-2.5 py-3">
+              <Button
+                color="secondary"
+                htmlProps={{
+                  className: 'pointer-events-auto flex-shrink-0',
+                  disabled: isResetDisabled,
+
+                  // When clicking the button while the editor collpases, mouse up will be outside of
+                  // button and not trigger click.
+                  onClick: (event) => event.preventDefault(),
+                  onMouseDown: onReset,
+                }}
+                icon={<Undo />}
+                tooltip="Reset"
+              />
               <Button
                 htmlProps={{
-                  className: 'ml-auto w-36 pointer-events-auto flex-shrink-0',
+                  className: 'w-36 pointer-events-auto flex-shrink-0',
                   disabled: !value?.trim() || query?.query.isLoading || isSubmitDisabled,
 
                   // When clicking the button while the editor collpases, mouse up will be outside of
@@ -115,6 +133,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           height={height}
           maxHeight={height}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           onFocus={() => setIsExtended(true)}
           onBlur={() => setIsExtended(false)}
           submit={submitQuery}

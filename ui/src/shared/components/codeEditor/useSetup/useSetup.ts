@@ -29,6 +29,7 @@ export const useSetup = (props: {
       maxHeight,
       onBlur,
       onChange,
+      onKeyDown,
       onFocus,
       readOnly,
       submit,
@@ -150,10 +151,18 @@ export const useSetup = (props: {
 
     setUpCompletions(monacoLanguage);
 
-    editorRef.current.onDidChangeModelContent(() => {
-      const currentValue = editorRef.current?.getValue() || '';
-      onChange?.(currentValue);
-    });
+    if (onChange) {
+      disposablesRef.current.push(
+        editorRef.current.onDidChangeModelContent(() => {
+          const currentValue = editorRef.current?.getValue() || '';
+          onChange?.(currentValue);
+        }),
+      );
+    }
+
+    if (onKeyDown) {
+      disposablesRef.current.push(editorRef.current.onKeyDown(onKeyDown));
+    }
 
     if (submit) {
       disposablesRef.current.push(

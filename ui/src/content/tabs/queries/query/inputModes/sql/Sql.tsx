@@ -36,10 +36,13 @@ export const Sql: React.FC = () => {
     (newValue: string) => {
       setValue(newValue);
       valueRef.current = newValue;
-      setIsDraft(true);
     },
-    [setValue, setIsDraft],
+    [setValue],
   );
+
+  const onKeyDown = useCallback(() => {
+    setIsDraft(true);
+  }, [setIsDraft]);
 
   const onSubmit = useCallback(async () => {
     track('query_sql_submit');
@@ -49,13 +52,23 @@ export const Sql: React.FC = () => {
     setIsDraft(false);
   }, [query.id, updateQuery, track, setIsDraft]);
 
+  const onReset = useCallback(() => {
+    const sql = query.sql ?? '';
+    setValue(sql);
+    valueRef.current = sql;
+    setIsDraft(false);
+  }, [query.sql, setIsDraft, setValue]);
+
   const isSubmitDisabled = !isDraft && query.sql === value && queryResult !== null;
 
   return (
     <div className="px-2 pb-2">
       <SqlEditor
+        isResetDisabled={query.sql === value}
         isSubmitDisabled={isSubmitDisabled}
         onChange={onChange}
+        onKeyDown={onKeyDown}
+        onReset={onReset}
         onSubmit={onSubmit}
         value={value}
       />

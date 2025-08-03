@@ -23,6 +23,7 @@ export type CodeEditorProps = {
   maxHeight?: number;
   onBlur?: () => void;
   onChange?: (value: string) => void;
+  onKeyDown?: () => void;
   onFocus?: () => void;
   placeholder?: string;
   readOnly?: boolean;

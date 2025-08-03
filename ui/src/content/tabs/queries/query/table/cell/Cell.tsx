@@ -215,7 +215,7 @@ export const Cell: React.FC<CellProps> = (props) => {
               })}
             />
           ) : (
-            <ArrowUpward className="!hidden !h-4 !w-4 text-primary group-hover:!block" />
+            <ArrowUpward className="!h-4 !w-4 text-primary group-hover:!block" />
           )}
         </>
       )}

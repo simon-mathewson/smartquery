@@ -21,13 +21,13 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
 
   const { runQuery } = useDefinedContext(ActiveConnectionContext);
   const { refetchActiveTabSelectQueries } = useDefinedContext(QueriesContext);
-  const { clearChanges, sql } = useDefinedContext(EditContext);
+  const { clearChanges, sql: originalSql } = useDefinedContext(EditContext);
 
-  const [userSql, setUserSql] = useState(sql);
+  const [userSql, setUserSql] = useState(originalSql);
 
   useEffect(() => {
-    setUserSql(sql);
-  }, [sql]);
+    setUserSql(originalSql);
+  }, [originalSql]);
 
   const handleSubmit = useCallback(async () => {
     track('toolbar_changes_submit');
@@ -53,7 +53,13 @@ export const ReviewChangesCard: React.FC<ReviewChangesCardProps> = (props) => {
     <OverlayCard htmlProps={{ className: 'p-3' }} overlay={overlay}>
       {() => (
         <div className="w-[592px]">
-          <SqlEditor onChange={(sql) => setUserSql(sql)} onSubmit={handleSubmit} value={userSql} />
+          <SqlEditor
+            isResetDisabled={userSql === originalSql}
+            onChange={(sql) => setUserSql(sql)}
+            onReset={() => setUserSql(originalSql)}
+            onSubmit={handleSubmit}
+            value={userSql}
+          />
         </div>
       )}
     </OverlayCard>
