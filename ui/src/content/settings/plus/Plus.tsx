@@ -3,7 +3,7 @@ import {
   PLUS_MAX_AI_CHAT_OUTPUT_TOKENS,
   PLUS_MAX_AI_INLINE_COMPLETION_INPUT_TOKENS,
   PLUS_MAX_AI_INLINE_COMPLETION_OUTPUT_TOKENS,
-  PLUS_MAX_QUERY_DURATION_SECONDS,
+  PLUS_MAX_QUERY_DURATION_MILLISECONDS,
   PLUS_MAX_QUERY_RESPONSE_BYTES,
 } from '@/plus/plus';
 import React from 'react';
@@ -16,10 +16,10 @@ import { formatNumber } from '~/shared/utils/format/formatNumber';
 
 const usages = [
   {
-    divisor: 1e3,
+    divisor: 1e6,
     label: 'Query Duration',
-    max: PLUS_MAX_QUERY_DURATION_SECONDS,
-    type: 'queryDurationSeconds',
+    max: PLUS_MAX_QUERY_DURATION_MILLISECONDS,
+    type: 'queryDurationMilliseconds',
     unit: 'k seconds',
   },
   {

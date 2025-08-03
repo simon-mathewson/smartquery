@@ -8,7 +8,7 @@
 CREATE TYPE "SubscriptionType" AS ENUM ('plus');
 
 -- CreateEnum
-CREATE TYPE "UsageType" AS ENUM ('aiChatInputTokens', 'aiChatOutputTokens', 'aiInlineCompletionInputTokens', 'aiInlineCompletionOutputTokens', 'queryDurationSeconds', 'queryResponseBytes');
+CREATE TYPE "UsageType" AS ENUM ('aiChatInputTokens', 'aiChatOutputTokens', 'aiInlineCompletionInputTokens', 'aiInlineCompletionOutputTokens', 'queryDurationMilliseconds', 'queryResponseBytes');
 
 -- AlterTable
 ALTER TABLE "User" DROP COLUMN "subscription";

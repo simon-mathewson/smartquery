@@ -10,6 +10,8 @@ import type { Connector } from '@/connector/types';
 import type { CurrentUser } from '~/context';
 import { PLUS_MAX_CONCURRENT_CONNECTIONS, PLUS_MAX_CONCURRENT_QUERY_STATEMENTS } from '@/plus/plus';
 import { TRPCError } from '@trpc/server';
+import { trackQueryResponseBytes } from './trackQueryResponseBytes';
+import { verifyUsageWithinLimits } from '~/subscription/verifyUsageWithinLimits';
 
 const connectors: Record<
   string,
@@ -77,6 +79,7 @@ export const connectorRouter = trpc.router({
     .use(isAuthenticatedAndPlus)
     .mutation(async (props) => {
       const {
+        ctx: { prisma, user },
         input: { connectorId, statements },
       } = props;
 
@@ -88,16 +91,41 @@ export const connectorRouter = trpc.router({
         throw new Error('Connector not found');
       }
 
+      await verifyUsageWithinLimits({
+        prisma,
+        types: ['queryDurationMilliseconds', 'queryResponseBytes'],
+        user,
+      });
+
       const connector = connectors[connectorId];
 
       const results = await new Promise<Results>((resolve) => {
         connector.queue.push(async () => {
-          resolve(await runQuery(connector.connector, statements));
+          const queryStart = Date.now();
 
-          connector.queue.shift();
+          try {
+            const results = await runQuery(connector.connector, statements);
+            resolve(results);
+          } finally {
+            const queryDuration = Date.now() - queryStart;
 
-          if (connector.queue.length > 0) {
-            void connector.queue[0]();
+            if (process.env.NODE_ENV === 'development') {
+              console.info(`Query duration: ${queryDuration}ms`);
+            }
+
+            connector.queue.shift();
+
+            if (connector.queue.length > 0) {
+              void connector.queue[0]();
+            }
+
+            await prisma.usage.create({
+              data: {
+                amount: queryDuration,
+                type: 'queryDurationMilliseconds',
+                userId: user.id,
+              },
+            });
           }
         });
 
@@ -109,6 +137,8 @@ export const connectorRouter = trpc.router({
       if (process.env.NODE_ENV === 'development') {
         console.info('Executed queries', results.length);
       }
+
+      void trackQueryResponseBytes({ prisma, user, results });
 
       return results;
     }),

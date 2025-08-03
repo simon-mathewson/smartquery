@@ -108,6 +108,6 @@ enum UsageType {
   aiChatOutputTokens
   aiInlineCompletionInputTokens
   aiInlineCompletionOutputTokens
-  queryDurationSeconds
+  queryDurationMilliseconds
   queryResponseBytes
 }

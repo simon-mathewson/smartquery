@@ -43,16 +43,16 @@ void (async () => {
 
   await prisma.usage.create({
     data: {
-      amount: 20_438,
-      type: 'queryDurationSeconds',
+      amount: 20_438_000,
+      type: 'queryDurationMilliseconds',
       subscription: { connect: { userId: plusUser.id } },
     },
   });
 
   await prisma.usage.create({
     data: {
-      amount: 1_843,
-      type: 'queryDurationSeconds',
+      amount: 1_843_000,
+      type: 'queryDurationMilliseconds',
       subscription: { connect: { userId: plusUser.id } },
     },
   });
