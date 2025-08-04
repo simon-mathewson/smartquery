@@ -10,8 +10,9 @@ import type { Connector } from '@/connector/types';
 import type { CurrentUser } from '~/context';
 import { PLUS_MAX_CONCURRENT_CONNECTIONS, PLUS_MAX_CONCURRENT_QUERY_STATEMENTS } from '@/plus/plus';
 import { TRPCError } from '@trpc/server';
-import { trackQueryResponseBytes } from './trackQueryResponseBytes';
+import { trackUsage } from '../subscription/trackUsage';
 import { verifyUsageWithinLimits } from '~/subscription/verifyUsageWithinLimits';
+import superjson from 'superjson';
 
 const connectors: Record<
   string,
@@ -106,6 +107,21 @@ export const connectorRouter = trpc.router({
           try {
             const results = await runQuery(connector.connector, statements);
             resolve(results);
+
+            if (process.env.NODE_ENV === 'development') {
+              console.info('Executed queries', results.length);
+            }
+
+            void trackUsage({
+              items: [
+                {
+                  amount: Buffer.byteLength(superjson.stringify(results), 'utf-8'),
+                  type: 'queryResponseBytes',
+                },
+              ],
+              prisma,
+              userId: user.id,
+            });
           } catch (error) {
             reject(error);
           } finally {
@@ -121,12 +137,10 @@ export const connectorRouter = trpc.router({
               void connector.queue[0]();
             }
 
-            await prisma.usage.create({
-              data: {
-                amount: queryDuration,
-                type: 'queryDurationMilliseconds',
-                userId: user.id,
-              },
+            void trackUsage({
+              items: [{ amount: queryDuration, type: 'queryDurationMilliseconds' }],
+              prisma,
+              userId: user.id,
             });
           }
         });
@@ -135,12 +149,6 @@ export const connectorRouter = trpc.router({
           void connector.queue[0]();
         }
       });
-
-      if (process.env.NODE_ENV === 'development') {
-        console.info('Executed queries', results.length);
-      }
-
-      void trackQueryResponseBytes({ prisma, user, results });
 
       return results;
     }),

@@ -43,12 +43,13 @@ export const generateInlineCompletions = async (
       ],
       config: {
         abortSignal: abortSignal,
+        candidateCount: 1,
         systemInstruction,
         temperature: 0,
       },
     });
 
-    return response.text ?? null;
+    return response;
   } catch (error) {
     if (
       error instanceof Error &&

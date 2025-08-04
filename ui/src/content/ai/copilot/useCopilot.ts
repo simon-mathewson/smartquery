@@ -57,7 +57,7 @@ export const useCopilot = () => {
           ? superjson.stringify(schemaDefinitions.definitions)
           : null;
 
-        const response = await ai.generateChatResponse({
+        const response = ai.generateChatResponse({
           abortSignal: abortControllerRef.current.signal,
           contents: threadWithUserMessage,
           engine: activeConnection.engine,

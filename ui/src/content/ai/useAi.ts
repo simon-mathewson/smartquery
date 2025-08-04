@@ -36,17 +36,28 @@ export const useAi = () => {
   }, [googleAiApiKey]);
 
   const generateChatResponse = useCallback(
-    async (props: Omit<GenerateChatResponseProps, 'googleAi'>) => {
+    async function* (props: Omit<GenerateChatResponseProps, 'googleAi'>) {
       try {
         if (auth.user?.subscription?.type === 'plus') {
-          return cloudApiStream.ai.generateChatResponse.mutate(omit(props, 'abortSignal'), {
-            signal: props.abortSignal,
-          });
+          const cloudResponse = await cloudApiStream.ai.generateChatResponse.mutate(
+            omit(props, 'abortSignal'),
+            {
+              signal: props.abortSignal,
+            },
+          );
+
+          for await (const chunkText of cloudResponse) {
+            yield chunkText;
+          }
         }
 
         assert(googleAi, 'Google AI is not initialized');
 
-        return sharedGenerateChatResponse({ ...props, googleAi });
+        const response = sharedGenerateChatResponse({ ...props, googleAi });
+
+        for await (const chunk of response) {
+          yield chunk.text ?? null;
+        }
       } catch (error) {
         if (
           error instanceof Error &&
@@ -73,7 +84,9 @@ export const useAi = () => {
 
         assert(googleAi, 'Google AI is not initialized');
 
-        return sharedGenerateInlineCompletions({ ...props, googleAi });
+        const reponse = await sharedGenerateInlineCompletions({ ...props, googleAi });
+
+        return reponse?.text ?? null;
       } catch (error) {
         if (
           error instanceof Error &&

@@ -27,12 +27,13 @@ export const generateChatResponse = async function* (
       contents,
       config: {
         abortSignal,
+        candidateCount: 1,
         systemInstruction,
       },
     });
 
     for await (const chunk of response) {
-      yield chunk.text ?? null;
+      yield chunk;
     }
   } catch (error) {
     if (
