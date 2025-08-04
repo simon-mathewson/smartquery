@@ -99,13 +99,15 @@ export const connectorRouter = trpc.router({
 
       const connector = connectors[connectorId];
 
-      const results = await new Promise<Results>((resolve) => {
+      const results = await new Promise<Results>((resolve, reject) => {
         connector.queue.push(async () => {
           const queryStart = Date.now();
 
           try {
             const results = await runQuery(connector.connector, statements);
             resolve(results);
+          } catch (error) {
+            reject(error);
           } finally {
             const queryDuration = Date.now() - queryStart;
 
