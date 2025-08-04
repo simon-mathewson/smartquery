@@ -5,7 +5,6 @@ import { CodeEditor } from '../codeEditor/CodeEditor';
 import { QueryContext } from '~/content/tabs/queries/query/Context';
 import { useSchemaDefinitions } from '~/content/ai/schemaDefinitions/useSchemaDefinitions';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
-import { isNotNull } from '~/shared/utils/typescript/typescript';
 import classNames from 'classnames';
 import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { useDebouncedCallback } from 'use-debounce';
@@ -28,7 +27,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   const query = useContext(QueryContext);
 
-  const { getSchemaDefinitionsInstruction } = useSchemaDefinitions();
+  const { getAndRefreshSchemaDefinitions } = useSchemaDefinitions();
 
   const [isExtended, setIsExtended] = useState(false);
 
@@ -52,19 +51,6 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       }
     },
     [onSubmit],
-  );
-
-  const getAdditionalSystemInstructions = useCallback(
-    async () =>
-      [
-        activeConnection
-          ? `The engine is ${activeConnection.engine}. When generating SQL, use quotes as necessary, particularly to ensure correct casing.`
-          : null,
-        await getSchemaDefinitionsInstruction(),
-      ]
-        .filter(isNotNull)
-        .join('\n\n') || null,
-    [activeConnection, getSchemaDefinitionsInstruction],
   );
 
   const initialHeight = 136;
@@ -127,7 +113,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
               />
             </div>
           }
-          getAdditionalSystemInstructions={getAdditionalSystemInstructions}
+          getSchemaDefinitions={getAndRefreshSchemaDefinitions}
           language={activeConnection?.engine ?? 'sql'}
           large
           height={height}

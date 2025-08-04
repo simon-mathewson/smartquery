@@ -21,7 +21,7 @@ export const useSetup = (props: {
   const {
     editorProps: {
       autoFocus,
-      getAdditionalSystemInstructions,
+      getSchemaDefinitions,
       height,
       hideLineNumbers,
       large,
@@ -86,7 +86,7 @@ export const useSetup = (props: {
 
   const { setUpAutocomplete } = useAutocomplete();
   const { setUpAiInlineCompletions } = useAiInlineCompletions({
-    getAdditionalSystemInstructions,
+    getSchemaDefinitions,
   });
 
   const setUpCompletions = useCallback(

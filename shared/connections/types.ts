@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+export const remoteEngineSchema = z.union([
+  z.literal("mysql"),
+  z.literal("postgres"),
+]);
+export type RemoteEngine = z.infer<typeof remoteEngineSchema>;
+
+export const fileEngineSchema = z.literal("sqlite");
+export type FileEngine = z.infer<typeof fileEngineSchema>;
+
+export const engineSchema = z.union([remoteEngineSchema, fileEngineSchema]);
+export type Engine = z.infer<typeof engineSchema>;
+
 export const baseConnectionSchema = z.object({
   database: z.string().trim().min(1),
   id: z.string().min(1),
@@ -13,7 +25,7 @@ export const remoteConnectionSchema = baseConnectionSchema.extend({
     z.literal("encrypted"),
     z.literal("plain"),
   ]),
-  engine: z.union([z.literal("mysql"), z.literal("postgres")]),
+  engine: remoteEngineSchema,
   host: z.string().trim().min(1),
   password: z.string().nullable(),
   port: z.number(),
@@ -35,7 +47,7 @@ export const remoteConnectionSchema = baseConnectionSchema.extend({
 export type RemoteConnection = z.infer<typeof remoteConnectionSchema>;
 
 export const fileConnectionSchema = baseConnectionSchema.extend({
-  engine: z.literal("sqlite"),
+  engine: fileEngineSchema,
   type: z.literal("file"),
 });
 
@@ -58,5 +70,3 @@ export const connectionSchema = z
   });
 
 export type Connection = z.infer<typeof connectionSchema>;
-
-export type Engine = Connection["engine"];

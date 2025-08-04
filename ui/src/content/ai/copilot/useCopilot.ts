@@ -3,16 +3,13 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { AiContext } from '../Context';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
-import { getSystemInstructions } from './systemInstruction';
-import { ToastContext } from '../../toast/Context';
 import { cloneDeep } from 'lodash';
 import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
 import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
 import type { AiTextContent } from '@/ai/types';
+import superjson from 'superjson';
 
 export const useCopilot = () => {
-  const toast = useDefinedContext(ToastContext);
-
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
   const ai = useDefinedContext(AiContext);
@@ -28,7 +25,7 @@ export const useCopilot = () => {
   const [input, setInput] = useState('');
 
   const {
-    getSchemaDefinitionsInstruction,
+    getAndRefreshSchemaDefinitions,
     isLoading: isLoadingSchemaDefinitions,
     hasSchemaDefinitions,
   } = useSchemaDefinitions();
@@ -53,13 +50,21 @@ export const useCopilot = () => {
       setThread(threadWithUserMessage);
 
       try {
-        const schemaDefinitionsInstruction = await getSchemaDefinitionsInstruction();
+        const schemaDefinitions = getAndRefreshSchemaDefinitions
+          ? await getAndRefreshSchemaDefinitions()
+          : null;
+        const schemaDefinitionsText = schemaDefinitions
+          ? superjson.stringify(schemaDefinitions.definitions)
+          : null;
 
-        const response = await ai.generateContent({
+        const response = await ai.generateChatResponse({
           abortSignal: abortControllerRef.current.signal,
           contents: threadWithUserMessage,
-          systemInstructions: getSystemInstructions(activeConnection, schemaDefinitionsInstruction),
+          engine: activeConnection.engine,
+          schemaDefinitions: schemaDefinitionsText,
         });
+
+        if (!response) return;
 
         const responseContent = {
           role: 'model',
@@ -69,43 +74,17 @@ export const useCopilot = () => {
         setThread((contents) => [...contents, responseContent]);
 
         for await (const chunk of response) {
-          responseContent!.parts[0]!.text! += chunk ?? '';
+          responseContent.parts[0].text += chunk ?? '';
 
           setThread((contents) => [...contents.slice(0, -1), cloneDeep(responseContent)]);
         }
 
         setInput('');
-      } catch (error) {
-        if (
-          error instanceof Error &&
-          (error.message.startsWith('exception AbortError:') ||
-            error.message === 'BodyStreamBuffer was aborted')
-        ) {
-          return;
-        }
-
-        const getMessage = (error: unknown) => {
-          if (error instanceof Error) {
-            if (error.message.includes('The model is overloaded. Please try again later.')) {
-              return 'The model is overloaded. Please try again later.';
-            }
-
-            return error.message;
-          }
-          return 'Unknown error';
-        };
-
-        toast.add({
-          title: 'Error while generating response',
-          description: getMessage(error),
-          color: 'danger',
-        });
-        console.error(error);
       } finally {
         setIsLoading(false);
       }
     },
-    [ai, activeConnection, getSchemaDefinitionsInstruction, setThread, thread, toast],
+    [ai, thread, setThread, getAndRefreshSchemaDefinitions, activeConnection.engine],
   );
 
   const stopGenerating = useCallback(() => {

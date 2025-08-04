@@ -8,13 +8,14 @@ import { Loading } from '../loading/Loading';
 import './setUpLanguageWorkers';
 import { useActions } from './useActions/useActions';
 import { useSetup } from './useSetup/useSetup';
+import type { SchemaDefinitions } from '~/content/ai/schemaDefinitions/types';
 
 export type CodeEditorProps = {
   autoFocus?: boolean;
   bottomToolbar?: React.ReactNode;
   editorOptions?: editor.IStandaloneEditorConstructionOptions | undefined;
   getActions?: (editor: editor.IStandaloneCodeEditor) => ButtonProps[];
-  getAdditionalSystemInstructions?: () => Promise<string | null>;
+  getSchemaDefinitions?: () => Promise<SchemaDefinitions | null>;
   height?: number;
   hideLineNumbers?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;

@@ -7,7 +7,6 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { getStatements } from './getStatements';
 import type { RemoteSchemaDefinitions, SchemaDefinitions, SqliteSchemaDefinitions } from './types';
-import superjson from '@/superjson/superjson';
 
 export const useSchemaDefinitions = () => {
   const toast = useDefinedContext(ToastContext);
@@ -100,28 +99,12 @@ export const useSchemaDefinitions = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConnection]);
 
-  const getSchemaDefinitionsInstruction = useCallback(async () => {
-    const schemaDefinitions = await getAndRefreshSchemaDefinitions();
-
-    if (!schemaDefinitions) return null;
-
-    return `The schema definitions are as follows:\n\n${superjson.stringify(
-      schemaDefinitions.definitions,
-    )}\n\n`;
-  }, [getAndRefreshSchemaDefinitions]);
-
   return useMemo(
     () => ({
       getAndRefreshSchemaDefinitions,
-      getSchemaDefinitionsInstruction,
       hasSchemaDefinitions: storedSchemaDefinitions !== null,
       isLoading,
     }),
-    [
-      getAndRefreshSchemaDefinitions,
-      getSchemaDefinitionsInstruction,
-      isLoading,
-      storedSchemaDefinitions,
-    ],
+    [getAndRefreshSchemaDefinitions, isLoading, storedSchemaDefinitions],
   );
 };

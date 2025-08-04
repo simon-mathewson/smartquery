@@ -3,13 +3,14 @@ import { useCallback, useMemo, useRef } from 'react';
 import { AiContext } from '~/content/ai/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { CodeEditorProps } from '../CodeEditor';
-import { getSystemInstructions } from './getSystemInstructions';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import type { SchemaDefinitions } from '~/content/ai/schemaDefinitions/types';
+import superjson from '@/superjson/superjson';
 
 export const useAiInlineCompletions = (props: {
-  getAdditionalSystemInstructions?: () => Promise<string | null>;
+  getSchemaDefinitions?: () => Promise<SchemaDefinitions | null>;
 }) => {
-  const { getAdditionalSystemInstructions } = props;
+  const { getSchemaDefinitions } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
   const ai = useDefinedContext(AiContext);
@@ -57,80 +58,60 @@ export const useAiInlineCompletions = (props: {
             abortControllerRef.current?.abort();
           });
 
-          const additionalSystemInstructions = getAdditionalSystemInstructions
-            ? await getAdditionalSystemInstructions()
+          const schemaDefinitions = getSchemaDefinitions ? await getSchemaDefinitions() : null;
+          const schemaDefinitionsText = schemaDefinitions
+            ? superjson.stringify(schemaDefinitions.definitions)
             : null;
 
-          try {
-            const stream = await ai.generateContent({
-              abortSignal: abortControllerRef.current.signal,
-              contents: [
-                {
-                  role: 'user',
-                  parts: [{ text: `${codeBeforeCursor}<CURSOR>${codeAfterCursor}` }],
-                },
-              ],
-              systemInstructions: getSystemInstructions(additionalSystemInstructions, language),
-              temperature: 0,
-            });
+          const response = await ai.generateInlineCompletions({
+            abortSignal: abortControllerRef.current.signal,
+            codeBeforeCursor,
+            codeAfterCursor,
+            language: language ?? null,
+            schemaDefinitions: schemaDefinitionsText,
+          });
 
-            let responseText = '';
+          const responseText = response ?? '';
 
-            for await (const chunk of stream) {
-              responseText += chunk ?? '';
-            }
-
-            // Only filter out completely empty responses or just semicolons
-            if (!responseText || responseText.trim() === '' || responseText.trim() === ';') {
-              return emptyResult;
-            }
-
-            const codeToInsert =
-              responseText
-                // Gemini will return escaped newline characters even when telling it not to. Therefore, we are
-                // replacing them here.
-                .replace(/\\n/g, '\n')
-                // Remove unwanted markdown formatting
-                .replace(/(^```sql[\s]*)|(\s*```)/g, '') || undefined;
-
-            if (!codeToInsert) {
-              return emptyResult;
-            }
-
-            const result = {
-              enableForwardStability: true,
-              items: [
-                {
-                  insertText: codeToInsert,
-                  range: {
-                    startLineNumber: position.lineNumber,
-                    startColumn: position.column,
-                    endLineNumber: position.lineNumber,
-                    endColumn: position.column + codeToInsert.length,
-                  },
-                },
-              ],
-            } satisfies monaco.languages.InlineCompletions;
-
-            return result;
-          } catch (error) {
-            if (
-              error instanceof Error &&
-              (error.message.startsWith('exception AbortError:') ||
-                error.message === 'BodyStreamBuffer was aborted' ||
-                error.message.includes('signal is aborted'))
-            ) {
-              return emptyResult;
-            }
-
-            throw error;
+          // Only filter out completely empty responses or just semicolons
+          if (!responseText || responseText.trim() === '' || responseText.trim() === ';') {
+            return emptyResult;
           }
+
+          const codeToInsert =
+            responseText
+              // Gemini will return escaped newline characters even when telling it not to. Therefore, we are
+              // replacing them here.
+              .replace(/\\n/g, '\n')
+              // Remove unwanted markdown formatting
+              .replace(/(^```sql[\s]*)|(\s*```)/g, '') || undefined;
+
+          if (!codeToInsert) {
+            return emptyResult;
+          }
+
+          const result = {
+            enableForwardStability: true,
+            items: [
+              {
+                insertText: codeToInsert,
+                range: {
+                  startLineNumber: position.lineNumber,
+                  startColumn: position.column,
+                  endLineNumber: position.lineNumber,
+                  endColumn: position.column + codeToInsert.length,
+                },
+              },
+            ],
+          } satisfies monaco.languages.InlineCompletions;
+
+          return result;
         },
       });
 
       return [disposable];
     },
-    [ai, getAdditionalSystemInstructions, track],
+    [ai, getSchemaDefinitions, track],
   );
 
   return useMemo(() => ({ setUpAiInlineCompletions }), [setUpAiInlineCompletions]);
