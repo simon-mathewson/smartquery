@@ -58,6 +58,7 @@ export const useAutocomplete = () => {
   const setUpSqliteAutocomplete = useCallback(
     () =>
       monaco.languages.registerCompletionItemProvider('sql', {
+        triggerCharacters: [],
         provideCompletionItems: async () => {
           const suggestions: ICompletionItem[] = sqliteKeywords.map((keyword) => ({
             detail: 'Keyword',
@@ -82,7 +83,9 @@ export const useAutocomplete = () => {
   const setUpMysqlPostgresAutocomplete = useCallback(
     (monacoLanguage: string) => {
       setupLanguageFeatures(monacoLanguage as LanguageIdEnum, {
+        diagnostics: false,
         completionItems: {
+          triggerCharacters: [],
           completionService: async (_, __, ___, syntaxContext) => {
             if (!syntaxContext) {
               return Promise.resolve([]);

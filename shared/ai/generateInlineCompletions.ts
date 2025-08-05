@@ -27,6 +27,8 @@ export const generateInlineCompletions = async (
     "Do not escape slashes if a special character should be rendered.",
     "If the insertion should start on a new line, begin your response with a newline character.",
     "If the code is already complete, return nothing.",
+    "Use quotes where appropriate if the Database engine requires them.",
+    "Match the case of the input code",
     ...(schemaDefinitions
       ? [`\n\nThe schema definitions are as follows:\n\n${schemaDefinitions}`]
       : []),
