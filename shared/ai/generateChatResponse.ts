@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GenerateContentResponse, GoogleGenAI } from "@google/genai";
 import { GenerateChatResponseInput } from "./types";
 
 export type GenerateChatResponseProps = GenerateChatResponseInput & {
@@ -9,7 +9,7 @@ export type GenerateChatResponseProps = GenerateChatResponseInput & {
 
 export const generateChatResponse = async function* (
   props: GenerateChatResponseProps
-) {
+): AsyncGenerator<GenerateContentResponse, null | undefined, unknown> {
   const { contents, engine, abortSignal, googleAi, schemaDefinitions } = props;
 
   const systemInstruction = [

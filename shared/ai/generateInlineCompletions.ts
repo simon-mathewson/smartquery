@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GenerateContentResponse, GoogleGenAI } from "@google/genai";
 import { GenerateInlineCompletionsInput } from "./types";
 
 export type GenerateInlineCompletionsProps = GenerateInlineCompletionsInput & {
@@ -8,7 +8,7 @@ export type GenerateInlineCompletionsProps = GenerateInlineCompletionsInput & {
 
 export const generateInlineCompletions = async (
   props: GenerateInlineCompletionsProps
-) => {
+): Promise<GenerateContentResponse | null> => {
   const {
     googleAi,
     codeBeforeCursor,
