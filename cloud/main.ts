@@ -28,7 +28,18 @@ app.use(
     router: appRouter,
     createContext,
     onError: (opts) => {
-      console.error(opts.error);
+      const errorMessagesToIgnore = [
+        'Not authenticated',
+        'Not authenticated as Plus user',
+        'No refresh token provided',
+        'Invalid refresh token',
+        'Invalid email or password',
+        'Email already verified',
+      ];
+
+      if (!errorMessagesToIgnore.includes(opts.error.message)) {
+        console.error(opts.error);
+      }
     },
   }),
 );
