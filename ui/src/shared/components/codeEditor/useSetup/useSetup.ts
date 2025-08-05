@@ -79,6 +79,9 @@ export const useSetup = (props: {
       },
       scrollBeyondLastLine: false,
       wordWrap: 'on',
+      suggest: {
+        selectionMode: 'never',
+      },
       ...(overrideOptions ?? {}),
     }),
     [hideLineNumbers, mode, overrideOptions, paddingBottom, paddingTop, readOnly],
