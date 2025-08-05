@@ -10,7 +10,7 @@ import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { useDebouncedCallback } from 'use-debounce';
 
 export type SqlEditorProps = {
-  compact?: boolean;
+  extendOnFocus?: boolean;
   isResetDisabled?: boolean;
   isSubmitDisabled?: boolean;
   onChange?: (sql: string) => void;
@@ -22,7 +22,7 @@ export type SqlEditorProps = {
 
 export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const {
-    compact,
+    extendOnFocus,
     isResetDisabled,
     isSubmitDisabled,
     onChange,
@@ -38,11 +38,11 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   const { getAndRefreshSchemaDefinitions } = useSchemaDefinitions();
 
-  const [isExtended, setIsExtended] = useState(!compact);
+  const [isExtended, setIsExtended] = useState(!extendOnFocus);
 
   useEffect(() => {
-    setIsExtended(!compact);
-  }, [compact]);
+    setIsExtended(!extendOnFocus);
+  }, [extendOnFocus]);
 
   useEscape({
     active: isExtended,
@@ -67,7 +67,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   );
 
   const getDefaultHeight = () => Math.min(window.innerHeight * 0.5, 480);
-  const initialHeight = compact ? 136 : getDefaultHeight();
+  const initialHeight = extendOnFocus ? 136 : getDefaultHeight();
   const [extendedHeight, setExtendedHeight] = useState(getDefaultHeight());
   const height = isExtended ? extendedHeight : initialHeight;
 
@@ -87,7 +87,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         className={classNames(
           'max-h-content absolute inset-0 z-40 w-full overflow-hidden rounded-lg border border-border bg-background transition-all ease-in-out',
           {
-            'shadow-xl': isExtended && compact,
+            'shadow-xl': isExtended && extendOnFocus,
           },
         )}
         style={{ height }}
@@ -135,12 +135,12 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           onChange={onChange}
           onKeyDown={onKeyDown}
           onFocus={() => {
-            if (compact) {
+            if (extendOnFocus) {
               setIsExtended(true);
             }
           }}
           onBlur={() => {
-            if (compact) {
+            if (extendOnFocus) {
               setIsExtended(false);
             }
           }}
