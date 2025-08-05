@@ -64,6 +64,7 @@ export const Sql: React.FC = () => {
   return (
     <div className="px-2 pb-2">
       <SqlEditor
+        compact={queryResult !== null}
         isResetDisabled={(query.sql ?? '') === value}
         isSubmitDisabled={isSubmitDisabled}
         onChange={onChange}

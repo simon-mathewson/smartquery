@@ -10,6 +10,7 @@ import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { useDebouncedCallback } from 'use-debounce';
 
 export type SqlEditorProps = {
+  compact?: boolean;
   isResetDisabled?: boolean;
   isSubmitDisabled?: boolean;
   onChange?: (sql: string) => void;
@@ -20,8 +21,16 @@ export type SqlEditorProps = {
 };
 
 export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
-  const { isResetDisabled, isSubmitDisabled, onChange, onKeyDown, onReset, onSubmit, value } =
-    props;
+  const {
+    compact,
+    isResetDisabled,
+    isSubmitDisabled,
+    onChange,
+    onKeyDown,
+    onReset,
+    onSubmit,
+    value,
+  } = props;
 
   const activeConnection = useContext(ActiveConnectionContext)?.activeConnection;
 
@@ -29,7 +38,11 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   const { getAndRefreshSchemaDefinitions } = useSchemaDefinitions();
 
-  const [isExtended, setIsExtended] = useState(false);
+  const [isExtended, setIsExtended] = useState(!compact);
+
+  useEffect(() => {
+    setIsExtended(!compact);
+  }, [compact]);
 
   useEscape({
     active: isExtended,
@@ -53,12 +66,13 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
     [onSubmit],
   );
 
-  const initialHeight = 136;
-  const [extendedHeight, setExtendedHeight] = useState(Math.min(window.innerHeight * 0.5, 480));
+  const getDefaultHeight = () => Math.min(window.innerHeight * 0.5, 480);
+  const initialHeight = compact ? 136 : getDefaultHeight();
+  const [extendedHeight, setExtendedHeight] = useState(getDefaultHeight());
   const height = isExtended ? extendedHeight : initialHeight;
 
   const handleResize = useDebouncedCallback(() => {
-    setExtendedHeight(Math.min(window.innerHeight * 0.4, 480));
+    setExtendedHeight(getDefaultHeight());
   }, 100);
 
   useEffect(() => {
@@ -73,7 +87,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
         className={classNames(
           'max-h-content absolute inset-0 z-40 w-full overflow-hidden rounded-lg border border-border bg-background transition-all ease-in-out',
           {
-            'shadow-xl': isExtended,
+            'shadow-xl': isExtended && compact,
           },
         )}
         style={{ height }}
@@ -120,8 +134,16 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           maxHeight={height}
           onChange={onChange}
           onKeyDown={onKeyDown}
-          onFocus={() => setIsExtended(true)}
-          onBlur={() => setIsExtended(false)}
+          onFocus={() => {
+            if (compact) {
+              setIsExtended(true);
+            }
+          }}
+          onBlur={() => {
+            if (compact) {
+              setIsExtended(false);
+            }
+          }}
           submit={submitQuery}
           value={value}
         />
