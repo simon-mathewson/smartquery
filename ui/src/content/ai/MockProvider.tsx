@@ -10,12 +10,14 @@ export const AiMockProvider: React.FC<MockProviderProps<AiContextType>> = (props
       value={Object.assign(
         {
           enabled: false,
-          generateContent: async function* () {
-            yield '';
+          generateChatResponse: async function* () {
+            yield null;
+            return null;
           },
+          generateInlineCompletions: async () => null,
           googleAiApiKey: undefined,
           setGoogleAiApiKey: () => {},
-        },
+        } satisfies AiContextType,
         overrides,
       )}
     >
