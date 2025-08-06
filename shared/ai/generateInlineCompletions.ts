@@ -47,7 +47,7 @@ export const generateInlineCompletions = async (
         abortSignal: abortSignal,
         candidateCount: 1,
         systemInstruction,
-        temperature: 0,
+        temperature: 0.2,
       },
     });
 
