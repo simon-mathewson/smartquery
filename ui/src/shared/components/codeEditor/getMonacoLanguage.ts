@@ -10,7 +10,9 @@ export const getMonacoLanguage = (language: string | undefined) => {
       return LanguageIdEnum.MYSQL;
     case 'postgres':
       return LanguageIdEnum.PG;
+    case 'sql':
+      return 'sql';
     default:
-      return language;
+      return 'plaintext';
   }
 };

@@ -151,9 +151,7 @@ export const useSetup = (props: {
 
     setIsLoading(false);
 
-    if (monacoLanguage) {
-      setUpCompletions(monacoLanguage);
-    }
+    setUpCompletions(monacoLanguage);
 
     if (onChange) {
       disposablesRef.current.push(
@@ -228,7 +226,7 @@ export const useSetup = (props: {
 
     const model = editorRef.current.getModel();
 
-    if (model && model.getLanguageId() !== monacoLanguage && monacoLanguage) {
+    if (model && model.getLanguageId() !== monacoLanguage) {
       monaco.editor.setModelLanguage(model, monacoLanguage);
 
       setUpCompletions(monacoLanguage);
