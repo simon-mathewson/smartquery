@@ -49,6 +49,8 @@ export const useAi = () => {
           for await (const chunkText of cloudResponse) {
             yield chunkText;
           }
+
+          return null;
         }
 
         assert(googleAi, 'Google AI is not initialized');
@@ -58,6 +60,8 @@ export const useAi = () => {
         for await (const chunk of response) {
           yield chunk.text ?? null;
         }
+
+        return null;
       } catch (error) {
         if (
           error instanceof Error &&

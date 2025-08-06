@@ -47,6 +47,8 @@ export const aiRouter = trpc.router({
         prisma,
         userId: user.id,
       });
+
+      return null;
     }),
   generateInlineCompletions: trpc.procedure
     .input(generateInlineCompletionsInputSchema)

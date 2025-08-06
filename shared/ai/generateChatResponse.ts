@@ -35,6 +35,8 @@ export const generateChatResponse = async function* (
     for await (const chunk of response) {
       yield chunk;
     }
+
+    return null;
   } catch (error) {
     if (
       error instanceof Error &&
