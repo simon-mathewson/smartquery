@@ -19,7 +19,7 @@ export type CodeEditorProps = {
   height?: number;
   hideLineNumbers?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
-  language?: 'json' | 'sql' | Engine;
+  language?: 'json' | 'sql' | Engine | string;
   large?: boolean;
   maxHeight?: number;
   onBlur?: () => void;

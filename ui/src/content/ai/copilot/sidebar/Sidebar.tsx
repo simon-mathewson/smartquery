@@ -10,12 +10,14 @@ import { PulseLoader } from 'react-spinners';
 import colors from 'tailwindcss/colors';
 import classNames from 'classnames';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
-import { MessagePart } from './MessagePart/MessagePart';
 import { CircularProgress } from '@mui/material';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { useCallback, useRef } from 'react';
 import { Tooltip } from '~/shared/components/tooltip/Tooltip';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { CodeSnippet } from './CodeSnippet/CodeSnippet';
 
 export const CopilotSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -109,7 +111,13 @@ export const CopilotSidebar: React.FC = () => {
                 )}
               >
                 {message.parts?.map((part, partIndex) => (
-                  <MessagePart key={partIndex} part={part} />
+                  <ReactMarkdown
+                    components={{ code: CodeSnippet }}
+                    key={partIndex}
+                    remarkPlugins={[remarkGfm]}
+                  >
+                    {part.text}
+                  </ReactMarkdown>
                 ))}
               </div>
             </div>

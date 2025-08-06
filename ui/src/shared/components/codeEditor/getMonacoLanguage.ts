@@ -11,6 +11,6 @@ export const getMonacoLanguage = (language: string | undefined) => {
     case 'postgres':
       return LanguageIdEnum.PG;
     default:
-      return 'sql';
+      return language;
   }
 };
