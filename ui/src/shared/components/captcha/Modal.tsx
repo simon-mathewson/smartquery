@@ -66,7 +66,7 @@ export const CaptchaModal: React.FC<CaptchaModalProps> = ({ modalControl }) => {
 
   return (
     <Modal {...modalControl} title="Please confirm that you are human">
-      <div ref={render}>
+      <div className="bg-white" ref={render}>
         <Loading />
       </div>
     </Modal>
