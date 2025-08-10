@@ -8,6 +8,7 @@ import {
   AutoAwesomeOutlined,
   ArrowBackOutlined,
   AddCircleOutlineOutlined,
+  SettingsEthernetOutlined,
 } from '@mui/icons-material';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Field } from '~/shared/components/field/Field';
@@ -30,16 +31,18 @@ import { List } from '~/shared/components/list/List';
 import { assert } from 'ts-essentials';
 import { Header } from '~/shared/components/header/Header';
 import { Plus } from './plus/Plus';
+import { LinkSetup as LinkSetup } from '../link/setup/Setup';
 
 export type SettingsProps = {
   close: () => Promise<void>;
 };
 
-const sections = ['home', 'general', 'copilot', 'appearance', 'plus'] as const;
+const sections = ['home', 'general', 'connectivity', 'copilot', 'appearance', 'plus'] as const;
 type Section = (typeof sections)[number];
 
 const labels: Record<Section, string> = {
   appearance: 'Appearance',
+  connectivity: 'Connectivity',
   copilot: 'Copilot',
   general: 'General',
   home: 'Settings',
@@ -79,6 +82,11 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               icon: <SettingsOutlined />,
               label: labels.general,
               value: 'general',
+            },
+            {
+              icon: <SettingsEthernetOutlined />,
+              label: labels.connectivity,
+              value: 'connectivity',
             },
             {
               icon: <AutoAwesomeOutlined />,
@@ -150,17 +158,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
       )}
       {section === 'general' && (
         <>
-          {user?.subscription?.type === 'plus' && (
-            <Field>
-              <Toggle
-                disabled={user.subscription.type !== 'plus'}
-                hint="Use Dabase servers for remote connections. Local connections still require Dabase Link."
-                label="Connect via Cloud"
-                onChange={(value) => setConnectViaCloud(value)}
-                value={connectViaCloud ?? false}
-              />
-            </Field>
-          )}
           <Field>
             <Toggle
               hint="Help improve Dabase"
@@ -184,6 +181,22 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
             />
           </Field>
           <AddToDesktop />
+        </>
+      )}
+      {section === 'connectivity' && (
+        <>
+          <LinkSetup />
+          {user?.subscription?.type === 'plus' && (
+            <Field>
+              <Toggle
+                disabled={user.subscription.type !== 'plus'}
+                hint="Use Dabase servers for remote connections. Local connections still require Dabase Link."
+                label="Connect via Cloud"
+                onChange={(value) => setConnectViaCloud(value)}
+                value={connectViaCloud ?? false}
+              />
+            </Field>
+          )}
         </>
       )}
       {section === 'copilot' && (

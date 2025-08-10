@@ -27,7 +27,7 @@ import { assert } from 'ts-essentials';
 import { v4 as uuid } from 'uuid';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
-import { Setup as LinkSetup } from '~/content/link/setup/Setup';
+import { LinkSetup as LinkSetup } from '~/content/link/setup/Setup';
 import { sqliteDemoConnectionId } from '~/content/connections/constants';
 import { AuthContext } from '~/content/auth/Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
@@ -63,7 +63,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { addConnection, connections, removeConnection, updateConnection } =
     useDefinedContext(ConnectionsContext);
   const connectionToEdit = connectionToEditId
-    ? (connections.find((connection) => connection.id === connectionToEditId) ?? null)
+    ? connections.find((connection) => connection.id === connectionToEditId) ?? null
     : null;
 
   const [formValues, setFormValues] = useState<FormValues>();
@@ -213,9 +213,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             value={formValues.engine}
           />
         </Field>
-        {formValues.type === 'remote' && (
-          <LinkSetup databaseLabel={engineLabels[formValues.engine]} />
-        )}
+        {formValues.type === 'remote' && <LinkSetup hideIfReadyOrCloud />}
         <Field label="Storage location">
           <ButtonSelect<FormValues['storageLocation'] | null>
             fullWidth

@@ -1,30 +1,38 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { LinkApiContext } from '../link/api/Context';
 
 export const useLink = () => {
   const linkApi = useDefinedContext(LinkApiContext);
 
-  const getIsReady = useCallback(async () => {
+  const isReadyRef = useRef<boolean | null>(null);
+  const [isReady, setIsReady] = useState<boolean | null>(null);
+
+  const checkIfReady = useCallback(async () => {
     try {
       await linkApi.status.query();
+      setIsReady(true);
+      isReadyRef.current = true;
       return true;
     } catch {
+      setIsReady(false);
+      isReadyRef.current = false;
       return false;
     }
   }, [linkApi]);
 
   const waitUntilReady = useCallback(async () => {
-    while (!(await getIsReady())) {
+    while (isReadyRef.current === null) {
       await new Promise((resolve) => setTimeout(resolve, 3000));
     }
-  }, [getIsReady]);
+  }, []);
 
   return useMemo(
     () => ({
-      getIsReady,
+      checkIfReady,
+      isReady,
       waitUntilReady,
     }),
-    [getIsReady, waitUntilReady],
+    [checkIfReady, isReady, waitUntilReady],
   );
 };
