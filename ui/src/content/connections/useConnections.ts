@@ -406,7 +406,9 @@ export const useConnections = (props: UseConnectionsProps) => {
         return storedCredentials;
       })();
 
-      const endpoint = getShouldConnectViaCloud(connection)
+      const connectedViaCloud = getShouldConnectViaCloud(connection);
+
+      const endpoint = connectedViaCloud
         ? cloudApi.connector.connectDb.mutate
         : linkApi.connectDb.mutate;
 
@@ -423,7 +425,7 @@ export const useConnections = (props: UseConnectionsProps) => {
           : null,
       });
 
-      return { connectorId };
+      return { connectedViaCloud, connectorId };
     },
     [getShouldConnectViaCloud, cloudApi, linkApi, signInModal, userPasswordModal],
   );
@@ -492,7 +494,7 @@ export const useConnections = (props: UseConnectionsProps) => {
           overrides?.schema ?? (connection.type === 'remote' ? connection.schema : undefined);
 
         if (connection.type === 'remote') {
-          const { connectorId: newConnectorId } = await connectRemote({
+          const { connectedViaCloud, connectorId: newConnectorId } = await connectRemote({
             ...connection,
             database: selectedDatabase,
             schema: selectedSchema,
@@ -500,7 +502,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
           const newActiveConnection = {
             ...connection,
-            connectedViaCloud: getShouldConnectViaCloud(connection),
+            connectedViaCloud,
             connectorId: newConnectorId,
             database: selectedDatabase,
             schema: selectedSchema,
