@@ -18,6 +18,7 @@ import { ConnectCanceledError } from './connectAbortedError';
 import { sqliteDemoConnectionId } from './constants';
 import type { SignInModalInput } from './signInModal/types';
 import type { UserPasswordModalInput } from './userPasswordModal/types';
+import { TRPCClientError } from '@trpc/client';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -301,6 +302,18 @@ export const useConnections = (props: UseConnectionsProps) => {
     ],
   );
 
+  const getShouldConnectViaCloud = useCallback(
+    (connection: RemoteConnection) => {
+      const localHosts = ['localhost', '127.0.0.1', '::1'];
+
+      return (
+        connectViaCloud === true &&
+        !localHosts.includes(connection.ssh ? connection.ssh.host : connection.host)
+      );
+    },
+    [connectViaCloud],
+  );
+
   const connectRemote = useCallback(
     async (
       connection: RemoteConnection,
@@ -393,13 +406,7 @@ export const useConnections = (props: UseConnectionsProps) => {
         return storedCredentials;
       })();
 
-      const localHosts = ['localhost', '127.0.0.1', '::1'];
-
-      const connectedViaCloud =
-        connectViaCloud === true &&
-        !localHosts.includes(connection.ssh ? connection.ssh.host : connection.host);
-
-      const endpoint = connectedViaCloud
+      const endpoint = getShouldConnectViaCloud(connection)
         ? cloudApi.connector.connectDb.mutate
         : linkApi.connectDb.mutate;
 
@@ -416,9 +423,9 @@ export const useConnections = (props: UseConnectionsProps) => {
           : null,
       });
 
-      return { connectedViaCloud, connectorId };
+      return { connectorId };
     },
-    [connectViaCloud, cloudApi, linkApi, signInModal, userPasswordModal],
+    [getShouldConnectViaCloud, cloudApi, linkApi, signInModal, userPasswordModal],
   );
 
   const getDemoConnection = useCallback(async () => {
@@ -485,7 +492,7 @@ export const useConnections = (props: UseConnectionsProps) => {
           overrides?.schema ?? (connection.type === 'remote' ? connection.schema : undefined);
 
         if (connection.type === 'remote') {
-          const { connectorId: newConnectorId, connectedViaCloud } = await connectRemote({
+          const { connectorId: newConnectorId } = await connectRemote({
             ...connection,
             database: selectedDatabase,
             schema: selectedSchema,
@@ -493,7 +500,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
           const newActiveConnection = {
             ...connection,
-            connectedViaCloud,
+            connectedViaCloud: getShouldConnectViaCloud(connection),
             connectorId: newConnectorId,
             database: selectedDatabase,
             schema: selectedSchema,
@@ -505,13 +512,31 @@ export const useConnections = (props: UseConnectionsProps) => {
         }
       } catch (error) {
         if (!(error instanceof ConnectCanceledError)) {
-          console.error(error);
-
-          toast.add({
-            color: 'danger',
-            description: (error as Error).message,
-            title: 'Failed to connect to database',
-          });
+          if (
+            error instanceof TRPCClientError &&
+            error.message === 'Failed to fetch' &&
+            connection.type === 'remote'
+          ) {
+            if (getShouldConnectViaCloud(connection)) {
+              toast.add({
+                color: 'danger',
+                description: 'Are you offline? Check connectivity settings to connect locally.',
+                title: 'Unable to reach Cloud',
+              });
+            } else {
+              toast.add({
+                color: 'danger',
+                description: 'Is Dabase Link running? See connectivity settings for details.',
+                title: 'Failed to reach Link',
+              });
+            }
+          } else {
+            toast.add({
+              color: 'danger',
+              description: (error as Error).message,
+              title: 'Failed to connect to database',
+            });
+          }
         }
 
         navigate(routes.root());
@@ -519,7 +544,16 @@ export const useConnections = (props: UseConnectionsProps) => {
         return null;
       }
     },
-    [connections, getDemoConnection, disconnect, toast, navigate, getSqliteDb, connectRemote],
+    [
+      getDemoConnection,
+      connections,
+      disconnect,
+      toast,
+      navigate,
+      getSqliteDb,
+      connectRemote,
+      getShouldConnectViaCloud,
+    ],
   );
 
   const isReady = !isInitializingAuth && (!user || cloudConnectionsQuery.hasRun);
