@@ -64,6 +64,18 @@ export const decryptCredentials = async (props: {
     );
 
     newConnection.sshPrivateKey = bytesToUtf8(decryptedSshPrivateKey);
+
+    if (newConnection.isSshPrivateKeyPassphraseEncrypted && newConnection.sshPrivateKeyPassphrase) {
+      assert(newConnection.sshPrivateKeyPassphraseNonce);
+
+      const decryptedSshPrivateKeyPassphrase = decrypt(
+        hexToBytes(newConnection.sshPrivateKeyPassphrase),
+        hexToBytes(newConnection.sshPrivateKeyPassphraseNonce),
+        decryptedDek,
+      );
+
+      newConnection.sshPrivateKeyPassphrase = bytesToUtf8(decryptedSshPrivateKeyPassphrase);
+    }
   }
 
   return newConnection;

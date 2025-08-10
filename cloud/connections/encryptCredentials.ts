@@ -56,6 +56,10 @@ export const encryptCredentials = async (props: {
   const isNewSshPrivateKey =
     !existingConnection?.encryptCredentials ||
     existingConnection.sshPrivateKey !== newConnection.sshPrivateKey;
+  const isNewSshPrivateKeyPassphrase =
+    !existingConnection?.encryptCredentials ||
+    !existingConnection.isSshPrivateKeyPassphraseEncrypted ||
+    existingConnection.sshPrivateKeyPassphrase !== newConnection.sshPrivateKeyPassphrase;
 
   if (newConnection.sshPassword && isNewSshPassword) {
     const sshPasswordEncryption = encrypt(newConnection.sshPassword, decryptedDek);
@@ -67,6 +71,20 @@ export const encryptCredentials = async (props: {
 
     newConnection.sshPrivateKey = bytesToHex(sshPrivateKeyEncryption.ciphertext);
     newConnection.sshPrivateKeyNonce = bytesToHex(sshPrivateKeyEncryption.nonce);
+  }
+
+  if (newConnection.sshPrivateKeyPassphrase && isNewSshPrivateKeyPassphrase) {
+    const sshPrivateKeyPassphraseEncryption = encrypt(
+      newConnection.sshPrivateKeyPassphrase,
+      decryptedDek,
+    );
+    newConnection.sshPrivateKeyPassphrase = bytesToHex(
+      sshPrivateKeyPassphraseEncryption.ciphertext,
+    );
+    newConnection.sshPrivateKeyPassphraseNonce = bytesToHex(
+      sshPrivateKeyPassphraseEncryption.nonce,
+    );
+    newConnection.isSshPrivateKeyPassphraseEncrypted = true;
   }
 
   return newConnection;

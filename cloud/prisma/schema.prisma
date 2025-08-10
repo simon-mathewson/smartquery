@@ -10,31 +10,33 @@ datasource db {
 }
 
 model Connection {
-  createdAt                  DateTime @default(now())
-  updatedAt                  DateTime @updatedAt
-  database                   String
-  dbUser                     String
-  encryptCredentials         Boolean
-  engine                     Engine
-  host                       String
-  name                       String
-  password                   String?
-  port                       Int
-  schema                     String?
-  sshHost                    String?
-  sshPassword                String?
-  sshPort                    Int?
-  sshPrivateKey              String?
-  sshUser                    String?
-  passwordNonce              String?
-  sshPasswordNonce           String?
-  sshPrivateKeyNonce         String?
-  sshUsePrivateKey           Boolean?
-  id                         String   @id @default(uuid()) @db.Uuid
-  userId                     String   @db.Uuid
-  sshPrivateKeyPassphrase    String?
-  useSshPrivateKeyPassphrase Boolean  @default(false)
-  user                       User     @relation(fields: [userId], references: [id])
+  createdAt                          DateTime @default(now())
+  updatedAt                          DateTime @updatedAt
+  database                           String
+  dbUser                             String
+  encryptCredentials                 Boolean
+  engine                             Engine
+  host                               String
+  name                               String
+  password                           String?
+  port                               Int
+  schema                             String?
+  sshHost                            String?
+  sshPassword                        String?
+  sshPort                            Int?
+  sshPrivateKey                      String?
+  sshUser                            String?
+  passwordNonce                      String?
+  sshPasswordNonce                   String?
+  sshPrivateKeyNonce                 String?
+  sshUsePrivateKey                   Boolean?
+  id                                 String   @id @default(uuid()) @db.Uuid
+  userId                             String   @db.Uuid
+  sshPrivateKeyPassphrase            String?
+  sshPrivateKeyPassphraseNonce       String?
+  useSshPrivateKeyPassphrase         Boolean  @default(false)
+  isSshPrivateKeyPassphraseEncrypted Boolean  @default(false)
+  user                               User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
