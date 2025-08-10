@@ -4,7 +4,13 @@ import type { AppRouter } from '../../../../../cloud/router';
 import { assert } from 'ts-essentials';
 
 const batchLinkInput = {
-  fetch: (input: RequestInfo | URL, init?: RequestInit) => {
+  fetch: (input: RequestInfo | URL, initProp?: RequestInit) => {
+    const init = {
+      ...initProp,
+      // Keeps disconnect request on beforeonload alive when the user navigates away
+      keepalive: true,
+    };
+
     const [fetchToUse, initToUse] = (() => {
       if (
         typeof init?.headers === 'object' &&

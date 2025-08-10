@@ -9,7 +9,6 @@ import { isAuthenticatedAndPlus } from '~/middlewares/isAuthenticated';
 import type { Connector } from '@/connector/types';
 import type { CurrentUser } from '~/context';
 import { PLUS_MAX_CONCURRENT_CONNECTIONS, PLUS_MAX_CONCURRENT_QUERY_STATEMENTS } from '@/plus/plus';
-import { TRPCError } from '@trpc/server';
 import { trackUsage } from '../subscription/trackUsage';
 import { verifyUsageWithinLimits } from '~/subscription/verifyUsageWithinLimits';
 import superjson from 'superjson';
@@ -17,6 +16,7 @@ import superjson from 'superjson';
 const connectors: Record<
   string,
   {
+    createdAt: Date;
     connector: Connector;
     queue: Array<() => Promise<void>>;
     user: CurrentUser;
@@ -34,11 +34,19 @@ export const connectorRouter = trpc.router({
         (connector) => connector.user.id === props.ctx.user.id,
       ).length;
 
+      // Disconnect the oldest connection if we've reached the limit
       if (existingConnectionsCount >= PLUS_MAX_CONCURRENT_CONNECTIONS) {
-        throw new TRPCError({
-          code: 'TOO_MANY_REQUESTS',
-          message: 'You have reached the maximum number of concurrent connections',
-        });
+        const [oldestConnectorId, oldestConnector] = Object.entries(connectors).sort(
+          ([, a], [, b]) => a.createdAt.getTime() - b.createdAt.getTime(),
+        )[0];
+
+        await disconnect(oldestConnector.connector);
+
+        if (process.env.NODE_ENV === 'development') {
+          console.info('Disconnected from', oldestConnectorId);
+        }
+
+        delete connectors[oldestConnectorId];
       }
 
       const connector = await connect(connection);
@@ -48,6 +56,7 @@ export const connectorRouter = trpc.router({
       }
 
       connectors[connector.id] = {
+        createdAt: new Date(),
         connector,
         queue: [],
         user: props.ctx.user,
