@@ -267,7 +267,7 @@ void (async () => {
         name: 'mysql_db SSH with key and passphrase',
         user: {
           connect: {
-            email: 'test@dabase.dev',
+            email: userEmail,
           },
         },
         encryptCredentials: false,
