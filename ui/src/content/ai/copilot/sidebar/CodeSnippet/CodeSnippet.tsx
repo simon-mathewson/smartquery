@@ -86,7 +86,7 @@ export const CodeSnippet = React.memo(
       return (
         <code
           className={classNames(
-            'inline-block whitespace-normal rounded-lg border border-border bg-background px-1 py-0.5',
+            'inline-block whitespace-normal rounded-lg border border-border bg-background px-1 py-0.5 text-textSecondary',
             {
               '!p-2': node?.position?.start?.column === 1,
             },
