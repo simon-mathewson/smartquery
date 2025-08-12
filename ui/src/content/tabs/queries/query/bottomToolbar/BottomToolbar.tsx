@@ -7,6 +7,7 @@ import { Add } from './createRow/CreateRow';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { formatNumber } from '@/utils/formatNumber';
 
 export type BottomToolbarProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
@@ -23,7 +24,9 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
   const limitText = limit
     ? `${(offset ?? 0) + 1}–${Math.min((offset ?? 0) + limit, totalRows ?? 0)}`
     : undefined;
-  const paginationText = [limitText, totalRows].filter(Boolean).join(' of ');
+  const paginationText = [limitText, totalRows === undefined ? undefined : formatNumber(totalRows)]
+    .filter(Boolean)
+    .join(' of ');
 
   const previousDisabled = !offset;
   const nextDisabled = totalRows !== undefined && totalRows - ((offset ?? 0) + (limit ?? 0)) <= 0;
@@ -34,7 +37,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
       middle={
         ((totalRows !== undefined && totalRows > 0) || rows.length > 0) && (
           <div className="text-xs text-textSecondary">
-            {totalRows ? paginationText : rows.length} rows
+            {totalRows ? paginationText : formatNumber(rows.length)} rows
           </div>
         )
       }
