@@ -124,8 +124,6 @@ export const useAuth = () => {
             color: 'success',
           });
         }
-
-        navigate(routes.root());
       } catch (error) {
         console.error(error);
 
@@ -135,7 +133,7 @@ export const useAuth = () => {
         });
       }
     },
-    [cloudApi, getCurrentUser, navigate, toast],
+    [cloudApi, getCurrentUser, toast],
   );
 
   const signUp = useCallback(

@@ -1,11 +1,4 @@
-import {
-  PLUS_MAX_AI_CHAT_INPUT_TOKENS,
-  PLUS_MAX_AI_CHAT_OUTPUT_TOKENS,
-  PLUS_MAX_AI_INLINE_COMPLETION_INPUT_TOKENS,
-  PLUS_MAX_AI_INLINE_COMPLETION_OUTPUT_TOKENS,
-  PLUS_MAX_QUERY_DURATION_MILLISECONDS,
-  PLUS_MAX_QUERY_RESPONSE_BYTES,
-} from '@/plus/plus';
+import { plans } from '@/subscriptions/plans';
 import React from 'react';
 import { assert } from 'ts-essentials';
 import { CloudApiContext } from '~/content/cloud/api/Context';
@@ -18,42 +11,42 @@ const usages = [
   {
     divisor: 1e6,
     label: 'Query Duration',
-    max: PLUS_MAX_QUERY_DURATION_MILLISECONDS,
+    max: plans.plus.limits.totalQueryDurationMilliseconds,
     type: 'queryDurationMilliseconds',
     unit: 'k seconds',
   },
   {
     divisor: 1024 * 1024 * 1024,
     label: 'Query Response Size',
-    max: PLUS_MAX_QUERY_RESPONSE_BYTES,
+    max: plans.plus.limits.totalQueryResponseBytes,
     type: 'queryResponseBytes',
     unit: ' GB',
   },
   {
     divisor: 1e6,
     label: 'AI Chat Input',
-    max: PLUS_MAX_AI_CHAT_INPUT_TOKENS,
+    max: plans.plus.limits.aiCredits,
     type: 'aiChatInputTokens',
     unit: 'm tokens',
   },
   {
     divisor: 1e3,
     label: 'AI Chat Output',
-    max: PLUS_MAX_AI_CHAT_OUTPUT_TOKENS,
+    max: plans.plus.limits.aiCredits,
     type: 'aiChatOutputTokens',
     unit: 'k tokens',
   },
   {
     divisor: 1e6,
     label: 'AI Inline Completion Input',
-    max: PLUS_MAX_AI_INLINE_COMPLETION_INPUT_TOKENS,
+    max: plans.plus.limits.aiCredits,
     type: 'aiInlineCompletionInputTokens',
     unit: 'm tokens',
   },
   {
     divisor: 1e6,
     label: 'AI Inline Completion Output',
-    max: PLUS_MAX_AI_INLINE_COMPLETION_OUTPUT_TOKENS,
+    max: plans.plus.limits.aiCredits,
     type: 'aiInlineCompletionOutputTokens',
     unit: 'm tokens',
   },

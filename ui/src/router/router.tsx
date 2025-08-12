@@ -8,7 +8,12 @@ const Login = React.lazy(() =>
   import('~/content/auth/Login/Login').then((module) => ({ default: module.Login })),
 );
 const Signup = React.lazy(() =>
-  import('~/content/auth/Signup/Signup').then((module) => ({ default: module.Signup })),
+  import('~/content/auth/Signup/SignupPage').then((module) => ({ default: module.SignupPage })),
+);
+const Subscribe = React.lazy(() =>
+  import('~/content/subscriptions/SubscribePage').then((module) => ({
+    default: module.SubscribePage,
+  })),
 );
 const VerifyEmail = React.lazy(() =>
   import('~/content/auth/VerifyEmail/VerifyEmail').then((module) => ({
@@ -67,6 +72,7 @@ export const Router: React.FC = () => {
 
         <Route path={routes.login()} component={Login} />
         <Route path={routes.signup()} component={Signup} />
+        <Route path={routes.subscribe()} component={Subscribe} />
         <Route path={routes.verifyEmail()} component={VerifyEmail} />
         <Route path={routes.requestResetPassword()} component={RequestResetPassword} />
         <Route path={routes.resetPassword()} component={ResetPassword} />

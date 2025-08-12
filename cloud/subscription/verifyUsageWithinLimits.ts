@@ -1,23 +1,16 @@
 import type { PrismaClient, UsageType } from '~/prisma/generated';
 import type { CurrentUser } from '~/context';
-import {
-  PLUS_MAX_AI_CHAT_INPUT_TOKENS,
-  PLUS_MAX_AI_CHAT_OUTPUT_TOKENS,
-  PLUS_MAX_AI_INLINE_COMPLETION_INPUT_TOKENS,
-  PLUS_MAX_AI_INLINE_COMPLETION_OUTPUT_TOKENS,
-  PLUS_MAX_QUERY_DURATION_MILLISECONDS,
-  PLUS_MAX_QUERY_RESPONSE_BYTES,
-} from '@/plus/plus';
+import { plans } from '@/subscriptions/plans';
 import { getSubscriptionAndUsage } from './getSubscriptionAndUsage';
 import { TRPCError } from '@trpc/server';
 
 const usageTypeToLimit: Record<UsageType, number> = {
-  aiChatInputTokens: PLUS_MAX_AI_CHAT_INPUT_TOKENS,
-  aiChatOutputTokens: PLUS_MAX_AI_CHAT_OUTPUT_TOKENS,
-  aiInlineCompletionInputTokens: PLUS_MAX_AI_INLINE_COMPLETION_INPUT_TOKENS,
-  aiInlineCompletionOutputTokens: PLUS_MAX_AI_INLINE_COMPLETION_OUTPUT_TOKENS,
-  queryDurationMilliseconds: PLUS_MAX_QUERY_DURATION_MILLISECONDS,
-  queryResponseBytes: PLUS_MAX_QUERY_RESPONSE_BYTES,
+  aiChatInputTokens: plans.plus.limits.aiCredits,
+  aiChatOutputTokens: plans.plus.limits.aiCredits,
+  aiInlineCompletionInputTokens: plans.plus.limits.aiCredits,
+  aiInlineCompletionOutputTokens: plans.plus.limits.aiCredits,
+  queryDurationMilliseconds: plans.plus.limits.totalQueryDurationMilliseconds,
+  queryResponseBytes: plans.plus.limits.totalQueryResponseBytes,
 };
 
 export const verifyUsageWithinLimits = async (props: {

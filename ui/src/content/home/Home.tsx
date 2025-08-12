@@ -10,7 +10,7 @@ export const Home: React.FC = () => {
   const { connections } = useDefinedContext(ConnectionsContext);
 
   return (
-    <Page title="Home">
+    <Page htmlProps={{ className: 'max-w-[356px]' }} title="Home">
       {connections.length > 0 && (
         <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
           <Connections

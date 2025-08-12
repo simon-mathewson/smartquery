@@ -8,7 +8,7 @@ import { trpc } from '~/trpc';
 import { isAuthenticatedAndPlus } from '~/middlewares/isAuthenticated';
 import type { Connector } from '@/connector/types';
 import type { CurrentUser } from '~/context';
-import { PLUS_MAX_CONCURRENT_CONNECTIONS, PLUS_MAX_CONCURRENT_QUERY_STATEMENTS } from '@/plus/plus';
+import { plans } from '@/subscriptions/plans';
 import { trackUsage } from '../subscription/trackUsage';
 import { verifyUsageWithinLimits } from '~/subscription/verifyUsageWithinLimits';
 import superjson from 'superjson';
@@ -35,7 +35,7 @@ export const connectorRouter = trpc.router({
       ).length;
 
       // Disconnect the oldest connection if we've reached the limit
-      if (existingConnectionsCount >= PLUS_MAX_CONCURRENT_CONNECTIONS) {
+      if (existingConnectionsCount >= plans.plus.limits.concurrentConnections) {
         const [oldestConnectorId, oldestConnector] = Object.entries(connectors).sort(
           ([, a], [, b]) => a.createdAt.getTime() - b.createdAt.getTime(),
         )[0];
@@ -83,7 +83,7 @@ export const connectorRouter = trpc.router({
     .input(
       z.object({
         connectorId: z.string(),
-        statements: z.array(z.string()).max(PLUS_MAX_CONCURRENT_QUERY_STATEMENTS),
+        statements: z.array(z.string()).max(plans.plus.limits.concurrentQueryStatements),
       }),
     )
     .use(isAuthenticatedAndPlus)

@@ -9,6 +9,7 @@ export const routes = {
 
   login: () => '/login',
   signup: () => '/signup',
+  subscribe: () => '/subscribe',
   verifyEmail: () => '/verify-email',
   requestResetPassword: (email?: string) =>
     `/request-reset-password${email ? `?email=${email}` : ''}`,

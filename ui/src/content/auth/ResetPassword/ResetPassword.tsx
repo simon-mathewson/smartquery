@@ -1,7 +1,7 @@
 import { ArrowBack, Done } from '@mui/icons-material';
 import React, { useCallback, useState } from 'react';
 import { assert } from 'ts-essentials';
-import { useSearchParams } from 'wouter';
+import { useLocation, useSearchParams } from 'wouter';
 import { CloudApiContext } from '~/content/cloud/api/Context';
 import { ToastContext } from '~/content/toast/Context';
 import { routes } from '~/router/routes';
@@ -14,6 +14,7 @@ import { AuthContext } from '../Context';
 import { PasswordFields } from '../PasswordFields';
 
 export const ResetPassword: React.FC = () => {
+  const [, navigate] = useLocation();
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const toast = useDefinedContext(ToastContext);
   const auth = useDefinedContext(AuthContext);
@@ -40,7 +41,9 @@ export const ResetPassword: React.FC = () => {
           title: 'Password reset successful',
         });
 
-        void auth.logIn(auth.user!.email, password);
+        await auth.logIn(auth.user!.email, password);
+
+        navigate(routes.root());
       } catch (error) {
         toast.add({
           color: 'danger',
@@ -49,12 +52,12 @@ export const ResetPassword: React.FC = () => {
         });
       }
     },
-    [auth, cloudApi.auth.resetPassword, password, toast, token],
+    [auth, cloudApi.auth.resetPassword, navigate, password, toast, token],
   );
 
   return (
     <Page title="Reset password">
-      <Card htmlProps={{ className: 'w-full' }}>
+      <Card htmlProps={{ className: 'w-full max-w-[356px]' }}>
         <Header
           left={<Button element="link" htmlProps={{ href: routes.login() }} icon={<ArrowBack />} />}
           middle={

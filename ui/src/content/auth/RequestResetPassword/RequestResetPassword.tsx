@@ -61,7 +61,7 @@ export const RequestResetPassword: React.FC = () => {
     <>
       <CaptchaModal modalControl={captchaModal} />
       <Page title="Reset password">
-        <Card htmlProps={{ className: 'w-full' }}>
+        <Card htmlProps={{ className: 'w-full max-w-[356px]' }}>
           <Header
             left={
               <Button element="link" htmlProps={{ href: routes.login() }} icon={<ArrowBack />} />

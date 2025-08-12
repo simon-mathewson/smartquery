@@ -9,25 +9,29 @@ import { Input } from '~/shared/components/input/Input';
 import { Page } from '~/shared/components/page/Page';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../Context';
+import { useLocation } from 'wouter';
 
 export const Login: React.FC = () => {
+  const [, navigate] = useLocation();
   const auth = useDefinedContext(AuthContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      void auth.logIn(email, password);
+      await auth.logIn(email, password);
+
+      navigate(routes.root());
     },
-    [auth, email, password],
+    [auth, email, navigate, password],
   );
 
   return (
     <Page title="Login">
-      <Card htmlProps={{ className: 'w-full' }}>
+      <Card htmlProps={{ className: 'w-full max-w-[356px]' }}>
         <Header
           left={<Button element="link" htmlProps={{ href: routes.root() }} icon={<ArrowBack />} />}
           middle={
