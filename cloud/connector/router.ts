@@ -5,13 +5,13 @@ import { disconnect } from '@/connector/disconnect';
 import type { Results } from '@/connector/runQuery';
 import { runQuery } from '@/connector/runQuery';
 import { trpc } from '~/trpc';
-import { isAuthenticatedAndPlus } from '~/middlewares/isAuthenticated';
+import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import type { Connector } from '@/connector/types';
-import type { CurrentUser } from '~/context';
-import { plans } from '@/subscriptions/plans';
-import { trackUsage } from '../subscription/trackUsage';
-import { verifyUsageWithinLimits } from '~/subscription/verifyUsageWithinLimits';
+import { trackUsage } from '~/usage/trackUsage';
+import { verifyUsageWithinLimits } from '~/usage/verifyUsageWithinLimits';
 import superjson from 'superjson';
+import { getLimitsForUser } from '@/subscriptions/getLimitsForUser';
+import type { CurrentUser } from '@/user/user';
 
 const connectors: Record<
   string,
@@ -26,16 +26,21 @@ const connectors: Record<
 export const connectorRouter = trpc.router({
   connectDb: trpc.procedure
     .input(remoteConnectionSchema)
-    .use(isAuthenticatedAndPlus)
+    .use(isAuthenticated)
     .mutation(async (props) => {
-      const { input: connection } = props;
+      const {
+        ctx: { user },
+        input: connection,
+      } = props;
 
       const existingConnectionsCount = Object.values(connectors).filter(
         (connector) => connector.user.id === props.ctx.user.id,
       ).length;
 
+      const maxConcurrentConnections = getLimitsForUser(user).concurrentConnections;
+
       // Disconnect the oldest connection if we've reached the limit
-      if (existingConnectionsCount >= plans.plus.limits.concurrentConnections) {
+      if (existingConnectionsCount >= maxConcurrentConnections) {
         const [oldestConnectorId, oldestConnector] = Object.entries(connectors).sort(
           ([, a], [, b]) => a.createdAt.getTime() - b.createdAt.getTime(),
         )[0];
@@ -66,7 +71,7 @@ export const connectorRouter = trpc.router({
     }),
   disconnectDb: trpc.procedure
     .input(z.string())
-    .use(isAuthenticatedAndPlus)
+    .use(isAuthenticated)
     .mutation(async (props) => {
       const { input: connectorId } = props;
       if (!(connectorId in connectors)) return;
@@ -83,15 +88,21 @@ export const connectorRouter = trpc.router({
     .input(
       z.object({
         connectorId: z.string(),
-        statements: z.array(z.string()).max(plans.plus.limits.concurrentQueryStatements),
+        statements: z.array(z.string()),
       }),
     )
-    .use(isAuthenticatedAndPlus)
+    .use(isAuthenticated)
     .mutation(async (props) => {
       const {
         ctx: { prisma, user },
         input: { connectorId, statements },
       } = props;
+
+      const maxConcurrentQueryStatements = getLimitsForUser(user).concurrentQueryStatements;
+
+      if (statements.length > maxConcurrentQueryStatements) {
+        throw new Error('Too many statements');
+      }
 
       if (process.env.NODE_ENV === 'development') {
         console.info(`Processing ${statements.length} queries`);

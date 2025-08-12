@@ -38,7 +38,7 @@ export const useAi = () => {
   const generateChatResponse = useCallback(
     async function* (props: Omit<GenerateChatResponseProps, 'googleAi'>) {
       try {
-        if (auth.user?.subscription?.type === 'plus') {
+        if (auth.user?.subscription) {
           const cloudResponse = await cloudApiStream.ai.generateChatResponse.mutate(
             omit(props, 'abortSignal'),
             {
@@ -74,13 +74,13 @@ export const useAi = () => {
         throw error;
       }
     },
-    [auth.user?.subscription?.type, cloudApiStream, googleAi],
+    [auth.user?.subscription, cloudApiStream, googleAi],
   );
 
   const generateInlineCompletions = useCallback(
     async (props: Omit<GenerateInlineCompletionsProps, 'googleAi'>) => {
       try {
-        if (auth.user?.subscription?.type === 'plus') {
+        if (auth.user?.subscription) {
           return cloudApi.ai.generateInlineCompletions.mutate(omit(props, 'abortSignal'), {
             signal: props.abortSignal,
           });
@@ -102,10 +102,10 @@ export const useAi = () => {
         }
       }
     },
-    [auth.user?.subscription?.type, cloudApi, googleAi],
+    [auth.user?.subscription, cloudApi, googleAi],
   );
 
-  const enabled = auth.user?.subscription?.type === 'plus' || Boolean(googleAi);
+  const enabled = auth.user?.subscription || Boolean(googleAi);
 
   return useMemo(
     () => ({

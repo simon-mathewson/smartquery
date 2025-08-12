@@ -1,43 +1,43 @@
-import React, { useState } from 'react';
 import {
+  ArrowBackOutlined,
+  AutoAwesomeOutlined,
   BrushOutlined,
   GitHub,
+  LogoutOutlined,
   PersonAddAlt1Outlined,
-  SettingsOutlined,
-  VpnKeyOutlined,
-  AutoAwesomeOutlined,
-  ArrowBackOutlined,
-  AddCircleOutlineOutlined,
   SettingsEthernetOutlined,
+  SettingsOutlined,
+  SpeedOutlined,
+  VpnKeyOutlined,
 } from '@mui/icons-material';
+import React, { useState } from 'react';
+import { assert } from 'ts-essentials';
+import { routes } from '~/router/routes';
+import { Button } from '~/shared/components/button/Button';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Field } from '~/shared/components/field/Field';
-import type { ThemeModePreference } from '../theme/types';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { ThemeContext } from '../theme/Context';
-import { AddToDesktop } from './addToDesktop/AddToDesktop';
-import { AiContext } from '../ai/Context';
-import { Input } from '~/shared/components/input/Input';
-import { AuthContext } from '../auth/Context';
-import { Button } from '~/shared/components/button/Button';
-import { LogoutOutlined } from '@mui/icons-material';
-import { AnalyticsContext } from '../analytics/Context';
-import { Toggle } from '~/shared/components/toggle/Toggle';
-import { routes } from '~/router/routes';
-import { ErrorTrackingContext } from '../errors/tracking/Context';
-import { ConnectionsContext } from '../connections/Context';
-import { ThemeColorSelect } from '~/shared/components/themeColorSelect/ThemeColorSelect';
-import { List } from '~/shared/components/list/List';
-import { assert } from 'ts-essentials';
 import { Header } from '~/shared/components/header/Header';
-import { Plus } from './plus/Plus';
-import { LinkSetup as LinkSetup } from '../link/setup/Setup';
+import { Input } from '~/shared/components/input/Input';
+import { List } from '~/shared/components/list/List';
+import { ThemeColorSelect } from '~/shared/components/themeColorSelect/ThemeColorSelect';
+import { Toggle } from '~/shared/components/toggle/Toggle';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { AiContext } from '../ai/Context';
+import { AnalyticsContext } from '../analytics/Context';
+import { AuthContext } from '../auth/Context';
+import { ConnectionsContext } from '../connections/Context';
+import { ErrorTrackingContext } from '../errors/tracking/Context';
+import { LinkSetup } from '../link/setup/Setup';
+import { ThemeContext } from '../theme/Context';
+import type { ThemeModePreference } from '../theme/types';
+import { AddToDesktop } from './addToDesktop/AddToDesktop';
+import { Usage } from './usage/Usage';
 
 export type SettingsProps = {
   close: () => Promise<void>;
 };
 
-const sections = ['home', 'general', 'connectivity', 'copilot', 'appearance', 'plus'] as const;
+const sections = ['home', 'general', 'connectivity', 'copilot', 'appearance', 'usage'] as const;
 type Section = (typeof sections)[number];
 
 const labels: Record<Section, string> = {
@@ -46,7 +46,7 @@ const labels: Record<Section, string> = {
   copilot: 'Copilot',
   general: 'General',
   home: 'Settings',
-  plus: 'Dabase Plus',
+  usage: 'Usage',
 } as const;
 
 export const Settings: React.FC<SettingsProps> = ({ close }) => {
@@ -98,15 +98,11 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               label: labels.appearance,
               value: 'appearance',
             },
-            ...(user?.subscription?.type === 'plus'
-              ? [
-                  {
-                    icon: <AddCircleOutlineOutlined />,
-                    label: labels.plus,
-                    value: 'plus',
-                  },
-                ]
-              : []),
+            {
+              icon: <SpeedOutlined />,
+              label: labels.usage,
+              value: 'usage',
+            },
             ...(user
               ? [
                   {
@@ -261,7 +257,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           )}
         </>
       )}
-      {section === 'plus' && <Plus />}
+      {section === 'usage' && <Usage />}
     </div>
   );
 };

@@ -83,7 +83,7 @@ export const useConnections = (props: UseConnectionsProps) => {
   useEffect(() => {
     if (isInitializingAuth || !user) return;
 
-    if (user.subscription?.type === 'plus') {
+    if (user.subscription) {
       if (connectViaCloud === null) {
         setConnectViaCloud(true);
       }

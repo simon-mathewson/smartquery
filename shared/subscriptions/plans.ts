@@ -50,3 +50,5 @@ export const plans = {
     },
   },
 } satisfies Record<string, Plan>;
+
+export type PlanLimits = Plan["limits"];

@@ -12,11 +12,29 @@ void (async () => {
       dataEncryptionKey:
         '54ad804c62507b42d63959046c1d0c92f21129e297655ecf10b79a580ee582cf1483d8d2385ead75393027ba51f995f3',
       dataEncryptionKeyNonce: '8f242f469d64fb04c061b40898d0b5fcb4ab0f6acee5f058',
-      email: 'test@dabase.dev',
+      email: 'free@dabase.dev',
       keyEncryptionKeySalt: 'eb8943e0cd3e0d2ac3f945a20272a70a',
       password:
         '5172332a5b34fbbafecf69a277f3022e45215916fba3f38ff8a61cb0072a5dbb6f6c3ca7923e7b2c8467d21659ef276a31220bb8e9ae47b380c9d1f0dc02c244',
       passwordSalt: '31c7bc712b3c556d63dda05d49ec172d',
+      usages: {
+        createMany: {
+          data: [
+            {
+              amount: 2_834,
+              type: 'aiCredits',
+            },
+            {
+              amount: 548_328,
+              type: 'queryDurationMilliseconds',
+            },
+            {
+              amount: 54_438_347,
+              type: 'queryResponseBytes',
+            },
+          ],
+        },
+      },
     },
   });
 
@@ -30,110 +48,67 @@ void (async () => {
       password:
         '5172332a5b34fbbafecf69a277f3022e45215916fba3f38ff8a61cb0072a5dbb6f6c3ca7923e7b2c8467d21659ef276a31220bb8e9ae47b380c9d1f0dc02c244',
       passwordSalt: '31c7bc712b3c556d63dda05d49ec172d',
+      subscription: {
+        create: {
+          startDate: new Date(),
+          type: 'plus',
+        },
+      },
+      usages: {
+        createMany: {
+          data: [
+            {
+              amount: 332_328,
+              type: 'aiCredits',
+            },
+            {
+              amount: 1_843_000,
+              type: 'queryDurationMilliseconds',
+            },
+            {
+              amount: 847_484_438,
+              type: 'queryResponseBytes',
+            },
+          ],
+        },
+      },
     },
   });
 
-  await prisma.subscription.create({
+  await prisma.user.create({
     data: {
-      startDate: new Date(),
-      type: 'plus',
-      userId: plusUser.id,
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 20_438_000,
-      type: 'queryDurationMilliseconds',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 1_843_000,
-      type: 'queryDurationMilliseconds',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 147_483_648,
-      type: 'queryResponseBytes',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 847_484_438,
-      type: 'queryResponseBytes',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 332_328,
-      type: 'aiChatInputTokens',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 237_249,
-      type: 'aiChatInputTokens',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 4_238,
-      type: 'aiChatOutputTokens',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 13_832,
-      type: 'aiChatOutputTokens',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 4_423_843,
-      type: 'aiInlineCompletionInputTokens',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 9_843_243,
-      type: 'aiInlineCompletionInputTokens',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 234_438,
-      type: 'aiInlineCompletionOutputTokens',
-      subscription: { connect: { userId: plusUser.id } },
-    },
-  });
-
-  await prisma.usage.create({
-    data: {
-      amount: 185_328,
-      type: 'aiInlineCompletionOutputTokens',
-      subscription: { connect: { userId: plusUser.id } },
+      dataEncryptionKey:
+        '54ad804c62507b42d63959046c1d0c92f21129e297655ecf10b79a580ee582cf1483d8d2385ead75393027ba51f995f3',
+      dataEncryptionKeyNonce: '8f242f469d64fb04c061b40898d0b5fcb4ab0f6acee5f058',
+      email: 'pro@dabase.dev',
+      keyEncryptionKeySalt: 'eb8943e0cd3e0d2ac3f945a20272a70a',
+      password:
+        '5172332a5b34fbbafecf69a277f3022e45215916fba3f38ff8a61cb0072a5dbb6f6c3ca7923e7b2c8467d21659ef276a31220bb8e9ae47b380c9d1f0dc02c244',
+      passwordSalt: '31c7bc712b3c556d63dda05d49ec172d',
+      subscription: {
+        create: {
+          startDate: new Date(),
+          type: 'pro',
+        },
+      },
+      usages: {
+        createMany: {
+          data: [
+            {
+              amount: 332_328,
+              type: 'aiCredits',
+            },
+            {
+              amount: 20_438_000,
+              type: 'queryDurationMilliseconds',
+            },
+            {
+              amount: 147_483_648,
+              type: 'queryResponseBytes',
+            },
+          ],
+        },
+      },
     },
   });
 

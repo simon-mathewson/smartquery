@@ -9,17 +9,12 @@ import { createAccessToken } from './accessToken';
 import { createRefreshToken, verifyRefreshToken } from './refreshToken';
 import { setUpUserPassword } from './setUpUserPassword';
 import { verifyPassword } from './verifyPassword';
+import { currentUserSchema } from '@/user/user';
 
 export const authRouter = trpc.router({
   currentUser: trpc.procedure
     .use(isAuthenticated)
-    .output(
-      z.object({
-        id: z.string(),
-        email: z.string(),
-        subscription: z.object({ type: z.enum(['plus']) }).nullable(),
-      }),
-    )
+    .output(currentUserSchema)
     .query(async ({ ctx: { user } }) => user),
   logIn: trpc.procedure
     .input(

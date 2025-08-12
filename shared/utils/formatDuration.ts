@@ -1,12 +1,45 @@
-export const formatDuration = (milliseconds: number) => {
+export const getDurationUnit = (milliseconds: number) => {
   if (milliseconds < 1000) {
-    return `${milliseconds} ms`;
+    return 'ms';
   }
   if (milliseconds < 1000 * 60) {
-    return `${(milliseconds / 1000).toFixed(0)} s`;
+    return 's';
   }
   if (milliseconds < 1000 * 60 * 60) {
-    return `${(milliseconds / 1000 / 60).toFixed(0)} mins`;
+    return 'mins';
   }
-  return `${(milliseconds / 1000 / 60 / 60).toFixed(0)} hours`;
+  return 'hours';
+};
+
+export const getDurationValue = (
+  milliseconds: number,
+  unitOverride: 'ms' | 's' | 'mins' | 'hours',
+) => {
+  const unit = unitOverride ?? getDurationUnit(milliseconds);
+
+  switch (unit) {
+    case 'ms':
+      return milliseconds.toFixed(Math.ceil(milliseconds % 1));
+    case 's': {
+      const value = milliseconds / 1000;
+      return value.toFixed(Math.ceil(value % 1));
+    }
+    case 'mins': {
+      const value = milliseconds / 1000 / 60;
+      return value.toFixed(Math.ceil(value % 1));
+    }
+    case 'hours': {
+      const value = milliseconds / 1000 / 60 / 60;
+      return value.toFixed(Math.ceil(value % 1));
+    }
+  }
+};
+
+export const formatDuration = (
+  milliseconds: number,
+  unitOverride?: 'ms' | 's' | 'mins' | 'hours',
+) => {
+  const unit = unitOverride ?? getDurationUnit(milliseconds);
+
+  return `${getDurationValue(milliseconds, unit)} ${unit}`;
 };

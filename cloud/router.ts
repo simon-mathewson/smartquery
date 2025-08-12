@@ -3,14 +3,14 @@ import { connectionsRouter } from './connections/router';
 import { trpc } from '~/trpc';
 import { connectorRouter } from './connector/router';
 import { aiRouter } from './ai/router';
-import { subscriptionRouter } from './subscription/router';
+import { usageRouter } from './usage/router';
 
 export const appRouter = trpc.router({
   ai: aiRouter,
   auth: authRouter,
   connections: connectionsRouter,
   connector: connectorRouter,
-  subscription: subscriptionRouter,
+  usage: usageRouter,
 });
 
 export type AppRouter = typeof appRouter;

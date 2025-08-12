@@ -59,18 +59,17 @@ model Subscription {
   type      SubscriptionType
   userId    String           @unique @db.Uuid
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  usages    Usage[]
 
   @@index([userId])
 }
 
 model Usage {
-  id           String       @id @default(uuid()) @db.Uuid
-  userId       String       @db.Uuid
-  subscription Subscription @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  createdAt    DateTime     @default(now())
-  type         UsageType
-  amount       Int
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  type      UsageType
+  amount    Int
 
   @@index([userId, type, createdAt])
 }
@@ -91,6 +90,7 @@ model User {
   connections            Connection[]
   refreshTokens          RefreshToken[]
   subscription           Subscription?
+  usages                 Usage[]
 
   @@index([emailVerificationToken])
   @@index([resetPasswordToken])
@@ -103,13 +103,11 @@ enum Engine {
 
 enum SubscriptionType {
   plus
+  pro
 }
 
 enum UsageType {
-  aiChatInputTokens
-  aiChatOutputTokens
-  aiInlineCompletionInputTokens
-  aiInlineCompletionOutputTokens
+  aiCredits
   queryDurationMilliseconds
   queryResponseBytes
 }

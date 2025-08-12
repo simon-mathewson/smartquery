@@ -17,20 +17,3 @@ export const isAuthenticated = trpc.middleware(async (opts) => {
     },
   });
 });
-
-export const isAuthenticatedAndPlus = trpc.middleware(async (opts) => {
-  const { ctx } = opts;
-
-  if (!ctx.user || ctx.user.subscription?.type !== 'plus') {
-    throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'Not authenticated as Plus user',
-    });
-  }
-
-  return opts.next({
-    ctx: {
-      user: ctx.user,
-    },
-  });
-});

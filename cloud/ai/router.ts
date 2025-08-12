@@ -1,16 +1,17 @@
 import { generateChatResponse } from '@/ai/generateChatResponse';
 import { generateInlineCompletions } from '@/ai/generateInlineCompletions';
 import { generateChatResponseInputSchema, generateInlineCompletionsInputSchema } from '@/ai/types';
-import { isAuthenticatedAndPlus } from '~/middlewares/isAuthenticated';
-import { trackUsage } from '~/subscription/trackUsage';
-import { verifyUsageWithinLimits } from '~/subscription/verifyUsageWithinLimits';
+import { trackUsage } from '~/usage/trackUsage';
+import { verifyUsageWithinLimits } from '~/usage/verifyUsageWithinLimits';
 import { trpc } from '~/trpc';
 import assert from 'assert';
+import { isAuthenticated } from '~/middlewares/isAuthenticated';
+import { getAiCreditsForTokens } from '~/usage/getAiCreditsForTokens';
 
 export const aiRouter = trpc.router({
   generateChatResponse: trpc.procedure
     .input(generateChatResponseInputSchema)
-    .use(isAuthenticatedAndPlus)
+    .use(isAuthenticated)
     .mutation(async function* (props) {
       const {
         ctx: { googleAi, prisma, user },
@@ -20,7 +21,7 @@ export const aiRouter = trpc.router({
 
       await verifyUsageWithinLimits({
         prisma,
-        types: ['aiChatInputTokens', 'aiChatOutputTokens'],
+        types: ['aiCredits'],
         user,
       });
 
@@ -41,8 +42,10 @@ export const aiRouter = trpc.router({
 
       void trackUsage({
         items: [
-          { amount: inputTokens, type: 'aiChatInputTokens' },
-          { amount: outputTokens, type: 'aiChatOutputTokens' },
+          {
+            amount: getAiCreditsForTokens({ inputTokens, outputTokens }),
+            type: 'aiCredits',
+          },
         ],
         prisma,
         userId: user.id,
@@ -52,7 +55,7 @@ export const aiRouter = trpc.router({
     }),
   generateInlineCompletions: trpc.procedure
     .input(generateInlineCompletionsInputSchema)
-    .use(isAuthenticatedAndPlus)
+    .use(isAuthenticated)
     .mutation(async (props) => {
       const {
         ctx: { googleAi, prisma, user },
@@ -62,7 +65,7 @@ export const aiRouter = trpc.router({
 
       await verifyUsageWithinLimits({
         prisma,
-        types: ['aiInlineCompletionInputTokens', 'aiInlineCompletionOutputTokens'],
+        types: ['aiCredits'],
         user,
       });
 
@@ -72,12 +75,11 @@ export const aiRouter = trpc.router({
         void trackUsage({
           items: [
             {
-              amount: response.usageMetadata?.promptTokenCount ?? 0,
-              type: 'aiInlineCompletionInputTokens',
-            },
-            {
-              amount: response.usageMetadata?.candidatesTokenCount ?? 0,
-              type: 'aiInlineCompletionOutputTokens',
+              amount: getAiCreditsForTokens({
+                inputTokens: response.usageMetadata?.promptTokenCount ?? 0,
+                outputTokens: response.usageMetadata?.candidatesTokenCount ?? 0,
+              }),
+              type: 'aiCredits',
             },
           ],
           prisma,
