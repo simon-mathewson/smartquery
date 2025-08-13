@@ -13,4 +13,4 @@ export const appRouter = trpc.router({
   usage: usageRouter,
 });
 
-export type AppRouter = typeof appRouter;
+export type CloudRouter = typeof appRouter;

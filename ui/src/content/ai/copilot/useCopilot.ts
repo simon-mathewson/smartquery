@@ -9,7 +9,7 @@ import superjson from 'superjson';
 import { CloudApiContext } from '~/content/cloud/api/Context';
 import { AuthContext } from '~/content/auth/Context';
 import type { inferRouterInputs } from '@trpc/server';
-import type { AppRouter } from '../../../../../cloud/router';
+import type { CloudRouter } from '../../../../../cloud/router';
 
 export const useCopilot = () => {
   const { cloudApiStream } = useDefinedContext(CloudApiContext);
@@ -34,7 +34,7 @@ export const useCopilot = () => {
 
   const generateChatResponse = useCallback(
     async function* (
-      props: inferRouterInputs<AppRouter>['ai']['generateChatResponse'] & {
+      props: inferRouterInputs<CloudRouter>['ai']['generateChatResponse'] & {
         abortSignal: AbortSignal;
       },
     ) {
