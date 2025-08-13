@@ -22,13 +22,13 @@ const getUsages = (currentUser: CurrentUser) => {
       valueType: 'number',
     },
     {
-      label: 'Query Duration',
+      label: 'Cloud Query Duration',
       max: limits.totalQueryDurationMilliseconds,
       type: 'queryDurationMilliseconds',
       valueType: 'duration',
     },
     {
-      label: 'Query Response Size',
+      label: 'Cloud Query Response Size',
       max: limits.totalQueryResponseBytes,
       type: 'queryResponseBytes',
       valueType: 'bytes',

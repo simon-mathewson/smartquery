@@ -1,18 +1,20 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import { AiContext } from '../Context';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { assert } from 'ts-essentials';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
 import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
 import type { AiTextContent } from '@/ai/types';
 import superjson from 'superjson';
+import { CloudApiContext } from '~/content/cloud/api/Context';
+import { AuthContext } from '~/content/auth/Context';
+import type { inferRouterInputs } from '@trpc/server';
+import type { AppRouter } from '../../../../../cloud/router';
 
 export const useCopilot = () => {
+  const { cloudApiStream } = useDefinedContext(CloudApiContext);
+  const { user } = useDefinedContext(AuthContext);
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
-
-  const ai = useDefinedContext(AiContext);
 
   const [isOpen, setIsOpen] = useStoredState<boolean>('useCopilot.isOpen', false);
 
@@ -30,10 +32,40 @@ export const useCopilot = () => {
     hasSchemaDefinitions,
   } = useSchemaDefinitions();
 
+  const generateChatResponse = useCallback(
+    async function* (
+      props: inferRouterInputs<AppRouter>['ai']['generateChatResponse'] & {
+        abortSignal: AbortSignal;
+      },
+    ) {
+      try {
+        const cloudResponse = await cloudApiStream.ai.generateChatResponse.mutate(
+          omit(props, 'abortSignal'),
+          { signal: props.abortSignal },
+        );
+
+        for await (const chunkText of cloudResponse) {
+          yield chunkText;
+        }
+
+        return null;
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          (error.message.startsWith('exception AbortError:') ||
+            error.message === 'BodyStreamBuffer was aborted' ||
+            error.message.includes('signal is aborted'))
+        ) {
+          return null;
+        }
+        throw error;
+      }
+    },
+    [cloudApiStream],
+  );
+
   const sendMessage = useCallback(
     async (message: string) => {
-      assert(ai.enabled);
-
       setIsLoading(true);
 
       abortControllerRef.current.abort();
@@ -57,7 +89,7 @@ export const useCopilot = () => {
           ? superjson.stringify(schemaDefinitions.definitions)
           : null;
 
-        const response = ai.generateChatResponse({
+        const response = generateChatResponse({
           abortSignal: abortControllerRef.current.signal,
           contents: threadWithUserMessage,
           engine: activeConnection.engine,
@@ -84,7 +116,13 @@ export const useCopilot = () => {
         setIsLoading(false);
       }
     },
-    [ai, thread, setThread, getAndRefreshSchemaDefinitions, activeConnection.engine],
+    [
+      thread,
+      setThread,
+      getAndRefreshSchemaDefinitions,
+      generateChatResponse,
+      activeConnection.engine,
+    ],
   );
 
   const stopGenerating = useCallback(() => {
@@ -97,11 +135,13 @@ export const useCopilot = () => {
     setThread([]);
   }, [setThread, stopGenerating]);
 
+  const isEnabled = user !== null;
+
   return useMemo(
     () => ({
       clearThread,
       input,
-      isEnabled: ai.enabled,
+      isEnabled,
       isLoading,
       isLoadingSchemaDefinitions,
       hasSchemaDefinitions,
@@ -115,7 +155,7 @@ export const useCopilot = () => {
     [
       clearThread,
       input,
-      ai.enabled,
+      isEnabled,
       isLoading,
       isLoadingSchemaDefinitions,
       hasSchemaDefinitions,

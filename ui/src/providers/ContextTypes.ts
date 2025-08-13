@@ -1,6 +1,5 @@
 import type { AnalyticsContextType } from '~/content/analytics/Context';
 import type { AddToDesktopContextType } from '~/content/settings/addToDesktop/Context';
-import type { AiContextType } from '~/content/ai/Context';
 import type { AuthContextType } from '~/content/auth/Context';
 import type { CloudApiContextType } from '~/content/cloud/api/Context';
 import type { ConnectionsContextType } from '~/content/connections/Context';
@@ -21,7 +20,6 @@ import type { ActiveConnectionContextType } from '~/content/connections/activeCo
 export type ContextTypes = {
   ActiveConnectionProvider: ActiveConnectionContextType;
   AddToDesktopProvider: AddToDesktopContextType;
-  AiProvider: AiContextType;
   AnalyticsProvider: AnalyticsContextType;
   AuthProvider: AuthContextType;
   CloudApiProvider: CloudApiContextType;

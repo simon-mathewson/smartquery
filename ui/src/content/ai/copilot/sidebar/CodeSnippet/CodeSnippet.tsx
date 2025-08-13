@@ -24,7 +24,7 @@ export const CodeSnippet = React.memo(
 
     const code = String(children).trim();
 
-    const showActions = language === 'sql';
+    const showActions = language && ['sql', 'sqlite'].includes(language);
 
     const getSqlActions = useCallback(
       (code: string) =>

@@ -1,5 +1,4 @@
 import { AddToDesktopProvider } from '~/content/settings/addToDesktop/Provider';
-import { AiMockProvider } from '~/content/ai/MockProvider';
 import { AnalyticsMockProvider } from '~/content/analytics/MockProvider';
 import { AuthMockProvider } from '~/content/auth/MockProvider';
 import { CloudApiMockProvider } from '~/content/cloud/api/MockProvider';
@@ -26,7 +25,6 @@ const mockProviders = {
   ErrorTrackingProvider: ErrorTrackingMockProvider,
   AnalyticsProvider: AnalyticsMockProvider,
   ThemeProvider,
-  AiProvider: AiMockProvider,
   EscapeStackProvider,
   ToastProvider,
   UpdateAvailableProvider: UpdateAvailableMockProvider,

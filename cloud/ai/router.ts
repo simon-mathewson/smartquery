@@ -1,6 +1,6 @@
-import { generateChatResponse } from '@/ai/generateChatResponse';
-import { generateInlineCompletions } from '@/ai/generateInlineCompletions';
-import { generateChatResponseInputSchema, generateInlineCompletionsInputSchema } from '@/ai/types';
+import { generateChatResponse } from './generateChatResponse';
+import { generateInlineCompletions } from './generateInlineCompletions';
+import { generateChatResponseInputSchema, generateInlineCompletionsInputSchema } from './types';
 import { trackUsage } from '~/usage/trackUsage';
 import { verifyUsageWithinLimits } from '~/usage/verifyUsageWithinLimits';
 import { trpc } from '~/trpc';

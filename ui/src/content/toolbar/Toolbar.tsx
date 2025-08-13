@@ -48,9 +48,7 @@ export const Toolbar: React.FC = () => {
         }}
         icon={<AutoAwesome />}
         label="Copilot"
-        tooltip={
-          copilot.isEnabled ? undefined : 'To use copilot, add your Google AI API key in Settings'
-        }
+        tooltip={copilot.isEnabled ? undefined : 'Sign up or log in to use Copilot'}
         variant={copilot.isOpen ? 'highlighted' : 'default'}
       />
     </div>

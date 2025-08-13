@@ -1,5 +1,5 @@
-import { GenerateContentResponse, GoogleGenAI } from "@google/genai";
-import { GenerateChatResponseInput } from "./types";
+import type { GenerateContentResponse, GoogleGenAI } from '@google/genai';
+import type { GenerateChatResponseInput } from './types';
 
 export type GenerateChatResponseProps = GenerateChatResponseInput & {
   abortSignal: AbortSignal | undefined;
@@ -8,22 +8,22 @@ export type GenerateChatResponseProps = GenerateChatResponseInput & {
 };
 
 export const generateChatResponse = async function* (
-  props: GenerateChatResponseProps
+  props: GenerateChatResponseProps,
 ): AsyncGenerator<GenerateContentResponse, null | undefined, unknown> {
   const { contents, engine, abortSignal, googleAi, schemaDefinitions } = props;
 
   const systemInstruction = [
-    "You are a copilot assistant in a database UI.",
+    'You are a copilot assistant in a database UI.',
     `The engine is ${engine}.`,
-    "When generating SQL, use quotes as necessary, particularly to ensure correct casing.",
+    'When generating SQL, use quotes as necessary, particularly to ensure correct casing.',
     ...(schemaDefinitions
       ? [`\n\nThe schema definitions are as follows:\n\n${schemaDefinitions}`]
       : []),
-  ].join("\n");
+  ].join('\n');
 
   try {
     const response = await googleAi.models.generateContentStream({
-      model: "gemini-2.5-flash",
+      model: 'gemini-2.5-flash',
       contents,
       config: {
         abortSignal,
@@ -38,10 +38,7 @@ export const generateChatResponse = async function* (
 
     return null;
   } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message.startsWith("exception AbortError:")
-    ) {
+    if (error instanceof Error && error.message.startsWith('exception AbortError:')) {
       return null;
     }
     throw error;

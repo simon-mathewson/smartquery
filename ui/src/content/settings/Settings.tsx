@@ -1,6 +1,5 @@
 import {
   ArrowBackOutlined,
-  AutoAwesomeOutlined,
   BrushOutlined,
   GitHub,
   LogoutOutlined,
@@ -17,12 +16,10 @@ import { Button } from '~/shared/components/button/Button';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Field } from '~/shared/components/field/Field';
 import { Header } from '~/shared/components/header/Header';
-import { Input } from '~/shared/components/input/Input';
 import { List } from '~/shared/components/list/List';
 import { ThemeColorSelect } from '~/shared/components/themeColorSelect/ThemeColorSelect';
 import { Toggle } from '~/shared/components/toggle/Toggle';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { AiContext } from '../ai/Context';
 import { AnalyticsContext } from '../analytics/Context';
 import { AuthContext } from '../auth/Context';
 import { ConnectionsContext } from '../connections/Context';
@@ -37,13 +34,12 @@ export type SettingsProps = {
   close: () => Promise<void>;
 };
 
-const sections = ['home', 'general', 'connectivity', 'copilot', 'appearance', 'usage'] as const;
+const sections = ['home', 'general', 'connectivity', 'appearance', 'usage'] as const;
 type Section = (typeof sections)[number];
 
 const labels: Record<Section, string> = {
   appearance: 'Appearance',
   connectivity: 'Connectivity',
-  copilot: 'Copilot',
   general: 'General',
   home: 'Settings',
   usage: 'Usage',
@@ -55,7 +51,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
   const { logOut, user } = useDefinedContext(AuthContext);
   const { modePreference, setModePreference, primaryColor, setPrimaryColor } =
     useDefinedContext(ThemeContext);
-  const { googleAiApiKey, setGoogleAiApiKey } = useDefinedContext(AiContext);
   const { connectViaCloud, setConnectViaCloud } = useDefinedContext(ConnectionsContext);
 
   const [section, setSection] = useState<Section>('home');
@@ -87,11 +82,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               icon: <SettingsEthernetOutlined />,
               label: labels.connectivity,
               value: 'connectivity',
-            },
-            {
-              icon: <AutoAwesomeOutlined />,
-              label: labels.copilot,
-              value: 'copilot',
             },
             {
               icon: <BrushOutlined />,
@@ -195,38 +185,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           )}
         </>
       )}
-      {section === 'copilot' && (
-        <>
-          {user?.subscription?.type !== 'plus' && (
-            <Field
-              hint={
-                <>
-                  Get a free key at{' '}
-                  <a
-                    className="underline"
-                    href="https://aistudio.google.com/apikey"
-                    target="_blank"
-                  >
-                    aistudio.google.com/apikey
-                  </a>
-                </>
-              }
-              label="Google AI API Key"
-            >
-              <Input
-                onChange={(value) => {
-                  setGoogleAiApiKey(value);
-                  track('settings_google_ai_api_key', { value: Boolean(value) });
-                }}
-                htmlProps={{
-                  type: 'password',
-                  value: googleAiApiKey,
-                }}
-              />
-            </Field>
-          )}
-        </>
-      )}
       {section === 'appearance' && (
         <>
           <Field label="Theme">
@@ -245,7 +203,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               value={modePreference}
             />
           </Field>
-          {user?.subscription?.type === 'plus' && (
+          {user?.subscription && (
             <Field label="Theme color">
               <ThemeColorSelect
                 onChange={(value) => {

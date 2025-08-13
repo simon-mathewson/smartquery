@@ -1,11 +1,15 @@
 import * as monaco from 'monaco-editor';
 import { useCallback, useMemo, useRef } from 'react';
-import { AiContext } from '~/content/ai/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { CodeEditorProps } from '../CodeEditor';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import type { SchemaDefinitions } from '~/content/ai/schemaDefinitions/types';
 import superjson from '@/superjson/superjson';
+import { CloudApiContext } from '~/content/cloud/api/Context';
+import { omit } from 'lodash';
+import { AuthContext } from '~/content/auth/Context';
+import type { inferRouterInputs } from '@trpc/server';
+import type { AppRouter } from '../../../../../../cloud/router';
 
 export const useAiInlineCompletions = (props: {
   getSchemaDefinitions?: () => Promise<SchemaDefinitions | null>;
@@ -13,10 +17,35 @@ export const useAiInlineCompletions = (props: {
   const { getSchemaDefinitions } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
-  const ai = useDefinedContext(AiContext);
+  const { cloudApi } = useDefinedContext(CloudApiContext);
+  const { user } = useDefinedContext(AuthContext);
 
   const timeoutRef = useRef<number | undefined>(undefined);
   const abortControllerRef = useRef<AbortController | undefined>(undefined);
+
+  const generateInlineCompletions = useCallback(
+    async (
+      props: inferRouterInputs<AppRouter>['ai']['generateInlineCompletions'] & {
+        abortSignal: AbortSignal;
+      },
+    ) => {
+      try {
+        return cloudApi.ai.generateInlineCompletions.mutate(omit(props, 'abortSignal'), {
+          signal: props.abortSignal,
+        });
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          (error.message.startsWith('exception AbortError:') ||
+            error.message === 'BodyStreamBuffer was aborted' ||
+            error.message.includes('signal is aborted'))
+        ) {
+          return null;
+        }
+      }
+    },
+    [cloudApi],
+  );
 
   const setUpAiInlineCompletions = useCallback(
     (props: { language: CodeEditorProps['language']; monacoLanguage: string }) => {
@@ -31,7 +60,7 @@ export const useAiInlineCompletions = (props: {
             items: [],
           };
 
-          if (!ai.enabled) {
+          if (!user) {
             return emptyResult;
           }
 
@@ -63,7 +92,7 @@ export const useAiInlineCompletions = (props: {
             ? superjson.stringify(schemaDefinitions.definitions)
             : null;
 
-          const response = await ai.generateInlineCompletions({
+          const response = await generateInlineCompletions({
             abortSignal: abortControllerRef.current.signal,
             codeBeforeCursor,
             codeAfterCursor,
@@ -111,7 +140,7 @@ export const useAiInlineCompletions = (props: {
 
       return [disposable];
     },
-    [ai, getSchemaDefinitions, track],
+    [generateInlineCompletions, getSchemaDefinitions, track, user],
   );
 
   return useMemo(() => ({ setUpAiInlineCompletions }), [setUpAiInlineCompletions]);

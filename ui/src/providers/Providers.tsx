@@ -1,5 +1,4 @@
 import { AddToDesktopProvider } from '~/content/settings/addToDesktop/Provider';
-import { AiProvider } from '~/content/ai/Provider';
 import { AnalyticsProvider } from '~/content/analytics/Provider';
 import { AuthProvider } from '~/content/auth/Provider';
 import { CloudApiProvider } from '~/content/cloud/api/Provider';
@@ -30,7 +29,6 @@ const providers = {
   AnalyticsProvider,
   ToastProvider,
   AuthProvider,
-  AiProvider,
   EscapeStackProvider,
   UpdateAvailableProvider,
   LinkProvider,
