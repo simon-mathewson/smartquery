@@ -98,13 +98,13 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               label: labels.appearance,
               value: 'appearance',
             },
-            {
-              icon: <SpeedOutlined />,
-              label: labels.usage,
-              value: 'usage',
-            },
             ...(user
               ? [
+                  {
+                    icon: <SpeedOutlined />,
+                    label: labels.usage,
+                    value: 'usage',
+                  },
                   {
                     icon: <LogoutOutlined />,
                     label: 'Log out',
