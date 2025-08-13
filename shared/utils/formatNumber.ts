@@ -42,5 +42,5 @@ export const getNumberValue = (number: number, unitOverride: 'k' | 'm' | 'b' | '
 export const formatNumber = (number: number, unitOverride?: null | 'k' | 'm' | 'b' | 't') => {
   const unit = unitOverride ?? getNumberUnit(number);
 
-  return `${getNumberValue(number, unit)}${unit}`;
+  return `${getNumberValue(number, unit)}${unit ?? ''}`;
 };
