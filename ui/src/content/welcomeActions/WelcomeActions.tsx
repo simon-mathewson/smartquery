@@ -46,7 +46,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
         ...(!user
           ? [
               {
-                hint: 'Save your connections across devices',
+                hint: 'Get free AI and cloud features',
                 label: 'Sign up',
                 icon: PersonAddAlt1Outlined,
                 route: routes.signup(),
