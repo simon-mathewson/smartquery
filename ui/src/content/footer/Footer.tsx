@@ -1,4 +1,4 @@
-import { GitHub, SettingsOutlined } from '@mui/icons-material';
+import { QuestionAnswerOutlined, SettingsOutlined } from '@mui/icons-material';
 import { useRef } from 'react';
 import { Button } from '~/shared/components/button/Button';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
@@ -38,19 +38,19 @@ export const Footer: React.FC = () => {
           icon={<SettingsOutlined />}
           label={user?.email ?? 'Settings'}
         />
-        <div className="flex pt-1">
+        <div className="flex items-center pt-1">
           <Button
             color="secondary"
             element="a"
             htmlProps={{
               className: '[&>svg]:text-textTertiary',
-              href: import.meta.env.VITE_GITHUB_DISCUSSIONS_URL,
+              href: import.meta.env.VITE_DISCORD_INVITE_URL,
               target: '_blank',
             }}
-            icon={<GitHub />}
-            tooltip="Ask questions and share your feedback, feature requests, and bug reports on GitHub Discussions"
+            icon={<QuestionAnswerOutlined />}
+            tooltip="Ask questions and share your feedback, feature requests, and bug reports on Discord"
           />
-          <div className="flex flex-col gap-[2px] pt-1">
+          <div className="flex flex-col gap-[2px]">
             <div className="text-xs text-textTertiary">© 2025 Simon Mathewson</div>
             <div className="flex items-center gap-1">
               <a

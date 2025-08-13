@@ -1,9 +1,9 @@
 import {
   ArrowBackOutlined,
   BrushOutlined,
-  GitHub,
   LogoutOutlined,
   PersonAddAlt1Outlined,
+  QuestionAnswerOutlined,
   SettingsEthernetOutlined,
   SettingsOutlined,
   SpeedOutlined,
@@ -152,6 +152,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               value={isConsentGranted ?? false}
             />
           </Field>
+          <AddToDesktop />
           <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
             <Button
               align="left"
@@ -159,14 +160,13 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               element="a"
               htmlProps={{
                 className: 'w-full',
-                href: import.meta.env.VITE_GITHUB_DISCUSSIONS_URL,
+                href: import.meta.env.VITE_DISCORD_INVITE_URL,
                 target: '_blank',
               }}
-              icon={<GitHub />}
-              label="GitHub Discussions"
+              icon={<QuestionAnswerOutlined />}
+              label="Discord"
             />
           </Field>
-          <AddToDesktop />
         </>
       )}
       {section === 'connectivity' && (

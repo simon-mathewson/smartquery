@@ -16,7 +16,7 @@ unhandled({
   showDialog: true,
   logger: log.error,
   reportButton: () => {
-    void shell.openExternal(import.meta.env.VITE_GITHUB_DISCUSSIONS_URL);
+    void shell.openExternal(import.meta.env.VITE_DISCORD_INVITE_URL);
   },
 });
 
