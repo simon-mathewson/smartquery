@@ -29,7 +29,9 @@ export const useSchemaDefinitions = () => {
     useCallback(async (): Promise<SchemaDefinitions | null> => {
       if (
         storedSchemaDefinitions &&
-        DateTime.fromJSDate(storedSchemaDefinitions.createdAt).diffNow().minutes < 5
+        Math.abs(
+          DateTime.fromJSDate(storedSchemaDefinitions.createdAt).diffNow('minutes').minutes,
+        ) < 5
       ) {
         return storedSchemaDefinitions;
       }
