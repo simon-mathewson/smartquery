@@ -2,6 +2,8 @@ import React from 'react';
 import { Logo } from '../logo/Logo';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
+import { Link } from 'wouter';
+import { routes } from '~/router/routes';
 
 export type PageProps = React.PropsWithChildren<{
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
@@ -22,7 +24,9 @@ export const Page: React.FC<PageProps> = (props) => {
           htmlProps?.className,
         )}
       >
-        <Logo htmlProps={{ className: 'w-16' }} />
+        <Link href={routes.root()}>
+          <Logo htmlProps={{ className: 'w-16' }} />
+        </Link>
         {children}
       </div>
     </>
