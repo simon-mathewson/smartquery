@@ -1,8 +1,5 @@
 export type Plan = {
-  price: {
-    eur: number;
-    usd: number;
-  } | null;
+  price: number | null;
   limits: {
     aiCredits: number;
     concurrentConnections: number;
@@ -24,10 +21,7 @@ export const plans = {
     },
   },
   plus: {
-    price: {
-      eur: 8,
-      usd: 9,
-    },
+    price: 8,
     limits: {
       aiCredits: 900_000,
       concurrentConnections: 3,
@@ -37,10 +31,7 @@ export const plans = {
     },
   },
   pro: {
-    price: {
-      eur: 18,
-      usd: 19,
-    },
+    price: 18,
     limits: {
       aiCredits: 1_900_000,
       concurrentConnections: 8,
@@ -51,4 +42,4 @@ export const plans = {
   },
 } satisfies Record<string, Plan>;
 
-export type PlanLimits = Plan["limits"];
+export type PlanLimits = Plan['limits'];

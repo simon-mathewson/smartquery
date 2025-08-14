@@ -176,12 +176,13 @@ export const useAuth = () => {
 
   return useMemo(
     () => ({
+      getCurrentUser,
       isInitializing,
       logIn,
       logOut,
       signUp,
       user,
     }),
-    [user, logIn, logOut, signUp, isInitializing],
+    [getCurrentUser, isInitializing, logIn, logOut, signUp, user],
   );
 };

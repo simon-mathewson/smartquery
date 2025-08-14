@@ -1,9 +1,10 @@
-import { z } from "zod";
+import { subscriptionTypeSchema } from '@/subscriptions/types';
+import { z } from 'zod';
 
 export const currentUserSchema = z.object({
   id: z.string(),
   email: z.string(),
-  subscription: z.object({ type: z.enum(["plus", "pro"]) }).nullable(),
+  subscription: z.object({ type: subscriptionTypeSchema }).nullable(),
 });
 
 export type CurrentUser = z.infer<typeof currentUserSchema>;

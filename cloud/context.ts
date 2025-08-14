@@ -5,6 +5,7 @@ import { PrismaClient } from '~/prisma/generated/client';
 import { verifyAccessToken } from './auth/accessToken';
 import type { Connector } from '@/connector/types';
 import { GoogleGenAI } from '@google/genai';
+import Stripe from 'stripe';
 
 export type CurrentUser = User & { subscription: Subscription | null };
 
@@ -16,6 +17,7 @@ export type Context = {
   req: CreateExpressContextOptions['req'];
   res: CreateExpressContextOptions['res'];
   setCookie: ReturnType<typeof createSetCookie>;
+  stripe: Stripe;
   user: CurrentUser | null;
 };
 
@@ -26,6 +28,8 @@ export const createContext = async ({
   const prisma = new PrismaClient();
 
   const googleAi = new GoogleGenAI({ apiKey: process.env.GOOGLE_AI_API_KEY });
+
+  const stripe = new Stripe(process.env.STRIPE_API_KEY);
 
   const getCookie = createGetCookie(req);
   const setCookie = createSetCookie(res);
@@ -51,6 +55,7 @@ export const createContext = async ({
     prisma,
     req,
     res,
+    stripe,
     user: await getUser(),
   };
 };

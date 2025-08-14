@@ -10,6 +10,7 @@ export const AuthMockProvider: React.FC<MockProviderProps<AuthContextType>> = (p
     <AuthContext.Provider
       value={Object.assign(
         {
+          getCurrentUser: async () => {},
           isInitializing: false,
           logIn: async () => {},
           logOut: async () => {},

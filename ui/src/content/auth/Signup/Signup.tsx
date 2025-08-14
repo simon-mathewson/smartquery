@@ -20,6 +20,10 @@ export type SignupProps = {
 export const Signup: React.FC<SignupProps> = ({ onSuccess }) => {
   const auth = useDefinedContext(AuthContext);
 
+  if (auth.user) {
+    onSuccess();
+  }
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');

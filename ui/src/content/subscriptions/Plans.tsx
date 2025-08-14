@@ -1,4 +1,5 @@
 import { plans } from '@/subscriptions/plans';
+import type { SubscriptionType } from '@/subscriptions/types';
 import { formatBytes } from '@/utils/formatBytes';
 import { formatDuration } from '@/utils/formatDuration';
 import { formatNumber } from '@/utils/formatNumber';
@@ -10,7 +11,13 @@ import { Button } from '~/shared/components/button/Button';
 import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 
-export const Plans: React.FC = () => {
+export type PlansProps = {
+  onContinue: (type: SubscriptionType) => void;
+};
+
+export const Plans: React.FC<PlansProps> = (props) => {
+  const { onContinue } = props;
+
   const planNames = Object.keys(plans) as (keyof typeof plans)[];
 
   const Cell = ({
@@ -32,7 +39,7 @@ export const Plans: React.FC = () => {
   );
 
   return (
-    <Card htmlProps={{ className: 'mx-2 container max-w-max' }}>
+    <Card htmlProps={{ className: 'container max-w-max' }}>
       <Header
         left={<Button element="link" htmlProps={{ href: routes.root() }} icon={<ArrowBack />} />}
         middle={
@@ -50,7 +57,7 @@ export const Plans: React.FC = () => {
             </div>
             {plans[plan].price && (
               <div>
-                <span className="text-textTertiary">${plans[plan].price.usd}</span>
+                <span className="text-textTertiary">${plans[plan].price}</span>
                 <span className="text-textTertiary">/mo</span>
               </div>
             )}
@@ -103,7 +110,10 @@ export const Plans: React.FC = () => {
           <Cell className="!p-0" key={plan}>
             {plan !== 'free' && (
               <Button
-                htmlProps={{ className: 'w-full' }}
+                htmlProps={{
+                  className: 'w-full',
+                  onClick: () => onContinue(plan),
+                }}
                 icon={<ArrowForward />}
                 label="Continue"
               />

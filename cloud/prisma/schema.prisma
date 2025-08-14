@@ -91,6 +91,7 @@ model User {
   refreshTokens          RefreshToken[]
   subscription           Subscription?
   usages                 Usage[]
+  stripeCustomerId       String?        @unique
 
   @@index([emailVerificationToken])
   @@index([resetPasswordToken])

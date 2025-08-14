@@ -20,6 +20,12 @@ importers:
       '@mui/material':
         specifier: 5.14.20
         version: 5.14.20(@emotion/react@11.11.1(@types/react@18.2.45)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.45)(react@18.2.0))(@types/react@18.2.45)(react@18.2.0))(@types/react@18.2.45)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@stripe/react-stripe-js':
+        specifier: 3.9.0
+        version: 3.9.0(@stripe/stripe-js@7.8.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@stripe/stripe-js':
+        specifier: 7.8.0
+        version: 7.8.0
       '@trpc/client':
         specifier: 11.1.4
         version: 11.1.4(@trpc/server@11.1.4(typescript@5.8.3))(typescript@5.8.3)
@@ -37,7 +43,7 @@ importers:
         version: 2.3.2
       dabase-shared:
         specifier: file:../shared
-        version: file:../shared(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(find-free-ports@3.1.1)(lodash-es@4.17.21)(node-ssh-forward@0.7.2)(superjson@1.12.4)(typescript@5.8.3)(zod@3.23.8)
+        version: file:../shared(@google/genai@0.12.0)(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(find-free-ports@3.1.1)(lodash-es@4.17.21)(node-ssh-forward@0.7.2)(superjson@1.12.4)(typescript@5.8.3)(zod@3.23.8)
       decimal.js:
         specifier: 10.4.3
         version: 10.4.3
@@ -1463,6 +1469,17 @@ packages:
     resolution: {integrity: sha512-rUeT12bxFnplYDe815GXbq/oixEGHfRFFtcTF3YdDi/JaENIM6aSYYLJydG83UNzLXeRI5K8abYd/8Sp/QM0kA==}
     engines: {node: '>=16.0.0'}
 
+  '@stripe/react-stripe-js@3.9.0':
+    resolution: {integrity: sha512-pN1Re7zUc3m61FFQROok685g3zsBQRzCmZDmTzO8iPU6zhLvu2JnC0LrG0FCzSp6kgGa8AQSzq4rpFSgyhkjKg==}
+    peerDependencies:
+      '@stripe/stripe-js': '>=1.44.1 <8.0.0'
+      react: '>=16.8.0 <20.0.0'
+      react-dom: '>=16.8.0 <20.0.0'
+
+  '@stripe/stripe-js@7.8.0':
+    resolution: {integrity: sha512-DNXRfYUgkZlrniQORbA/wH8CdFRhiBSE0R56gYU0V5vvpJ9WZwvGrz9tBAZmfq2aTgw6SK7mNpmTizGzLWVezw==}
+    engines: {node: '>=12.16'}
+
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     resolution: {integrity: sha512-lR8q/9W7hZpMWweNiAKU7NQerBnzQQLvi8qnTDU/fxItPhtZVMbPV3lbCwjhIlNBe9Bbr5V+KHshvWmVSG9cxQ==}
 
@@ -2143,6 +2160,7 @@ packages:
   dabase-shared@file:../shared:
     resolution: {directory: ../shared, type: directory}
     peerDependencies:
+      '@google/genai': 0.12.0
       '@prisma/client': 6.9.0
       find-free-ports: 3.1.1
       lodash-es: 4.17.21
@@ -3728,6 +3746,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -5671,6 +5690,15 @@ snapshots:
       '@smithy/util-buffer-from': 3.0.0
       tslib: 2.6.2
 
+  '@stripe/react-stripe-js@3.9.0(@stripe/stripe-js@7.8.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      '@stripe/stripe-js': 7.8.0
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
+  '@stripe/stripe-js@7.8.0': {}
+
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     dependencies:
       ejs: 3.1.9
@@ -6411,8 +6439,9 @@ snapshots:
 
   csstype@3.1.3: {}
 
-  dabase-shared@file:../shared(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(find-free-ports@3.1.1)(lodash-es@4.17.21)(node-ssh-forward@0.7.2)(superjson@1.12.4)(typescript@5.8.3)(zod@3.23.8):
+  dabase-shared@file:../shared(@google/genai@0.12.0)(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(find-free-ports@3.1.1)(lodash-es@4.17.21)(node-ssh-forward@0.7.2)(superjson@1.12.4)(typescript@5.8.3)(zod@3.23.8):
     dependencies:
+      '@google/genai': 0.12.0
       '@prisma/client': 6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)
       find-free-ports: 3.1.1
       lodash-es: 4.17.21
