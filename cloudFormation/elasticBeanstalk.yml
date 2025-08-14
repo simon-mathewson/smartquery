@@ -126,6 +126,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: STRIPE_API_KEY
           Value: !ImportValue DabaseCloudStripeApiKeyArn
+        - Namespace: aws:elasticbeanstalk:application:environmentsecrets
+          OptionName: STRIPE_WEBHOOK_SECRET
+          Value: !ImportValue DabaseCloudStripeWebhookSecretArn
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: SES_EMAIL_IDENTITY_ARN
           Value: !ImportValue SESEmailIdentityArn
