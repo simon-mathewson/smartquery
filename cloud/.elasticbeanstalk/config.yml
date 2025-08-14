@@ -1,0 +1,19 @@
+branch-defaults:
+  default:
+    environment: dabase-cloud
+environment-defaults:
+  dabase-cloud:
+    branch: null
+    repository: null
+global:
+  application_name: dabase-cloud
+  default_ec2_keyname: null
+  default_platform: Node.js 22 running on 64bit Amazon Linux 2023
+  default_region: eu-central-1
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: null
+  sc: null
+  workspace_type: Application

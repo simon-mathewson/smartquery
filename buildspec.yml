@@ -277,13 +277,9 @@ phases:
             --application-name dabase-cloud \
             --version-label $CODEBUILD_BUILD_NUMBER \
             --source-bundle S3Bucket=dabase-cloud-source,S3Key=$CODEBUILD_BUILD_NUMBER.zip
-          aws elasticbeanstalk update-environment \
-            --environment-name dabase-cloud \
-            --version-label $CODEBUILD_BUILD_NUMBER
-
-          aws elasticbeanstalk wait environment-updated \
-            --environment-name dabase-cloud \
-            --version-label $CODEBUILD_BUILD_NUMBER
+          
+          # Use EB CLI to deploy (automatically waits for success and preserves environment config)
+          eb deploy dabase-cloud --version $CODEBUILD_BUILD_NUMBER
         fi
 
       - |
