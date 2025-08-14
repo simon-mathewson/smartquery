@@ -1,4 +1,5 @@
 import type { Connection, RemoteConnection } from '@/connections/types';
+import { TRPCClientError } from '@trpc/client';
 import { omit, sortBy } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
@@ -18,7 +19,6 @@ import { ConnectCanceledError } from './connectAbortedError';
 import { sqliteDemoConnectionId } from './constants';
 import type { SignInModalInput } from './signInModal/types';
 import type { UserPasswordModalInput } from './userPasswordModal/types';
-import { TRPCClientError } from '@trpc/client';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -76,21 +76,8 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const [connectViaCloud, setConnectViaCloud] = useStoredState<boolean | null>(
     'useConnections.connectViaCloud',
-    null,
+    false,
   );
-
-  // Initialize connectViaCloud
-  useEffect(() => {
-    if (isInitializingAuth || !user) return;
-
-    if (user.subscription) {
-      if (connectViaCloud === null) {
-        setConnectViaCloud(true);
-      }
-    } else {
-      setConnectViaCloud(null);
-    }
-  }, [connectViaCloud, isInitializingAuth, setConnectViaCloud, user]);
 
   const [, dbRouteParamsWithoutSchema] = useRoute<{
     connectionId: string;

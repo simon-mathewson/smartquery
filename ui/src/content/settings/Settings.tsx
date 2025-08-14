@@ -172,17 +172,14 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
       {section === 'connectivity' && (
         <>
           <LinkSetup />
-          {user?.subscription && (
-            <Field>
-              <Toggle
-                disabled={!user.subscription.type}
-                hint="Use Dabase servers for remote connections. Local connections still require Dabase Link."
-                label="Connect via Cloud"
-                onChange={(value) => setConnectViaCloud(value)}
-                value={connectViaCloud ?? false}
-              />
-            </Field>
-          )}
+          <Field>
+            <Toggle
+              hint="Use Dabase servers for remote connections. Local connections still require Dabase Link."
+              label="Connect via Cloud"
+              onChange={(value) => setConnectViaCloud(value)}
+              value={connectViaCloud ?? false}
+            />
+          </Field>
         </>
       )}
       {section === 'appearance' && (
