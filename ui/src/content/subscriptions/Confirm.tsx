@@ -48,7 +48,7 @@ export const Confirm: React.FC<ConfirmProps> = (props) => {
         left={<Button htmlProps={{ onClick: goBack }} icon={<ArrowBack />} />}
         middle={
           <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-            Final
+            Payment Confirmation
           </div>
         }
       />
