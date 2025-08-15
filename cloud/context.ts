@@ -29,7 +29,7 @@ export const createContext = async ({
 
   const googleAi = new GoogleGenAI({ apiKey: process.env.GOOGLE_AI_API_KEY });
 
-  const stripe = new Stripe(process.env.STRIPE_API_KEY);
+  const stripe = new Stripe(process.env.STRIPE_API_KEY, { apiVersion: '2025-07-30.basil' });
 
   const getCookie = createGetCookie(req);
   const setCookie = createSetCookie(res);
