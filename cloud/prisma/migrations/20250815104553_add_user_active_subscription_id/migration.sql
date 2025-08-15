@@ -12,3 +12,8 @@ CREATE UNIQUE INDEX "User_activeSubscriptionId_key" ON "User"("activeSubscriptio
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_activeSubscriptionId_fkey" FOREIGN KEY ("activeSubscriptionId") REFERENCES "Subscription"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- Set active subscription for existing users
+UPDATE "User" SET "activeSubscriptionId" = (
+  SELECT "id" FROM "Subscription" WHERE "userId" = "User"."id"
+);

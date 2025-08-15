@@ -73,9 +73,21 @@ void (async () => {
         },
       },
     },
+    include: { subscriptions: true },
   });
 
-  await prisma.user.create({
+  await prisma.user.update({
+    where: { id: plusUser.id },
+    data: {
+      activeSubscription: {
+        connect: {
+          id: plusUser.subscriptions[0].id,
+        },
+      },
+    },
+  });
+
+  const proUser = await prisma.user.create({
     data: {
       dataEncryptionKey:
         '54ad804c62507b42d63959046c1d0c92f21129e297655ecf10b79a580ee582cf1483d8d2385ead75393027ba51f995f3',
@@ -107,6 +119,18 @@ void (async () => {
               type: 'queryResponseBytes',
             },
           ],
+        },
+      },
+    },
+    include: { subscriptions: true },
+  });
+
+  await prisma.user.update({
+    where: { id: proUser.id },
+    data: {
+      activeSubscription: {
+        connect: {
+          id: proUser.subscriptions[0].id,
         },
       },
     },
