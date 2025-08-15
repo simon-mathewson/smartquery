@@ -1,4 +1,4 @@
-import type { Address } from '@/payments/types';
+import type { Address } from '@/subscriptions/types';
 import type Stripe from 'stripe';
 import type { PrismaClient, User } from '~/prisma/generated';
 

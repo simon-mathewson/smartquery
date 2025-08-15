@@ -10,6 +10,8 @@ import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { AuthContext } from '../auth/Context';
 
 export type PlansProps = {
   onContinue: (type: SubscriptionType) => void;
@@ -17,6 +19,8 @@ export type PlansProps = {
 
 export const Plans: React.FC<PlansProps> = (props) => {
   const { onContinue } = props;
+
+  const { user } = useDefinedContext(AuthContext);
 
   const planNames = Object.keys(plans) as (keyof typeof plans)[];
 
@@ -111,11 +115,17 @@ export const Plans: React.FC<PlansProps> = (props) => {
             {plan !== 'free' && (
               <Button
                 htmlProps={{
+                  disabled: user?.activeSubscription?.type === plan,
                   className: 'w-full',
                   onClick: () => onContinue(plan),
                 }}
                 icon={<ArrowForward />}
                 label="Continue"
+                tooltip={
+                  user?.activeSubscription?.type === plan
+                    ? 'You are already on this plan'
+                    : undefined
+                }
               />
             )}
           </Cell>

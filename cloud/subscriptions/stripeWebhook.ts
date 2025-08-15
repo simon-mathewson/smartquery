@@ -27,7 +27,7 @@ export const stripeWebhook: RequestHandler = async (request, response) => {
     return;
   }
 
-  console.log('Stripe webhook event', event.type);
+  console.log('Stripe webhook event', event);
 
   if (
     event.type === 'customer.subscription.created' ||

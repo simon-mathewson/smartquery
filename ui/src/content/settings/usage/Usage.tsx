@@ -1,5 +1,5 @@
 import { getLimitsForUser } from '@/subscriptions/getLimitsForUser';
-import type { CurrentUser } from '@/user/user';
+import type { CurrentUser } from '@/user/types';
 import { formatBytes, getBytesUnit, getBytesValue } from '@/utils/formatBytes';
 import { formatDuration, getDurationUnit, getDurationValue } from '@/utils/formatDuration';
 import { formatNumber, getNumberUnit, getNumberValue } from '@/utils/formatNumber';

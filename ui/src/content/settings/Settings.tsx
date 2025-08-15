@@ -4,6 +4,7 @@ import {
   LogoutOutlined,
   PersonAddAlt1Outlined,
   QuestionAnswerOutlined,
+  ReplayOutlined,
   SettingsEthernetOutlined,
   SettingsOutlined,
   SpeedOutlined,
@@ -29,12 +30,20 @@ import { ThemeContext } from '../theme/Context';
 import type { ThemeModePreference } from '../theme/types';
 import { AddToDesktop } from './addToDesktop/AddToDesktop';
 import { Usage } from './usage/Usage';
+import { Subscription } from './Subscription';
 
 export type SettingsProps = {
   close: () => Promise<void>;
 };
 
-const sections = ['home', 'general', 'connectivity', 'appearance', 'usage'] as const;
+const sections = [
+  'home',
+  'general',
+  'connectivity',
+  'appearance',
+  'usage',
+  'subscription',
+] as const;
 type Section = (typeof sections)[number];
 
 const labels: Record<Section, string> = {
@@ -42,6 +51,7 @@ const labels: Record<Section, string> = {
   connectivity: 'Connectivity',
   general: 'General',
   home: 'Settings',
+  subscription: 'Subscription',
   usage: 'Usage',
 } as const;
 
@@ -95,6 +105,15 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
                     label: labels.usage,
                     value: 'usage',
                   },
+                  ...(user.activeSubscription
+                    ? [
+                        {
+                          icon: <ReplayOutlined />,
+                          label: labels.subscription,
+                          value: 'subscription',
+                        },
+                      ]
+                    : []),
                   {
                     icon: <LogoutOutlined />,
                     label: 'Log out',
@@ -212,6 +231,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           )}
         </>
       )}
+      {section === 'subscription' && <Subscription exit={close} />}
       {section === 'usage' && <Usage />}
     </div>
   );

@@ -1,4 +1,4 @@
-import type { Address } from '@/payments/types';
+import type { Address } from '@/subscriptions/types';
 import { subscriptionTypeSchema, type SubscriptionType } from '@/subscriptions/types';
 import { useState } from 'react';
 import { useSearchParams } from 'wouter';

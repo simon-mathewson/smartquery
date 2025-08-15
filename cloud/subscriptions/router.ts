@@ -1,14 +1,22 @@
 import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import { trpc } from '~/trpc';
 import { z } from 'zod';
-import { addressSchema } from '@/payments/types';
 import { createOrUpdateCustomer } from './createOrUpdateCustomer';
-import { subscriptionTypeSchema } from '@/subscriptions/types';
 import { getPriceIdForSubscriptionType } from './getPriceIdForSubscriptionType';
 import assert from 'assert';
+import { addressSchema, subscriptionTypeSchema } from '@/subscriptions/types';
 
-export const paymentsRouter = trpc.router({
-  createSession: trpc.procedure
+export const subscriptionsRouter = trpc.router({
+  cancelSubscription: trpc.procedure.use(isAuthenticated).mutation(async (props) => {
+    const {
+      ctx: { stripe, user },
+    } = props;
+
+    assert(user.activeSubscription?.stripeSubscriptionId, 'User has no active subscription');
+
+    await stripe.subscriptions.cancel(user.activeSubscription.stripeSubscriptionId);
+  }),
+  createCheckoutSession: trpc.procedure
     .use(isAuthenticated)
     .input(z.object({ address: addressSchema, subscriptionType: subscriptionTypeSchema }))
     .output(z.object({ clientSecret: z.string() }))
@@ -26,16 +34,12 @@ export const paymentsRouter = trpc.router({
       });
 
       const session = await stripe.checkout.sessions.create({
-        ui_mode: 'custom',
+        automatic_tax: { enabled: true },
         customer: stripeCustomerId,
-        line_items: [
-          {
-            price: getPriceIdForSubscriptionType(subscriptionType),
-            quantity: 1,
-          },
-        ],
+        line_items: [{ price: getPriceIdForSubscriptionType(subscriptionType), quantity: 1 }],
         mode: 'subscription',
         return_url: `${process.env.UI_URL}/subscribe?confirm=${subscriptionType}`,
+        ui_mode: 'custom',
       });
 
       assert(session.client_secret, 'Client secret is required');

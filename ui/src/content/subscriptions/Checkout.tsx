@@ -1,5 +1,4 @@
-import type { Address } from '@/payments/types';
-import type { SubscriptionType } from '@/subscriptions/types';
+import type { Address, SubscriptionType } from '@/subscriptions/types';
 import { ArrowBack } from '@mui/icons-material';
 import { CheckoutProvider, PaymentElement } from '@stripe/react-stripe-js';
 import { useCallback, useState } from 'react';
@@ -33,7 +32,7 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const createSession = useCallback(async () => {
-    const { clientSecret } = await cloudApi.payments.createSession.mutate({
+    const { clientSecret } = await cloudApi.subscriptions.createCheckoutSession.mutate({
       address,
       subscriptionType,
     });

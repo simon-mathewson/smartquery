@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { appRouter } from './router';
 import { createContext } from './context';
-import { stripeWebhook } from './payments/stripeWebhook';
+import { stripeWebhook } from './subscriptions/stripeWebhook';
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);

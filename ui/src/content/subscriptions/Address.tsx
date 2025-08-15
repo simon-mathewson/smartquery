@@ -7,7 +7,7 @@ import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { Loading } from '~/shared/components/loading/Loading';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { Address as AddressType } from '@/payments/types';
+import type { Address as AddressType } from '@/subscriptions/types';
 import { assert } from 'ts-essentials';
 import { stripe } from './stripe';
 

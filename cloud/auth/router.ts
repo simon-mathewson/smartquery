@@ -9,7 +9,7 @@ import { createAccessToken } from './accessToken';
 import { createRefreshToken, verifyRefreshToken } from './refreshToken';
 import { setUpUserPassword } from './setUpUserPassword';
 import { verifyPassword } from './verifyPassword';
-import { currentUserSchema } from '@/user/user';
+import { currentUserSchema } from '@/user/types';
 
 export const authRouter = trpc.router({
   currentUser: trpc.procedure

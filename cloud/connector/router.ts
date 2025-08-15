@@ -11,7 +11,7 @@ import { trackUsage } from '~/usage/trackUsage';
 import { verifyUsageWithinLimits } from '~/usage/verifyUsageWithinLimits';
 import superjson from 'superjson';
 import { getLimitsForUser } from '@/subscriptions/getLimitsForUser';
-import type { CurrentUser } from '@/user/user';
+import type { CurrentUser } from '@/user/types';
 
 const connectors: Record<
   string,
