@@ -48,7 +48,7 @@ void (async () => {
       password:
         '5172332a5b34fbbafecf69a277f3022e45215916fba3f38ff8a61cb0072a5dbb6f6c3ca7923e7b2c8467d21659ef276a31220bb8e9ae47b380c9d1f0dc02c244',
       passwordSalt: '31c7bc712b3c556d63dda05d49ec172d',
-      subscription: {
+      subscriptions: {
         create: {
           startDate: new Date(),
           type: 'plus',
@@ -85,7 +85,7 @@ void (async () => {
       password:
         '5172332a5b34fbbafecf69a277f3022e45215916fba3f38ff8a61cb0072a5dbb6f6c3ca7923e7b2c8467d21659ef276a31220bb8e9ae47b380c9d1f0dc02c244',
       passwordSalt: '31c7bc712b3c556d63dda05d49ec172d',
-      subscription: {
+      subscriptions: {
         create: {
           startDate: new Date(),
           type: 'pro',

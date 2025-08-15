@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const currentUserSchema = z.object({
   id: z.string(),
   email: z.string(),
-  subscription: z.object({ type: subscriptionTypeSchema }).nullable(),
+  activeSubscription: z.object({ type: subscriptionTypeSchema }).nullable(),
 });
 
 export type CurrentUser = z.infer<typeof currentUserSchema>;

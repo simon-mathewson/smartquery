@@ -1,18 +1,16 @@
 import type { PrismaClient } from '~/prisma/generated';
 import type { usageSchema } from './types';
 import type { z } from 'zod';
-import type { CurrentUser } from '@/user/user';
+import type { CurrentUser } from '~/context';
 
 export const getUsage = async (props: { prisma: PrismaClient; user: CurrentUser }) => {
   const { prisma, user } = props;
 
-  const subscription = await prisma.subscription.findUnique({
-    where: { userId: user.id },
-  });
-
   const startOfMonth = new Date();
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
+
+  const subscription = user.activeSubscription;
 
   const billingPeriodStartDate = subscription?.startDate
     ? new Date(Math.max(subscription.startDate.getTime(), startOfMonth.getTime()))

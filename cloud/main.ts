@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { appRouter } from './router';
 import { createContext } from './context';
+import { stripeWebhook } from './payments/stripeWebhook';
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -47,6 +48,8 @@ app.use(
 app.get('/health', (_, res) => {
   res.status(200).send('OK');
 });
+
+app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebhook);
 
 const port = process.env.PORT || 80;
 

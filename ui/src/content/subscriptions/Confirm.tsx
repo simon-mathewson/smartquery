@@ -22,7 +22,7 @@ export const Confirm: React.FC<ConfirmProps> = (props) => {
 
   const { getCurrentUser, user } = useDefinedContext(AuthContext);
 
-  const subscriptionConfirmed = user?.subscription?.type === subscriptionType;
+  const subscriptionConfirmed = user?.activeSubscription?.type === subscriptionType;
 
   const intervalRef = useRef<number | null>(null);
 
@@ -48,7 +48,7 @@ export const Confirm: React.FC<ConfirmProps> = (props) => {
         left={<Button htmlProps={{ onClick: goBack }} icon={<ArrowBack />} />}
         middle={
           <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-            Payment Confirmation
+            Confirmation
           </div>
         }
       />

@@ -2,7 +2,7 @@ import type { PrismaClient, UsageType } from '~/prisma/generated';
 import { plans } from '@/subscriptions/plans';
 import { getUsage } from './getUsage';
 import { TRPCError } from '@trpc/server';
-import type { CurrentUser } from '@/user/user';
+import type { CurrentUser } from '~/context';
 
 const usageTypeToLimit: Record<UsageType, number> = {
   aiCredits: plans.plus.limits.aiCredits,

@@ -54,11 +54,17 @@ model RefreshToken {
 }
 
 model Subscription {
-  createdAt DateTime         @default(now())
-  startDate DateTime         @db.Date
-  type      SubscriptionType
-  userId    String           @unique @db.Uuid
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                   String           @id @default(uuid()) @db.Uuid
+  createdAt            DateTime         @default(now())
+  startDate            DateTime
+  endDate              DateTime?
+  type                 SubscriptionType
+  userId               String           @db.Uuid
+  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activeForUser        User?            @relation("activeSubscription")
+  stripeSubscriptionId String?          @unique
+  stripeProductId      String?
+  stripePriceId        String?
 
   @@index([userId])
 }
@@ -89,12 +95,15 @@ model User {
   resetPasswordToken     String?        @unique
   connections            Connection[]
   refreshTokens          RefreshToken[]
-  subscription           Subscription?
+  subscriptions          Subscription[]
   usages                 Usage[]
   stripeCustomerId       String?        @unique
+  activeSubscriptionId   String?        @unique @db.Uuid
+  activeSubscription     Subscription?  @relation("activeSubscription", fields: [activeSubscriptionId], references: [id])
 
   @@index([emailVerificationToken])
   @@index([resetPasswordToken])
+  @@index([stripeCustomerId])
 }
 
 enum Engine {

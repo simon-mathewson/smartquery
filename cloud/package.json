@@ -8,6 +8,7 @@
     "postinstall": "prisma generate",
     "prisma": "NODE_ENV=development pnpm dotenv-flow -- prisma",
     "setup-production": "chmod +x ./scripts/setup-production.sh && ./scripts/setup-production.sh",
+    "stripe-webhook": "stripe listen --forward-to http://localhost:4444/stripe",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {

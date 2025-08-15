@@ -7,7 +7,7 @@ import type { Connector } from '@/connector/types';
 import { GoogleGenAI } from '@google/genai';
 import Stripe from 'stripe';
 
-export type CurrentUser = User & { subscription: Subscription | null };
+export type CurrentUser = User & { activeSubscription: Subscription | null };
 
 export type Context = {
   connectors: Record<string, Connector>;
@@ -43,7 +43,7 @@ export const createContext = async ({
     // Return null if not found, let `isAuthorized` throw to trigger client side logout
     return prisma.user.findUnique({
       where: { id: decoded.userId },
-      include: { subscription: true },
+      include: { activeSubscription: true },
     });
   };
 

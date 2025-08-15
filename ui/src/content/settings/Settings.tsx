@@ -200,7 +200,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               value={modePreference}
             />
           </Field>
-          {user?.subscription && (
+          {user?.activeSubscription && (
             <Field label="Theme color">
               <ThemeColorSelect
                 onChange={(value) => {
