@@ -1,1 +1,1 @@
-export const emailAddress = "dabase@simonmathewson.com";
+export const emailAddress = "support@dabase.dev";

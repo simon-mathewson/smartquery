@@ -106,7 +106,7 @@ Resources:
         - "0 mx1.efwd.spaceship.net."
         - "0 mx2.efwd.spaceship.net."
 
-  Route53RecordSetSpaceshipSpf:
+  Route53RecordSetSpaceshipSpfAndStripeVerification:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
@@ -115,5 +115,84 @@ Resources:
       Type: "TXT"
       TTL: "3600"
       ResourceRecords:
+        - '"stripe-verification=b675f45f2d01cd1774e0f4278720e194cb3f270ee7f382b09baecaf7a405741c"'
+        - '"stripe-verification=f8137c32c9086ff8c31fa71aa54425f4a8291f0a91cc1efac15b3cb7e890a029"'
         - '"v=spf1 include:spf.efwd.spaceship.net ~all"'
+
+  Route53RecordSetStripeDkim1:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "s3rffjeocaxxfut6wdu44i7vehx2uj5j._domainkey.dabase.dev."
+      Type: "CNAME"
+      TTL: "3600"
+      ResourceRecords:
+        - "s3rffjeocaxxfut6wdu44i7vehx2uj5j.dkim.custom-email-domain.stripe.com."
+
+  Route53RecordSetStripeDkim2:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "b4duab33kjqcufz5wdcm5rmmqxp7bp7t._domainkey.dabase.dev."
+      Type: "CNAME"
+      TTL: "3600"
+      ResourceRecords:
+        - "b4duab33kjqcufz5wdcm5rmmqxp7bp7t.dkim.custom-email-domain.stripe.com."
+
+  Route53RecordSetStripeDkim3:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "dd3cgupkaeimjf65taelxznf2qgdq3n6._domainkey.dabase.dev."
+      Type: "CNAME"
+      TTL: "3600"
+      ResourceRecords:
+        - "dd3cgupkaeimjf65taelxznf2qgdq3n6.dkim.custom-email-domain.stripe.com."
+
+  Route53RecordSetStripeDkim4:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "dtb25znqdfzorsexuowotxg3jk3vaxrr._domainkey.dabase.dev."
+      Type: "CNAME"
+      TTL: "3600"
+      ResourceRecords:
+        - "dtb25znqdfzorsexuowotxg3jk3vaxrr.dkim.custom-email-domain.stripe.com."
+
+  Route53RecordSetStripeDkim5:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "bgt2j4ti4cnh7uufqzxylpkjn3nnrhf7._domainkey.dabase.dev."
+      Type: "CNAME"
+      TTL: "3600"
+      ResourceRecords:
+        - "bgt2j4ti4cnh7uufqzxylpkjn3nnrhf7.dkim.custom-email-domain.stripe.com."
+
+  Route53RecordSetStripeDkim6:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "gsdw7senfn5tkd32jic4uvzmjdvd5zvz._domainkey.dabase.dev."
+      Type: "CNAME"
+      TTL: "3600"
+      ResourceRecords:
+        - "gsdw7senfn5tkd32jic4uvzmjdvd5zvz.dkim.custom-email-domain.stripe.com."
+
+  Route53RecordSetStripeBounce:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabase
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "bounce.dabase.dev."
+      Type: "CNAME"
+      TTL: "3600"
+      ResourceRecords:
+        - "custom-email-domain.stripe.com."
 

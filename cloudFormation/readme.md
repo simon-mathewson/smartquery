@@ -27,7 +27,11 @@ Go to https://eu-central-1.console.aws.amazon.com/codesuite/settings/connections
 
 Go to https://us-east-1.console.aws.amazon.com/route53/v2/hostedzones?region=eu-central-1, get the name servers from the hosted zone, and add them to the domain registrar: https://www.spaceship.com/application/advanced-dns-application/manage/dabase.dev/
 
-### 5. Build and publish link:
+### 5. Set up Stripe custom email domain
+
+In Stripe settings -> Business -> Customer emails -> Your custom email domains set up dabase.dev. Add value to Stripe records in cloudFormation/route53.yml.
+
+### 6. Build and publish link:
 
 ```
 cd link
@@ -46,7 +50,7 @@ To build for macOS and sign, ensure Apple Developer certificate is available in 
    1. Locate team ID here https://developer.apple.com/account#MembershipDetailsCard
    2. Generate app-specific password here https://account.apple.com/account/manage
 
-### 6. Create ACM certificates
+### 7. Create ACM certificates
 
 In the AWS console, go to Certificate Manager, Request a certificate, and request a certificate for the following domains in both us-east-1 and eu-central-1 regions:
 
@@ -57,7 +61,7 @@ Replace `AcmCertificateArn` value in CloudFormation files with the ARN from us-e
 
 Replace the certificate ARN in the Elastic Beanstalk Stack with the ARN from eu-central-1.
 
-### 7. Setup production DB access
+### 8. Setup production DB access
 
 1. Get key pair ID
 
@@ -83,19 +87,19 @@ SSH Key: ~/.ssh/dabase-bastion-key.pem
 DB Password, username, host, port, and name are stored in the secret manager:
 https://eu-central-1.console.aws.amazon.com/secretsmanager/secret?name=dabase-cloud-db-secret&region=eu-central-1
 
-### 8. Update RUM script
+### 9. Update RUM script
 
 Update `ui/src/setUpRum.ts` according to JS snippet displayed in https://eu-central-1.console.aws.amazon.com/cloudwatch/home?region=eu-central-1#rum:dashboard/Dabase?tab=configuration.
 
 Replace `APPLICATION_VERSION` with `import.meta.env.VITE_UI_VERSION`.
 
-### 9. Update WAF script
+### 10. Update WAF script
 
 Update `VITE_AWS_WAF_CAPTCHA_SCRIPT_URL` according to JS script URL displayed in https://us-east-1.console.aws.amazon.com/wafv2/homev2/application-integ-sdks?region=eu-central-1.
 
 Create an API key with domain `dabase.dev` in the console as update `VITE_AWS_WAF_CAPTCHA_API_KEY` accordingly.
 
-### 10. Set Google AI API key secret
+### 11. Set Google AI API key secret
 
 Get API Key from https://aistudio.google.com/apikey and insert it into the secret manager:
 https://eu-central-1.console.aws.amazon.com/secretsmanager/listsecrets?region=eu-central-1
