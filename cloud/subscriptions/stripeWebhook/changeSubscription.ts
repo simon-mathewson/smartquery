@@ -1,9 +1,9 @@
 import assert from 'assert';
 import type Stripe from 'stripe';
 import type { PrismaClient } from '~/prisma/generated';
-import { getSubscriptionTypeForProductId } from './getSubscriptionTypeForProductId';
+import { getSubscriptionTypeForProductId } from '../getSubscriptionTypeForProductId';
 
-export const updateSubscription = async (props: {
+export const changeSubscription = async (props: {
   prisma: PrismaClient;
   stripeSubscription: Stripe.Subscription;
 }) => {
