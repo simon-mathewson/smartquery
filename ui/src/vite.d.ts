@@ -8,7 +8,6 @@ interface ImportMetaEnv {
   readonly VITE_CLOUD_URL: string;
   readonly VITE_DISCORD_INVITE_URL: string;
   readonly VITE_GOOGLE_ANALYTICS_ID: string;
-  readonly VITE_GOOGLE_MAPS_API_KEY: string;
   readonly VITE_IMPRINT_URL: string;
   readonly VITE_LINK_S3_URL: string;
   readonly VITE_LINK_URL: string;

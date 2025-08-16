@@ -5,7 +5,13 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { ToastContext } from '../toast/Context';
 import { ArrowForward } from '@mui/icons-material';
 
-export const PayButton: React.FC = () => {
+export type PayButtonProps = {
+  disabled?: boolean;
+};
+
+export const PayButton: React.FC<PayButtonProps> = (props) => {
+  const { disabled } = props;
+
   const toast = useDefinedContext(ToastContext);
 
   const checkout = useCheckout();
@@ -34,7 +40,7 @@ export const PayButton: React.FC = () => {
         icon={<ArrowForward />}
         htmlProps={{
           className: 'w-full',
-          disabled: loading,
+          disabled: loading || disabled,
           onClick: handleClick,
         }}
         label={`Subscribe • ${total.total.amount}/mo.`}

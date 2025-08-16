@@ -35,11 +35,11 @@ export const stripeWebhook: RequestHandler = async (request, response) => {
 
   // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (event.type) {
-    case 'customer.subscription.updated':
-      await changeSubscription({ prisma, stripeSubscription: event.data.object });
-      break;
     case 'customer.subscription.deleted':
       await revokeSubscription({ prisma, stripeSubscription: event.data.object });
+      break;
+    case 'customer.subscription.updated':
+      await changeSubscription({ prisma, stripeSubscription: event.data.object });
       break;
     case 'invoice.paid':
     case 'invoice.payment_succeeded':

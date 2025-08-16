@@ -10,10 +10,7 @@ export const grantSubscription = async (props: {
 }) => {
   const { prisma, invoice, stripe } = props;
 
-  const invoiceSubscription = invoice.lines.data[0].subscription;
-  const subscriptionId =
-    typeof invoiceSubscription === 'string' ? invoiceSubscription : invoiceSubscription?.id;
-
+  const subscriptionId = invoice.lines.data[0].parent?.subscription_item_details?.subscription;
   assert(subscriptionId, 'Subscription ID is required');
 
   const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
@@ -33,9 +30,13 @@ export const grantSubscription = async (props: {
       include: { activeSubscription: true },
     });
 
+    if (user.activeSubscription?.stripeSubscriptionId === stripeSubscription.id) {
+      return;
+    }
+
     assert(
       !user.activeSubscription?.stripeSubscriptionId,
-      'User already has an active Stripe subscription',
+      'User already has different active Stripe subscription',
     );
 
     const newSubscriptionType = getSubscriptionTypeForProductId(productId);

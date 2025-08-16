@@ -1,15 +1,17 @@
-import type { Address } from '@/subscriptions/types';
 import { subscriptionTypeSchema, type SubscriptionType } from '@/subscriptions/types';
 import { useState } from 'react';
 import { useSearchParams } from 'wouter';
 import { Page } from '~/shared/components/page/Page';
 import { Signup } from '../auth/Signup/Signup';
-import { Address as AddressForm } from './Address';
 import { Checkout } from './Checkout';
 import { Confirm } from './Confirm';
 import { Plans } from './Plans';
+import { AuthContext } from '../auth/Context';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 
 export const SubscribePage: React.FC = () => {
+  const { user } = useDefinedContext(AuthContext);
+
   const [searchParams] = useSearchParams();
 
   const subscriptionToConfirmParam = searchParams.get('confirm');
@@ -17,13 +19,12 @@ export const SubscribePage: React.FC = () => {
     ? subscriptionTypeSchema.parse(subscriptionToConfirmParam)
     : null;
 
-  const [stage, setStage] = useState<'plans' | 'signup' | 'address' | 'checkout' | 'confirm'>(
+  const [stage, setStage] = useState<'plans' | 'signup' | 'checkout' | 'confirm'>(
     subscriptionToConfirm ? 'confirm' : 'plans',
   );
   const [subscriptionType, setSubscriptionType] = useState<SubscriptionType | null>(
     subscriptionToConfirm,
   );
-  const [address, setAddress] = useState<Address | null>(null);
 
   return (
     <Page title="Subscribe">
@@ -31,30 +32,16 @@ export const SubscribePage: React.FC = () => {
         <Plans
           onContinue={(type) => {
             setSubscriptionType(type);
-            setStage('signup');
+            setStage(user ? 'checkout' : 'signup');
           }}
         />
       )}
-      {stage === 'signup' && <Signup onSuccess={() => setStage('address')} />}
-      {stage === 'address' && (
-        <AddressForm
-          goBack={() => setStage('plans')}
-          onContinue={(address) => {
-            setAddress(address);
-            setStage('checkout');
-          }}
-          value={address}
-        />
-      )}
+      {stage === 'signup' && <Signup onSuccess={() => setStage('checkout')} />}
       {stage === 'checkout' && (
-        <Checkout
-          address={address}
-          goBack={() => setStage('address')}
-          subscriptionType={subscriptionType}
-        />
+        <Checkout goBack={() => setStage('plans')} subscriptionType={subscriptionType} />
       )}
       {stage === 'confirm' && (
-        <Confirm goBack={() => setStage('signup')} subscriptionType={subscriptionType} />
+        <Confirm goBack={() => setStage('checkout')} subscriptionType={subscriptionType} />
       )}
     </Page>
   );

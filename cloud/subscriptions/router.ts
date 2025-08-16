@@ -1,10 +1,10 @@
+import { subscriptionTypeSchema } from '@/subscriptions/types';
+import assert from 'assert';
+import { z } from 'zod';
 import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import { trpc } from '~/trpc';
-import { z } from 'zod';
-import { createOrUpdateCustomer } from './createOrUpdateCustomer';
+import { getOrCreateCustomer } from './getOrCreateCustomer';
 import { getPriceIdForSubscriptionType } from './getPriceIdForSubscriptionType';
-import assert from 'assert';
-import { addressSchema, subscriptionTypeSchema } from '@/subscriptions/types';
 
 export const subscriptionsRouter = trpc.router({
   cancelSubscription: trpc.procedure.use(isAuthenticated).mutation(async (props) => {
@@ -18,16 +18,15 @@ export const subscriptionsRouter = trpc.router({
   }),
   createCheckoutSession: trpc.procedure
     .use(isAuthenticated)
-    .input(z.object({ address: addressSchema, subscriptionType: subscriptionTypeSchema }))
+    .input(z.object({ subscriptionType: subscriptionTypeSchema }))
     .output(z.object({ clientSecret: z.string() }))
     .mutation(async (props) => {
       const {
         ctx: { prisma, stripe, user },
-        input: { address, subscriptionType },
+        input: { subscriptionType },
       } = props;
 
-      const { stripeCustomerId } = await createOrUpdateCustomer({
-        address,
+      const { stripeCustomerId } = await getOrCreateCustomer({
         prisma,
         stripe,
         user,
@@ -35,6 +34,8 @@ export const subscriptionsRouter = trpc.router({
 
       const session = await stripe.checkout.sessions.create({
         automatic_tax: { enabled: true },
+        billing_address_collection: 'required',
+        customer_update: { address: 'auto' },
         customer: stripeCustomerId,
         line_items: [{ price: getPriceIdForSubscriptionType(subscriptionType), quantity: 1 }],
         mode: 'subscription',

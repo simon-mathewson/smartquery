@@ -3,12 +3,12 @@
   "private": true,
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",
-    "dev": "NODE_ENV=development pnpm dotenv-flow -- tsx watch main",
+    "dev": "NODE_ENV=development pnpm dotenv-flow -- tsx watch --inspect main",
     "lint": "eslint --cache .",
     "postinstall": "prisma generate",
     "prisma": "NODE_ENV=development pnpm dotenv-flow -- prisma",
     "setup-production": "chmod +x ./scripts/setup-production.sh && ./scripts/setup-production.sh",
-    "stripe-webhook": "stripe listen --forward-to http://localhost:4444/stripe",
+    "stripe-webhook": "stripe listen --forward-to http://localhost:4444/stripe --events customer.subscription.deleted,customer.subscription.updated,invoice.paid,invoice.payment_succeeded",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
