@@ -42,9 +42,7 @@ export const Usage: React.FC = () => {
 
   const { cloudApi } = useDefinedContext(CloudApiContext);
 
-  const usageQuery = useCloudQuery(() => cloudApi.usage.usage.query(), {
-    emptyValue: null,
-  });
+  const usageQuery = useCloudQuery(() => cloudApi.usage.usage.query());
 
   return (
     <div>

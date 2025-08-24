@@ -9,9 +9,10 @@ import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { Loading } from '~/shared/components/loading/Loading';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { CloudApiContext } from '../cloud/api/Context';
-import PayButton from './PayButton';
-import { stripe } from './stripe';
+import { CloudApiContext } from '../../cloud/api/Context';
+import PayButton from '../PayButton';
+import { stripe } from '../stripe';
+import { Total } from './Total';
 
 export type CheckoutProps = {
   goBack: () => void;
@@ -70,6 +71,7 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
             onReady={() => setIsLoadingPayment(false)}
             options={{ layout: 'auto' }}
           />
+          <Total subscriptionType={subscriptionType} />
           <PayButton disabled={!isAddressComplete || !isPaymentComplete} />
         </CheckoutProvider>
       </div>

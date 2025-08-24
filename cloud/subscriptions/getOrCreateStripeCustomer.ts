@@ -1,7 +1,7 @@
 import type Stripe from 'stripe';
 import type { PrismaClient, User } from '~/prisma/generated';
 
-export const getOrCreateCustomer = async (props: {
+export const getOrCreateStripeCustomer = async (props: {
   prisma: PrismaClient;
   stripe: Stripe;
   user: User;

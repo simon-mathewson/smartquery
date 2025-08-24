@@ -29,7 +29,7 @@ export const Subscription: React.FC<SubscriptionProps> = (props) => {
     ...(price ? [{ label: 'Price', value: `$${price}/mo` }] : []),
     {
       label: 'Subscribed since',
-      value: startDate.toLocaleDateString(),
+      value: startDate.toLocaleDateString('en-US'),
     },
   ];
 

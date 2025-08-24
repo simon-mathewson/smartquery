@@ -15,7 +15,7 @@ export const PayButton: React.FC<PayButtonProps> = (props) => {
   const toast = useDefinedContext(ToastContext);
 
   const checkout = useCheckout();
-  const { confirm, total } = checkout;
+  const { confirm } = checkout;
 
   const [loading, setLoading] = useState(false);
 
@@ -43,7 +43,7 @@ export const PayButton: React.FC<PayButtonProps> = (props) => {
           disabled: loading || disabled,
           onClick: handleClick,
         }}
-        label={`Subscribe • ${total.total.amount}/mo.`}
+        label="Subscribe"
         variant="filled"
       />
     </div>

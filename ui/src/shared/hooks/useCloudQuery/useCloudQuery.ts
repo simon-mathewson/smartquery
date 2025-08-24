@@ -1,18 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export const useCloudQuery = <T>(
-  query: () => Promise<T>,
-  props: { disabled?: boolean; emptyValue?: T },
-) => {
+export const useCloudQuery = <T>(query: () => Promise<T>, options?: { disabled?: boolean }) => {
   const [results, setResults] = useState<T | null>(null);
 
   const [hasRun, setHasRun] = useState(false);
 
-  const emptyValue = useMemo(() => props?.emptyValue ?? ([] as T), [props?.emptyValue]);
-
   const run = useCallback(async () => {
-    if (props.disabled) {
-      setResults(emptyValue);
+    if (options?.disabled) {
+      setResults(null);
       return;
     }
 
@@ -20,12 +15,12 @@ export const useCloudQuery = <T>(
     setResults(response);
 
     setHasRun(true);
-  }, [props, query, emptyValue]);
+  }, [options, query]);
 
   useEffect(() => {
     void run();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.disabled]);
+  }, [options?.disabled]);
 
   return useMemo(
     () =>

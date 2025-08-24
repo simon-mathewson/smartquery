@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'wouter';
 import { Page } from '~/shared/components/page/Page';
 import { Signup } from '../auth/Signup/Signup';
-import { Checkout } from './Checkout';
+import { Checkout } from './Checkout/Checkout';
 import { Confirm } from './Confirm';
 import { Plans } from './Plans';
 import { AuthContext } from '../auth/Context';
