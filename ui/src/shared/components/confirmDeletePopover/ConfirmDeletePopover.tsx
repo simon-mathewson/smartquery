@@ -5,7 +5,7 @@ import { Button } from '../button/Button';
 import { useOverlay } from '../overlay/useOverlay';
 
 export type ConfirmDeletePopoverProps = {
-  onConfirm: () => void;
+  onConfirm: () => Promise<void>;
   renderTrigger: (props: React.HTMLProps<HTMLButtonElement>) => React.ReactNode;
   text: string;
 };
@@ -17,6 +17,7 @@ export const ConfirmDeletePopover: React.FC<ConfirmDeletePopoverProps> = (props)
 
   const [menuId] = useState(uuid);
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const triggerProps = useMemo(
     () =>
@@ -47,10 +48,22 @@ export const ConfirmDeletePopover: React.FC<ConfirmDeletePopoverProps> = (props)
         }}
         overlay={overlay}
       >
-        {() => (
+        {({ close }) => (
           <Button
             color="danger"
-            htmlProps={{ onClick: onConfirm, role: 'menuitem' }}
+            htmlProps={{
+              disabled: isLoading,
+              onClick: async () => {
+                try {
+                  setIsLoading(true);
+                  await onConfirm();
+                  void close();
+                } finally {
+                  setIsLoading(false);
+                }
+              },
+              role: 'menuitem',
+            }}
             label={text}
           />
         )}

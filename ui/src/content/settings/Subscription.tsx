@@ -3,23 +3,27 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { AuthContext } from '../auth/Context';
 import { assert } from 'ts-essentials';
 import { Button } from '~/shared/components/button/Button';
-import { CancelOutlined, EditOutlined } from '@mui/icons-material';
+import { CancelOutlined, EditOutlined, SettingsBackupRestoreOutlined } from '@mui/icons-material';
 import { plans } from '@/subscriptions/plans';
 import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/ConfirmDeletePopover';
 import { routes } from '~/router/routes';
+import { CloudApiContext } from '../cloud/api/Context';
+import { ToastContext } from '../toast/Context';
 
 export type SubscriptionProps = {
-  exit: () => void;
+  close: () => void;
 };
 
 export const Subscription: React.FC<SubscriptionProps> = (props) => {
-  const { exit } = props;
+  const { close } = props;
 
-  const { user } = useDefinedContext(AuthContext);
+  const toast = useDefinedContext(ToastContext);
+  const { cloudApi } = useDefinedContext(CloudApiContext);
+  const { user, getCurrentUser } = useDefinedContext(AuthContext);
 
   assert(user?.activeSubscription, 'User must have an active subscription');
 
-  const { startDate, stripeSubscriptionId, type } = user.activeSubscription;
+  const { startDate, stripeSubscriptionId, type, endDate } = user.activeSubscription;
   const subscriptionName = `${type[0].toUpperCase()}${type.slice(1)}`;
 
   const price = stripeSubscriptionId ? plans[type].price : null;
@@ -31,6 +35,7 @@ export const Subscription: React.FC<SubscriptionProps> = (props) => {
       label: 'Subscribed since',
       value: startDate.toLocaleDateString('en-US'),
     },
+    ...(endDate ? [{ label: 'Expires on', value: endDate.toLocaleDateString('en-US') }] : []),
   ];
 
   return (
@@ -51,24 +56,59 @@ export const Subscription: React.FC<SubscriptionProps> = (props) => {
             htmlProps={{
               href: routes.subscribe(),
               onClick: () => {
-                exit();
+                close();
               },
             }}
             icon={<EditOutlined />}
             label="Change plan"
           />
-          <ConfirmDeletePopover
-            onConfirm={() => {}}
-            renderTrigger={(htmlProps) => (
-              <Button
-                align="left"
-                icon={<CancelOutlined />}
-                label="Cancel subscription"
-                htmlProps={htmlProps}
-              />
-            )}
-            text="Confirm cancellation"
-          />
+          {!endDate ? (
+            <ConfirmDeletePopover
+              onConfirm={async () => {
+                await cloudApi.subscriptions.cancelSubscription.mutate();
+                toast.add({
+                  title: 'Subscription cancelled',
+                  color: 'success',
+                });
+
+                setTimeout(() => {
+                  void getCurrentUser();
+                }, 1000);
+              }}
+              renderTrigger={(htmlProps) => (
+                <Button
+                  align="left"
+                  icon={<CancelOutlined />}
+                  label="Cancel subscription"
+                  htmlProps={htmlProps}
+                />
+              )}
+              text="Confirm cancellation"
+            />
+          ) : (
+            <ConfirmDeletePopover
+              onConfirm={async () => {
+                await cloudApi.subscriptions.reactivateSubscription.mutate();
+                toast.add({
+                  title: 'Subscription reactivated',
+                  color: 'success',
+                });
+
+                setTimeout(() => {
+                  void getCurrentUser();
+                }, 1000);
+              }}
+              renderTrigger={(htmlProps) => (
+                <Button
+                  align="left"
+                  icon={<SettingsBackupRestoreOutlined />}
+                  label="Reactivate subscription"
+                  htmlProps={htmlProps}
+                />
+              )}
+              text="Confirm reactivation"
+            />
+          )}
         </>
       )}
     </div>

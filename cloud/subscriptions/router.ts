@@ -14,7 +14,9 @@ export const subscriptionsRouter = trpc.router({
 
     assert(user.activeSubscription?.stripeSubscriptionId, 'User has no active subscription');
 
-    await stripe.subscriptions.cancel(user.activeSubscription.stripeSubscriptionId);
+    await stripe.subscriptions.update(user.activeSubscription.stripeSubscriptionId, {
+      cancel_at_period_end: true,
+    });
   }),
   createCheckoutSession: trpc.procedure
     .use(isAuthenticated)
@@ -107,4 +109,15 @@ export const subscriptionsRouter = trpc.router({
         futurePrice,
       };
     }),
+  reactivateSubscription: trpc.procedure.use(isAuthenticated).mutation(async (props) => {
+    const {
+      ctx: { stripe, user },
+    } = props;
+
+    assert(user.activeSubscription?.stripeSubscriptionId, 'User has no active subscription');
+
+    await stripe.subscriptions.update(user.activeSubscription.stripeSubscriptionId, {
+      cancel_at_period_end: false,
+    });
+  }),
 });

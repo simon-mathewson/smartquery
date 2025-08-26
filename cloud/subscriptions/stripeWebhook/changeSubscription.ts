@@ -26,11 +26,32 @@ export const changeSubscription = async (props: {
 
     const newSubscriptionType = getSubscriptionTypeForProductId(productId);
 
-    // Do nothing if subscription is active and type unchanged
+    // If is active and type unchanged...
     if (
       user.activeSubscription?.type === newSubscriptionType &&
       stripeSubscription.status === 'active'
     ) {
+      // set end date if subscription was canceled
+      if (stripeSubscription.cancel_at_period_end && !user.activeSubscription.endDate) {
+        await tx.subscription.update({
+          where: { id: user.activeSubscription.id },
+          data: {
+            endDate: new Date(stripeSubscription.items.data[0].current_period_end * 1000),
+          },
+        });
+        return;
+      }
+
+      // remove end date if canceled subscription was reactivated
+      if (!stripeSubscription.cancel_at_period_end && user.activeSubscription.endDate) {
+        await tx.subscription.update({
+          where: { id: user.activeSubscription.id },
+          data: { endDate: null },
+        });
+        return;
+      }
+
+      // do nothing
       return;
     }
 

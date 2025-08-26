@@ -231,7 +231,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           )}
         </>
       )}
-      {section === 'subscription' && <Subscription exit={close} />}
+      {section === 'subscription' && <Subscription close={close} />}
       {section === 'usage' && <Usage />}
     </div>
   );

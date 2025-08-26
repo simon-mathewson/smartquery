@@ -6,6 +6,7 @@ export const currentUserSchema = z.object({
   email: z.string(),
   activeSubscription: z
     .object({
+      endDate: z.date().nullable(),
       startDate: z.date(),
       stripeSubscriptionId: z.string().nullable(),
       type: subscriptionTypeSchema,
