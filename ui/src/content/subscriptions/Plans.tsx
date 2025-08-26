@@ -1,4 +1,4 @@
-import { plans } from '@/subscriptions/plans';
+import { plans as allPlans } from '@/subscriptions/plans';
 import type { SubscriptionType } from '@/subscriptions/types';
 import { formatBytes } from '@/utils/formatBytes';
 import { formatDuration } from '@/utils/formatDuration';
@@ -12,6 +12,9 @@ import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../auth/Context';
+import { omit } from 'lodash';
+
+const plans = omit(allPlans, 'pro');
 
 export type PlansProps = {
   onContinue: (type: SubscriptionType) => void;
@@ -52,7 +55,12 @@ export const Plans: React.FC<PlansProps> = (props) => {
           </div>
         }
       />
-      <div className="relative grid w-full grid-cols-[150px_150px_150px_150px] overflow-x-auto pt-2 text-sm">
+      <div
+        className="relative grid w-full overflow-x-auto pt-2 text-sm"
+        style={{
+          gridTemplateColumns: `repeat(${planNames.length + 1}, 150px)`,
+        }}
+      >
         <Cell feature />
         {planNames.map((plan) => (
           <Cell className="text-md" key={plan}>

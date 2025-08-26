@@ -30,6 +30,7 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
 
   const [isLoadingAddress, setIsLoadingAddress] = useState(true);
   const [isLoadingPayment, setIsLoadingPayment] = useState(true);
+  const [isLoadingTotal, setIsLoadingTotal] = useState(true);
 
   const [isAddressComplete, setIsAddressComplete] = useState(false);
   const [isPaymentComplete, setIsPaymentComplete] = useState(false);
@@ -52,28 +53,32 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
           </div>
         }
       />
-      <div className="relative flex min-h-[200px] flex-col gap-4 p-2">
-        {isLoadingAddress && isLoadingPayment && <Loading />}
-        <CheckoutProvider
-          stripe={stripe}
-          options={{
-            elementsOptions: { appearance: { theme: theme.mode === 'dark' ? 'night' : 'stripe' } },
-            fetchClientSecret: createSession,
-          }}
-        >
-          <AddressElement
-            onChange={(event) => setIsAddressComplete(event.complete)}
-            onReady={() => setIsLoadingAddress(false)}
-            options={{ mode: 'billing' }}
-          />
-          <PaymentElement
-            onChange={(event) => setIsPaymentComplete(event.complete)}
-            onReady={() => setIsLoadingPayment(false)}
-            options={{ layout: 'auto' }}
-          />
-          <Total subscriptionType={subscriptionType} />
-          <PayButton disabled={!isAddressComplete || !isPaymentComplete} />
-        </CheckoutProvider>
+      <div className="relative min-h-[200px] p-2">
+        {(isLoadingAddress || isLoadingPayment || isLoadingTotal) && <Loading />}
+        <div className="z-10 flex flex-col gap-4 bg-white">
+          <CheckoutProvider
+            stripe={stripe}
+            options={{
+              elementsOptions: {
+                appearance: { theme: theme.mode === 'dark' ? 'night' : 'stripe' },
+              },
+              fetchClientSecret: createSession,
+            }}
+          >
+            <AddressElement
+              onChange={(event) => setIsAddressComplete(event.complete)}
+              onReady={() => setIsLoadingAddress(false)}
+              options={{ mode: 'billing' }}
+            />
+            <PaymentElement
+              onChange={(event) => setIsPaymentComplete(event.complete)}
+              onReady={() => setIsLoadingPayment(false)}
+              options={{ layout: 'auto' }}
+            />
+            <Total subscriptionType={subscriptionType} onReady={() => setIsLoadingTotal(false)} />
+            <PayButton disabled={!isAddressComplete || !isPaymentComplete} />
+          </CheckoutProvider>
+        </div>
       </div>
     </Card>
   );

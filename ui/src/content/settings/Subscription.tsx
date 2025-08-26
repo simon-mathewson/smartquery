@@ -1,12 +1,11 @@
+import { plans } from '@/subscriptions/plans';
+import { CancelOutlined, SettingsBackupRestoreOutlined } from '@mui/icons-material';
 import React from 'react';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { AuthContext } from '../auth/Context';
 import { assert } from 'ts-essentials';
 import { Button } from '~/shared/components/button/Button';
-import { CancelOutlined, EditOutlined, SettingsBackupRestoreOutlined } from '@mui/icons-material';
-import { plans } from '@/subscriptions/plans';
 import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/ConfirmDeletePopover';
-import { routes } from '~/router/routes';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { AuthContext } from '../auth/Context';
 import { CloudApiContext } from '../cloud/api/Context';
 import { ToastContext } from '../toast/Context';
 
@@ -14,9 +13,7 @@ export type SubscriptionProps = {
   close: () => void;
 };
 
-export const Subscription: React.FC<SubscriptionProps> = (props) => {
-  const { close } = props;
-
+export const Subscription: React.FC<SubscriptionProps> = () => {
   const toast = useDefinedContext(ToastContext);
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const { user, getCurrentUser } = useDefinedContext(AuthContext);
@@ -50,7 +47,7 @@ export const Subscription: React.FC<SubscriptionProps> = (props) => {
       </div>
       {stripeSubscriptionId && (
         <>
-          <Button
+          {/* <Button
             align="left"
             element="link"
             htmlProps={{
@@ -61,7 +58,7 @@ export const Subscription: React.FC<SubscriptionProps> = (props) => {
             }}
             icon={<EditOutlined />}
             label="Change plan"
-          />
+          /> */}
           {!endDate ? (
             <ConfirmDeletePopover
               onConfirm={async () => {
