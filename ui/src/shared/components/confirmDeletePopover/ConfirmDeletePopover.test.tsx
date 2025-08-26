@@ -4,7 +4,7 @@ import { type ConfirmDeletePopoverProps } from './ConfirmDeletePopover';
 import { ConfirmDeletePopoverStory } from './ConfirmDeletePopover.story';
 
 test('ConfirmDeletePopover', async ({ mount }) => {
-  const onConfirm = spy();
+  const onConfirm = spy(() => {});
 
   const props = {
     onConfirm,
