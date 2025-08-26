@@ -5,7 +5,7 @@ import { Button } from '../button/Button';
 import { useOverlay } from '../overlay/useOverlay';
 
 export type ConfirmDeletePopoverProps = {
-  onConfirm: () => Promise<void>;
+  onConfirm: () => Promise<void> | void;
   renderTrigger: (props: React.HTMLProps<HTMLButtonElement>) => React.ReactNode;
   text: string;
 };

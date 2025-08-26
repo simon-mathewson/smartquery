@@ -54,5 +54,14 @@ export const mapConnectionToPrisma = (
         sshUser: c.ssh.user,
         useSshPrivateKeyPassphrase: c.ssh.privateKeyPassphrase !== undefined,
       }
-    : null),
+    : {
+        sshHost: null,
+        sshPassword: null,
+        sshPort: null,
+        sshPrivateKey: null,
+        sshPrivateKeyPassphrase: null,
+        sshUsePrivateKey: null,
+        sshUser: null,
+        useSshPrivateKeyPassphrase: false,
+      }),
 });
