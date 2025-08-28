@@ -5,7 +5,7 @@ export default function Home() {
     <>
       <div className="flex flex-col items-center gap-6 pt-4">
         <div className="flex flex-col items-center gap-4">
-          <h2 className="text-lg font-[Inter] font-[600] text-gray-700 leading-snug text-center">
+          <h2 className="text-lg font-[600] text-gray-700 leading-snug text-center">
             The fun, browser-based, AI-powered database UI.
           </h2>
           <a

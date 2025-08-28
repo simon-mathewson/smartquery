@@ -47,7 +47,7 @@ export const Total: React.FC<TotalProps> = (props) => {
     <div className="flex flex-col gap-2 py-2">
       {items.map((item) => (
         <div key={item.label} className="flex justify-between">
-          <div className="text-md text-textPrimary">{item.label}</div>
+          <div className="text-md font-medium text-textSecondary">{item.label}</div>
           <div className="text-md font-medium text-textSecondary">{item.value}</div>
         </div>
       ))}

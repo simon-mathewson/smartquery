@@ -12,6 +12,7 @@ import { PasswordFields } from '../PasswordFields';
 import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { routes } from '~/router/routes';
+import { Toggle } from '~/shared/components/toggle/Toggle';
 
 export type SignupProps = {
   onSuccess: () => void;
@@ -41,6 +42,8 @@ export const Signup: React.FC<SignupProps> = ({ onSuccess }) => {
     [auth, captchaModal, email, onSuccess, password],
   );
 
+  const [isAgreementAccepted, setIsAgreementAccepted] = useState(false);
+
   return (
     <>
       <CaptchaModal modalControl={captchaModal} />
@@ -66,9 +69,36 @@ export const Signup: React.FC<SignupProps> = ({ onSuccess }) => {
             setPassword={setPassword}
             setRepeatPassword={setRepeatPassword}
           />
+          <Toggle
+            label={
+              <>
+                I agree to the{' '}
+                <a
+                  className="underline"
+                  href={import.meta.env.VITE_TERMS_URL}
+                  target="_blank"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Terms of Use
+                </a>{' '}
+                and acknowledge the{' '}
+                <a
+                  className="underline"
+                  href={import.meta.env.VITE_PRIVACY_URL}
+                  target="_blank"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Privacy Policy
+                </a>
+                .
+              </>
+            }
+            value={isAgreementAccepted}
+            onChange={() => setIsAgreementAccepted(!isAgreementAccepted)}
+          />
           <Button
             htmlProps={{
-              disabled: repeatPassword !== password || !email || !password,
+              disabled: repeatPassword !== password || !email || !password || !isAgreementAccepted,
               className: 'mt-4',
               type: 'submit',
             }}

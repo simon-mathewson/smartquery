@@ -55,7 +55,7 @@ export const ConsentModal: React.FC = () => {
           <a className="underline" href={import.meta.env.VITE_TERMS_URL} target="_blank">
             Terms of Use
           </a>{' '}
-          and the{' '}
+          and acknowledge the{' '}
           <a className="underline" href={import.meta.env.VITE_PRIVACY_URL} target="_blank">
             Privacy Policy
           </a>

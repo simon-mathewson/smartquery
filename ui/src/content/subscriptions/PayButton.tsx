@@ -43,7 +43,7 @@ export const PayButton: React.FC<PayButtonProps> = (props) => {
           disabled: loading || disabled,
           onClick: handleClick,
         }}
-        label="Subscribe"
+        label="Pay now"
         variant="filled"
       />
     </div>

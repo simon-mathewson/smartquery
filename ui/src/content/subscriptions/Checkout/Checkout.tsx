@@ -13,6 +13,7 @@ import { CloudApiContext } from '../../cloud/api/Context';
 import PayButton from '../PayButton';
 import { stripe } from '../stripe';
 import { Total } from './Total';
+import { Toggle } from '~/shared/components/toggle/Toggle';
 
 export type CheckoutProps = {
   goBack: () => void;
@@ -34,6 +35,7 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
 
   const [isAddressComplete, setIsAddressComplete] = useState(false);
   const [isPaymentComplete, setIsPaymentComplete] = useState(false);
+  const [isAgreementAccepted, setIsAgreementAccepted] = useState(false);
 
   const createSession = useCallback(async () => {
     const { clientSecret } = await cloudApi.subscriptions.createCheckoutSession.mutate({
@@ -75,8 +77,16 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
               onReady={() => setIsLoadingPayment(false)}
               options={{ layout: 'auto' }}
             />
+            <Toggle
+              label="I agree to the immediate execution of the contract and acknowledge that I will lose my
+              right of withdrawal upon the complete fulfillment of the contract."
+              value={isAgreementAccepted}
+              onChange={() => setIsAgreementAccepted(!isAgreementAccepted)}
+            />
             <Total subscriptionType={subscriptionType} onReady={() => setIsLoadingTotal(false)} />
-            <PayButton disabled={!isAddressComplete || !isPaymentComplete} />
+            <PayButton
+              disabled={!isAddressComplete || !isPaymentComplete || !isAgreementAccepted}
+            />
           </CheckoutProvider>
         </div>
       </div>

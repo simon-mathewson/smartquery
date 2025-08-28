@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 export type ToggleProps = {
   disabled?: boolean;
   hint?: string;
-  label: string;
+  label: string | React.ReactNode;
   onChange: (value: boolean) => void;
   value: boolean;
 };
