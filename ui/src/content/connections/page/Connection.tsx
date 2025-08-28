@@ -16,7 +16,7 @@ export const Connection: React.FC = () => {
       : ''
   }${activeConnection?.database} – ${activeConnection?.name}`;
 
-  const demoDescription = 'Check out this demo database to see how Dabase works.';
+  const demoDescription = 'Check out this demo database to see how SmartQuery works.';
 
   return (
     <>

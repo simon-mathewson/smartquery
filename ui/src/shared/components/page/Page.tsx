@@ -16,7 +16,7 @@ export const Page: React.FC<PageProps> = (props) => {
   return (
     <>
       <Helmet>
-        <title>{title} – Dabase</title>
+        <title>{title} – SmartQuery</title>
       </Helmet>
       <div
         className={classNames(

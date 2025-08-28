@@ -109,7 +109,7 @@ export const LinkSetup: React.FC<LinkSetupProps> = (props) => {
           className="flex cursor-pointer items-center justify-between gap-2"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <div className="text-xs font-medium text-textSecondary">Install Dabase Link</div>
+          <div className="text-xs font-medium text-textSecondary">Install SmartQuery Link</div>
           {isOpen ? <ExpandLessOutlined /> : <ExpandMoreOutlined />}
         </div>
         {isOpen && (

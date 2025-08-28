@@ -14,13 +14,14 @@ const TermsOfUse: React.FC = () => {
         </header>
         <main>
           <p>
-            Welcome to Dabase! These Terms of Use (&quot;Terms&quot;) govern
-            your access to and use of the Dabase application, including the
+            Welcome to SmartQuery! These Terms of Use (&quot;Terms&quot;) govern
+            your access to and use of the SmartQuery application, including the
             website (https://smartquery.dev), any associated desktop
-            applications (&quot;Dabase Link&quot;), cloud services (&quot;Dabase
-            Cloud&quot;), and all related services (collectively, the
-            &quot;Service&quot;). The Service is provided by Simon Mathewson
-            (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;).
+            applications (&quot;SmartQuery Link&quot;), cloud services
+            (&quot;SmartQuery Cloud&quot;), and all related services
+            (collectively, the &quot;Service&quot;). The Service is provided by
+            Simon Mathewson (&quot;we,&quot; &quot;us,&quot; or
+            &quot;our&quot;).
           </p>
           <p>
             By accessing or using the Service, you agree to be bound by these
@@ -30,22 +31,22 @@ const TermsOfUse: React.FC = () => {
           <section>
             <h3>1. Description of the Service</h3>
             <p>
-              Dabase is a database viewer that allows users to connect to and
-              interact with open-source databases such as PostgreSQL, MySQL, and
-              SQLite. Users can connect to their databases through different
+              SmartQuery is a database viewer that allows users to connect to
+              and interact with open-source databases such as PostgreSQL, MySQL,
+              and SQLite. Users can connect to their databases through different
               methods, including a direct local connection via our desktop
-              application (&quot;Dabase Link&quot;) or through our managed proxy
-              service (&quot;Dabase Cloud&quot;).
+              application (&quot;SmartQuery Link&quot;) or through our managed
+              proxy service (&quot;SmartQuery Cloud&quot;).
             </p>
           </section>
           <section>
             <h3>2. Accounts</h3>
             <p>
-              Using the core functionality of Dabase for direct database
-              connections (e.g., via Dabase Link) does not require an account.
-              However, to save and sync your connections, and to access the
-              features provided under our Free Tier (such as AI Credits and
-              Dabase Cloud queries), you must create a free account. Upon
+              Using the core functionality of SmartQuery for direct database
+              connections (e.g., via SmartQuery Link) does not require an
+              account. However, to save and sync your connections, and to access
+              the features provided under our Free Tier (such as AI Credits and
+              SmartQuery Cloud queries), you must create a free account. Upon
               signing up, you are automatically enrolled in the Free Tier.
             </p>
             <ul>
@@ -67,9 +68,9 @@ const TermsOfUse: React.FC = () => {
           <section>
             <h3>3. Service Tiers and Subscriptions</h3>
             <p>
-              Dabase is offered with service tiers for users with an account.
-              Usage limits are applied on a monthly basis, resetting on your
-              billing anchor date (the date you signed up or subscribed).
+              SmartQuery is offered with service tiers for users with an
+              account. Usage limits are applied on a monthly basis, resetting on
+              your billing anchor date (the date you signed up or subscribed).
             </p>
 
             <h4>3.1. Free Tier</h4>
@@ -82,10 +83,10 @@ const TermsOfUse: React.FC = () => {
                 <strong>AI Credits:</strong> 10,000
               </li>
               <li>
-                <strong>Queries via Dabase Link:</strong> Unlimited
+                <strong>Queries via SmartQuery Link:</strong> Unlimited
               </li>
               <li>
-                <strong>Queries via Dabase Cloud:</strong>
+                <strong>Queries via SmartQuery Cloud:</strong>
                 <ul>
                   <li>Concurrent Connections: 1</li>
                   <li>Concurrent Query Statements: 2</li>
@@ -95,9 +96,9 @@ const TermsOfUse: React.FC = () => {
               </li>
             </ul>
 
-            <h4>3.2. Dabase Plus Subscription</h4>
+            <h4>3.2. SmartQuery Plus Subscription</h4>
             <p>
-              For users requiring higher limits, we offer the Dabase Plus
+              For users requiring higher limits, we offer the SmartQuery Plus
               subscription for $8 per month. The monthly usage limits are as
               follows:
             </p>
@@ -106,10 +107,10 @@ const TermsOfUse: React.FC = () => {
                 <strong>AI Credits:</strong> 900,000
               </li>
               <li>
-                <strong>Queries via Dabase Link:</strong> Unlimited
+                <strong>Queries via SmartQuery Link:</strong> Unlimited
               </li>
               <li>
-                <strong>Queries via Dabase Cloud:</strong>
+                <strong>Queries via SmartQuery Cloud:</strong>
                 <ul>
                   <li>Concurrent Connections: 3</li>
                   <li>Concurrent Query Statements: 5</li>
@@ -127,15 +128,15 @@ const TermsOfUse: React.FC = () => {
                 terms of service and privacy policy.
               </li>
               <li>
-                <strong>Billing Cycle:</strong> Dabase Plus subscriptions are
-                billed in advance on a monthly basis. Your billing cycle begins
-                on the date you subscribe.
+                <strong>Billing Cycle:</strong> SmartQuery Plus subscriptions
+                are billed in advance on a monthly basis. Your billing cycle
+                begins on the date you subscribe.
               </li>
               <li>
-                <strong>Cancellation:</strong> You may cancel your Dabase Plus
-                subscription at any time. Your subscription will remain active,
-                and you will have access to paid features until the end of your
-                current paid billing period.
+                <strong>Cancellation:</strong> You may cancel your SmartQuery
+                Plus subscription at any time. Your subscription will remain
+                active, and you will have access to paid features until the end
+                of your current paid billing period.
               </li>
               <li>
                 <strong>Refunds:</strong> Payments are non-refundable, and we do
@@ -151,7 +152,7 @@ const TermsOfUse: React.FC = () => {
               If you are a consumer based in the European Union or European
               Economic Area (EEA), you have a statutory right to withdraw from a
               contract for the purchase of services within 14 days without
-              giving any reason. However, when purchasing a Dabase Plus
+              giving any reason. However, when purchasing a SmartQuery Plus
               subscription, which provides immediate access to a digital
               service, you will be asked to provide your prior express consent
               to the immediate execution of the contract. By providing this
@@ -163,7 +164,7 @@ const TermsOfUse: React.FC = () => {
           <section>
             <h3>4. Use of AI Features</h3>
             <p>
-              Dabase integrates AI features powered by Google&apos;s Gemini
+              SmartQuery integrates AI features powered by Google&apos;s Gemini
               models to assist with database queries. Your use of these features
               is governed by an &quot;AI Credits&quot; system, available only to
               users with an account.
@@ -211,9 +212,9 @@ const TermsOfUse: React.FC = () => {
             <h3>6. Intellectual Property Rights</h3>
             <p>
               The Service and its original content, features, and functionality,
-              including but not limited to the Dabase application, the
-              &quot;Dabase Link&quot; software, the website design, logos, and
-              all underlying source code, are and will remain the exclusive
+              including but not limited to the SmartQuery application, the
+              &quot;SmartQuery Link&quot; software, the website design, logos,
+              and all underlying source code, are and will remain the exclusive
               property of Simon Mathewson. The Service is protected by
               copyright, trademark, and other laws of both Germany and foreign
               countries.
@@ -225,14 +226,15 @@ const TermsOfUse: React.FC = () => {
               works of, publicly display, publicly perform, republish, or
               distribute the Service or any part thereof. You further agree not
               to reverse-engineer, decompile, or otherwise attempt to discover
-              the source code of the Dabase application or its related software.
+              the source code of the SmartQuery application or its related
+              software.
             </p>
           </section>
           <section>
             <h3>7. Service Availability and Disclaimer of Warranties</h3>
             <p>
-              Dabase is a new application and is provided in an early stage of
-              development.
+              SmartQuery is a new application and is provided in an early stage
+              of development.
             </p>
             <ul>
               <li>

@@ -24,7 +24,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
     () =>
       [
         {
-          hint: 'See how Dabase works with dummy data',
+          hint: 'See how SmartQuery works with dummy data',
           icon: ScienceOutlined,
           label: 'Open demo database',
           route: routes.demo(),

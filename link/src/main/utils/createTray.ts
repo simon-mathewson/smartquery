@@ -15,13 +15,13 @@ export const createTray = () => {
 
   const tray = new Tray(icon);
 
-  tray.setToolTip('Dabase Link');
+  tray.setToolTip('SmartQuery Link');
 
   const contextMenuItems: MenuItemConstructorOptions[] = [];
 
   contextMenuItems.push(
     {
-      label: `Dabase Link ${import.meta.env.VITE_LINK_VERSION}`,
+      label: `SmartQuery Link ${import.meta.env.VITE_LINK_VERSION}`,
       enabled: false,
     },
     { type: 'separator' },

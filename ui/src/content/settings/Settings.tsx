@@ -165,7 +165,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
         <>
           <Field>
             <Toggle
-              hint="Help improve Dabase"
+              hint="Help improve SmartQuery"
               label="Share anonymous usage data"
               onChange={(value) => setIsConsentGranted(Boolean(value))}
               value={isConsentGranted ?? false}
@@ -193,7 +193,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           <LinkSetup />
           <Field>
             <Toggle
-              hint="Use Dabase servers for remote connections. Local connections still require Dabase Link."
+              hint="Use SmartQuery servers for remote connections. Local connections still require SmartQuery Link."
               label="Connect via Cloud"
               onChange={(value) => setConnectViaCloud(value)}
               value={connectViaCloud ?? false}

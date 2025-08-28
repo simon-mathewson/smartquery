@@ -22,8 +22,8 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 5 * 1024 ** 2, // 5 MB
       },
       manifest: {
-        name: 'Dabase',
-        short_name: 'Dabase',
+        name: 'SmartQuery',
+        short_name: 'SmartQuery',
         theme_color: 'transparent',
         icons: [
           {

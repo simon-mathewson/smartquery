@@ -4,7 +4,7 @@ import Head from "next/head";
 
 export default function App({ Component, pageProps }: AppProps) {
   const title =
-    "Dabase – AI-powered, browser-based database UI for Postgres, MySQL, and SQLite";
+    "SmartQuery – AI-powered, browser-based database UI for Postgres, MySQL, and SQLite";
   const description =
     "The AI copilot can answer questions and generate SQL queries tailored to your database. View and edit your data in a user-friendly interface.";
 

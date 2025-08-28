@@ -158,8 +158,8 @@ export const authRouter = trpc.router({
 
       void sendEmail(
         email,
-        'Reset your password – Dabase',
-        `Someone requested a password reset for your Dabase account. If this was you, please click the following link:\n${verificationLink}\n\nIf this was not you, please ignore this email.\n\nNote that after changing your password, your encrypted connection credentials will no longer be usable and have to be re-entered.`,
+        'Reset your password – SmartQuery',
+        `Someone requested a password reset for your SmartQuery account. If this was you, please click the following link:\n${verificationLink}\n\nIf this was not you, please ignore this email.\n\nNote that after changing your password, your encrypted connection credentials will no longer be usable and have to be re-entered.`,
       );
     }),
   resetPassword: trpc.procedure
@@ -207,8 +207,8 @@ export const authRouter = trpc.router({
 
       void sendEmail(
         email,
-        'Welcome to Dabase! – Please verify your email',
-        `Welcome to Dabase!\n\nPlease verify your email by clicking the following link:\n${verificationLink}`,
+        'Please verify your email',
+        `Welcome to SmartQuery!\n\nPlease verify your email by clicking the following link:\n${verificationLink}`,
       );
     }),
   verifyEmail: trpc.procedure

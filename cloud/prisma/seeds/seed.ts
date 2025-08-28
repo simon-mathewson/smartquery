@@ -334,7 +334,7 @@ void (async () => {
         dbUser: 'postgres',
         engine: 'postgres',
         host: 'localhost',
-        name: 'Dabase Dev',
+        name: 'SmartQuery Dev',
         user: {
           connect: {
             email: userEmail,
@@ -353,7 +353,7 @@ void (async () => {
         dbUser: 'postgres',
         engine: 'postgres',
         host: '-',
-        name: 'Dabase Prod',
+        name: 'SmartQuery Prod',
         user: {
           connect: {
             email: userEmail,

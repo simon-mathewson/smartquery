@@ -2,7 +2,7 @@ const artifactName = '${name}_${version}_${arch}.${ext}';
 const artifactNameWindows = '${name}_${version}_${arch}_setup.${ext}';
 
 export default {
-  appId: 'dev.dabase.link',
+  appId: 'dev.smartquery.link',
   asarUnpack: ['resources/**'],
   extraResources: [
     {
@@ -12,7 +12,7 @@ export default {
     },
   ],
   directories: { buildResources: 'buildResources' },
-  productName: 'Dabase Link',
+  productName: 'SmartQuery Link',
   files: [
     '!**/.vscode/**',
     '!src/*',
@@ -48,7 +48,7 @@ export default {
   dmg: {
     artifactName,
     sign: false,
-    title: 'dabase-link', // Mac ARM build fails if this contains spaces
+    title: 'smartquery-link', // Mac ARM build fails if this contains spaces
   },
   linux: {
     target: [{ target: 'deb', arch: ['x64', 'arm64'] }],

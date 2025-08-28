@@ -14,7 +14,7 @@ export const App: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Dabase</title>
+        <title>SmartQuery</title>
         <meta name="description" content={description} />
       </Helmet>
       <Providers>

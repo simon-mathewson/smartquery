@@ -1,8 +1,8 @@
 {
   "name": "dabase-link",
-  "productName": "Dabase Link",
+  "productName": "SmartQuery Link",
   "version": "1.0.3",
-  "description": "Background service for Dabase",
+  "description": "Background service for SmartQuery",
   "type": "module",
   "main": "./out/main/main.js",
   "homepage": "https://about.smartquery.dev",

@@ -82,7 +82,7 @@ export const Plans: React.FC<PlansProps> = (props) => {
             {formatNumber(plans[plan].limits.aiCredits)}
           </Cell>
         ))}
-        <Cell feature>Dabase Link queries</Cell>
+        <Cell feature>SmartQuery Link queries</Cell>
         {planNames.map((plan) => (
           <Cell className="text-textSecondary" key={plan}>
             Unlimited

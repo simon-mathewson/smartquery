@@ -16,8 +16,8 @@ const PrivacyPolicy: React.FC = () => {
           <p>
             This Privacy Policy describes how Simon Mathewson (&quot;we&quot;,
             &quot;us&quot;, or &quot;our&quot;) collects, uses, and shares
-            information in connection with your use of the Dabase application,
-            including the website (
+            information in connection with your use of the SmartQuery
+            application, including the website (
             <a href="https://smartquery.dev" target="_blank">
               https://smartquery.dev
             </a>
@@ -46,8 +46,8 @@ const PrivacyPolicy: React.FC = () => {
           <section>
             <h3>2. General Principles of Data Processing</h3>
             <p>
-              Dabase is designed with a &quot;local-first&quot; approach. Core
-              functions can run directly on your device without sending
+              SmartQuery is designed with a &quot;local-first&quot; approach.
+              Core functions can run directly on your device without sending
               sensitive data to our servers. For enhanced functionality, such as
               account syncing, AI assistance, and cloud connectivity, we offer
               optional services that involve processing data on our secure
@@ -70,8 +70,8 @@ const PrivacyPolicy: React.FC = () => {
               <div>
                 <h4>b) When You Create an Account</h4>
                 <p>
-                  To use features like connection syncing, Dabase Cloud, or the
-                  AI assistant, you must create an account. We collect:
+                  To use features like connection syncing, SmartQuery Cloud, or
+                  the AI assistant, you must create an account. We collect:
                 </p>
                 <ul>
                   <li>
@@ -88,9 +88,9 @@ const PrivacyPolicy: React.FC = () => {
                 </p>
               </div>
               <div>
-                <h4>c) When You Subscribe to Dabase Plus</h4>
+                <h4>c) When You Subscribe to SmartQuery Plus</h4>
                 <p>
-                  If you subscribe to Dabase Plus, we process payment
+                  If you subscribe to SmartQuery Plus, we process payment
                   information through our payment provider, Stripe. We do not
                   directly collect or store your full credit card information.
                   We collect:
@@ -121,11 +121,11 @@ const PrivacyPolicy: React.FC = () => {
                 </p>
               </div>
               <div>
-                <h4>e) When You Use Dabase Cloud</h4>
+                <h4>e) When You Use SmartQuery Cloud</h4>
                 <p>
-                  Dabase Cloud acts as a proxy, allowing you to connect to your
-                  databases through our servers. When you use this feature, your
-                  database queries and the resulting data pass through our
+                  SmartQuery Cloud acts as a proxy, allowing you to connect to
+                  your databases through our servers. When you use this feature,
+                  your database queries and the resulting data pass through our
                   servers.
                 </p>
                 <ul>
@@ -139,7 +139,7 @@ const PrivacyPolicy: React.FC = () => {
                 </ul>
                 <p>
                   This transient processing is technically necessary to provide
-                  the Dabase Cloud service, based on the performance of our
+                  the SmartQuery Cloud service, based on the performance of our
                   contract with you (Art. 6(1)(b) GDPR).
                 </p>
               </div>
@@ -195,10 +195,10 @@ const PrivacyPolicy: React.FC = () => {
               </li>
               <li>
                 <strong>Stripe, Inc.:</strong> We use Stripe for payment
-                processing for Dabase Plus subscriptions. Your payment data is
-                sent directly to Stripe; we do not store your full payment card
-                details. Stripe may process data in the U.S. under appropriate
-                legal safeguards.
+                processing for SmartQuery Plus subscriptions. Your payment data
+                is sent directly to Stripe; we do not store your full payment
+                card details. Stripe may process data in the U.S. under
+                appropriate legal safeguards.
               </li>
               <li>
                 <strong>Google LLC:</strong> We use Google&apos;s Gemini API for

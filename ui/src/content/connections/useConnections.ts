@@ -515,7 +515,7 @@ export const useConnections = (props: UseConnectionsProps) => {
             } else {
               toast.add({
                 color: 'danger',
-                description: 'Is Dabase Link running? See connectivity settings for details.',
+                description: 'Is SmartQuery Link running? See connectivity settings for details.',
                 title: 'Failed to reach Link',
               });
             }
