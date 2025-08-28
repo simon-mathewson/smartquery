@@ -146,7 +146,7 @@ Resources:
           Value: default,hostheaders
         - Namespace: aws:elbv2:listenerrule:hostheaders
           OptionName: HostHeaders
-          Value: cloud.dabase.dev
+          Value: cloud.smartquery.dev
         - Namespace: aws:elasticbeanstalk:application
           OptionName: 'Application Healthcheck URL'
           Value: HTTPS:443/health

@@ -7,5 +7,5 @@ Resources:
           EnableXRay: True
           GuestRoleArn: !ImportValue CognitoIAMRoleArn
           IdentityPoolId: !ImportValue CognitoIdentityPoolId
-      Domain: dabase.dev
+      Domain: smartquery.dev
       Name: Dabase

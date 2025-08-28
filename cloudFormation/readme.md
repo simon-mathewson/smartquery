@@ -25,11 +25,11 @@ Go to https://eu-central-1.console.aws.amazon.com/codesuite/settings/connections
 
 ### 4. Connect Domain
 
-Go to https://us-east-1.console.aws.amazon.com/route53/v2/hostedzones?region=eu-central-1, get the name servers from the hosted zone, and add them to the domain registrar: https://www.spaceship.com/application/advanced-dns-application/manage/dabase.dev/
+Go to https://us-east-1.console.aws.amazon.com/route53/v2/hostedzones?region=eu-central-1, get the name servers from the hosted zone, and add them to the domain registrar: https://www.spaceship.com/application/advanced-dns-application/manage/smartquery.dev/
 
 ### 5. Set up Stripe custom email domain
 
-In Stripe settings -> Business -> Customer emails -> Your custom email domains set up dabase.dev. Add value to Stripe records in cloudFormation/route53.yml.
+In Stripe settings -> Business -> Customer emails -> Your custom email domains set up smartquery.dev. Add value to Stripe records in cloudFormation/route53.yml.
 
 ### 6. Build and publish link:
 
@@ -54,8 +54,8 @@ To build for macOS and sign, ensure Apple Developer certificate is available in 
 
 In the AWS console, go to Certificate Manager, Request a certificate, and request a certificate for the following domains in both us-east-1 and eu-central-1 regions:
 
-- `dabase.dev`
-- `*.dabase.dev`
+- `smartquery.dev`
+- `*.smartquery.dev`
 
 Replace `AcmCertificateArn` value in CloudFormation files with the ARN from us-east-1.
 
@@ -80,7 +80,7 @@ chmod 400 ~/.ssh/dabase-bastion-key.pem
 Production DB info:
 
 SSH User: ec2-user
-SSH Host: bastion.dabase.dev
+SSH Host: bastion.smartquery.dev
 SSH Port: 22
 SSH Key: ~/.ssh/dabase-bastion-key.pem
 
@@ -97,7 +97,7 @@ Replace `APPLICATION_VERSION` with `import.meta.env.VITE_UI_VERSION`.
 
 Update `VITE_AWS_WAF_CAPTCHA_SCRIPT_URL` according to JS script URL displayed in https://us-east-1.console.aws.amazon.com/wafv2/homev2/application-integ-sdks?region=eu-central-1.
 
-Create an API key with domain `dabase.dev` in the console as update `VITE_AWS_WAF_CAPTCHA_API_KEY` accordingly.
+Create an API key with domain `smartquery.dev` in the console as update `VITE_AWS_WAF_CAPTCHA_API_KEY` accordingly.
 
 ### 11. Set Google AI API key secret
 

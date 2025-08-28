@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Bastion host for secure RDS access'
 
 # To test SSH connectivity:
-# ssh -i ~/.ssh/dabase-bastion-key.pem ec2-user@bastion.dabase.dev
+# ssh -i ~/.ssh/dabase-bastion-key.pem ec2-user@bastion.smartquery.dev
 
 Resources:
   BastionKeyPair:

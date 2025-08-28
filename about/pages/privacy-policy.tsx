@@ -18,8 +18,8 @@ const PrivacyPolicy: React.FC = () => {
             &quot;us&quot;, or &quot;our&quot;) collects, uses, and shares
             information in connection with your use of the Dabase application,
             including the website (
-            <a href="https://dabase.dev" target="_blank">
-              https://dabase.dev
+            <a href="https://smartquery.dev" target="_blank">
+              https://smartquery.dev
             </a>
             ) and related services (collectively, the &quot;Service&quot;). We
             are committed to protecting your privacy and handling your data in

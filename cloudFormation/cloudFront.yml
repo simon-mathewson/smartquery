@@ -98,7 +98,7 @@ Resources:
           Items: []
         Enabled: true
         Aliases:
-          - "dabase.dev"
+          - "smartquery.dev"
         IPV6Enabled: true
         HttpVersion: "http2"
         Restrictions:
@@ -178,7 +178,7 @@ Resources:
           Items: []
         Enabled: true
         Aliases:
-          - "about.dabase.dev"
+          - "about.smartquery.dev"
         IPV6Enabled: true
         HttpVersion: "http2"
         Restrictions:
@@ -186,6 +186,208 @@ Resources:
             Locations: []
             RestrictionType: "none"
         CacheBehaviors: []
+
+  # S3 Bucket for dabase.dev redirect
+  S3BucketDabaseDevRedirect:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: dabase-dev-redirect
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+
+  # S3 Bucket Policy for dabase.dev redirect
+  S3BucketPolicyDabaseDevRedirect:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3BucketDabaseDevRedirect
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: s3:GetObject
+            Resource: !Sub "${S3BucketDabaseDevRedirect}/*"
+
+  # CloudFront Function for dabase.dev redirect
+  CloudFrontFunctionDabaseDevRedirect:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: "dabase-dev-redirect"
+      AutoPublish: true
+      FunctionConfig:
+        Comment: "Redirect dabase.dev to smartquery.dev"
+        Runtime: "cloudfront-js-2.0"
+      FunctionCode: |
+        function handler(event) {
+          var request = event.request;
+          var uri = request.uri;
+          var querystring = request.querystring;
+          
+          // Build the new URL
+          var newUrl = 'https://smartquery.dev' + uri;
+          
+          // Add query string if present
+          if (querystring && Object.keys(querystring).length > 0) {
+            var queryParams = [];
+            for (var key in querystring) {
+              if (querystring[key].value) {
+                queryParams.push(key + '=' + querystring[key].value);
+              }
+            }
+            if (queryParams.length > 0) {
+              newUrl += '?' + queryParams.join('&');
+            }
+          }
+          
+          return {
+            statusCode: 301,
+            statusDescription: 'Moved Permanently',
+            headers: {
+              'location': { value: newUrl }
+            }
+          };
+        }
+
+  # CloudFront Distribution for dabase.dev redirect
+  CloudFrontDistributionDabaseDevRedirect:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: "Redirect dabase.dev to smartquery.dev"
+        Origins:
+          - DomainName: !GetAtt S3BucketDabaseDevRedirect.RegionalDomainName
+            Id: "dabase-dev-redirect-s3"
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        ViewerCertificate:
+          MinimumProtocolVersion: "TLSv1.2_2021"
+          SslSupportMethod: "sni-only"
+          AcmCertificateArn: "arn:aws:acm:us-east-1:339712876040:certificate/03ebcb0f-f956-448b-b64e-f2e2c9425a97"
+        PriceClass: "PriceClass_All"
+        DefaultCacheBehavior:
+          TargetOriginId: "dabase-dev-redirect-s3"
+          ViewerProtocolPolicy: "redirect-to-https"
+          FunctionAssociations:
+            - EventType: "viewer-request"
+              FunctionARN: !GetAtt CloudFrontFunctionDabaseDevRedirect.FunctionARN
+          AllowedMethods:
+            - "HEAD"
+            - "GET"
+            - "OPTIONS"
+          CachedMethods:
+            - "HEAD"
+            - "GET"
+          CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled
+        Enabled: true
+        Aliases:
+          - "dabase.dev"
+        IPV6Enabled: true
+        HttpVersion: "http2"
+        Restrictions:
+          GeoRestriction:
+            Locations: []
+            RestrictionType: "none"
+
+  # S3 Bucket for about.dabase.dev redirect
+  S3BucketAboutDabaseDevRedirect:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: about-dabase-dev-redirect
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+
+  # S3 Bucket Policy for about.dabase.dev redirect
+  S3BucketPolicyAboutDabaseDevRedirect:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3BucketAboutDabaseDevRedirect
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: s3:GetObject
+            Resource: !Sub "${S3BucketAboutDabaseDevRedirect}/*"
+
+  # CloudFront Function for about.dabase.dev redirect
+  CloudFrontFunctionAboutDabaseDevRedirect:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: "about-dabase-dev-redirect"
+      AutoPublish: true
+      FunctionConfig:
+        Comment: "Redirect about.dabase.dev to about.smartquery.dev"
+        Runtime: "cloudfront-js-2.0"
+      FunctionCode: |
+        function handler(event) {
+          var request = event.request;
+          var uri = request.uri;
+          var querystring = request.querystring;
+          
+          // Build the new URL
+          var newUrl = 'https://about.smartquery.dev' + uri;
+          
+          // Add query string if present
+          if (querystring && Object.keys(querystring).length > 0) {
+            var queryParams = [];
+            for (var key in querystring) {
+              if (querystring[key].value) {
+                queryParams.push(key + '=' + querystring[key].value);
+              }
+            }
+            if (queryParams.length > 0) {
+              newUrl += '?' + queryParams.join('&');
+            }
+          }
+          
+          return {
+            statusCode: 301,
+            statusDescription: 'Moved Permanently',
+            headers: {
+              'location': { value: newUrl }
+            }
+          };
+        }
+
+  # CloudFront Distribution for about.dabase.dev redirect
+  CloudFrontDistributionAboutDabaseDevRedirect:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: "Redirect about.dabase.dev to about.smartquery.dev"
+        Origins:
+          - DomainName: !GetAtt S3BucketAboutDabaseDevRedirect.RegionalDomainName
+            Id: "about-dabase-dev-redirect-s3"
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        ViewerCertificate:
+          MinimumProtocolVersion: "TLSv1.2_2021"
+          SslSupportMethod: "sni-only"
+          AcmCertificateArn: "arn:aws:acm:us-east-1:339712876040:certificate/03ebcb0f-f956-448b-b64e-f2e2c9425a97"
+        PriceClass: "PriceClass_All"
+        DefaultCacheBehavior:
+          TargetOriginId: "about-dabase-dev-redirect-s3"
+          ViewerProtocolPolicy: "redirect-to-https"
+          FunctionAssociations:
+            - EventType: "viewer-request"
+              FunctionARN: !GetAtt CloudFrontFunctionAboutDabaseDevRedirect.FunctionARN
+          AllowedMethods:
+            - "HEAD"
+            - "GET"
+            - "OPTIONS"
+          CachedMethods:
+            - "HEAD"
+            - "GET"
+          CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled
+        Enabled: true
+        Aliases:
+          - "about.dabase.dev"
+        IPV6Enabled: true
+        HttpVersion: "http2"
+        Restrictions:
+          GeoRestriction:
+            Locations: []
+            RestrictionType: "none"
 
 Outputs:
   CloudFrontDistributionDabaseUiDomainName:
@@ -204,3 +406,11 @@ Outputs:
     Value: !Ref CloudFrontDistributionDabaseAbout
     Export:
       Name: "CloudFrontDistributionDabaseAbout"
+  CloudFrontDistributionDabaseDevRedirectDomainName:
+    Value: !GetAtt CloudFrontDistributionDabaseDevRedirect.DomainName
+    Export:
+      Name: "CloudFrontDistributionDabaseDevRedirectDomainName"
+  CloudFrontDistributionAboutDabaseDevRedirectDomainName:
+    Value: !GetAtt CloudFrontDistributionAboutDabaseDevRedirect.DomainName
+    Export:
+      Name: "CloudFrontDistributionAboutDabaseDevRedirectDomainName"

@@ -93,7 +93,7 @@ Resources:
             SampledRequestsEnabled: true
       Scope: REGIONAL
       TokenDomains:
-        - dabase.dev
+        - smartquery.dev
       VisibilityConfig:
         CloudWatchMetricsEnabled: true
         MetricName: 'cloud-web-acl'

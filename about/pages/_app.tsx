@@ -18,9 +18,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="og:description" content={description} />
         <meta
           property="og:image"
-          content="https://about.dabase.dev/open-graph-logo.png"
+          content="https://about.smartquery.dev/open-graph-logo.png"
         />
-        <meta property="og:url" content="https://about.dabase.dev" />
+        <meta property="og:url" content="https://about.smartquery.dev" />
       </Head>
       <Component {...pageProps} />
     </>

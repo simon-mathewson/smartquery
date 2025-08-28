@@ -1,1 +1,1 @@
-export const emailAddress = "support@dabase.dev";
+export const emailAddress = "support@smartquery.dev";

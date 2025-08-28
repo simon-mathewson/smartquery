@@ -4,7 +4,7 @@ Resources:
     Properties:
       DkimAttributes:
         SigningEnabled: true
-      EmailIdentity: dabase.dev
+      EmailIdentity: smartquery.dev
       FeedbackAttributes:
         EmailForwardingEnabled: true
 

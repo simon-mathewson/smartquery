@@ -12,7 +12,7 @@ void (async () => {
       dataEncryptionKey:
         '54ad804c62507b42d63959046c1d0c92f21129e297655ecf10b79a580ee582cf1483d8d2385ead75393027ba51f995f3',
       dataEncryptionKeyNonce: '8f242f469d64fb04c061b40898d0b5fcb4ab0f6acee5f058',
-      email: 'free@dabase.dev',
+      email: 'free@smartquery.dev',
       keyEncryptionKeySalt: 'eb8943e0cd3e0d2ac3f945a20272a70a',
       password:
         '5172332a5b34fbbafecf69a277f3022e45215916fba3f38ff8a61cb0072a5dbb6f6c3ca7923e7b2c8467d21659ef276a31220bb8e9ae47b380c9d1f0dc02c244',
@@ -43,7 +43,7 @@ void (async () => {
       dataEncryptionKey:
         '54ad804c62507b42d63959046c1d0c92f21129e297655ecf10b79a580ee582cf1483d8d2385ead75393027ba51f995f3',
       dataEncryptionKeyNonce: '8f242f469d64fb04c061b40898d0b5fcb4ab0f6acee5f058',
-      email: 'plus@dabase.dev',
+      email: 'plus@smartquery.dev',
       keyEncryptionKeySalt: 'eb8943e0cd3e0d2ac3f945a20272a70a',
       password:
         '5172332a5b34fbbafecf69a277f3022e45215916fba3f38ff8a61cb0072a5dbb6f6c3ca7923e7b2c8467d21659ef276a31220bb8e9ae47b380c9d1f0dc02c244',
@@ -92,7 +92,7 @@ void (async () => {
       dataEncryptionKey:
         '54ad804c62507b42d63959046c1d0c92f21129e297655ecf10b79a580ee582cf1483d8d2385ead75393027ba51f995f3',
       dataEncryptionKeyNonce: '8f242f469d64fb04c061b40898d0b5fcb4ab0f6acee5f058',
-      email: 'pro@dabase.dev',
+      email: 'pro@smartquery.dev',
       keyEncryptionKeySalt: 'eb8943e0cd3e0d2ac3f945a20272a70a',
       password:
         '5172332a5b34fbbafecf69a277f3022e45215916fba3f38ff8a61cb0072a5dbb6f6c3ca7923e7b2c8467d21659ef276a31220bb8e9ae47b380c9d1f0dc02c244',
@@ -363,7 +363,7 @@ void (async () => {
         password: '',
         port: 5432,
         schema: 'public',
-        sshHost: 'bastion.dabase.dev',
+        sshHost: 'bastion.smartquery.dev',
         sshPort: 22,
         sshUsePrivateKey: true,
         sshUser: 'ec2-user',

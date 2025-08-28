@@ -16,8 +16,8 @@ const TermsOfUse: React.FC = () => {
           <p>
             Welcome to Dabase! These Terms of Use (&quot;Terms&quot;) govern
             your access to and use of the Dabase application, including the
-            website (https://dabase.dev), any associated desktop applications
-            (&quot;Dabase Link&quot;), cloud services (&quot;Dabase
+            website (https://smartquery.dev), any associated desktop
+            applications (&quot;Dabase Link&quot;), cloud services (&quot;Dabase
             Cloud&quot;), and all related services (collectively, the
             &quot;Service&quot;). The Service is provided by Simon Mathewson
             (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;).

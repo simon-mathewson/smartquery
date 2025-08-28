@@ -9,7 +9,7 @@ export default function Home() {
             The fun, browser-based, AI-powered database UI.
           </h2>
           <a
-            href="https://dabase.dev"
+            href="https://smartquery.dev"
             className="flex gap-2 items-center font-bold bg-blue-500 text-white px-4 py-2 rounded-[32px]"
           >
             <Image src="/arrow_forward.svg" alt="" width={24} height={24} />

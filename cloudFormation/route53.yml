@@ -2,14 +2,14 @@ Resources:
   Route53HostedZoneDabase:
     Type: "AWS::Route53::HostedZone"
     Properties:
-      Name: "dabase.dev."
+      Name: "smartquery.dev."
 
   Route53RecordSetDabaseUi:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "smartquery.dev."
       Type: "A"
       AliasTarget:
         # This is the CloudFront hosted zone ID, which is fixed for CloudFront
@@ -20,8 +20,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "about.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "about.smartquery.dev."
       Type: "A"
       AliasTarget:
         # This is the CloudFront hosted zone ID, which is fixed for CloudFront
@@ -32,8 +32,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "cloud.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "cloud.smartquery.dev."
       Type: "A"
       AliasTarget:
         HostedZoneId: "Z215JYRZR1TBD5"  # Fixed hosted zone ID for Elastic Beanstalk in eu-central-1
@@ -43,8 +43,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "bastion.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "bastion.smartquery.dev."
       Type: "A"
       TTL: "300"
       ResourceRecords:
@@ -54,7 +54,7 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
+      HostedZoneName: "smartquery.dev."
       Name: !ImportValue DkimDNSTokenName1
       Type: "CNAME"
       TTL: "3600"
@@ -65,7 +65,7 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
+      HostedZoneName: "smartquery.dev."
       Name: !ImportValue DkimDNSTokenName2
       Type: "CNAME"
       TTL: "3600"
@@ -76,7 +76,7 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
+      HostedZoneName: "smartquery.dev."
       Name: !ImportValue DkimDNSTokenName3
       Type: "CNAME"
       TTL: "3600"
@@ -87,19 +87,19 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "_dmarc.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "_dmarc.smartquery.dev."
       Type: "TXT"
       TTL: "3600"
       ResourceRecords:
-        - '"v=DMARC1; p=reject; rua=mailto:dmarc@dabase.dev"'
+        - '"v=DMARC1; p=reject; rua=mailto:dmarc@smartquery.dev"'
 
   Route53RecordSetSpaceshipMx:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "smartquery.dev."
       Type: "MX"
       TTL: "3600"
       ResourceRecords:
@@ -110,8 +110,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "smartquery.dev."
       Type: "TXT"
       TTL: "3600"
       ResourceRecords:
@@ -123,8 +123,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "s3rffjeocaxxfut6wdu44i7vehx2uj5j._domainkey.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "s3rffjeocaxxfut6wdu44i7vehx2uj5j._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
@@ -134,8 +134,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "b4duab33kjqcufz5wdcm5rmmqxp7bp7t._domainkey.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "b4duab33kjqcufz5wdcm5rmmqxp7bp7t._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
@@ -145,8 +145,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "dd3cgupkaeimjf65taelxznf2qgdq3n6._domainkey.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "dd3cgupkaeimjf65taelxznf2qgdq3n6._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
@@ -156,8 +156,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "dtb25znqdfzorsexuowotxg3jk3vaxrr._domainkey.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "dtb25znqdfzorsexuowotxg3jk3vaxrr._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
@@ -167,8 +167,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "bgt2j4ti4cnh7uufqzxylpkjn3nnrhf7._domainkey.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "bgt2j4ti4cnh7uufqzxylpkjn3nnrhf7._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
@@ -178,8 +178,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "gsdw7senfn5tkd32jic4uvzmjdvd5zvz._domainkey.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "gsdw7senfn5tkd32jic4uvzmjdvd5zvz._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
@@ -189,10 +189,40 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: Route53HostedZoneDabase
     Properties:
-      HostedZoneName: "dabase.dev."
-      Name: "bounce.dabase.dev."
+      HostedZoneName: "smartquery.dev."
+      Name: "bounce.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
         - "custom-email-domain.stripe.com."
+
+  # Old domain hosted zone for redirects
+  Route53HostedZoneDabaseOld:
+    Type: "AWS::Route53::HostedZone"
+    Properties:
+      Name: "dabase.dev."
+
+  # Redirect records for old domains
+  Route53RecordSetRedirectDabaseDev:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabaseOld
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "dabase.dev."
+      Type: "A"
+      AliasTarget:
+        HostedZoneId: "Z2FDTNDATAQYW2"
+        DNSName: !ImportValue CloudFrontDistributionDabaseDevRedirectDomainName
+
+  Route53RecordSetRedirectAboutDabaseDev:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZoneDabaseOld
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "about.dabase.dev."
+      Type: "A"
+      AliasTarget:
+        HostedZoneId: "Z2FDTNDATAQYW2"
+        DNSName: !ImportValue CloudFrontDistributionAboutDabaseDevRedirectDomainName
+
 

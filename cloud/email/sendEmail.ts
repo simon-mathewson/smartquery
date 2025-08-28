@@ -2,7 +2,7 @@ import type { SendEmailCommandInput } from '@aws-sdk/client-ses';
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import assert from 'node:assert';
 
-const footer = '\n\n\nhttps://dabase.dev\nThe AI-powered, browser-based database UI.';
+const footer = '\n\n\nhttps://smartquery.dev\nThe AI-powered, browser-based database UI.';
 
 export const sendEmail = async (to: string, subject: string, body: string) => {
   if (process.env.NODE_ENV === 'development') {
@@ -18,7 +18,7 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
   const message = `${body}${footer}`;
 
   const input = {
-    Source: '"Dabase" <no-reply@dabase.dev>',
+    Source: '"SmartQuery" <no-reply@smartquery.dev>',
     Destination: { ToAddresses: [to] },
     Message: {
       Subject: {
@@ -36,7 +36,7 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
         },
       },
     },
-    ReturnPath: 'email-feedback@dabase.dev',
+    ReturnPath: 'email-feedback@smartquery.dev',
     SourceArn: process.env.SES_EMAIL_IDENTITY_ARN,
   } satisfies SendEmailCommandInput;
 

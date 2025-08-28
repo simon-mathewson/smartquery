@@ -5,10 +5,10 @@
   "description": "Background service for Dabase",
   "type": "module",
   "main": "./out/main/main.js",
-  "homepage": "https://about.dabase.dev",
+  "homepage": "https://about.smartquery.dev",
   "author": {
     "name": "Simon Mathewson",
-    "email": "support@dabase.dev"
+    "email": "support@smartquery.dev"
   },
   "license": "UNLICENSED",
   "scripts": {
