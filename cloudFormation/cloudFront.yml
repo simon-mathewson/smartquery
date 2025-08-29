@@ -62,7 +62,7 @@ Resources:
         ViewerCertificate:
           MinimumProtocolVersion: "TLSv1.2_2021"
           SslSupportMethod: "sni-only"
-          AcmCertificateArn: "arn:aws:acm:us-east-1:339712876040:certificate/03ebcb0f-f956-448b-b64e-f2e2c9425a97"
+          AcmCertificateArn: "arn:aws:acm:us-east-1:339712876040:certificate/97319459-7547-4ced-96ba-74c0149941a4"
         PriceClass: "PriceClass_All"
         DefaultCacheBehavior:
           Compress: true
@@ -140,7 +140,7 @@ Resources:
         ViewerCertificate:
           MinimumProtocolVersion: "TLSv1.2_2021"
           SslSupportMethod: "sni-only"
-          AcmCertificateArn: "arn:aws:acm:us-east-1:339712876040:certificate/03ebcb0f-f956-448b-b64e-f2e2c9425a97"
+          AcmCertificateArn: "arn:aws:acm:us-east-1:339712876040:certificate/97319459-7547-4ced-96ba-74c0149941a4"
         PriceClass: "PriceClass_All"
         DefaultCacheBehavior:
           Compress: true
