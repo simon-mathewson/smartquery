@@ -1,12 +1,12 @@
 Resources:
-  Route53HostedZoneDabase:
+  Route53HostedZone:
     Type: "AWS::Route53::HostedZone"
     Properties:
       Name: "smartquery.dev."
 
-  Route53RecordSetDabaseUi:
+  Route53RecordSetUi:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: "smartquery.dev."
@@ -16,9 +16,9 @@ Resources:
         HostedZoneId: "Z2FDTNDATAQYW2"
         DNSName: !ImportValue CloudFrontDistributionDabaseUiDomainName
 
-  Route53RecordSetDabaseAboout:
+  Route53RecordSetAbout:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: "about.smartquery.dev."
@@ -28,9 +28,9 @@ Resources:
         HostedZoneId: "Z2FDTNDATAQYW2"
         DNSName: !ImportValue CloudFrontDistributionDabaseAboutDomainName
 
-  Route53RecordSetDabaseCloud:
+  Route53RecordSetCloud:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: "cloud.smartquery.dev."
@@ -41,7 +41,7 @@ Resources:
 
   Route53RecordSetBastion:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: "bastion.smartquery.dev."
@@ -52,7 +52,7 @@ Resources:
 
   Route53RecordSetSesDkim1:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: !ImportValue DkimDNSTokenName1
@@ -63,7 +63,7 @@ Resources:
 
   Route53RecordSetSesDkim2:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: !ImportValue DkimDNSTokenName2
@@ -74,7 +74,7 @@ Resources:
 
   Route53RecordSetSesDkim3:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: !ImportValue DkimDNSTokenName3
@@ -85,7 +85,7 @@ Resources:
 
   Route53RecordSetDmarc:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: "_dmarc.smartquery.dev."
@@ -96,7 +96,7 @@ Resources:
 
   Route53RecordSetSpaceshipMx:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: "smartquery.dev."
@@ -108,7 +108,7 @@ Resources:
 
   Route53RecordSetSpaceshipSpfAndStripeVerification:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: "smartquery.dev."
@@ -119,75 +119,75 @@ Resources:
         - '"stripe-verification=f8137c32c9086ff8c31fa71aa54425f4a8291f0a91cc1efac15b3cb7e890a029"'
         - '"v=spf1 include:spf.efwd.spaceship.net ~all"'
 
-  Route53RecordSetStripeDkim1:
+  Route53RecordSetStripeDkimNew1:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
-      Name: "s3rffjeocaxxfut6wdu44i7vehx2uj5j._domainkey.smartquery.dev."
+      Name: "jkivbbrtb6n7ktnnx2n6lolfh3jehtuo._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
-        - "s3rffjeocaxxfut6wdu44i7vehx2uj5j.dkim.custom-email-domain.stripe.com."
+        - "jkivbbrtb6n7ktnnx2n6lolfh3jehtuo.dkim.custom-email-domain.stripe.com."
 
-  Route53RecordSetStripeDkim2:
+  Route53RecordSetStripeDkimNew2:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
-      Name: "b4duab33kjqcufz5wdcm5rmmqxp7bp7t._domainkey.smartquery.dev."
+      Name: "z5vl5lyvm6ubguanfyeuvotu63lhysgj._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
-        - "b4duab33kjqcufz5wdcm5rmmqxp7bp7t.dkim.custom-email-domain.stripe.com."
+        - "z5vl5lyvm6ubguanfyeuvotu63lhysgj.dkim.custom-email-domain.stripe.com."
 
-  Route53RecordSetStripeDkim3:
+  Route53RecordSetStripeDkimNew3:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
-      Name: "dd3cgupkaeimjf65taelxznf2qgdq3n6._domainkey.smartquery.dev."
+      Name: "3zqxh27hsrlgufndjhodik72hj57gzca._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
-        - "dd3cgupkaeimjf65taelxznf2qgdq3n6.dkim.custom-email-domain.stripe.com."
+        - "3zqxh27hsrlgufndjhodik72hj57gzca.dkim.custom-email-domain.stripe.com."
 
-  Route53RecordSetStripeDkim4:
+  Route53RecordSetStripeDkimNew4:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
-      Name: "dtb25znqdfzorsexuowotxg3jk3vaxrr._domainkey.smartquery.dev."
+      Name: "7kxcki7spcgclvxxgewgtjg5uj2as4o2._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
-        - "dtb25znqdfzorsexuowotxg3jk3vaxrr.dkim.custom-email-domain.stripe.com."
+        - "7kxcki7spcgclvxxgewgtjg5uj2as4o2.dkim.custom-email-domain.stripe.com."
 
-  Route53RecordSetStripeDkim5:
+  Route53RecordSetStripeDkimNew5:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
-      Name: "bgt2j4ti4cnh7uufqzxylpkjn3nnrhf7._domainkey.smartquery.dev."
+      Name: "keabwkkdfsqmh2cd7vlxwflwpb4jv7vg._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
-        - "bgt2j4ti4cnh7uufqzxylpkjn3nnrhf7.dkim.custom-email-domain.stripe.com."
+        - "keabwkkdfsqmh2cd7vlxwflwpb4jv7vg.dkim.custom-email-domain.stripe.com."
 
-  Route53RecordSetStripeDkim6:
+  Route53RecordSetStripeDkimNew6:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
-      Name: "gsdw7senfn5tkd32jic4uvzmjdvd5zvz._domainkey.smartquery.dev."
+      Name: "wvou2wuz3aul35szabjblcj4hhzv6af3._domainkey.smartquery.dev."
       Type: "CNAME"
       TTL: "3600"
       ResourceRecords:
-        - "gsdw7senfn5tkd32jic4uvzmjdvd5zvz.dkim.custom-email-domain.stripe.com."
+        - "wvou2wuz3aul35szabjblcj4hhzv6af3.dkim.custom-email-domain.stripe.com."
 
   Route53RecordSetStripeBounce:
     Type: AWS::Route53::RecordSet
-    DependsOn: Route53HostedZoneDabase
+    DependsOn: Route53HostedZone
     Properties:
       HostedZoneName: "smartquery.dev."
       Name: "bounce.smartquery.dev."
