@@ -206,7 +206,7 @@ Resources:
           - Effect: Allow
             Principal: "*"
             Action: s3:GetObject
-            Resource: !Sub "${S3BucketDabaseDevRedirect}/*"
+            Resource: !Sub "arn:${AWS::Partition}:s3:::${S3BucketDabaseDevRedirect}/*"
 
   # CloudFront Function for dabase.dev redirect
   CloudFrontFunctionDabaseDevRedirect:
@@ -307,7 +307,7 @@ Resources:
           - Effect: Allow
             Principal: "*"
             Action: s3:GetObject
-            Resource: !Sub "${S3BucketAboutDabaseDevRedirect}/*"
+            Resource: !Sub "arn:${AWS::Partition}:s3:::${S3BucketAboutDabaseDevRedirect}/*"
 
   # CloudFront Function for about.dabase.dev redirect
   CloudFrontFunctionAboutDabaseDevRedirect:
