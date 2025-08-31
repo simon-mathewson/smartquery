@@ -3,16 +3,18 @@
 ### 1. Create S3 buckets
 
 ```
-aws s3api create-bucket --bucket smartquery-cloudformation --region eu-central-1
+aws s3 mb s3://smartquery-cloudformation --region eu-central-1
 ```
 
 ### 2. Create stack
 
-These commands should be kept in sync with buildspec.yml.
+These commands should be kept in sync with cloudFormation/deploy.sh.
 
 ```sh
 cd ../cloudFormation
-aws s3 sync . s3://smartquery-cloudformation --delete
+
+aws s3 sync . s3://smartquery-cloudformation --delete --exclude "*" --include "*.yml"
+
 aws cloudformation create-stack \
    --stack-name smartquery-$(date +%Y-%m-%d-%H-%M-%S) \
    --template-url https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/main.yml \

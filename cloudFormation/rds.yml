@@ -1,10 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'RDS PostgreSQL database for Cloud'
 
-Parameters:
-  CloudDbSecretArn:
-    Type: String
-
 Resources:
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
@@ -19,8 +15,8 @@ Resources:
     Properties:
       DBName: smartquery_cloud
       Engine: postgres
-      MasterUsername: !Sub '{{resolve:secretsmanager:${CloudDbSecretArn}::username}}'
-      MasterUserPassword: !Sub '{{resolve:secretsmanager:${CloudDbSecretArn}::password}}'
+      MasterUsername: '{{resolve:secretsmanager:${!ImportValue CloudDbSecretArn}:username}}'
+      MasterUserPassword: '{{resolve:secretsmanager:${!ImportValue CloudDbSecretArn}:password}}'
       DBInstanceClass: db.t3.micro
       AllocatedStorage: 20
       MultiAZ: false
