@@ -41,6 +41,9 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
           Description: 'SSH access for bastion functionality'
+        - IpProtocol: -1
+          CidrIp: 10.0.0.0/16
+          Description: 'Allow all traffic from VPC private subnets (covers all instances)'
       SecurityGroupEgress:
         - IpProtocol: -1
           CidrIp: 0.0.0.0/0
@@ -71,26 +74,36 @@ Resources:
         echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
         sysctl -p
         
+        # Flush existing iptables rules
+        iptables -F
+        iptables -t nat -F
+        
         # Configure iptables for NAT
+        # Allow established connections
+        iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+        iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+        
+        # Allow SSH
+        iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+        
+        # Allow traffic from entire VPC (covers all instances in private and public subnets)
+        iptables -A INPUT -s 10.0.0.0/16 -j ACCEPT
+        iptables -A FORWARD -s 10.0.0.0/16 -j ACCEPT
+        
+        # NAT configuration - masquerade outbound traffic
         iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-        iptables -A FORWARD -i eth0 -o eth0 -j ACCEPT
+        
+        # Set default policies
+        iptables -P INPUT DROP
+        iptables -P FORWARD DROP
+        iptables -P OUTPUT ACCEPT
         
         # Save iptables rules
         service iptables save
         systemctl enable iptables
         
         # Install monitoring and management tools
-        yum install -y htop iotop httpd
-        
-        # Create a simple health check endpoint
-        systemctl start httpd
-        systemctl enable httpd
-        echo "Bastion and NAT Gateway is running" > /var/www/html/index.html
-        
-        # Set up SSH access (bastion functionality)
-        # Create a user for SSH access if needed
-        # useradd -m -s /bin/bash admin
-        # echo "admin:changeme" | chpasswd
+        yum install -y htop iotop
         
         # Log the setup completion
         echo "Bastion and NAT Gateway setup completed at $(date)" >> /var/log/bastion-nat-setup.log

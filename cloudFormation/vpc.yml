@@ -79,8 +79,6 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
 
-
-
   CodeBuildSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -144,6 +142,14 @@ Resources:
       FromPort: 5432
       DestinationSecurityGroupId: !Ref CloudDbSecurityGroup
 
+  ElasticBeanstalkEnvironmentSecurityGroupToInternetEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref ElasticBeanstalkEnvironmentSecurityGroup
+      IpProtocol: -1
+      CidrIp: 0.0.0.0/0
+      Description: 'Allow all outbound traffic to internet'
+
   CloudDbSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -167,8 +173,6 @@ Resources:
       ToPort: 5432
       FromPort: 5432
       SourceSecurityGroupId: !Ref ElasticBeanstalkEnvironmentSecurityGroup
-
-
 
 Outputs:
   VpcId:
