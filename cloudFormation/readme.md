@@ -40,7 +40,6 @@ In Stripe settings -> Business -> Customer emails -> Your custom email domains s
 ```
 cd link
 pnpm build:all
-pnpm run publish
 ```
 
 If building fails with hdiutil error, enable IDE under macOS settings -> Privacy & Security -> App Management.
@@ -99,11 +98,14 @@ Replace `APPLICATION_VERSION` with `import.meta.env.VITE_UI_VERSION`.
 
 ### 10. Update WAF script
 
-Update `VITE_AWS_WAF_CAPTCHA_SCRIPT_URL` according to JS script URL displayed in https://us-east-1.console.aws.amazon.com/wafv2/homev2/application-integ-sdks?region=eu-central-1.
+Update `VITE_AWS_WAF_CAPTCHA_SCRIPT_URL` according to JS script URL displayed in https://us-east-1.console.aws.amazon.com/wafv2/homev2/application-integ-sdks?region=eu-central-1 -> CAPTCHA integration.
 
-Create an API key with domain `smartquery.dev` in the console as update `VITE_AWS_WAF_CAPTCHA_API_KEY` accordingly.
+Create an API key with domain `smartquery.dev` in the console and update `VITE_AWS_WAF_CAPTCHA_API_KEY` accordingly.
 
-### 11. Set Google AI API key secret
+### 11. Populate secrets
 
-Get API Key from https://aistudio.google.com/apikey and insert it into the secret manager:
 https://eu-central-1.console.aws.amazon.com/secretsmanager/listsecrets?region=eu-central-1
+
+- smartquery-cloud-google-ai-api-key: https://aistudio.google.com/apikey
+- smartquery-cloud-stripe-api-key: https://dashboard.stripe.com/apikeys
+- smartquery-cloud-stripe-webhook-secret: https://dashboard.stripe.com/workbench/webhooks
