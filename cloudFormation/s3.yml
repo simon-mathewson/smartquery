@@ -9,7 +9,7 @@ Resources:
         IgnorePublicAcls: true
         BlockPublicPolicy: true
         BlockPublicAcls: true
-      BucketName: "dabase-codepipeline"
+      BucketName: "smartquery-codepipeline"
       OwnershipControls:
         Rules:
           - ObjectOwnership: "BucketOwnerEnforced"
@@ -19,7 +19,7 @@ Resources:
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
 
-  S3BucketDabaseLink:
+  S3BucketSmartqueryLink:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
@@ -29,7 +29,7 @@ Resources:
         IgnorePublicAcls: false
         BlockPublicPolicy: false
         BlockPublicAcls: false
-      BucketName: "dabase-link"
+      BucketName: "smartquery-link"
       OwnershipControls:
         Rules:
           - ObjectOwnership: "BucketOwnerEnforced"
@@ -39,22 +39,22 @@ Resources:
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
 
-  S3BucketPolicyDabaseLink:
+  S3BucketPolicySmartqueryLink:
     Type: "AWS::S3::BucketPolicy"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
-      Bucket: !Ref S3BucketDabaseLink
+      Bucket: !Ref S3BucketSmartqueryLink
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Resource: "arn:aws:s3:::dabase-link/*"
+          - Resource: "arn:aws:s3:::smartquery-link/*"
             Action: "s3:GetObject"
             Effect: "Allow"
             Principal: "*"
             Sid: "PublicReadGetObject"
 
-  S3BucketDabaseCloudSource:
+  S3BucketSmartqueryCloudSource:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
@@ -64,7 +64,7 @@ Resources:
         IgnorePublicAcls: true
         BlockPublicPolicy: true
         BlockPublicAcls: true
-      BucketName: "dabase-cloud-source"
+      BucketName: "smartquery-cloud-source"
       OwnershipControls:
         Rules:
           - ObjectOwnership: "BucketOwnerEnforced"
@@ -79,7 +79,7 @@ Resources:
             Status: Enabled
             ExpirationInDays: 1
 
-  S3BucketDabaseUi:
+  S3BucketSmartqueryUi:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
@@ -92,7 +92,7 @@ Resources:
         IgnorePublicAcls: false
         BlockPublicPolicy: false
         BlockPublicAcls: false
-      BucketName: "dabase-ui"
+      BucketName: "smartquery-ui"
       CorsConfiguration:
         CorsRules:
           - MaxAge: 3000
@@ -113,22 +113,22 @@ Resources:
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
 
-  S3BucketPolicyDabaseUi:
+  S3BucketPolicySmartqueryUi:
     Type: "AWS::S3::BucketPolicy"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
-      Bucket: !Ref S3BucketDabaseUi
+      Bucket: !Ref S3BucketSmartqueryUi
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Resource: "arn:aws:s3:::dabase-ui/*"
+          - Resource: "arn:aws:s3:::smartquery-ui/*"
             Action: "s3:GetObject"
             Effect: "Allow"
             Principal: "*"
             Sid: "PublicReadGetObject"
 
-  S3BucketDabaseAbout:
+  S3BucketSmartqueryAbout:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
@@ -141,7 +141,7 @@ Resources:
         IgnorePublicAcls: false
         BlockPublicPolicy: false
         BlockPublicAcls: false
-      BucketName: "dabase-about"
+      BucketName: "smartquery-about"
       CorsConfiguration:
         CorsRules:
           - MaxAge: 3000
@@ -162,16 +162,16 @@ Resources:
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
 
-  S3BucketPolicyDabaseAbout:
+  S3BucketPolicySmartqueryAbout:
     Type: "AWS::S3::BucketPolicy"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
-      Bucket: !Ref S3BucketDabaseAbout
+      Bucket: !Ref S3BucketSmartqueryAbout
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Resource: "arn:aws:s3:::dabase-about/*"
+          - Resource: "arn:aws:s3:::smartquery-about/*"
             Action: "s3:GetObject"
             Effect: "Allow"
             Principal: "*"
@@ -182,11 +182,11 @@ Outputs:
     Value: !Ref S3BucketCodePipeline
     Export:
       Name: "S3BucketCodePipeline"
-  S3BucketDabaseUi:
-    Value: !Ref S3BucketDabaseUi
+  S3BucketSmartqueryUi:
+    Value: !Ref S3BucketSmartqueryUi
     Export:
-      Name: "S3BucketDabaseUi"
-  S3BucketDabaseAbout:
-    Value: !Ref S3BucketDabaseAbout
+      Name: "S3BucketSmartqueryUi"
+  S3BucketSmartqueryAbout:
+    Value: !Ref S3BucketSmartqueryAbout
     Export:
-      Name: "S3BucketDabaseAbout"
+      Name: "S3BucketSmartqueryAbout"

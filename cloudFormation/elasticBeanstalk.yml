@@ -5,13 +5,13 @@ Resources:
   ElasticBeanstalkApplication:
     Type: AWS::ElasticBeanstalk::Application
     Properties:
-      ApplicationName: dabase-cloud
-      Description: 'Dabase Cloud'
+      ApplicationName: smartquery-cloud
+      Description: 'Smartquery Cloud'
 
   ElasticBeanstalkIamInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
-      InstanceProfileName: dabase-cloud-instance-profile
+      InstanceProfileName: smartquery-cloud-instance-profile
       Path: /
       Roles:
         - !Ref ElasticBeanstalkIamRole
@@ -42,13 +42,13 @@ Resources:
   CloudLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Name: dabase-cloud-elb
+      Name: smartquery-cloud-elb
       Scheme: internet-facing
       SecurityGroups:
-        - !ImportValue DabaseCloudELBSecurityGroup
+        - !ImportValue SmartqueryCloudELBSecurityGroup
       Subnets:
-        - !ImportValue DabaseCloudPublicSubnet1
-        - !ImportValue DabaseCloudPublicSubnet2
+        - !ImportValue SmartqueryCloudPublicSubnet1
+        - !ImportValue SmartqueryCloudPublicSubnet2
 
   # Needed because a default rule with target group is needed, not actually used because EB
   # creates its own target group.
@@ -56,10 +56,10 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckPath: /health
-      Name: dabase-cloud-elb-target-group
+      Name: smartquery-cloud-elb-target-group
       Port: 8080
       Protocol: HTTP
-      VpcId: !ImportValue DabaseCloudVpcId
+      VpcId: !ImportValue SmartqueryCloudVpcId
 
   CloudLoadBalancerListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -77,8 +77,8 @@ Resources:
     Type: AWS::ElasticBeanstalk::Environment
     DependsOn: ElasticBeanstalkApplication
     Properties:
-      ApplicationName: dabase-cloud
-      EnvironmentName: dabase-cloud
+      ApplicationName: smartquery-cloud
+      EnvironmentName: smartquery-cloud
       SolutionStackName: '64bit Amazon Linux 2023 v6.5.2 running Node.js 22'
       OptionSettings:
         - Namespace: aws:autoscaling:launchconfiguration
@@ -86,7 +86,7 @@ Resources:
           Value: t2.micro
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: SecurityGroups
-          Value: !ImportValue DabaseCloudElasticBeanstalkEnvironmentSecurityGroup
+          Value: !ImportValue SmartqueryCloudElasticBeanstalkEnvironmentSecurityGroup
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: IamInstanceProfile
           Value: !Ref ElasticBeanstalkIamInstanceProfile
@@ -107,28 +107,28 @@ Resources:
           Value: true
         - Namespace: aws:ec2:vpc
           OptionName: VPCId
-          Value: !ImportValue DabaseCloudVpcId
+          Value: !ImportValue SmartqueryCloudVpcId
         - Namespace: aws:ec2:vpc
           OptionName: Subnets
-          Value: !ImportValue DabaseCloudPrivateSubnets
+          Value: !ImportValue SmartqueryCloudPrivateSubnets
         - Namespace: aws:ec2:vpc
           OptionName: ELBSubnets
-          Value: !ImportValue DabaseCloudPublicSubnets
+          Value: !ImportValue SmartqueryCloudPublicSubnets
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
-          OptionName: DABASE_CLOUD_DB_SECRET
-          Value: !ImportValue DabaseCloudDbSecretArn
+          OptionName: SMARTQUERY_CLOUD_DB_SECRET
+          Value: !ImportValue SmartqueryCloudDbSecretArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: GOOGLE_AI_API_KEY
-          Value: !ImportValue DabaseCloudGoogleAiApiKeyArn
+          Value: !ImportValue SmartqueryCloudGoogleAiApiKeyArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: JWT_SECRET
-          Value: !ImportValue DabaseCloudJwtSecretArn
+          Value: !ImportValue SmartqueryCloudJwtSecretArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: STRIPE_API_KEY
-          Value: !ImportValue DabaseCloudStripeApiKeyArn
+          Value: !ImportValue SmartqueryCloudStripeApiKeyArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: STRIPE_WEBHOOK_SECRET
-          Value: !ImportValue DabaseCloudStripeWebhookSecretArn
+          Value: !ImportValue SmartqueryCloudStripeWebhookSecretArn
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: SES_EMAIL_IDENTITY_ARN
           Value: !ImportValue SESEmailIdentityArn
@@ -162,7 +162,7 @@ Outputs:
     Description: "Elastic Beanstalk Environment Endpoint URL"
     Value: !GetAtt ElasticBeanstalkEnvironment.EndpointURL
     Export:
-      Name: DabaseCloudElasticBeanstalkEndpointUrl
+      Name: SmartqueryCloudElasticBeanstalkEndpointUrl
 
   CloudLoadBalancerArn:
     Description: "Cloud Load Balancer ARN"

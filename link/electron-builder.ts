@@ -59,7 +59,7 @@ export default {
   npmRebuild: false,
   publish: {
     acl: null,
-    bucket: 'dabase-link',
+    bucket: 'smartquery-link',
     provider: 's3',
     region: 'eu-central-1',
   },

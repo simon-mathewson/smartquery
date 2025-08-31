@@ -28,7 +28,7 @@ Resources:
           return request;
         }
 
-  CloudFrontDistributionDabaseUi:
+  CloudFrontDistributionSmartqueryUi:
     Type: "AWS::CloudFront::Distribution"
     Properties:
       DistributionConfig:
@@ -43,11 +43,11 @@ Resources:
             OriginAccessControlId: ""
             ConnectionAttempts: 3
             OriginCustomHeaders: []
-            DomainName: "dabase-ui.s3-website.eu-central-1.amazonaws.com"
+            DomainName: "smartquery-ui.s3-website.eu-central-1.amazonaws.com"
             OriginShield:
               Enabled: false
             OriginPath: ""
-            Id: "dabase-ui.s3.eu-central-1.amazonaws.com"
+            Id: "smartquery-ui.s3.eu-central-1.amazonaws.com"
             CustomOriginConfig:
               OriginKeepaliveTimeout: 5
               OriginReadTimeout: 30
@@ -77,7 +77,7 @@ Resources:
             - "GET"
           LambdaFunctionAssociations: []
           SmoothStreaming: false
-          TargetOriginId: "dabase-ui.s3.eu-central-1.amazonaws.com"
+          TargetOriginId: "smartquery-ui.s3.eu-central-1.amazonaws.com"
           ViewerProtocolPolicy: "redirect-to-https"
           CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6" # CachingOptmized
           TrustedSigners: []
@@ -106,7 +106,7 @@ Resources:
             Locations: []
             RestrictionType: "none"
         CacheBehaviors: []
-  CloudFrontDistributionDabaseAbout:
+  CloudFrontDistributionSmartqueryAbout:
     Type: "AWS::CloudFront::Distribution"
     Properties:
       DistributionConfig:
@@ -121,11 +121,11 @@ Resources:
             OriginAccessControlId: ""
             ConnectionAttempts: 3
             OriginCustomHeaders: []
-            DomainName: "dabase-about.s3-website.eu-central-1.amazonaws.com"
+            DomainName: "smartquery-about.s3-website.eu-central-1.amazonaws.com"
             OriginShield:
               Enabled: false
             OriginPath: ""
-            Id: "dabase-about.s3.eu-central-1.amazonaws.com"
+            Id: "smartquery-about.s3.eu-central-1.amazonaws.com"
             CustomOriginConfig:
               OriginKeepaliveTimeout: 5
               OriginReadTimeout: 30
@@ -157,7 +157,7 @@ Resources:
             - "GET"
           LambdaFunctionAssociations: []
           SmoothStreaming: false
-          TargetOriginId: "dabase-about.s3.eu-central-1.amazonaws.com"
+          TargetOriginId: "smartquery-about.s3.eu-central-1.amazonaws.com"
           ViewerProtocolPolicy: "redirect-to-https"
           CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6" # CachingOptmized
           TrustedSigners: []
@@ -390,22 +390,22 @@ Resources:
             RestrictionType: "none"
 
 Outputs:
-  CloudFrontDistributionDabaseUiDomainName:
-    Value: !GetAtt CloudFrontDistributionDabaseUi.DomainName
+  CloudFrontDistributionSmartqueryUiDomainName:
+    Value: !GetAtt CloudFrontDistributionSmartqueryUi.DomainName
     Export:
-      Name: "CloudFrontDistributionDabaseUiDomainName"
-  CloudFrontDistributionDabaseUi:
-    Value: !Ref CloudFrontDistributionDabaseUi
+      Name: "CloudFrontDistributionSmartqueryUiDomainName"
+  CloudFrontDistributionSmartqueryUi:
+    Value: !Ref CloudFrontDistributionSmartqueryUi
     Export:
-      Name: "CloudFrontDistributionDabaseUi"
-  CloudFrontDistributionDabaseAboutDomainName:
-    Value: !GetAtt CloudFrontDistributionDabaseAbout.DomainName
+      Name: "CloudFrontDistributionSmartqueryUi"
+  CloudFrontDistributionSmartqueryAboutDomainName:
+    Value: !GetAtt CloudFrontDistributionSmartqueryAbout.DomainName
     Export:
-      Name: "CloudFrontDistributionDabaseAboutDomainName"
-  CloudFrontDistributionDabaseAbout:
-    Value: !Ref CloudFrontDistributionDabaseAbout
+      Name: "CloudFrontDistributionSmartqueryAboutDomainName"
+  CloudFrontDistributionSmartqueryAbout:
+    Value: !Ref CloudFrontDistributionSmartqueryAbout
     Export:
-      Name: "CloudFrontDistributionDabaseAbout"
+      Name: "CloudFrontDistributionSmartqueryAbout"
   CloudFrontDistributionDabaseDevRedirectDomainName:
     Value: !GetAtt CloudFrontDistributionDabaseDevRedirect.DomainName
     Export:

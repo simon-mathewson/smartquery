@@ -1,12 +1,12 @@
 Resources:
-  CodeStarConnectionDabase:
+  CodeStarConnectionSmartquery:
     Type: AWS::CodeStarConnections::Connection
     Properties:
-      ConnectionName: "GitHubConnectionDabase"
+      ConnectionName: "GitHubConnectionSmartquery"
       ProviderType: GitHub
 
 Outputs:
-  CodeStarConnectionDabaseArn:
-    Value: !Ref CodeStarConnectionDabase
+  CodeStarConnectionSmartqueryArn:
+    Value: !Ref CodeStarConnectionSmartquery
     Export:
-      Name: CodeStarConnectionDabaseArn
+      Name: CodeStarConnectionSmartqueryArn

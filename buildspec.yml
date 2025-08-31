@@ -20,7 +20,7 @@ phases:
       - |
         set -e  # Exit immediately if any command fails
         export MAX_ITEMS=100
-        export BUILD_IDS=$(aws codebuild list-builds-for-project --project-name dabase --sort-order DESCENDING --max-items $MAX_ITEMS)
+        export BUILD_IDS=$(aws codebuild list-builds-for-project --project-name smartquery --sort-order DESCENDING --max-items $MAX_ITEMS)
         export INDEX=0
         while [ $INDEX -lt $MAX_ITEMS ]; do
           export CURRENT_BUILD_ID=$(echo $BUILD_IDS | jq -r --arg index $INDEX '.ids[$index | tonumber]')
@@ -246,8 +246,8 @@ phases:
           echo "About package is unchanged. Skipping deployment."
         else
           cd ../about
-          aws s3 sync out s3://dabase-about
-          aws cloudfront create-invalidation --distribution-id $DABASE_ABOUT_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+          aws s3 sync out s3://smartquery-about
+          aws cloudfront create-invalidation --distribution-id $SMARTQUERY_ABOUT_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
         fi
 
       - |
@@ -267,20 +267,20 @@ phases:
           cd ../cloud
 
           # Run migrations
-          export DABASE_CLOUD_DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $DABASE_CLOUD_DB_SECRET_ARN --query SecretString --output text)
+          export SMARTQUERY_CLOUD_DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $SMARTQUERY_CLOUD_DB_SECRET_ARN --query SecretString --output text)
           chmod +x ./scripts/build-database-url.sh
           export DATABASE_URL=$(./scripts/build-database-url.sh)
           pnpm prisma migrate deploy
 
           # Deploy server
-          aws s3 cp application.zip s3://dabase-cloud-source/$CODEBUILD_BUILD_NUMBER.zip
+          aws s3 cp application.zip s3://smartquery-cloud-source/$CODEBUILD_BUILD_NUMBER.zip
           aws elasticbeanstalk create-application-version \
-            --application-name dabase-cloud \
+            --application-name smartquery-cloud \
             --version-label $CODEBUILD_BUILD_NUMBER \
-            --source-bundle S3Bucket=dabase-cloud-source,S3Key=$CODEBUILD_BUILD_NUMBER.zip
+            --source-bundle S3Bucket=smartquery-cloud-source,S3Key=$CODEBUILD_BUILD_NUMBER.zip
           
           # Use EB CLI to deploy (automatically waits for success and preserves environment config)
-          eb deploy dabase-cloud --version $CODEBUILD_BUILD_NUMBER
+          eb deploy smartquery-cloud --version $CODEBUILD_BUILD_NUMBER
         fi
 
       - |
@@ -289,9 +289,9 @@ phases:
           echo "UI package is unchanged. Skipping deployment."
         else
           cd ../ui
-          aws s3 sync dist s3://dabase-ui
-          aws s3 cp s3://dabase-ui/version s3://dabase-ui/version --content-type text/plain
-          aws cloudfront create-invalidation --distribution-id $DABASE_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+          aws s3 sync dist s3://smartquery-ui
+          aws s3 cp s3://smartquery-ui/version s3://smartquery-ui/version --content-type text/plain
+          aws cloudfront create-invalidation --distribution-id $SMARTQUERY_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
         fi
 
 reports:

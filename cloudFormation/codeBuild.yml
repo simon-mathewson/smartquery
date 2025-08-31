@@ -1,5 +1,5 @@
 Resources:
-  CodeBuildDabase:
+  CodeBuildSmartquery:
     Type: "AWS::CodeBuild::Project"
     Properties:
       Artifacts:
@@ -7,30 +7,30 @@ Resources:
       Environment:
         ComputeType: "BUILD_GENERAL1_LARGE"
         EnvironmentVariables:
-          - Name: "DABASE_UI_CLOUDFRONT_DISTRIBUTION_ID"
-            Value: !ImportValue CloudFrontDistributionDabaseUi
-          - Name: "DABASE_ABOUT_CLOUDFRONT_DISTRIBUTION_ID"
-            Value: !ImportValue CloudFrontDistributionDabaseAbout
-          - Name: "DABASE_CLOUD_DB_SECRET_ARN"
-            Value: !ImportValue DabaseCloudDbSecretArn
+          - Name: "SMARTQUERY_UI_CLOUDFRONT_DISTRIBUTION_ID"
+            Value: !ImportValue CloudFrontDistributionSmartqueryUi
+          - Name: "SMARTQUERY_ABOUT_CLOUDFRONT_DISTRIBUTION_ID"
+            Value: !ImportValue CloudFrontDistributionSmartqueryAbout
+          - Name: "SMARTQUERY_CLOUD_DB_SECRET_ARN"
+            Value: !ImportValue SmartqueryCloudDbSecretArn
         Image: "aws/codebuild/standard:7.0"
         PrivilegedMode: true
         Type: "LINUX_CONTAINER"
       LogsConfig:
         CloudWatchLogs:
           Status: "ENABLED"
-      Name: "dabase"
+      Name: "smartquery"
       ServiceRole: !ImportValue IamRoleCodeBuildArn
       Source:
         Type: "CODEPIPELINE"
       VpcConfig:
-        VpcId: !ImportValue DabaseCloudVpcId
-        Subnets: !Split [',', !ImportValue DabaseCloudPrivateSubnets]
+        VpcId: !ImportValue SmartqueryCloudVpcId
+        Subnets: !Split [',', !ImportValue SmartqueryCloudPrivateSubnets]
         SecurityGroupIds:
-          - !ImportValue DabaseCloudCodeBuildSecurityGroup
+          - !ImportValue SmartqueryCloudCodeBuildSecurityGroup
 
 Outputs:
-  CodeBuildDabase:
-    Value: !Ref CodeBuildDabase
+  CodeBuildSmartquery:
+    Value: !Ref CodeBuildSmartquery
     Export:
-      Name: CodeBuildDabase
+      Name: CodeBuildSmartquery

@@ -330,7 +330,7 @@ void (async () => {
 
     await prisma.connection.create({
       data: {
-        database: 'dabase_cloud',
+        database: 'smartquery_cloud',
         dbUser: 'postgres',
         engine: 'postgres',
         host: 'localhost',
@@ -349,7 +349,7 @@ void (async () => {
 
     await prisma.connection.create({
       data: {
-        database: 'dabase_cloud',
+        database: 'smartquery_cloud',
         dbUser: 'postgres',
         engine: 'postgres',
         host: '-',

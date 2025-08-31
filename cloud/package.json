@@ -1,5 +1,5 @@
 {
-  "name": "dabase-cloud",
+  "name": "smartquery-cloud",
   "private": true,
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",

@@ -1,9 +1,9 @@
 Resources:
-  CognitoIdentityPoolDabase:
+  CognitoIdentityPoolSmartquery:
     Type: AWS::Cognito::IdentityPool
     Properties:
       AllowUnauthenticatedIdentities: true
-      IdentityPoolName: dabase
+      IdentityPoolName: smartquery
 
   ManagedPolicyCognito:
     Type: "AWS::IAM::ManagedPolicy"
@@ -31,21 +31,21 @@ Resources:
             Federated: "cognito-identity.amazonaws.com"
           Condition:
             StringEquals:
-              'cognito-identity.amazonaws.com:aud': !GetAtt CognitoIdentityPoolDabase.Id
+              'cognito-identity.amazonaws.com:aud': !GetAtt CognitoIdentityPoolSmartquery.Id
             'ForAnyValue:StringLike':
               'cognito-identity.amazonaws.com:amr': "unauthenticated"
 
-  CognitoIdentityPoolDabaseRoleAttachment:
+  CognitoIdentityPoolSmartqueryRoleAttachment:
     Type: AWS::Cognito::IdentityPoolRoleAttachment
     Properties:
-      IdentityPoolId: !Ref CognitoIdentityPoolDabase
+      IdentityPoolId: !Ref CognitoIdentityPoolSmartquery
       Roles:
         unauthenticated: !GetAtt IAMRoleCognito.Arn
 
 Outputs:
   CognitoIdentityPoolId:
     Description: "Cognito Identity Pool ID"
-    Value: !Ref CognitoIdentityPoolDabase
+    Value: !Ref CognitoIdentityPoolSmartquery
     Export:
       Name: CognitoIdentityPoolId
   CognitoIAMRoleArn:

@@ -3,7 +3,7 @@
 ### 1. Create S3 buckets
 
 ```
-aws s3api create-bucket --bucket dabase-cloudformation --region eu-central-1
+aws s3api create-bucket --bucket smartquery-cloudformation --region eu-central-1
 ```
 
 ### 2. Create stack
@@ -12,10 +12,10 @@ These commands should be kept in sync with buildspec.yml.
 
 ```sh
 cd ../cloudFormation
-aws s3 sync . s3://dabase-cloudformation --delete
+aws s3 sync . s3://smartquery-cloudformation --delete
 aws cloudformation create-stack \
-   --stack-name dabase-$(date +%Y-%m-%d-%H-%M-%S) \
-   --template-url https://dabase-cloudformation.s3.eu-central-1.amazonaws.com/main.yml \
+   --stack-name smartquery-$(date +%Y-%m-%d-%H-%M-%S) \
+   --template-url https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/main.yml \
    --capabilities CAPABILITY_NAMED_IAM
 ```
 
@@ -72,9 +72,9 @@ aws ec2 describe-key-pairs
 2. Get and store private key
 
 ```sh
-aws ssm get-parameter --name /ec2/keypair/<KEY ID> --with-decryption --query Parameter.Value --output text > ~/.ssh/dabase-bastion-key.pem
+aws ssm get-parameter --name /ec2/keypair/<KEY ID> --with-decryption --query Parameter.Value --output text > ~/.ssh/smartquery-bastion-key.pem
 
-chmod 400 ~/.ssh/dabase-bastion-key.pem
+chmod 400 ~/.ssh/smartquery-bastion-key.pem
 ```
 
 Production DB info:
@@ -82,14 +82,14 @@ Production DB info:
 SSH User: ec2-user
 SSH Host: bastion.smartquery.dev
 SSH Port: 22
-SSH Key: ~/.ssh/dabase-bastion-key.pem
+SSH Key: ~/.ssh/smartquery-bastion-key.pem
 
 DB Password, username, host, port, and name are stored in the secret manager:
-https://eu-central-1.console.aws.amazon.com/secretsmanager/secret?name=dabase-cloud-db-secret&region=eu-central-1
+https://eu-central-1.console.aws.amazon.com/secretsmanager/secret?name=smartquery-cloud-db-secret&region=eu-central-1
 
 ### 9. Update RUM script
 
-Update `ui/src/setUpRum.ts` according to JS snippet displayed in https://eu-central-1.console.aws.amazon.com/cloudwatch/home?region=eu-central-1#rum:dashboard/Dabase?tab=configuration.
+Update `ui/src/setUpRum.ts` according to JS snippet displayed in https://eu-central-1.console.aws.amazon.com/cloudwatch/home?region=eu-central-1#rum:dashboard/Smartquery?tab=configuration.
 
 Replace `APPLICATION_VERSION` with `import.meta.env.VITE_UI_VERSION`.
 

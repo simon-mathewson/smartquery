@@ -1,8 +1,8 @@
 services:
-  dabase-cloud:
+  smartquery-cloud:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: dabase_cloud
+      POSTGRES_DB: smartquery_cloud
     ports:
       - '5444:5432'

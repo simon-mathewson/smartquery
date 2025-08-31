@@ -1,12 +1,12 @@
 branch-defaults:
   default:
-    environment: dabase-cloud
+    environment: smartquery-cloud
 environment-defaults:
-  dabase-cloud:
+  smartquery-cloud:
     branch: null
     repository: null
 global:
-  application_name: dabase-cloud
+  application_name: smartquery-cloud
   default_ec2_keyname: null
   default_platform: Node.js 22 running on 64bit Amazon Linux 2023
   default_region: eu-central-1

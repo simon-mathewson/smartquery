@@ -18,31 +18,31 @@ export const getDistributables = (os: Os): Array<Distributable> => {
       {
         arch: 'x64',
         fileExtension: 'deb',
-        fileName: `dabase-link_${version}_amd64.deb`,
+        fileName: `smartquery-link_${version}_amd64.deb`,
       },
       {
         arch: 'arm64',
         fileExtension: 'deb',
-        fileName: `dabase-link_${version}_arm64.deb`,
+        fileName: `smartquery-link_${version}_arm64.deb`,
       },
     ],
     mac: [
       {
         arch: 'x64',
         fileExtension: 'dmg',
-        fileName: `dabase-link_${version}_x64.dmg`,
+        fileName: `smartquery-link_${version}_x64.dmg`,
       },
       {
         arch: 'arm64',
         fileExtension: 'dmg',
-        fileName: `dabase-link_${version}_arm64.dmg`,
+        fileName: `smartquery-link_${version}_arm64.dmg`,
       },
     ],
     windows: [
       {
         arch: 'x64',
         fileExtension: 'exe',
-        fileName: `dabase-link_${version}_x64_setup.exe`,
+        fileName: `smartquery-link_${version}_x64_setup.exe`,
       },
     ],
   }[os];

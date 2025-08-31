@@ -1,11 +1,11 @@
 Resources:
-  CodePipelineDabase:
+  CodePipelineSmartquery:
     Type: "AWS::CodePipeline::Pipeline"
     Properties:
       ArtifactStore:
         Type: "S3"
         Location: !ImportValue S3BucketCodePipeline
-      Name: dabase
+      Name: smartquery
       RoleArn: !ImportValue IamRoleCodePipelineArn
       Stages:
         - Name: Source
@@ -17,8 +17,8 @@ Resources:
                 Provider: CodeStarSourceConnection
                 Version: "1"
               Configuration:
-                ConnectionArn: !ImportValue CodeStarConnectionDabaseArn
-                FullRepositoryId: "simon-mathewson/dabase"
+                ConnectionArn: !ImportValue CodeStarConnectionSmartqueryArn
+                FullRepositoryId: "simon-mathewson/smartquery"
                 BranchName: "main"
               OutputArtifacts:
                 - Name: SourceOutput
@@ -32,7 +32,7 @@ Resources:
                 Version: "1" 
                 Provider: CodeBuild
               Configuration:
-                ProjectName: !ImportValue CodeBuildDabase
+                ProjectName: !ImportValue CodeBuildSmartquery
               InputArtifacts:
                 - Name: SourceOutput
               OutputArtifacts:

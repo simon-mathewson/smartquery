@@ -2,13 +2,13 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Bastion host for secure RDS access'
 
 # To test SSH connectivity:
-# ssh -i ~/.ssh/dabase-bastion-key.pem ec2-user@bastion.smartquery.dev
+# ssh -i ~/.ssh/smartquery-bastion-key.pem ec2-user@bastion.smartquery.dev
 
 Resources:
   BastionKeyPair:
     Type: AWS::EC2::KeyPair
     Properties:
-      KeyName: dabase-bastion-key2
+      KeyName: smartquery-bastion-key2
       KeyType: ed25519
 
   BastionRole:
@@ -36,9 +36,9 @@ Resources:
       ImageId: ami-092ff8e60e2d51e19  # Amazon Linux 2023 AMI
       InstanceType: t3.nano
       KeyName: !Ref BastionKeyPair
-      SubnetId: !ImportValue DabaseCloudPublicSubnet1
+      SubnetId: !ImportValue SmartqueryCloudPublicSubnet1
       SecurityGroupIds:
-        - !ImportValue DabaseCloudBastionSecurityGroup
+        - !ImportValue SmartqueryCloudBastionSecurityGroup
       IamInstanceProfile: !Ref BastionInstanceProfile
 
   BastionElasticIP:
@@ -57,4 +57,4 @@ Outputs:
     Description: Public IP address of the bastion host
     Value: !Ref BastionElasticIP
     Export:
-      Name: DabaseCloudBastionPublicIP
+      Name: SmartqueryCloudBastionPublicIP

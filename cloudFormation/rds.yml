@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'RDS PostgreSQL database for Dabase Cloud'
+Description: 'RDS PostgreSQL database for Smartquery Cloud'
 
 Parameters:
-  DabaseCloudDbSecretArn:
+  SmartqueryCloudDbSecretArn:
     Type: String
 
 Resources:
@@ -10,23 +10,23 @@ Resources:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
       DBSubnetGroupDescription: 'Subnet group for RDS PostgreSQL'
-      SubnetIds: !Split [',', !ImportValue DabaseCloudPrivateSubnets]
+      SubnetIds: !Split [',', !ImportValue SmartqueryCloudPrivateSubnets]
 
   DBInstance:
     Type: AWS::RDS::DBInstance
     DeletionPolicy: Delete
     UpdateReplacePolicy: Delete
     Properties:
-      DBName: dabase_cloud
+      DBName: smartquery_cloud
       Engine: postgres
-      MasterUsername: !Sub '{{resolve:secretsmanager:${DabaseCloudDbSecretArn}::username}}'
-      MasterUserPassword: !Sub '{{resolve:secretsmanager:${DabaseCloudDbSecretArn}::password}}'
+      MasterUsername: !Sub '{{resolve:secretsmanager:${SmartqueryCloudDbSecretArn}::username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${SmartqueryCloudDbSecretArn}::password}}'
       DBInstanceClass: db.t3.micro
       AllocatedStorage: 20
       MultiAZ: false
       PubliclyAccessible: false
       VPCSecurityGroups:
-        - !ImportValue DabaseCloudDbSecurityGroup
+        - !ImportValue SmartqueryCloudDbSecurityGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
       BackupRetentionPeriod: 7
       PreferredBackupWindow: '03:00-04:00'
@@ -37,7 +37,7 @@ Resources:
   DBInstanceSecretAttachment:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
-      SecretId: !ImportValue DabaseCloudDbSecretArn
+      SecretId: !ImportValue SmartqueryCloudDbSecretArn
       TargetId: !Ref DBInstance
       TargetType: AWS::RDS::DBInstance
 
@@ -46,4 +46,4 @@ Outputs:
     Description: 'Database endpoint'
     Value: !GetAtt DBInstance.Endpoint.Address
     Export:
-      Name: DabaseCloudDbEndpoint
+      Name: SmartqueryCloudDbEndpoint

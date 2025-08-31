@@ -1,11 +1,11 @@
 #!/bin/sh
 
 # Extract username and password from secret JSON
-DB_USERNAME=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.username')
-DB_PASSWORD=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.password')
-DB_HOST=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.host')
-DB_NAME=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.dbname')
-DB_PORT=$(echo $DABASE_CLOUD_DB_SECRET | jq -r '.port')
+DB_USERNAME=$(echo $SMARTQUERY_CLOUD_DB_SECRET | jq -r '.username')
+DB_PASSWORD=$(echo $SMARTQUERY_CLOUD_DB_SECRET | jq -r '.password')
+DB_HOST=$(echo $SMARTQUERY_CLOUD_DB_SECRET | jq -r '.host')
+DB_NAME=$(echo $SMARTQUERY_CLOUD_DB_SECRET | jq -r '.dbname')
+DB_PORT=$(echo $SMARTQUERY_CLOUD_DB_SECRET | jq -r '.port')
 
 # URL encode the password
 ENCODED_PASSWORD=$(echo "$DB_PASSWORD" | awk 'BEGIN { for (i = 0; i <= 255; i++) ord[sprintf("%c", i)] = i }

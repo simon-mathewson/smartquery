@@ -1,5 +1,5 @@
 {
-  "name": "dabase-ui",
+  "name": "smartquery-ui",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -27,7 +27,7 @@
     "@types/uuid": "9.0.8",
     "aws-rum-web": "1.24.0",
     "classnames": "2.3.2",
-    "dabase-shared": "file:../shared",
+    "smartquery-shared": "file:../shared",
     "decimal.js": "10.4.3",
     "luxon": "3.4.4",
     "monaco-editor": "0.52.2",
