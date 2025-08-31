@@ -23,6 +23,26 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/AmazonSSMManagedEC2InstanceDefaultPolicy
+      Policies:
+        - PolicyName: AttachNatEniPolicy
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - ec2:AttachNetworkInterface
+                  - ec2:ModifyNetworkInterfaceAttribute
+                Effect: Allow
+                Resource: "*"
+            Version: "2012-10-17"
+        - PolicyName: AssociateNatAddressPolicy
+          PolicyDocument:
+            Statement:
+              - Action:
+                  - ec2:AssociateAddress
+                  - ec2:DisassociateAddress
+                Effect: Allow
+                Resource: "*"
+            Version: "2012-10-17"
 
   BastionNatInstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -57,8 +77,8 @@ Resources:
   BastionNatInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-092ff8e60e2d51e19
-      InstanceType: t3.nano
+      ImageId: ami-04eb0af991f1fe55d # fck-nat ARM eu-central-1
+      InstanceType: t4g.nano
       KeyName: !Ref BastionKeyPair
       SecurityGroupIds:
         - !Ref BastionNatSecurityGroup
@@ -67,46 +87,8 @@ Resources:
       IamInstanceProfile: !Ref BastionNatInstanceProfile
       UserData: !Base64 |
         #!/bin/bash
-        yum update -y
-        yum install -y iptables-services
-        
-        # Enable IP forwarding for NAT
-        echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
-        sysctl -p
-        
-        # Flush existing iptables rules
-        iptables -F
-        iptables -t nat -F
-        
-        # Configure iptables for NAT
-        # Allow established connections
-        iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-        iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
-        
-        # Allow SSH
-        iptables -A INPUT -p tcp --dport 22 -j ACCEPT
-        
-        # Allow traffic from entire VPC (covers all instances in private and public subnets)
-        iptables -A INPUT -s 10.0.0.0/16 -j ACCEPT
-        iptables -A FORWARD -s 10.0.0.0/16 -j ACCEPT
-        
-        # NAT configuration - masquerade outbound traffic
-        iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-        
-        # Set default policies
-        iptables -P INPUT DROP
-        iptables -P FORWARD DROP
-        iptables -P OUTPUT ACCEPT
-        
-        # Save iptables rules
-        service iptables save
-        systemctl enable iptables
-        
-        # Install monitoring and management tools
-        yum install -y htop iotop
-        
-        # Log the setup completion
-        echo "Bastion and NAT Gateway setup completed at $(date)" >> /var/log/bastion-nat-setup.log
+        echo "eni_id=${FckNatInterface}" >> /etc/fck-nat.conf
+        service fck-nat restart
 
   BastionNatEIPAssociation:
     Type: AWS::EC2::EIPAssociation
