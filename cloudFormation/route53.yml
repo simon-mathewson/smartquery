@@ -236,3 +236,14 @@ Resources:
       ResourceRecords:
         - "0 mx1.efwd.spaceship.net."
         - "0 mx2.efwd.spaceship.net."
+
+  Route53RecordSetSpaceshipSpfDabaseDev:
+    Type: AWS::Route53::RecordSet
+    DependsOn: Route53HostedZone
+    Properties:
+      HostedZoneName: "dabase.dev."
+      Name: "dabase.dev."
+      Type: "TXT"
+      TTL: "3600"
+      ResourceRecords:
+        - '"v=spf1 include:spf.efwd.spaceship.net ~all"'
