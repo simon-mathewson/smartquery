@@ -24,6 +24,13 @@ phases:
         export INDEX=0
         while [ $INDEX -lt $MAX_ITEMS ]; do
           export CURRENT_BUILD_ID=$(echo $BUILD_IDS | jq -r --arg index $INDEX '.ids[$index | tonumber]')
+          
+          # Check if CURRENT_BUILD_ID is null (no more builds available)
+          if [ "$CURRENT_BUILD_ID" = "null" ] || [ -z "$CURRENT_BUILD_ID" ]; then
+            echo "No more builds available at index $INDEX"
+            break
+          fi
+          
           export CURRENT_BUILD=$(aws codebuild batch-get-builds --ids $CURRENT_BUILD_ID)
           export CURRENT_BUILD_SUCCEEDED=$(echo $CURRENT_BUILD | jq -r '.builds[0].buildStatus')
           echo "Current build: $CURRENT_BUILD_ID, Succeeded: $CURRENT_BUILD_SUCCEEDED"
