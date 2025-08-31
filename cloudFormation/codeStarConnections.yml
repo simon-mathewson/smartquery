@@ -1,5 +1,5 @@
 Resources:
-  CodeStarConnection:
+  CodeStarConnectionNew:
     Type: AWS::CodeStarConnections::Connection
     Properties:
       ConnectionName: "GitHubConnection"
@@ -7,6 +7,6 @@ Resources:
 
 Outputs:
   CodeStarConnectionArn:
-    Value: !Ref CodeStarConnection
+    Value: !Ref CodeStarConnectionNew
     Export:
       Name: CodeStarConnectionArn
