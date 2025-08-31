@@ -62,7 +62,7 @@ Resources:
       SubnetId: !ImportValue CloudPublicSubnet1
       SourceDestCheck: false
       IamInstanceProfile: !Ref BastionNatInstanceProfile
-      UserData: |
+      UserData: !Base64 |
         #!/bin/bash
         yum update -y
         yum install -y iptables-services

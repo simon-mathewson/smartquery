@@ -54,8 +54,6 @@ Resources:
     Properties:
       Domain: vpc
 
-
-
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -110,7 +108,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable HTTP/HTTPs ingress
-      VpcId: !ImportValue CloudVpcId
+      VpcId: !Ref VPC
       SecurityGroupIngress:
       - CidrIp: 0.0.0.0/0
         IpProtocol: tcp
@@ -130,7 +128,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: 'Security group for Elastic Beanstalk environment'
-      VpcId: !ImportValue CloudVpcId
+      VpcId: !Ref VPC
       SecurityGroupIngress:
         - SourceSecurityGroupId: !Ref ELBSecurityGroup
           IpProtocol: tcp

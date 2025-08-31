@@ -84,7 +84,8 @@ Resources:
     UpdateReplacePolicy: "Delete"
     Properties:
       TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/rds.yml"
-
+      Parameters:
+        CloudDbSecretArn: !ImportValue CloudDbSecretArn
     DependsOn:
       - SecretsManagerStack
       - VPCStack

@@ -24,7 +24,7 @@ export const useErrorTracking = () => {
       allowCookies: true,
       enableXRay: true,
       endpoint: 'https://dataplane.rum.eu-central-1.amazonaws.com',
-      identityPoolId: 'eu-central-1:cbafc5b5-01fc-495d-b36b-552f93ba1acb',
+      identityPoolId: 'eu-central-1:67e78910-d6cf-4ffd-90c6-b704bb711791',
       signing: false,
       telemetries: [
         ['errors', { ignore: (error: unknown) => isUserUnauthorizedError(error) }],
@@ -33,7 +33,7 @@ export const useErrorTracking = () => {
       ],
     };
 
-    const APPLICATION_ID: string = 'd51e93b1-3986-44e8-b1d7-5d450b83b77c';
+    const APPLICATION_ID: string = '7f8ee2fc-5755-4aeb-bdc2-5728435ae926';
     const APPLICATION_REGION: string = 'eu-central-1';
 
     setRum(new AwsRum(APPLICATION_ID, import.meta.env.VITE_UI_VERSION, APPLICATION_REGION, config));

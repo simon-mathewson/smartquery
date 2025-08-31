@@ -21,6 +21,8 @@ aws cloudformation create-stack \
    --capabilities CAPABILITY_NAMED_IAM
 ```
 
+Add the new stack name to the deploy.sh script.
+
 ### 3. Initialize GitHub connection
 
 Go to https://eu-central-1.console.aws.amazon.com/codesuite/settings/connections, select the pending connection, and click "Update pending connection". Log in to GitHub and click "Authorize". Install app to GitHub account.
@@ -91,7 +93,7 @@ https://eu-central-1.console.aws.amazon.com/secretsmanager/secret?name=smartquer
 
 ### 9. Update RUM script
 
-Update `ui/src/setUpRum.ts` according to JS snippet displayed in https://eu-central-1.console.aws.amazon.com/cloudwatch/home?region=eu-central-1#rum:dashboard/smartquery?tab=configuration.
+Update `ui/src/content/errors/tracking/useErrorTracking.ts` according to JS snippet displayed in https://eu-central-1.console.aws.amazon.com/cloudwatch/home?region=eu-central-1#rum:dashboard/smartquery?tab=configuration (Identity Pool ID, Application ID)
 
 Replace `APPLICATION_VERSION` with `import.meta.env.VITE_UI_VERSION`.
 

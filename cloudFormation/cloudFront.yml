@@ -192,6 +192,11 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: dabase-dev-redirect
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: index.html
@@ -293,6 +298,11 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: about-dabase-dev-redirect
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: index.html

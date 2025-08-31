@@ -56,7 +56,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckPath: /health
-      Name: smartquery-cloud-elb-target-group
+      Name: smartquery-cloud-elb-target
       Port: 8080
       Protocol: HTTP
       VpcId: !ImportValue CloudVpcId
