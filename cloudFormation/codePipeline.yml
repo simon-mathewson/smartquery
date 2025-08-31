@@ -1,5 +1,5 @@
 Resources:
-  CodePipelineSmartquery:
+  CodePipeline:
     Type: "AWS::CodePipeline::Pipeline"
     Properties:
       ArtifactStore:
@@ -17,7 +17,7 @@ Resources:
                 Provider: CodeStarSourceConnection
                 Version: "1"
               Configuration:
-                ConnectionArn: !ImportValue CodeStarConnectionSmartqueryArn
+                ConnectionArn: !ImportValue CodeStarConnectionArn
                 FullRepositoryId: "simon-mathewson/smartquery"
                 BranchName: "main"
               OutputArtifacts:
@@ -32,7 +32,7 @@ Resources:
                 Version: "1" 
                 Provider: CodeBuild
               Configuration:
-                ProjectName: !ImportValue CodeBuildSmartquery
+                ProjectName: !ImportValue CodeBuild
               InputArtifacts:
                 - Name: SourceOutput
               OutputArtifacts:

@@ -28,7 +28,7 @@ Resources:
           return request;
         }
 
-  CloudFrontDistributionSmartqueryUi:
+  CloudFrontDistributionUi:
     Type: "AWS::CloudFront::Distribution"
     Properties:
       DistributionConfig:
@@ -106,7 +106,7 @@ Resources:
             Locations: []
             RestrictionType: "none"
         CacheBehaviors: []
-  CloudFrontDistributionSmartqueryAbout:
+  CloudFrontDistributionAbout:
     Type: "AWS::CloudFront::Distribution"
     Properties:
       DistributionConfig:
@@ -390,22 +390,22 @@ Resources:
             RestrictionType: "none"
 
 Outputs:
-  CloudFrontDistributionSmartqueryUiDomainName:
-    Value: !GetAtt CloudFrontDistributionSmartqueryUi.DomainName
+  CloudFrontDistributionUiDomainName:
+    Value: !GetAtt CloudFrontDistributionUi.DomainName
     Export:
-      Name: "CloudFrontDistributionSmartqueryUiDomainName"
-  CloudFrontDistributionSmartqueryUi:
-    Value: !Ref CloudFrontDistributionSmartqueryUi
+      Name: "CloudFrontDistributionUiDomainName"
+  CloudFrontDistributionUi:
+    Value: !Ref CloudFrontDistributionUi
     Export:
-      Name: "CloudFrontDistributionSmartqueryUi"
-  CloudFrontDistributionSmartqueryAboutDomainName:
-    Value: !GetAtt CloudFrontDistributionSmartqueryAbout.DomainName
+      Name: "CloudFrontDistributionUi"
+  CloudFrontDistributionAboutDomainName:
+    Value: !GetAtt CloudFrontDistributionAbout.DomainName
     Export:
-      Name: "CloudFrontDistributionSmartqueryAboutDomainName"
-  CloudFrontDistributionSmartqueryAbout:
-    Value: !Ref CloudFrontDistributionSmartqueryAbout
+      Name: "CloudFrontDistributionAboutDomainName"
+  CloudFrontDistributionAbout:
+    Value: !Ref CloudFrontDistributionAbout
     Export:
-      Name: "CloudFrontDistributionSmartqueryAbout"
+      Name: "CloudFrontDistributionAbout"
   CloudFrontDistributionDabaseDevRedirectDomainName:
     Value: !GetAtt CloudFrontDistributionDabaseDevRedirect.DomainName
     Export:

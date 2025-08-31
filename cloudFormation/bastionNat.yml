@@ -8,7 +8,7 @@ Resources:
   BastionKeyPair:
     Type: AWS::EC2::KeyPair
     Properties:
-      KeyName: smartquery-bastion-key
+      KeyName: bastion-nat-key
       KeyType: ed25519
 
   BastionNatRole:
@@ -34,7 +34,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: 'Security group for combined Bastion and NAT Gateway EC2 instance'
-      VpcId: !ImportValue SmartqueryCloudVpcId
+      VpcId: !ImportValue CloudVpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -59,7 +59,7 @@ Resources:
       KeyName: !Ref BastionKeyPair
       SecurityGroupIds:
         - !Ref BastionNatSecurityGroup
-      SubnetId: !ImportValue SmartqueryCloudPublicSubnet1
+      SubnetId: !ImportValue CloudPublicSubnet1
       SourceDestCheck: false
       IamInstanceProfile: !Ref BastionNatInstanceProfile
       UserData: |
@@ -104,7 +104,7 @@ Resources:
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !ImportValue SmartqueryCloudVpcId
+      VpcId: !ImportValue CloudVpcId
 
   PrivateRoute:
     Type: AWS::EC2::Route
@@ -117,18 +117,18 @@ Resources:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref PrivateRouteTable
-      SubnetId: !ImportValue SmartqueryCloudPrivateSubnet1
+      SubnetId: !ImportValue CloudPrivateSubnet1
 
   PrivateSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref PrivateRouteTable
-      SubnetId: !ImportValue SmartqueryCloudPrivateSubnet2
+      SubnetId: !ImportValue CloudPrivateSubnet2
 
   DbSecurityGroupFromBastionIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
-      GroupId: !ImportValue SmartqueryCloudDbSecurityGroup
+      GroupId: !ImportValue CloudDbSecurityGroup
       IpProtocol: tcp
       ToPort: 5432
       FromPort: 5432
@@ -139,13 +139,13 @@ Outputs:
     Description: 'Bastion and NAT Gateway EC2 instance ID'
     Value: !Ref BastionNatInstance
     Export:
-      Name: SmartqueryCloudBastionNatInstance
+      Name: CloudBastionNatInstance
 
   BastionNatSecurityGroup:
     Description: 'Security group ID of the Bastion and NAT Gateway'
     Value: !Ref BastionNatSecurityGroup
     Export:
-      Name: SmartqueryCloudBastionNatSecurityGroup
+      Name: CloudBastionNatSecurityGroup
 
   BastionNatPublicIP:
     Description: 'Public IP address of the bastion and NAT gateway'

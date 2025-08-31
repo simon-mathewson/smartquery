@@ -19,7 +19,7 @@ Resources:
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
 
-  S3BucketSmartqueryLink:
+  S3BucketLink:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
@@ -39,12 +39,12 @@ Resources:
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
 
-  S3BucketPolicySmartqueryLink:
+  S3BucketPolicyLink:
     Type: "AWS::S3::BucketPolicy"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
-      Bucket: !Ref S3BucketSmartqueryLink
+      Bucket: !Ref S3BucketLink
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -54,7 +54,7 @@ Resources:
             Principal: "*"
             Sid: "PublicReadGetObject"
 
-  S3BucketSmartqueryCloudSource:
+  S3BucketCloudSource:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
@@ -79,7 +79,7 @@ Resources:
             Status: Enabled
             ExpirationInDays: 1
 
-  S3BucketSmartqueryUi:
+  S3BucketUi:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
@@ -113,12 +113,12 @@ Resources:
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
 
-  S3BucketPolicySmartqueryUi:
+  S3BucketPolicyUi:
     Type: "AWS::S3::BucketPolicy"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
-      Bucket: !Ref S3BucketSmartqueryUi
+      Bucket: !Ref S3BucketUi
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -128,7 +128,7 @@ Resources:
             Principal: "*"
             Sid: "PublicReadGetObject"
 
-  S3BucketSmartqueryAbout:
+  S3BucketAbout:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
@@ -162,12 +162,12 @@ Resources:
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
 
-  S3BucketPolicySmartqueryAbout:
+  S3BucketPolicyAbout:
     Type: "AWS::S3::BucketPolicy"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
-      Bucket: !Ref S3BucketSmartqueryAbout
+      Bucket: !Ref S3BucketAbout
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -182,11 +182,11 @@ Outputs:
     Value: !Ref S3BucketCodePipeline
     Export:
       Name: "S3BucketCodePipeline"
-  S3BucketSmartqueryUi:
-    Value: !Ref S3BucketSmartqueryUi
+  S3BucketUi:
+    Value: !Ref S3BucketUi
     Export:
-      Name: "S3BucketSmartqueryUi"
-  S3BucketSmartqueryAbout:
-    Value: !Ref S3BucketSmartqueryAbout
+      Name: "S3BucketUi"
+  S3BucketAbout:
+    Value: !Ref S3BucketAbout
     Export:
-      Name: "S3BucketSmartqueryAbout"
+      Name: "S3BucketAbout"

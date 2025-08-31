@@ -1,5 +1,5 @@
 Resources:
-  CodeBuildSmartquery:
+  CodeBuild:
     Type: "AWS::CodeBuild::Project"
     Properties:
       Artifacts:
@@ -8,11 +8,11 @@ Resources:
         ComputeType: "BUILD_GENERAL1_LARGE"
         EnvironmentVariables:
           - Name: "SMARTQUERY_UI_CLOUDFRONT_DISTRIBUTION_ID"
-            Value: !ImportValue CloudFrontDistributionSmartqueryUi
+            Value: !ImportValue CloudFrontDistributionUi
           - Name: "SMARTQUERY_ABOUT_CLOUDFRONT_DISTRIBUTION_ID"
-            Value: !ImportValue CloudFrontDistributionSmartqueryAbout
+            Value: !ImportValue CloudFrontDistributionAbout
           - Name: "SMARTQUERY_CLOUD_DB_SECRET_ARN"
-            Value: !ImportValue SmartqueryCloudDbSecretArn
+            Value: !ImportValue CloudDbSecretArn
         Image: "aws/codebuild/standard:7.0"
         PrivilegedMode: true
         Type: "LINUX_CONTAINER"
@@ -24,13 +24,13 @@ Resources:
       Source:
         Type: "CODEPIPELINE"
       VpcConfig:
-        VpcId: !ImportValue SmartqueryCloudVpcId
-        Subnets: !Split [',', !ImportValue SmartqueryCloudPrivateSubnets]
+        VpcId: !ImportValue CloudVpcId
+        Subnets: !Split [',', !ImportValue CloudPrivateSubnets]
         SecurityGroupIds:
-          - !ImportValue SmartqueryCloudCodeBuildSecurityGroup
+          - !ImportValue CloudCodeBuildSecurityGroup
 
 Outputs:
-  CodeBuildSmartquery:
-    Value: !Ref CodeBuildSmartquery
+  CodeBuild:
+    Value: !Ref CodeBuild
     Export:
-      Name: CodeBuildSmartquery
+      Name: CodeBuild

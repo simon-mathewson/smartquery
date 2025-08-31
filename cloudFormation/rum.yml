@@ -1,5 +1,5 @@
 Resources:
-  RUMAppMonitorSmartquery:
+  RUMAppMonitor:
     Type: AWS::RUM::AppMonitor
     Properties:
       AppMonitorConfiguration: 
@@ -8,4 +8,4 @@ Resources:
           GuestRoleArn: !ImportValue CognitoIAMRoleArn
           IdentityPoolId: !ImportValue CognitoIdentityPoolId
       Domain: smartquery.dev
-      Name: Smartquery
+      Name: smartquery

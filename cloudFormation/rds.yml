@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'RDS PostgreSQL database for Smartquery Cloud'
+Description: 'RDS PostgreSQL database for Cloud'
 
 Parameters:
-  SmartqueryCloudDbSecretArn:
+  CloudDbSecretArn:
     Type: String
 
 Resources:
@@ -10,7 +10,7 @@ Resources:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
       DBSubnetGroupDescription: 'Subnet group for RDS PostgreSQL'
-      SubnetIds: !Split [',', !ImportValue SmartqueryCloudPrivateSubnets]
+      SubnetIds: !Split [',', !ImportValue CloudPrivateSubnets]
 
   DBInstance:
     Type: AWS::RDS::DBInstance
@@ -19,14 +19,14 @@ Resources:
     Properties:
       DBName: smartquery_cloud
       Engine: postgres
-      MasterUsername: !Sub '{{resolve:secretsmanager:${SmartqueryCloudDbSecretArn}::username}}'
-      MasterUserPassword: !Sub '{{resolve:secretsmanager:${SmartqueryCloudDbSecretArn}::password}}'
+      MasterUsername: !Sub '{{resolve:secretsmanager:${CloudDbSecretArn}::username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${CloudDbSecretArn}::password}}'
       DBInstanceClass: db.t3.micro
       AllocatedStorage: 20
       MultiAZ: false
       PubliclyAccessible: false
       VPCSecurityGroups:
-        - !ImportValue SmartqueryCloudDbSecurityGroup
+        - !ImportValue CloudDbSecurityGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
       BackupRetentionPeriod: 7
       PreferredBackupWindow: '03:00-04:00'
@@ -37,7 +37,7 @@ Resources:
   DBInstanceSecretAttachment:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
-      SecretId: !ImportValue SmartqueryCloudDbSecretArn
+      SecretId: !ImportValue CloudDbSecretArn
       TargetId: !Ref DBInstance
       TargetType: AWS::RDS::DBInstance
 
@@ -46,4 +46,4 @@ Outputs:
     Description: 'Database endpoint'
     Value: !GetAtt DBInstance.Endpoint.Address
     Export:
-      Name: SmartqueryCloudDbEndpoint
+      Name: CloudDbEndpoint

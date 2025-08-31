@@ -6,7 +6,7 @@ Resources:
     Type: AWS::ElasticBeanstalk::Application
     Properties:
       ApplicationName: smartquery-cloud
-      Description: 'Smartquery Cloud'
+      Description: 'Cloud'
 
   ElasticBeanstalkIamInstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -45,10 +45,10 @@ Resources:
       Name: smartquery-cloud-elb
       Scheme: internet-facing
       SecurityGroups:
-        - !ImportValue SmartqueryCloudELBSecurityGroup
+        - !ImportValue CloudELBSecurityGroup
       Subnets:
-        - !ImportValue SmartqueryCloudPublicSubnet1
-        - !ImportValue SmartqueryCloudPublicSubnet2
+        - !ImportValue CloudPublicSubnet1
+        - !ImportValue CloudPublicSubnet2
 
   # Needed because a default rule with target group is needed, not actually used because EB
   # creates its own target group.
@@ -59,7 +59,7 @@ Resources:
       Name: smartquery-cloud-elb-target-group
       Port: 8080
       Protocol: HTTP
-      VpcId: !ImportValue SmartqueryCloudVpcId
+      VpcId: !ImportValue CloudVpcId
 
   CloudLoadBalancerListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -86,7 +86,7 @@ Resources:
           Value: t2.micro
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: SecurityGroups
-          Value: !ImportValue SmartqueryCloudElasticBeanstalkEnvironmentSecurityGroup
+          Value: !ImportValue CloudElasticBeanstalkEnvironmentSecurityGroup
         - Namespace: aws:autoscaling:launchconfiguration
           OptionName: IamInstanceProfile
           Value: !Ref ElasticBeanstalkIamInstanceProfile
@@ -107,28 +107,28 @@ Resources:
           Value: true
         - Namespace: aws:ec2:vpc
           OptionName: VPCId
-          Value: !ImportValue SmartqueryCloudVpcId
+          Value: !ImportValue CloudVpcId
         - Namespace: aws:ec2:vpc
           OptionName: Subnets
-          Value: !ImportValue SmartqueryCloudPrivateSubnets
+          Value: !ImportValue CloudPrivateSubnets
         - Namespace: aws:ec2:vpc
           OptionName: ELBSubnets
-          Value: !ImportValue SmartqueryCloudPublicSubnets
+          Value: !ImportValue CloudPublicSubnets
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: SMARTQUERY_CLOUD_DB_SECRET
-          Value: !ImportValue SmartqueryCloudDbSecretArn
+          Value: !ImportValue CloudDbSecretArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: GOOGLE_AI_API_KEY
-          Value: !ImportValue SmartqueryCloudGoogleAiApiKeyArn
+          Value: !ImportValue CloudGoogleAiApiKeyArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: JWT_SECRET
-          Value: !ImportValue SmartqueryCloudJwtSecretArn
+          Value: !ImportValue CloudJwtSecretArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: STRIPE_API_KEY
-          Value: !ImportValue SmartqueryCloudStripeApiKeyArn
+          Value: !ImportValue CloudStripeApiKeyArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: STRIPE_WEBHOOK_SECRET
-          Value: !ImportValue SmartqueryCloudStripeWebhookSecretArn
+          Value: !ImportValue CloudStripeWebhookSecretArn
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: SES_EMAIL_IDENTITY_ARN
           Value: !ImportValue SESEmailIdentityArn
@@ -162,7 +162,7 @@ Outputs:
     Description: "Elastic Beanstalk Environment Endpoint URL"
     Value: !GetAtt ElasticBeanstalkEnvironment.EndpointURL
     Export:
-      Name: SmartqueryCloudElasticBeanstalkEndpointUrl
+      Name: CloudElasticBeanstalkEndpointUrl
 
   CloudLoadBalancerArn:
     Description: "Cloud Load Balancer ARN"

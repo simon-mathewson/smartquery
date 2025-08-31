@@ -85,7 +85,7 @@ Resources:
     Properties:
       TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/rds.yml"
       Parameters:
-        SmartqueryCloudDbSecretArn: !ImportValue SmartqueryCloudDbSecretArn
+        CloudDbSecretArn: !ImportValue CloudDbSecretArn
     DependsOn:
       - SecretsManagerStack
       - VPCStack
