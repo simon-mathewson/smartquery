@@ -48,7 +48,7 @@ Resources:
       Type: "A"
       TTL: "300"
       ResourceRecords:
-        - !ImportValue SmartqueryCloudBastionPublicIP
+        - !ImportValue BastionNatPublicIP
 
   Route53RecordSetSesDkim1:
     Type: AWS::Route53::RecordSet

@@ -1,0 +1,154 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Combined Bastion and NAT Gateway instance for secure RDS access and private subnet internet routing'
+
+# To test SSH connectivity:
+# ssh -i ~/.ssh/smartquery-bastion-key.pem ec2-user@<public-ip>
+
+Resources:
+  BastionKeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: smartquery-bastion-key
+      KeyType: ed25519
+
+  BastionNatRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+  BastionNatInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref BastionNatRole
+
+  BastionNatSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Security group for combined Bastion and NAT Gateway EC2 instance'
+      VpcId: !ImportValue SmartqueryCloudVpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+          Description: 'SSH access for bastion functionality'
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          Description: 'Allow all outbound traffic for NAT functionality'
+
+  BastionNatElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  BastionNatInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-092ff8e60e2d51e19
+      InstanceType: t3.nano
+      KeyName: !Ref BastionKeyPair
+      SecurityGroupIds:
+        - !Ref BastionNatSecurityGroup
+      SubnetId: !ImportValue SmartqueryCloudPublicSubnet1
+      SourceDestCheck: false
+      IamInstanceProfile: !Ref BastionNatInstanceProfile
+      UserData: |
+        #!/bin/bash
+        yum update -y
+        yum install -y iptables-services
+        
+        # Enable IP forwarding for NAT
+        echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+        sysctl -p
+        
+        # Configure iptables for NAT
+        iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+        iptables -A FORWARD -i eth0 -o eth0 -j ACCEPT
+        
+        # Save iptables rules
+        service iptables save
+        systemctl enable iptables
+        
+        # Install monitoring and management tools
+        yum install -y htop iotop httpd
+        
+        # Create a simple health check endpoint
+        systemctl start httpd
+        systemctl enable httpd
+        echo "Bastion and NAT Gateway is running" > /var/www/html/index.html
+        
+        # Set up SSH access (bastion functionality)
+        # Create a user for SSH access if needed
+        # useradd -m -s /bin/bash admin
+        # echo "admin:changeme" | chpasswd
+        
+        # Log the setup completion
+        echo "Bastion and NAT Gateway setup completed at $(date)" >> /var/log/bastion-nat-setup.log
+
+  BastionNatEIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt BastionNatElasticIP.AllocationId
+      InstanceId: !Ref BastionNatInstance
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !ImportValue SmartqueryCloudVpcId
+
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      InstanceId: !Ref BastionNatInstance
+
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !ImportValue SmartqueryCloudPrivateSubnet1
+
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !ImportValue SmartqueryCloudPrivateSubnet2
+
+  DbSecurityGroupFromBastionIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !ImportValue SmartqueryCloudDbSecurityGroup
+      IpProtocol: tcp
+      ToPort: 5432
+      FromPort: 5432
+      SourceSecurityGroupId: !Ref BastionNatSecurityGroup
+
+Outputs:
+  BastionNatInstance:
+    Description: 'Bastion and NAT Gateway EC2 instance ID'
+    Value: !Ref BastionNatInstance
+    Export:
+      Name: SmartqueryCloudBastionNatInstance
+
+  BastionNatSecurityGroup:
+    Description: 'Security group ID of the Bastion and NAT Gateway'
+    Value: !Ref BastionNatSecurityGroup
+    Export:
+      Name: SmartqueryCloudBastionNatSecurityGroup
+
+  BastionNatPublicIP:
+    Description: 'Public IP address of the bastion and NAT gateway'
+    Value: !Ref BastionNatElasticIP
+    Export:
+      Name: BastionNatPublicIP

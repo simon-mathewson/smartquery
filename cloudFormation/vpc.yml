@@ -54,11 +54,7 @@ Resources:
     Properties:
       Domain: vpc
 
-  NatGateway:
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt ElasticIP.AllocationId
-      SubnetId: !Ref PublicSubnet1
+
 
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -85,29 +81,7 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
 
-  PrivateRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
 
-  PrivateRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway
-
-  PrivateSubnet1RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      SubnetId: !Ref PrivateSubnet1
-
-  PrivateSubnet2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      SubnetId: !Ref PrivateSubnet2
 
   CodeBuildSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -196,34 +170,7 @@ Resources:
       FromPort: 5432
       SourceSecurityGroupId: !Ref ElasticBeanstalkEnvironmentSecurityGroup
 
-  DbSecurityGroupFromBastionIngress:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      GroupId: !Ref SmartqueryCloudDbSecurityGroup
-      IpProtocol: tcp
-      ToPort: 5432
-      FromPort: 5432
-      SourceSecurityGroupId: !Ref BastionSecurityGroup
 
-  BastionSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security group for bastion host
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
-
-  BastionSecurityGroupToDbEgress:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties:
-      GroupId: !Ref BastionSecurityGroup
-      IpProtocol: tcp
-      ToPort: 5432
-      FromPort: 5432
-      DestinationSecurityGroupId: !Ref SmartqueryCloudDbSecurityGroup
 
 Outputs:
   VpcId:
@@ -291,9 +238,3 @@ Outputs:
     Value: !Ref SmartqueryCloudDbSecurityGroup
     Export:
       Name: SmartqueryCloudDbSecurityGroup
-
-  BastionSecurityGroup:
-    Description: 'Security group ID of the bastion host'
-    Value: !Ref BastionSecurityGroup
-    Export:
-      Name: SmartqueryCloudBastionSecurityGroup
