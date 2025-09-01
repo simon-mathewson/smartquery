@@ -70,7 +70,10 @@ export const subscriptionsRouter = trpc.router({
         user,
       });
 
-      const existingSubscriptions = await stripe.subscriptions.list({ customer: stripeCustomerId });
+      const existingSubscriptions = await stripe.subscriptions.list({
+        customer: stripeCustomerId,
+        status: 'active',
+      });
       const existingSubscription = existingSubscriptions.data.at(0) ?? null;
 
       const newSubscriptionPriceId = getPriceIdForSubscriptionType(subscriptionType);
