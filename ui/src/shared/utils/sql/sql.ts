@@ -8,7 +8,7 @@ export const addQuotes = (engine: Engine, value: string) => {
 export const splitSqlStatements = (sql: string) => {
   const statements = sql
     .replaceAll(/\/\*[\S\s]*\*\/|--.*/g, '')
-    .match(/(?:".*"|'.*'|`.*`|[^;])*(?:;)?/g)
+    .match(/(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`|[^;])*(?:;)?/g)
     ?.map((statement) => statement.trim())
     .filter(Boolean);
 
