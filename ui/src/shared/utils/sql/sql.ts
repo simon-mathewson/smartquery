@@ -6,11 +6,56 @@ export const addQuotes = (engine: Engine, value: string) => {
 };
 
 export const splitSqlStatements = (sql: string) => {
-  const statements = sql
-    .replaceAll(/\/\*[\S\s]*\*\/|--.*/g, '')
-    .match(/(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`|[^;])*(?:;)?/g)
-    ?.map((statement) => statement.trim())
+  // First, temporarily replace quoted strings with placeholders
+  const quotes: string[] = [];
+  let quoteIndex = 0;
+
+  // Process all quotes in the order they appear in the string
+  let result = sql;
+  let i = 0;
+
+  while (i < result.length) {
+    const char = result[i];
+
+    if (char === "'" || char === '"' || char === '`') {
+      const quoteChar = char;
+      const start = i;
+      i++; // Skip opening quote
+
+      // Find the closing quote, handling escaped quotes
+      while (i < result.length) {
+        if (result[i] === quoteChar && result[i - 1] !== '\\') {
+          // Found closing quote
+          const match = result.substring(start, i + 1);
+          quotes.push(match);
+          const placeholder = `__QUOTE_${quoteIndex++}__`;
+          result = result.substring(0, start) + placeholder + result.substring(i + 1);
+          i = start + placeholder.length;
+          break;
+        }
+        i++;
+      }
+    } else {
+      i++;
+    }
+  }
+
+  // Now remove comments from the non-quoted portions
+  result = result.replace(/\/\*[\S\s]*?\*\//g, ''); // Remove block comments
+  result = result.replace(/--.*$/gm, ''); // Remove line comments
+
+  // Split into statements using semicolon as delimiter (but not inside quote placeholders)
+  const statements = result
+    .split(';')
+    .map((statement) => statement.trim())
     .filter(Boolean);
 
-  return statements ?? [];
+  // Restore the quoted strings in each statement
+  return statements.map((statement) => {
+    let restoredStatement = statement;
+    quotes.forEach((quote, index) => {
+      restoredStatement = restoredStatement.replace(`__QUOTE_${index}__`, quote);
+    });
+    return restoredStatement;
+  });
 };
