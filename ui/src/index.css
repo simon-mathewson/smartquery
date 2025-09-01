@@ -8,6 +8,10 @@
     @apply text-textSecondary;
   }
 
+  body {
+    overscroll-behavior: none;
+  }
+
   html,
   body,
   #root {
