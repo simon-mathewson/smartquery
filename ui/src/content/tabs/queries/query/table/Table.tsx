@@ -106,16 +106,20 @@ export const Table: React.FC<TableProps> = (props) => {
     [visibleColumns],
   );
 
+  const isEmpty = rows.length === 0 && rowsToCreate.length === 0;
+
   // Compute column width based on median value length
   useEffect(() => {
     setColumnWidths(
       visibleColumns.map((column) => {
-        if (!rows.length) return '1fr';
+        if (isEmpty) return '1fr';
 
         const columnName = typeof column === 'object' ? column.name : column;
 
-        const sampleSize = Math.max(rows.length, 1000);
-        const sample = [...rows].sort(() => Math.random() - 0.5).slice(0, sampleSize);
+        const sampleSize = Math.max(rows.length + rowsToCreate.length, 1000);
+        const sample = [...rows, ...rowsToCreate]
+          .sort(() => Math.random() - 0.5)
+          .slice(0, sampleSize);
         const medianLength = median(sample.map((row) => String(row[columnName]).length));
         const finalWidth = Math.max(Math.min(medianLength, 60), 10);
 
@@ -123,7 +127,7 @@ export const Table: React.FC<TableProps> = (props) => {
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visibleColumnNamesKey]);
+  }, [visibleColumnNamesKey, isEmpty]);
 
   const { topRowsHiddenCount, visibleRowCount, bottomRowsHiddenCount } = useVirtualization(
     rows,
