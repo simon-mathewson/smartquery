@@ -106,6 +106,7 @@ export const CodeSnippet = React.memo(
               bottom: 12,
             },
           }}
+          maxHeight={200}
           hideLineNumbers
           language={language}
           readOnly
