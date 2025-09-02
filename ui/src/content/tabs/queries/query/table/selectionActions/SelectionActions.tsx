@@ -5,11 +5,11 @@ import { mergeRefs } from 'react-merge-refs';
 import type { XOR } from 'ts-essentials';
 import { useDebouncedCallback } from 'use-debounce';
 import { EditContext } from '~/content/edit/Context';
-import type { PrimaryKey } from '~/content/edit/types';
+import type { UniqueValue } from '~/content/edit/types';
 import { doChangeLocationsMatch } from '~/content/edit/utils';
 import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { getPrimaryKeys } from '../../../utils/primaryKeys';
+import { getUniqueValues } from '../../../utils/getUniqueValues';
 import { ResultContext } from '../../Context';
 import { EditOverlay } from '../editOverlay/EditOverlay';
 import { Delete } from './delete/Delete';
@@ -136,7 +136,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
   const { isEntireSelectionDeleted, selectedChanges } = useMemo(() => {
     const selectionLocations = selection.reduce<
       Array<
-        { column: string; table: string } & XOR<{ primaryKeys: PrimaryKey[] }, { index: number }>
+        { column: string; table: string } & XOR<{ uniqueValues: UniqueValue[] }, { index: number }>
       >
     >((locations, _selectedColumnIndices, rowIndex) => {
       const selectedColumnIndices =
@@ -150,7 +150,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
           return rowIndex < rows.length
             ? {
                 column,
-                primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
+                uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
                 table: table!,
               }
             : {

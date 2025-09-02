@@ -157,5 +157,10 @@ export const insertData = async (connection: Connection) => {
         .map(() => manyTableData.map((text) => `('${text}')`).join())}
   `);
 
+  await prisma.$queryRawUnsafe(`
+    INSERT INTO no_primary_key (id, text)
+    VALUES ('1', 'text')
+  `);
+
   await prisma.$disconnect();
 };

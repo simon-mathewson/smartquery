@@ -39,6 +39,7 @@ export type Column = {
   isNullable?: boolean;
   isPrimaryKey?: boolean;
   isVisible: boolean;
+  isUnique?: boolean;
   name: string;
 };
 

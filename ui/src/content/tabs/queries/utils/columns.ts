@@ -28,13 +28,23 @@ export const getColumnsStatement = (props: {
       /** Query columns and primary key */
       `
         SELECT
-          name AS column_name,
-          cid AS ordinal_position,
-          type AS data_type,
-          CASE "notnull" WHEN 0 THEN 'YES' ELSE 'NO' END AS is_nullable,
-          pk AS sqlite_is_primary_key
-        FROM pragma_table_info('${table}')
-        ORDER BY cid
+          table_info.name AS column_name,
+          table_info.cid AS ordinal_position,
+          table_info.type AS data_type,
+          CASE table_info."notnull" WHEN 0 THEN 'YES' ELSE 'NO' END AS is_nullable,
+          table_info.pk AS sqlite_is_primary_key,
+          CASE WHEN index_info.cid IS NOT NULL THEN 1 ELSE 0 END AS sqlite_is_unique
+        FROM pragma_table_info('${table}') as table_info
+        LEFT JOIN (
+          SELECT
+            index_info.name AS index_name,
+            index_info.name AS column_name,
+            index_info.cid
+          FROM pragma_index_list('${table}') AS index_list
+          JOIN pragma_index_info(index_list.name) AS index_info
+          WHERE index_list."unique" = 1
+        ) AS index_info ON table_info.name = index_info.column_name
+        ORDER BY table_info.cid
       `,
       /** Query foreign keys */
       `
@@ -150,6 +160,7 @@ export const getColumnsFromResult = (props: {
     mysql_column_type?: string;
     postgres_enum_values?: string[];
     sqlite_is_primary_key?: number;
+    sqlite_is_unique?: number;
   }>;
 
   const constraintsResult = constraintsResultUntyped as Array<{
@@ -171,6 +182,7 @@ export const getColumnsFromResult = (props: {
       postgres_enum_values,
       data_type,
       sqlite_is_primary_key,
+      sqlite_is_unique,
     } = column;
 
     const getEnumValues = () => {
@@ -211,6 +223,12 @@ export const getColumnsFromResult = (props: {
           constraint_type === 'PRIMARY KEY' && column_name === name,
       );
 
+    const isUnique =
+      sqlite_is_unique === 1 ||
+      constraintsResult.some(
+        ({ column_name, constraint_type }) => constraint_type === 'UNIQUE' && column_name === name,
+      );
+
     return {
       alias: parsedStatement.columns.find((column) => column.expr.column === name)?.as as
         | string
@@ -220,6 +238,7 @@ export const getColumnsFromResult = (props: {
       foreignKey: getForeignKey(),
       isNullable: is_nullable === 'YES',
       isPrimaryKey,
+      isUnique,
       isVisible: parsedStatement.columns.some(
         (column) => column.expr.column === '*' || column.expr.column === name,
       ),

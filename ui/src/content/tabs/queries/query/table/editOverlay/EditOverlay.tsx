@@ -6,7 +6,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { ResultContext } from '../../Context';
 import type { EditOverlayFieldProps } from './field/Field';
 import { EditOverlayField } from './field/Field';
-import { getPrimaryKeys } from '../../../utils/primaryKeys';
+import { getUniqueValues } from '../../../utils/getUniqueValues';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
 
 export type EditModalProps = {
@@ -43,7 +43,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
             newColumnsWithValues[columnIndex].locations.push({
               column: column.name,
               originalValue: value,
-              primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
+              uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
               table: table!,
               type: 'update',
             });

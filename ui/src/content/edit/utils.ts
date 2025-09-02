@@ -1,5 +1,5 @@
 import type { Value } from '~/shared/types';
-import type { CreateValue, Location, PrimaryKey } from './types';
+import type { CreateValue, Location, UniqueValue } from './types';
 
 export const doChangeLocationsMatch = (
   change1: Omit<Location, 'originalValue' | 'type'>,
@@ -8,12 +8,12 @@ export const doChangeLocationsMatch = (
   change1.table === change2.table &&
   ((!('index' in change1) && !('index' in change2)) ||
     ('index' in change1 && 'index' in change2 && change1.index === change2.index)) &&
-  (!('primaryKeys' in change1) ||
-    !('primaryKeys' in change2) ||
-    (change1.primaryKeys as PrimaryKey[]).every(
+  (!('uniqueValues' in change1) ||
+    !('uniqueValues' in change2) ||
+    (change1.uniqueValues as UniqueValue[]).every(
       (key, index) =>
-        (change2.primaryKeys as PrimaryKey[])[index].column === key.column &&
-        (change2.primaryKeys as PrimaryKey[])[index].value === key.value,
+        (change2.uniqueValues as UniqueValue[])[index].column === key.column &&
+        (change2.uniqueValues as UniqueValue[])[index].value === key.value,
     )) &&
   (!('column' in change1) || !('column' in change2) || change1.column === change2.column);
 

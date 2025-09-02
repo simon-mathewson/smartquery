@@ -209,14 +209,16 @@ export const useEdit = () => {
           previousChanges.push({
             location: {
               table: change.location.table,
-              primaryKeys: [change.location.primaryKeys],
+              uniqueValues: [change.location.uniqueValues],
             },
           });
 
           return previousChanges;
         }
 
-        previousChanges[existingGroupIndex].location.primaryKeys.push(change.location.primaryKeys);
+        previousChanges[existingGroupIndex].location.uniqueValues.push(
+          change.location.uniqueValues,
+        );
 
         return previousChanges;
       },
@@ -239,7 +241,7 @@ export const useEdit = () => {
             location: {
               table: change.location.table,
               column: change.location.column,
-              primaryKeys: [change.location.primaryKeys],
+              uniqueValues: [change.location.uniqueValues],
             },
             value: change.value,
           });
@@ -247,7 +249,9 @@ export const useEdit = () => {
           return previousChanges;
         }
 
-        previousChanges[existingGroupIndex].location.primaryKeys.push(change.location.primaryKeys);
+        previousChanges[existingGroupIndex].location.uniqueValues.push(
+          change.location.uniqueValues,
+        );
 
         return previousChanges;
       },
@@ -278,17 +282,17 @@ export const useEdit = () => {
     const deleteStatements = aggregatedDeleteChanges.map((change) => {
       const { location } = change;
 
-      const primaryKeyConditions = location.primaryKeys
-        .map((primaryKeys) => {
-          return primaryKeys
-            .map((primaryKey) => {
-              return `${addQuotes(engine, primaryKey.column)} = '${primaryKey.value}'`;
+      const uniqueValueConditions = location.uniqueValues
+        .map((uniqueValues) => {
+          return uniqueValues
+            .map((uniqueValue) => {
+              return `${addQuotes(engine, uniqueValue.column)} = '${uniqueValue.value}'`;
             })
             .join(' AND ');
         })
         .join('\n   OR ');
 
-      const where = `WHERE ${primaryKeyConditions}`;
+      const where = `WHERE ${uniqueValueConditions}`;
 
       return `DELETE FROM ${addQuotes(engine, location.table)}\n${where};`;
     });
@@ -296,17 +300,17 @@ export const useEdit = () => {
     const updateStatements = aggregatedUpdateChanges.map((change) => {
       const { location } = change;
 
-      const primaryKeyConditions = location.primaryKeys
-        .map((primaryKeys) => {
-          return primaryKeys
-            .map((primaryKey) => {
-              return `${addQuotes(engine, primaryKey.column)} = '${primaryKey.value}'`;
+      const uniqueValueConditions = location.uniqueValues
+        .map((uniqueValues) => {
+          return uniqueValues
+            .map((uniqueValue) => {
+              return `${addQuotes(engine, uniqueValue.column)} = '${uniqueValue.value}'`;
             })
             .join(' AND ');
         })
         .join('\n   OR ');
 
-      const where = `WHERE ${primaryKeyConditions}`;
+      const where = `WHERE ${uniqueValueConditions}`;
 
       return `UPDATE ${addQuotes(engine, location.table)}\nSET ${addQuotes(
         engine,

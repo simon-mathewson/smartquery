@@ -1,7 +1,7 @@
 import { DeleteOutlined } from '@mui/icons-material';
 import React from 'react';
 import { EditContext } from '~/content/edit/Context';
-import { getPrimaryKeys } from '../../../../utils/primaryKeys';
+import { getUniqueValues } from '../../../../utils/getUniqueValues';
 import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../../Context';
@@ -27,7 +27,7 @@ export const Delete: React.FC<DeleteProps> = (props) => {
           selection.forEach((_, rowIndex) => {
             handleDeleteChange({
               location: {
-                primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
+                uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
                 table: table!,
                 type: 'delete',
               },

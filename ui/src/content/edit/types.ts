@@ -1,6 +1,6 @@
 import type { Value } from '~/shared/types';
 
-export type PrimaryKey = { column: string; value: string };
+export type UniqueValue = { column: string; value: string };
 
 export type CreateLocation = {
   index: number;
@@ -11,13 +11,13 @@ export type CreateLocation = {
 export type UpdateLocation = {
   column: string;
   originalValue: Value;
-  primaryKeys: PrimaryKey[];
+  uniqueValues: UniqueValue[];
   table: string;
   type: 'update';
 };
 
 export type DeleteLocation = {
-  primaryKeys: PrimaryKey[];
+  uniqueValues: UniqueValue[];
   table: string;
   type: 'delete';
 };
@@ -59,10 +59,10 @@ export type AggregatedCreateChanges = {
 };
 
 export type AggregatedUpdateChanges = {
-  location: Pick<UpdateLocation, 'column' | 'table'> & { primaryKeys: PrimaryKey[][] };
+  location: Pick<UpdateLocation, 'column' | 'table'> & { uniqueValues: UniqueValue[][] };
   value: Value;
 };
 
 export type AggregatedDeleteChanges = {
-  location: Pick<DeleteLocation, 'table'> & { primaryKeys: PrimaryKey[][] };
+  location: Pick<DeleteLocation, 'table'> & { uniqueValues: UniqueValue[][] };
 };

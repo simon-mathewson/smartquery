@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { EditContext } from '~/content/edit/Context';
 import type { CreateChange, DeleteChange, UpdateChange } from '~/content/edit/types';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { getPrimaryKeys } from '../../utils/primaryKeys';
+import { getUniqueValues } from '../../utils/getUniqueValues';
 import { Cell } from './cell/Cell';
 import { SelectionActions } from './selectionActions/SelectionActions';
 import { useSelection } from './useSelection';
@@ -92,7 +92,7 @@ export const Table: React.FC<TableProps> = (props) => {
     ? columns.filter(({ isVisible }) => isVisible)
     : Object.keys(rows[0] ?? {});
   const isEditable = columns
-    ? getPrimaryKeys(columns, rows, 0) !== null || rowsToCreate.length > 0
+    ? Boolean(getUniqueValues(columns, rows, 0)?.length) || rowsToCreate.length > 0
     : false;
 
   const isTableEmpty = rows.length === 0 && rowsToCreate.length === 0;
@@ -125,8 +125,6 @@ export const Table: React.FC<TableProps> = (props) => {
         if (isEmpty) return '1fr';
 
         const columnName = typeof column === 'object' ? column.name : column;
-        console.log('columnName', columnName);
-        console.log('resizedColumnWidths', resizedColumnWidths);
 
         const resizedColumnWidth = resizedColumnWidths[columnName];
         if (resizedColumnWidth) return `${resizedColumnWidth}px`;
@@ -211,7 +209,7 @@ export const Table: React.FC<TableProps> = (props) => {
                   ? (getChangeAtLocation({
                       column: columnName,
                       originalValue: value,
-                      primaryKeys: getPrimaryKeys(columns!, rows, rowIndex)!,
+                      uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
                       table: table!,
                       type: 'update',
                     }) as DeleteChange | UpdateChange | undefined)
