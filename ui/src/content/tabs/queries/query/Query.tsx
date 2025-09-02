@@ -114,7 +114,11 @@ export const Query: React.FC = () => {
           <BottomToolbar handleRowCreationRef={handleRowCreationRef} />
         </>
       )}
-      {!result && query.isLoading && <Loading size="large" />}
+      {!result && query.isLoading && (
+        <div className="relative min-h-[100px]">
+          <Loading />
+        </div>
+      )}
     </div>
   );
 };
