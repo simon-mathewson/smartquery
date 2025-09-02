@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TableList } from '../tableList/TableList';
 import { ConnectionsContext } from '../connections/Context';
@@ -9,6 +9,8 @@ import { Button } from '~/shared/components/button/Button';
 import { Logo } from '~/shared/components/logo/Logo';
 import { routes } from '~/router/routes';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
+import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 
 export const NavigationSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -24,8 +26,21 @@ export const NavigationSidebar: React.FC = () => {
     triggerRef: connectionsTriggerRef,
   });
 
+  const [width, setWidth] = useStoredState('NavigationSidebar.width', 224);
+
+  const onResize = useCallback(
+    (width: number) => {
+      setWidth(Math.min(Math.max(width, 100), 500));
+    },
+    [setWidth],
+  );
+
   return (
-    <div className="sticky top-0 flex h-[calc(100vh-90px)] grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-1 px-2 pt-2">
+    <div
+      className="sticky top-0 flex h-[calc(100vh-90px)] grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-1 px-2 pt-2"
+      style={{ width: `${width}px` }}
+    >
+      <ResizeHandle position="right" onResize={onResize} />
       <div className="flex w-full items-center">
         <Button
           element="link"
@@ -52,14 +67,12 @@ export const NavigationSidebar: React.FC = () => {
           )}
         </button>
       </div>
-
       <OverlayCard
         htmlProps={{ className: 'w-max p-2 shadow-2xl overflow-auto' }}
         overlay={connectionsOverlay}
       >
         {() => <Connections />}
       </OverlayCard>
-
       {activeConnection && <TableList />}
     </div>
   );

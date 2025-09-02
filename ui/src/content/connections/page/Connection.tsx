@@ -30,7 +30,7 @@ export const Connection: React.FC = () => {
           <meta name="description" content={demoDescription} />
         </Helmet>
       )}
-      <div className="relative grid h-full grid-cols-[224px_1fr] bg-background">
+      <div className="relative grid h-full grid-cols-[max-content_1fr] bg-background">
         {!activeConnection && <Loading size="large" />}
         <NavigationSidebar />
         <div className="flex h-full flex-col overflow-hidden pb-3 pl-1 pr-3">
