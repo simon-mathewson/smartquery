@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TableList } from '../tableList/TableList';
 import { ConnectionsContext } from '../connections/Context';
@@ -28,19 +28,12 @@ export const NavigationSidebar: React.FC = () => {
 
   const [width, setWidth] = useStoredState('NavigationSidebar.width', 224);
 
-  const onResize = useCallback(
-    (width: number) => {
-      setWidth(Math.min(Math.max(width, 100), 500));
-    },
-    [setWidth],
-  );
-
   return (
     <div
       className="sticky top-0 flex h-[calc(100vh-90px)] grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-1 px-2 pt-2"
       style={{ width: `${width}px` }}
     >
-      <ResizeHandle position="right" onResize={onResize} />
+      <ResizeHandle offset={7} position="right" setWidth={setWidth} minWidth={100} maxWidth={500} />
       <div className="flex w-full items-center">
         <Button
           element="link"

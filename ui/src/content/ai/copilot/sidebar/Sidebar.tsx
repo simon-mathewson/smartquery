@@ -18,6 +18,8 @@ import { ActiveConnectionContext } from '~/content/connections/activeConnection/
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { CodeSnippet } from './CodeSnippet/CodeSnippet';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
 
 export const CopilotSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -55,10 +57,16 @@ export const CopilotSidebar: React.FC = () => {
     [sendMessage, track],
   );
 
+  const [width, setWidth] = useStoredState('CopilotSidebar.width', 320);
+
   return (
     <Card
-      htmlProps={{ className: 'max-h-full h-max w-[320px] flex-none relative flex-col flex gap-2' }}
+      htmlProps={{
+        className: 'max-h-full h-max flex-none relative flex-col flex gap-2',
+        style: { width: `${width}px` },
+      }}
     >
+      <ResizeHandle offset={18} position="left" setWidth={setWidth} minWidth={200} maxWidth={600} />
       <Header
         left={
           thread.length ? (
