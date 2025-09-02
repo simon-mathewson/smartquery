@@ -14,6 +14,8 @@ import { AnalyticsContext } from '~/content/analytics/Context';
 import { median } from '~/shared/utils/math/median';
 import { useVirtualization } from './useVirtualization';
 import { CELL_HEIGHT } from './cell/constants';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 
 export type TableProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
@@ -23,10 +25,9 @@ export const Table: React.FC<TableProps> = (props) => {
   const { handleRowCreationRef } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
   const { query } = useDefinedContext(QueryContext);
-
   const { columns, rows, table, tableType } = useDefinedContext(ResultContext);
-
   const { createChanges, getChangeAtLocation } = useDefinedContext(EditContext);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -96,8 +97,6 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const isTableEmpty = rows.length === 0 && rowsToCreate.length === 0;
 
-  const [columnWidths, setColumnWidths] = useState<string[] | null>(null);
-
   const visibleColumnNamesKey = useMemo(
     () =>
       JSON.stringify(
@@ -108,6 +107,17 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const isEmpty = rows.length === 0 && rowsToCreate.length === 0;
 
+  const resizedColumnWidthsStorageKey = `Table.resizedColumnWidths.${activeConnection.id}.${
+    activeConnection.database
+  }${'schema' in activeConnection ? `.${activeConnection.schema}` : ''}.${table}`;
+
+  const [resizedColumnWidths, setResizedColumnWidths] = useStoredState<Record<string, number>>(
+    resizedColumnWidthsStorageKey,
+    {},
+  );
+
+  const [columnWidths, setColumnWidths] = useState<string[] | null>(null);
+
   // Compute column width based on median value length
   useEffect(() => {
     setColumnWidths(
@@ -115,6 +125,11 @@ export const Table: React.FC<TableProps> = (props) => {
         if (isEmpty) return '1fr';
 
         const columnName = typeof column === 'object' ? column.name : column;
+        console.log('columnName', columnName);
+        console.log('resizedColumnWidths', resizedColumnWidths);
+
+        const resizedColumnWidth = resizedColumnWidths[columnName];
+        if (resizedColumnWidth) return `${resizedColumnWidth}px`;
 
         const sampleSize = Math.max(rows.length + rowsToCreate.length, 1000);
         const sample = [...rows, ...rowsToCreate]
@@ -127,12 +142,18 @@ export const Table: React.FC<TableProps> = (props) => {
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visibleColumnNamesKey, isEmpty]);
+  }, [visibleColumnNamesKey, isEmpty, resizedColumnWidths]);
 
   const { topRowsHiddenCount, visibleRowCount, bottomRowsHiddenCount } = useVirtualization(
     rows,
     tableRef,
   );
+
+  const getColumnWidthUpdater = (width: number, columnName: string) =>
+    setResizedColumnWidths(() => ({
+      ...resizedColumnWidths,
+      [columnName]: width,
+    }));
 
   return (
     <>
@@ -150,10 +171,12 @@ export const Table: React.FC<TableProps> = (props) => {
           >
             {visibleColumns.map((column) => {
               const columnName = typeof column === 'object' ? column.name : column;
+
               return (
                 <Cell
                   column={column}
                   key={columnName}
+                  setColumnWidth={(updateFn) => getColumnWidthUpdater(updateFn, columnName)}
                   sorting={sorting}
                   type="header"
                   value={columnName}
@@ -207,6 +230,7 @@ export const Table: React.FC<TableProps> = (props) => {
                     onClick={handleCellClick}
                     rowIndex={rowIndex}
                     selection={selection}
+                    setColumnWidth={(updateFn) => getColumnWidthUpdater(updateFn, columnName)}
                     type="body"
                     value={changedValue === undefined ? value : changedValue}
                   />
@@ -235,6 +259,7 @@ export const Table: React.FC<TableProps> = (props) => {
                     onClick={handleCellClick}
                     rowIndex={rows.length + rowIndex}
                     selection={selection}
+                    setColumnWidth={(updateFn) => getColumnWidthUpdater(updateFn, columnName)}
                     type="body"
                     value={value}
                   />

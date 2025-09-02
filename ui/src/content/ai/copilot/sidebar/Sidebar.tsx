@@ -1,25 +1,25 @@
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { CopilotContext } from '../Context';
-import { Card } from '~/shared/components/card/Card';
-import { Input } from '~/shared/components/input/Input';
-import { Field } from '~/shared/components/field/Field';
-import { Button } from '~/shared/components/button/Button';
-import { Close, Send, DeleteOutline, Stop, Language } from '@mui/icons-material';
-import { Header } from '~/shared/components/header/Header';
-import { PulseLoader } from 'react-spinners';
-import colors from 'tailwindcss/colors';
-import classNames from 'classnames';
-import { isNotUndefined } from '~/shared/utils/typescript/typescript';
+import { Close, DeleteOutline, Language, Send, Stop } from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
-import { AnalyticsContext } from '~/content/analytics/Context';
+import classNames from 'classnames';
 import { useCallback, useRef } from 'react';
-import { Tooltip } from '~/shared/components/tooltip/Tooltip';
-import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import ReactMarkdown from 'react-markdown';
+import { PulseLoader } from 'react-spinners';
 import remarkGfm from 'remark-gfm';
-import { CodeSnippet } from './CodeSnippet/CodeSnippet';
-import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import colors from 'tailwindcss/colors';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import { Button } from '~/shared/components/button/Button';
+import { Card } from '~/shared/components/card/Card';
+import { Field } from '~/shared/components/field/Field';
+import { Header } from '~/shared/components/header/Header';
+import { Input } from '~/shared/components/input/Input';
 import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
+import { Tooltip } from '~/shared/components/tooltip/Tooltip';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { isNotUndefined } from '~/shared/utils/typescript/typescript';
+import { CopilotContext } from '../Context';
+import { CodeSnippet } from './CodeSnippet/CodeSnippet';
 
 export const CopilotSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -66,7 +66,7 @@ export const CopilotSidebar: React.FC = () => {
         style: { width: `${width}px` },
       }}
     >
-      <ResizeHandle offset={18} position="left" setWidth={setWidth} minWidth={200} maxWidth={600} />
+      <ResizeHandle offset={18} position="left" onResize={setWidth} minWidth={200} maxWidth={600} />
       <Header
         left={
           thread.length ? (

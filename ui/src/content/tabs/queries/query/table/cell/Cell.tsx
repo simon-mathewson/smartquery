@@ -12,10 +12,13 @@ import { Button } from '~/shared/components/button/Button';
 import { QueriesContext } from '../../../Context';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import type { ResizeHandleProps } from '~/shared/components/resizeHandle/ResizeHandle';
+import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
 
 export type CellProps = {
   column: Column | string;
   value: Value | CreateValue;
+  setColumnWidth: ResizeHandleProps['onResize'];
 } & XOR<
   {
     sorting: ReturnType<typeof useSorting>;
@@ -47,6 +50,7 @@ export const Cell: React.FC<CellProps> = (props) => {
     onClick,
     rowIndex,
     selection,
+    setColumnWidth,
     sorting,
     type,
     value,
@@ -100,7 +104,7 @@ export const Cell: React.FC<CellProps> = (props) => {
     <div
       tabIndex={-1}
       className={classNames(
-        'group flex h-8 select-none items-center justify-between gap-2 px-2 transition-colors duration-100',
+        'group relative flex h-8 select-none items-center justify-between gap-2 px-2 transition-colors duration-100',
         (() => {
           if (type === 'header') return undefined;
 
@@ -163,6 +167,13 @@ export const Cell: React.FC<CellProps> = (props) => {
             },
           })}
     >
+      <ResizeHandle
+        position="right"
+        onResize={setColumnWidth}
+        minWidth={30}
+        maxWidth={600}
+        offset={8}
+      />
       <div
         className={classNames('overflow-hidden text-ellipsis whitespace-nowrap text-xs', {
           'font-mono font-medium text-textPrimary': type === 'header',

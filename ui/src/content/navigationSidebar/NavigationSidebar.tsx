@@ -26,14 +26,17 @@ export const NavigationSidebar: React.FC = () => {
     triggerRef: connectionsTriggerRef,
   });
 
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
   const [width, setWidth] = useStoredState('NavigationSidebar.width', 224);
 
   return (
     <div
       className="sticky top-0 flex h-[calc(100vh-90px)] grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-1 px-2 pt-2"
+      ref={sidebarRef}
       style={{ width: `${width}px` }}
     >
-      <ResizeHandle offset={7} position="right" setWidth={setWidth} minWidth={100} maxWidth={500} />
+      <ResizeHandle offset={7} position="right" onResize={setWidth} minWidth={100} maxWidth={500} />
       <div className="flex w-full items-center">
         <Button
           element="link"
