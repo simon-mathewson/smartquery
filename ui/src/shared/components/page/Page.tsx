@@ -25,7 +25,7 @@ export const Page: React.FC<PageProps> = (props) => {
         )}
       >
         <Link href={routes.root()}>
-          <Logo htmlProps={{ className: 'w-16' }} />
+          <Logo htmlProps={{ className: 'w-56' }} />
         </Link>
         {children}
       </div>

@@ -6,7 +6,7 @@ import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { Connections } from '../connections/Connections';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { Button } from '~/shared/components/button/Button';
-import { Logo } from '~/shared/components/logo/Logo';
+import { Logo } from '~/shared/components/logo/LogoIcon';
 import { routes } from '~/router/routes';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
 import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';

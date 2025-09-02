@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import { Logo } from './Logo';
+import { Logo } from './LogoIcon';
 import { TestApp } from '~/test/componentTests/TestApp';
 
 test('Logo', async ({ mount }) => {

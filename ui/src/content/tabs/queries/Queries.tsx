@@ -4,7 +4,7 @@ import { Query } from './query/Query';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { TabsContext } from '../Context';
 import { QueryProvider } from './query/Provider';
-import { Logo } from '~/shared/components/logo/Logo';
+import { Logo } from '~/shared/components/logo/LogoIcon';
 
 export const Queries: React.FC = () => {
   const { activeTab } = useDefinedContext(TabsContext);
@@ -12,7 +12,9 @@ export const Queries: React.FC = () => {
   if (!activeTab) {
     return (
       <div className="flex grow items-center justify-center">
-        <Logo htmlProps={{ className: 'w-[200px] h-[200px] pointer-events-none opacity-10 grayscale' }} />
+        <Logo
+          htmlProps={{ className: 'w-[200px] h-[200px] pointer-events-none opacity-10 grayscale' }}
+        />
       </div>
     );
   }
