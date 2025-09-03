@@ -58,7 +58,7 @@ export const Footer: React.FC = () => {
                 navigate(routes.subscribe() + `?${searchParams.toString()}`);
               }
 
-              close();
+              void close();
             }}
           />
         )}
