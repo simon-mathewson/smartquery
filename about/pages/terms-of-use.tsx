@@ -90,8 +90,8 @@ const TermsOfUse: React.FC = () => {
                 <ul>
                   <li>Concurrent Connections: 1</li>
                   <li>Concurrent Query Statements: 2</li>
-                  <li>Total Query Duration: 15 minutes (900,000 ms)</li>
-                  <li>Total Query Response Size: 250 MB</li>
+                  <li>Total Query Duration: 10 minutes</li>
+                  <li>Total Query Response Size: 100 MB</li>
                 </ul>
               </li>
             </ul>
@@ -114,8 +114,8 @@ const TermsOfUse: React.FC = () => {
                 <ul>
                   <li>Concurrent Connections: 3</li>
                   <li>Concurrent Query Statements: 5</li>
-                  <li>Total Query Duration: 2 hours (7,200,000 ms)</li>
-                  <li>Total Query Response Size: 4 GB</li>
+                  <li>Total Query Duration: 1 hours</li>
+                  <li>Total Query Response Size: 1 GB</li>
                 </ul>
               </li>
             </ul>

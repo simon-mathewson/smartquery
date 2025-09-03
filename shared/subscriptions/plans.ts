@@ -15,9 +15,9 @@ export const plans = {
     limits: {
       aiCredits: 10_000,
       concurrentConnections: 1,
-      concurrentQueryStatements: 10,
-      totalQueryDurationMilliseconds: 15 * 60 * 1000,
-      totalQueryResponseBytes: 250 * 1024 * 1024,
+      concurrentQueryStatements: 2,
+      totalQueryDurationMilliseconds: 10 * 60 * 1000,
+      totalQueryResponseBytes: 100 * 1024 * 1024,
     },
   },
   plus: {
@@ -25,9 +25,9 @@ export const plans = {
     limits: {
       aiCredits: 900_000,
       concurrentConnections: 3,
-      concurrentQueryStatements: 10,
-      totalQueryDurationMilliseconds: 2 * 60 * 60 * 1000,
-      totalQueryResponseBytes: 4 * 1024 * 1024 * 1024,
+      concurrentQueryStatements: 5,
+      totalQueryDurationMilliseconds: 60 * 60 * 1000,
+      totalQueryResponseBytes: 1 * 1024 * 1024 * 1024,
     },
   },
   pro: {

@@ -98,7 +98,7 @@ export const connectorRouter = trpc.router({
         input: { connectorId, statements },
       } = props;
 
-      const maxConcurrentQueryStatements = getLimitsForUser(user).concurrentQueryStatements;
+      const maxConcurrentQueryStatements = 10; // getLimitsForUser(user).concurrentQueryStatements;
 
       if (statements.length > maxConcurrentQueryStatements) {
         throw new Error('Too many statements');
