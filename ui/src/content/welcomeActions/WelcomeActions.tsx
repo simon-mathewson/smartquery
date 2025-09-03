@@ -1,4 +1,9 @@
-import { PersonAddAlt1Outlined, ScienceOutlined, VpnKeyOutlined } from '@mui/icons-material';
+import {
+  LightbulbOutlined,
+  PersonAddAlt1Outlined,
+  ScienceOutlined,
+  VpnKeyOutlined,
+} from '@mui/icons-material';
 import React, { useMemo } from 'react';
 import { routes } from '~/router/routes';
 import type { Action } from '~/shared/components/actionList/ActionList';
@@ -49,7 +54,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
                 hint: 'Get free AI and cloud features',
                 label: 'Sign up',
                 icon: PersonAddAlt1Outlined,
-                route: routes.signup(),
+                route: routes.subscribe(),
                 onClick: () => track('home_sign_up'),
               },
               {
@@ -57,6 +62,17 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
                 icon: VpnKeyOutlined,
                 route: routes.login(),
                 onClick: () => track('home_log_in'),
+              },
+            ]
+          : []),
+        ...(user && !user.activeSubscription
+          ? [
+              {
+                hint: 'Get access to all features',
+                label: 'Subscribe',
+                icon: LightbulbOutlined,
+                route: routes.subscribe(),
+                onClick: () => track('home_subscribe'),
               },
             ]
           : []),
