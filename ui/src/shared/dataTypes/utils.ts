@@ -13,10 +13,13 @@ export const isIntegerType = (dataType: DataType) =>
   includes(['int', 'integer', 'tinyint'], dataType);
 
 export const isNumberType = (dataType: DataType) =>
-  isIntegerType(dataType) || includes(['decimal', 'numeric'], dataType);
+  isIntegerType(dataType) || dataType === 'decimal' || dataType.startsWith('numeric');
 
 export const isTextType = (dataType: DataType) =>
   includes(['char', 'character varying', 'varchar', 'text'], dataType);
 
 export const isTimeType = (dataType: DataType) =>
   includes(['time', 'time with time zone', 'time without time zone'], dataType);
+
+export const isDateOrTimeType = (dataType: DataType) =>
+  isDateTimeType(dataType) || isTimeType(dataType);

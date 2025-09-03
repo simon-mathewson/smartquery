@@ -2,7 +2,12 @@ import { assert, type XOR } from 'ts-essentials';
 import classNames from 'classnames';
 import React, { useCallback } from 'react';
 import { type Column, type Value } from '~/shared/types';
-import { isDateTimeType, isEnumType, isNumberType, isTimeType } from '~/shared/dataTypes/utils';
+import {
+  isDateOrTimeType,
+  isDateTimeType,
+  isEnumType,
+  isNumberType,
+} from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { QueryContext } from '../../Context';
 import type { CreateValue } from '~/content/edit/types';
@@ -14,6 +19,7 @@ import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import type { ResizeHandleProps } from '~/shared/components/resizeHandle/ResizeHandle';
 import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
+import { isNil } from 'lodash';
 
 export type CellProps = {
   column: Column | string;
@@ -183,11 +189,29 @@ export const Cell: React.FC<CellProps> = (props) => {
             (value === null ||
               value === undefined ||
               (typeof column === 'object' &&
-                (['boolean', 'json'].includes(column.dataType) ||
-                  isDateTimeType(column.dataType) ||
+                (column.isUnique ||
+                  column.isPrimaryKey ||
+                  ['boolean', 'json'].includes(column.dataType) ||
+                  isDateOrTimeType(column.dataType) ||
                   isEnumType(column.dataType) ||
-                  isNumberType(column.dataType) ||
-                  isTimeType(column.dataType)))),
+                  isNumberType(column.dataType)))),
+          ...(type === 'body' &&
+            typeof column === 'object' &&
+            !selected && {
+              'text-emerald-600 dark:text-emerald-500':
+                !isNil(value) && isNumberType(column.dataType),
+              'text-amber-600 dark:text-amber-500':
+                !isNil(value) && isDateOrTimeType(column.dataType),
+              '!text-blue-600 dark:!text-blue-500': !isNil(value) && column.isPrimaryKey,
+              '!text-sky-600 dark:!text-sky-500':
+                !isNil(value) && !column.isPrimaryKey && column.foreignKey !== null,
+              '!text-indigo-600 dark:!text-indigo-500': !isNil(value) && column.isUnique,
+              'text-teal-600 dark:text-teal-500': !isNil(value) && column.dataType === 'boolean',
+              'text-fuchsia-600 dark:text-fuchsia-500':
+                !isNil(value) && isEnumType(column.dataType),
+            }),
+          'text-textTertiary':
+            !selected && type === 'body' && (value === null || value === undefined),
         })}
       >
         {(() => {

@@ -133,10 +133,12 @@ export const Table: React.FC<TableProps> = (props) => {
         const sample = [...rows, ...rowsToCreate]
           .sort(() => Math.random() - 0.5)
           .slice(0, sampleSize);
-        const medianLength = median(sample.map((row) => String(row[columnName]).length));
-        const finalWidth = Math.max(Math.min(medianLength, 60), 10);
+        const lengths = [columnName.length, ...sample.map((row) => String(row[columnName]).length)];
+        const medianLength = median(lengths);
+        const finalWidthChars = Math.max(Math.min(medianLength, 60), 10);
+        const finalWidth = finalWidthChars * 9;
 
-        return `${finalWidth}ch`;
+        return `${finalWidth}px`;
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

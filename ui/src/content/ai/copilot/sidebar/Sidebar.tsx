@@ -112,7 +112,7 @@ export const CopilotSidebar: React.FC = () => {
             >
               <div
                 className={classNames(
-                  'prose max-w-none break-all text-sm leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
+                  'prose max-w-none break-words text-sm leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
                   {
                     'rounded-xl bg-primary px-2 py-1 text-white': message.role === 'user',
                   },
