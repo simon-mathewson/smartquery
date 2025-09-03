@@ -10,10 +10,12 @@ import { CopilotContext } from '../ai/copilot/Context';
 import { EditContext } from '../edit/Context';
 import classNames from 'classnames';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { useLocation } from 'wouter';
+import { routes } from '~/router/routes';
 
 export const Toolbar: React.FC = () => {
+  const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
-
   const { tabs } = useDefinedContext(TabsContext);
   const { addQuery } = useDefinedContext(QueriesContext);
   const copilot = useDefinedContext(CopilotContext);
@@ -39,8 +41,12 @@ export const Toolbar: React.FC = () => {
         color="primary"
         htmlProps={{
           className: classNames({ 'ml-auto': !allChanges.length }),
-          disabled: !copilot.isEnabled,
           onClick: () => {
+            if (!copilot.isEnabled) {
+              navigate(routes.subscribe());
+              return;
+            }
+
             track('toolbar_open_copilot');
 
             copilot.setIsOpen(!copilot.isOpen);
