@@ -72,7 +72,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
   if (selection.length === 0) return null;
 
   return (
-    <OverlayCard htmlProps={{ className: 'p-3 overflow-auto' }} overlay={overlay}>
+    <OverlayCard htmlProps={{ className: 'p-3' }} overlay={overlay}>
       {() => (
         <div className="no-scrollbar grid w-full min-w-[320px] max-w-[360px] gap-2">
           {columnFields?.map((fieldProps, index) => (

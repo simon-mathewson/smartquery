@@ -1,44 +1,91 @@
-import { QuestionAnswerOutlined, SettingsOutlined } from '@mui/icons-material';
+import {
+  LightbulbOutlined,
+  PersonAddAlt1Outlined,
+  QuestionAnswerOutlined,
+  SettingsOutlined,
+} from '@mui/icons-material';
 import { useRef } from 'react';
+import { useLocation } from 'wouter';
+import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
-import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
-import { Settings } from '../settings/Settings';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { AuthContext } from '../auth/Context';
-import { AnalyticsContext } from '../analytics/Context';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
+import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { AnalyticsContext } from '../analytics/Context';
+import { AuthContext } from '../auth/Context';
+import { Settings } from '../settings/Settings';
+import { Plans } from '../subscriptions/plans/Plans';
 
 export const Footer: React.FC = () => {
+  const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
-
   const { user } = useDefinedContext(AuthContext);
 
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const settingsButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const overlay = useOverlay({
+  const settingsOverlay = useOverlay({
     align: 'center',
     darkenBackground: true,
-    triggerRef,
-    onOpen: () => track('open_settings'),
+    triggerRef: settingsButtonRef,
+    onOpen: () => track('footer_open_settings'),
+  });
+
+  const plansButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  const plansOverlay = useOverlay({
+    align: 'center',
+    darkenBackground: true,
+    triggerRef: plansButtonRef,
+    onOpen: () => track('footer_open_plans'),
   });
 
   return (
     <>
-      <OverlayCard htmlProps={{ className: 'w-[340px] overflow-auto' }} overlay={overlay}>
+      <OverlayCard htmlProps={{ className: 'w-[340px]' }} overlay={settingsOverlay}>
         {({ close }) => <Settings close={close} />}
       </OverlayCard>
-      <div className="fixed bottom-2 left-2 w-[208px]">
+      <OverlayCard overlay={plansOverlay}>
+        {({ close }) => (
+          <Plans
+            onContinue={(plan) => {
+              if (plan === 'free') {
+                navigate(routes.signup());
+              } else {
+                const searchParams = new URLSearchParams({
+                  type: plan,
+                  stage: 'signup',
+                });
+                navigate(routes.subscribe() + `?${searchParams.toString()}`);
+              }
+
+              close();
+            }}
+          />
+        )}
+      </OverlayCard>
+      <div className="fixed bottom-2 left-2 w-[224px] space-y-1 rounded-tr-lg bg-background pt-1">
+        {!user?.activeSubscription && (
+          <Button
+            align="left"
+            htmlProps={{
+              className: 'w-full',
+              ref: plansButtonRef,
+            }}
+            icon={user ? <LightbulbOutlined /> : <PersonAddAlt1Outlined />}
+            label={user ? 'Get access to all features' : 'Sign up to use AI for free'}
+          />
+        )}
         <Button
           align="left"
           color="secondary"
           htmlProps={{
             className: 'w-full',
-            ref: triggerRef,
+            ref: settingsButtonRef,
           }}
           icon={<SettingsOutlined />}
           label={user?.email ?? 'Settings'}
         />
-        <div className="flex items-center pt-1">
+        <div className="flex items-center">
           <Button
             color="secondary"
             element="a"

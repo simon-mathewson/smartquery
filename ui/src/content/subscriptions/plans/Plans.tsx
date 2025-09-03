@@ -4,61 +4,44 @@ import { formatBytes } from '@/utils/formatBytes';
 import { formatDuration } from '@/utils/formatDuration';
 import { formatNumber } from '@/utils/formatNumber';
 import { ArrowBack, ArrowForward, Close, Done } from '@mui/icons-material';
-import classNames from 'classnames';
 import React from 'react';
-import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
-import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { AuthContext } from '../auth/Context';
+import { AuthContext } from '../../auth/Context';
 import { omit } from 'lodash';
+import { Cell } from './Cell';
 
 const plans = omit(allPlans, 'pro');
 
 export type PlansProps = {
-  onContinue: (type: SubscriptionType) => void;
+  onBack?: () => void;
+  onContinue: (plan: SubscriptionType | 'free') => void;
 };
 
 export const Plans: React.FC<PlansProps> = (props) => {
-  const { onContinue } = props;
+  const { onBack, onContinue } = props;
 
   const { user } = useDefinedContext(AuthContext);
 
   const planNames = Object.keys(plans) as (keyof typeof plans)[];
 
-  const Cell = ({
-    children,
-    className,
-    feature,
-  }: {
-    children?: React.ReactNode;
-    className?: string;
-    feature?: boolean;
-  }) => (
-    <div
-      className={classNames('flex w-full items-center gap-2 p-2', className, {
-        'sticky left-0 z-10 bg-card text-xs font-medium text-textPrimary': feature,
-      })}
-    >
-      {children}
-    </div>
-  );
-
   return (
-    <Card htmlProps={{ className: 'container max-w-max' }}>
+    <>
       <Header
-        left={<Button element="link" htmlProps={{ href: routes.root() }} icon={<ArrowBack />} />}
+        left={
+          onBack && <Button element="link" htmlProps={{ onClick: onBack }} icon={<ArrowBack />} />
+        }
         middle={
           <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-            Subscribe
+            Plans
           </div>
         }
       />
       <div
         className="relative grid w-full overflow-x-auto pt-2 text-sm"
         style={{
-          gridTemplateColumns: `repeat(${planNames.length + 1}, 150px)`,
+          gridTemplateColumns: `200px repeat(${planNames.length}, 150px)`,
         }}
       >
         <Cell feature />
@@ -76,7 +59,12 @@ export const Plans: React.FC<PlansProps> = (props) => {
           </Cell>
         ))}
         <div className="col-span-full mx-2 my-1 h-px border-b border-border" />
-        <Cell feature>AI Credits</Cell>
+        <Cell feature>
+          <div>
+            <div>AI Credits</div>
+            <div className="mt-1 font-normal text-textTertiary">Chat & inline completions</div>
+          </div>
+        </Cell>
         {planNames.map((plan) => (
           <Cell className="text-textSecondary" key={plan}>
             {formatNumber(plans[plan].limits.aiCredits)}
@@ -117,28 +105,36 @@ export const Plans: React.FC<PlansProps> = (props) => {
             )}
           </Cell>
         ))}
-        <Cell feature />
+        <Cell feature>Support the development of SmartQuery</Cell>
         {planNames.map((plan) => (
-          <Cell className="!p-0" key={plan}>
-            {plan !== 'free' && (
-              <Button
-                htmlProps={{
-                  disabled: user?.activeSubscription?.type === plan,
-                  className: 'w-full',
-                  onClick: () => onContinue(plan),
-                }}
-                icon={<ArrowForward />}
-                label="Continue"
-                tooltip={
-                  user?.activeSubscription?.type === plan
-                    ? 'You are already on this plan'
-                    : undefined
-                }
-              />
+          <Cell className="pl-1" key={plan}>
+            {plan === 'free' ? (
+              <Close className="text-danger" />
+            ) : (
+              <Done className="text-success" />
             )}
           </Cell>
         ))}
+        <Cell feature />
+        {planNames.map((plan) => (
+          <Cell className="!p-0" key={plan}>
+            <Button
+              htmlProps={{
+                disabled:
+                  user?.activeSubscription?.type === plan ||
+                  (user !== null && !user.activeSubscription && plan === 'free'),
+                className: 'w-full',
+                onClick: () => onContinue(plan),
+              }}
+              icon={<ArrowForward />}
+              label="Continue"
+              tooltip={
+                user?.activeSubscription?.type === plan ? 'You are already on this plan' : undefined
+              }
+            />
+          </Cell>
+        ))}
       </div>
-    </Card>
+    </>
   );
 };

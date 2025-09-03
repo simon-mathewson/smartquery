@@ -28,7 +28,7 @@ export const NavigationSidebar: React.FC = () => {
 
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  const [width, setWidth] = useStoredState('NavigationSidebar.width', 224);
+  const [width, setWidth] = useStoredState('NavigationSidebar.width', 232);
 
   return (
     <div
@@ -63,10 +63,7 @@ export const NavigationSidebar: React.FC = () => {
           )}
         </button>
       </div>
-      <OverlayCard
-        htmlProps={{ className: 'w-max p-2 shadow-2xl overflow-auto' }}
-        overlay={connectionsOverlay}
-      >
+      <OverlayCard htmlProps={{ className: 'w-max p-2 shadow-2xl' }} overlay={connectionsOverlay}>
         {() => <Connections />}
       </OverlayCard>
       {activeConnection && <TableList />}

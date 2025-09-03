@@ -41,7 +41,7 @@ export const subscriptionsRouter = trpc.router({
         customer: stripeCustomerId,
         line_items: [{ price: getPriceIdForSubscriptionType(subscriptionType), quantity: 1 }],
         mode: 'subscription',
-        return_url: `${process.env.UI_URL}/subscribe?confirm=${subscriptionType}`,
+        return_url: `${process.env.UI_URL}/subscribe?type=${subscriptionType}&stage=confirm`,
         ui_mode: 'custom',
       });
 

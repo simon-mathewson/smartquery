@@ -11,14 +11,14 @@ import { AuthContext } from '../Context';
 import { PasswordFields } from '../PasswordFields';
 import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
-import { routes } from '~/router/routes';
 import { Toggle } from '~/shared/components/toggle/Toggle';
 
 export type SignupProps = {
+  onBack: () => void;
   onSuccess: () => void;
 };
 
-export const Signup: React.FC<SignupProps> = ({ onSuccess }) => {
+export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess }) => {
   const auth = useDefinedContext(AuthContext);
 
   const [email, setEmail] = useState('');
@@ -49,7 +49,7 @@ export const Signup: React.FC<SignupProps> = ({ onSuccess }) => {
       <CaptchaModal modalControl={captchaModal} />
       <Card htmlProps={{ className: 'flex flex-col p-3 w-full max-w-[356px]' }}>
         <Header
-          left={<Button element="link" htmlProps={{ href: routes.root() }} icon={<ArrowBack />} />}
+          left={<Button element="link" htmlProps={{ onClick: onBack }} icon={<ArrowBack />} />}
           middle={
             <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
               Sign up

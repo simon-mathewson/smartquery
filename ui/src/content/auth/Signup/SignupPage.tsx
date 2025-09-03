@@ -8,7 +8,7 @@ export const SignupPage: React.FC = () => {
 
   return (
     <Page title="Signup">
-      <Signup onSuccess={() => navigate(routes.root())} />
+      <Signup onBack={() => navigate(routes.root())} onSuccess={() => navigate(routes.root())} />
     </Page>
   );
 };
