@@ -28,7 +28,7 @@ export const SubscribePage: React.FC = () => {
   );
 
   return (
-    <Page title="Subscribe">
+    <Page title="Subscribe" htmlProps={{ className: 'max-w-max' }}>
       {stage === 'plans' && (
         <Card htmlProps={{ className: 'container max-w-max' }}>
           <Plans

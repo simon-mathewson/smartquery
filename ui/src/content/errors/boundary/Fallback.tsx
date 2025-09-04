@@ -32,7 +32,7 @@ export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = (prop
           label="Report"
         />
       </div>
-      <code className="max-w-xl rounded-xl border border-border bg-card p-3 text-sm">
+      <code className="max-w-2xl overflow-x-auto rounded-xl border border-border bg-card p-3 text-sm">
         {error.stack || ''}
       </code>
     </div>

@@ -22,7 +22,7 @@ export const Page: React.FC<PageProps> = (props) => {
       <div className="relative flex min-h-screen flex-col">
         <div
           className={classNames(
-            'mx-auto flex flex-col items-center gap-6 pb-16 pt-8',
+            'mx-auto flex w-full max-w-[356px] flex-col items-center gap-6 pb-16 pt-8',
             htmlProps?.className,
           )}
         >
