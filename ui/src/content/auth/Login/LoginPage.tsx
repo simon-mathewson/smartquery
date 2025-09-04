@@ -1,17 +1,17 @@
 import { Page } from '~/shared/components/page/Page';
-import { Signup } from './Signup';
+import { Login } from './Login';
 import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
 
-export const SignupPage: React.FC = () => {
+export const LoginPage: React.FC = () => {
   const [, navigate] = useLocation();
 
   return (
-    <Page title="Signup">
-      <Signup
+    <Page title="Login">
+      <Login
         onBack={() => history.back()}
         onSuccess={() => navigate(routes.root())}
-        onShowLogin={() => navigate(routes.login())}
+        onShowSignup={() => navigate(routes.subscribe())}
       />
     </Page>
   );

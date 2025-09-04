@@ -4,14 +4,14 @@ import { useLocation, useSearchParams } from 'wouter';
 import { Page } from '~/shared/components/page/Page';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../auth/Context';
-import { Signup } from '../auth/Signup/Signup';
 import { Checkout } from './Checkout/Checkout';
 import { Confirm } from './Confirm';
 import { Plans } from './plans/Plans';
 import { routes } from '~/router/routes';
 import { Card } from '~/shared/components/card/Card';
+import { Auth } from './Auth';
 
-type Stage = 'plans' | 'signup' | 'checkout' | 'confirm';
+type Stage = 'plans' | 'auth' | 'checkout' | 'confirm';
 
 export const SubscribePage: React.FC = () => {
   const [, navigate] = useLocation();
@@ -28,11 +28,11 @@ export const SubscribePage: React.FC = () => {
   );
 
   return (
-    <Page title="Subscribe" htmlProps={{ className: 'max-w-max' }}>
+    <Page title="Subscribe" htmlProps={{ className: 'max-w-none' }}>
       {stage === 'plans' && (
         <Card htmlProps={{ className: 'container max-w-max' }}>
           <Plans
-            onBack={() => navigate(routes.root())}
+            onBack={() => history.back()}
             onContinue={(type) => {
               if (type === 'free') {
                 navigate(routes.signup());
@@ -40,13 +40,13 @@ export const SubscribePage: React.FC = () => {
               }
 
               setSubscriptionType(type);
-              setStage(user ? 'checkout' : 'signup');
+              setStage(user ? 'checkout' : 'auth');
             }}
           />
         </Card>
       )}
-      {stage === 'signup' && (
-        <Signup onBack={() => setStage('plans')} onSuccess={() => setStage('checkout')} />
+      {stage === 'auth' && (
+        <Auth onBack={() => setStage('plans')} onSuccess={() => setStage('checkout')} />
       )}
       {stage === 'checkout' && (
         <Checkout goBack={() => setStage('plans')} subscriptionType={subscriptionType} />

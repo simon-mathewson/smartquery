@@ -5,7 +5,7 @@ import { Loading } from '~/shared/components/loading/Loading';
 
 // Lazy load all components
 const Login = React.lazy(() =>
-  import('~/content/auth/Login/Login').then((module) => ({ default: module.Login })),
+  import('~/content/auth/Login/LoginPage').then((module) => ({ default: module.LoginPage })),
 );
 const Signup = React.lazy(() =>
   import('~/content/auth/Signup/SignupPage').then((module) => ({ default: module.SignupPage })),

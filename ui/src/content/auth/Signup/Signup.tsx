@@ -1,4 +1,4 @@
-import { ArrowBack, Done } from '@mui/icons-material';
+import { ArrowBack, Done, VpnKeyOutlined } from '@mui/icons-material';
 import { useCallback, useState } from 'react';
 import { Button } from '~/shared/components/button/Button';
 import type { CaptchaModalInput } from '~/shared/components/captcha/Modal';
@@ -12,13 +12,15 @@ import { PasswordFields } from '../PasswordFields';
 import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { Toggle } from '~/shared/components/toggle/Toggle';
+import { ActionList } from '~/shared/components/actionList/ActionList';
 
 export type SignupProps = {
   onBack: () => void;
   onSuccess: () => void;
+  onShowLogin: () => void;
 };
 
-export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess }) => {
+export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess, onShowLogin }) => {
   const auth = useDefinedContext(AuthContext);
 
   const [email, setEmail] = useState('');
@@ -47,7 +49,7 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess }) => {
   return (
     <>
       <CaptchaModal modalControl={captchaModal} />
-      <Card htmlProps={{ className: 'flex flex-col p-3 w-full max-w-[356px]' }}>
+      <Card htmlProps={{ className: 'flex flex-col w-full max-w-[356px]' }}>
         <Header
           left={<Button element="link" htmlProps={{ onClick: onBack }} icon={<ArrowBack />} />}
           middle={
@@ -56,7 +58,7 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess }) => {
             </div>
           }
         />
-        <form className="flex flex-col gap-2 py-2" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-2 p-1" onSubmit={handleSubmit}>
           <Field label="Email">
             <Input
               htmlProps={{ autoFocus: true, type: 'email', value: email }}
@@ -108,6 +110,16 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess }) => {
           />
         </form>
       </Card>
+      <ActionList
+        actions={[
+          {
+            hint: 'Log in',
+            label: 'Already have an account?',
+            icon: VpnKeyOutlined,
+            onClick: onShowLogin,
+          },
+        ]}
+      />
     </>
   );
 };
