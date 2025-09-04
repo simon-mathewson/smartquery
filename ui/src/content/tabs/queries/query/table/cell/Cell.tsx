@@ -148,7 +148,7 @@ export const Cell: React.FC<CellProps> = (props) => {
             '-mt-[1px] border-y py-2': type === 'body',
             'border-l-0 pl-4': columnIndex === 0,
             'border-b-1': type === 'body' && rowIndex === rowCount - 1,
-            'z-10 border-whiteHighlightHover': type === 'body' && selected,
+            'z-10 !border-whiteHighlightHover': type === 'body' && selected,
             'border-y-border':
               type === 'header' || (!selected && !isChanged && !isDeleted && !isCreated),
             'z-10 border-y-transparent':
