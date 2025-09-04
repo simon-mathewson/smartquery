@@ -1,4 +1,4 @@
-import 'monaco-editor/esm/vs/language/json/monaco.contribution';
+import * as monaco from 'monaco-editor';
 import 'monaco-sql-languages/esm/languages/mysql/mysql.contribution';
 import 'monaco-sql-languages/esm/languages/pgsql/pgsql.contribution';
 
@@ -8,6 +8,12 @@ import PostgresWorker from 'monaco-sql-languages/esm/languages/pgsql/pgsql.worke
 import MysqlWorker from 'monaco-sql-languages/esm/languages/mysql/mysql.worker?worker';
 
 import { LanguageIdEnum } from 'monaco-sql-languages';
+
+// Set up global monaco reference for JSON contribution
+(globalThis as unknown as { monaco: typeof monaco }).monaco = monaco;
+
+// Import JSON contribution after setting up global reference
+import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 
 self.MonacoEnvironment = {
   getWorker(_: unknown, label: string) {
