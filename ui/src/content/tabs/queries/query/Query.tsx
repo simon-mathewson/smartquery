@@ -41,7 +41,7 @@ export const Query: React.FC = () => {
   return (
     <div
       className={classNames(
-        'relative ml-3 mt-3 flex min-h-[240px] flex-col justify-start gap-2 rounded-xl border border-border bg-card p-2',
+        'relative ml-3 mt-3 flex min-h-[240px] flex-col justify-start gap-2 rounded-xl border border-border bg-card',
         {
           '!ml-0': columnIndex === 0,
           '!mt-0': rowIndex === 0,
@@ -49,69 +49,73 @@ export const Query: React.FC = () => {
       )}
       data-query={query.id}
     >
-      <Header
-        left={
-          result ? (
+      <div className="space-y-2 p-2">
+        <Header
+          left={
+            result ? (
+              <>
+                <InputModesSelect inputMode={inputMode} setInputMode={setInputMode} />{' '}
+                <ViewColumnsButton />
+              </>
+            ) : null
+          }
+          middle={
+            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
+              {getQueryTitle(query, result)}
+            </div>
+          }
+          right={
             <>
-              <InputModesSelect inputMode={inputMode} setInputMode={setInputMode} />{' '}
-              <ViewColumnsButton />
-            </>
-          ) : null
-        }
-        middle={
-          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-            {getQueryTitle(query, result)}
-          </div>
-        }
-        right={
-          <>
-            {result && query.select && (
-              <div className="relative h-fit w-fit">
-                <Tooltip<HTMLButtonElement> text="Reload">
-                  {({ htmlProps }) => (
-                    <Button
-                      htmlProps={{
-                        ...htmlProps,
-                        onClick: () => {
-                          void runUserQuery(query.id);
-                          track('query_reload');
-                        },
-                      }}
-                      icon={<Refresh />}
+              {result && query.select && (
+                <div className="relative h-fit w-fit">
+                  <Tooltip<HTMLButtonElement> text="Reload">
+                    {({ htmlProps }) => (
+                      <Button
+                        htmlProps={{
+                          ...htmlProps,
+                          onClick: () => {
+                            void runUserQuery(query.id);
+                            track('query_reload');
+                          },
+                        }}
+                        icon={<Refresh />}
+                      />
+                    )}
+                  </Tooltip>
+                  {query.isLoading && (
+                    <CircularProgress
+                      className="absolute left-[4px] top-[4px] !text-primary"
+                      size={28}
                     />
                   )}
-                </Tooltip>
-                {query.isLoading && (
-                  <CircularProgress
-                    className="absolute left-[4px] top-[4px] !text-primary"
-                    size={28}
+                </div>
+              )}
+              <Tooltip<HTMLButtonElement> text="Close">
+                {({ htmlProps }) => (
+                  <Button
+                    color="secondary"
+                    htmlProps={{
+                      ...htmlProps,
+                      onClick: () => {
+                        removeQuery(query.id);
+                        track('query_close');
+                      },
+                    }}
+                    icon={<Close />}
                   />
                 )}
-              </div>
-            )}
-            <Tooltip<HTMLButtonElement> text="Close">
-              {({ htmlProps }) => (
-                <Button
-                  color="secondary"
-                  htmlProps={{
-                    ...htmlProps,
-                    onClick: () => {
-                      removeQuery(query.id);
-                      track('query_close');
-                    },
-                  }}
-                  icon={<Close />}
-                />
-              )}
-            </Tooltip>
-          </>
-        }
-      />
-      <InputModes inputMode={inputMode} />
+              </Tooltip>
+            </>
+          }
+        />
+        <InputModes inputMode={inputMode} />
+      </div>
       {result && (
         <>
           <Table handleRowCreationRef={handleRowCreationRef} />
-          <BottomToolbar handleRowCreationRef={handleRowCreationRef} />
+          <div className="p-2">
+            <BottomToolbar handleRowCreationRef={handleRowCreationRef} />
+          </div>
         </>
       )}
       {!result && query.isLoading && (

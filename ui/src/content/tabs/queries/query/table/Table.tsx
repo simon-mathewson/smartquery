@@ -157,9 +157,9 @@ export const Table: React.FC<TableProps> = (props) => {
 
   return (
     <>
-      <div className="relative flex grow flex-col items-start overflow-hidden px-2">
+      <div className="relative flex grow flex-col items-start overflow-hidden">
         <div
-          className={classNames('relative max-w-full overflow-auto', {
+          className={classNames('relative w-full overflow-auto', {
             'pointer-events-none overflow-hidden': isEditing,
           })}
           ref={tableRef}
@@ -167,19 +167,21 @@ export const Table: React.FC<TableProps> = (props) => {
           <div
             className="sticky top-0 z-30 grid auto-rows-max"
             ref={tableContentRef}
-            style={{ gridTemplateColumns: columnWidths?.join(' ') ?? '1fr' }}
+            style={{ gridTemplateColumns: `${columnWidths?.join(' ') ?? '1fr'} 1fr` }}
           >
-            {visibleColumns.map((column) => {
+            {visibleColumns.map((column, columnIndex) => {
               const columnName = typeof column === 'object' ? column.name : column;
 
               return (
                 <Cell
                   column={column}
+                  columnIndex={columnIndex}
                   key={columnName}
                   setColumnWidth={(updateFn) => getColumnWidthUpdater(updateFn, columnName)}
                   sorting={sorting}
                   type="header"
                   value={columnName}
+                  visibleColumnCount={visibleColumns.length}
                 />
               );
             })}
@@ -193,7 +195,7 @@ export const Table: React.FC<TableProps> = (props) => {
           <div
             className="grid auto-rows-max"
             ref={tableContentRef}
-            style={{ gridTemplateColumns: columnWidths?.join(' ') ?? '1fr' }}
+            style={{ gridTemplateColumns: `${columnWidths?.join(' ') ?? '1fr'} 1fr` }}
           >
             {rows.map((row, rowIndex) => {
               const rowNumber = rowIndex + 1;
@@ -228,11 +230,13 @@ export const Table: React.FC<TableProps> = (props) => {
                     isDeleted={isDeleted}
                     key={[columnIndex, rowIndex].join()}
                     onClick={handleCellClick}
+                    rowCount={rows.length + rowsToCreate.length}
                     rowIndex={rowIndex}
                     selection={selection}
                     setColumnWidth={(updateFn) => getColumnWidthUpdater(updateFn, columnName)}
                     type="body"
                     value={changedValue === undefined ? value : changedValue}
+                    visibleColumnCount={visibleColumns.length}
                   />
                 );
               });
@@ -257,11 +261,13 @@ export const Table: React.FC<TableProps> = (props) => {
                     isCreated
                     key={[columnIndex, rowIndex].join()}
                     onClick={handleCellClick}
+                    rowCount={rows.length + rowsToCreate.length}
                     rowIndex={rows.length + rowIndex}
                     selection={selection}
                     setColumnWidth={(updateFn) => getColumnWidthUpdater(updateFn, columnName)}
                     type="body"
                     value={value}
+                    visibleColumnCount={visibleColumns.length}
                   />
                 );
               });
