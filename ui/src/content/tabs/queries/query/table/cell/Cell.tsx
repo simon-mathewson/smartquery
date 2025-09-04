@@ -235,7 +235,7 @@ export const Cell: React.FC<CellProps> = (props) => {
             return value;
           })()}
         </div>
-        {type !== 'header' && typeof column === 'object' && column.foreignKey && (
+        {type !== 'header' && typeof column === 'object' && column.foreignKey && !isNil(value) && (
           <Button
             color={selected ? 'white' : 'secondary'}
             htmlProps={{
