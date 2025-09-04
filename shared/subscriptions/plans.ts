@@ -3,7 +3,6 @@ export type Plan = {
   limits: {
     aiCredits: number;
     concurrentConnections: number;
-    concurrentQueryStatements: number;
     totalQueryDurationMilliseconds: number;
     totalQueryResponseBytes: number;
   };
@@ -15,7 +14,6 @@ export const plans = {
     limits: {
       aiCredits: 10_000,
       concurrentConnections: 1,
-      concurrentQueryStatements: 2,
       totalQueryDurationMilliseconds: 10 * 60 * 1000,
       totalQueryResponseBytes: 100 * 1024 * 1024,
     },
@@ -25,7 +23,6 @@ export const plans = {
     limits: {
       aiCredits: 900_000,
       concurrentConnections: 3,
-      concurrentQueryStatements: 5,
       totalQueryDurationMilliseconds: 60 * 60 * 1000,
       totalQueryResponseBytes: 1 * 1024 * 1024 * 1024,
     },
@@ -35,7 +32,6 @@ export const plans = {
     limits: {
       aiCredits: 1_900_000,
       concurrentConnections: 8,
-      concurrentQueryStatements: 10,
       totalQueryDurationMilliseconds: 6 * 60 * 60 * 1000,
       totalQueryResponseBytes: 12 * 1024 * 1024 * 1024,
     },

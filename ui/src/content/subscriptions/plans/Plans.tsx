@@ -89,12 +89,6 @@ export const Plans: React.FC<PlansProps> = (props) => {
             {plans[plan].limits.concurrentConnections}
           </Cell>
         ))}
-        <Cell feature>Concurrent queries</Cell>
-        {planNames.map((plan) => (
-          <Cell className="text-textSecondary" key={plan}>
-            {plans[plan].limits.concurrentQueryStatements}
-          </Cell>
-        ))}
         <Cell feature>Change theme color</Cell>
         {planNames.map((plan) => (
           <Cell className="pl-1" key={plan}>

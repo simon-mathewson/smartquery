@@ -89,7 +89,6 @@ const TermsOfUse: React.FC = () => {
                 <strong>Queries via SmartQuery Cloud:</strong>
                 <ul>
                   <li>Concurrent Connections: 1</li>
-                  <li>Concurrent Query Statements: 2</li>
                   <li>Total Query Duration: 10 minutes</li>
                   <li>Total Query Response Size: 100 MB</li>
                 </ul>
@@ -113,7 +112,6 @@ const TermsOfUse: React.FC = () => {
                 <strong>Queries via SmartQuery Cloud:</strong>
                 <ul>
                   <li>Concurrent Connections: 3</li>
-                  <li>Concurrent Query Statements: 5</li>
                   <li>Total Query Duration: 1 hours</li>
                   <li>Total Query Response Size: 1 GB</li>
                 </ul>
