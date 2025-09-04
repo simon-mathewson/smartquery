@@ -68,7 +68,7 @@ export const NavigationSidebar: React.FC = () => {
         {() => <Connections />}
       </OverlayCard>
       {activeConnection && <TableList />}
-      <Footer htmlProps={{ className: '-mx-1 px-1' }} />
+      <Footer htmlProps={{ className: '-mx-1 px-1 shrink-0' }} />
     </div>
   );
 };
