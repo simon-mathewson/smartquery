@@ -199,16 +199,16 @@ export const Cell: React.FC<CellProps> = (props) => {
           ...(type === 'body' &&
             typeof column === 'object' &&
             !selected && {
-              'text-emerald-700 dark:text-emerald-500':
+              'text-emerald-700 dark:text-emerald-400':
                 !isNil(value) && isNumberType(column.dataType),
-              'text-amber-700 dark:text-amber-500':
+              'text-amber-700 dark:text-amber-400':
                 !isNil(value) && isDateOrTimeType(column.dataType),
-              '!text-blue-700 dark:!text-blue-500': !isNil(value) && column.isPrimaryKey,
-              '!text-sky-700 dark:!text-sky-500':
+              '!text-blue-700 dark:!text-blue-400': !isNil(value) && column.isPrimaryKey,
+              '!text-sky-700 dark:!text-sky-400':
                 !isNil(value) && !column.isPrimaryKey && column.foreignKey !== null,
-              '!text-indigo-700 dark:!text-indigo-500': !isNil(value) && column.isUnique,
-              'text-teal-700 dark:text-teal-500': !isNil(value) && column.dataType === 'boolean',
-              'text-fuchsia-700 dark:text-fuchsia-500':
+              '!text-indigo-700 dark:!text-indigo-400': !isNil(value) && column.isUnique,
+              'text-teal-700 dark:text-teal-400': !isNil(value) && column.dataType === 'boolean',
+              'text-fuchsia-700 dark:text-fuchsia-400':
                 !isNil(value) && isEnumType(column.dataType),
             }),
           'text-textTertiary':
