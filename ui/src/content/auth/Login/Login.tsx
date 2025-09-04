@@ -1,6 +1,7 @@
 import { ArrowBack, ArrowForwardOutlined, PersonAddAlt1Outlined } from '@mui/icons-material';
 import React, { useCallback, useState } from 'react';
 import { routes } from '~/router/routes';
+import { ActionList } from '~/shared/components/actionList/ActionList';
 import { Button } from '~/shared/components/button/Button';
 import { Card } from '~/shared/components/card/Card';
 import { Field } from '~/shared/components/field/Field';
@@ -8,8 +9,6 @@ import { Header } from '~/shared/components/header/Header';
 import { Input } from '~/shared/components/input/Input';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../Context';
-import { useLocation } from 'wouter';
-import { ActionList } from '~/shared/components/actionList/ActionList';
 
 export type LoginProps = {
   onBack: () => void;
@@ -20,7 +19,6 @@ export type LoginProps = {
 export const Login: React.FC<LoginProps> = (props) => {
   const { onBack, onSuccess, onShowSignup } = props;
 
-  const [, navigate] = useLocation();
   const auth = useDefinedContext(AuthContext);
 
   const [email, setEmail] = useState('');
@@ -34,7 +32,7 @@ export const Login: React.FC<LoginProps> = (props) => {
 
       onSuccess();
     },
-    [auth, email, navigate, password],
+    [auth, email, onSuccess, password],
   );
 
   return (

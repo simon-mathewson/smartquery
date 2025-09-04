@@ -1,4 +1,4 @@
-import { SubscriptionType } from '@/subscriptions/types';
+import type { SubscriptionType } from '@/subscriptions/types';
 
 export const routes = {
   root: () => '/',

@@ -2,7 +2,7 @@ import { useLocation, useSearchParams } from 'wouter';
 import { Page } from '~/shared/components/page/Page';
 import { routes } from '~/router/routes';
 import { Auth } from './Auth';
-import { SubscriptionType } from '@/subscriptions/types';
+import type { SubscriptionType } from '@/subscriptions/types';
 import { assert } from 'ts-essentials';
 
 export const SubscribeAuthPage: React.FC = () => {
