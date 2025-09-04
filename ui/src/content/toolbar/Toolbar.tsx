@@ -43,7 +43,7 @@ export const Toolbar: React.FC = () => {
           className: classNames({ 'ml-auto': !allChanges.length }),
           onClick: () => {
             if (!copilot.isEnabled) {
-              navigate(routes.subscribe());
+              navigate(routes.subscribePlans());
               return;
             }
 

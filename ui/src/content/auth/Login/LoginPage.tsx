@@ -11,7 +11,7 @@ export const LoginPage: React.FC = () => {
       <Login
         onBack={() => history.back()}
         onSuccess={() => navigate(routes.root())}
-        onShowSignup={() => navigate(routes.subscribe())}
+        onShowSignup={() => navigate(routes.subscribePlans())}
       />
     </Page>
   );

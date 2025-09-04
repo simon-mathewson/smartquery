@@ -54,7 +54,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
                 hint: 'Get free AI and cloud features',
                 label: 'Sign up',
                 icon: PersonAddAlt1Outlined,
-                route: routes.subscribe(),
+                route: routes.subscribePlans(),
                 onClick: () => track('home_sign_up'),
               },
               {
@@ -71,7 +71,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
                 hint: 'Get access to all features',
                 label: 'Subscribe',
                 icon: LightbulbOutlined,
-                route: routes.subscribe(),
+                route: routes.subscribePlans(),
                 onClick: () => track('home_subscribe'),
               },
             ]

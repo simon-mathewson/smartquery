@@ -51,7 +51,7 @@ export const Subscription: React.FC<SubscriptionProps> = () => {
             align="left"
             element="link"
             htmlProps={{
-              href: routes.subscribe(),
+              href: routes.subscribePlans(),
               onClick: () => {
                 close();
               },

@@ -3,6 +3,7 @@ import {
   PersonAddAlt1Outlined,
   QuestionAnswerOutlined,
   SettingsOutlined,
+  VpnKeyOutlined,
 } from '@mui/icons-material';
 import { useRef } from 'react';
 import { useLocation } from 'wouter';
@@ -43,7 +44,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
     align: 'center',
     darkenBackground: true,
     triggerRef: plansButtonRef,
-    onOpen: () => track('footer_open_plans'),
+    onOpen: () => (user ? track('footer_open_plans') : track('footer_sign_up')),
   });
 
   return (
@@ -58,11 +59,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
               if (plan === 'free') {
                 navigate(routes.signup());
               } else {
-                const searchParams = new URLSearchParams({
-                  type: plan,
-                  stage: 'signup',
-                });
-                navigate(routes.subscribe() + `?${searchParams.toString()}`);
+                navigate(routes.subscribeAuth(plan));
               }
 
               void close();
@@ -76,6 +73,19 @@ export const Footer: React.FC<FooterProps> = (props) => {
           htmlProps?.className,
         )}
       >
+        {!user && (
+          <Button
+            align="left"
+            element="link"
+            htmlProps={{
+              className: 'w-full',
+              href: routes.login(),
+              onClick: () => track('footer_log_in'),
+            }}
+            icon={<VpnKeyOutlined />}
+            label="Log in"
+          />
+        )}
         {!user?.activeSubscription && (
           <Button
             align="left"

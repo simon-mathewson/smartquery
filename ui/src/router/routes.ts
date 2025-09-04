@@ -1,3 +1,5 @@
+import { SubscriptionType } from '@/subscriptions/types';
+
 export const routes = {
   root: () => '/',
 
@@ -10,6 +12,11 @@ export const routes = {
   login: () => '/login',
   signup: () => '/signup',
   subscribe: () => '/subscribe',
+  subscribePlans: () => '/subscribe/plans',
+  subscribeAuth: (type?: SubscriptionType) => `/subscribe/auth${type ? `?type=${type}` : ''}`,
+  subscribeCheckout: (type?: SubscriptionType) =>
+    `/subscribe/checkout${type ? `?type=${type}` : ''}`,
+  subscribeConfirm: () => '/subscribe/confirm',
   verifyEmail: () => '/verify-email',
   requestResetPassword: (email?: string) =>
     `/request-reset-password${email ? `?email=${email}` : ''}`,

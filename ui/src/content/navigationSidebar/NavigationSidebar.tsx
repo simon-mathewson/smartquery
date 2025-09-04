@@ -29,7 +29,7 @@ export const NavigationSidebar: React.FC = () => {
 
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  const [width, setWidth] = useStoredState('NavigationSidebar.width', 232);
+  const [width, setWidth] = useStoredState('NavigationSidebar.width', 236);
 
   return (
     <div
@@ -68,7 +68,7 @@ export const NavigationSidebar: React.FC = () => {
         {() => <Connections />}
       </OverlayCard>
       {activeConnection && <TableList />}
-      <Footer htmlProps={{ className: '-mx-1' }} />
+      <Footer htmlProps={{ className: '-mx-1 px-1' }} />
     </div>
   );
 };

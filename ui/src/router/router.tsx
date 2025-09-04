@@ -1,5 +1,5 @@
-import React, { Suspense } from 'react';
-import { Route, Switch } from 'wouter';
+import React, { Suspense, useEffect } from 'react';
+import { Redirect, Route, Switch, useLocation } from 'wouter';
 import { routes } from './routes';
 import { Loading } from '~/shared/components/loading/Loading';
 
@@ -10,9 +10,24 @@ const Login = React.lazy(() =>
 const Signup = React.lazy(() =>
   import('~/content/auth/Signup/SignupPage').then((module) => ({ default: module.SignupPage })),
 );
-const Subscribe = React.lazy(() =>
-  import('~/content/subscriptions/SubscribePage').then((module) => ({
-    default: module.SubscribePage,
+const SubscribePlans = React.lazy(() =>
+  import('~/content/subscriptions/PlansPage').then((module) => ({
+    default: module.SubscribePlansPage,
+  })),
+);
+const SubscribeAuth = React.lazy(() =>
+  import('~/content/subscriptions/AuthPage').then((module) => ({
+    default: module.SubscribeAuthPage,
+  })),
+);
+const SubscribeCheckout = React.lazy(() =>
+  import('~/content/subscriptions/CheckoutPage').then((module) => ({
+    default: module.SubscribeCheckoutPage,
+  })),
+);
+const SubscribeConfirm = React.lazy(() =>
+  import('~/content/subscriptions/ConfirmPage').then((module) => ({
+    default: module.SubscribeConfirmPage,
   })),
 );
 const VerifyEmail = React.lazy(() =>
@@ -60,6 +75,13 @@ const ConnectToMysql = React.lazy(() =>
 );
 
 export const Router: React.FC = () => {
+  const [location] = useLocation();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
   return (
     <Suspense fallback={<Loading size="large" />}>
       <Switch>
@@ -72,7 +94,6 @@ export const Router: React.FC = () => {
 
         <Route path={routes.login()} component={Login} />
         <Route path={routes.signup()} component={Signup} />
-        <Route path={routes.subscribe()} component={Subscribe} />
         <Route path={routes.verifyEmail()} component={VerifyEmail} />
         <Route path={routes.requestResetPassword()} component={RequestResetPassword} />
         <Route path={routes.resetPassword()} component={ResetPassword} />
@@ -80,6 +101,14 @@ export const Router: React.FC = () => {
         <Route path={routes.connectToMysql()} component={ConnectToMysql} />
         <Route path={routes.connectToPostgres()} component={ConnectToPostgres} />
         <Route path={routes.openSqlite()} component={OpenSqlite} />
+
+        <Route path={routes.subscribe()}>
+          <Redirect to={routes.subscribePlans()} />
+        </Route>
+        <Route path={routes.subscribePlans()} component={SubscribePlans} />
+        <Route path={routes.subscribeAuth()} component={SubscribeAuth} />
+        <Route path={routes.subscribeCheckout()} component={SubscribeCheckout} />
+        <Route path={routes.subscribeConfirm()} component={SubscribeConfirm} />
       </Switch>
     </Suspense>
   );
