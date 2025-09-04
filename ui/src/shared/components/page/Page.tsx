@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
 import { Link } from 'wouter';
 import { routes } from '~/router/routes';
+import { Footer } from '../footer/Footer';
 
 export type PageProps = React.PropsWithChildren<{
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
@@ -18,16 +19,19 @@ export const Page: React.FC<PageProps> = (props) => {
       <Helmet>
         <title>{title} – SmartQuery</title>
       </Helmet>
-      <div
-        className={classNames(
-          'mx-auto flex flex-col items-center gap-6 pb-16 pt-8',
-          htmlProps?.className,
-        )}
-      >
-        <Link href={routes.root()}>
-          <Logo htmlProps={{ className: 'w-56' }} />
-        </Link>
-        {children}
+      <div className="relative flex min-h-screen flex-col">
+        <div
+          className={classNames(
+            'mx-auto flex flex-col items-center gap-6 pb-16 pt-8',
+            htmlProps?.className,
+          )}
+        >
+          <Link href={routes.root()}>
+            <Logo htmlProps={{ className: 'w-56' }} />
+          </Link>
+          {children}
+        </div>
+        <Footer htmlProps={{ className: 'px-1 w-[232px]' }} />
       </div>
     </>
   );

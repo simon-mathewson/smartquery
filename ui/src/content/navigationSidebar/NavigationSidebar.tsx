@@ -11,6 +11,7 @@ import { routes } from '~/router/routes';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
 import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { Footer } from '~/shared/components/footer/Footer';
 
 export const NavigationSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -32,7 +33,7 @@ export const NavigationSidebar: React.FC = () => {
 
   return (
     <div
-      className="sticky top-0 flex h-[calc(100vh-90px)] grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-1 px-2 pt-2"
+      className="sticky top-0 flex h-screen grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-1 px-2 pt-2"
       ref={sidebarRef}
       style={{ width: `${width}px` }}
     >
@@ -67,6 +68,7 @@ export const NavigationSidebar: React.FC = () => {
         {() => <Connections />}
       </OverlayCard>
       {activeConnection && <TableList />}
+      <Footer htmlProps={{ className: '-mx-1' }} />
     </div>
   );
 };

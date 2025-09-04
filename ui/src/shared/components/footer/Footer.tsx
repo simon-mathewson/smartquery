@@ -11,12 +11,19 @@ import { Button } from '~/shared/components/button/Button';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { AnalyticsContext } from '../analytics/Context';
-import { AuthContext } from '../auth/Context';
-import { Settings } from '../settings/Settings';
-import { Plans } from '../subscriptions/plans/Plans';
+import { AnalyticsContext } from '../../../content/analytics/Context';
+import { AuthContext } from '../../../content/auth/Context';
+import { Settings } from '../../../content/settings/Settings';
+import { Plans } from '../../../content/subscriptions/plans/Plans';
+import classNames from 'classnames';
 
-export const Footer: React.FC = () => {
+export type FooterProps = {
+  htmlProps?: React.HTMLAttributes<HTMLDivElement>;
+};
+
+export const Footer: React.FC<FooterProps> = (props) => {
+  const { htmlProps } = props;
+
   const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
@@ -63,7 +70,12 @@ export const Footer: React.FC = () => {
           />
         )}
       </OverlayCard>
-      <div className="fixed bottom-2 left-2 w-[224px] space-y-1 rounded-tr-lg bg-background pt-1">
+      <div
+        className={classNames(
+          'sticky bottom-0 mt-auto w-full space-y-1 overflow-hidden bg-background py-1',
+          htmlProps?.className,
+        )}
+      >
         {!user?.activeSubscription && (
           <Button
             align="left"
@@ -85,7 +97,7 @@ export const Footer: React.FC = () => {
           icon={<SettingsOutlined />}
           label={user?.email ?? 'Settings'}
         />
-        <div className="flex items-center">
+        <div className="flex items-center overflow-hidden">
           <Button
             color="secondary"
             element="a"
@@ -97,12 +109,12 @@ export const Footer: React.FC = () => {
             icon={<QuestionAnswerOutlined />}
             tooltip="Ask questions and share your feedback, feature requests, and bug reports on Discord"
           />
-          <div className="flex flex-col gap-[2px]">
-            <div className="text-xs text-textTertiary">© 2025 Simon Mathewson</div>
-            <div className="flex items-center gap-1">
+          <div className="flex flex-col gap-[2px] overflow-hidden">
+            <div className="truncate text-xs text-textTertiary">© 2025 Simon Mathewson</div>
+            <div className="flex items-center gap-1 overflow-hidden">
               <a
                 href={import.meta.env.VITE_IMPRINT_URL}
-                className="text-xs text-textTertiary hover:underline"
+                className="truncate text-xs text-textTertiary hover:underline"
                 target="_blank"
               >
                 Imprint
@@ -110,7 +122,7 @@ export const Footer: React.FC = () => {
               <div className="text-xs text-textTertiary">&middot;</div>
               <a
                 href={import.meta.env.VITE_TERMS_URL}
-                className="text-xs text-textTertiary hover:underline"
+                className="truncate text-xs text-textTertiary hover:underline"
                 target="_blank"
               >
                 Terms
@@ -118,7 +130,7 @@ export const Footer: React.FC = () => {
               <div className="text-xs text-textTertiary">&middot;</div>
               <a
                 href={import.meta.env.VITE_PRIVACY_URL}
-                className="text-xs text-textTertiary hover:underline"
+                className="truncate text-xs text-textTertiary hover:underline"
                 target="_blank"
               >
                 Privacy
