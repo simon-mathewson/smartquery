@@ -41,5 +41,14 @@ export const formatDuration = (
 ) => {
   const unit = unitOverride ?? getDurationUnit(milliseconds);
 
-  return `${getDurationValue(milliseconds, unit)} ${unit}`;
+  const durationValue = getDurationValue(milliseconds, unit);
+
+  const pluralizedUnit = {
+    ms: 'ms',
+    s: 's',
+    mins: durationValue === '1' ? 'min' : 'mins',
+    hours: durationValue === '1' ? 'hour' : 'hours',
+  }[unit];
+
+  return `${durationValue} ${pluralizedUnit}`;
 };
