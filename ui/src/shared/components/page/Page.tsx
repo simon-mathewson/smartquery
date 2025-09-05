@@ -31,7 +31,7 @@ export const Page: React.FC<PageProps> = (props) => {
           </Link>
           {children}
         </div>
-        <Footer htmlProps={{ className: 'px-2 w-[236px]' }} />
+        <Footer htmlProps={{ className: 'px-2 !w-[236px]' }} />
       </div>
     </>
   );
