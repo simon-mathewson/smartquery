@@ -5,8 +5,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 import { VitePWA } from 'vite-plugin-pwa';
+import { muteWarningsPlugin } from './muteWarningsPlugin';
 
 export default defineConfig({
+  build: {
+    sourcemap: true,
+  },
   plugins: [
     analyzer({ enabled: process.env.CI !== 'true' }),
     react(),
@@ -16,7 +20,7 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,sqlite,svg,ttf,wasm}'],
         maximumFileSizeToCacheInBytes: 5 * 1024 ** 2, // 5 MB
@@ -51,6 +55,10 @@ export default defineConfig({
         ],
       },
     }),
+    muteWarningsPlugin([
+      ['SOURCEMAP_ERROR', "Can't resolve original location of error"],
+      ['INVALID_ANNOTATION', 'contains an annotation that Rollup cannot interpret'],
+    ]),
   ],
   resolve: {
     alias: {

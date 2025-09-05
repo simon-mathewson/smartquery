@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'wouter';
-import { routes } from './routes';
 import { Loading } from '~/shared/components/loading/Loading';
+import { routes } from './routes';
 
 // Lazy load all components
 const Login = React.lazy(() =>
