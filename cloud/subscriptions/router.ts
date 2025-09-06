@@ -5,6 +5,7 @@ import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import { trpc } from '~/trpc';
 import { getOrCreateStripeCustomer } from './getOrCreateStripeCustomer';
 import { getPriceIdForSubscriptionType } from './getPriceIdForSubscriptionType';
+import { prisma } from '~/prisma/client';
 
 export const subscriptionsRouter = trpc.router({
   cancelSubscription: trpc.procedure.use(isAuthenticated).mutation(async (props) => {
@@ -24,7 +25,7 @@ export const subscriptionsRouter = trpc.router({
     .output(z.object({ clientSecret: z.string() }))
     .mutation(async (props) => {
       const {
-        ctx: { prisma, stripe, user },
+        ctx: { stripe, user },
         input: { subscriptionType },
       } = props;
 
@@ -60,7 +61,7 @@ export const subscriptionsRouter = trpc.router({
     )
     .mutation(async (props) => {
       const {
-        ctx: { prisma, stripe, user },
+        ctx: { stripe, user },
         input: { subscriptionType },
       } = props;
 

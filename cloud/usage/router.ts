@@ -2,6 +2,7 @@ import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import { trpc } from '~/trpc';
 import { usageSchema } from './types';
 import { getUsage } from './getUsage';
+import { prisma } from '~/prisma/client';
 
 export const usageRouter = trpc.router({
   usage: trpc.procedure
@@ -9,7 +10,7 @@ export const usageRouter = trpc.router({
     .output(usageSchema)
     .query(async (props) => {
       const {
-        ctx: { prisma, user },
+        ctx: { user },
       } = props;
 
       return getUsage({ prisma, user });

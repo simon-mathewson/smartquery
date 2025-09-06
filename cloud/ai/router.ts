@@ -7,6 +7,7 @@ import { trpc } from '~/trpc';
 import assert from 'assert';
 import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import { getAiCreditsForTokens } from '~/usage/getAiCreditsForTokens';
+import { prisma } from '~/prisma/client';
 
 export const aiRouter = trpc.router({
   generateChatResponse: trpc.procedure
@@ -14,7 +15,7 @@ export const aiRouter = trpc.router({
     .use(isAuthenticated)
     .mutation(async function* (props) {
       const {
-        ctx: { googleAi, prisma, user },
+        ctx: { googleAi, user },
         input,
         signal,
       } = props;
@@ -58,7 +59,7 @@ export const aiRouter = trpc.router({
     .use(isAuthenticated)
     .mutation(async (props) => {
       const {
-        ctx: { googleAi, prisma, user },
+        ctx: { googleAi, user },
         input,
         signal,
       } = props;

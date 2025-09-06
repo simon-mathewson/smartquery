@@ -1,11 +1,9 @@
 import type { RequestHandler } from 'express';
 import Stripe from 'stripe';
-import { PrismaClient } from '~/prisma/generated/client';
 import { changeSubscription } from './changeSubscription';
 import { revokeSubscription } from './revokeSubscription';
 import { grantSubscription } from './grantSubscription';
-
-const prisma = new PrismaClient();
+import { prisma } from '~/prisma/client';
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY, { apiVersion: '2025-07-30.basil' });
 

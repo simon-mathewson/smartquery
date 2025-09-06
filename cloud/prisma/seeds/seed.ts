@@ -1,11 +1,9 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { PrismaClient } from '../generated';
+import { prisma } from '../client';
 
 void (async () => {
   console.info('Seeding database...');
-
-  const prisma = new PrismaClient();
 
   const user = await prisma.user.create({
     data: {

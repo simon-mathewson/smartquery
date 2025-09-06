@@ -8,12 +8,13 @@ import { encryptCredentials } from './encryptCredentials';
 import { verifyPassword } from '~/auth/verifyPassword';
 import assert from 'node:assert';
 import { decryptCredentials } from './decryptCredentials';
+import { prisma } from '~/prisma/client';
 
 export const connectionsRouter = trpc.router({
   create: trpc.procedure
     .use(isAuthenticated)
     .input(createConnectionInputSchema)
-    .mutation(async ({ input, ctx: { prisma, user } }) => {
+    .mutation(async ({ input, ctx: { user } }) => {
       const prismaInput = await (async () => {
         const prismaInputUnencrypted = mapConnectionToPrisma(input.connection);
 
@@ -46,7 +47,7 @@ export const connectionsRouter = trpc.router({
     .use(isAuthenticated)
     .input(z.object({ id: z.string(), userPassword: z.string() }))
     .output(connectionSchema)
-    .mutation(async ({ input, ctx: { prisma, user } }) => {
+    .mutation(async ({ input, ctx: { user } }) => {
       const connection = await prisma.connection.findUniqueOrThrow({
         where: { id: input.id, userId: user.id },
       });
@@ -63,7 +64,7 @@ export const connectionsRouter = trpc.router({
   delete: trpc.procedure
     .use(isAuthenticated)
     .input(z.object({ id: z.string() }))
-    .mutation(async ({ input, ctx: { prisma, user } }) => {
+    .mutation(async ({ input, ctx: { user } }) => {
       await prisma.connection.delete({
         where: { id: input.id, userId: user.id },
       });
@@ -71,7 +72,7 @@ export const connectionsRouter = trpc.router({
   list: trpc.procedure
     .use(isAuthenticated)
     .output(z.array(connectionSchema))
-    .query(async ({ ctx: { prisma, user } }) => {
+    .query(async ({ ctx: { user } }) => {
       const connections = await prisma.connection.findMany({
         where: {
           userId: user.id,
@@ -86,7 +87,7 @@ export const connectionsRouter = trpc.router({
   update: trpc.procedure
     .use(isAuthenticated)
     .input(updateConnectionInputSchema)
-    .mutation(async ({ input, ctx: { prisma, user } }) => {
+    .mutation(async ({ input, ctx: { user } }) => {
       const prismaInput = await (async () => {
         const prismaInputUnencrypted = mapConnectionToPrisma(input.connection);
 

@@ -1,11 +1,11 @@
 import type { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import * as cookie from 'cookie';
 import type { Subscription, User } from '~/prisma/generated/client';
-import { PrismaClient } from '~/prisma/generated/client';
 import { verifyAccessToken } from './auth/accessToken';
 import type { Connector } from '@/connector/types';
 import { GoogleGenAI } from '@google/genai';
 import Stripe from 'stripe';
+import { prisma } from '~/prisma/client';
 
 export type CurrentUser = User & { activeSubscription: Subscription | null };
 
@@ -13,7 +13,6 @@ export type Context = {
   connectors: Record<string, Connector>;
   getCookie: ReturnType<typeof createGetCookie>;
   googleAi: GoogleGenAI;
-  prisma: PrismaClient;
   req: CreateExpressContextOptions['req'];
   res: CreateExpressContextOptions['res'];
   setCookie: ReturnType<typeof createSetCookie>;
@@ -25,8 +24,6 @@ export const createContext = async ({
   req,
   res,
 }: CreateExpressContextOptions): Promise<Context> => {
-  const prisma = new PrismaClient();
-
   const googleAi = new GoogleGenAI({ apiKey: process.env.GOOGLE_AI_API_KEY });
 
   const stripe = new Stripe(process.env.STRIPE_API_KEY, { apiVersion: '2025-07-30.basil' });
@@ -52,7 +49,6 @@ export const createContext = async ({
     googleAi,
     getCookie,
     setCookie,
-    prisma,
     req,
     res,
     stripe,

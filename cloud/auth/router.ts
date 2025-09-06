@@ -10,6 +10,7 @@ import { createRefreshToken, verifyRefreshToken } from './refreshToken';
 import { setUpUserPassword } from './setUpUserPassword';
 import { verifyPassword } from './verifyPassword';
 import { currentUserSchema } from '@/user/types';
+import { prisma } from '~/prisma/client';
 
 export const authRouter = trpc.router({
   currentUser: trpc.procedure
@@ -23,7 +24,7 @@ export const authRouter = trpc.router({
         password: z.string().min(12),
       }),
     )
-    .mutation(async ({ input, ctx: { prisma, setCookie } }) => {
+    .mutation(async ({ input, ctx: { setCookie } }) => {
       const { email, password } = input;
 
       const user = await prisma.user.findUnique({
@@ -69,7 +70,7 @@ export const authRouter = trpc.router({
         secure: process.env.NODE_ENV === 'production',
       });
     }),
-  logOut: trpc.procedure.mutation(async ({ ctx: { setCookie, getCookie, prisma } }) => {
+  logOut: trpc.procedure.mutation(async ({ ctx: { setCookie, getCookie } }) => {
     const refreshTokenId = getCookie('refreshTokenId');
 
     if (refreshTokenId) {
@@ -102,7 +103,7 @@ export const authRouter = trpc.router({
       secure: process.env.NODE_ENV === 'production',
     });
   }),
-  refresh: trpc.procedure.mutation(async ({ ctx: { prisma, getCookie, setCookie } }) => {
+  refresh: trpc.procedure.mutation(async ({ ctx: { getCookie, setCookie } }) => {
     const refreshToken = getCookie('refreshToken');
 
     if (!refreshToken) {
@@ -131,40 +132,38 @@ export const authRouter = trpc.router({
       });
     }
   }),
-  requestResetPassword: trpc.procedure
-    .input(z.string().email())
-    .mutation(async ({ input, ctx: { prisma } }) => {
-      const email = input;
+  requestResetPassword: trpc.procedure.input(z.string().email()).mutation(async ({ input }) => {
+    const email = input;
 
-      const user = await prisma.user.findUnique({
-        where: { email },
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'User not found',
       });
+    }
 
-      if (!user) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'User not found',
-        });
-      }
+    const resetPasswordToken = crypto.randomBytes(32).toString('hex');
 
-      const resetPasswordToken = crypto.randomBytes(32).toString('hex');
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { resetPasswordToken },
+    });
 
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { resetPasswordToken },
-      });
+    const verificationLink = `${process.env.UI_URL}/reset-password?token=${resetPasswordToken}`;
 
-      const verificationLink = `${process.env.UI_URL}/reset-password?token=${resetPasswordToken}`;
-
-      void sendEmail(
-        email,
-        'Reset your password – SmartQuery',
-        `Someone requested a password reset for your SmartQuery account. If this was you, please click the following link:\n${verificationLink}\n\nIf this was not you, please ignore this email.\n\nNote that after changing your password, your encrypted connection credentials will no longer be usable and have to be re-entered.`,
-      );
-    }),
+    void sendEmail(
+      email,
+      'Reset your password – SmartQuery',
+      `Someone requested a password reset for your SmartQuery account. If this was you, please click the following link:\n${verificationLink}\n\nIf this was not you, please ignore this email.\n\nNote that after changing your password, your encrypted connection credentials will no longer be usable and have to be re-entered.`,
+    );
+  }),
   resetPassword: trpc.procedure
     .input(z.object({ token: z.string(), password: z.string().min(12) }))
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input }) => {
       const { token, password } = input;
 
       const user = await prisma.user.findUnique({
@@ -190,7 +189,7 @@ export const authRouter = trpc.router({
         password: z.string().min(12),
       }),
     )
-    .mutation(async ({ input, ctx: { prisma } }) => {
+    .mutation(async ({ input }) => {
       const { email, password } = input;
 
       const emailVerificationToken = crypto.randomBytes(32).toString('hex');
@@ -211,30 +210,28 @@ export const authRouter = trpc.router({
         `Welcome to SmartQuery!\n\nPlease verify your email by clicking the following link:\n${verificationLink}`,
       );
     }),
-  verifyEmail: trpc.procedure
-    .input(z.string())
-    .mutation(async ({ input: token, ctx: { prisma } }) => {
-      const user = await prisma.user.findUnique({
-        where: { emailVerificationToken: token },
+  verifyEmail: trpc.procedure.input(z.string()).mutation(async ({ input: token }) => {
+    const user = await prisma.user.findUnique({
+      where: { emailVerificationToken: token },
+    });
+
+    if (!user) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'User not found',
       });
+    }
 
-      if (!user) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'User not found',
-        });
-      }
-
-      if (user.isEmailVerified) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Email already verified',
-        });
-      }
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { isEmailVerified: true },
+    if (user.isEmailVerified) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Email already verified',
       });
-    }),
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { isEmailVerified: true },
+    });
+  }),
 });

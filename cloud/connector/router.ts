@@ -12,6 +12,7 @@ import { verifyUsageWithinLimits } from '~/usage/verifyUsageWithinLimits';
 import superjson from 'superjson';
 import { getLimitsForUser } from '@/subscriptions/getLimitsForUser';
 import type { CurrentUser } from '@/user/types';
+import { prisma } from '~/prisma/client';
 
 const connectors: Record<
   string,
@@ -94,7 +95,7 @@ export const connectorRouter = trpc.router({
     .use(isAuthenticated)
     .mutation(async (props) => {
       const {
-        ctx: { prisma, user },
+        ctx: { user },
         input: { connectorId, statements },
       } = props;
 
