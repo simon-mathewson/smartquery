@@ -8,6 +8,7 @@ import { routes } from '~/router/routes';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { isUserUnauthorizedError } from './isUserUnauthorizedError';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { AnalyticsContext } from '../analytics/Context';
 
 const TOKEN_EXPIRY_DURATION = 15 * 60 * 1000; // 15 minutes
 const REFRESH_INTERVAL = 14 * 60 * 1000; // 14 minutes (1 minute before expiry)
@@ -17,6 +18,7 @@ export const useAuth = () => {
 
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const toast = useDefinedContext(ToastContext);
+  const { track } = useDefinedContext(AnalyticsContext);
 
   const [isInitializing, setIsInitializing] = useState(true);
   const [user, setUser] = useStoredState<User | null>('useAuth.user', null);
@@ -147,6 +149,8 @@ export const useAuth = () => {
       try {
         await cloudApi.auth.signUp.mutate({ email, password }, { context: { useWafFetch: true } });
 
+        track('signup_success');
+
         toast.add({
           title: 'Signup successful',
           color: 'success',
@@ -162,7 +166,7 @@ export const useAuth = () => {
         });
       }
     },
-    [cloudApi, logIn, toast],
+    [cloudApi, logIn, toast, track],
   );
 
   useEffectOnce(() => {

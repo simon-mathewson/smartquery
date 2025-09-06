@@ -9,6 +9,7 @@ import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../auth/Context';
+import { AnalyticsContext } from '../analytics/Context';
 
 export type ConfirmProps = {
   goBack: () => void;
@@ -20,6 +21,7 @@ export const Confirm: React.FC<ConfirmProps> = (props) => {
 
   assert(subscriptionType, 'Subscription type is required');
 
+  const { track } = useDefinedContext(AnalyticsContext);
   const { getCurrentUser, user } = useDefinedContext(AuthContext);
 
   const subscriptionConfirmed = user?.activeSubscription?.type === subscriptionType;
@@ -28,6 +30,7 @@ export const Confirm: React.FC<ConfirmProps> = (props) => {
 
   useEffect(() => {
     if (subscriptionConfirmed) {
+      track(`subscription_${subscriptionType}_confirmed`);
       return;
     }
 
