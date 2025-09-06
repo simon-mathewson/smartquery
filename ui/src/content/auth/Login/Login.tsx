@@ -28,9 +28,7 @@ export const Login: React.FC<LoginProps> = (props) => {
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      await auth.logIn(email, password);
-
-      onSuccess();
+      await auth.logIn(email, password, { onSuccess });
     },
     [auth, email, onSuccess, password],
   );

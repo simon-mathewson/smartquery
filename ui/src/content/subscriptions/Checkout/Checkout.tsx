@@ -57,7 +57,7 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
       />
       <div className="relative min-h-[200px] p-2">
         {(isLoadingAddress || isLoadingPayment || isLoadingTotal) && <Loading />}
-        <div className="z-10 flex flex-col gap-4 bg-white">
+        <div className="z-10 flex flex-col gap-4 bg-card">
           <CheckoutProvider
             stripe={stripe}
             options={{

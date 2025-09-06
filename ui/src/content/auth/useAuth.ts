@@ -112,7 +112,11 @@ export const useAuth = () => {
   }, [cloudApi, setUser]);
 
   const logIn = useCallback(
-    async (email: string, password: string, props: { skipToast?: boolean } = {}) => {
+    async (
+      email: string,
+      password: string,
+      props: { skipToast?: boolean; onSuccess?: () => void } = {},
+    ) => {
       try {
         await cloudApi.auth.logIn.mutate({ email, password });
 
@@ -124,6 +128,8 @@ export const useAuth = () => {
             color: 'success',
           });
         }
+
+        props.onSuccess?.();
       } catch (error) {
         console.error(error);
 
