@@ -115,7 +115,7 @@ export const Cell: React.FC<CellProps> = (props) => {
       <div
         tabIndex={-1}
         className={classNames(
-          'group relative flex h-8 select-none items-center justify-between gap-2 overflow-hidden border-l border-l-border px-2 transition-colors duration-100',
+          'group relative -ml-px flex h-8 select-none items-center justify-between gap-2 overflow-hidden border-l border-l-border px-2 transition-colors duration-100',
           (() => {
             if (type === 'header') return undefined;
 
@@ -151,7 +151,7 @@ export const Cell: React.FC<CellProps> = (props) => {
             'z-10 !border-whiteHighlightHover': type === 'body' && selected,
             'border-y-border':
               type === 'header' || (!selected && !isChanged && !isDeleted && !isCreated),
-            'z-10 border-y-transparent':
+            'z-10 !border-transparent':
               type === 'body' && !selected && (isChanged || isDeleted || isCreated),
           },
         )}
@@ -268,8 +268,8 @@ export const Cell: React.FC<CellProps> = (props) => {
           className={classNames(
             'h-8 w-full border-y border-y-border shadow-[inset_1px_0_0_0_#e5e5e5] dark:shadow-[inset_1px_0_0_0_#404040]',
             {
-              'bg-card': type === 'header',
-              '-mt-px': type === 'body',
+              'z-10 -ml-px bg-card': type === 'header',
+              '-ml-px -mt-px': type === 'body',
             },
           )}
         />
