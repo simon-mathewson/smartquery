@@ -1,5 +1,4 @@
 import { plans as allPlans } from '@/subscriptions/plans';
-import type { SubscriptionType } from '@/subscriptions/types';
 import { formatBytes } from '@/utils/formatBytes';
 import { formatDuration } from '@/utils/formatDuration';
 import { formatNumber } from '@/utils/formatNumber';
@@ -11,18 +10,23 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { AuthContext } from '../../auth/Context';
 import { omit } from 'lodash';
 import { Cell } from './Cell';
+import { routes } from '~/router/routes';
+import { useLocation } from 'wouter';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 const plans = omit(allPlans, 'pro');
 
 export type PlansProps = {
   onBack?: () => void;
-  onContinue: (plan: SubscriptionType | 'free') => void;
+  afterContinue?: () => void;
 };
 
 export const Plans: React.FC<PlansProps> = (props) => {
-  const { onBack, onContinue } = props;
+  const { onBack, afterContinue } = props;
 
+  const [, navigate] = useLocation();
   const { user } = useDefinedContext(AuthContext);
+  const { track } = useDefinedContext(AnalyticsContext);
 
   const planNames = Object.keys(plans) as (keyof typeof plans)[];
 
@@ -118,7 +122,22 @@ export const Plans: React.FC<PlansProps> = (props) => {
                   user?.activeSubscription?.type === plan ||
                   (user !== null && !user.activeSubscription && plan === 'free'),
                 className: 'w-full',
-                onClick: () => onContinue(plan),
+                onClick: () => {
+                  track('subscribe_plans_continue', { plan });
+
+                  if (plan === 'free') {
+                    navigate(routes.signup());
+                    return;
+                  }
+
+                  if (user) {
+                    navigate(routes.subscribeCheckout(plan), { replace: false });
+                  } else {
+                    navigate(routes.subscribeAuth(plan), { replace: false });
+                  }
+
+                  afterContinue?.();
+                },
               }}
               icon={<ArrowForward />}
               label="Continue"

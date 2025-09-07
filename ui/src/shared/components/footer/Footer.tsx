@@ -5,8 +5,8 @@ import {
   SettingsOutlined,
   VpnKeyOutlined,
 } from '@mui/icons-material';
+import classNames from 'classnames';
 import { useRef } from 'react';
-import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
@@ -16,7 +16,6 @@ import { AnalyticsContext } from '../../../content/analytics/Context';
 import { AuthContext } from '../../../content/auth/Context';
 import { Settings } from '../../../content/settings/Settings';
 import { Plans } from '../../../content/subscriptions/plans/Plans';
-import classNames from 'classnames';
 
 export type FooterProps = {
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
@@ -25,7 +24,6 @@ export type FooterProps = {
 export const Footer: React.FC<FooterProps> = (props) => {
   const { htmlProps } = props;
 
-  const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
 
@@ -55,13 +53,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
       <OverlayCard overlay={plansOverlay}>
         {({ close }) => (
           <Plans
-            onContinue={(plan) => {
-              if (plan === 'free') {
-                navigate(routes.signup());
-              } else {
-                navigate(routes.subscribeAuth(plan));
-              }
-
+            afterContinue={() => {
               void close();
             }}
           />
