@@ -19,6 +19,7 @@ import { ConnectCanceledError } from './connectAbortedError';
 import { sqliteDemoConnectionId } from './constants';
 import type { SignInModalInput } from './signInModal/types';
 import type { UserPasswordModalInput } from './userPasswordModal/types';
+import { AnalyticsContext } from '../analytics/Context';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -33,6 +34,7 @@ export const useConnections = (props: UseConnectionsProps) => {
   const [, navigate] = useLocation();
 
   const { cloudApi } = useDefinedContext(CloudApiContext);
+  const { track } = useDefinedContext(AnalyticsContext);
   const linkApi = useDefinedContext(LinkApiContext);
   const { user, isInitializing: isInitializingAuth } = useDefinedContext(AuthContext);
   const toast = useDefinedContext(ToastContext);
@@ -471,6 +473,8 @@ export const useConnections = (props: UseConnectionsProps) => {
             sqliteDb,
           } satisfies ActiveConnection;
 
+          track('connect');
+
           setActiveConnection(activeConnection);
 
           return activeConnection;
@@ -494,6 +498,8 @@ export const useConnections = (props: UseConnectionsProps) => {
             database: selectedDatabase,
             schema: selectedSchema,
           } satisfies ActiveConnection;
+
+          track('connect');
 
           setActiveConnection(newActiveConnection);
 
@@ -540,6 +546,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       toast,
       navigate,
       getSqliteDb,
+      track,
       connectRemote,
       getShouldConnectViaCloud,
     ],
