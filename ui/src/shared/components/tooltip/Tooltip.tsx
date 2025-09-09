@@ -6,13 +6,14 @@ import { useOverlay } from '../overlay/useOverlay';
 
 export type TooltipProps<T extends HTMLElement> = {
   children: (childrenProps: { htmlProps: React.HTMLProps<T> }) => React.ReactNode;
+  delay?: number;
   overlayProps?: UseOverlayProps;
   role?: 'label' | 'description';
   text?: string;
 };
 
 export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
-  const { children, overlayProps, role = 'label', text } = props;
+  const { children, delay = 1000, overlayProps, role = 'label', text } = props;
 
   const anchorRef = useRef<T>(null);
 
@@ -27,12 +28,24 @@ export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
     },
   });
 
+  const timeoutRef = useRef<number | null>(null);
+
   const onPointerEnter = useCallback(() => {
-    void overlay.open();
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      void overlay.open();
+    }, delay) as unknown as number;
 
     const listener = (moveEvent: MouseEvent) => {
       if (moveEvent.target instanceof Node && anchorRef.current?.contains(moveEvent.target)) {
         return;
+      }
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
 
       void overlay.close();
@@ -40,7 +53,7 @@ export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
     };
 
     document.addEventListener('mousemove', listener, { passive: true });
-  }, [overlay]);
+  }, [overlay, delay]);
 
   useEffect(() => {
     if (!overlay.isOpen) {
