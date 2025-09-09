@@ -134,8 +134,8 @@ void (async () => {
     },
   });
 
-  const createConnections = async (userEmail: string) => {
-    await prisma.connection.create({
+  const seedUserEntities = async (userEmail: string) => {
+    const postgresConnection = await prisma.connection.create({
       data: {
         database: 'postgres_db',
         dbUser: 'postgres',
@@ -154,7 +154,7 @@ void (async () => {
       },
     });
 
-    await prisma.connection.create({
+    const mysqlConnection = await prisma.connection.create({
       data: {
         database: 'mysql_db',
         dbUser: 'root',
@@ -404,10 +404,33 @@ void (async () => {
         port: 4497,
       },
     });
+
+    await Promise.all(
+      [postgresConnection.id, mysqlConnection.id].map(async (connectionId) => {
+        await prisma.savedQuery.create({
+          data: {
+            name: 'Published posts',
+            query: 'SELECT * FROM posts\nWHERE is_published = true AND is_deleted IS NULL',
+            connection: { connect: { id: connectionId } },
+            user: { connect: { email: userEmail } },
+          },
+        });
+
+        await prisma.savedQuery.create({
+          data: {
+            name: 'Favorite posts per user',
+            query:
+              'SELECT user_id, COUNT(*) AS favorite_count\nFROM user_favorite_posts\nGROUP BY user_id\nORDER BY favorite_count DESC',
+            connection: { connect: { id: connectionId } },
+            user: { connect: { email: userEmail } },
+          },
+        });
+      }),
+    );
   };
 
-  await createConnections(user.email);
-  await createConnections(plusUser.email);
+  await seedUserEntities(user.email);
+  await seedUserEntities(plusUser.email);
 
   console.info('Seeding complete.');
 })();

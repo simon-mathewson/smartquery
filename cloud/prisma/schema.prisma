@@ -10,8 +10,8 @@ datasource db {
 }
 
 model Connection {
-  createdAt                          DateTime @default(now())
-  updatedAt                          DateTime @updatedAt
+  createdAt                          DateTime     @default(now())
+  updatedAt                          DateTime     @updatedAt
   database                           String
   dbUser                             String
   encryptCredentials                 Boolean
@@ -30,13 +30,14 @@ model Connection {
   sshPasswordNonce                   String?
   sshPrivateKeyNonce                 String?
   sshUsePrivateKey                   Boolean?
-  id                                 String   @id @default(uuid()) @db.Uuid
-  userId                             String   @db.Uuid
+  id                                 String       @id @default(uuid()) @db.Uuid
+  userId                             String       @db.Uuid
   sshPrivateKeyPassphrase            String?
   sshPrivateKeyPassphraseNonce       String?
-  useSshPrivateKeyPassphrase         Boolean  @default(false)
-  isSshPrivateKeyPassphraseEncrypted Boolean  @default(false)
-  user                               User     @relation(fields: [userId], references: [id])
+  useSshPrivateKeyPassphrase         Boolean      @default(false)
+  isSshPrivateKeyPassphraseEncrypted Boolean      @default(false)
+  user                               User         @relation(fields: [userId], references: [id])
+  savedQueries                       SavedQuery[]
 
   @@index([userId])
 }
@@ -51,6 +52,24 @@ model RefreshToken {
 
   @@index([token])
   @@index([userId])
+}
+
+model SavedQuery {
+  id           String     @id @default(uuid()) @db.Uuid
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  connectionId String     @db.Uuid
+  connection   Connection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  database     String?
+  name         String
+  query        String
+  userId       String     @db.Uuid
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([connectionId, database, name])
+  @@index([userId])
+  @@index([connectionId])
+  @@index([connectionId, database])
 }
 
 model Subscription {
@@ -100,6 +119,7 @@ model User {
   stripeCustomerId       String?        @unique
   activeSubscriptionId   String?        @unique @db.Uuid
   activeSubscription     Subscription?  @relation("activeSubscription", fields: [activeSubscriptionId], references: [id])
+  savedQueries           SavedQuery[]
 
   @@index([emailVerificationToken])
   @@index([resetPasswordToken])
