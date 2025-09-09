@@ -1,4 +1,6 @@
 import type { Value } from '~/shared/types';
+import type { Engine } from '@/connections/types';
+import { escapeValue } from '~/shared/utils/sql/sql';
 import type { CreateValue, Location, UniqueValue } from './types';
 
 export const doChangeLocationsMatch = (
@@ -17,12 +19,13 @@ export const doChangeLocationsMatch = (
     )) &&
   (!('column' in change1) || !('column' in change2) || change1.column === change2.column);
 
-export const getValueString = (value: Value | CreateValue) => {
+export const getValueString = (value: Value | CreateValue, engine: Engine) => {
   if (value === null) {
     return 'NULL';
   }
   if (value === undefined) {
     return 'DEFAULT';
   }
-  return `'${value}'`;
+  const escapedValue = escapeValue(engine, value);
+  return `'${escapedValue}'`;
 };

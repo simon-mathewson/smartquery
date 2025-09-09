@@ -5,6 +5,19 @@ export const addQuotes = (engine: Engine, value: string) => {
   return `"${value}"`;
 };
 
+export const escapeValue = (engine: Engine, value: string): string => {
+  switch (engine) {
+    case 'mysql':
+      // MySQL: escape single quotes by doubling them, and escape backslashes
+      return value.replace(/\\/g, '\\\\').replace(/'/g, "''");
+    default:
+      // PostgreSQL: escape single quotes by doubling them
+      // SQLite: escape single quotes by doubling them
+      // Default to PostgreSQL-style escaping
+      return value.replace(/'/g, "''");
+  }
+};
+
 export const splitSqlStatements = (sql: string) => {
   // First, temporarily replace quoted strings with placeholders
   const quotes: string[] = [];

@@ -1,6 +1,6 @@
 import { useCallback, useContext, useMemo } from 'react';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import { addQuotes } from '~/shared/utils/sql/sql';
+import { addQuotes, escapeValue } from '~/shared/utils/sql/sql';
 import { ActiveConnectionContext } from '../connections/activeConnection/Context';
 import type {
   AggregatedCreateChanges,
@@ -267,7 +267,7 @@ export const useEdit = () => {
       const valueRows = change.rows
         .map((row) => {
           const valueList = Object.values(row)
-            .map((value) => getValueString(value))
+            .map((value) => getValueString(value, engine))
             .join(', ');
           return `  (${valueList})`;
         })
@@ -286,7 +286,8 @@ export const useEdit = () => {
         .map((uniqueValues) => {
           return uniqueValues
             .map((uniqueValue) => {
-              return `${addQuotes(engine, uniqueValue.column)} = '${uniqueValue.value}'`;
+              const escapedValue = escapeValue(engine, uniqueValue.value);
+              return `${addQuotes(engine, uniqueValue.column)} = '${escapedValue}'`;
             })
             .join(' AND ');
         })
@@ -304,7 +305,8 @@ export const useEdit = () => {
         .map((uniqueValues) => {
           return uniqueValues
             .map((uniqueValue) => {
-              return `${addQuotes(engine, uniqueValue.column)} = '${uniqueValue.value}'`;
+              const escapedValue = escapeValue(engine, uniqueValue.value);
+              return `${addQuotes(engine, uniqueValue.column)} = '${escapedValue}'`;
             })
             .join(' AND ');
         })
@@ -315,7 +317,7 @@ export const useEdit = () => {
       return `UPDATE ${addQuotes(engine, location.table)}\nSET ${addQuotes(
         engine,
         location.column,
-      )} = ${getValueString(change.value)}\n${where};`;
+      )} = ${getValueString(change.value, engine)}\n${where};`;
     });
 
     return [...deleteStatements, ...createStatements, ...updateStatements].join('\n\n');

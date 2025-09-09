@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { addQuotes, splitSqlStatements } from './sql';
+import { addQuotes, escapeValue, splitSqlStatements } from './sql';
 
 describe('SQL utils', () => {
   describe('addQuotes', () => {
@@ -9,6 +9,54 @@ describe('SQL utils', () => {
 
     test('PostgreSQL', () => {
       expect(addQuotes('postgres', 'table')).toBe('"table"');
+    });
+
+    test('SQLite', () => {
+      expect(addQuotes('sqlite', 'table')).toBe('"table"');
+    });
+  });
+
+  describe('escapeValue', () => {
+    test('MySQL escapes single quotes and backslashes', () => {
+      expect(escapeValue('mysql', "Hello 'World'")).toBe("Hello ''World''");
+      expect(escapeValue('mysql', 'Back\\slash')).toBe('Back\\\\slash');
+      expect(escapeValue('mysql', 'It\'s a "test"')).toBe('It\'\'s a "test"');
+    });
+
+    test('PostgreSQL escapes single quotes', () => {
+      expect(escapeValue('postgres', "Hello 'World'")).toBe("Hello ''World''");
+      expect(escapeValue('postgres', 'Back\\slash')).toBe('Back\\slash');
+      expect(escapeValue('postgres', 'It\'s a "test"')).toBe('It\'\'s a "test"');
+    });
+
+    test('SQLite escapes single quotes', () => {
+      expect(escapeValue('sqlite', "Hello 'World'")).toBe("Hello ''World''");
+      expect(escapeValue('sqlite', 'Back\\slash')).toBe('Back\\slash');
+      expect(escapeValue('sqlite', 'It\'s a "test"')).toBe('It\'\'s a "test"');
+    });
+
+    test('handles multiple consecutive quotes', () => {
+      expect(escapeValue('mysql', "Multiple''quotes")).toBe("Multiple''''quotes");
+      expect(escapeValue('postgres', "Multiple''quotes")).toBe("Multiple''''quotes");
+      expect(escapeValue('sqlite', "Multiple''quotes")).toBe("Multiple''''quotes");
+    });
+
+    test('handles empty string', () => {
+      expect(escapeValue('mysql', '')).toBe('');
+      expect(escapeValue('postgres', '')).toBe('');
+      expect(escapeValue('sqlite', '')).toBe('');
+    });
+
+    test('handles string without special characters', () => {
+      expect(escapeValue('mysql', 'Hello World')).toBe('Hello World');
+      expect(escapeValue('postgres', 'Hello World')).toBe('Hello World');
+      expect(escapeValue('sqlite', 'Hello World')).toBe('Hello World');
+    });
+
+    test('handles newlines and other special characters', () => {
+      expect(escapeValue('mysql', 'Line\nbreak')).toBe('Line\nbreak');
+      expect(escapeValue('postgres', 'Line\nbreak')).toBe('Line\nbreak');
+      expect(escapeValue('sqlite', 'Line\nbreak')).toBe('Line\nbreak');
     });
   });
 
