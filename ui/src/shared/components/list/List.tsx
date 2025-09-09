@@ -13,6 +13,7 @@ export type ListProps<T> = {
   >;
   onSelect?: (value: T) => void;
   search?: string;
+  searchAutofocus?: boolean;
   searchPlaceholder?: string;
   setSearch?: (value: string) => void;
 } & ({ multiple?: false; selectedValue?: T | null } | { multiple: true; selectedValues: T[] });
@@ -26,6 +27,7 @@ export function List<T>(props: ListProps<T>) {
     multiple,
     onSelect,
     search,
+    searchAutofocus,
     searchPlaceholder,
     setSearch,
   } = props;
@@ -52,6 +54,7 @@ export function List<T>(props: ListProps<T>) {
         <Input
           htmlProps={{
             'aria-label': searchPlaceholder,
+            autoFocus: searchAutofocus,
             className: 'mb-1',
             placeholder: searchPlaceholder,
             type: 'search',
