@@ -80,12 +80,10 @@ export const useTableList = () => {
         dropMarker: { column, horizontal, row },
       } = dropProps;
 
-      assert(activeTab);
-
       void addQuery(getQuery(table), {
         position: { column, row: horizontal ? row : undefined },
         run: true,
-        tabId: activeTab.id,
+        tabId: activeTab?.id,
       });
 
       track('table_list_drag_drop');

@@ -7,7 +7,7 @@ import type { DropMarker } from '../types';
 
 export const useDrag = <T extends Record<string, unknown>>(props: {
   dragRef?: React.MutableRefObject<HTMLElement | null>;
-  onDrop: (props: { dropMarker: DropMarker; item: T; tabId: string }) => void;
+  onDrop: (props: { dropMarker: DropMarker; item: T }) => void;
 }) => {
   const { dragRef, onDrop } = props;
 
@@ -81,8 +81,6 @@ export const useDrag = <T extends Record<string, unknown>>(props: {
 
   const getHandleMouseDown = useCallback(
     (item: T) => (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-      if (!activeTab) return;
-
       triggerRef.current = event.currentTarget as HTMLElement | null;
       currentItemRef.current = item;
       startRef.current = { x: event.clientX, y: event.clientY };
@@ -116,7 +114,6 @@ export const useDrag = <T extends Record<string, unknown>>(props: {
           onDrop({
             dropMarker,
             item,
-            tabId: activeTab.id,
           });
         },
         { once: true },
