@@ -31,6 +31,7 @@ export const TableList: React.FC = () => {
             }}
             icon={<SearchIcon />}
             size="small"
+            tooltip="Search tables"
             variant={search === undefined ? 'default' : 'highlighted'}
           />
         </div>
