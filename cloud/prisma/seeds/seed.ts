@@ -409,8 +409,10 @@ void (async () => {
       [postgresConnection.id, mysqlConnection.id].map(async (connectionId) => {
         await prisma.savedQuery.create({
           data: {
+            database:
+              connectionId === postgresConnection.id ? postgresConnection.database : undefined,
             name: 'Published posts',
-            query: 'SELECT * FROM posts\nWHERE is_published = true AND is_deleted IS NULL',
+            sql: 'SELECT * FROM posts\nWHERE is_published = true AND is_deleted IS NULL',
             connection: { connect: { id: connectionId } },
             user: { connect: { email: userEmail } },
           },
@@ -418,9 +420,10 @@ void (async () => {
 
         await prisma.savedQuery.create({
           data: {
+            database:
+              connectionId === postgresConnection.id ? postgresConnection.database : undefined,
             name: 'Favorite posts per user',
-            query:
-              'SELECT user_id, COUNT(*) AS favorite_count\nFROM user_favorite_posts\nGROUP BY user_id\nORDER BY favorite_count DESC',
+            sql: 'SELECT user_id, COUNT(*) AS favorite_count\nFROM user_favorite_posts\nGROUP BY user_id\nORDER BY favorite_count DESC',
             connection: { connect: { id: connectionId } },
             user: { connect: { email: userEmail } },
           },

@@ -11,7 +11,7 @@ import { getQueryTitle } from './utils';
 import { InputModesSelect } from './inputModes/Select';
 import { Header } from '~/shared/components/header/Header';
 import { BottomToolbar } from './bottomToolbar/BottomToolbar';
-import { QueryContext, ResultContext } from './Context';
+import { QueryContext, ResultContext, SavedQueryContext } from './Context';
 import { QueriesContext } from '../Context';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { AnalyticsContext } from '~/content/analytics/Context';
@@ -22,10 +22,9 @@ import { ViewColumnsButton } from './viewColumnsButton/ViewColumnsButton';
 export const Query: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { removeQuery, runUserQuery } = useDefinedContext(QueriesContext);
-
   const { columnIndex, query, rowIndex } = useDefinedContext(QueryContext);
-
   const result = useContext(ResultContext);
+  const savedQuery = useContext(SavedQueryContext);
 
   const initialInputMode = query.initialInputMode ?? (!query.select ? 'editor' : undefined);
 
@@ -61,7 +60,7 @@ export const Query: React.FC = () => {
           }
           middle={
             <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-              {getQueryTitle(query, result)}
+              {getQueryTitle(query, result, savedQuery)}
             </div>
           }
           right={

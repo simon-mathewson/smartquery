@@ -6,7 +6,7 @@ CREATE TABLE "SavedQuery" (
     "connectionId" UUID NOT NULL,
     "database" TEXT,
     "name" TEXT NOT NULL,
-    "query" TEXT NOT NULL,
+    "sql" TEXT NOT NULL,
     "userId" UUID NOT NULL,
 
     CONSTRAINT "SavedQuery_pkey" PRIMARY KEY ("id")

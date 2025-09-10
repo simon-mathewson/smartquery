@@ -16,6 +16,7 @@ import type { ToastContextType } from '~/content/toast/Context';
 import type { ErrorTrackingContextType } from '~/content/errors/tracking/Context';
 import type { UpdateAvailableContextType } from '~/content/updateAvailable/Context';
 import type { ActiveConnectionContextType } from '~/content/connections/activeConnection/Context';
+import type { SavedQueriesContextType } from '~/content/savedQueries/Context';
 
 export type ContextTypes = {
   ActiveConnectionProvider: ActiveConnectionContextType;
@@ -31,6 +32,7 @@ export type ContextTypes = {
   LinkApiProvider: LinkApiContextType;
   LinkProvider: LinkContextType;
   QueriesProvider: QueriesContextType;
+  SavedQueriesProvider: SavedQueriesContextType;
   SqliteProvider: SqliteContextType;
   TabsProvider: TabsContextType;
   ThemeProvider: ThemeContextType;

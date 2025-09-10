@@ -22,7 +22,7 @@ export const ViewColumnsButton: React.FC = () => {
       table: query.select.table,
     });
 
-    void addQuery({ sql }, { afterActiveTab: true, run: true });
+    void addQuery({ sql }, { afterActiveTab: true, alwaysRun: true });
   }, [activeConnection, addQuery, query.select]);
 
   if (!query.select) return null;

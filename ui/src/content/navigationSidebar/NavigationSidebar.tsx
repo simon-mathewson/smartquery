@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { TableList } from '../tableList/TableList';
+import { TableList } from './tableList/TableList';
 import { ConnectionsContext } from '../connections/Context';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { Connections } from '../connections/Connections';
@@ -12,10 +12,13 @@ import { useOverlay } from '~/shared/components/overlay/useOverlay';
 import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { Footer } from '~/shared/components/footer/Footer';
+import { AuthContext } from '../auth/Context';
+import { SavedQueryList } from './savedQueryList/SavedQueryList';
 
 export const NavigationSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ConnectionsContext);
+  const { user } = useDefinedContext(AuthContext);
 
   const connectionsTriggerRef = useRef<HTMLButtonElement | null>(null);
   const homeButtonRef = useRef<HTMLAnchorElement | null>(null);
@@ -67,7 +70,12 @@ export const NavigationSidebar: React.FC = () => {
       <OverlayCard htmlProps={{ className: 'w-max p-2 shadow-2xl' }} overlay={connectionsOverlay}>
         {() => <Connections />}
       </OverlayCard>
-      {activeConnection && <TableList />}
+      {activeConnection && (
+        <div className="w-full grow">
+          {user && <SavedQueryList />}
+          {<TableList />}
+        </div>
+      )}
       <Footer htmlProps={{ className: '-mx-1 px-1 shrink-0' }} />
     </div>
   );

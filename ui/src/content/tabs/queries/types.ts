@@ -3,6 +3,7 @@ import type { InputMode } from './query/types';
 
 export type AddQueryOptions = {
   initialInputMode?: InputMode;
+  savedQueryId?: string;
   sql?: string;
 };
 

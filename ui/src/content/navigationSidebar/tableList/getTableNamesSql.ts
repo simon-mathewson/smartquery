@@ -1,4 +1,4 @@
-import { ActiveConnection } from '~/shared/types';
+import type { ActiveConnection } from '~/shared/types';
 
 export const getTableNamesSql = (activeConection: ActiveConnection) => {
   const { engine, database } = activeConection;

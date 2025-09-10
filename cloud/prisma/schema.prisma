@@ -62,11 +62,10 @@ model SavedQuery {
   connection   Connection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
   database     String?
   name         String
-  query        String
+  sql          String
   userId       String     @db.Uuid
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([connectionId, database, name])
   @@index([userId])
   @@index([connectionId])
   @@index([connectionId, database])

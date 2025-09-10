@@ -5,10 +5,12 @@ import { getTabTitle } from './utils';
 import { Button } from '~/shared/components/button/Button';
 import { Close } from '@mui/icons-material';
 import { QueriesContext } from '~/content/tabs/queries/Context';
+import { SavedQueriesContext } from '~/content/savedQueries/Context';
 
 export const Tabs: React.FC = () => {
   const { activeTab, removeTab, setActiveTabId, tabs } = useDefinedContext(TabsContext);
   const { queryResults } = useDefinedContext(QueriesContext);
+  const { savedQueries } = useDefinedContext(SavedQueriesContext);
 
   if (!tabs.length) {
     return null;
@@ -25,7 +27,7 @@ export const Tabs: React.FC = () => {
               onClick: () => setActiveTabId(tab.id),
             }}
             key={tab.id}
-            label={getTabTitle(tab, queryResults)}
+            label={getTabTitle(tab, queryResults, savedQueries ?? [])}
             suffix={
               <Button
                 color={activeTab?.id === tab.id ? 'primary' : 'secondary'}

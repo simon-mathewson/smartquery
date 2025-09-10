@@ -226,13 +226,14 @@ export const useQueries = () => {
       query: AddQueryOptions,
       options?: {
         afterActiveTab?: boolean;
+        /** Auto-run even if non-select query */
+        alwaysRun?: boolean;
         openIfExists?: boolean;
         position?: { column: number; row?: number };
-        run?: boolean;
         tabId?: string;
       },
     ) => {
-      const { position, tabId, afterActiveTab, run, openIfExists } = options ?? {};
+      const { position, tabId, afterActiveTab, alwaysRun, openIfExists } = options ?? {};
 
       assert(activeConnectionContext);
       const { activeConnection } = activeConnectionContext;
@@ -268,7 +269,7 @@ export const useQueries = () => {
         }, tabId);
       }
 
-      if (run) {
+      if (alwaysRun) {
         setTimeout(() => {
           void runUserQuery(newQuery.id);
         }, 100);

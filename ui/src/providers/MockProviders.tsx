@@ -20,6 +20,7 @@ import type { PropsWithChildren } from 'react';
 import { ErrorTrackingMockProvider } from '~/content/errors/tracking/MockProvider';
 import { UpdateAvailableMockProvider } from '~/content/updateAvailable/MockProvider';
 import { ActiveConnectionMockProvider } from '~/content/connections/activeConnection/MockProvider';
+import { SavedQueriesMockProvider } from '~/content/savedQueries/MockProvider';
 
 const mockProviders = {
   ErrorTrackingProvider: ErrorTrackingMockProvider,
@@ -38,6 +39,7 @@ const mockProviders = {
   EditProvider,
   TabsProvider,
   QueriesProvider,
+  SavedQueriesProvider: SavedQueriesMockProvider,
   DragAndDropProvider,
   AddToDesktopProvider,
 } as const;

@@ -39,7 +39,7 @@ export const CodeSnippet = React.memo(
                     initialInputMode: 'editor',
                     sql: code,
                   },
-                  { afterActiveTab: true, run: true },
+                  { afterActiveTab: true, alwaysRun: true },
                 );
               },
             },

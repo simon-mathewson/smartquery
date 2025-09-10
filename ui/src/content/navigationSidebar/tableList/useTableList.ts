@@ -44,7 +44,7 @@ export const useTableList = () => {
       query
         .map((q) => {
           const result = q.id in queryResults ? queryResults[q.id] : null;
-          return result?.table
+          return !q.savedQueryId && result?.table
             ? tables.find((t) => t.name === result.table && t.schema === result.schema)
             : undefined;
         })
@@ -52,26 +52,29 @@ export const useTableList = () => {
     ),
   ) satisfies Table[];
 
-  const getQuery = (table: Table) => {
-    assert(activeConnection);
+  const getQuery = useCallback(
+    (table: Table) => {
+      assert(activeConnection);
 
-    switch (activeConnection.engine) {
-      case 'mysql':
-        return {
-          sql: `SELECT * FROM ${table.name} LIMIT 50`,
-        };
-      case 'postgres':
-        return {
-          sql: `SELECT * FROM ${
-            activeConnection.schema ? '' : `${addQuotes(activeConnection.engine, table.schema!)}.`
-          }${addQuotes(activeConnection.engine, table.name)} LIMIT 50`,
-        };
-      case 'sqlite':
-        return {
-          sql: `SELECT * FROM ${table.name} LIMIT 50`,
-        };
-    }
-  };
+      switch (activeConnection.engine) {
+        case 'mysql':
+          return {
+            sql: `SELECT * FROM ${table.name} LIMIT 50`,
+          };
+        case 'postgres':
+          return {
+            sql: `SELECT * FROM ${
+              activeConnection.schema ? '' : `${addQuotes(activeConnection.engine, table.schema!)}.`
+            }${addQuotes(activeConnection.engine, table.name)} LIMIT 50`,
+          };
+        case 'sqlite':
+          return {
+            sql: `SELECT * FROM ${table.name} LIMIT 50`,
+          };
+      }
+    },
+    [activeConnection],
+  );
 
   const { getHandleMouseDown, isDragging } = useDrag<Table>({
     onDrop: (dropProps) => {
@@ -80,10 +83,12 @@ export const useTableList = () => {
         dropMarker: { column, horizontal, row },
       } = dropProps;
 
+      assert(activeTab);
+
       void addQuery(getQuery(table), {
         position: { column, row: horizontal ? row : undefined },
-        run: true,
-        tabId: activeTab?.id,
+        alwaysRun: true,
+        tabId: activeTab.id,
       });
 
       track('table_list_drag_drop');
@@ -98,14 +103,17 @@ export const useTableList = () => {
     return tables.filter((table) => table.name.toLowerCase().includes(search.trim().toLowerCase()));
   }, [search, tables]);
 
-  const onSelect = useCallback((table: Table) => {
-    void addQuery(getQuery(table), {
-      // Unless table is already selected, open tab that already contains this query if
-      // applicable
-      openIfExists: !selectedTables.includes(table),
-    });
-    track('table_list_select');
-  }, []);
+  const onSelect = useCallback(
+    (table: Table) => {
+      void addQuery(getQuery(table), {
+        // Unless table is already selected, open tab that already contains this query if
+        // applicable
+        openIfExists: !selectedTables.includes(table),
+      });
+      track('table_list_select');
+    },
+    [addQuery, getQuery, selectedTables, track],
+  );
 
   return useMemo(
     () => ({

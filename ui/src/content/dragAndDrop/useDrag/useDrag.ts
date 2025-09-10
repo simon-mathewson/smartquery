@@ -2,7 +2,6 @@ import { useCallback, useRef, useState } from 'react';
 import { getClosestDropMarker } from './utils';
 import { useDefinedContext } from '../../../shared/hooks/useDefinedContext/useDefinedContext';
 import { DragAndDropContext } from '../Context';
-import { TabsContext } from '~/content/tabs/Context';
 import type { DropMarker } from '../types';
 
 export const useDrag = <T extends Record<string, unknown>>(props: {
@@ -10,8 +9,6 @@ export const useDrag = <T extends Record<string, unknown>>(props: {
   onDrop: (props: { dropMarker: DropMarker; item: T }) => void;
 }) => {
   const { dragRef, onDrop } = props;
-
-  const { activeTab } = useDefinedContext(TabsContext);
 
   const { dropMarkers, setActiveDropMarker } = useDefinedContext(DragAndDropContext);
 
@@ -119,7 +116,7 @@ export const useDrag = <T extends Record<string, unknown>>(props: {
         { once: true },
       );
     },
-    [activeTab, dropMarkers, handleMouseMove, onDrop, setActiveDropMarker],
+    [dropMarkers, handleMouseMove, onDrop, setActiveDropMarker],
   );
 
   return { getHandleMouseDown, isDragging };

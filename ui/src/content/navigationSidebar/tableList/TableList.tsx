@@ -2,7 +2,8 @@ import classNames from 'classnames';
 import React from 'react';
 import { List } from '~/shared/components/list/List';
 import { Loading } from '~/shared/components/loading/Loading';
-import { Table, useTableList } from './useTableList';
+import type { Table } from './useTableList';
+import { useTableList } from './useTableList';
 import { Button } from '~/shared/components/button/Button';
 import SearchIcon from '~/shared/icons/Search.svg?react';
 
@@ -20,7 +21,7 @@ export const TableList: React.FC = () => {
   } = useTableList();
 
   return (
-    <div className="relative flex w-full grow flex-col gap-1 overflow-hidden py-2">
+    <div className="flex w-full flex-col gap-1 overflow-hidden py-2">
       <div className="flex items-center justify-between gap-2 pl-2">
         <div className="truncate text-xs font-medium text-textTertiary">Tables</div>
         <div className="flex items-center gap-2">
@@ -36,29 +37,31 @@ export const TableList: React.FC = () => {
           />
         </div>
       </div>
-      {isLoading || isLoadingDatabases ? (
-        <Loading />
-      ) : (
-        <List<Table>
-          emptyPlaceholder="This database is empty."
-          items={filteredTables.map((table) => ({
-            className: classNames({
-              '!opacity-50': isDragging,
-            }),
-            label: table.name,
-            onMouseDown: getHandleMouseDown(table),
-            selectedVariant: 'secondary',
-            value: table,
-          }))}
-          multiple
-          onSelect={onSelect}
-          selectedValues={selectedTables}
-          search={search}
-          searchPlaceholder="Search tables"
-          setSearch={setSearch}
-          searchAutofocus
-        />
-      )}
+      <div className="relative min-h-[100px]">
+        {isLoading || isLoadingDatabases ? (
+          <Loading />
+        ) : (
+          <List<Table>
+            emptyPlaceholder="This database is empty."
+            items={filteredTables.map((table) => ({
+              className: classNames({
+                '!opacity-50': isDragging,
+              }),
+              label: table.name,
+              onMouseDown: getHandleMouseDown(table),
+              selectedVariant: 'secondary',
+              value: table,
+            }))}
+            multiple
+            onSelect={onSelect}
+            selectedValues={selectedTables}
+            search={search}
+            searchPlaceholder="Search tables"
+            setSearch={setSearch}
+            searchAutofocus
+          />
+        )}
+      </div>
     </div>
   );
 };

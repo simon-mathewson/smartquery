@@ -20,6 +20,7 @@ import type { PropsWithChildren } from 'react';
 import { ErrorTrackingProvider } from '~/content/errors/tracking/Provider';
 import { UpdateAvailableProvider } from '~/content/updateAvailable/Provider';
 import { ActiveConnectionProvider } from '~/content/connections/activeConnection/Provider';
+import { SavedQueriesProvider } from '~/content/savedQueries/Provider';
 
 const providers = {
   ThemeProvider,
@@ -38,6 +39,7 @@ const providers = {
   EditProvider,
   TabsProvider,
   QueriesProvider,
+  SavedQueriesProvider,
   DragAndDropProvider,
   AddToDesktopProvider,
 } satisfies Record<keyof ContextTypes, React.FC<PropsWithChildren>>;
