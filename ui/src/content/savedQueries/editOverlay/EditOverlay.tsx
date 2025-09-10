@@ -1,5 +1,5 @@
 import { BookmarkBorderOutlined, BookmarkOutlined, DeleteOutline, Done } from '@mui/icons-material';
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   QueryContext,
   ResultContext,
@@ -20,9 +20,11 @@ import { assert } from 'ts-essentials';
 import { ToastContext } from '~/content/toast/Context';
 import { SavedQueriesContext } from '../Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
+import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const SavedQueryEditOverlay: React.FC = () => {
   const toast = useDefinedContext(ToastContext);
+  const { track } = useDefinedContext(AnalyticsContext);
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
   const { updateQuery } = useDefinedContext(QueriesContext);
@@ -39,7 +41,13 @@ export const SavedQueryEditOverlay: React.FC = () => {
 
   const title = savedQuery ? 'Saved query' : 'Save Query';
 
-  const [name, setName] = useState(savedQuery?.name ?? getQueryTitle(query, result, savedQuery));
+  const [name, setName] = useState(getQueryTitle(query, result, savedQuery));
+
+  useEffect(() => {
+    if (savedQuery) {
+      setName(savedQuery.name);
+    }
+  }, [savedQuery]);
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -53,10 +61,19 @@ export const SavedQueryEditOverlay: React.FC = () => {
 
       try {
         if (savedQuery) {
+          track('saved_query_update');
+
           await cloudApi.savedQueries.update.mutate({ id: savedQuery.id, name });
 
           await updateQuery({ id: query.id, savedQueryId: savedQuery.id });
+
+          toast.add({
+            color: 'success',
+            title: 'Saved query updated',
+          });
         } else {
+          track('saved_query_create');
+
           const id = await cloudApi.savedQueries.create.mutate({
             connectionId: activeConnection.id,
             database: activeConnection.engine === 'postgres' ? activeConnection.database : null,
@@ -65,6 +82,11 @@ export const SavedQueryEditOverlay: React.FC = () => {
           });
 
           await updateQuery({ id: query.id, savedQueryId: id });
+
+          toast.add({
+            color: 'success',
+            title: 'Query saved',
+          });
         }
 
         await refetchSavedQueries();
@@ -91,6 +113,7 @@ export const SavedQueryEditOverlay: React.FC = () => {
       refetchSavedQueries,
       savedQuery,
       toast,
+      track,
       updateQuery,
     ],
   );
@@ -99,12 +122,20 @@ export const SavedQueryEditOverlay: React.FC = () => {
     async (close: () => void) => {
       assert(savedQuery);
 
+      track('saved_query_delete');
+
       await cloudApi.savedQueries.delete.mutate(savedQuery.id);
       await updateQuery({ id: query.id, savedQueryId: null });
       await refetchSavedQueries();
+
+      toast.add({
+        color: 'success',
+        title: 'Saved query deleted',
+      });
+
       void close();
     },
-    [cloudApi, query.id, refetchSavedQueries, savedQuery, updateQuery],
+    [savedQuery, track, cloudApi, updateQuery, query.id, refetchSavedQueries, toast],
   );
 
   return (
@@ -121,7 +152,12 @@ export const SavedQueryEditOverlay: React.FC = () => {
                   <ConfirmDeletePopover
                     onConfirm={() => onDelete(close)}
                     renderTrigger={(buttonProps) => (
-                      <Button color="danger" htmlProps={buttonProps} icon={<DeleteOutline />} />
+                      <Button
+                        color="danger"
+                        htmlProps={buttonProps}
+                        icon={<DeleteOutline />}
+                        tooltip="Delete saved query"
+                      />
                     )}
                     text="Delete saved query"
                   />
@@ -130,7 +166,10 @@ export const SavedQueryEditOverlay: React.FC = () => {
             />
             <form className="space-y-2" onSubmit={(event) => onSubmit(event, close)}>
               <Field label="Name">
-                <Input htmlProps={{ disabled: isSaving, value: name }} onChange={setName} />
+                <Input
+                  htmlProps={{ autoFocus: true, disabled: isSaving, value: name }}
+                  onChange={setName}
+                />
               </Field>
               <Button
                 icon={<Done />}
