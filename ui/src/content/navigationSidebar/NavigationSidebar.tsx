@@ -36,7 +36,7 @@ export const NavigationSidebar: React.FC = () => {
 
   return (
     <div
-      className="sticky top-0 flex h-screen grid-rows-[max-content_max-content_minmax(auto,max-content)] flex-col items-start gap-1 px-2 pt-2"
+      className="sticky top-0 flex h-screen flex-col items-start gap-1 px-2 pt-2"
       ref={sidebarRef}
       style={{ width: `${width}px` }}
     >
@@ -71,7 +71,7 @@ export const NavigationSidebar: React.FC = () => {
         {() => <Connections />}
       </OverlayCard>
       {activeConnection && (
-        <div className="w-full grow">
+        <div className="flex w-full grow flex-col overflow-hidden">
           {user && <SavedQueryList />}
           {<TableList />}
         </div>

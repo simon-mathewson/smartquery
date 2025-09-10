@@ -289,16 +289,27 @@ export const useQueries = () => {
   );
 
   const updateQuery = useCallback(
-    async (props: { id: string; run?: boolean; sql: string }) => {
-      const { id, run, sql } = props;
+    async (props: { id: string; run?: boolean; sql?: string; savedQueryId?: string | null }) => {
+      const { id, run, sql, savedQueryId } = props;
 
       assert(activeConnectionContext);
       const { activeConnection } = activeConnectionContext;
 
-      const updatedQuery = {
-        sql: sql.trim(),
-        ...(await parseQuery({ connection: activeConnection, sql })),
-      };
+      const existingQuery = queriesRef.current.find((q) => q.id === id);
+      assert(existingQuery);
+
+      const updatedQuery = { ...existingQuery };
+
+      if (sql !== undefined) {
+        Object.assign(updatedQuery, {
+          sql: sql.trim(),
+          ...(await parseQuery({ connection: activeConnection, sql })),
+        });
+      }
+
+      if (savedQueryId !== undefined) {
+        Object.assign(updatedQuery, { savedQueryId });
+      }
 
       setQueries((currentQueries) =>
         currentQueries.map((currentColumn) =>

@@ -2,21 +2,22 @@ import { Close, Refresh } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
 import classNames from 'classnames';
 import React, { useContext } from 'react';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { SavedQueryEditOverlay } from '~/content/savedQueries/editOverlay/EditOverlay';
+import { Header } from '~/shared/components/header/Header';
+import { Loading } from '~/shared/components/loading/Loading';
+import { Tooltip } from '~/shared/components/tooltip/Tooltip';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { Button } from '../../../../shared/components/button/Button';
+import { QueriesContext } from '../Context';
+import { BottomToolbar } from './bottomToolbar/BottomToolbar';
+import { QueryContext, ResultContext, SavedQueryContext } from './Context';
 import { InputModes } from './inputModes/InputModes';
+import { InputModesSelect } from './inputModes/Select';
 import { Table } from './table/Table';
 import type { InputMode } from './types';
 import { getQueryTitle } from './utils';
-import { InputModesSelect } from './inputModes/Select';
-import { Header } from '~/shared/components/header/Header';
-import { BottomToolbar } from './bottomToolbar/BottomToolbar';
-import { QueryContext, ResultContext, SavedQueryContext } from './Context';
-import { QueriesContext } from '../Context';
-import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { Loading } from '~/shared/components/loading/Loading';
-import { Tooltip } from '~/shared/components/tooltip/Tooltip';
 import { ViewColumnsButton } from './viewColumnsButton/ViewColumnsButton';
 
 export const Query: React.FC = () => {
@@ -65,6 +66,7 @@ export const Query: React.FC = () => {
           }
           right={
             <>
+              <SavedQueryEditOverlay />
               {result && query.select && (
                 <div className="relative h-fit w-fit">
                   <Tooltip<HTMLButtonElement> text="Reload">

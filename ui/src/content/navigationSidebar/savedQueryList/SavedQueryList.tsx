@@ -50,28 +50,24 @@ export const SavedQueryList: React.FC = () => {
           />
         </div>
       </div>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <List<SavedQuery>
-          items={filteredSavedQueries.map((savedQuery) => ({
-            className: classNames({
-              '!opacity-50': isDragging,
-            }),
-            label: savedQuery.name,
-            onMouseDown: getHandleMouseDown(savedQuery),
-            selectedVariant: 'secondary',
-            value: savedQuery,
-          }))}
-          multiple
-          onSelect={onSelect}
-          selectedValues={selectedSavedQueries}
-          search={search}
-          searchPlaceholder="Search queries"
-          setSearch={setSearch}
-          searchAutofocus
-        />
-      )}
+      <List<SavedQuery>
+        items={filteredSavedQueries.map((savedQuery) => ({
+          className: classNames({
+            '!opacity-50': isDragging,
+          }),
+          label: savedQuery.name,
+          onMouseDown: getHandleMouseDown(savedQuery),
+          selectedVariant: 'secondary',
+          value: savedQuery,
+        }))}
+        multiple
+        onSelect={onSelect}
+        selectedValues={selectedSavedQueries}
+        search={search}
+        searchPlaceholder="Search queries"
+        setSearch={setSearch}
+        searchAutofocus
+      />
     </div>
   );
 };

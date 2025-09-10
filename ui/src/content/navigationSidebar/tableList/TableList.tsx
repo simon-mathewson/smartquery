@@ -37,7 +37,7 @@ export const TableList: React.FC = () => {
           />
         </div>
       </div>
-      <div className="relative min-h-[100px]">
+      <div className="relative flex min-h-[100px] flex-col overflow-hidden">
         {isLoading || isLoadingDatabases ? (
           <Loading />
         ) : (

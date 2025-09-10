@@ -4,15 +4,24 @@ import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { ActiveConnectionContext } from '../connections/activeConnection/Context';
 import { useContext, useMemo } from 'react';
 import { assert } from 'ts-essentials';
+import { sqliteDemoConnectionId } from '../connections/constants';
 
 export const useSavedQueries = () => {
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const activeConnectionContext = useContext(ActiveConnectionContext);
 
-  const { hasRun, results: savedQueries } = useCloudQuery(
+  const {
+    hasRun,
+    results: savedQueries,
+    run: refetchSavedQueries,
+  } = useCloudQuery(
     () => {
       assert(activeConnectionContext);
       const { activeConnection } = activeConnectionContext;
+
+      if (activeConnection.id === sqliteDemoConnectionId) {
+        return Promise.resolve([]);
+      }
 
       return cloudApi.savedQueries.list.query({
         connectionId: activeConnection.id,
@@ -28,7 +37,8 @@ export const useSavedQueries = () => {
     () => ({
       isLoading,
       savedQueries,
+      refetchSavedQueries,
     }),
-    [isLoading, savedQueries],
+    [isLoading, savedQueries, refetchSavedQueries],
   );
 };

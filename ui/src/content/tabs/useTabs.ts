@@ -29,7 +29,13 @@ export const useTabs = () => {
       if (openIfExists) {
         const existingTab = tabs.find((t) =>
           t.queries.every((c, columnIndex) =>
-            c.every((q, rowIndex) => q.sql === queries[columnIndex][rowIndex].sql),
+            c.every((q, rowIndex) => {
+              if (q.savedQueryId) {
+                return q.savedQueryId === queries[columnIndex][rowIndex].savedQueryId;
+              }
+
+              return q.sql === queries[columnIndex][rowIndex].sql;
+            }),
           ),
         );
         if (existingTab) {
