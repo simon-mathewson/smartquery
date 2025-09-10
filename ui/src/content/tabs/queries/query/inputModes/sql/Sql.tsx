@@ -1,24 +1,20 @@
+import { BookmarkAddedOutlined } from '@mui/icons-material';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { assert } from 'ts-essentials';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { SavedQueriesContext } from '~/content/savedQueries/Context';
+import { Button } from '~/shared/components/button/Button';
 import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { QueriesContext } from '../../../Context';
 import { QueryContext, ResultContext } from '../../Context';
-import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { BookmarkAddedOutlined } from '@mui/icons-material';
-import { Button } from '~/shared/components/button/Button';
-import { CloudApiContext } from '~/content/cloud/api/Context';
-import { assert } from 'ts-essentials';
-import { ToastContext } from '~/content/toast/Context';
-import { SavedQueriesContext } from '~/content/savedQueries/Context';
 
 export const Sql: React.FC = () => {
-  const toast = useDefinedContext(ToastContext);
   const { track } = useDefinedContext(AnalyticsContext);
-  const { cloudApi } = useDefinedContext(CloudApiContext);
   const { updateQuery } = useDefinedContext(QueriesContext);
   const { query } = useDefinedContext(QueryContext);
-  const { refetchSavedQueries } = useDefinedContext(SavedQueriesContext);
+  const { updateSavedQuery } = useDefinedContext(SavedQueriesContext);
   const queryResult = useContext(ResultContext);
 
   const [value, setValue] = useStoredState<string>(
@@ -72,33 +68,17 @@ export const Sql: React.FC = () => {
 
   const [isUpdatingSavedQuery, setIsUpdatingSavedQuery] = useState(false);
 
-  const updateSavedQuery = useCallback(
+  const onOpdateSavedQuery = useCallback(
     async (sql: string) => {
       assert(query.savedQueryId);
 
       setIsUpdatingSavedQuery(true);
-      track('saved_query_update_sql');
 
-      try {
-        await cloudApi.savedQueries.update.mutate({ id: query.savedQueryId, sql });
+      await updateSavedQuery(query.savedQueryId, { sql }, query.id);
 
-        await refetchSavedQueries();
-        await updateQuery({ id: query.id, sql });
-
-        toast.add({
-          color: 'success',
-          title: 'Saved query updated',
-        });
-      } catch {
-        toast.add({
-          color: 'danger',
-          title: 'Failed to update saved query',
-        });
-      } finally {
-        setIsUpdatingSavedQuery(false);
-      }
+      setIsUpdatingSavedQuery(false);
     },
-    [cloudApi, query.id, query.savedQueryId, refetchSavedQueries, toast, track, updateQuery],
+    [query.savedQueryId, updateSavedQuery, query.id],
   );
 
   return (
@@ -114,7 +94,7 @@ export const Sql: React.FC = () => {
                 ...htmlProps,
                 disabled: isUpdatingSavedQuery,
                 onClick: () => {
-                  void updateSavedQuery(value);
+                  void onOpdateSavedQuery(value);
                 },
               }}
             />
