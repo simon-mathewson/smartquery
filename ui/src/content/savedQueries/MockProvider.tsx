@@ -7,7 +7,17 @@ export const SavedQueriesMockProvider: React.FC<MockProviderProps<SavedQueriesCo
   overrides,
 }) => (
   <SavedQueriesContext.Provider
-    value={Object.assign({ isLoading: false, savedQueries: [] }, overrides)}
+    value={Object.assign(
+      {
+        isLoading: false,
+        savedQueries: [],
+        createSavedQuery: async () => {},
+        deleteSavedQuery: async () => {},
+        refetchSavedQueries: async () => {},
+        updateSavedQuery: async () => {},
+      },
+      overrides,
+    )}
   >
     {children}
   </SavedQueriesContext.Provider>
