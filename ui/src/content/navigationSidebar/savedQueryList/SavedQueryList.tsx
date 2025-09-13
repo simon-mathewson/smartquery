@@ -23,7 +23,7 @@ export const SavedQueryList: React.FC = () => {
     return <Loading />;
   }
 
-  if (!filteredSavedQueries?.length) {
+  if (!search && !filteredSavedQueries?.length) {
     return null;
   }
 
