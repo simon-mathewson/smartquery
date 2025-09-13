@@ -1,0 +1,39 @@
+### LICENSE
+
+**LICENSE AGREEMENT FOR SMARTQUERY**
+
+This license agreement (“Agreement”) is a binding legal agreement between you, the user, and **Simon Mathewson** (“Licensor”). By viewing, accessing, or using the source code for the application **SmartQuery** (“the Software”), you agree to the terms of this Agreement.
+
+**1. Grant of License**
+
+The Licensor grants you a non-exclusive, non-transferable, limited license to **view** the source code of the Software. This license is granted solely for the purpose of personal auditing and security verification.
+
+**2. Prohibited Actions**
+
+You may **not** do any of the following:
+
+- **Copy** the source code, in whole or in part, for any reason.
+- **Modify** the source code, including creating derivative works.
+- **Distribute** or publish the source code, or any part of it, to any third party.
+- **Use** the source code for any commercial purpose or in any other software or application.
+- **Reverse-engineer** or decompile the compiled software.
+
+**3. Ownership and Copyright**
+
+The Software and its source code are the exclusive intellectual property of the Licensor. All rights not expressly granted in this Agreement are reserved by the Licensor. The Software is protected by copyright laws and international treaties.
+
+**4. No Warranty**
+
+The source code is provided “as is,” without any warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability and fitness for a particular purpose.
+
+**5. Termination**
+
+This Agreement is effective until terminated. The Licensor may terminate this Agreement at any time if you fail to comply with any of its terms. Upon termination, you must cease all use of the source code.
+
+**6. Governing Law**
+
+This Agreement is governed by the laws of **Germany**.
+
+By proceeding, you acknowledge that you have read, understood, and agree to be bound by the terms and conditions of this Agreement.
+
+Copyright (c) **2025 Simon Mathewson**. All Rights Reserved.
