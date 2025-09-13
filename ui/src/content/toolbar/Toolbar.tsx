@@ -6,7 +6,6 @@ import { Changes } from './changes/Changes';
 import { TabsContext } from '../tabs/Context';
 import { Tabs } from './tabs/Tabs';
 import { QueriesContext } from '../tabs/queries/Context';
-import { CopilotContext } from '../ai/copilot/Context';
 import { EditContext } from '../edit/Context';
 import classNames from 'classnames';
 import { AnalyticsContext } from '~/content/analytics/Context';
@@ -14,15 +13,18 @@ import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
 import { NavigationSidebarContext } from '../navigationSidebar/Context';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
+import { CopilotSidebarContext } from '../ai/copilot/sidebar/Context';
+import { AuthContext } from '../auth/Context';
 
 export const Toolbar: React.FC = () => {
   const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
+  const { user } = useDefinedContext(AuthContext);
   const { tabs } = useDefinedContext(TabsContext);
   const { addQuery } = useDefinedContext(QueriesContext);
-  const copilot = useDefinedContext(CopilotContext);
   const { allChanges } = useDefinedContext(EditContext);
-  const { setIsOpen } = useDefinedContext(NavigationSidebarContext);
+  const navigationSidebar = useDefinedContext(NavigationSidebarContext);
+  const copilotSidebar = useDefinedContext(CopilotSidebarContext);
 
   const isMobile = useIsMobile();
 
@@ -32,7 +34,7 @@ export const Toolbar: React.FC = () => {
         <Button
           color="secondary"
           htmlProps={{
-            onClick: () => setIsOpen(true),
+            onClick: () => navigationSidebar.setIsOpen(true),
           }}
           icon={<Menu />}
         />
@@ -51,26 +53,28 @@ export const Toolbar: React.FC = () => {
         tooltip={tabs.length ? 'New query' : undefined}
       />
       {allChanges.length > 0 && <Changes />}
-      <Button
-        color="primary"
-        htmlProps={{
-          className: classNames({ 'ml-auto': !allChanges.length }),
-          onClick: () => {
-            if (!copilot.isEnabled) {
-              navigate(routes.subscribePlans());
-              return;
-            }
+      {(!copilotSidebar.isOpen || isMobile) && (
+        <Button
+          color="primary"
+          htmlProps={{
+            className: classNames({ 'ml-auto': !allChanges.length }),
+            onClick: () => {
+              if (!user) {
+                navigate(routes.subscribePlans());
+                return;
+              }
 
-            track('toolbar_open_copilot');
+              track('toolbar_open_copilot');
 
-            copilot.setIsOpen(!copilot.isOpen);
-          },
-        }}
-        icon={<AutoAwesome />}
-        label="Copilot"
-        tooltip={copilot.isEnabled ? undefined : 'Sign up or log in to use Copilot'}
-        variant={copilot.isOpen ? 'highlighted' : 'default'}
-      />
+              copilotSidebar.setIsOpen(!copilotSidebar.isOpen);
+            },
+          }}
+          icon={<AutoAwesome />}
+          label={isMobile ? undefined : 'Copilot'}
+          tooltip={user ? undefined : 'Sign up or log in to use Copilot'}
+          variant={copilotSidebar.isOpen ? 'highlighted' : 'default'}
+        />
+      )}
     </div>
   );
 };

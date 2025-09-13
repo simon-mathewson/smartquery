@@ -1,22 +1,18 @@
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { cloneDeep, omit } from 'lodash';
-import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
-import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
 import type { AiTextContent } from '@/ai/types';
+import type { inferRouterInputs } from '@trpc/server';
+import { cloneDeep, omit } from 'lodash';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import superjson from 'superjson';
 import { CloudApiContext } from '~/content/cloud/api/Context';
-import { AuthContext } from '~/content/auth/Context';
-import type { inferRouterInputs } from '@trpc/server';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { CloudRouter } from '../../../../../cloud/router';
+import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
+import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
 
 export const useCopilot = () => {
   const { cloudApiStream } = useDefinedContext(CloudApiContext);
-  const { user } = useDefinedContext(AuthContext);
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
-
-  const [isOpen, setIsOpen] = useStoredState<boolean>('useCopilot.isOpen', false);
 
   const [thread, setThread] = useStoredState<AiTextContent[]>('useCopilot.thread', []);
 
@@ -135,33 +131,25 @@ export const useCopilot = () => {
     setThread([]);
   }, [setThread, stopGenerating]);
 
-  const isEnabled = user !== null;
-
   return useMemo(
     () => ({
       clearThread,
       input,
-      isEnabled,
       isLoading,
       isLoadingSchemaDefinitions,
       hasSchemaDefinitions,
-      isOpen,
       sendMessage,
       setInput,
-      setIsOpen,
       stopGenerating,
       thread,
     }),
     [
       clearThread,
       input,
-      isEnabled,
       isLoading,
       isLoadingSchemaDefinitions,
       hasSchemaDefinitions,
-      isOpen,
       sendMessage,
-      setIsOpen,
       stopGenerating,
       thread,
     ],
