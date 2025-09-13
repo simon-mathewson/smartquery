@@ -1,24 +1,22 @@
 import React, { useRef } from 'react';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { TableList } from './tableList/TableList';
-import { ConnectionsContext } from '../connections/Context';
-import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
-import { Connections } from '../connections/Connections';
 import { AnalyticsContext } from '~/content/analytics/Context';
-import { Button } from '~/shared/components/button/Button';
-import { Logo } from '~/shared/components/logo/LogoIcon';
 import { routes } from '~/router/routes';
-import { useOverlay } from '~/shared/components/overlay/useOverlay';
-import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
-import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { Button } from '~/shared/components/button/Button';
 import { Footer } from '~/shared/components/footer/Footer';
-import { AuthContext } from '../auth/Context';
+import { Logo } from '~/shared/components/logo/LogoIcon';
+import { useOverlay } from '~/shared/components/overlay/useOverlay';
+import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
+import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { Connections } from '../connections/Connections';
+import { ConnectionsContext } from '../connections/Context';
 import { SavedQueryList } from './savedQueryList/SavedQueryList';
+import { TableList } from './tableList/TableList';
 
 export const NavigationSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ConnectionsContext);
-  const { user } = useDefinedContext(AuthContext);
 
   const connectionsTriggerRef = useRef<HTMLButtonElement | null>(null);
   const homeButtonRef = useRef<HTMLAnchorElement | null>(null);
@@ -72,7 +70,7 @@ export const NavigationSidebar: React.FC = () => {
       </OverlayCard>
       {activeConnection && (
         <div className="flex w-full grow flex-col overflow-hidden">
-          {user && <SavedQueryList />}
+          <SavedQueryList />
           {<TableList />}
         </div>
       )}

@@ -4,7 +4,6 @@ import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { ActiveConnectionContext } from '../connections/activeConnection/Context';
 import { useCallback, useContext, useMemo } from 'react';
 import { assert } from 'ts-essentials';
-import { sqliteDemoConnectionId } from '../connections/constants';
 import type { SavedQuery } from '@/savedQueries/types';
 import { AnalyticsContext } from '../analytics/Context';
 import { ToastContext } from '../toast/Context';
@@ -43,7 +42,7 @@ export const useSavedQueries = () => {
       assert(activeConnectionContext);
       const { activeConnection } = activeConnectionContext;
 
-      if (activeConnection.id === sqliteDemoConnectionId) {
+      if (activeConnection.storageLocation === 'local') {
         return Promise.resolve([]);
       }
 

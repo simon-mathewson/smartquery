@@ -1,19 +1,13 @@
 import type { SavedQuery } from '@/savedQueries/types';
 import classNames from 'classnames';
 import React from 'react';
-import { assert } from 'ts-essentials';
-import { AuthContext } from '~/content/auth/Context';
 import { Button } from '~/shared/components/button/Button';
 import { List } from '~/shared/components/list/List';
 import { Loading } from '~/shared/components/loading/Loading';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import SearchIcon from '~/shared/icons/Search.svg?react';
 import { useSavedQueryList } from './useSavedQueryList';
 
 export const SavedQueryList: React.FC = () => {
-  const { user } = useDefinedContext(AuthContext);
-  assert(user);
-
   const {
     filteredSavedQueries,
     getHandleMouseDown,
