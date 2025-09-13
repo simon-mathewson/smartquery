@@ -69,7 +69,8 @@ export const CopilotSidebar: React.FC = () => {
       className={classNames(
         'absolute right-0 z-50 h-screen bg-background p-3 transition-[right] sm:relative sm:right-0 sm:pl-1 sm:pt-[60px]',
         {
-          '-right-full sm:!w-0 sm:!p-0': !isOpen,
+          'sm:!w-0 sm:!p-0': !isOpen,
+          '!-right-full': !isOpen && isMobile,
         },
       )}
       style={{ width: isMobile ? '100%' : `${desktopWidth}px` }}
