@@ -11,6 +11,7 @@ import { uniq } from 'lodash';
 import { addQuotes } from '~/shared/utils/sql/sql';
 import { useEffect } from 'react';
 import { getTableNamesSql } from './getTableNamesSql';
+import { NavigationSidebarContext } from '../Context';
 
 export type Table = { name: string; schema: string | undefined };
 
@@ -20,6 +21,7 @@ export const useTableList = () => {
     useDefinedContext(ActiveConnectionContext);
   const { activeTab } = useDefinedContext(TabsContext);
   const { addQuery, queryResults } = useDefinedContext(QueriesContext);
+  const navigationSidebar = useDefinedContext(NavigationSidebarContext);
 
   const [tables, setTables] = useState<Table[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -111,8 +113,9 @@ export const useTableList = () => {
         openIfExists: !selectedTables.includes(table),
       });
       track('table_list_select');
+      navigationSidebar.setIsOpen(false);
     },
-    [addQuery, getQuery, selectedTables, track],
+    [addQuery, getQuery, selectedTables, navigationSidebar, track],
   );
 
   return useMemo(
