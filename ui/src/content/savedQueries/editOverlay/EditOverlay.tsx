@@ -110,7 +110,7 @@ export const SavedQueryEditOverlay: React.FC = () => {
       </OverlayCard>
       <Button
         icon={savedQuery ? <BookmarkOutlined /> : <BookmarkBorderOutlined />}
-        htmlProps={{ disabled: !query.sql, ref: triggerRef }}
+        htmlProps={{ disabled: !savedQuery && !query.sql, ref: triggerRef }}
         tooltip={title}
       />
     </>
