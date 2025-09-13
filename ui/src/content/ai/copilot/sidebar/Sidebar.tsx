@@ -67,7 +67,7 @@ export const CopilotSidebar: React.FC = () => {
   return (
     <div
       className={classNames(
-        'absolute right-0 z-50 h-screen bg-background p-3 transition-[right] sm:relative sm:right-0 sm:pl-1 sm:pt-[60px]',
+        'absolute right-0 z-50 h-screen bg-background p-3 sm:relative sm:right-0 sm:pl-1 sm:pt-[60px]',
         {
           'sm:!w-0 sm:!p-0': !isOpen,
           '!-right-full': !isOpen && isMobile,
