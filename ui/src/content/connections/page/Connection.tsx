@@ -6,6 +6,7 @@ import { CopilotProvider } from '../../ai/copilot/Provider';
 import { Loading } from '~/shared/components/loading/Loading';
 import { Helmet } from 'react-helmet';
 import { sqliteDemoConnectionId } from '../constants';
+import { NavigationSidebarProvider } from '~/content/navigationSidebar/Provider';
 
 export const Connection: React.FC = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -30,16 +31,18 @@ export const Connection: React.FC = () => {
           <meta name="description" content={demoDescription} />
         </Helmet>
       )}
-      <div className="relative grid h-full grid-cols-[max-content_1fr] bg-background">
+      <div className="relative grid h-full grid-cols-1 bg-background sm:grid-cols-[max-content_1fr]">
         {!activeConnection && <Loading size="large" />}
-        <NavigationSidebar />
-        <div className="flex h-full flex-col overflow-hidden pb-3 pl-1 pr-3">
-          {activeConnection && (
-            <CopilotProvider>
-              <DatabaseContent />
-            </CopilotProvider>
-          )}
-        </div>
+        <NavigationSidebarProvider>
+          <NavigationSidebar />
+          <div className="flex h-full flex-col overflow-hidden pb-3 pl-3 pr-3 sm:pl-1">
+            {activeConnection && (
+              <CopilotProvider>
+                <DatabaseContent />
+              </CopilotProvider>
+            )}
+          </div>
+        </NavigationSidebarProvider>
       </div>
     </>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { Add, AutoAwesome } from '@mui/icons-material';
+import { Add, AutoAwesome, Menu } from '@mui/icons-material';
 import { Changes } from './changes/Changes';
 import { TabsContext } from '../tabs/Context';
 import { Tabs } from './tabs/Tabs';
@@ -12,6 +12,8 @@ import classNames from 'classnames';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
+import { NavigationSidebarContext } from '../navigationSidebar/Context';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 
 export const Toolbar: React.FC = () => {
   const [, navigate] = useLocation();
@@ -20,9 +22,21 @@ export const Toolbar: React.FC = () => {
   const { addQuery } = useDefinedContext(QueriesContext);
   const copilot = useDefinedContext(CopilotContext);
   const { allChanges } = useDefinedContext(EditContext);
+  const { setIsOpen } = useDefinedContext(NavigationSidebarContext);
+
+  const isMobile = useIsMobile();
 
   return (
     <div className="mb-1 mt-1 flex items-center gap-3 py-2">
+      {isMobile && (
+        <Button
+          color="secondary"
+          htmlProps={{
+            onClick: () => setIsOpen(true),
+          }}
+          icon={<Menu />}
+        />
+      )}
       <Tabs />
       <Button
         align="left"

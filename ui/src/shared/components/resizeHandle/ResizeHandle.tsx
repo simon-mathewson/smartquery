@@ -16,13 +16,25 @@ export const ResizeHandle = (props: ResizeHandleProps) => {
       event.preventDefault();
       event.stopPropagation();
 
-      const container = event.currentTarget.closest('.relative, .sticky') as HTMLElement;
+      // Find the closest element with position: relative or sticky
+      let container = event.currentTarget.parentElement;
+      while (container) {
+        const computedStyle = getComputedStyle(container);
+        if (computedStyle.position === 'relative' || computedStyle.position === 'sticky') {
+          break;
+        }
+        container = container.parentElement;
+      }
+      if (!container) return;
+
+      const containerWidth = parseInt(getComputedStyle(container).width.replace('px', ''), 10);
+      let movementX = 0;
 
       const onMouseMove = (event: MouseEvent) => {
-        const containerWidth = parseInt(getComputedStyle(container).width.replace('px', ''));
+        movementX += event.movementX;
 
         const newWidth = Math.min(
-          Math.max(containerWidth + event.movementX * (position === 'left' ? -1 : 1), minWidth),
+          Math.max(containerWidth + movementX * (position === 'left' ? -1 : 1), minWidth),
           maxWidth,
         );
 

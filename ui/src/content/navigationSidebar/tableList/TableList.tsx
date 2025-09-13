@@ -21,7 +21,7 @@ export const TableList: React.FC = () => {
   } = useTableList();
 
   return (
-    <div className="flex w-full flex-col gap-1 overflow-hidden py-2">
+    <div className="flex w-full flex-col gap-1 py-2">
       <div className="flex items-center justify-between gap-2 pl-2">
         <div className="truncate text-xs font-medium text-textTertiary">Tables</div>
         <div className="flex items-center gap-2">

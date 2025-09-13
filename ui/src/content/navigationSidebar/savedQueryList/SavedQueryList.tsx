@@ -28,7 +28,7 @@ export const SavedQueryList: React.FC = () => {
   }
 
   return (
-    <div className="relative flex w-full flex-col gap-1 overflow-hidden py-2">
+    <div className="relative flex w-full flex-col gap-1 py-2">
       <div className="flex items-center justify-between gap-2 pl-2">
         <div className="truncate text-xs font-medium text-textTertiary">Queries</div>
         <div className="flex items-center gap-2">
