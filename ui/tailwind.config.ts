@@ -26,10 +26,10 @@ export const themes = primaryColors.reduce((acc, primaryColor) => {
   return {
     ...acc,
     [`${primaryColor ? `${primaryColor}-` : ''}dark`]: {
-      background: colors.neutral[900],
+      background: colors.neutral[950],
       border: colors.neutral[700],
       borderHover: colors.neutral[600],
-      card: '#1F1F1F',
+      card: colors.neutral[900],
 
       textPrimary: '#FFFFFFE9',
       textSecondary: '#FFFFFFC0',
