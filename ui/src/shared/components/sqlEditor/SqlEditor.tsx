@@ -147,9 +147,6 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
                 htmlProps={{
                   className: 'w-36 pointer-events-auto flex-shrink-0',
                   disabled: !value?.trim() || query?.query.isLoading || isSubmitDisabled,
-                  onClick: () => {
-                    void submitQuery();
-                  },
                   type: 'submit',
                 }}
                 icon={<Send />}
