@@ -19,6 +19,7 @@ import { Table } from './table/Table';
 import type { InputMode } from './types';
 import { getQueryTitle } from './utils';
 import { ViewColumnsButton } from './viewColumnsButton/ViewColumnsButton';
+import { ChartEditOverlay } from '~/content/charts/editOverlay/EditOverlay';
 
 export const Query: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -41,7 +42,7 @@ export const Query: React.FC = () => {
   return (
     <div
       className={classNames(
-        'relative ml-3 mt-3 flex min-h-[240px] flex-col justify-start gap-2 rounded-xl border border-border bg-card',
+        'relative ml-3 mt-3 flex min-h-[240px] flex-col rounded-xl border border-border bg-card',
         {
           '!ml-0': columnIndex === 0,
           '!mt-0': rowIndex === 0,
@@ -52,12 +53,7 @@ export const Query: React.FC = () => {
       <div className="space-y-2 p-2">
         <Header
           left={
-            result ? (
-              <>
-                <InputModesSelect inputMode={inputMode} setInputMode={setInputMode} />{' '}
-                <ViewColumnsButton />
-              </>
-            ) : null
+            result ? <InputModesSelect inputMode={inputMode} setInputMode={setInputMode} /> : null
           }
           middle={
             <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
@@ -113,6 +109,10 @@ export const Query: React.FC = () => {
       </div>
       {result && (
         <>
+          <div className="flex gap-2 px-2 pb-3">
+            <ChartEditOverlay />
+            <ViewColumnsButton />
+          </div>
           <Table handleRowCreationRef={handleRowCreationRef} />
           <div className="p-2">
             <BottomToolbar handleRowCreationRef={handleRowCreationRef} />

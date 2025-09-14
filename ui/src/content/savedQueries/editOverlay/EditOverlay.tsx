@@ -53,12 +53,16 @@ export const SavedQueryEditOverlay: React.FC = () => {
       if (savedQuery) {
         await updateSavedQuery(savedQuery.id, { name }, query.id, close);
       } else {
-        await createSavedQuery({ name, sql: query.sql }, query.id, close);
+        await createSavedQuery(
+          { name, sql: query.sql, chart: query.chart ?? undefined },
+          query.id,
+          close,
+        );
       }
 
       setIsSaving(false);
     },
-    [createSavedQuery, name, query.sql, query.id, savedQuery, updateSavedQuery],
+    [query.sql, query.id, query.chart, savedQuery, updateSavedQuery, name, createSavedQuery],
   );
 
   return (
@@ -87,7 +91,7 @@ export const SavedQueryEditOverlay: React.FC = () => {
                 )
               }
             />
-            <form className="space-y-2" onSubmit={(event) => onSubmit(event, close)}>
+            <form className="space-y-1" onSubmit={(event) => onSubmit(event, close)}>
               <Field label="Name">
                 <Input
                   htmlProps={{ autoFocus: true, disabled: isSaving, value: name }}

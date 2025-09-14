@@ -55,20 +55,34 @@ model RefreshToken {
 }
 
 model SavedQuery {
-  id           String     @id @default(uuid()) @db.Uuid
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  connectionId String     @db.Uuid
-  connection   Connection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  id           String           @id @default(uuid()) @db.Uuid
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  connectionId String           @db.Uuid
+  connection   Connection       @relation(fields: [connectionId], references: [id], onDelete: Cascade)
   database     String?
   name         String
   sql          String
-  userId       String     @db.Uuid
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String           @db.Uuid
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chart        SavedQueryChart?
 
   @@index([userId])
   @@index([connectionId])
   @@index([connectionId, database])
+}
+
+model SavedQueryChart {
+  id           String     @id @default(uuid()) @db.Uuid
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  savedQueryId String     @unique @db.Uuid
+  savedQuery   SavedQuery @relation(fields: [savedQueryId], references: [id], onDelete: Cascade)
+  type         ChartType
+  x            String
+  y            String
+
+  @@index([savedQueryId])
 }
 
 model Subscription {
@@ -123,6 +137,10 @@ model User {
   @@index([emailVerificationToken])
   @@index([resetPasswordToken])
   @@index([stripeCustomerId])
+}
+
+enum ChartType {
+  line
 }
 
 enum Engine {

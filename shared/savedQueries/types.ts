@@ -1,13 +1,18 @@
 import { z } from 'zod';
 
+export const chartSchema = z.object({
+  type: z.enum(['line']),
+  x: z.string(),
+  y: z.string(),
+});
+
+export type Chart = z.infer<typeof chartSchema>;
+
 export const savedQuerySchema = z.object({
+  chart: chartSchema.nullable().optional(),
   id: z.string(),
   name: z.string(),
   sql: z.string(),
 });
 
-export type SavedQuery = {
-  id: string;
-  name: string;
-  sql: string;
-};
+export type SavedQuery = z.infer<typeof savedQuerySchema>;

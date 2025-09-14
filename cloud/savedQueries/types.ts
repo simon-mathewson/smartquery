@@ -1,6 +1,8 @@
+import { chartSchema } from '@/savedQueries/types';
 import { z } from 'zod';
 
 export const createSavedQueryInputSchema = z.object({
+  chart: chartSchema.nullable().optional(),
   connectionId: z.string(),
   database: z.string().nullable(),
   name: z.string(),
@@ -13,6 +15,7 @@ export const listSavedQueriesInputSchema = z.object({
 });
 
 export const updateSavedQueryInputSchema = z.object({
+  chart: chartSchema.nullable().optional(),
   id: z.string(),
   name: z.string().optional(),
   sql: z.string().optional(),

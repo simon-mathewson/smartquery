@@ -15,6 +15,7 @@ import { getNewQuery } from './utils/getNewQuery';
 import { getTableStatement } from './utils/getTableStatement';
 import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
 import { parseQuery } from './utils/parse';
+import type { Chart } from '@/savedQueries/types';
 
 export const useQueries = () => {
   const toast = useDefinedContext(ToastContext);
@@ -289,8 +290,14 @@ export const useQueries = () => {
   );
 
   const updateQuery = useCallback(
-    async (props: { id: string; run?: boolean; sql?: string; savedQueryId?: string | null }) => {
-      const { id, run, sql, savedQueryId } = props;
+    async (props: {
+      id: string;
+      run?: boolean;
+      sql?: string;
+      savedQueryId?: string | null;
+      chart?: Chart | null;
+    }) => {
+      const { id, run, sql, savedQueryId, chart } = props;
 
       assert(activeConnectionContext);
       const { activeConnection } = activeConnectionContext;
@@ -309,6 +316,10 @@ export const useQueries = () => {
 
       if (savedQueryId !== undefined) {
         Object.assign(updatedQuery, { savedQueryId });
+      }
+
+      if (chart !== undefined) {
+        Object.assign(updatedQuery, { chart });
       }
 
       setQueries((currentQueries) =>
