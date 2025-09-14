@@ -80,7 +80,7 @@ const TermsOfUse: React.FC = () => {
             </p>
             <ul>
               <li>
-                <strong>AI Credits:</strong> 10,000
+                <strong>AI Credits:</strong> 100,000
               </li>
               <li>
                 <strong>Queries via SmartQuery Link:</strong> Unlimited

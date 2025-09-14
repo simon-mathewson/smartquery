@@ -12,7 +12,7 @@ export const plans = {
   free: {
     price: null,
     limits: {
-      aiCredits: 10_000,
+      aiCredits: 100_000,
       concurrentConnections: 1,
       totalQueryDurationMilliseconds: 10 * 60 * 1000,
       totalQueryResponseBytes: 100 * 1024 * 1024,
