@@ -16,10 +16,11 @@ import { LinkApiContext } from '../link/api/Context';
 import { SqliteContext } from '../sqlite/Context';
 import { ToastContext } from '../toast/Context';
 import { ConnectCanceledError } from './connectAbortedError';
-import { sqliteDemoConnectionId } from './constants';
+import { demoConnectionId } from './demo/constants';
 import type { SignInModalInput } from './signInModal/types';
 import type { UserPasswordModalInput } from './userPasswordModal/types';
 import { AnalyticsContext } from '../analytics/Context';
+import { getOrCreateDemoConnection } from './demo/getOrCreateDemoConnection';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -419,31 +420,6 @@ export const useConnections = (props: UseConnectionsProps) => {
     [getShouldConnectViaCloud, cloudApi, linkApi, signInModal, userPasswordModal],
   );
 
-  const getDemoConnection = useCallback(async () => {
-    const demoConnection = connections.find((c) => c.id === sqliteDemoConnectionId);
-
-    if (demoConnection) {
-      return demoConnection;
-    }
-
-    const response = await fetch('/demo.sqlite');
-    const buffer = await response.arrayBuffer();
-    await storeSqliteContent(buffer, sqliteDemoConnectionId);
-
-    const newDemoConnection = {
-      database: 'demo',
-      engine: 'sqlite',
-      id: sqliteDemoConnectionId,
-      name: 'Demo',
-      storageLocation: 'local',
-      type: 'file',
-    } satisfies Connection;
-
-    await addConnection(newDemoConnection, { skipToast: true });
-
-    return newDemoConnection;
-  }, [addConnection, connections, storeSqliteContent]);
-
   const connect = useCallback(
     async (
       id: string,
@@ -453,8 +429,8 @@ export const useConnections = (props: UseConnectionsProps) => {
       },
     ) => {
       const connection =
-        id === sqliteDemoConnectionId
-          ? await getDemoConnection()
+        id === demoConnectionId
+          ? await getOrCreateDemoConnection({ addConnection, connections, storeSqliteContent })
           : connections.find((c) => c.id === id);
 
       if (!connection) {
@@ -540,8 +516,9 @@ export const useConnections = (props: UseConnectionsProps) => {
       }
     },
     [
-      getDemoConnection,
+      addConnection,
       connections,
+      storeSqliteContent,
       disconnect,
       toast,
       navigate,

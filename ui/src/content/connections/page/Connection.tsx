@@ -4,7 +4,7 @@ import { NavigationSidebar } from '../../navigationSidebar/NavigationSidebar';
 import { CopilotProvider } from '../../ai/copilot/Provider';
 import { Loading } from '~/shared/components/loading/Loading';
 import { Helmet } from 'react-helmet';
-import { sqliteDemoConnectionId } from '../constants';
+import { demoConnectionId } from '../demo/constants';
 import { NavigationSidebarProvider } from '~/content/navigationSidebar/Provider';
 import { Toolbar } from '~/content/toolbar/Toolbar';
 import { Queries } from '~/content/tabs/queries/Queries';
@@ -29,7 +29,7 @@ export const Connection: React.FC = () => {
           <title>{title}</title>
         </Helmet>
       )}
-      {activeConnection?.id === sqliteDemoConnectionId && (
+      {activeConnection?.id === demoConnectionId && (
         <Helmet>
           <meta name="description" content={demoDescription} />
         </Helmet>

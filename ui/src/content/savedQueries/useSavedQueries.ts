@@ -10,10 +10,13 @@ import { ToastContext } from '../toast/Context';
 import { QueriesContext } from '../tabs/queries/Context';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { v4 as uuid } from 'uuid';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { demoConnectionId } from '../connections/demo/constants';
 
 export const useSavedQueries = () => {
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const activeConnectionContext = useContext(ActiveConnectionContext);
+  const activeConnection = activeConnectionContext?.activeConnection;
   const { track } = useDefinedContext(AnalyticsContext);
   const { updateQuery } = useDefinedContext(QueriesContext);
   const toast = useDefinedContext(ToastContext);
@@ -31,6 +34,21 @@ export const useSavedQueries = () => {
   const [localSavedQueries, setLocalSavedQueries] = useStoredState<SavedQuery[]>(
     getStorageKey(),
     [],
+  );
+
+  useEffectOnce(
+    () => {
+      if (activeConnection?.id === demoConnectionId && localSavedQueries.length === 0) {
+        setLocalSavedQueries([
+          {
+            id: uuid(),
+            name: 'Invoice totals per customer',
+            sql: 'SELECT\n  T1.FirstName,\n  T1.LastName,\n  SUM(T2.Total) AS TotalInvoices\nFROM customers AS T1\nINNER JOIN invoices AS T2\n  ON T1.CustomerId = T2.CustomerId\nGROUP BY\n  T1.CustomerId\nORDER BY\n  T1.FirstName,\n  T1.LastName;',
+          },
+        ]);
+      }
+    },
+    { enabled: Boolean(activeConnection) },
   );
 
   const {

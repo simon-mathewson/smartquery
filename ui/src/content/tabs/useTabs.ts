@@ -30,7 +30,7 @@ export const useTabs = () => {
         const existingTab = tabs.find((t) =>
           t.queries.every((c, columnIndex) =>
             c.every((q, rowIndex) => {
-              if (q.savedQueryId) {
+              if (queries[columnIndex][rowIndex].savedQueryId) {
                 return q.savedQueryId === queries[columnIndex][rowIndex].savedQueryId;
               }
 

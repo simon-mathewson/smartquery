@@ -28,7 +28,7 @@ import { v4 as uuid } from 'uuid';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
 import { LinkSetup as LinkSetup } from '~/content/link/setup/Setup';
-import { sqliteDemoConnectionId } from '~/content/connections/constants';
+import { demoConnectionId } from '~/content/connections/demo/constants';
 import { AuthContext } from '~/content/auth/Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { useLocation } from 'wouter';
@@ -316,7 +316,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             hint="Database will be read from and written to the file system."
             label="Database file"
           >
-            {formValues.id === sqliteDemoConnectionId ? (
+            {formValues.id === demoConnectionId ? (
               <div className="flex w-full items-center gap-2">
                 <FileIcon className="!text-[20px] text-textTertiary" />
                 <div className="flex-1 text-ellipsis text-sm font-medium text-textSecondary">
