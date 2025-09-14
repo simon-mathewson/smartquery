@@ -4,7 +4,7 @@ import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { ActiveConnectionContext } from '../connections/activeConnection/Context';
 import { useCallback, useContext, useMemo } from 'react';
 import { assert } from 'ts-essentials';
-import type { SavedQuery } from '@/savedQueries/types';
+import type { Chart, SavedQuery } from '@/savedQueries/types';
 import { AnalyticsContext } from '../analytics/Context';
 import { ToastContext } from '../toast/Context';
 import { QueriesContext } from '../tabs/queries/Context';
@@ -115,17 +115,22 @@ export const useSavedQueries = () => {
   );
 
   const createSavedQuery = useCallback(
-    async (data: { name: string; sql: string }, queryId: string, onSuccess?: () => void) => {
+    async (
+      data: { name: string; sql: string; chart?: Chart },
+      queryId: string,
+      onSuccess?: () => void,
+    ) => {
       assert(activeConnectionContext);
       const { activeConnection } = activeConnectionContext;
 
-      const { name, sql } = data;
+      const { name, sql, chart } = data;
 
       track('saved_query_create');
 
       try {
         if (activeConnection.storageLocation === 'cloud') {
           const id = await cloudApi.savedQueries.create.mutate({
+            chart,
             connectionId: activeConnection.id,
             database: activeConnection.engine === 'postgres' ? activeConnection.database : null,
             name,
@@ -136,7 +141,7 @@ export const useSavedQueries = () => {
           await updateQuery({ id: queryId, savedQueryId: id });
         } else {
           const id = uuid();
-          setLocalSavedQueries([...localSavedQueries, { id, name, sql }]);
+          setLocalSavedQueries([...localSavedQueries, { id, name, sql, chart }]);
 
           await updateQuery({ id: queryId, savedQueryId: id });
         }
@@ -171,7 +176,7 @@ export const useSavedQueries = () => {
   const updateSavedQuery = useCallback(
     async (
       id: string,
-      data: { name?: string; sql?: string },
+      data: { name?: string; sql?: string; chart?: Chart | null },
       queryId: string,
       onSuccess?: () => void,
     ) => {
@@ -180,19 +185,21 @@ export const useSavedQueries = () => {
 
       track('saved_query_update');
 
-      const { name, sql } = data;
+      const { name, sql, chart } = data;
 
       try {
         if (activeConnection.storageLocation === 'cloud') {
-          await cloudApi.savedQueries.update.mutate({ id, name, sql });
+          await cloudApi.savedQueries.update.mutate({ id, name, sql, chart });
         } else {
           setLocalSavedQueries((currentSavedQueries) =>
-            currentSavedQueries.map((sq) => (sq.id === id ? Object.assign(sq, { name, sql }) : sq)),
+            currentSavedQueries.map((sq) =>
+              sq.id === id ? Object.assign(sq, { name, sql, chart }) : sq,
+            ),
           );
         }
 
-        if (sql !== undefined) {
-          await updateQuery({ id: queryId, savedQueryId: id, sql });
+        if (sql !== undefined || chart !== undefined) {
+          await updateQuery({ id: queryId, savedQueryId: id, sql, chart });
         }
 
         await refetchSavedQueries();

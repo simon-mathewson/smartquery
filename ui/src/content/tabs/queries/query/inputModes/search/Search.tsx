@@ -18,7 +18,7 @@ export const Search: React.FC = () => {
 
   return (
     <form
-      className="flex items-center gap-2 px-2 pb-2"
+      className="flex items-center gap-2 px-1 pb-2"
       onSubmit={(event) => {
         event.preventDefault();
 

@@ -82,7 +82,7 @@ export const Sql: React.FC = () => {
   );
 
   return (
-    <div className="px-2 pb-2">
+    <div className="px-1 pb-1">
       <SqlEditor
         bottomToolbarActions={({ htmlProps, value }) =>
           query.savedQueryId &&

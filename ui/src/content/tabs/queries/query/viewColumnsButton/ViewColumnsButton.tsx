@@ -27,5 +27,13 @@ export const ViewColumnsButton: React.FC = () => {
 
   if (!query.select) return null;
 
-  return <Button htmlProps={{ onClick }} icon={<ViewWeekOutlined />} tooltip="View columns" />;
+  return (
+    <Button
+      color="secondary"
+      htmlProps={{ onClick }}
+      icon={<ViewWeekOutlined />}
+      label="Columns"
+      size="small"
+    />
+  );
 };

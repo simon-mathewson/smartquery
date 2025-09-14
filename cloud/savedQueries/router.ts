@@ -17,11 +17,12 @@ export const savedQueriesRouter = trpc.router({
     .mutation(async (props) => {
       const {
         ctx: { user },
-        input: { connectionId, database, name, sql },
+        input: { chart, connectionId, database, name, sql },
       } = props;
 
       const { id } = await prisma.savedQuery.create({
         data: {
+          chart: chart ? { create: chart } : undefined,
           connectionId,
           database,
           userId: user.id,
@@ -62,6 +63,7 @@ export const savedQueriesRouter = trpc.router({
           id: true,
           name: true,
           sql: true,
+          chart: { select: { type: true, x: true, y: true } },
         },
         orderBy: {
           name: 'asc',
@@ -74,12 +76,27 @@ export const savedQueriesRouter = trpc.router({
     .mutation(async (props) => {
       const {
         ctx: { user },
-        input: { id, name, sql },
+        input: { chart, id, name, sql },
       } = props;
+
+      const getChartInput = () => {
+        if (chart === null) {
+          return {
+            delete: true,
+          };
+        }
+        if (chart === undefined) {
+          return undefined;
+        }
+        return {
+          update: chart,
+        };
+      };
 
       await prisma.savedQuery.update({
         where: { id, userId: user.id },
         data: {
+          chart: getChartInput(),
           name,
           sql,
         },
