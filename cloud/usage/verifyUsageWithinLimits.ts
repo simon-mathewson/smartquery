@@ -4,11 +4,12 @@ import { getUsage } from './getUsage';
 import { TRPCError } from '@trpc/server';
 import type { CurrentUser } from '~/context';
 
-const usageTypeToLimit: Record<UsageType, number> = {
-  aiCredits: plans.plus.limits.aiCredits,
-  queryDurationMilliseconds: plans.plus.limits.totalQueryDurationMilliseconds,
-  queryResponseBytes: plans.plus.limits.totalQueryResponseBytes,
-};
+const getLimit = (type: UsageType, plan: keyof typeof plans) =>
+  ({
+    aiCredits: plans[plan].limits.aiCredits,
+    queryDurationMilliseconds: plans[plan].limits.totalQueryDurationMilliseconds,
+    queryResponseBytes: plans[plan].limits.totalQueryResponseBytes,
+  }[type]);
 
 export const verifyUsageWithinLimits = async (props: {
   prisma: PrismaClient;
@@ -21,7 +22,7 @@ export const verifyUsageWithinLimits = async (props: {
 
   types.forEach((type) => {
     const totalUsage = subscriptionAndUsage.usage[type];
-    const limit = usageTypeToLimit[type];
+    const limit = getLimit(type, user.activeSubscription?.type ?? 'free');
 
     if (totalUsage > limit) {
       throw new TRPCError({
