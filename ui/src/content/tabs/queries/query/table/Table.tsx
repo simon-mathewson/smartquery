@@ -157,7 +157,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   return (
     <>
-      <div className="relative flex grow flex-col items-start overflow-hidden">
+      <div className="relative flex min-h-[100px] grow flex-col items-start overflow-hidden">
         <div
           className={classNames('relative w-full overflow-auto', {
             'pointer-events-none overflow-hidden': isEditing,
