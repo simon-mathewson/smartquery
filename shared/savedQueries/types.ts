@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const chartSchema = z.object({
-  type: z.enum(['line']),
+  type: z.enum(['bar', 'line', 'pie']),
   x: z.string(),
   y: z.string(),
 });

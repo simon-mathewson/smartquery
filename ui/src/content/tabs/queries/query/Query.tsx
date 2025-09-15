@@ -3,8 +3,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import classNames from 'classnames';
 import React, { useContext } from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { Chart } from '~/content/charts/chart/Chart';
 import { ChartEditOverlay } from '~/content/charts/editOverlay/EditOverlay';
-import { LineChart } from '~/content/charts/lineChart/LineChart';
 import { SavedQueryEditOverlay } from '~/content/savedQueries/editOverlay/EditOverlay';
 import { Header } from '~/shared/components/header/Header';
 import { Loading } from '~/shared/components/loading/Loading';
@@ -114,7 +114,7 @@ export const Query: React.FC = () => {
             <ChartEditOverlay />
             <ViewColumnsButton />
           </div>
-          <LineChart />
+          <Chart />
           <Table handleRowCreationRef={handleRowCreationRef} />
           <div className="p-2">
             <BottomToolbar handleRowCreationRef={handleRowCreationRef} />
