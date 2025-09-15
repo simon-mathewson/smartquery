@@ -1,7 +1,6 @@
 import type { Chart } from '@/savedQueries/types';
 import { BarChartOutlined, DeleteOutline, Done } from '@mui/icons-material';
 import { useCallback, useContext, useRef, useState } from 'react';
-import { assert } from 'ts-essentials';
 import { SavedQueriesContext } from '~/content/savedQueries/Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
 import { QueryContext, ResultContext } from '~/content/tabs/queries/query/Context';
@@ -13,6 +12,7 @@ import { Header } from '~/shared/components/header/Header';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { Select } from '~/shared/components/select/Select';
+import type { DataType } from '~/shared/dataTypes/types';
 import { isDateOrTimeType, isNumberType } from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 
@@ -41,9 +41,7 @@ export const ChartEditOverlay: React.FC = () => {
     async (event: React.FormEvent<HTMLFormElement>, close: () => void) => {
       event.preventDefault();
 
-      assert(x);
-      assert(y);
-      const chart = { type, x, y };
+      const chart = { type, x, y } as Chart;
 
       setIsSaving(true);
 
@@ -101,13 +99,22 @@ export const ChartEditOverlay: React.FC = () => {
     [query.id, query.savedQueryId, toast, updateQuery, updateSavedQuery],
   );
 
-  const columnOptions =
-    result?.columns
-      ?.filter((column) => isNumberType(column.dataType) || isDateOrTimeType(column.dataType))
-      .map((column) => ({
-        label: column.name,
-        value: column.name,
-      })) ?? [];
+  const getIsAllowed = (axis: 'x' | 'y', dataType: DataType) => {
+    if (axis === 'x' && type === 'line') {
+      return isNumberType(dataType) || isDateOrTimeType(dataType);
+    }
+    if (axis === 'y') {
+      return isNumberType(dataType);
+    }
+    return true;
+  };
+
+  const getColumnOptions = (axis: 'x' | 'y') =>
+    result?.columns?.map((column) => ({
+      disabled: !getIsAllowed(axis, column.dataType),
+      label: column.name,
+      value: column.name,
+    })) ?? [];
 
   return (
     <>
@@ -145,26 +152,34 @@ export const ChartEditOverlay: React.FC = () => {
                   onChange={setType}
                   options={[
                     {
+                      label: 'Bar',
+                      value: 'bar',
+                    },
+                    {
                       label: 'Line',
                       value: 'line',
+                    },
+                    {
+                      label: 'Pie',
+                      value: 'pie',
                     },
                   ]}
                 />
               </Field>
-              <Field label="X axis">
+              <Field label={type === 'pie' ? 'Label' : 'X axis'}>
                 <Select
                   value={x}
                   htmlProps={{ disabled: isSaving }}
                   onChange={setX}
-                  options={columnOptions}
+                  options={getColumnOptions('x')}
                 />
               </Field>
-              <Field label="Y axis">
+              <Field label={type === 'pie' ? 'Value' : 'Y axis'}>
                 <Select
                   value={y}
                   htmlProps={{ disabled: isSaving }}
                   onChange={setY}
-                  options={columnOptions}
+                  options={getColumnOptions('y')}
                 />
               </Field>
               <Button
@@ -173,7 +188,7 @@ export const ChartEditOverlay: React.FC = () => {
                   className: 'w-full',
                   disabled:
                     isSaving ||
-                    Boolean(chart && chart.x === x && chart.y === y && chart.type === type) ||
+                    Boolean(chart && chart.type === type && chart.x === x && chart.y === y) ||
                     !x ||
                     !y,
                   type: 'submit',

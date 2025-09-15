@@ -12,7 +12,7 @@ export type SelectProps<T extends string> = {
   monospace?: boolean;
   placeholder?: string;
   onChange: (value: T) => void;
-  options: Array<{ label: string; value: T }>;
+  options: Array<{ disabled?: boolean; label: string; value: T }>;
   value: T | null;
 };
 
@@ -75,7 +75,7 @@ export function Select<T extends string>(props: SelectProps<T>) {
               className: '!gap-0',
               id: listboxId,
             }}
-            items={options.map(({ label, value }) => ({
+            items={options.map(({ disabled, label, value }) => ({
               htmlProps: {
                 className: classNames(
                   'first:rounded-t-xl last:rounded-b-xl rounded-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-1.5 text-sm font-medium text-textSecondary',
@@ -86,6 +86,7 @@ export function Select<T extends string>(props: SelectProps<T>) {
                   },
                 ),
               },
+              disabled,
               label,
               selectedVariant: 'primary',
               value,

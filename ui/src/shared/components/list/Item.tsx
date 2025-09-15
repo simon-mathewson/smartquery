@@ -12,6 +12,7 @@ export type ListItemProps<T> = {
     tooltip?: string;
   }>;
   autoFocus?: boolean;
+  disabled?: boolean;
   hint?: string;
   htmlProps?: React.HTMLProps<HTMLDivElement> | React.HTMLProps<HTMLAnchorElement>;
   icon?: React.ReactNode;
@@ -27,6 +28,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
   const {
     actions,
     autoFocus,
+    disabled,
     hint,
     htmlProps,
     icon,
@@ -43,6 +45,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
     <Element
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       {...(htmlProps as any)}
+      aria-disabled={disabled}
       aria-selected={selected}
       className={classNames(
         'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-1.5',
@@ -53,13 +56,14 @@ export function ListItem<T>(props: ListItemProps<T>) {
           'hover:bg-secondaryHighlight focus:bg-secondaryHighlight': !selected,
           [autoFocusClass]: autoFocus,
           '!grid-cols-[max-content_1fr_max-content] [&_svg]:text-textTertiary': icon,
+          'pointer-events-none opacity-50': disabled,
         },
         htmlProps?.className,
       )}
       onClick={onSelect}
       onMouseDown={onMouseDown}
       role="option"
-      tabIndex={0}
+      tabIndex={disabled ? -1 : 0}
     >
       {icon && <div className="pr-2">{icon}</div>}
       <div className="flex flex-col justify-center overflow-hidden">

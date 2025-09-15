@@ -140,7 +140,9 @@ model User {
 }
 
 enum ChartType {
+  bar
   line
+  pie
 }
 
 enum Engine {
