@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const chartSchema = z.object({
   type: z.enum(['bar', 'line', 'pie']),
   x: z.string(),
-  y: z.string(),
+  y: z.string().nullable(),
 });
 
 export type Chart = z.infer<typeof chartSchema>;

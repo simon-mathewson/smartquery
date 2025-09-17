@@ -3,11 +3,12 @@ import { useMemo } from 'react';
 import type { Value } from '~/shared/types';
 
 export type PieChartProps = {
+  colors: string[];
   data: { x: Date | Value; y: number }[];
 };
 
 export const PieChart = (props: PieChartProps) => {
-  const { data: dataProp } = props;
+  const { colors, data: dataProp } = props;
 
   const chartData = useMemo(
     () =>
@@ -24,6 +25,7 @@ export const PieChart = (props: PieChartProps) => {
   return (
     <div className="[&_.MuiChartsLegend-root]:!h-[200px]">
       <MuiPieChart
+        colors={colors}
         height={200}
         series={[
           {

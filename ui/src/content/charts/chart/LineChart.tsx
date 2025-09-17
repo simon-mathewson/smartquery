@@ -1,20 +1,25 @@
 import type { Chart } from '@/savedQueries/types';
 import { LineChart as MuiLineChart } from '@mui/x-charts';
+import { assert } from 'ts-essentials';
 import { isDateTimeType } from '~/shared/dataTypes/utils';
 import type { Column } from '~/shared/types';
 
 export type LineChartProps = {
   chart: Chart;
+  colors: string[];
   data: { x: Date | string; y: number }[];
   valueFormatter: ((value: Date) => string) | undefined;
   xColumn: Column;
 };
 
 export const LineChart = (props: LineChartProps) => {
-  const { chart, data, valueFormatter, xColumn } = props;
+  const { chart, colors, data, valueFormatter, xColumn } = props;
+
+  assert(chart.y, 'Y axis is required');
 
   return (
     <MuiLineChart
+      colors={colors}
       height={200}
       series={[
         {

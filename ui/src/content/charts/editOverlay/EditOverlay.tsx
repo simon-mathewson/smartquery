@@ -174,12 +174,18 @@ export const ChartEditOverlay: React.FC = () => {
                   options={getColumnOptions('x')}
                 />
               </Field>
-              <Field label={type === 'pie' ? 'Value' : 'Y axis'}>
+              <Field
+                hint="Values with the same label will be summed up"
+                label={type === 'pie' ? 'Value' : 'Y axis'}
+              >
                 <Select
                   value={y}
                   htmlProps={{ disabled: isSaving }}
                   onChange={setY}
-                  options={getColumnOptions('y')}
+                  options={[
+                    ...(type === 'pie' ? [{ label: 'None', value: null }] : []),
+                    ...getColumnOptions('y'),
+                  ]}
                 />
               </Field>
               <Button
@@ -190,7 +196,7 @@ export const ChartEditOverlay: React.FC = () => {
                     isSaving ||
                     Boolean(chart && chart.type === type && chart.x === x && chart.y === y) ||
                     !x ||
-                    !y,
+                    (type !== 'pie' && !y),
                   type: 'submit',
                 }}
                 label={chart ? 'Update' : 'Create'}

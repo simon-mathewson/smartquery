@@ -12,6 +12,7 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { v4 as uuid } from 'uuid';
 import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { demoConnectionId } from '../connections/demo/constants';
+import { demoSavedQueries } from '../connections/demo/savedQueries';
 
 export const useSavedQueries = () => {
   const { cloudApi } = useDefinedContext(CloudApiContext);
@@ -39,13 +40,7 @@ export const useSavedQueries = () => {
   useEffectOnce(
     () => {
       if (activeConnection?.id === demoConnectionId && localSavedQueries.length === 0) {
-        setLocalSavedQueries([
-          {
-            id: uuid(),
-            name: 'Invoice totals per customer',
-            sql: 'SELECT\n  T1.FirstName,\n  T1.LastName,\n  SUM(T2.Total) AS TotalInvoices\nFROM customers AS T1\nINNER JOIN invoices AS T2\n  ON T1.CustomerId = T2.CustomerId\nGROUP BY\n  T1.CustomerId\nORDER BY\n  T1.FirstName,\n  T1.LastName;',
-          },
-        ]);
+        setLocalSavedQueries(demoSavedQueries);
       }
     },
     { enabled: Boolean(activeConnection) },

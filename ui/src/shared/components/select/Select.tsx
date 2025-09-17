@@ -7,7 +7,7 @@ import { FieldContext } from '../field/FieldContext';
 import { List } from '../list/List';
 import { useOverlay } from '../overlay/useOverlay';
 
-export type SelectProps<T extends string> = {
+export type SelectProps<T extends string | null> = {
   htmlProps?: React.HTMLProps<HTMLButtonElement>;
   monospace?: boolean;
   placeholder?: string;
@@ -16,7 +16,7 @@ export type SelectProps<T extends string> = {
   value: T | null;
 };
 
-export function Select<T extends string>(props: SelectProps<T>) {
+export function Select<T extends string | null>(props: SelectProps<T>) {
   const { htmlProps, monospace, onChange, options, placeholder, value: selectedValue } = props;
 
   const fieldContext = useContext(FieldContext);

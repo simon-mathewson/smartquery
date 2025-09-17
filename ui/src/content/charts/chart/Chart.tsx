@@ -6,8 +6,12 @@ import { PieChart } from './PieChart';
 import { useContext, useMemo } from 'react';
 import { assert } from 'ts-essentials';
 import { isDateTimeType } from '~/shared/dataTypes/utils';
+import { ThemeContext } from '~/content/theme/Context';
+import tailwindColors from 'tailwindcss/colors';
+import { primaryColors } from '~/content/theme/primaryColors';
 
 export const Chart = () => {
+  const { mode } = useDefinedContext(ThemeContext);
   const {
     query: { chart },
   } = useDefinedContext(QueryContext);
@@ -24,11 +28,11 @@ export const Chart = () => {
       assert(xColumn);
 
       const x = row[chart.x];
-      const y = row[chart.y];
+      const y = chart.y ? row[chart.y] : null;
 
       return {
         x: isDateTimeType(xColumn.dataType) && x !== null ? new Date(x) : x,
-        y: Number(y),
+        y: y !== null ? Number(y) : null,
       };
     });
   }, [result, chart, xColumn]);
@@ -42,15 +46,16 @@ export const Chart = () => {
 
     chartData.forEach((data) => {
       const existing = grouped.find((group) => String(group.x) === String(data.x));
+      const valueToAdd = chart?.y && data.y !== null ? data.y : 1;
       if (existing) {
-        existing.y += data.y;
+        existing.y += valueToAdd;
       } else {
-        grouped.push({ x: data.x, y: data.y });
+        grouped.push({ x: data.x, y: valueToAdd });
       }
     });
 
     return grouped;
-  }, [chartData]);
+  }, [chart?.y, chartData]);
 
   if (!chart || !chartDataGrouped || !xColumn) {
     return null;
@@ -60,11 +65,14 @@ export const Chart = () => {
     ? (value: Date) => value.toLocaleDateString()
     : undefined;
 
+  const colors = primaryColors.map((name) => tailwindColors[name][mode === 'dark' ? 500 : 600]);
+
   switch (chart.type) {
     case 'line':
       return (
         <LineChart
           chart={chart}
+          colors={colors}
           data={
             chartDataGrouped.filter((data) => data.x !== null) as { x: string | Date; y: number }[]
           }
@@ -73,8 +81,15 @@ export const Chart = () => {
         />
       );
     case 'bar':
-      return <BarChart chart={chart} data={chartDataGrouped} valueFormatter={valueFormatter} />;
+      return (
+        <BarChart
+          chart={chart}
+          colors={colors}
+          data={chartDataGrouped}
+          valueFormatter={valueFormatter}
+        />
+      );
     case 'pie':
-      return <PieChart data={chartDataGrouped} />;
+      return <PieChart colors={colors} data={chartDataGrouped} />;
   }
 };

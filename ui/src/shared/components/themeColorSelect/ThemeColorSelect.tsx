@@ -19,7 +19,7 @@ export const ThemeColorSelect: React.FC<ThemeColorSelectProps> = ({ value, onCha
   return (
     <div
       aria-required="true"
-      className="flex w-full justify-between px-1 py-2"
+      className="grid w-full grid-cols-[repeat(auto-fit,1.5rem)] gap-2 px-1 py-2"
       role="radiogroup"
       {...fieldContext?.controlHtmlProps}
     >
