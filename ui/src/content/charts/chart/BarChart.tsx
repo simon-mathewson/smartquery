@@ -1,18 +1,23 @@
 import type { Chart } from '@/savedQueries/types';
 import { BarChart as MuiBarChart } from '@mui/x-charts';
+import { assert } from 'ts-essentials';
 import type { Value } from '~/shared/types';
 
 export type BarChartProps = {
   chart: Chart;
+  colors: string[];
   data: { x: Date | Value; y: number }[];
   valueFormatter: ((value: Date) => string) | undefined;
 };
 
 export const BarChart = (props: BarChartProps) => {
-  const { chart, data, valueFormatter } = props;
+  const { chart, colors, data, valueFormatter } = props;
+
+  assert(chart.y, 'Y axis is required');
 
   return (
     <MuiBarChart
+      colors={colors}
       height={200}
       series={[{ dataKey: 'y' }]}
       dataset={data}
