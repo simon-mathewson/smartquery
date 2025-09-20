@@ -1,6 +1,7 @@
 import type { Engine } from '@/connections/types';
 import type { Select } from '../../types';
 import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
+import type { TableExpr } from 'node-sql-parser';
 
 export const getSql = (props: { engine: Engine; select: Select; table: string }) => {
   const { engine, select, table } = props;
@@ -20,7 +21,14 @@ export const getSql = (props: { engine: Engine; select: Select; table: string })
           {
             expr: {
               type: 'function',
-              name: 'pragma_table_info',
+              name: {
+                name: [
+                  {
+                    type: 'default',
+                    value: 'pragma_table_info',
+                  },
+                ],
+              },
               args: {
                 type: 'expr_list',
                 value: [
@@ -32,14 +40,17 @@ export const getSql = (props: { engine: Engine; select: Select; table: string })
               },
             },
             as: null,
-          },
+          } as unknown as TableExpr,
         ],
         orderby: [{ expr: { type: 'column_ref', column: 'cid' }, type: 'ASC' }],
         with: null,
         options: null,
         distinct: null,
         where: null,
-        groupby: null,
+        groupby: {
+          columns: null,
+          modifiers: [],
+        },
         having: null,
         limit: null,
       },
@@ -83,7 +94,10 @@ export const getSql = (props: { engine: Engine; select: Select; table: string })
             right: { type: 'single_quote_string', value: select.database },
           },
         },
-        groupby: null,
+        groupby: {
+          columns: null,
+          modifiers: [],
+        },
         having: null,
         orderby: [
           { expr: { type: 'column_ref', table: null, column: 'ordinal_position' }, type: 'ASC' },
@@ -136,7 +150,10 @@ export const getSql = (props: { engine: Engine; select: Select; table: string })
           right: { type: 'single_quote_string', value: select.database },
         },
       },
-      groupby: null,
+      groupby: {
+        columns: null,
+        modifiers: [],
+      },
       having: null,
       orderby: [
         { expr: { type: 'column_ref', table: null, column: 'ordinal_position' }, type: 'ASC' },

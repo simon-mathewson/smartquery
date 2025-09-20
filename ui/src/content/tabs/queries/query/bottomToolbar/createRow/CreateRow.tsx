@@ -15,19 +15,19 @@ export const Add: React.FC<AddProps> = (props) => {
 
   const { handleCreateChange } = useDefinedContext(EditContext);
 
-  const { columns, table } = useDefinedContext(ResultContext);
+  const { columns, tables } = useDefinedContext(ResultContext);
 
   if (!columns) return null;
 
   const handleClick = () => {
     const createChange = {
       location: {
-        table: table!,
+        table: tables[0].originalName,
         type: 'create',
       },
       type: 'create',
       row: columns.reduce<CreateRow>((row, column) => {
-        row[column.name] = undefined;
+        row[column.originalName] = undefined;
         return row;
       }, {}),
     } satisfies CreateChangeInput;

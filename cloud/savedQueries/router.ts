@@ -63,7 +63,9 @@ export const savedQueriesRouter = trpc.router({
           id: true,
           name: true,
           sql: true,
-          chart: { select: { type: true, x: true, y: true } },
+          chart: {
+            select: { type: true, xColumn: true, yColumn: true, xTable: true, yTable: true },
+          },
         },
         orderBy: {
           name: 'asc',

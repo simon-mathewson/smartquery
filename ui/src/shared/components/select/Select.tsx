@@ -7,23 +7,32 @@ import { FieldContext } from '../field/FieldContext';
 import { List } from '../list/List';
 import { useOverlay } from '../overlay/useOverlay';
 
-export type SelectProps<T extends string | null> = {
+export type SelectProps<T> = {
+  compareFn?: (a: T, b: T) => boolean;
   htmlProps?: React.HTMLProps<HTMLButtonElement>;
   monospace?: boolean;
-  placeholder?: string;
   onChange: (value: T) => void;
   options: Array<{ disabled?: boolean; label: string; value: T }>;
-  value: T | null;
+  placeholder?: string;
+  value: T;
 };
 
-export function Select<T extends string | null>(props: SelectProps<T>) {
-  const { htmlProps, monospace, onChange, options, placeholder, value: selectedValue } = props;
+export function Select<T = string | null>(props: SelectProps<T>) {
+  const {
+    compareFn = (a, b) => a === b,
+    htmlProps,
+    monospace,
+    onChange,
+    options,
+    placeholder,
+    value: selectedValue,
+  } = props;
 
   const fieldContext = useContext(FieldContext);
 
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
-  const selectedOption = options.find(({ value }) => value === selectedValue);
+  const selectedOption = options.find(({ value }) => compareFn(value, selectedValue));
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -71,6 +80,7 @@ export function Select<T extends string | null>(props: SelectProps<T>) {
       <OverlayCard htmlProps={{ className: '!p-0' }} overlay={overlay}>
         {({ close }) => (
           <List
+            compareFn={compareFn}
             htmlProps={{
               className: '!gap-0',
               id: listboxId,
@@ -80,8 +90,8 @@ export function Select<T extends string | null>(props: SelectProps<T>) {
                 className: classNames(
                   'first:rounded-t-xl last:rounded-b-xl rounded-none cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-1.5 text-sm font-medium text-textSecondary',
                   {
-                    'bg-primary text-white': value === selectedValue,
-                    'hover:bg-secondaryHighlight': value !== selectedValue,
+                    'bg-primary text-white': compareFn(value, selectedValue),
+                    'hover:bg-secondaryHighlight': !compareFn(value, selectedValue),
                     'font-mono': monospace,
                   },
                 ),

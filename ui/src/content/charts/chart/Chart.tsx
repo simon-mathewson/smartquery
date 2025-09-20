@@ -17,7 +17,11 @@ export const Chart = () => {
   } = useDefinedContext(QueryContext);
   const result = useContext(ResultContext);
 
-  const xColumn = chart ? result?.columns?.find((column) => column.name === chart.x) : null;
+  const xColumn = chart
+    ? result?.columns?.find(
+        (column) => column.name === chart.xColumn && column.table === chart.xTable,
+      )
+    : null;
 
   const chartData = useMemo(() => {
     if (!result || !chart) {
@@ -27,8 +31,8 @@ export const Chart = () => {
     return result.rows.map((row) => {
       assert(xColumn);
 
-      const x = row[chart.x];
-      const y = chart.y ? row[chart.y] : null;
+      const x = row[chart.xColumn];
+      const y = chart.yColumn ? row[chart.yColumn] : null;
 
       return {
         x: isDateTimeType(xColumn.dataType) && x !== null ? new Date(x) : x,
@@ -46,7 +50,7 @@ export const Chart = () => {
 
     chartData.forEach((data) => {
       const existing = grouped.find((group) => String(group.x) === String(data.x));
-      const valueToAdd = chart?.y && data.y !== null ? data.y : 1;
+      const valueToAdd = chart?.yColumn && data.y !== null ? data.y : 1;
       if (existing) {
         existing.y += valueToAdd;
       } else {
@@ -55,7 +59,7 @@ export const Chart = () => {
     });
 
     return grouped;
-  }, [chart?.y, chartData]);
+  }, [chart?.yColumn, chartData]);
 
   if (!chart || !chartDataGrouped || !xColumn) {
     return null;

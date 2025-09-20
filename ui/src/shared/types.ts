@@ -42,6 +42,8 @@ export type Column = {
   isVisible: boolean;
   isUnique?: boolean;
   name: string;
+  originalName: string;
+  table?: { name: string; originalName: string } | null;
 };
 
 export type Query = {
@@ -61,8 +63,11 @@ export type QueryResult = {
   columns: Column[] | null;
   rows: Row[];
   schema?: string;
-  table?: string;
-  tableType: TableType | null;
+  tables: {
+    name: string;
+    originalName: string;
+    type: TableType | null;
+  }[];
   totalRows?: number;
 };
 

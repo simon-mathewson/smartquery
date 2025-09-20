@@ -19,15 +19,16 @@ import { ActiveConnectionContext } from '~/content/connections/activeConnection/
 
 export type TableProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
+  isEditable: boolean;
 };
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { handleRowCreationRef } = props;
+  const { handleRowCreationRef, isEditable } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
   const { query } = useDefinedContext(QueryContext);
-  const { columns, rows, table, tableType } = useDefinedContext(ResultContext);
+  const { columns, rows, tables } = useDefinedContext(ResultContext);
   const { createChanges, getChangeAtLocation } = useDefinedContext(EditContext);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -35,15 +36,7 @@ export const Table: React.FC<TableProps> = (props) => {
   const { handleCellClick, selection, selectionActionsRef, setSelection, tableRef } =
     useSelection();
 
-  const rowsToCreate = useMemo(
-    () =>
-      createChanges.filter((change) => change.location.table === table).map((change) => change.row),
-    [createChanges, table],
-  );
-
   const tableContentRef = useRef<HTMLDivElement | null>(null);
-
-  useCopyPaste(selection, rowsToCreate, tableRef);
 
   const sorting = useSorting();
 
@@ -52,7 +45,7 @@ export const Table: React.FC<TableProps> = (props) => {
       const latestCreateChange = createChanges.reduce<CreateChange | null>(
         (latestChange, change) => {
           if (
-            change.location.table === table &&
+            tables.some(({ originalName }) => change.location.table === originalName) &&
             (!latestChange || change.location.index > latestChange.location.index)
           ) {
             return change;
@@ -86,14 +79,23 @@ export const Table: React.FC<TableProps> = (props) => {
         track('query_create_row');
       }, 200);
     };
-  }, [createChanges, handleRowCreationRef, query.id, rows.length, setSelection, table, track]);
+  }, [createChanges, handleRowCreationRef, query.id, rows.length, setSelection, tables, track]);
 
   const visibleColumns = columns
     ? columns.filter(({ isVisible }) => isVisible)
     : Object.keys(rows[0] ?? {});
-  const isEditable = columns
-    ? Boolean(getUniqueValues(columns, rows, 0)?.length) || rowsToCreate.length > 0
-    : false;
+
+  const rowsToCreate = useMemo(
+    () =>
+      isEditable
+        ? createChanges
+            .filter((change) => tables[0].originalName === change.location.table)
+            .map((change) => change.row)
+        : [],
+    [createChanges, isEditable, tables],
+  );
+
+  useCopyPaste(selection, rowsToCreate, tableRef);
 
   const isTableEmpty = rows.length === 0 && rowsToCreate.length === 0;
 
@@ -109,7 +111,9 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const resizedColumnWidthsStorageKey = `Table.resizedColumnWidths.${activeConnection.id}.${
     activeConnection.database
-  }${'schema' in activeConnection ? `.${activeConnection.schema}` : ''}.${table}`;
+  }${'schema' in activeConnection ? `.${activeConnection.schema}` : ''}.${tables
+    .map(({ name }) => name)
+    .join('-')}`;
 
   const [resizedColumnWidths, setResizedColumnWidths] = useStoredState<Record<string, number>>(
     resizedColumnWidthsStorageKey,
@@ -208,16 +212,18 @@ export const Table: React.FC<TableProps> = (props) => {
 
               return visibleColumns.map((column, columnIndex) => {
                 const columnName = typeof column === 'object' ? column.name : column;
+                const table = typeof column === 'object' ? column.table ?? null : null;
                 const value = row[columnName];
-                const change = isEditable
-                  ? (getChangeAtLocation({
-                      column: columnName,
-                      originalValue: value,
-                      uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
-                      table: table!,
-                      type: 'update',
-                    }) as DeleteChange | UpdateChange | undefined)
-                  : null;
+                const change =
+                  isEditable && typeof column === 'object' && table
+                    ? (getChangeAtLocation({
+                        column: column.originalName,
+                        originalValue: value,
+                        uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
+                        table: table.originalName,
+                        type: 'update',
+                      }) as DeleteChange | UpdateChange | undefined)
+                    : null;
 
                 const changedValue = change?.type === 'update' ? change.value : undefined;
                 const isDeleted = change?.type === 'delete';
@@ -251,7 +257,7 @@ export const Table: React.FC<TableProps> = (props) => {
               }
 
               return visibleColumns.map((column, columnIndex) => {
-                const columnName = typeof column === 'object' ? column.name : column;
+                const columnName = typeof column === 'object' ? column.originalName : column;
                 const value = row[columnName];
 
                 return (
@@ -273,7 +279,7 @@ export const Table: React.FC<TableProps> = (props) => {
               });
             })}
           </div>
-          {isEditable && tableType === 'BASE TABLE' && (
+          {isEditable && (
             <SelectionActions
               columnCount={visibleColumns!.length}
               isEditing={isEditing}

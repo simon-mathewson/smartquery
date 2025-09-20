@@ -37,6 +37,7 @@ export const Filters: React.FC = () => {
           column: null,
           logicalOperator,
           operator: '=',
+          table: null,
           value: '',
         },
       ]);

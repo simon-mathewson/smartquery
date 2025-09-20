@@ -23,21 +23,28 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
   const { columns } = useDefinedContext(ResultContext);
   assert(columns);
 
-  const column = filter.column ? columns.find((col) => col.name === filter.column) : null;
+  const column = filter.column
+    ? columns.find(
+        (col) => col.name === filter.column && (!col.table || col.table.name === filter.table),
+      )
+    : null;
 
   return (
     <div className="flex gap-2 pl-2">
       <div className="w-12 shrink-0 pl-1 pt-2 font-mono text-sm font-medium text-textTertiary">
         {isFirst ? 'WHERE' : filter.logicalOperator}
       </div>
-      <Select
+      <Select<{ column: string; table: string | null } | null>
         htmlProps={{ className: '!w-[200px] shrink-0' }}
         onChange={(newColumn) => {
-          updateFilter((current) => ({ ...current, column: newColumn }));
+          updateFilter((current) => ({ ...current, ...newColumn }));
         }}
-        options={columns.map((col) => ({ label: col.name, value: col.name }))}
+        options={columns.map((col) => ({
+          label: col.table ? `${col.table.name}.${col.name}` : col.name,
+          value: { column: col.name, table: col.table?.name ?? null },
+        }))}
         placeholder="Column"
-        value={filter.column ?? null}
+        value={filter.column ? { column: filter.column, table: filter.table } : null}
       />
       <Select
         htmlProps={{ className: '!w-[144px] shrink-0' }}

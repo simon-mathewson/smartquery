@@ -46,8 +46,8 @@ export const useTableList = () => {
       query
         .map((q) => {
           const result = q.id in queryResults ? queryResults[q.id] : null;
-          return !q.savedQueryId && result?.table
-            ? tables.find((t) => t.name === result.table && t.schema === result.schema)
+          return !q.savedQueryId && result?.tables.length === 1
+            ? tables.find((t) => t.name === result.tables[0].name && t.schema === result.schema)
             : undefined;
         })
         .filter(isNotUndefined),

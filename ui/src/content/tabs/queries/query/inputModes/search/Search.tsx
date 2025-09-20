@@ -9,7 +9,7 @@ import { AnalyticsContext } from '~/content/analytics/Context';
 
 export const Search: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
-  const { table } = useDefinedContext(ResultContext);
+  const { tables } = useDefinedContext(ResultContext);
 
   const { search, searchValue } = useSearch();
 
@@ -32,7 +32,7 @@ export const Search: React.FC = () => {
         htmlProps={{
           autoFocus: true,
           className: '!w-56',
-          placeholder: `Search ${table}`,
+          placeholder: `Search ${tables[0].name}`,
           value,
         }}
         onChange={(newValue) => {

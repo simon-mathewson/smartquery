@@ -6,16 +6,16 @@ import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { Row, TableType } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
-import { isNotNull } from '~/shared/utils/typescript/typescript';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
-import { getColumnsFromResult, getColumnsStatement } from './utils/columns';
+import { getColumnsFromResult, getColumnsStatements } from './utils/columns';
 import { convertDbValue } from './utils/convertPrismaValue';
 import { getNewQuery } from './utils/getNewQuery';
-import { getTableStatement } from './utils/getTableStatement';
+import { getTableStatements } from './utils/getTableStatement';
 import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
 import { parseQuery } from './utils/parse';
 import type { Chart } from '@/savedQueries/types';
+import { chunk, uniqBy } from 'lodash';
 
 export const useQueries = () => {
   const toast = useDefinedContext(ToastContext);
@@ -78,7 +78,7 @@ export const useQueries = () => {
 
       const selectStatement = statements[0];
 
-      const [columnsStatement, constraintsStatement] = getColumnsStatement({
+      const columnsStatements = getColumnsStatements({
         connection: activeConnection,
         select,
       });
@@ -88,36 +88,44 @@ export const useQueries = () => {
         select,
       });
 
-      const tableStatement = getTableStatement({
+      const tableStatements = getTableStatements({
         connection: activeConnection,
         select,
-        table: select.table,
       });
 
-      const statementsWithMetadata = [
-        selectStatement,
-        columnsStatement,
-        constraintsStatement,
-        tableStatement,
-        totalRowsStatement,
-      ];
+      const statementsWithMetadata = [selectStatement, ...columnsStatements, ...tableStatements];
 
-      const statementsWithMetadataFiltered = statementsWithMetadata.filter(isNotNull);
+      if (totalRowsStatement) {
+        statementsWithMetadata.push(totalRowsStatement);
+      }
 
       onStartLoading(id);
 
       try {
-        const results = await runQuery(statementsWithMetadataFiltered, { skipSqliteWrite: true });
+        const results = await runQuery(statementsWithMetadata, { skipSqliteWrite: true });
 
-        const [firstSelectResult, columnsResult, constraintsResult, tableResult, totalRowsResult] =
-          results;
+        const firstSelectResult = results[0];
+        const columnsResults = results.slice(1, columnsStatements.length + 1);
+        const tableResults = results.slice(
+          columnsStatements.length + 1,
+          columnsStatements.length + tableStatements.length + 1,
+        );
+        const totalRowsResult = totalRowsStatement ? results[results.length - 1] : null;
 
-        const columns = getColumnsFromResult({
-          connection: activeConnection,
-          parsedStatement: select!.parsed,
-          columnsResult,
-          constraintsResult,
-        });
+        const columnsWithDuplicates = chunk(columnsResults, 2).flatMap(
+          ([columnsResult, constraintsResult], index) =>
+            getColumnsFromResult({
+              connection: activeConnection,
+              parsedStatement: select!.parsed,
+              columnsResult,
+              constraintsResult,
+              table: select.tables[index],
+            }),
+        );
+
+        // If there are multiple columns with the same name, we only keep the first.
+        // This can happen if all columns of multiple tables are selected.
+        const columns = uniqBy(columnsWithDuplicates, 'name');
 
         const rows = firstSelectResult.map<Row>((row) =>
           Object.fromEntries(
@@ -130,7 +138,11 @@ export const useQueries = () => {
 
         const totalRows = Number(totalRowsResult?.[0].count);
 
-        const tableType = (tableResult[0]?.table_type ?? 'SYSTEM_VIEW') as TableType;
+        const tables = select.tables.map(({ name, originalName }, index) => ({
+          name,
+          originalName,
+          type: (tableResults[index].at(0)?.table_type ?? 'SYSTEM_VIEW') as TableType,
+        }));
 
         setQueryResults((currentQueryResults) => ({
           ...currentQueryResults,
@@ -138,8 +150,7 @@ export const useQueries = () => {
             columns,
             rows,
             schema: activeConnection.engine === 'postgres' ? select!.schema : undefined,
-            table: select!.table,
-            tableType,
+            tables,
             totalRows,
           },
         }));
@@ -188,7 +199,7 @@ export const useQueries = () => {
             [query.id]: {
               columns: null,
               rows,
-              tableType: null,
+              tables: [],
             },
           }));
         } else {

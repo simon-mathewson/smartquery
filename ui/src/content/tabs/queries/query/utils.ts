@@ -5,4 +5,8 @@ export const getQueryTitle = (
   query: Query,
   result: QueryResult | null,
   savedQuery: SavedQuery | null,
-) => savedQuery?.name ?? query.select?.table ?? result?.table ?? 'New query';
+) =>
+  savedQuery?.name ??
+  query.select?.tables[0].originalName ??
+  result?.tables[0].originalName ??
+  'New query';

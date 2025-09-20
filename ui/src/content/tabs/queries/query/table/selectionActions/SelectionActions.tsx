@@ -32,7 +32,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
   const { track } = useDefinedContext(AnalyticsContext);
   const { allChanges, removeChange } = useDefinedContext(EditContext);
 
-  const { columns, rows, table } = useDefinedContext(ResultContext);
+  const { columns, rows, tables } = useDefinedContext(ResultContext);
 
   const [tableWidth, setTableWidth] = useState<number>();
 
@@ -145,18 +145,18 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       return [
         ...locations,
         ...selectedColumnIndices.map((columnIndex) => {
-          const column = columns!.filter(({ isVisible }) => isVisible)[columnIndex].name;
+          const column = columns!.filter(({ isVisible }) => isVisible)[columnIndex].originalName;
 
           return rowIndex < rows.length
             ? {
                 column,
                 uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
-                table: table!,
+                table: tables[0].originalName,
               }
             : {
                 column,
                 index: rowIndex - rows.length,
-                table: table!,
+                table: tables[0].originalName,
               };
         }),
       ];
@@ -175,7 +175,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
     });
 
     return { isEntireSelectionDeleted, selectedChanges };
-  }, [allChanges, columnCount, columns, rows, selection, table]);
+  }, [allChanges, columnCount, columns, rows, selection, tables]);
 
   return (
     <>

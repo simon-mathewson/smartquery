@@ -11,5 +11,8 @@ export type Select = {
   database: string;
   parsed: NodeSqlParser.Select;
   schema?: string;
-  table: string;
+  tables: {
+    name: string;
+    originalName: string;
+  }[];
 };

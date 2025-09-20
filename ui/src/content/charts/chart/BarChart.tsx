@@ -13,7 +13,7 @@ export type BarChartProps = {
 export const BarChart = (props: BarChartProps) => {
   const { chart, colors, data, valueFormatter } = props;
 
-  assert(chart.y, 'Y axis is required');
+  assert(chart.yColumn, 'Y axis is required');
 
   return (
     <MuiBarChart
@@ -24,14 +24,14 @@ export const BarChart = (props: BarChartProps) => {
       xAxis={[
         {
           dataKey: 'x',
-          label: chart.x,
+          label: chart.xColumn,
           valueFormatter,
         },
       ]}
       yAxis={[
         {
           scaleType: 'linear',
-          label: chart.y,
+          label: chart.yColumn,
         },
       ]}
       className="[&_.MuiChartsAxis-label_tspan]:text-xs [&_.MuiChartsAxis-line]:!stroke-border [&_.MuiChartsAxis-tickLabel]:!fill-textSecondary [&_.MuiChartsAxis-tick]:!stroke-border [&_.MuiLineElement-root]:!stroke-primary"

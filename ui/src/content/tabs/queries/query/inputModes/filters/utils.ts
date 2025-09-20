@@ -24,7 +24,9 @@ export const getAstFromFilters = (props: { columns: Column[]; filters: Filter[] 
   const { columns, filters } = props;
 
   return filters.reduce<NodeSqlParser.Expr | null>((all, filter) => {
-    const column = columns.find((column) => column.name === filter.column);
+    const column = columns.find(
+      (column) => filter.column === column.name && (column.table ?? null) === filter.table,
+    );
 
     if (!column || !column.isVisible) {
       return all;
@@ -65,7 +67,7 @@ export const getAstFromFilters = (props: { columns: Column[]; filters: Filter[] 
       operator: getAstOperator(filter.operator, filter),
       left: {
         type: 'column_ref',
-        table: null,
+        table: filter.table,
         column: filter.column,
       },
       right: valueExpression,
@@ -101,16 +103,25 @@ export const getFilterFromAst = (
   }
 
   const left = expression.left as NodeSqlParser.ColumnRef | NodeSqlParser.Value;
-  const column = 'column' in left ? left.column : (left.value as string);
-
+  const table = 'table' in left ? left.table : null;
   const right = expression.right as NodeSqlParser.Value;
+
+  const column = (() => {
+    if ('column' in left && typeof left.column === 'string') {
+      return left.column;
+    }
+    if ('value' in left && typeof left.value === 'string') {
+      return left.value;
+    }
+    throw new Error(`Unable to find column in left expression: ${JSON.stringify(left)}`);
+  })();
 
   if (operator === 'IS') {
     if (right.type !== 'null' || right.value !== null) {
       throw new Error(`IS operator used with non-null value: ${JSON.stringify(right)}`);
     }
 
-    return { column, logicalOperator, operator: 'IS NULL' };
+    return { column, logicalOperator, operator: 'IS NULL', table };
   }
 
   if (operator === 'IS NOT') {
@@ -118,7 +129,7 @@ export const getFilterFromAst = (
       throw new Error(`IS NOT operator used with non-null value: ${JSON.stringify(right)}`);
     }
 
-    return { column, logicalOperator, operator: 'IS NOT NULL' };
+    return { column, logicalOperator, operator: 'IS NOT NULL', table };
   }
   if (!includes(['single_quote_string', 'bool', 'number'], right.type)) {
     throw new Error(
@@ -131,6 +142,7 @@ export const getFilterFromAst = (
     logicalOperator,
     operator: operator as Operator,
     value: String(right.value),
+    table,
   };
 };
 

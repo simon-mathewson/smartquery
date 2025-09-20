@@ -79,8 +79,10 @@ model SavedQueryChart {
   savedQueryId String     @unique @db.Uuid
   savedQuery   SavedQuery @relation(fields: [savedQueryId], references: [id], onDelete: Cascade)
   type         ChartType
-  x            String
-  y            String?
+  xColumn      String
+  xTable       String?
+  yColumn      String?
+  yTable       String?
 
   @@index([savedQueryId])
 }

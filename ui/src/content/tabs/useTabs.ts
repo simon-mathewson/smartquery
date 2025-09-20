@@ -12,7 +12,30 @@ export const useTabs = () => {
     ? `${activeConnectionContext.activeConnection.id}-${activeConnectionContext.activeConnection.database}`
     : '';
 
-  const [tabs, setTabs] = useStoredState<Tab[]>(`tabs-${localStorageSuffix}`, [], sessionStorage);
+  const [tabs, setTabs] = useStoredState<Tab[]>(`tabs-${localStorageSuffix}`, [], sessionStorage, [
+    (tabs) =>
+      tabs.map((t) => ({
+        ...t,
+        queries: t.queries.map((qs) =>
+          qs.map((q) => {
+            const tableName = (q.select as unknown as { table: string }).table;
+
+            return {
+              ...q,
+              select: q.select
+                ? {
+                    ...q.select,
+                    tables:
+                      !('tables' in q.select) || !q.select.tables
+                        ? [{ name: tableName, originalName: tableName }]
+                        : q.select.tables,
+                  }
+                : null,
+            };
+          }),
+        ),
+      })),
+  ]);
 
   const [activeTabId, setActiveTabId] = useStoredState<string | null>(
     `activeTabId-${localStorageSuffix}`,

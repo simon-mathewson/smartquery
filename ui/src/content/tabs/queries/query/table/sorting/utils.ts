@@ -9,6 +9,7 @@ export const getSortedColumnFromAst = (select: Select) => {
 
   return {
     columnName: 'column' in orderBy.expr ? orderBy.expr.column : orderBy.expr.value,
+    tableName: 'table' in orderBy.expr ? orderBy.expr.table : null,
     direction: orderBy.type,
   };
 };

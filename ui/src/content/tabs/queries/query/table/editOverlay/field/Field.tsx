@@ -24,9 +24,9 @@ export const EditOverlayField: React.FC<EditOverlayFieldProps> = (props) => {
         if (!change || change.type === 'delete') {
           return location.type === 'update' ? location.originalValue : undefined;
         }
-        return change.type === 'update' ? change.value : change.row[column.name];
+        return change.type === 'update' ? change.value : change.row[column.originalName];
       }),
-    [column.name, getChangeAtLocation, locations],
+    [column.originalName, getChangeAtLocation, locations],
   );
 
   const multipleValues = useMemo(() => !values.every((value) => value === values[0]), [values]);
@@ -43,7 +43,7 @@ export const EditOverlayField: React.FC<EditOverlayFieldProps> = (props) => {
           type: 'create',
           row: {
             ...createChange.row,
-            [column.name]: newValue,
+            [column.originalName]: newValue,
           },
         });
       } else {

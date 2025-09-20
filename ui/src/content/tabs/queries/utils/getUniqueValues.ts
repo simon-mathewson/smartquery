@@ -10,7 +10,7 @@ export const getUniqueValues = (columns: Column[], rows: Row[], rowIndex: number
   if (!areUniqueValuesAvailable) return null;
 
   return uniqueColumns.map((column) => ({
-    column: column.name,
+    column: column.originalName,
     value: rows[rowIndex][column.name] as string,
   }));
 };

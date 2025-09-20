@@ -12,7 +12,12 @@ const getProps = (dataType: (typeof dataTypes)[number]) =>
   (
     ({
       boolean: {
-        column: { dataType: 'boolean', isNullable: false, name: 'boolean_column' },
+        column: {
+          dataType: 'boolean',
+          isNullable: false,
+          name: 'boolean_column',
+          originalName: 'boolean_column',
+        },
         dataType: 'boolean',
         value: 'true',
       },
@@ -22,11 +27,17 @@ const getProps = (dataType: (typeof dataTypes)[number]) =>
           enumValues,
           isNullable: false,
           name: 'enum_column',
+          originalName: 'enum_column',
         },
         value: 'foo',
       },
       varchar: {
-        column: { dataType: 'varchar', isNullable: false, name: 'varchar_column' },
+        column: {
+          dataType: 'varchar',
+          isNullable: false,
+          name: 'varchar_column',
+          originalName: 'varchar_column',
+        },
         value: 'Initial value\nwith newline',
       },
     }) as const

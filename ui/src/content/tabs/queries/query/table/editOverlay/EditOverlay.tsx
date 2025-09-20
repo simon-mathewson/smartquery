@@ -20,7 +20,7 @@ export type EditModalProps = {
 export const EditOverlay: React.FC<EditModalProps> = (props) => {
   const { columnCount, editButtonRef, selection, selectionActionsPopoverRef, setIsEditing } = props;
 
-  const { columns, rows, table } = useDefinedContext(ResultContext);
+  const { columns, rows, tables } = useDefinedContext(ResultContext);
 
   const columnFields = useMemo(() => {
     return selection.reduce<Array<Pick<EditOverlayFieldProps, 'column' | 'locations'>>>(
@@ -41,16 +41,16 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
             const value = rows[rowIndex][column.name];
 
             newColumnsWithValues[columnIndex].locations.push({
-              column: column.name,
+              column: column.originalName,
               originalValue: value,
               uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
-              table: table!,
+              table: tables[0].originalName,
               type: 'update',
             });
           } else {
             newColumnsWithValues[columnIndex].locations.push({
               index: rowIndex - rows.length,
-              table: table!,
+              table: tables[0].originalName,
               type: 'create',
             });
           }
@@ -59,7 +59,7 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
       },
       [],
     );
-  }, [columnCount, columns, rows, selection, table]);
+  }, [columnCount, columns, rows, selection, tables]);
 
   const overlay = useOverlay({
     align: 'center',
@@ -78,7 +78,11 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
           {columnFields?.map((fieldProps, index) => (
             <EditOverlayField
               autoFocus={index === columnFields.findIndex((c) => c)}
-              key={fieldProps.column.name}
+              key={
+                fieldProps.column.table
+                  ? `${fieldProps.column.table}.${fieldProps.column.name}`
+                  : fieldProps.column.name
+              }
               {...fieldProps}
             />
           ))}

@@ -26,7 +26,11 @@ export const getWhere = (props: {
                     {
                       type: 'cast',
                       keyword: 'cast',
-                      expr: { type: 'double_quote_string', value: column.name },
+                      expr: {
+                        type: 'double_quote_string',
+                        table: column.table ?? null,
+                        value: column.originalName,
+                      },
                       symbol: '::',
                       target: { dataType: 'TEXT' },
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,8 +41,8 @@ export const getWhere = (props: {
               } as any)
             : {
                 type: 'column_ref',
-                table: null,
-                column: column.name,
+                table: column.table ?? null,
+                column: column.originalName,
               },
         right:
           engine === 'postgres'

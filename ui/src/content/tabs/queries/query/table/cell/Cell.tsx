@@ -86,7 +86,7 @@ export const Cell: React.FC<CellProps> = (props) => {
       {
         type: 'select',
         columns: [{ expr: { type: 'column_ref', column: '*' } }],
-        from: [{ db: foreignKey.schema, table: foreignKey.table }],
+        from: [{ db: foreignKey.schema ?? null, table: foreignKey.table, as: null }],
         where: {
           type: 'binary_expr',
           operator: '=',
@@ -99,7 +99,10 @@ export const Cell: React.FC<CellProps> = (props) => {
         with: null,
         options: null,
         distinct: null,
-        groupby: null,
+        groupby: {
+          columns: null,
+          modifiers: [],
+        },
         having: null,
         orderby: null,
         limit: null,
@@ -176,7 +179,10 @@ export const Cell: React.FC<CellProps> = (props) => {
           : {
               onClick: () => {
                 if (!query.select) return;
-                void sorting.toggleSort((column as Column).name);
+                void sorting.toggleSort(
+                  (column as Column).name,
+                  (column as Column).table?.name ?? null,
+                );
               },
             })}
       >

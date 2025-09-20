@@ -2,8 +2,10 @@ import { z } from 'zod';
 
 export const chartSchema = z.object({
   type: z.enum(['bar', 'line', 'pie']),
-  x: z.string(),
-  y: z.string().nullable(),
+  xColumn: z.string(),
+  xTable: z.string().nullable(),
+  yColumn: z.string().nullable(),
+  yTable: z.string().nullable(),
 });
 
 export type Chart = z.infer<typeof chartSchema>;

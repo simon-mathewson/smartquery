@@ -13,18 +13,18 @@ export const getMySqlEnumValuesFromColumnType = (columnType: string) => {
   );
 };
 
-export const getColumnsStatement = (props: {
+export const getColumnsStatements = (props: {
   connection: Connection;
   select: Select;
-}): [string, string] => {
+}): string[] => {
   const {
     connection: { engine },
     select,
-    select: { table },
+    select: { tables },
   } = props;
 
   if (engine === 'sqlite') {
-    return [
+    return tables.flatMap((table) => [
       /** Query columns and primary key */
       `
         SELECT
@@ -34,13 +34,13 @@ export const getColumnsStatement = (props: {
           CASE table_info."notnull" WHEN 0 THEN 'YES' ELSE 'NO' END AS is_nullable,
           table_info.pk AS sqlite_is_primary_key,
           CASE WHEN index_info.cid IS NOT NULL THEN 1 ELSE 0 END AS sqlite_is_unique
-        FROM pragma_table_info('${table}') as table_info
+        FROM pragma_table_info('${table.originalName}') as table_info
         LEFT JOIN (
           SELECT
             index_info.name AS index_name,
             index_info.name AS column_name,
             index_info.cid
-          FROM pragma_index_list('${table}') AS index_list
+          FROM pragma_index_list('${table.originalName}') AS index_list
           JOIN pragma_index_info(index_list.name) AS index_info
           WHERE index_list."unique" = 1
         ) AS index_info ON table_info.name = index_info.column_name
@@ -52,15 +52,15 @@ export const getColumnsStatement = (props: {
           "from" AS column_name,
           "table" AS foreign_key_table_name,
           "to" AS foreign_key_column_name
-        FROM pragma_foreign_key_list('${table}')
+        FROM pragma_foreign_key_list('${table.originalName}')
       `,
-    ];
+    ]);
   }
 
   if (engine === 'mysql') {
     const isInformationSchemaQuery = select.database === 'information_schema';
 
-    return [
+    return tables.flatMap((table) => [
       /** Query columns*/
       `
         SELECT
@@ -71,7 +71,7 @@ export const getColumnsStatement = (props: {
           c.column_type AS mysql_column_type
         FROM information_schema.columns AS c
         WHERE ${isInformationSchemaQuery ? 'LOWER(c.table_name)' : 'c.table_name'} = '${
-          isInformationSchemaQuery ? table.toLowerCase() : table
+          isInformationSchemaQuery ? table.originalName.toLowerCase() : table
         }'
           AND c.table_schema = '${select.database}'
         ORDER BY c.ordinal_position
@@ -90,14 +90,14 @@ export const getColumnsStatement = (props: {
           AND tc.table_name = kcu.table_name
           AND tc.table_schema = kcu.table_schema
         WHERE ${isInformationSchemaQuery ? 'LOWER(kcu.table_name)' : 'kcu.table_name'} = '${
-          isInformationSchemaQuery ? table.toLowerCase() : table
+          isInformationSchemaQuery ? table.originalName.toLowerCase() : table
         }'
           AND kcu.table_schema = '${select.database}'
       `,
-    ];
+    ]);
   }
 
-  return [
+  return tables.flatMap((table) => [
     /** Query column types */
     `
       SELECT
@@ -137,7 +137,7 @@ export const getColumnsStatement = (props: {
         AND kcu.table_schema = '${select.schema}'
         AND kcu.table_catalog = '${select.database}'
     `,
-  ];
+  ]);
 };
 
 export const getColumnsFromResult = (props: {
@@ -145,12 +145,14 @@ export const getColumnsFromResult = (props: {
   parsedStatement: NodeSqlParser.Select;
   columnsResult: Record<string, DbValue>[];
   constraintsResult: Record<string, DbValue>[];
+  table: { name: string; originalName: string };
 }): Column[] => {
   const {
     connection: { engine },
     parsedStatement,
     columnsResult,
     constraintsResult: constraintsResultUntyped,
+    table,
   } = props;
 
   const rawColumns = columnsResult as Array<{
@@ -171,78 +173,85 @@ export const getColumnsFromResult = (props: {
     foreign_key_table_name: string;
   }>;
 
-  const columnNames = rawColumns.map(({ column_name }) => column_name);
-
-  return columnNames.map((name) => {
-    const column = rawColumns.find(({ column_name }) => column_name === name)!;
-
-    const {
+  return rawColumns.map(
+    ({
+      column_name,
+      data_type,
       is_nullable,
       mysql_column_type,
       postgres_enum_values,
-      data_type,
       sqlite_is_primary_key,
       sqlite_is_unique,
-    } = column;
+    }) => {
+      const getEnumValues = () => {
+        if (engine === 'mysql' && mysql_column_type) {
+          return getMySqlEnumValuesFromColumnType(mysql_column_type);
+        }
 
-    const getEnumValues = () => {
-      if (engine === 'mysql' && mysql_column_type) {
-        return getMySqlEnumValuesFromColumnType(mysql_column_type);
-      }
+        if (engine === 'postgres' && postgres_enum_values?.length) {
+          return postgres_enum_values;
+        }
 
-      if (engine === 'postgres' && postgres_enum_values?.length) {
-        return postgres_enum_values;
-      }
+        return null;
+      };
 
-      return null;
-    };
+      const orderedEnumValues = sortBy(getEnumValues());
 
-    const orderedEnumValues = sortBy(getEnumValues());
+      const getForeignKey = () => {
+        const constraint = constraintsResult.find(
+          (c) =>
+            c.column_name === column_name &&
+            (!c.constraint_type || c.constraint_type === 'FOREIGN KEY'),
+        );
 
-    const getForeignKey = () => {
-      const constraint = constraintsResult.find(
-        ({ column_name, constraint_type }) =>
-          column_name === name && (!constraint_type || constraint_type === 'FOREIGN KEY'),
+        if (constraint) {
+          return {
+            column: constraint.foreign_key_column_name,
+            schema: constraint.foreign_key_table_schema,
+            table: constraint.foreign_key_table_name,
+          } as const;
+        }
+
+        return null;
+      };
+
+      const isPrimaryKey =
+        sqlite_is_primary_key === 1 ||
+        constraintsResult.some(
+          (c) => c.constraint_type === 'PRIMARY KEY' && c.column_name === column_name,
+        );
+
+      const isUnique =
+        sqlite_is_unique === 1 ||
+        constraintsResult.some(
+          (c) => c.constraint_type === 'UNIQUE' && c.column_name === column_name,
+        );
+
+      const selectColumn = parsedStatement.columns.find((column) => {
+        const expr = (column as NodeSqlParser.Column).expr;
+        if ('column' in expr) {
+          return expr.column === column_name && (!expr.table || expr.table === table.name);
+        }
+        return false;
+      }) as NodeSqlParser.Column | undefined;
+
+      const alias = typeof selectColumn?.as === 'string' ? selectColumn.as : null;
+      const allColumnsSelected = parsedStatement.columns.some(
+        (column) => column.expr.column === '*',
       );
 
-      if (constraint) {
-        return {
-          column: constraint.foreign_key_column_name,
-          schema: constraint.foreign_key_table_schema,
-          table: constraint.foreign_key_table_name,
-        } as const;
-      }
-
-      return null;
-    };
-
-    const isPrimaryKey =
-      sqlite_is_primary_key === 1 ||
-      constraintsResult.some(
-        ({ column_name, constraint_type }) =>
-          constraint_type === 'PRIMARY KEY' && column_name === name,
-      );
-
-    const isUnique =
-      sqlite_is_unique === 1 ||
-      constraintsResult.some(
-        ({ column_name, constraint_type }) => constraint_type === 'UNIQUE' && column_name === name,
-      );
-
-    return {
-      alias: parsedStatement.columns.find((column) => column.expr.column === name)?.as as
-        | string
-        | undefined,
-      dataType: data_type.toLowerCase() as DataType,
-      enumValues: orderedEnumValues,
-      foreignKey: getForeignKey(),
-      isNullable: is_nullable === 'YES',
-      isPrimaryKey,
-      isUnique,
-      isVisible: parsedStatement.columns.some(
-        (column) => column.expr.column === '*' || column.expr.column === name,
-      ),
-      name,
-    };
-  }) satisfies Column[];
+      return {
+        dataType: data_type.toLowerCase() as DataType,
+        enumValues: orderedEnumValues,
+        foreignKey: getForeignKey(),
+        isNullable: is_nullable === 'YES',
+        isPrimaryKey,
+        isUnique,
+        isVisible: allColumnsSelected || selectColumn !== undefined,
+        name: alias ?? column_name,
+        originalName: column_name,
+        table,
+      };
+    },
+  ) satisfies Column[];
 };

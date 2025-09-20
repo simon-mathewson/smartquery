@@ -33,7 +33,7 @@
     "luxon": "3.4.4",
     "monaco-editor": "0.52.2",
     "monaco-sql-languages": "0.15.1",
-    "node-sql-parser": "4.18.0",
+    "node-sql-parser": "5.3.12",
     "path": "0.12.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",

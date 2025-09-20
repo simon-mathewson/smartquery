@@ -41,7 +41,10 @@ const ast = {
       table: 'posts',
     },
   ],
-  groupby: null,
+  groupby: {
+    columns: null,
+    modifiers: [],
+  },
   having: null,
   limit: {
     seperator: '',

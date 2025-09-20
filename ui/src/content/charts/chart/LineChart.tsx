@@ -15,7 +15,7 @@ export type LineChartProps = {
 export const LineChart = (props: LineChartProps) => {
   const { chart, colors, data, valueFormatter, xColumn } = props;
 
-  assert(chart.y, 'Y axis is required');
+  assert(chart.yColumn, 'Y axis is required');
 
   return (
     <MuiLineChart
@@ -34,11 +34,11 @@ export const LineChart = (props: LineChartProps) => {
           scaleType: isDateTimeType(xColumn.dataType) ? 'time' : 'linear',
           data: data.map((point) => point.x),
           tickLabelMinGap: 8,
-          label: chart.x,
+          label: chart.xColumn,
           valueFormatter,
         },
       ]}
-      yAxis={[{ scaleType: 'linear', min: 0, label: chart.y }]}
+      yAxis={[{ scaleType: 'linear', min: 0, label: chart.yColumn }]}
       className="pr-4 [&_.MuiAreaElement-root]:!fill-[url('#gradient')] [&_.MuiChartsAxis-label_tspan]:fill-textSecondary [&_.MuiChartsAxis-label_tspan]:text-xs [&_.MuiChartsAxis-line]:!stroke-border [&_.MuiChartsAxis-tickLabel]:!fill-textSecondary [&_.MuiChartsAxis-tick]:!stroke-border [&_.MuiLineElement-root]:!stroke-primary"
     >
       <defs>

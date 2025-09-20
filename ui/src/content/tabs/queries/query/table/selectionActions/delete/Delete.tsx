@@ -17,7 +17,7 @@ export const Delete: React.FC<DeleteProps> = (props) => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { handleDeleteChange } = useDefinedContext(EditContext);
 
-  const { columns, rows, table } = useDefinedContext(ResultContext);
+  const { columns, rows, tables } = useDefinedContext(ResultContext);
 
   return (
     <Button
@@ -28,7 +28,7 @@ export const Delete: React.FC<DeleteProps> = (props) => {
             handleDeleteChange({
               location: {
                 uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
-                table: table!,
+                table: tables[0].originalName,
                 type: 'delete',
               },
               type: 'delete',

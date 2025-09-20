@@ -24,6 +24,7 @@ const postgresProps = {
     isNullable: true,
     isVisible: true,
     name: 'fruit',
+    originalName: 'fruit',
   },
   onChange,
   placeholder: 'Select a fruit',

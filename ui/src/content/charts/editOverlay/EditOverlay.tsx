@@ -32,8 +32,12 @@ export const ChartEditOverlay: React.FC = () => {
   });
 
   const [type, setType] = useState<Chart['type']>(chart?.type ?? 'line');
-  const [x, setX] = useState<string | null>(chart?.x ?? null);
-  const [y, setY] = useState<string | null>(chart?.y ?? null);
+  const [x, setX] = useState<{ column: string; table: string | null } | null>(
+    chart?.xColumn ? { column: chart.xColumn, table: chart.xTable } : null,
+  );
+  const [y, setY] = useState<{ column: string; table: string | null } | null>(
+    chart?.yColumn ? { column: chart.yColumn, table: chart.yTable } : null,
+  );
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -41,7 +45,13 @@ export const ChartEditOverlay: React.FC = () => {
     async (event: React.FormEvent<HTMLFormElement>, close: () => void) => {
       event.preventDefault();
 
-      const chart = { type, x, y } as Chart;
+      const chart = {
+        type,
+        xColumn: x?.column ?? null,
+        xTable: x?.table ?? null,
+        yColumn: y?.column ?? null,
+        yTable: y?.table ?? null,
+      } as Chart;
 
       setIsSaving(true);
 
@@ -112,8 +122,8 @@ export const ChartEditOverlay: React.FC = () => {
   const getColumnOptions = (axis: 'x' | 'y') =>
     result?.columns?.map((column) => ({
       disabled: !getIsAllowed(axis, column.dataType),
-      label: column.name,
-      value: column.name,
+      label: column.table ? `${column.table.name}.${column.name}` : column.name,
+      value: { column: column.name, table: column.table?.name ?? null },
     })) ?? [];
 
   return (
@@ -167,25 +177,31 @@ export const ChartEditOverlay: React.FC = () => {
                 />
               </Field>
               <Field label={type === 'pie' ? 'Label' : 'X axis'}>
-                <Select
-                  value={x}
+                <Select<{ column: string; table: string | null } | null>
+                  compareFn={(a, b) =>
+                    Boolean(a && b && a.column === b.column && a.table === b.table)
+                  }
                   htmlProps={{ disabled: isSaving }}
                   onChange={setX}
                   options={getColumnOptions('x')}
+                  value={x}
                 />
               </Field>
               <Field
                 hint="Values with the same label will be summed up"
                 label={type === 'pie' ? 'Value' : 'Y axis'}
               >
-                <Select
-                  value={y}
+                <Select<{ column: string; table: string | null } | null>
+                  compareFn={(a, b) =>
+                    Boolean(a && b && a.column === b.column && a.table === b.table)
+                  }
                   htmlProps={{ disabled: isSaving }}
                   onChange={setY}
                   options={[
                     ...(type === 'pie' ? [{ label: 'None', value: null }] : []),
                     ...getColumnOptions('y'),
                   ]}
+                  value={y}
                 />
               </Field>
               <Button
@@ -194,9 +210,16 @@ export const ChartEditOverlay: React.FC = () => {
                   className: 'w-full',
                   disabled:
                     isSaving ||
-                    Boolean(chart && chart.type === type && chart.x === x && chart.y === y) ||
-                    !x ||
-                    (type !== 'pie' && !y),
+                    Boolean(
+                      chart &&
+                        chart.type === type &&
+                        chart.xColumn === x?.column &&
+                        chart.xTable === x?.table &&
+                        chart.yColumn === y?.column &&
+                        chart.yTable === y?.table,
+                    ) ||
+                    !x?.column ||
+                    (type !== 'pie' && !y?.column),
                   type: 'submit',
                 }}
                 label={chart ? 'Update' : 'Create'}

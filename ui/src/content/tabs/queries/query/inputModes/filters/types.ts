@@ -13,6 +13,7 @@ export type FilterWithoutValue = {
   column: string;
   logicalOperator: LogicalOperator;
   operator: NullOperator;
+  table: string | null;
 };
 
 export type FilterWithValue = Omit<FilterWithoutValue, 'operator'> & {

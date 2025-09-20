@@ -21,6 +21,7 @@ import { Table } from './table/Table';
 import type { InputMode } from './types';
 import { getQueryTitle } from './utils';
 import { ViewColumnsButton } from './viewColumnsButton/ViewColumnsButton';
+import { getUniqueValues } from '../utils/getUniqueValues';
 
 export const Query: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -39,6 +40,13 @@ export const Query: React.FC = () => {
   );
 
   const handleRowCreationRef = React.useRef<(() => void) | null>(null);
+
+  const isEditable = Boolean(
+    result?.columns &&
+      getUniqueValues(result.columns, result.rows, 0)?.length &&
+      result.tables.length === 1 &&
+      result.tables[0].type === 'BASE TABLE',
+  );
 
   return (
     <div
@@ -115,9 +123,9 @@ export const Query: React.FC = () => {
             <ViewColumnsButton />
           </div>
           <Chart />
-          <Table handleRowCreationRef={handleRowCreationRef} />
+          <Table handleRowCreationRef={handleRowCreationRef} isEditable={isEditable} />
           <div className="p-2">
-            <BottomToolbar handleRowCreationRef={handleRowCreationRef} />
+            <BottomToolbar handleRowCreationRef={handleRowCreationRef} isEditable={isEditable} />
           </div>
         </div>
       )}

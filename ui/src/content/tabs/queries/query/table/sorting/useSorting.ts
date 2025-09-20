@@ -22,11 +22,16 @@ export const useSorting = () => {
   );
 
   const toggleSort = useCallback(
-    async (columnName: string) => {
+    async (columnName: string, tableName: string | null) => {
       if (!query.select) return;
 
       const newSortDirection = (() => {
-        if (sortedColumn?.columnName !== columnName) return 'ASC';
+        if (
+          !sortedColumn ||
+          sortedColumn.columnName !== columnName ||
+          sortedColumn.tableName !== tableName
+        )
+          return 'ASC';
         return sortedColumn.direction === 'ASC' ? 'DESC' : null;
       })();
 
@@ -34,7 +39,7 @@ export const useSorting = () => {
         ? [
             {
               type: newSortDirection,
-              expr: { type: 'column_ref', column: columnName },
+              expr: { type: 'column_ref', column: columnName, table: tableName },
             },
           ]
         : null;

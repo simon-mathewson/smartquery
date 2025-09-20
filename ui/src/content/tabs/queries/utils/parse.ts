@@ -1,8 +1,9 @@
 import type { Connection } from '@/connections/types';
+import type NodeSqlParser from 'node-sql-parser';
 import { splitSqlStatements } from '~/shared/utils/sql/sql';
 import { getAstForSql } from '~/shared/utils/sqlParser/getAstForSql';
+import { isNotNull } from '~/shared/utils/typescript/typescript';
 import type { Select } from '../types';
-import type NodeSqlParser from 'node-sql-parser';
 
 export const getSelectFromStatement = async (props: {
   connection: Connection;
@@ -16,18 +17,31 @@ export const getSelectFromStatement = async (props: {
   if (
     !parsed ||
     parsed.type !== 'select' ||
-    parsed.from?.length !== 1 ||
-    parsed.columns.some((column) => column.expr.type !== 'column_ref' || column.as !== null)
+    !Array.isArray(parsed.from) ||
+    parsed.columns.some((column) => column.expr.type !== 'column_ref')
   ) {
     return null;
   }
 
-  const table = parsed.from[0].table;
-  if (!table) return null;
+  const tables = Array.isArray(parsed.from)
+    ? parsed.from
+        .map((from) => {
+          if (!('table' in from)) {
+            return null;
+          }
+
+          return {
+            name: from.as ?? from.table,
+            originalName: from.table,
+          };
+        })
+        .filter(isNotNull)
+    : [];
+  if (!tables.length) return null;
 
   const from = parsed.from[0];
 
-  const selectSchemaOrDatabase = ('db' in from && (from as NodeSqlParser.From).db) || undefined;
+  const selectSchemaOrDatabase = ('db' in from && (from as NodeSqlParser.BaseFrom).db) || undefined;
 
   const database =
     engine === 'postgres' ? connectionDatabase : selectSchemaOrDatabase ?? connectionDatabase;
@@ -37,7 +51,7 @@ export const getSelectFromStatement = async (props: {
     database,
     parsed,
     schema,
-    table,
+    tables,
   };
 };
 
