@@ -19,7 +19,7 @@ export const Chart = () => {
 
   const xColumn = chart
     ? result?.columns?.find(
-        (column) => column.name === chart.xColumn && column.table === chart.xTable,
+        (column) => column.name === chart.xColumn && (column.table?.name ?? null) === chart.xTable,
       )
     : null;
 

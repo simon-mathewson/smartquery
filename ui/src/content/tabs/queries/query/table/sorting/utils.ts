@@ -1,4 +1,6 @@
+import type NodeSqlParser from 'node-sql-parser';
 import type { Select } from '../../../types';
+import { getColumnRefFromAst } from '../../../utils/getColumnRef';
 
 export const getSortedColumnFromAst = (select: Select) => {
   const orderByList = select.parsed.orderby;
@@ -7,9 +9,12 @@ export const getSortedColumnFromAst = (select: Select) => {
 
   const [orderBy] = orderByList;
 
+  const columnRef = getColumnRefFromAst(
+    orderBy.expr as NodeSqlParser.ColumnRef | NodeSqlParser.Value,
+  );
+
   return {
-    columnName: 'column' in orderBy.expr ? orderBy.expr.column : orderBy.expr.value,
-    tableName: 'table' in orderBy.expr ? orderBy.expr.table : null,
+    ...columnRef,
     direction: orderBy.type,
   };
 };

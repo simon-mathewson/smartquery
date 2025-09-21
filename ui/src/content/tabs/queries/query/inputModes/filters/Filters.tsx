@@ -24,7 +24,7 @@ export const Filters: React.FC = () => {
 
   const isValid = formFilters.every(
     (filter) =>
-      filter.column &&
+      filter.columnRef &&
       filter.operator &&
       (includes(NULL_OPERATORS, filter.operator) || 'value' in filter),
   );
@@ -34,10 +34,9 @@ export const Filters: React.FC = () => {
       setFormFilters([
         ...formFilters,
         {
-          column: null,
+          columnRef: null,
           logicalOperator,
           operator: '=',
-          table: null,
           value: '',
         },
       ]);

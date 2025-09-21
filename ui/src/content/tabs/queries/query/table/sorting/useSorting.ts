@@ -9,6 +9,8 @@ import { QueryContext } from '../../Context';
 import { getSortedColumnFromAst } from './utils';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import type { Column } from '~/shared/types';
+import { getColumnRef } from '../../../utils/getColumnRef';
 
 export const useSorting = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -22,14 +24,16 @@ export const useSorting = () => {
   );
 
   const toggleSort = useCallback(
-    async (columnName: string, tableName: string | null) => {
+    async (column: Column) => {
       if (!query.select) return;
+
+      const columnRef = getColumnRef(column);
 
       const newSortDirection = (() => {
         if (
           !sortedColumn ||
-          sortedColumn.columnName !== columnName ||
-          sortedColumn.tableName !== tableName
+          sortedColumn.column !== columnRef.column ||
+          sortedColumn.table !== columnRef.table
         )
           return 'ASC';
         return sortedColumn.direction === 'ASC' ? 'DESC' : null;
@@ -39,7 +43,10 @@ export const useSorting = () => {
         ? [
             {
               type: newSortDirection,
-              expr: { type: 'column_ref', column: columnName, table: tableName },
+              expr: {
+                type: 'column_ref',
+                ...columnRef,
+              } satisfies NodeSqlParser.ColumnRef,
             },
           ]
         : null;

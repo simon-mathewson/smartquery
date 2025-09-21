@@ -9,6 +9,7 @@ import { NULL_OPERATORS, OPERATORS } from '../constants';
 import type { FormFilter, NullOperator, OperatorWithValue } from '../types';
 import { Close } from '@mui/icons-material';
 import { Button } from '~/shared/components/button/Button';
+import { getColumnRef } from '~/content/tabs/queries/utils/getColumnRef';
 
 export interface FilterControlProps {
   filter: FormFilter;
@@ -23,10 +24,14 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
   const { columns } = useDefinedContext(ResultContext);
   assert(columns);
 
-  const column = filter.column
-    ? columns.find(
-        (col) => col.name === filter.column && (!col.table || col.table.name === filter.table),
-      )
+  const column = filter.columnRef
+    ? columns.find((col) => {
+        const columnRef = getColumnRef(col);
+        return (
+          columnRef.column === filter.columnRef!.column &&
+          columnRef.table === filter.columnRef!.table
+        );
+      })
     : null;
 
   return (
@@ -35,16 +40,17 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
         {isFirst ? 'WHERE' : filter.logicalOperator}
       </div>
       <Select<{ column: string; table: string | null } | null>
+        compareFn={(a, b) => a?.column === b?.column && a?.table === b?.table}
         htmlProps={{ className: '!w-[200px] shrink-0' }}
-        onChange={(newColumn) => {
-          updateFilter((current) => ({ ...current, ...newColumn }));
+        onChange={(newColumnRef) => {
+          updateFilter((current) => ({ ...current, columnRef: newColumnRef }));
         }}
         options={columns.map((col) => ({
           label: col.table ? `${col.table.name}.${col.name}` : col.name,
-          value: { column: col.name, table: col.table?.name ?? null },
+          value: getColumnRef(col),
         }))}
         placeholder="Column"
-        value={filter.column ? { column: filter.column, table: filter.table } : null}
+        value={filter.columnRef}
       />
       <Select
         htmlProps={{ className: '!w-[144px] shrink-0' }}

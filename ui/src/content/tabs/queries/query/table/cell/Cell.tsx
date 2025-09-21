@@ -179,10 +179,7 @@ export const Cell: React.FC<CellProps> = (props) => {
           : {
               onClick: () => {
                 if (!query.select) return;
-                void sorting.toggleSort(
-                  (column as Column).name,
-                  (column as Column).table?.name ?? null,
-                );
+                void sorting.toggleSort(column as Column);
               },
             })}
       >

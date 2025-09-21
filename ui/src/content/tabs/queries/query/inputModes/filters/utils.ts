@@ -4,6 +4,7 @@ import type { Filter, LogicalOperator, Operator } from './types';
 import { LOGICAL_OPERATORS, NULL_OPERATORS, OPERATORS } from './constants';
 import { includes } from 'lodash';
 import { assert } from 'ts-essentials';
+import { getColumnRef, getColumnRefFromAst } from '../../../utils/getColumnRef';
 
 export const getAstOperator = (operator: Operator, filter: Filter): string => {
   if (operator === 'IS NULL' || (operator === '=' && 'value' in filter && filter.value === null)) {
@@ -24,9 +25,12 @@ export const getAstFromFilters = (props: { columns: Column[]; filters: Filter[] 
   const { columns, filters } = props;
 
   return filters.reduce<NodeSqlParser.Expr | null>((all, filter) => {
-    const column = columns.find(
-      (column) => filter.column === column.name && (column.table ?? null) === filter.table,
-    );
+    const column = columns.find((column) => {
+      const columnRef = getColumnRef(column);
+      return (
+        filter.columnRef.column === columnRef.column && filter.columnRef.table === columnRef.table
+      );
+    });
 
     if (!column || !column.isVisible) {
       return all;
@@ -67,8 +71,7 @@ export const getAstFromFilters = (props: { columns: Column[]; filters: Filter[] 
       operator: getAstOperator(filter.operator, filter),
       left: {
         type: 'column_ref',
-        table: filter.table,
-        column: filter.column,
+        ...filter.columnRef,
       },
       right: valueExpression,
     };
@@ -103,25 +106,16 @@ export const getFilterFromAst = (
   }
 
   const left = expression.left as NodeSqlParser.ColumnRef | NodeSqlParser.Value;
-  const table = 'table' in left ? left.table : null;
   const right = expression.right as NodeSqlParser.Value;
 
-  const column = (() => {
-    if ('column' in left && typeof left.column === 'string') {
-      return left.column;
-    }
-    if ('value' in left && typeof left.value === 'string') {
-      return left.value;
-    }
-    throw new Error(`Unable to find column in left expression: ${JSON.stringify(left)}`);
-  })();
+  const columnRef = getColumnRefFromAst(left);
 
   if (operator === 'IS') {
     if (right.type !== 'null' || right.value !== null) {
       throw new Error(`IS operator used with non-null value: ${JSON.stringify(right)}`);
     }
 
-    return { column, logicalOperator, operator: 'IS NULL', table };
+    return { columnRef, logicalOperator, operator: 'IS NULL' };
   }
 
   if (operator === 'IS NOT') {
@@ -129,7 +123,7 @@ export const getFilterFromAst = (
       throw new Error(`IS NOT operator used with non-null value: ${JSON.stringify(right)}`);
     }
 
-    return { column, logicalOperator, operator: 'IS NOT NULL', table };
+    return { columnRef, logicalOperator, operator: 'IS NOT NULL' };
   }
   if (!includes(['single_quote_string', 'bool', 'number'], right.type)) {
     throw new Error(
@@ -138,11 +132,10 @@ export const getFilterFromAst = (
   }
 
   return {
-    column,
+    columnRef,
     logicalOperator,
     operator: operator as Operator,
     value: String(right.value),
-    table,
   };
 };
 

@@ -1,5 +1,5 @@
 import type { Value } from '~/shared/types';
-import type { OPERATORS, NULL_OPERATORS } from './constants';
+import type { NULL_OPERATORS, OPERATORS } from './constants';
 
 export type NullOperator = (typeof NULL_OPERATORS)[number];
 
@@ -10,10 +10,12 @@ export type OperatorWithValue = Exclude<Operator, NullOperator>;
 export type LogicalOperator = 'AND' | 'OR';
 
 export type FilterWithoutValue = {
-  column: string;
+  columnRef: {
+    column: string;
+    table: string | null;
+  };
   logicalOperator: LogicalOperator;
   operator: NullOperator;
-  table: string | null;
 };
 
 export type FilterWithValue = Omit<FilterWithoutValue, 'operator'> & {
@@ -23,6 +25,9 @@ export type FilterWithValue = Omit<FilterWithoutValue, 'operator'> & {
 
 export type Filter = FilterWithValue | FilterWithoutValue;
 
-export type FormFilter = (Omit<FilterWithValue, 'column'> | Omit<FilterWithoutValue, 'column'>) & {
-  column: string | null;
+export type FormFilter = (
+  | Omit<FilterWithValue, 'columnRef'>
+  | Omit<FilterWithoutValue, 'columnRef'>
+) & {
+  columnRef: { column: string; table: string | null } | null;
 };
