@@ -23,7 +23,7 @@ export const PieChart = (props: PieChartProps) => {
   const total = chartData.reduce((acc, curr) => acc + curr.value, 0);
 
   return (
-    <div className="[&_.MuiChartsLegend-root]:!h-[200px]">
+    <div className="px-2 [&_.MuiChartsLegend-root]:!h-[200px]">
       <MuiPieChart
         colors={colors}
         height={200}
