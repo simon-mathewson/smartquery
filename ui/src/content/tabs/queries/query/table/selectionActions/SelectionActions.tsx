@@ -16,6 +16,7 @@ import { Delete } from './delete/Delete';
 import { popoverHeight, popoverMargin } from './constants';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays/arrays';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { isNotNull } from '~/shared/utils/typescript/typescript';
 
 export type SelectionActionsProps = {
   columnCount: number;
@@ -133,19 +134,22 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
 
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
-  const { isEntireSelectionDeleted, selectedChanges } = useMemo(() => {
+  const { isSelectionEditable, isEntireSelectionDeleted, selectedChanges } = useMemo(() => {
     const selectionLocations = selection.reduce<
       Array<
         { column: string; table: string } & XOR<{ uniqueValues: UniqueValue[] }, { index: number }>
       >
-    >((locations, _selectedColumnIndices, rowIndex) => {
+    >((allLocations, _selectedColumnIndices, rowIndex) => {
       const selectedColumnIndices =
         _selectedColumnIndices.length === 0 ? range(columnCount) : _selectedColumnIndices;
 
-      return [
-        ...locations,
-        ...selectedColumnIndices.map((columnIndex) => {
-          const column = columns!.filter(({ isVisible }) => isVisible)[columnIndex].originalName;
+      const rowLocations = selectedColumnIndices
+        .map((columnIndex) => {
+          const column = columns!
+            .filter(({ isVisible, isVirtual }) => isVisible && !isVirtual)
+            .at(columnIndex)?.originalName;
+
+          if (!column) return null;
 
           return rowIndex < rows.length
             ? {
@@ -158,8 +162,10 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
                 index: rowIndex - rows.length,
                 table: tables[0].originalName,
               };
-        }),
-      ];
+        })
+        .filter(isNotNull);
+
+      return [...allLocations, ...rowLocations];
     }, []);
 
     const selectedChanges = allChanges.filter((change) => {
@@ -174,12 +180,14 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       });
     });
 
-    return { isEntireSelectionDeleted, selectedChanges };
+    const isSelectionEditable = selectionLocations.length > 0;
+
+    return { isSelectionEditable, isEntireSelectionDeleted, selectedChanges };
   }, [allChanges, columnCount, columns, rows, selection, tables]);
 
   return (
     <>
-      {popoverStyles && (
+      {popoverStyles && isSelectionEditable && (
         <div
           className="pointer-events-none absolute z-20 flex justify-center"
           style={popoverStyles}

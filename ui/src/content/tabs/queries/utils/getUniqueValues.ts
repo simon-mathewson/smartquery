@@ -6,11 +6,10 @@ export const getUniqueValues = (columns: Column[], rows: Row[], rowIndex: number
   const row = rows.at(rowIndex);
   if (!row) return null;
 
-  const areUniqueValuesAvailable = uniqueColumns.every((column) => column.name in row);
-  if (!areUniqueValuesAvailable) return null;
-
-  return uniqueColumns.map((column) => ({
-    column: column.originalName,
-    value: rows[rowIndex][column.name] as string,
-  }));
+  return uniqueColumns
+    .filter((column) => column.name in row)
+    .map((column) => ({
+      column: column.originalName,
+      value: rows[rowIndex][column.name] as string,
+    }));
 };

@@ -13,7 +13,7 @@ export const getTableStatements = (props: { connection: Connection; select: Sele
       (table) => `
       SELECT CASE type WHEN 'table' THEN 'BASE TABLE' ELSE '' END AS table_type
       FROM sqlite_master
-      WHERE name = '${table}'
+      WHERE name = '${table.originalName}'
     `,
     );
   }
@@ -27,7 +27,7 @@ export const getTableStatements = (props: { connection: Connection; select: Sele
     SELECT table_type AS table_type
     FROM information_schema.tables
     WHERE ${isMysqlInformationSchemaQuery ? 'LOWER(table_name)' : 'table_name'} = '${
-      isMysqlInformationSchemaQuery ? table.originalName.toLowerCase() : table
+      isMysqlInformationSchemaQuery ? table.originalName.toLowerCase() : table.originalName
     }'
     AND table_catalog = '${engine === 'postgres' ? select.database : 'def'}'
     AND table_schema = '${engine === 'postgres' ? select.schema : select.database}'

@@ -39,12 +39,12 @@ export type Column = {
   } | null;
   isNullable?: boolean;
   isPrimaryKey?: boolean;
+  isVirtual?: true;
   isVisible: boolean;
   isUnique?: boolean;
   name: string;
   originalName: string;
   table?: { name: string; originalName: string } | null;
-  virtual?: true;
 };
 
 export type Query = {

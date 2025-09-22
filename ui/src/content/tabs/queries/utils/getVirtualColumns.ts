@@ -18,7 +18,7 @@ export const getVirtualColumns = (
         name: columnName,
         originalName: columnName,
         table: null,
-        virtual: true,
+        isVirtual: true,
       }) satisfies Column,
   );
 };
