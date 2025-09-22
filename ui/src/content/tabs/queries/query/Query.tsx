@@ -118,7 +118,7 @@ export const Query: React.FC = () => {
       </div>
       {result && (
         <div className="flex flex-col gap-2 overflow-y-auto">
-          <div className="sticky top-0 z-30 flex gap-2 bg-card px-2 pb-3">
+          <div className="sticky top-0 z-40 flex gap-2 bg-card px-2 pb-3">
             <ChartEditOverlay />
             <ViewColumnsButton />
           </div>

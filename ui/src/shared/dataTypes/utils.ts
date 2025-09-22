@@ -10,7 +10,7 @@ export const isDateTimeType = (dataType: DataType) =>
 export const isEnumType = (dataType: DataType) => includes(['enum', 'user-defined'], dataType);
 
 export const isIntegerType = (dataType: DataType) =>
-  includes(['int', 'integer', 'tinyint'], dataType);
+  includes(['int', 'integer', 'tinyint', 'bigint'], dataType);
 
 export const isNumberType = (dataType: DataType) =>
   isIntegerType(dataType) || dataType === 'decimal' || dataType.startsWith('numeric');

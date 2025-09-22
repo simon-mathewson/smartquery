@@ -1,10 +1,3 @@
-import { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from '@prisma/client/runtime/library';
 
-export type PrismaValue =
-  | string
-  | string[]
-  | number
-  | boolean
-  | Date
-  | Decimal
-  | null;
+export type PrismaValue = string | string[] | number | bigint | boolean | Date | Decimal | null;

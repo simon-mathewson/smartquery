@@ -14,12 +14,7 @@ export const getSelectFromStatement = async (props: {
 
   const parsed = await getAstForSql({ engine, statement });
 
-  if (
-    !parsed ||
-    parsed.type !== 'select' ||
-    !Array.isArray(parsed.from) ||
-    parsed.columns.some((column) => column.expr.type !== 'column_ref')
-  ) {
+  if (!parsed || parsed.type !== 'select' || !Array.isArray(parsed.from)) {
     return null;
   }
 

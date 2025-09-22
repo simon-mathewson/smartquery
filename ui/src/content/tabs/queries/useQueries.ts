@@ -16,6 +16,7 @@ import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
 import { parseQuery } from './utils/parse';
 import type { Chart } from '@/savedQueries/types';
 import { chunk, uniqBy } from 'lodash';
+import { getVirtualColumns } from './utils/getVirtualColumns';
 
 export const useQueries = () => {
   const toast = useDefinedContext(ToastContext);
@@ -125,7 +126,12 @@ export const useQueries = () => {
 
         // If there are multiple columns with the same name, we only keep the first.
         // This can happen if all columns of multiple tables are selected.
-        const columns = uniqBy(columnsWithDuplicates, 'name');
+        const tableColumns = uniqBy(columnsWithDuplicates, 'name');
+        const virtualColumns = getVirtualColumns(
+          firstSelectResult,
+          tableColumns.map((column) => column.name),
+        );
+        const columns = [...tableColumns, ...virtualColumns];
 
         const rows = firstSelectResult.map<Row>((row) =>
           Object.fromEntries(
@@ -193,11 +199,13 @@ export const useQueries = () => {
             )
           : null;
 
+        const columns = rawRows ? getVirtualColumns(rawRows) : [];
+
         if (rows) {
           setQueryResults((currentQueryResults) => ({
             ...currentQueryResults,
             [query.id]: {
-              columns: null,
+              columns,
               rows,
               tables: [],
             },

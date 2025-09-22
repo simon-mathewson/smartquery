@@ -44,6 +44,7 @@ export type Column = {
   name: string;
   originalName: string;
   table?: { name: string; originalName: string } | null;
+  virtual?: true;
 };
 
 export type Query = {
