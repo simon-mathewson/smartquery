@@ -71,7 +71,7 @@ export const getColumnsStatements = (props: {
           c.column_type AS mysql_column_type
         FROM information_schema.columns AS c
         WHERE ${isInformationSchemaQuery ? 'LOWER(c.table_name)' : 'c.table_name'} = '${
-          isInformationSchemaQuery ? table.originalName.toLowerCase() : table
+          isInformationSchemaQuery ? table.originalName.toLowerCase() : table.originalName
         }'
           AND c.table_schema = '${select.database}'
         ORDER BY c.ordinal_position
@@ -90,7 +90,7 @@ export const getColumnsStatements = (props: {
           AND tc.table_name = kcu.table_name
           AND tc.table_schema = kcu.table_schema
         WHERE ${isInformationSchemaQuery ? 'LOWER(kcu.table_name)' : 'kcu.table_name'} = '${
-          isInformationSchemaQuery ? table.originalName.toLowerCase() : table
+          isInformationSchemaQuery ? table.originalName.toLowerCase() : table.originalName
         }'
           AND kcu.table_schema = '${select.database}'
       `,
@@ -109,7 +109,7 @@ export const getColumnsStatements = (props: {
       FROM information_schema.columns AS c
       LEFT JOIN pg_type AS t ON c.udt_name = t.typname
       LEFT JOIN pg_enum AS e ON e.enumtypid = t.oid
-      WHERE c.table_name = '${table}'
+      WHERE c.table_name = '${table.originalName}'
         AND c.table_schema = '${select.schema}'
         AND c.table_catalog = '${select.database}'
       GROUP BY c.column_name, c.ordinal_position, c.data_type, c.is_nullable
@@ -133,7 +133,7 @@ export const getColumnsStatements = (props: {
         AND ccu.constraint_schema = tc.table_schema
         AND ccu.constraint_catalog = tc.table_catalog
         AND tc.constraint_type = 'FOREIGN KEY'
-      WHERE kcu.table_name = '${table}'
+      WHERE kcu.table_name = '${table.originalName}'
         AND kcu.table_schema = '${select.schema}'
         AND kcu.table_catalog = '${select.database}'
     `,

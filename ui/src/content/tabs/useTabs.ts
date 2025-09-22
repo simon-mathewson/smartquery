@@ -18,19 +18,20 @@ export const useTabs = () => {
         ...t,
         queries: t.queries.map((qs) =>
           qs.map((q) => {
-            const tableName = (q.select as unknown as { table: string }).table;
+            const tableName = (q.select as unknown as { table: string } | null)?.table;
 
             return {
               ...q,
-              select: q.select
-                ? {
-                    ...q.select,
-                    tables:
-                      !('tables' in q.select) || !q.select.tables
-                        ? [{ name: tableName, originalName: tableName }]
-                        : q.select.tables,
-                  }
-                : null,
+              select:
+                q.select && tableName
+                  ? {
+                      ...q.select,
+                      tables:
+                        !('tables' in q.select) || !q.select.tables
+                          ? [{ name: tableName, originalName: tableName }]
+                          : q.select.tables,
+                    }
+                  : q.select,
             };
           }),
         ),

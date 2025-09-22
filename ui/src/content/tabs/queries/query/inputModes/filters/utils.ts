@@ -32,7 +32,7 @@ export const getAstFromFilters = (props: { columns: Column[]; filters: Filter[] 
       );
     });
 
-    if (!column || !column.isVisible) {
+    if (!column) {
       return all;
     }
 
@@ -101,7 +101,7 @@ export const getFilterFromAst = (
   if (expression.right.type === 'param' || expression.right.type === 'column_ref') {
     throw new Error(`Right expression is not value: ${JSON.stringify(expression.right)}`);
   }
-  if (!includes(OPERATORS, operator)) {
+  if (!includes([...OPERATORS, 'IS', 'IS NOT'], operator)) {
     throw new Error(`Operator is not supported: ${JSON.stringify(operator)}`);
   }
 
