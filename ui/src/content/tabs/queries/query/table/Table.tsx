@@ -169,7 +169,7 @@ export const Table: React.FC<TableProps> = (props) => {
           ref={tableRef}
         >
           <div
-            className="sticky top-0 z-30 grid auto-rows-max"
+            className="sticky top-0 z-20 grid auto-rows-max"
             ref={tableContentRef}
             style={{ gridTemplateColumns: `${columnWidths?.join(' ') ?? '1fr'} 1fr` }}
           >
