@@ -22,7 +22,7 @@ export interface FilterControlProps {
 export const FilterControl: React.FC<FilterControlProps> = (props) => {
   const { filter, isFirst, removeFilter, updateFilter } = props;
 
-  const { columns } = useDefinedContext(ResultContext);
+  const { columns, tables } = useDefinedContext(ResultContext);
   assert(columns);
 
   const column = filter.columnRef
@@ -47,7 +47,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
           updateFilter((current) => ({ ...current, columnRef: newColumnRef }));
         }}
         options={columns.map((col) => ({
-          label: col.table ? `${col.table.name}.${col.name}` : col.name,
+          label: col.table && tables.length > 1 ? `${col.table.name}.${col.name}` : col.name,
           value: getColumnRef(col),
         }))}
         placeholder="Column"

@@ -21,6 +21,9 @@ export const getColumnRefFromAst = (
   const ref = 'expr' in column ? column.expr : column;
 
   const columnName = (() => {
+    if ('value' in ref && typeof ref.value === 'string') {
+      return ref.value;
+    }
     if (!('column' in ref) || ref.type !== 'column_ref') {
       return null;
     }

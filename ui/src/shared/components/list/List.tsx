@@ -6,7 +6,7 @@ import SearchIcon from '~/shared/icons/Search.svg?react';
 
 export type ListProps<T> = {
   autoFocusFirstItem?: boolean;
-  compareFn?: (a: T, b: T) => boolean;
+  compareFn?: (a: T | null, b: T | null) => boolean;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
   emptyPlaceholder?: string;
   items: Array<
@@ -17,7 +17,7 @@ export type ListProps<T> = {
   searchAutofocus?: boolean;
   searchPlaceholder?: string;
   setSearch?: (value: string) => void;
-} & ({ multiple?: false; selectedValue?: T | null } | { multiple: true; selectedValues: T[] });
+} & ({ multiple?: false; selectedValue: T | null } | { multiple: true; selectedValues: T[] });
 
 export function List<T>(props: ListProps<T>) {
   const {
@@ -42,10 +42,7 @@ export function List<T>(props: ListProps<T>) {
       (!multiple && props.selectedValue !== null)
     ) {
       return (multiple && compareFn(props.selectedValues[0], item.value)) ||
-        (!multiple &&
-          props.selectedValue !== null &&
-          props.selectedValue !== undefined &&
-          compareFn(props.selectedValue, item.value))
+        (!multiple && compareFn(props.selectedValue, item.value))
         ? true
         : undefined;
     }
@@ -92,9 +89,7 @@ export function List<T>(props: ListProps<T>) {
                   ? props.selectedValues.some((selectedValue) =>
                       compareFn(selectedValue, item.value),
                     )
-                  : props.selectedValue !== null &&
-                    props.selectedValue !== undefined &&
-                    compareFn(props.selectedValue, item.value)
+                  : compareFn(props.selectedValue, item.value)
               }
             />
           ))}

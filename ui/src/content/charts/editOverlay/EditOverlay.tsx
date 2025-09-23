@@ -123,7 +123,10 @@ export const ChartEditOverlay: React.FC = () => {
   const getColumnOptions = (axis: 'x' | 'y') =>
     result?.columns?.map((column) => ({
       disabled: !getIsAllowed(axis, column.dataType),
-      label: column.table ? `${column.table.name}.${column.name}` : column.name,
+      label:
+        column.table && result.tables.length > 1
+          ? `${column.table.name}.${column.name}`
+          : column.name,
       value: { column: column.name, table: column.table?.name ?? null },
     })) ?? [];
 
@@ -194,7 +197,7 @@ export const ChartEditOverlay: React.FC = () => {
               >
                 <Select<ColumnRef | null>
                   compareFn={(a, b) =>
-                    Boolean(a && b && a.column === b.column && a.table === b.table)
+                    (!a && !b) || (a?.column === b?.column && a?.table === b?.table)
                   }
                   htmlProps={{ disabled: isSaving }}
                   onChange={setY}

@@ -8,7 +8,7 @@ import { List } from '../list/List';
 import { useOverlay } from '../overlay/useOverlay';
 
 export type SelectProps<T> = {
-  compareFn?: (a: T, b: T) => boolean;
+  compareFn?: (a: T | null, b: T | null) => boolean;
   htmlProps?: React.HTMLProps<HTMLButtonElement>;
   monospace?: boolean;
   onChange: (value: T) => void;
