@@ -4,6 +4,7 @@ import { useCallback, useContext, useRef, useState } from 'react';
 import { SavedQueriesContext } from '~/content/savedQueries/Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
 import { QueryContext, ResultContext } from '~/content/tabs/queries/query/Context';
+import type { ColumnRef } from '~/content/tabs/queries/utils/getColumnRef';
 import { ToastContext } from '~/content/toast/Context';
 import { Button } from '~/shared/components/button/Button';
 import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/ConfirmDeletePopover';
@@ -32,10 +33,10 @@ export const ChartEditOverlay: React.FC = () => {
   });
 
   const [type, setType] = useState<Chart['type']>(chart?.type ?? 'line');
-  const [x, setX] = useState<{ column: string; table: string | null } | null>(
+  const [x, setX] = useState<ColumnRef | null>(
     chart?.xColumn ? { column: chart.xColumn, table: chart.xTable } : null,
   );
-  const [y, setY] = useState<{ column: string; table: string | null } | null>(
+  const [y, setY] = useState<ColumnRef | null>(
     chart?.yColumn ? { column: chart.yColumn, table: chart.yTable } : null,
   );
 
@@ -177,7 +178,7 @@ export const ChartEditOverlay: React.FC = () => {
                 />
               </Field>
               <Field label={type === 'pie' ? 'Label' : 'X axis'}>
-                <Select<{ column: string; table: string | null } | null>
+                <Select<ColumnRef | null>
                   compareFn={(a, b) =>
                     Boolean(a && b && a.column === b.column && a.table === b.table)
                   }
@@ -191,7 +192,7 @@ export const ChartEditOverlay: React.FC = () => {
                 hint="Values with the same label will be summed up"
                 label={type === 'pie' ? 'Value' : 'Y axis'}
               >
-                <Select<{ column: string; table: string | null } | null>
+                <Select<ColumnRef | null>
                   compareFn={(a, b) =>
                     Boolean(a && b && a.column === b.column && a.table === b.table)
                   }

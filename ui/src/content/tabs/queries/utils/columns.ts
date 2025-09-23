@@ -227,12 +227,18 @@ export const getColumnsFromResult = (props: {
           (c) => c.constraint_type === 'UNIQUE' && c.column_name === column_name,
         );
 
-      const selectColumn = parsedStatement.columns.find((column) => {
-        const expr = (column as NodeSqlParser.Column).expr;
-        if ('column' in expr) {
-          return expr.column === column_name && (!expr.table || expr.table === table.name);
+      const selectColumn = parsedStatement.columns.find((columnAst) => {
+        const columnExpr = (columnAst as NodeSqlParser.Column).expr;
+
+        if (!('column' in columnExpr)) {
+          return false;
         }
-        return false;
+
+        const selectColumn =
+          typeof columnExpr.column === 'object' ? columnExpr.column.expr.value : columnExpr.column;
+        const selectTable = columnExpr.table;
+
+        return selectColumn === column_name && (!selectTable || selectTable === table.name);
       }) as NodeSqlParser.Column | undefined;
 
       const alias = typeof selectColumn?.as === 'string' ? selectColumn.as : null;

@@ -95,9 +95,6 @@ export const getFilterFromAst = (
 ): Filter => {
   const { operator } = expression;
 
-  if (expression.left.type !== 'column_ref' && expression.left.type !== 'double_quote_string') {
-    throw new Error(`Left expression is not column: ${JSON.stringify(expression.left)}`);
-  }
   if (expression.right.type === 'param' || expression.right.type === 'column_ref') {
     throw new Error(`Right expression is not value: ${JSON.stringify(expression.right)}`);
   }
@@ -105,7 +102,7 @@ export const getFilterFromAst = (
     throw new Error(`Operator is not supported: ${JSON.stringify(operator)}`);
   }
 
-  const left = expression.left as NodeSqlParser.ColumnRef | NodeSqlParser.Value;
+  const left = expression.left as NodeSqlParser.ColumnRef;
   const right = expression.right as NodeSqlParser.Value;
 
   const columnRef = getColumnRefFromAst(left);

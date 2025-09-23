@@ -9,6 +9,7 @@ import { NULL_OPERATORS, OPERATORS } from '../constants';
 import type { FormFilter, NullOperator, OperatorWithValue } from '../types';
 import { Close } from '@mui/icons-material';
 import { Button } from '~/shared/components/button/Button';
+import type { ColumnRef } from '~/content/tabs/queries/utils/getColumnRef';
 import { getColumnRef } from '~/content/tabs/queries/utils/getColumnRef';
 
 export interface FilterControlProps {
@@ -39,7 +40,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
       <div className="w-12 shrink-0 pl-1 pt-2 font-mono text-sm font-medium text-textTertiary">
         {isFirst ? 'WHERE' : filter.logicalOperator}
       </div>
-      <Select<{ column: string; table: string | null } | null>
+      <Select<ColumnRef | null>
         compareFn={(a, b) => a?.column === b?.column && a?.table === b?.table}
         htmlProps={{ className: '!w-[200px] shrink-0' }}
         onChange={(newColumnRef) => {

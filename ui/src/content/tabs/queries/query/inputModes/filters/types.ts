@@ -1,5 +1,6 @@
 import type { Value } from '~/shared/types';
 import type { NULL_OPERATORS, OPERATORS } from './constants';
+import type { ColumnRef } from '../../../utils/getColumnRef';
 
 export type NullOperator = (typeof NULL_OPERATORS)[number];
 
@@ -10,10 +11,7 @@ export type OperatorWithValue = Exclude<Operator, NullOperator>;
 export type LogicalOperator = 'AND' | 'OR';
 
 export type FilterWithoutValue = {
-  columnRef: {
-    column: string;
-    table: string | null;
-  };
+  columnRef: ColumnRef;
   logicalOperator: LogicalOperator;
   operator: NullOperator;
 };
@@ -29,5 +27,5 @@ export type FormFilter = (
   | Omit<FilterWithValue, 'columnRef'>
   | Omit<FilterWithoutValue, 'columnRef'>
 ) & {
-  columnRef: { column: string; table: string | null } | null;
+  columnRef: ColumnRef | null;
 };
