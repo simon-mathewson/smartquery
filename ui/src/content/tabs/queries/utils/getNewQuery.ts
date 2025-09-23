@@ -9,7 +9,7 @@ export const getNewQuery = async (props: {
   connection: Connection;
 }) => {
   const {
-    addQueryOptions: { initialInputMode, sql, savedQueryId },
+    addQueryOptions: { initialInputMode, sql, savedQueryId, chart },
     connection,
   } = props;
 
@@ -19,6 +19,7 @@ export const getNewQuery = async (props: {
     initialInputMode,
     sql: sql ?? null,
     savedQueryId,
+    chart,
     ...(sql ? await parseQuery({ connection, sql }) : { select: null, statements: null }),
   } satisfies Query;
 };

@@ -121,14 +121,16 @@ export const ChartEditOverlay: React.FC = () => {
   };
 
   const getColumnOptions = (axis: 'x' | 'y') =>
-    result?.columns?.map((column) => ({
-      disabled: !getIsAllowed(axis, column.dataType),
-      label:
-        column.table && result.tables.length > 1
-          ? `${column.table.name}.${column.name}`
-          : column.name,
-      value: { column: column.name, table: column.table?.name ?? null },
-    })) ?? [];
+    result?.columns
+      ?.filter((column) => column.isVisible)
+      .map((column) => ({
+        disabled: !getIsAllowed(axis, column.dataType),
+        label:
+          column.table && result.tables.length > 1
+            ? `${column.table.name}.${column.name}`
+            : column.name,
+        value: { column: column.name, table: column.table?.name ?? null },
+      })) ?? [];
 
   return (
     <>

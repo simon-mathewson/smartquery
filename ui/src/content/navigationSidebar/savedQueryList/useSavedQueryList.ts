@@ -64,7 +64,7 @@ export const useSavedQueryList = () => {
   const onSelect = useCallback(
     (savedQuery: SavedQuery) => {
       void addQuery(
-        { sql: savedQuery.sql, savedQueryId: savedQuery.id },
+        { sql: savedQuery.sql, savedQueryId: savedQuery.id, chart: savedQuery.chart },
         {
           // Unless saved query is already selected, open tab that already contains this query if
           // applicable
