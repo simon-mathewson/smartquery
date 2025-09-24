@@ -9,7 +9,8 @@ export const getAstForSql = async (props: { engine: Connection['engine']; statem
     const sqlParser = await getSqlParser();
     const ast = sqlParser.astify(statement, getParserOptions(engine));
     return castArray(ast)[0];
-  } catch {
+  } catch (error) {
+    console.error(error);
     return null;
   }
 };

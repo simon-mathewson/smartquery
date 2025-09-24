@@ -22,7 +22,13 @@ export const demoSavedQueries = [
   {
     id: 'c8fd33c9-692c-4e6d-be6d-fda0c7c84a2b',
     name: 'Top countries',
-    sql: 'SELECT\n  Country,\n  COUNT(CustomerId) as count\nFROM\n  customers\nGROUP BY\n  Country\nORDER BY\n  count DESC;',
-    chart: { type: 'bar', xColumn: 'Country', xTable: null, yColumn: 'count', yTable: null },
+    sql: 'SELECT\n  Country,\n  COUNT(CustomerId) as CustomerCount\nFROM\n  customers\nGROUP BY\n  Country\nORDER BY\n  CustomerCount DESC;',
+    chart: {
+      type: 'bar',
+      xColumn: 'Country',
+      xTable: 'customers',
+      yColumn: 'CustomerCount',
+      yTable: 'customers',
+    },
   },
 ] satisfies SavedQuery[];
