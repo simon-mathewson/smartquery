@@ -66,7 +66,8 @@ export const Chart = () => {
   }
 
   const valueFormatter = isDateTimeType(xColumn?.dataType)
-    ? (value: Date) => value.toLocaleDateString()
+    ? (value: Date) =>
+        new Intl.DateTimeFormat('en-US', { dateStyle: 'short', timeStyle: 'short' }).format(value)
     : undefined;
 
   const colors = primaryColors.map((name) => tailwindColors[name][mode === 'dark' ? 500 : 600]);

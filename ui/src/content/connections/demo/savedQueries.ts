@@ -28,7 +28,7 @@ export const demoSavedQueries = [
       xColumn: 'Country',
       xTable: 'customers',
       yColumn: 'CustomerCount',
-      yTable: 'customers',
+      yTable: null,
     },
   },
 ] satisfies SavedQuery[];

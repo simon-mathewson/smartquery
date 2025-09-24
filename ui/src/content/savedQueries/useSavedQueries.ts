@@ -187,9 +187,19 @@ export const useSavedQueries = () => {
           await cloudApi.savedQueries.update.mutate({ id, name, sql, chart });
         } else {
           setLocalSavedQueries((currentSavedQueries) =>
-            currentSavedQueries.map((sq) =>
-              sq.id === id ? Object.assign(sq, { name, sql, chart }) : sq,
-            ),
+            currentSavedQueries.map((sq) => {
+              if (sq.id !== id) return sq;
+              if (name !== undefined) {
+                Object.assign(sq, { name });
+              }
+              if (sql !== undefined) {
+                Object.assign(sq, { sql });
+              }
+              if (chart !== undefined) {
+                Object.assign(sq, { chart });
+              }
+              return sq;
+            }),
           );
         }
 
