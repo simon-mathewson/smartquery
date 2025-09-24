@@ -36,32 +36,12 @@ export const Chart = () => {
 
       return {
         x: isDateTimeType(xColumn.dataType) && x !== null ? new Date(x) : x,
-        y: y !== null ? Number(y) : null,
+        y: Number(y),
       };
     });
   }, [result, chart, xColumn]);
 
-  const chartDataGrouped = useMemo(() => {
-    if (!chartData) {
-      return null;
-    }
-
-    const grouped: { x: string | Date | null; y: number }[] = [];
-
-    chartData.forEach((data) => {
-      const existing = grouped.find((group) => String(group.x) === String(data.x));
-      const valueToAdd = chart?.yColumn && data.y !== null ? data.y : 1;
-      if (existing) {
-        existing.y += valueToAdd;
-      } else {
-        grouped.push({ x: data.x, y: valueToAdd });
-      }
-    });
-
-    return grouped;
-  }, [chart?.yColumn, chartData]);
-
-  if (!chart || !chartDataGrouped || !xColumn) {
+  if (!chart || !chartData || !xColumn) {
     return null;
   }
 
@@ -78,23 +58,18 @@ export const Chart = () => {
         <LineChart
           chart={chart}
           colors={colors}
-          data={
-            chartDataGrouped.filter((data) => data.x !== null) as { x: string | Date; y: number }[]
-          }
+          data={chartData.filter(
+            (data): data is { x: string | Date; y: number } => data.x !== null,
+          )}
           valueFormatter={valueFormatter}
           xColumn={xColumn}
         />
       );
     case 'bar':
       return (
-        <BarChart
-          chart={chart}
-          colors={colors}
-          data={chartDataGrouped}
-          valueFormatter={valueFormatter}
-        />
+        <BarChart chart={chart} colors={colors} data={chartData} valueFormatter={valueFormatter} />
       );
     case 'pie':
-      return <PieChart colors={colors} data={chartDataGrouped} />;
+      return <PieChart colors={colors} data={chartData} />;
   }
 };

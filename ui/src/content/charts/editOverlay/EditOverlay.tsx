@@ -185,7 +185,7 @@ export const ChartEditOverlay: React.FC = () => {
               <Field label={type === 'pie' ? 'Label' : 'X axis'}>
                 <Select<ColumnRef | null>
                   compareFn={(a, b) =>
-                    Boolean(a && b && a.column === b.column && a.table === b.table)
+                    (!a && !b) || (a?.column === b?.column && a?.table === b?.table)
                   }
                   htmlProps={{ disabled: isSaving }}
                   onChange={setX}
@@ -203,10 +203,7 @@ export const ChartEditOverlay: React.FC = () => {
                   }
                   htmlProps={{ disabled: isSaving }}
                   onChange={setY}
-                  options={[
-                    ...(type === 'pie' ? [{ label: 'None', value: null }] : []),
-                    ...getColumnOptions('y'),
-                  ]}
+                  options={getColumnOptions('y')}
                   value={y}
                 />
               </Field>
@@ -225,7 +222,7 @@ export const ChartEditOverlay: React.FC = () => {
                         chart.yTable === y?.table,
                     ) ||
                     !x?.column ||
-                    (type !== 'pie' && !y?.column),
+                    !y?.column,
                   type: 'submit',
                 }}
                 label={chart ? 'Update' : 'Create'}

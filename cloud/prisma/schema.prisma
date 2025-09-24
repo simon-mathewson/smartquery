@@ -81,7 +81,7 @@ model SavedQueryChart {
   type         ChartType
   xColumn      String
   xTable       String?
-  yColumn      String?
+  yColumn      String
   yTable       String?
 
   @@index([savedQueryId])

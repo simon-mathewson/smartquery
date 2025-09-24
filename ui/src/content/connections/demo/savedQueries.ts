@@ -2,10 +2,16 @@ import type { SavedQuery } from '@/savedQueries/types';
 
 export const demoSavedQueries = [
   {
-    id: 'a14523cc-906b-407e-b0f2-b92fbf81ca46',
+    id: '65371258-b28b-4e01-b7fc-31368ce29b1d',
     name: 'Genre distribution',
-    sql: 'SELECT\n  T1.Name AS Track,\n  T2.Name AS Genre\nFROM tracks AS T1\nINNER JOIN genres AS T2\n  ON T1.GenreId = T2.GenreId;',
-    chart: { type: 'pie', xColumn: 'Genre', xTable: 'T2', yColumn: null, yTable: null },
+    sql: 'SELECT\n  T1.Name,\n  COUNT(T2.TrackId) AS NumberOfTracks\nFROM genres AS T1\nINNER JOIN tracks AS T2\n  ON T1.GenreId = T2.GenreId\nGROUP BY\n  T1.Name\nORDER BY\n  NumberOfTracks DESC;',
+    chart: {
+      type: 'pie',
+      xColumn: 'Name',
+      xTable: 'T1',
+      yColumn: 'NumberOfTracks',
+      yTable: null,
+    },
   },
   {
     id: 'a172e5c8-b4da-4b57-9a4d-28a91470c7d2',
