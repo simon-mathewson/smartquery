@@ -6,6 +6,7 @@ import { assert } from 'ts-essentials';
 import { formatJson, isValidJson } from '~/shared/utils/json/json';
 import type { ButtonProps } from '../../button/Button';
 import type { CodeEditorProps } from '../CodeEditor';
+import { formatSql } from '~/shared/utils/sql/sql';
 
 export const useActions = (props: {
   editorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>;
@@ -28,12 +29,10 @@ export const useActions = (props: {
     if (!readOnly && includes(['sql', 'json', 'sqlite', 'mysql', 'postgres'], language)) {
       const disabled = !value || (language === 'json' && !isValidJson(value));
 
-      const { format: formatSql } = await import('sql-formatter');
-
       actionList.push({
         htmlProps: {
           disabled,
-          onClick: () => {
+          onClick: async () => {
             if (!editorRef.current) return;
 
             switch (language) {
@@ -44,7 +43,7 @@ export const useActions = (props: {
               case 'postgres':
               case 'sqlite':
               case 'sql':
-                editorRef.current.setValue(formatSql(value!));
+                editorRef.current.setValue(await formatSql(value!));
                 break;
               default:
                 break;

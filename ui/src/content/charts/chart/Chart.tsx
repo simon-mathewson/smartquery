@@ -4,7 +4,6 @@ import { QueryContext, ResultContext } from '~/content/tabs/queries/query/Contex
 import { BarChart } from './BarChart';
 import { PieChart } from './PieChart';
 import { useContext, useMemo } from 'react';
-import { assert } from 'ts-essentials';
 import { isDateTimeType } from '~/shared/dataTypes/utils';
 import { ThemeContext } from '~/content/theme/Context';
 import tailwindColors from 'tailwindcss/colors';
@@ -24,13 +23,11 @@ export const Chart = () => {
     : null;
 
   const chartData = useMemo(() => {
-    if (!result || !chart) {
+    if (!result || !chart || !xColumn) {
       return null;
     }
 
     return result.rows.map((row) => {
-      assert(xColumn);
-
       const x = row[chart.xColumn];
       const y = chart.yColumn ? row[chart.yColumn] : null;
 

@@ -1,7 +1,7 @@
 import type { AiTextContent } from '@/ai/types';
 import type { inferRouterInputs } from '@trpc/server';
 import { cloneDeep, omit } from 'lodash';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import superjson from 'superjson';
 import { CloudApiContext } from '~/content/cloud/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -9,12 +9,44 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { CloudRouter } from '../../../../../cloud/router';
 import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
 import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
+import { parseResponse } from './parseResponse';
+import type { ThreadMessage } from './types';
+import { formatSql } from '~/shared/utils/sql/sql';
 
 export const useCopilot = () => {
   const { cloudApiStream } = useDefinedContext(CloudApiContext);
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
-  const [thread, setThread] = useStoredState<AiTextContent[]>('useCopilot.thread', []);
+  const [rawThread, setRawThread] = useStoredState<AiTextContent[]>('useCopilot.thread', []);
+  const [thread, setThread] = useState<Awaited<ReturnType<typeof processThread>>>([]);
+
+  const processThread = useCallback(
+    (rawThread: AiTextContent[]) =>
+      Promise.all(
+        rawThread.map(async (item) =>
+          item.role === 'user'
+            ? ({
+                content: [item.parts[0].text] satisfies ThreadMessage[],
+                role: 'user',
+              } as const)
+            : ({
+                content: await Promise.all(
+                  parseResponse(item.parts[0].text).map(async (message) =>
+                    typeof message === 'string'
+                      ? message
+                      : { ...message, sql: await formatSql(message.sql) },
+                  ),
+                ),
+                role: 'model',
+              } as const),
+        ),
+      ),
+    [],
+  );
+
+  useEffect(() => {
+    void processThread(rawThread).then(setThread);
+  }, [processThread, rawThread]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,13 +67,13 @@ export const useCopilot = () => {
       },
     ) {
       try {
-        const cloudResponse = await cloudApiStream.ai.generateChatResponse.mutate(
+        const chatResponse = await cloudApiStream.ai.generateChatResponse.mutate(
           omit(props, 'abortSignal'),
           { signal: props.abortSignal },
         );
 
-        for await (const chunkText of cloudResponse) {
-          yield chunkText;
+        for await (const item of chatResponse) {
+          yield item;
         }
 
         return null;
@@ -68,14 +100,14 @@ export const useCopilot = () => {
       abortControllerRef.current = new AbortController();
 
       const threadWithUserMessage = [
-        ...thread,
+        ...rawThread,
         {
           role: 'user',
           parts: [{ text: message }],
         },
       ] satisfies AiTextContent[];
 
-      setThread(threadWithUserMessage);
+      setRawThread(threadWithUserMessage);
 
       try {
         const schemaDefinitions = getAndRefreshSchemaDefinitions
@@ -99,12 +131,12 @@ export const useCopilot = () => {
           parts: [{ text: '' }],
         } satisfies AiTextContent;
 
-        setThread((contents) => [...contents, responseContent]);
+        setRawThread((contents) => [...contents, responseContent]);
 
         for await (const chunk of response) {
           responseContent.parts[0].text += chunk ?? '';
 
-          setThread((contents) => [...contents.slice(0, -1), cloneDeep(responseContent)]);
+          setRawThread((contents) => [...contents.slice(0, -1), cloneDeep(responseContent)]);
         }
 
         setInput('');
@@ -113,8 +145,8 @@ export const useCopilot = () => {
       }
     },
     [
-      thread,
-      setThread,
+      rawThread,
+      setRawThread,
       getAndRefreshSchemaDefinitions,
       generateChatResponse,
       activeConnection.engine,
@@ -128,8 +160,8 @@ export const useCopilot = () => {
 
   const clearThread = useCallback(() => {
     stopGenerating();
-    setThread([]);
-  }, [setThread, stopGenerating]);
+    setRawThread([]);
+  }, [setRawThread, stopGenerating]);
 
   return useMemo(
     () => ({

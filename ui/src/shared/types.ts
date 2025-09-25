@@ -52,6 +52,7 @@ export type Query = {
   id: string;
   initialInputMode?: InputMode;
   isLoading: boolean;
+  name?: string;
   savedQueryId?: string | null;
   select: Select | null;
   sql: string | null;

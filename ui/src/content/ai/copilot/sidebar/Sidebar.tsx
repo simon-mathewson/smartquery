@@ -18,7 +18,6 @@ import { Tooltip } from '~/shared/components/tooltip/Tooltip';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { CopilotContext } from '../Context';
 import { CodeSnippet } from './CodeSnippet/CodeSnippet';
 import { CopilotSidebarContext } from './Context';
@@ -122,39 +121,35 @@ export const CopilotSidebar: React.FC = () => {
           }
         />
         <div className="flex flex-col gap-4 overflow-auto px-1" ref={threadContainerRef}>
-          {thread.map((message, index) => {
-            const textParts = message.parts?.map((part) => part.text).filter(isNotUndefined);
-
-            if (!textParts?.length) {
-              return null;
-            }
-
-            return (
+          {thread.map((message, index) => (
+            <div
+              className={classNames({ 'flex justify-end pl-[32px]': message.role === 'user' })}
+              key={index}
+            >
               <div
-                className={classNames({ 'flex justify-end pl-[32px]': message.role === 'user' })}
-                key={index}
+                className={classNames(
+                  'prose max-w-none space-y-2 overflow-hidden break-words text-sm leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
+                  {
+                    'rounded-xl bg-primary px-2 py-1 text-white': message.role === 'user',
+                  },
+                )}
               >
-                <div
-                  className={classNames(
-                    'prose max-w-none overflow-hidden break-words text-sm leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
-                    {
-                      'rounded-xl bg-primary px-2 py-1 text-white': message.role === 'user',
-                    },
-                  )}
-                >
-                  {message.parts?.map((part, partIndex) => (
+                {message.content.map((item, itemIndex) =>
+                  typeof item === 'string' ? (
                     <ReactMarkdown
                       components={{ code: CodeSnippet }}
-                      key={partIndex}
+                      key={itemIndex}
                       remarkPlugins={[remarkGfm]}
                     >
-                      {part.text}
+                      {item}
                     </ReactMarkdown>
-                  ))}
-                </div>
+                  ) : (
+                    <CodeSnippet query={item}>{item.sql}</CodeSnippet>
+                  ),
+                )}
               </div>
-            );
-          })}
+            </div>
+          ))}
           {isLoading && <PulseLoader color={colors.neutral[400]} size={8} />}
         </div>
         <div>

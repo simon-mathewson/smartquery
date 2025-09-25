@@ -4,7 +4,7 @@ export const chartSchema = z.object({
   type: z.enum(['bar', 'line', 'pie']),
   xColumn: z.string(),
   xTable: z.string().nullable(),
-  yColumn: z.string().nullable(),
+  yColumn: z.string(),
   yTable: z.string().nullable(),
 });
 

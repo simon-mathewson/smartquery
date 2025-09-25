@@ -29,20 +29,23 @@ export type CodeEditorProps = {
   placeholder?: string;
   readOnly?: boolean;
   submit?: () => void;
+  title?: string;
   value?: string;
 };
 
 export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
-  const { bottomToolbar, htmlProps, large, maxHeight, readOnly } = props;
+  const { bottomToolbar, htmlProps, large, maxHeight, readOnly, title } = props;
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const [actions, setActions] = useState<ButtonProps[]>([]);
 
+  const hasTopToolbar = Boolean(actions.length > 0 || title);
+
   const { containerRef, hostRef, isInitialized, isLoading } = useSetup({
     editorProps: props,
     editorRef,
-    hasActions: actions.length > 0,
+    hasTopToolbar,
     hasBottomToolbar: Boolean(bottomToolbar),
   });
 
@@ -67,20 +70,30 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
       }}
     >
       {isLoading && <Loading size={large ? 'default' : 'small'} />}
-      {!isLoading && actions.length > 0 && (
-        <div className="pointer-events-none absolute left-0 right-0 top-0 z-20 flex justify-end">
+      {!isLoading && hasTopToolbar && (
+        <div className="pointer-events-none absolute left-0 right-0 top-0 z-20 flex">
           <div
             className={classNames(
-              'pointer-events-auto flex h-max justify-end gap-2 rounded-bl-[18px] bg-background pr-2 pt-2',
+              'pointer-events-auto ml-auto flex h-9 items-center gap-3 rounded-bl-[18px] bg-background pr-2 pt-2',
               {
                 'pb-1 pl-1': !large,
                 'p-2 pb-0': large,
+                'w-full': title,
               },
             )}
           >
-            {actions.map((action, index) => (
-              <Button color="secondary" key={index} size="small" {...action} />
-            ))}
+            {title && (
+              <div className="pointer-events-auto truncate pl-2 text-xs font-medium text-textTertiary">
+                {title}
+              </div>
+            )}
+            {actions.length > 0 && (
+              <div className="ml-auto flex items-center gap-2">
+                {actions.map((action, index) => (
+                  <Button color="secondary" key={index} size="small" {...action} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

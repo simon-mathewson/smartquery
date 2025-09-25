@@ -1,4 +1,4 @@
-import { generateChatResponse } from './generateChatResponse';
+import { generateChatResponse } from './generateChatResponse/generateChatResponse';
 import { generateInlineCompletions } from './generateInlineCompletions';
 import { generateChatResponseInputSchema, generateInlineCompletionsInputSchema } from './types';
 import { trackUsage } from '~/usage/trackUsage';

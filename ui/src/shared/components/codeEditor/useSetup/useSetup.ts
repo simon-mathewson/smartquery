@@ -14,7 +14,7 @@ import { useAutocomplete } from '../useAutocomplete/useAutocomplete';
 export const useSetup = (props: {
   editorProps: CodeEditorProps;
   editorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>;
-  hasActions: boolean;
+  hasTopToolbar: boolean;
   hasBottomToolbar: boolean;
   overrideOptions?: editor.IEditorOptions;
 }) => {
@@ -36,7 +36,7 @@ export const useSetup = (props: {
       value,
     },
     editorRef,
-    hasActions,
+    hasTopToolbar,
     hasBottomToolbar,
     overrideOptions,
   } = props;
@@ -285,12 +285,12 @@ export const useSetup = (props: {
   }, [isInitialized, options]);
 
   useEffect(() => {
-    if (hasActions) {
+    if (hasTopToolbar) {
       setPaddingTop(36);
     } else {
       setPaddingTop(defaultPaddingTop);
     }
-  }, [defaultPaddingTop, hasActions]);
+  }, [defaultPaddingTop, hasTopToolbar]);
 
   useEffect(() => {
     if (hasBottomToolbar) {

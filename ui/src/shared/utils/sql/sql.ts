@@ -72,3 +72,8 @@ export const splitSqlStatements = (sql: string) => {
     return restoredStatement;
   });
 };
+
+export const formatSql = async (sql: string) => {
+  const { format: formatSql } = await import('sql-formatter');
+  return formatSql(sql);
+};

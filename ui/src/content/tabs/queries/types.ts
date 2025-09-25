@@ -3,10 +3,11 @@ import type { InputMode } from './query/types';
 import type { Chart } from '@/savedQueries/types';
 
 export type AddQueryOptions = {
+  chart?: Chart | null;
   initialInputMode?: InputMode;
+  name?: string;
   savedQueryId?: string;
   sql?: string;
-  chart?: Chart | null;
 };
 
 export type Select = {
