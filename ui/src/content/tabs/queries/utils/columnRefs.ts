@@ -46,3 +46,6 @@ export const getColumnRefFromAst = (
     table: tableName,
   };
 };
+
+export const compareColumnRefs = (a: ColumnRef | null, b: ColumnRef | null) =>
+  (!a && !b) || (a?.column === b?.column && (!a?.table || !b?.table || a.table === b.table));

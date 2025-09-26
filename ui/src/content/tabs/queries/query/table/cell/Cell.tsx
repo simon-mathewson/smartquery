@@ -20,6 +20,7 @@ import { ActiveConnectionContext } from '~/content/connections/activeConnection/
 import type { ResizeHandleProps } from '~/shared/components/resizeHandle/ResizeHandle';
 import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
 import { isNil } from 'lodash';
+import { compareColumnRefs, getColumnRef } from '../../../utils/columnRefs';
 
 export type CellProps = {
   column: Column | string;
@@ -112,6 +113,10 @@ export const Cell: React.FC<CellProps> = (props) => {
 
     void addQuery({ sql, initialInputMode: 'filters' }, { afterActiveTab: true });
   }, [activeConnection.engine, addQuery, column, value]);
+
+  const isSortedColumn = sorting
+    ? compareColumnRefs(sorting.sortedColumn, getColumnRef(column as Column))
+    : false;
 
   return (
     <>
@@ -252,12 +257,11 @@ export const Cell: React.FC<CellProps> = (props) => {
         {query.select && type === 'header' && (
           <>
             {!sorting.sortedColumn ||
-            sorting.sortedColumn.columnName !== (column as Column).name ||
+            !isSortedColumn ||
             sorting.sortedColumn.direction === 'ASC' ? (
               <ArrowDownward
                 className={classNames('!h-4 !w-4 text-primary', {
-                  '!hidden opacity-0 group-hover:!block group-hover:opacity-50':
-                    sorting.sortedColumn?.columnName !== (column as Column).name,
+                  '!hidden opacity-0 group-hover:!block group-hover:opacity-50': !isSortedColumn,
                 })}
               />
             ) : (

@@ -9,8 +9,8 @@ import { NULL_OPERATORS, OPERATORS } from '../constants';
 import type { FormFilter, NullOperator, OperatorWithValue } from '../types';
 import { Close } from '@mui/icons-material';
 import { Button } from '~/shared/components/button/Button';
-import type { ColumnRef } from '~/content/tabs/queries/utils/getColumnRef';
-import { getColumnRef } from '~/content/tabs/queries/utils/getColumnRef';
+import type { ColumnRef } from '~/content/tabs/queries/utils/columnRefs';
+import { getColumnRef } from '~/content/tabs/queries/utils/columnRefs';
 
 export interface FilterControlProps {
   filter: FormFilter;

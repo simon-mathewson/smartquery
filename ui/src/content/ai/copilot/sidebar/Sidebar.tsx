@@ -144,7 +144,9 @@ export const CopilotSidebar: React.FC = () => {
                       {item}
                     </ReactMarkdown>
                   ) : (
-                    <CodeSnippet query={item}>{item.sql}</CodeSnippet>
+                    <CodeSnippet query={item} key={itemIndex}>
+                      {item.sql}
+                    </CodeSnippet>
                   ),
                 )}
               </div>

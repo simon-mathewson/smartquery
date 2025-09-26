@@ -34,14 +34,14 @@ export const useCopilot = () => {
                   parseResponse(item.parts[0].text).map(async (message) =>
                     typeof message === 'string'
                       ? message
-                      : { ...message, sql: await formatSql(message.sql) },
+                      : { ...message, sql: await formatSql(message.sql, activeConnection.engine) },
                   ),
                 ),
                 role: 'model',
               } as const),
         ),
       ),
-    [],
+    [activeConnection.engine],
   );
 
   useEffect(() => {

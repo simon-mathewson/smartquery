@@ -1,6 +1,6 @@
 import type { Value } from '~/shared/types';
 import type { NULL_OPERATORS, OPERATORS } from './constants';
-import type { ColumnRef } from '../../../utils/getColumnRef';
+import type { ColumnRef } from '../../../utils/columnRefs';
 
 export type NullOperator = (typeof NULL_OPERATORS)[number];
 

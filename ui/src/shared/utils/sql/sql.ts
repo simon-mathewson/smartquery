@@ -1,4 +1,5 @@
 import type { Engine } from '@/connections/types';
+import type { FormatOptionsWithLanguage } from 'sql-formatter';
 
 export const addQuotes = (engine: Engine, value: string) => {
   if (engine === 'mysql') return `\`${value}\``;
@@ -73,7 +74,23 @@ export const splitSqlStatements = (sql: string) => {
   });
 };
 
-export const formatSql = async (sql: string) => {
+export const formatSql = async (sql: string, engine?: Engine | 'sql') => {
   const { format: formatSql } = await import('sql-formatter');
-  return formatSql(sql);
+
+  const language: FormatOptionsWithLanguage['language'] = engine
+    ? (
+        {
+          mysql: 'mysql',
+          postgres: 'postgresql',
+          sqlite: 'sqlite',
+          sql: 'sql',
+        } as const
+      )[engine]
+    : 'sql';
+
+  try {
+    return formatSql(sql, { language });
+  } catch (error) {
+    return sql;
+  }
 };

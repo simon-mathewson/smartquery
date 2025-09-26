@@ -5,6 +5,8 @@ export const getVirtualColumns = (
   rows: Record<string, DbValue>[],
   columnsToIgnore?: string[],
 ): Column[] => {
+  if (rows.length === 0) return [];
+
   const virtualColumnNames = Object.keys(rows[0]).filter(
     (columnName) => !columnsToIgnore?.includes(columnName),
   );

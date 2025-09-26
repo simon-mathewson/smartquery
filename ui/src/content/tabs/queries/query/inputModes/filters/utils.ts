@@ -4,7 +4,7 @@ import type { Filter, LogicalOperator, Operator } from './types';
 import { LOGICAL_OPERATORS, NULL_OPERATORS, OPERATORS } from './constants';
 import { includes } from 'lodash';
 import { assert } from 'ts-essentials';
-import { getColumnRef, getColumnRefFromAst } from '../../../utils/getColumnRef';
+import { compareColumnRefs, getColumnRef, getColumnRefFromAst } from '../../../utils/columnRefs';
 
 export const getAstOperator = (operator: Operator, filter: Filter): string => {
   if (operator === 'IS NULL' || (operator === '=' && 'value' in filter && filter.value === null)) {
@@ -25,12 +25,9 @@ export const getAstFromFilters = (props: { columns: Column[]; filters: Filter[] 
   const { columns, filters } = props;
 
   return filters.reduce<NodeSqlParser.Expr | null>((all, filter) => {
-    const column = columns.find((column) => {
-      const columnRef = getColumnRef(column);
-      return (
-        filter.columnRef.column === columnRef.column && filter.columnRef.table === columnRef.table
-      );
-    });
+    const column = columns.find((column) =>
+      compareColumnRefs(filter.columnRef, getColumnRef(column)),
+    );
 
     if (!column) {
       return all;

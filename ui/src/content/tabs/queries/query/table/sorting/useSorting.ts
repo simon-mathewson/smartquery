@@ -10,7 +10,7 @@ import { getSortedColumnFromAst } from './utils';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import type { Column } from '~/shared/types';
-import { getColumnRef } from '../../../utils/getColumnRef';
+import { compareColumnRefs, getColumnRef } from '../../../utils/columnRefs';
 
 export const useSorting = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -30,12 +30,7 @@ export const useSorting = () => {
       const columnRef = getColumnRef(column);
 
       const newSortDirection = (() => {
-        if (
-          !sortedColumn ||
-          sortedColumn.column !== columnRef.column ||
-          sortedColumn.table !== columnRef.table
-        )
-          return 'ASC';
+        if (!sortedColumn || !compareColumnRefs(sortedColumn, columnRef)) return 'ASC';
         return sortedColumn.direction === 'ASC' ? 'DESC' : null;
       })();
 

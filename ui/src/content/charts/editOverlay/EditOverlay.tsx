@@ -4,7 +4,7 @@ import { useCallback, useContext, useRef, useState } from 'react';
 import { SavedQueriesContext } from '~/content/savedQueries/Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
 import { QueryContext, ResultContext } from '~/content/tabs/queries/query/Context';
-import type { ColumnRef } from '~/content/tabs/queries/utils/getColumnRef';
+import { compareColumnRefs, type ColumnRef } from '~/content/tabs/queries/utils/columnRefs';
 import { ToastContext } from '~/content/toast/Context';
 import { Button } from '~/shared/components/button/Button';
 import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/ConfirmDeletePopover';
@@ -184,23 +184,16 @@ export const ChartEditOverlay: React.FC = () => {
               </Field>
               <Field label={type === 'pie' ? 'Label' : 'X axis'}>
                 <Select<ColumnRef | null>
-                  compareFn={(a, b) =>
-                    (!a && !b) || (a?.column === b?.column && a?.table === b?.table)
-                  }
+                  compareFn={compareColumnRefs}
                   htmlProps={{ disabled: isSaving }}
                   onChange={setX}
                   options={getColumnOptions('x')}
                   value={x}
                 />
               </Field>
-              <Field
-                hint="Values with the same label will be summed up"
-                label={type === 'pie' ? 'Value' : 'Y axis'}
-              >
+              <Field label={type === 'pie' ? 'Value' : 'Y axis'}>
                 <Select<ColumnRef | null>
-                  compareFn={(a, b) =>
-                    (!a && !b) || (a?.column === b?.column && a?.table === b?.table)
-                  }
+                  compareFn={compareColumnRefs}
                   htmlProps={{ disabled: isSaving }}
                   onChange={setY}
                   options={getColumnOptions('y')}

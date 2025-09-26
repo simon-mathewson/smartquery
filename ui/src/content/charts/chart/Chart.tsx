@@ -8,6 +8,7 @@ import { isDateTimeType } from '~/shared/dataTypes/utils';
 import { ThemeContext } from '~/content/theme/Context';
 import tailwindColors from 'tailwindcss/colors';
 import { primaryColors } from '~/content/theme/primaryColors';
+import { compareColumnRefs } from '~/content/tabs/queries/utils/columnRefs';
 
 export const Chart = () => {
   const { mode } = useDefinedContext(ThemeContext);
@@ -17,8 +18,11 @@ export const Chart = () => {
   const result = useContext(ResultContext);
 
   const xColumn = chart
-    ? result?.columns?.find(
-        (column) => column.name === chart.xColumn && (column.table?.name ?? null) === chart.xTable,
+    ? result?.columns?.find((column) =>
+        compareColumnRefs(
+          { column: chart.xColumn, table: chart.xTable },
+          { column: column.name, table: column.table?.name ?? null },
+        ),
       )
     : null;
 

@@ -9,8 +9,8 @@ import type { CodeEditorProps } from '../CodeEditor';
 import { formatSql } from '~/shared/utils/sql/sql';
 
 export const useActions = (props: {
-  editorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>;
   editorProps: CodeEditorProps;
+  editorRef: React.MutableRefObject<editor.IStandaloneCodeEditor | null>;
   isInitialized: boolean;
   setActions: (actions: ButtonProps[]) => void;
 }) => {
@@ -43,7 +43,7 @@ export const useActions = (props: {
               case 'postgres':
               case 'sqlite':
               case 'sql':
-                editorRef.current.setValue(await formatSql(value!));
+                editorRef.current.setValue(await formatSql(value!, language));
                 break;
               default:
                 break;
