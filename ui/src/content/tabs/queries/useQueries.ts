@@ -15,7 +15,7 @@ import { getTableStatements } from './utils/getTableStatement';
 import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
 import { parseQuery } from './utils/parse';
 import type { Chart } from '@/savedQueries/types';
-import { chunk, uniqBy } from 'lodash';
+import { chunk, sortBy, uniqBy } from 'lodash';
 import { getVirtualColumns } from './utils/getVirtualColumns';
 
 export const useQueries = () => {
@@ -126,7 +126,8 @@ export const useQueries = () => {
 
         // If there are multiple columns with the same name, we only keep the first.
         // This can happen if all columns of multiple tables are selected.
-        const tableColumns = uniqBy(columnsWithDuplicates, 'name');
+        // Prefer visible columns.
+        const tableColumns = uniqBy(sortBy(columnsWithDuplicates, 'name'), 'isVisible');
         const virtualColumns = getVirtualColumns(
           firstSelectResult,
           tableColumns.map((column) => column.name),

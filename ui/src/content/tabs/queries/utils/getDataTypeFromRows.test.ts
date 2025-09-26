@@ -129,6 +129,12 @@ describe('getDataTypeFromRows', () => {
   });
 
   describe('Date/Time detection', () => {
+    test('detects year-month values (YYYY-MM)', () => {
+      const rows = [{ column: '2023-12' }, { column: '2024-01' }, { column: '1999-06' }];
+      const result = getDataTypeFromRows(rows, 'column');
+      expect(result).toEqual({ dataType: 'datetime', isNullable: false });
+    });
+
     test('detects date-only values', () => {
       const rows = [{ column: '2023-12-25' }, { column: '2024-01-01' }];
       const result = getDataTypeFromRows(rows, 'column');
@@ -187,6 +193,18 @@ describe('getDataTypeFromRows', () => {
       const rows = [{ column: '10:30:00+02:00' }, { column: '15:45:30-05:00' }];
       const result = getDataTypeFromRows(rows, 'column');
       expect(result).toEqual({ dataType: 'datetime', isNullable: false });
+    });
+
+    test('rejects invalid year-month values', () => {
+      const rows = [{ column: '2023-13' }, { column: '2023-00' }, { column: '2023-25' }];
+      const result = getDataTypeFromRows(rows, 'column');
+      expect(result).toEqual({ dataType: 'char', isNullable: false });
+    });
+
+    test('rejects invalid year-month format', () => {
+      const rows = [{ column: '23-12' }, { column: '2023/12' }, { column: '2023_12' }];
+      const result = getDataTypeFromRows(rows, 'column');
+      expect(result).toEqual({ dataType: 'varchar', isNullable: false });
     });
   });
 

@@ -1,4 +1,4 @@
-import { Close, DeleteOutline, Language, Send, Stop } from '@mui/icons-material';
+import { Close, DeleteOutline, Language, LightbulbOutline, Send, Stop } from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
 import classNames from 'classnames';
 import { useCallback, useRef } from 'react';
@@ -21,6 +21,8 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { CopilotContext } from '../Context';
 import { CodeSnippet } from './CodeSnippet/CodeSnippet';
 import { CopilotSidebarContext } from './Context';
+import { ActionList } from '~/shared/components/actionList/ActionList';
+import { copilotChatSuggestions } from '~/content/connections/demo/copilotChatSuggestions';
 
 export const CopilotSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -153,6 +155,27 @@ export const CopilotSidebar: React.FC = () => {
             </div>
           ))}
           {isLoading && <PulseLoader color={colors.neutral[400]} size={8} />}
+          {activeConnection.id === 'demo' && (
+            <ActionList
+              actions={copilotChatSuggestions
+                .filter(
+                  (suggestion) =>
+                    !thread.some((message) =>
+                      message.content.some(
+                        (item) => typeof item === 'string' && item === suggestion,
+                      ),
+                    ),
+                )
+                .map((suggestion) => ({
+                  label: suggestion,
+                  icon: LightbulbOutline,
+                  onClick: () => {
+                    void sendMessage(suggestion);
+                  },
+                }))}
+              compact
+            />
+          )}
         </div>
         <div>
           {isLoadingSchemaDefinitions && (

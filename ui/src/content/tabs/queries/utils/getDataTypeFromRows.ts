@@ -12,6 +12,7 @@ const REGEX_PATTERNS = {
   HEXADECIMAL: /^-?0[xX][0-9a-fA-F]+(_[0-9a-fA-F]+)*$/,
 
   // Date/time patterns
+  YEAR_MONTH: /^\d{4}-\d{2}$/,
   DATE_ONLY: /^\d{4}-\d{2}-\d{2}$/,
   DATETIME: /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/,
   ISO_DATETIME: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?([+-]\d{2}:\d{2}|Z)?$/,
@@ -98,15 +99,21 @@ export const getDataTypeFromRows = (
   const isAllDateTime = values.every((value) => {
     if (value instanceof Date) return true;
     if (typeof value === 'string') {
-      // Check various date formats
-      const dateFormats = [
+      // Check year-month pattern first with validation
+      if (REGEX_PATTERNS.YEAR_MONTH.test(value)) {
+        const [, month] = value.split('-').map(Number);
+        return month >= 1 && month <= 12;
+      }
+
+      // Check other date formats
+      const otherDateFormats = [
         REGEX_PATTERNS.DATE_ONLY,
         REGEX_PATTERNS.DATETIME,
         REGEX_PATTERNS.ISO_DATETIME,
         REGEX_PATTERNS.DATETIME_MILLIS,
       ];
 
-      if (dateFormats.some((format) => format.test(value))) {
+      if (otherDateFormats.some((format) => format.test(value))) {
         const date = new Date(value);
         return !isNaN(date.getTime());
       }
