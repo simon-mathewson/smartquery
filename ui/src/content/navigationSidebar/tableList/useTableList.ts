@@ -8,7 +8,7 @@ import { useDrag } from '~/content/dragAndDrop/useDrag/useDrag';
 import { assert } from 'ts-essentials';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 import { uniq } from 'lodash';
-import { addQuotes } from '~/shared/utils/sql/sql';
+import { addQuotes, formatSql } from '~/shared/utils/sql/sql';
 import { useEffect } from 'react';
 import { getTableNamesSql } from './getTableNamesSql';
 import { NavigationSidebarContext } from '../Context';
@@ -55,23 +55,28 @@ export const useTableList = () => {
   ) satisfies Table[];
 
   const getQuery = useCallback(
-    (table: Table) => {
+    async (table: Table) => {
       assert(activeConnection);
 
       switch (activeConnection.engine) {
         case 'mysql':
           return {
-            sql: `SELECT * FROM ${table.name} LIMIT 50`,
+            sql: await formatSql(`SELECT * FROM ${table.name} LIMIT 50`, activeConnection.engine),
           };
         case 'postgres':
           return {
-            sql: `SELECT * FROM ${
-              activeConnection.schema ? '' : `${addQuotes(activeConnection.engine, table.schema!)}.`
-            }${addQuotes(activeConnection.engine, table.name)} LIMIT 50`,
+            sql: await formatSql(
+              `SELECT * FROM ${
+                activeConnection.schema
+                  ? ''
+                  : `${addQuotes(activeConnection.engine, table.schema!)}.`
+              }${addQuotes(activeConnection.engine, table.name)} LIMIT 50`,
+              activeConnection.engine,
+            ),
           };
         case 'sqlite':
           return {
-            sql: `SELECT * FROM ${table.name} LIMIT 50`,
+            sql: await formatSql(`SELECT * FROM ${table.name} LIMIT 50`, activeConnection.engine),
           };
       }
     },
@@ -87,11 +92,13 @@ export const useTableList = () => {
 
       assert(activeTab);
 
-      void addQuery(getQuery(table), {
-        position: { column, row: horizontal ? row : undefined },
-        alwaysRun: true,
-        tabId: activeTab.id,
-      });
+      void getQuery(table).then((query) =>
+        addQuery(query, {
+          position: { column, row: horizontal ? row : undefined },
+          alwaysRun: true,
+          tabId: activeTab.id,
+        }),
+      );
 
       track('table_list_drag_drop');
     },
@@ -107,11 +114,13 @@ export const useTableList = () => {
 
   const onSelect = useCallback(
     (table: Table) => {
-      void addQuery(getQuery(table), {
-        // Unless table is already selected, open tab that already contains this query if
-        // applicable
-        openIfExists: !selectedTables.includes(table),
-      });
+      void getQuery(table).then((query) =>
+        addQuery(query, {
+          // Unless table is already selected, open tab that already contains this query if
+          // applicable
+          openIfExists: !selectedTables.includes(table),
+        }),
+      );
       track('table_list_select');
       navigationSidebar.setIsOpen(false);
     },
