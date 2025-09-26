@@ -85,10 +85,10 @@ const ast = {
 
 describe('getSqlForAst generates SQL for AST', () => {
   test('MySQL', async () => {
-    expect(await getSqlForAst(ast, 'mysql')).toMatchSnapshot();
+    expect(await getSqlForAst(ast, { engine: 'mysql' })).toMatchSnapshot();
   });
 
   test('PostgreSQL', async () => {
-    expect(await getSqlForAst(ast, 'postgres')).toMatchSnapshot();
+    expect(await getSqlForAst(ast, { engine: 'postgres' })).toMatchSnapshot();
   });
 });

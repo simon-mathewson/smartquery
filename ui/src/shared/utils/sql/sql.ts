@@ -74,10 +74,10 @@ export const splitSqlStatements = (sql: string) => {
   });
 };
 
-export const formatSql = async (sql: string, engine?: Engine | 'sql') => {
+export const formatSql = async (sql: string, languageProp?: Engine | 'sql') => {
   const { format: formatSql } = await import('sql-formatter');
 
-  const language: FormatOptionsWithLanguage['language'] = engine
+  const language: FormatOptionsWithLanguage['language'] = languageProp
     ? (
         {
           mysql: 'mysql',
@@ -85,7 +85,7 @@ export const formatSql = async (sql: string, engine?: Engine | 'sql') => {
           sqlite: 'sqlite',
           sql: 'sql',
         } as const
-      )[engine]
+      )[languageProp]
     : 'sql';
 
   try {

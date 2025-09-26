@@ -10,7 +10,7 @@ import type { FormFilter, NullOperator, OperatorWithValue } from '../types';
 import { Close } from '@mui/icons-material';
 import { Button } from '~/shared/components/button/Button';
 import type { ColumnRef } from '~/content/tabs/queries/utils/columnRefs';
-import { getColumnRef } from '~/content/tabs/queries/utils/columnRefs';
+import { compareColumnRefs, getColumnRef } from '~/content/tabs/queries/utils/columnRefs';
 
 export interface FilterControlProps {
   filter: FormFilter;
@@ -26,13 +26,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
   assert(columns);
 
   const column = filter.columnRef
-    ? columns.find((col) => {
-        const columnRef = getColumnRef(col);
-        return (
-          columnRef.column === filter.columnRef!.column &&
-          columnRef.table === filter.columnRef!.table
-        );
-      })
+    ? columns.find((col) => compareColumnRefs(getColumnRef(col), filter.columnRef))
     : null;
 
   return (
@@ -41,7 +35,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
         {isFirst ? 'WHERE' : filter.logicalOperator}
       </div>
       <Select<ColumnRef | null>
-        compareFn={(a, b) => a?.column === b?.column && a?.table === b?.table}
+        compareFn={compareColumnRefs}
         htmlProps={{ className: '!w-[200px] shrink-0' }}
         onChange={(newColumnRef) => {
           updateFilter((current) => ({ ...current, columnRef: newColumnRef }));

@@ -35,7 +35,7 @@ export const useFilters = () => {
         setLimitAndOffset(newStatement, limitAndOffset.limit);
       }
 
-      const newSql = await getSqlForAst(newStatement, activeConnection.engine);
+      const newSql = await getSqlForAst(newStatement, { engine: activeConnection.engine });
       await updateQuery({ id: query.id, run: true, sql: newSql });
     },
     [activeConnection, columns, select, query.id, updateQuery],

@@ -108,7 +108,7 @@ export const Cell: React.FC<CellProps> = (props) => {
         orderby: null,
         limit: null,
       },
-      activeConnection.engine,
+      { engine: activeConnection.engine },
     );
 
     void addQuery({ sql, initialInputMode: 'filters' }, { afterActiveTab: true });

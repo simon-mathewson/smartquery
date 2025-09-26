@@ -54,7 +54,7 @@ export const getSql = (props: { engine: Engine; select: Select; table: string })
         having: null,
         limit: null,
       },
-      engine,
+      { engine },
     );
   }
 
@@ -104,7 +104,7 @@ export const getSql = (props: { engine: Engine; select: Select; table: string })
         ],
         limit: null,
       },
-      engine,
+      { engine },
     );
   }
 
@@ -160,6 +160,6 @@ export const getSql = (props: { engine: Engine; select: Select; table: string })
       ],
       limit: null,
     },
-    engine,
+    { engine },
   );
 };

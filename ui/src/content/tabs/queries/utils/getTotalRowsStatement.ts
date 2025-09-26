@@ -18,7 +18,10 @@ export const getTotalRowsStatement = async (props: { connection: Connection; sel
   ];
 
   try {
-    const statement = await getSqlForAst(totalQuery, connection.engine);
+    const statement = await getSqlForAst(totalQuery, {
+      engine: connection.engine,
+      skipFormat: true,
+    });
     return statement;
   } catch (error) {
     console.error(error);

@@ -55,7 +55,7 @@ export const useSorting = () => {
         setLimitAndOffset(newStatement, limitAndOffset.limit);
       }
 
-      const sql = await getSqlForAst(newStatement, activeConnection.engine);
+      const sql = await getSqlForAst(newStatement, { engine: activeConnection.engine });
 
       void updateQuery({ id: query.id, run: true, sql });
 

@@ -31,7 +31,7 @@ export const usePagination = () => {
       const newQuery = cloneDeep(select.parsed);
       setLimitAndOffset(newQuery, limitAndOffset.limit, newOffset);
 
-      const sql = await getSqlForAst(newQuery, activeConnection.engine);
+      const sql = await getSqlForAst(newQuery, { engine: activeConnection.engine });
 
       await updateQuery({ id: query.id, run: true, sql });
     },
