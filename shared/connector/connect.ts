@@ -1,5 +1,5 @@
 import { uniqueId } from 'lodash-es';
-import { createSshTunnel } from './ssh/createSshTunnel';
+import { createSshTunnel } from './createSshTunnel';
 import type { RemoteConnection } from '@/connections/types';
 import { MySqlClient, PostgresClient } from './prisma';
 import type { Connector } from './types';
