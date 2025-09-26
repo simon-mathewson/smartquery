@@ -94,7 +94,7 @@ importers:
         version: 4.0.1
       smartquery-shared:
         specifier: file:../shared
-        version: file:../shared(@google/genai@0.12.0)(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(find-free-ports@3.1.1)(lodash-es@4.17.21)(node-ssh-forward@0.7.2)(superjson@1.12.4)(typescript@5.8.3)(zod@3.24.1)
+        version: file:../shared(@google/genai@0.12.0)(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(find-free-ports@3.1.1)(lodash-es@4.17.21)(ssh2@0.8.9)(superjson@1.12.4)(typescript@5.8.3)(zod@3.24.1)
       sql-formatter:
         specifier: 15.6.6
         version: 15.6.6
@@ -3523,9 +3523,6 @@ packages:
     resolution: {integrity: sha512-GQBwA2e44qjbK0MzFwh5bNYefniV6cKT4KfjNDpuh/2EWipUEK1BCMc//moSidp8EF6fHB/EqJwUH9GCh9MAPg==}
     engines: {node: '>=8'}
 
-  node-ssh-forward@0.7.2:
-    resolution: {integrity: sha512-dQGhwT9emJJ0PymZGXdwHue18oc+bnAeqSGUCi4+YufGLaTSfA4Ft04T97WGkVxmBUySy/O6lvKIfpJM0a8lgA==}
-
   normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
@@ -4100,7 +4097,7 @@ packages:
       '@prisma/client': 6.9.0
       find-free-ports: 3.1.1
       lodash-es: 4.17.21
-      node-ssh-forward: 0.7.2
+      ssh2: 1.17.0
       superjson: 1.12.4
       zod: 3.24.1
 
@@ -8597,13 +8594,6 @@ snapshots:
       '@types/pegjs': 0.10.6
       big-integer: 1.6.52
 
-  node-ssh-forward@0.7.2:
-    dependencies:
-      debug: 4.4.3
-      ssh2: 0.8.9
-    transitivePeerDependencies:
-      - supports-color
-
   normalize-path@3.0.0: {}
 
   normalize-range@0.1.2: {}
@@ -9203,14 +9193,14 @@ snapshots:
 
   slash@3.0.0: {}
 
-  smartquery-shared@file:../shared(@google/genai@0.12.0)(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(find-free-ports@3.1.1)(lodash-es@4.17.21)(node-ssh-forward@0.7.2)(superjson@1.12.4)(typescript@5.8.3)(zod@3.24.1):
+  smartquery-shared@file:../shared(@google/genai@0.12.0)(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(find-free-ports@3.1.1)(lodash-es@4.17.21)(ssh2@0.8.9)(superjson@1.12.4)(typescript@5.8.3)(zod@3.24.1):
     dependencies:
       '@google/genai': 0.12.0
       '@prisma/client': 6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)
       find-free-ports: 3.1.1
       lodash-es: 4.17.21
-      node-ssh-forward: 0.7.2
       prisma: 6.9.0(typescript@5.8.3)
+      ssh2: 0.8.9
       superjson: 1.12.4
       zod: 3.24.1
     transitivePeerDependencies:

@@ -17,7 +17,7 @@
     "@prisma/client": "6.9.0",
     "find-free-ports": "3.1.1",
     "lodash-es": "4.17.21",
-    "node-ssh-forward": "0.7.2",
+    "ssh2": "1.17.0",
     "superjson": "1.12.4",
     "zod": "3.24.1"
   },
@@ -25,6 +25,7 @@
     "@eslint/js": "^9.0.0",
     "@types/lodash-es": "4.17.12",
     "@types/node": "24.0.10",
+    "@types/ssh2": "1.15.5",
     "eslint": "^9.0.0",
     "globals": "^15.0.0",
     "typescript": "5.8.3",

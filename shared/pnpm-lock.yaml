@@ -20,12 +20,12 @@ importers:
       lodash-es:
         specifier: 4.17.21
         version: 4.17.21
-      node-ssh-forward:
-        specifier: 0.7.2
-        version: 0.7.2
       prisma:
         specifier: 6.9.0
         version: 6.9.0(typescript@5.8.3)
+      ssh2:
+        specifier: 1.17.0
+        version: 1.17.0
       superjson:
         specifier: 1.12.4
         version: 1.12.4
@@ -42,6 +42,9 @@ importers:
       '@types/node':
         specifier: 24.0.10
         version: 24.0.10
+      '@types/ssh2':
+        specifier: 1.15.5
+        version: 1.15.5
       eslint:
         specifier: ^9.0.0
         version: 9.36.0(jiti@2.4.2)
@@ -169,8 +172,14 @@ packages:
   '@types/lodash@4.17.20':
     resolution: {integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==}
 
+  '@types/node@18.19.127':
+    resolution: {integrity: sha512-gSjxjrnKXML/yo0BO099uPixMqfpJU0TKYjpfLU7TrtA2WWDki412Np/RSTPRil1saKBhvVVKzVx/p/6p94nVA==}
+
   '@types/node@24.0.10':
     resolution: {integrity: sha512-ENHwaH+JIRTDIEEbDK6QSQntAYGtbvdDXnMXnZaZ6k13Du1dPMmprkEHIL7ok2Wl2aZevetwTAb5S+7yIF+enA==}
+
+  '@types/ssh2@1.15.5':
+    resolution: {integrity: sha512-N1ASjp/nXH3ovBHddRJpli4ozpk6UdDYIX4RJWFa9L1YKnzdhTlVmiGHm4DZnj/jLbqZpes4aeR30EFGQtvhQQ==}
 
   '@typescript-eslint/eslint-plugin@8.44.1':
     resolution: {integrity: sha512-molgphGqOBT7t4YKCSkbasmu1tb1MgrZ2szGzHbclF7PNmOkSTQVHy+2jXOSnxvR3+Xe1yySHFZoqMpz3TfQsw==}
@@ -283,6 +292,10 @@ packages:
   buffer-equal-constant-time@1.0.1:
     resolution: {integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==}
 
+  buildcheck@0.0.6:
+    resolution: {integrity: sha512-8f9ZJCUXyT1M35Jx7MkBgmBMo3oHTTBIPLiY9xyL0pl3T5RwcPEY8cUHr5LBNfu/fk6c2T4DJZuVM/8ZZT2D2A==}
+    engines: {node: '>=10.0.0'}
+
   callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
     engines: {node: '>=6'}
@@ -304,6 +317,10 @@ packages:
   copy-anything@3.0.5:
     resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
     engines: {node: '>=12.13'}
+
+  cpu-features@0.0.10:
+    resolution: {integrity: sha512-9IkYqtX3YHPCzoVg1Py+o9057a3i0fp7S530UWokCSaFVTc7CwXPRiOjRjBQQ18ZCNafx78YfnG+HALxtVmOGA==}
+    engines: {node: '>=10.0.0'}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -558,6 +575,9 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
+  nan@2.23.0:
+    resolution: {integrity: sha512-1UxuyYGdoQHcGg87Lkqm3FzefucTa0NAiOcuRsDmysep3c1LVCRK2krrUDafMWtjSG04htvAmvg96+SDknOmgQ==}
+
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
@@ -569,9 +589,6 @@ packages:
     peerDependenciesMeta:
       encoding:
         optional: true
-
-  node-ssh-forward@0.7.2:
-    resolution: {integrity: sha512-dQGhwT9emJJ0PymZGXdwHue18oc+bnAeqSGUCi4+YufGLaTSfA4Ft04T97WGkVxmBUySy/O6lvKIfpJM0a8lgA==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -652,17 +669,9 @@ packages:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
 
-  ssh2-streams@0.4.10:
-    resolution: {integrity: sha512-8pnlMjvnIZJvmTzUIIA5nT4jr2ZWNNVHwyXfMGdRJbug9TpI3kd99ffglgfSWqujVv/0gxwMsDn9j9RVst8yhQ==}
-    engines: {node: '>=5.2.0'}
-
-  ssh2@0.8.9:
-    resolution: {integrity: sha512-GmoNPxWDMkVpMFa9LVVzQZHF6EW3WKmBwL+4/GeILf2hFmix5Isxm7Amamo8o7bHiU0tC+wXsGcUXOxp8ChPaw==}
-    engines: {node: '>=5.2.0'}
-
-  streamsearch@0.1.2:
-    resolution: {integrity: sha512-jos8u++JKm0ARcSUTAZXOVC0mSox7Bhn6sBgty73P1f3JGf7yG2clTbBNHUdde/kdvP2FESam+vM6l8jBrNxHA==}
-    engines: {node: '>=0.8.0'}
+  ssh2@1.17.0:
+    resolution: {integrity: sha512-wPldCk3asibAjQ/kziWQQt1Wh3PgDFpC0XpwclzKcdT1vql6KeYxf5LIt4nlFkUeR8WuphYMKqUA56X4rjbfgQ==}
+    engines: {node: '>=10.16.0'}
 
   strip-json-comments@3.1.1:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
@@ -707,6 +716,9 @@ packages:
     resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
     engines: {node: '>=14.17'}
     hasBin: true
+
+  undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
   undici-types@7.8.0:
     resolution: {integrity: sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw==}
@@ -878,9 +890,17 @@ snapshots:
 
   '@types/lodash@4.17.20': {}
 
+  '@types/node@18.19.127':
+    dependencies:
+      undici-types: 5.26.5
+
   '@types/node@24.0.10':
     dependencies:
       undici-types: 7.8.0
+
+  '@types/ssh2@1.15.5':
+    dependencies:
+      '@types/node': 18.19.127
 
   '@typescript-eslint/eslint-plugin@8.44.1(@typescript-eslint/parser@8.44.1(eslint@9.36.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.36.0(jiti@2.4.2))(typescript@5.8.3)':
     dependencies:
@@ -1025,6 +1045,9 @@ snapshots:
 
   buffer-equal-constant-time@1.0.1: {}
 
+  buildcheck@0.0.6:
+    optional: true
+
   callsites@3.1.0: {}
 
   chalk@4.1.2:
@@ -1043,6 +1066,12 @@ snapshots:
   copy-anything@3.0.5:
     dependencies:
       is-what: 4.1.16
+
+  cpu-features@0.0.10:
+    dependencies:
+      buildcheck: 0.0.6
+      nan: 2.23.0
+    optional: true
 
   cross-spawn@7.0.6:
     dependencies:
@@ -1324,18 +1353,14 @@ snapshots:
 
   ms@2.1.3: {}
 
+  nan@2.23.0:
+    optional: true
+
   natural-compare@1.4.0: {}
 
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
-
-  node-ssh-forward@0.7.2:
-    dependencies:
-      debug: 4.4.1
-      ssh2: 0.8.9
-    transitivePeerDependencies:
-      - supports-color
 
   optionator@0.9.4:
     dependencies:
@@ -1397,17 +1422,13 @@ snapshots:
 
   shebang-regex@3.0.0: {}
 
-  ssh2-streams@0.4.10:
+  ssh2@1.17.0:
     dependencies:
       asn1: 0.2.6
       bcrypt-pbkdf: 1.0.2
-      streamsearch: 0.1.2
-
-  ssh2@0.8.9:
-    dependencies:
-      ssh2-streams: 0.4.10
-
-  streamsearch@0.1.2: {}
+    optionalDependencies:
+      cpu-features: 0.0.10
+      nan: 2.23.0
 
   strip-json-comments@3.1.1: {}
 
@@ -1447,6 +1468,8 @@ snapshots:
       - supports-color
 
   typescript@5.8.3: {}
+
+  undici-types@5.26.5: {}
 
   undici-types@7.8.0: {}
 
