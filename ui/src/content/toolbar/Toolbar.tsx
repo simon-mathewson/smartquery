@@ -1,25 +1,20 @@
+import { Add, AutoAwesome, Menu } from '@mui/icons-material';
+import classNames from 'classnames';
 import React from 'react';
+import { AnalyticsContext } from '~/content/analytics/Context';
 import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { Add, AutoAwesome, Menu } from '@mui/icons-material';
-import { Changes } from './changes/Changes';
-import { TabsContext } from '../tabs/Context';
-import { Tabs } from './tabs/Tabs';
-import { QueriesContext } from '../tabs/queries/Context';
-import { EditContext } from '../edit/Context';
-import classNames from 'classnames';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { useLocation } from 'wouter';
-import { routes } from '~/router/routes';
-import { NavigationSidebarContext } from '../navigationSidebar/Context';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { CopilotSidebarContext } from '../ai/copilot/sidebar/Context';
-import { AuthContext } from '../auth/Context';
+import { EditContext } from '../edit/Context';
+import { NavigationSidebarContext } from '../navigationSidebar/Context';
+import { TabsContext } from '../tabs/Context';
+import { QueriesContext } from '../tabs/queries/Context';
+import { Changes } from './changes/Changes';
+import { Tabs } from './tabs/Tabs';
 
 export const Toolbar: React.FC = () => {
-  const [, navigate] = useLocation();
   const { track } = useDefinedContext(AnalyticsContext);
-  const { user } = useDefinedContext(AuthContext);
   const { tabs } = useDefinedContext(TabsContext);
   const { addQuery } = useDefinedContext(QueriesContext);
   const { allChanges } = useDefinedContext(EditContext);
@@ -59,19 +54,12 @@ export const Toolbar: React.FC = () => {
           htmlProps={{
             className: classNames({ 'ml-auto': !allChanges.length }),
             onClick: () => {
-              if (!user) {
-                navigate(routes.subscribePlans());
-                return;
-              }
-
               track('toolbar_open_copilot');
-
               copilotSidebar.setIsOpen(!copilotSidebar.isOpen);
             },
           }}
           icon={<AutoAwesome />}
           label={isMobile ? undefined : 'Copilot'}
-          tooltip={user ? undefined : 'Sign up or log in to use Copilot'}
           variant={copilotSidebar.isOpen ? 'highlighted' : 'default'}
         />
       )}

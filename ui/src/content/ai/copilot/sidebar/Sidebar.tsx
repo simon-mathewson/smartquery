@@ -1,4 +1,12 @@
-import { Close, DeleteOutline, Language, LightbulbOutline, Send, Stop } from '@mui/icons-material';
+import {
+  ArrowForward,
+  Close,
+  DeleteOutline,
+  Language,
+  LightbulbOutline,
+  Send,
+  Stop,
+} from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
 import classNames from 'classnames';
 import { useCallback, useRef } from 'react';
@@ -23,9 +31,12 @@ import { CodeSnippet } from './CodeSnippet/CodeSnippet';
 import { CopilotSidebarContext } from './Context';
 import { ActionList } from '~/shared/components/actionList/ActionList';
 import { copilotChatSuggestions } from '~/content/connections/demo/copilotChatSuggestions';
+import { AuthContext } from '~/content/auth/Context';
+import { routes } from '~/router/routes';
 
 export const CopilotSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
+  const { user } = useDefinedContext(AuthContext);
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
   const { isOpen, setIsOpen } = useDefinedContext(CopilotSidebarContext);
   const {
@@ -61,7 +72,7 @@ export const CopilotSidebar: React.FC = () => {
     [sendMessage, track],
   );
 
-  const [desktopWidth, setDesktopWidth] = useStoredState('CopilotSidebar.width', 320);
+  const [desktopWidth, setDesktopWidth] = useStoredState('CopilotSidebar.width', 328);
 
   if (!activeConnection) return null;
 
@@ -167,6 +178,7 @@ export const CopilotSidebar: React.FC = () => {
                     ),
                 )
                 .map((suggestion) => ({
+                  disabled: user === null,
                   label: suggestion,
                   icon: LightbulbOutline,
                   onClick: () => {
@@ -185,7 +197,7 @@ export const CopilotSidebar: React.FC = () => {
             </div>
           )}
           {hasSchemaDefinitions && activeConnection && (
-            <Tooltip<HTMLDivElement> text="Schema definitions of this database are passed to the AI as context">
+            <Tooltip<HTMLDivElement> text="Schema definitions of this database are passed to Copilot as context. Rows are never passed.">
               {({ htmlProps }) => (
                 <div
                   {...htmlProps}
@@ -213,7 +225,7 @@ export const CopilotSidebar: React.FC = () => {
               <Input
                 element="textarea"
                 htmlProps={{
-                  disabled: isLoading,
+                  disabled: isLoading || user === null,
                   placeholder: 'Ask anything about your database',
                   onKeyDown: (e) => {
                     if (e.key === 'Enter') {
@@ -264,6 +276,18 @@ export const CopilotSidebar: React.FC = () => {
               )}
             </Field>
           </form>
+          {user === null && (
+            <Button
+              element="link"
+              htmlProps={{
+                className: 'w-full mt-2',
+                href: routes.subscribePlans(),
+              }}
+              icon={<ArrowForward />}
+              label="Sign up to use Copilot for free"
+              variant="filled"
+            />
+          )}
         </div>
       </Card>
     </div>

@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { Link } from 'wouter';
 
 export type Action = {
+  disabled?: boolean;
   hint?: string;
   icon: SvgIconComponent | React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
   label: string;
@@ -25,10 +26,14 @@ export const ActionList: React.FC<ActionListProps> = (props) => {
 
         return (
           <Element
+            {...(Element === 'button'
+              ? { disabled: action.disabled }
+              : { 'aria-disabled': action.disabled })}
             className={classNames(
               'flex min-h-[56px] cursor-pointer items-center gap-3 overflow-hidden rounded-xl border border-border bg-card px-4 py-2 text-left hover:border-borderHover',
               {
                 '!min-h-[40px] !gap-2 !px-2': compact,
+                'pointer-events-none opacity-50': action.disabled,
               },
             )}
             key={action.label}
