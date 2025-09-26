@@ -1,6 +1,8 @@
-import type { ConnectConfig } from 'ssh2';
-import { Client } from 'ssh2';
+import type { Client, ConnectConfig } from 'ssh2';
 import * as net from 'net';
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const ssh2 = require('ssh2');
 
 interface Options {
   username?: string;
@@ -46,7 +48,7 @@ export class SshConnection {
   }
 
   private async connect(): Promise<Client> {
-    const connection = new Client();
+    const connection = new ssh2.Client();
     return new Promise<Client>((resolve, reject) => {
       const options: ConnectConfig = {
         host: this.options.endHost,
@@ -62,7 +64,7 @@ export class SshConnection {
         return resolve(connection);
       });
 
-      connection.on('error', (error) => {
+      connection.on('error', (error: unknown) => {
         reject(error);
       });
 
