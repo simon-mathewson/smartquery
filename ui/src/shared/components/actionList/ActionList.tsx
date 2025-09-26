@@ -37,7 +37,10 @@ export const ActionList: React.FC<ActionListProps> = (props) => {
             tabIndex={0}
           >
             <action.icon
-              className={classNames('!h-7 !w-7 text-primary', { '!h-5 !w-5': compact })}
+              className={classNames('text-primary', {
+                '!h-7 !w-7': !compact,
+                '!h-5 !w-5': compact,
+              })}
             />
             <div className="flex flex-col items-start gap-[2px]">
               <div
