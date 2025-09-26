@@ -75,9 +75,6 @@ export const useSetup = (props: {
       readOnly,
       renderLineHighlight: readOnly ? 'none' : 'line',
       renderLineHighlightOnlyWhenFocus: true,
-      scrollbar: {
-        alwaysConsumeMouseWheel: false,
-      },
       scrollBeyondLastLine: false,
       theme: mode === 'light' ? 'vs-custom' : 'vs-dark-custom',
       wordWrap: 'on',
