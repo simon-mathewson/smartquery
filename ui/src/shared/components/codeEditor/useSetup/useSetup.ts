@@ -60,7 +60,6 @@ export const useSetup = (props: {
 
   const options = useMemo<editor.IEditorOptions & editor.IGlobalEditorOptions>(
     () => ({
-      theme: mode === 'light' ? 'vs-custom' : 'vs-dark-custom',
       folding: false,
       fontSize: 12,
       glyphMargin: true,
@@ -71,15 +70,16 @@ export const useSetup = (props: {
       lineNumbersMinChars: 2,
       minimap: { enabled: false },
       overviewRulerLanes: 0,
-      renderLineHighlight: readOnly ? 'none' : 'line',
-      renderLineHighlightOnlyWhenFocus: true,
       padding: { top: paddingTop, bottom: paddingBottom },
       quickSuggestions: false,
       readOnly,
+      renderLineHighlight: readOnly ? 'none' : 'line',
+      renderLineHighlightOnlyWhenFocus: true,
       scrollbar: {
         alwaysConsumeMouseWheel: false,
       },
       scrollBeyondLastLine: false,
+      theme: mode === 'light' ? 'vs-custom' : 'vs-dark-custom',
       wordWrap: 'on',
       ...(overrideOptions ?? {}),
     }),
@@ -105,8 +105,9 @@ export const useSetup = (props: {
 
   const isFirstHeightChangedEvent = useRef(true);
 
-  const setHeight = useCallback(() => {
+  const setDimensions = useCallback(() => {
     assert(editorRef.current);
+    assert(hostRef.current);
 
     const initialHeight = height ?? (large ? 80 : 30);
 
@@ -132,7 +133,7 @@ export const useSetup = (props: {
     }
 
     editorRef.current.layout({
-      width: editorRef.current.getContainerDomNode().clientWidth,
+      width: hostRef.current.clientWidth,
       height: newHeight,
     });
   }, [editorRef, height, large, maxHeight]);
@@ -259,19 +260,24 @@ export const useSetup = (props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInitialized, mode]);
 
-  // Update height
+  // Update dimensions
   useEffect(() => {
     if (!isInitialized) return;
     assert(editorRef.current);
+    assert(hostRef.current);
 
-    const dispose = editorRef.current.onDidContentSizeChange(setHeight);
+    const dispose = editorRef.current.onDidContentSizeChange(setDimensions);
 
-    setHeight();
+    const observer = new ResizeObserver(setDimensions);
+    observer.observe(hostRef.current);
+
+    setDimensions();
 
     return () => {
       dispose.dispose();
+      observer.disconnect();
     };
-  }, [editorRef, isInitialized, setHeight]);
+  }, [editorRef, isInitialized, setDimensions]);
 
   // Update options
   useEffect(() => {
