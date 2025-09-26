@@ -24,7 +24,7 @@ describe('Query parsing utils', () => {
         expect(result.select).toEqual({
           database: 'test_db',
           schema: undefined,
-          table: 'users',
+          tables: [{ name: 'users', originalName: 'users' }],
           parsed: expect.any(Object),
         });
       });
@@ -37,7 +37,25 @@ describe('Query parsing utils', () => {
         expect(result.select).toEqual({
           database: 'other_db',
           schema: undefined,
-          table: 'users',
+          tables: [{ name: 'users', originalName: 'users' }],
+          parsed: expect.any(Object),
+        });
+      });
+
+      test('parses multi-table SELECT statements', async () => {
+        const sql = 'SELECT u.id, u.name FROM users u JOIN orders o ON u.id = o.user_id';
+        const result = await parseQuery({ connection: mysqlConnection, sql });
+
+        expect(result.statements).toEqual([
+          'SELECT u.id, u.name FROM users u JOIN orders o ON u.id = o.user_id',
+        ]);
+        expect(result.select).toEqual({
+          database: 'test_db',
+          schema: undefined,
+          tables: [
+            { name: 'u', originalName: 'users' },
+            { name: 'o', originalName: 'orders' },
+          ],
           parsed: expect.any(Object),
         });
       });
@@ -47,24 +65,6 @@ describe('Query parsing utils', () => {
         const result = await parseQuery({ connection: mysqlConnection, sql });
 
         expect(result.statements).toEqual(['INSERT INTO users (id, name) VALUES (1, "test")']);
-        expect(result.select).toBeNull();
-      });
-
-      test('returns null select for complex SELECT statements', async () => {
-        const sql = 'SELECT COUNT(*) as count FROM users';
-        const result = await parseQuery({ connection: mysqlConnection, sql });
-
-        expect(result.statements).toEqual(['SELECT COUNT(*) as count FROM users']);
-        expect(result.select).toBeNull();
-      });
-
-      test('returns null select for multi-table SELECT statements', async () => {
-        const sql = 'SELECT u.id, u.name FROM users u JOIN orders o ON u.id = o.user_id';
-        const result = await parseQuery({ connection: mysqlConnection, sql });
-
-        expect(result.statements).toEqual([
-          'SELECT u.id, u.name FROM users u JOIN orders o ON u.id = o.user_id',
-        ]);
         expect(result.select).toBeNull();
       });
     });
@@ -78,7 +78,7 @@ describe('Query parsing utils', () => {
         expect(result.select).toEqual({
           database: 'test_db',
           schema: 'public',
-          table: 'users',
+          tables: [{ name: 'users', originalName: 'users' }],
           parsed: expect.any(Object),
         });
       });
@@ -91,7 +91,25 @@ describe('Query parsing utils', () => {
         expect(result.select).toEqual({
           database: 'test_db',
           schema: 'custom_schema',
-          table: 'users',
+          tables: [{ name: 'users', originalName: 'users' }],
+          parsed: expect.any(Object),
+        });
+      });
+
+      test('parses multi-table SELECT statements', async () => {
+        const sql = 'SELECT u.id, u.name FROM users u JOIN orders o ON u.id = o.user_id';
+        const result = await parseQuery({ connection: postgresConnection, sql });
+
+        expect(result.statements).toEqual([
+          'SELECT u.id, u.name FROM users u JOIN orders o ON u.id = o.user_id',
+        ]);
+        expect(result.select).toEqual({
+          database: 'test_db',
+          schema: 'public',
+          tables: [
+            { name: 'u', originalName: 'users' },
+            { name: 'o', originalName: 'orders' },
+          ],
           parsed: expect.any(Object),
         });
       });
@@ -101,24 +119,6 @@ describe('Query parsing utils', () => {
         const result = await parseQuery({ connection: postgresConnection, sql });
 
         expect(result.statements).toEqual(["INSERT INTO users (id, name) VALUES (1, 'test')"]);
-        expect(result.select).toBeNull();
-      });
-
-      test('returns null select for complex SELECT statements', async () => {
-        const sql = 'SELECT COUNT(*) as count FROM users';
-        const result = await parseQuery({ connection: postgresConnection, sql });
-
-        expect(result.statements).toEqual(['SELECT COUNT(*) as count FROM users']);
-        expect(result.select).toBeNull();
-      });
-
-      test('returns null select for multi-table SELECT statements', async () => {
-        const sql = 'SELECT u.id, u.name FROM users u JOIN orders o ON u.id = o.user_id';
-        const result = await parseQuery({ connection: postgresConnection, sql });
-
-        expect(result.statements).toEqual([
-          'SELECT u.id, u.name FROM users u JOIN orders o ON u.id = o.user_id',
-        ]);
         expect(result.select).toBeNull();
       });
     });

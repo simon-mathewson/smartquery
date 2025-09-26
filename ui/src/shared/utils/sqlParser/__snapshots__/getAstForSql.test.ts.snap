@@ -2,6 +2,7 @@
 
 exports[`getAstForSql > parses SQL select statement > MySQL 1`] = `
 {
+  "collate": null,
   "columns": [
     {
       "as": null,
@@ -25,14 +26,22 @@ exports[`getAstForSql > parses SQL select statement > MySQL 1`] = `
       "join": "INNER JOIN",
       "on": {
         "left": {
+          "collate": null,
           "column": "id",
-          "table": "users",
+          "table": {
+            "type": "backticks_quote_string",
+            "value": "users",
+          },
           "type": "column_ref",
         },
         "operator": "=",
         "right": {
+          "collate": null,
           "column": "user_id",
-          "table": "posts",
+          "table": {
+            "type": "backticks_quote_string",
+            "value": "posts",
+          },
           "type": "column_ref",
         },
         "type": "binary_expr",
@@ -59,8 +68,12 @@ exports[`getAstForSql > parses SQL select statement > MySQL 1`] = `
   "orderby": [
     {
       "expr": {
+        "collate": null,
         "column": "id",
-        "table": "users",
+        "table": {
+          "type": "backticks_quote_string",
+          "value": "users",
+        },
         "type": "column_ref",
       },
       "type": "ASC",
@@ -69,8 +82,12 @@ exports[`getAstForSql > parses SQL select statement > MySQL 1`] = `
   "type": "select",
   "where": {
     "left": {
+      "collate": null,
       "column": "id",
-      "table": "users",
+      "table": {
+        "type": "backticks_quote_string",
+        "value": "users",
+      },
       "type": "column_ref",
     },
     "operator": "=",
@@ -112,13 +129,25 @@ exports[`getAstForSql > parses SQL select statement > PostgreSQL 1`] = `
       "join": "INNER JOIN",
       "on": {
         "left": {
-          "column": "id",
+          "collate": null,
+          "column": {
+            "expr": {
+              "type": "double_quote_string",
+              "value": "id",
+            },
+          },
           "table": "users",
           "type": "column_ref",
         },
         "operator": "=",
         "right": {
-          "column": "user_id",
+          "collate": null,
+          "column": {
+            "expr": {
+              "type": "double_quote_string",
+              "value": "user_id",
+            },
+          },
           "table": "posts",
           "type": "column_ref",
         },
@@ -145,7 +174,13 @@ exports[`getAstForSql > parses SQL select statement > PostgreSQL 1`] = `
   "orderby": [
     {
       "expr": {
-        "column": "id",
+        "collate": null,
+        "column": {
+          "expr": {
+            "type": "double_quote_string",
+            "value": "id",
+          },
+        },
         "table": "users",
         "type": "column_ref",
       },
@@ -156,7 +191,13 @@ exports[`getAstForSql > parses SQL select statement > PostgreSQL 1`] = `
   "type": "select",
   "where": {
     "left": {
-      "column": "id",
+      "collate": null,
+      "column": {
+        "expr": {
+          "type": "double_quote_string",
+          "value": "id",
+        },
+      },
       "table": "users",
       "type": "column_ref",
     },
