@@ -17,7 +17,7 @@ export type ListProps<T> = {
   searchAutofocus?: boolean;
   searchPlaceholder?: string;
   setSearch?: (value: string) => void;
-} & ({ multiple?: false; selectedValue: T | null } | { multiple: true; selectedValues: T[] });
+} & ({ multiple?: false; selectedValue?: T | null } | { multiple: true; selectedValues: T[] });
 
 export function List<T>(props: ListProps<T>) {
   const {
@@ -39,10 +39,10 @@ export function List<T>(props: ListProps<T>) {
   const getAutoFocus = (item: (typeof items)[number], index: number) => {
     if (
       (multiple && props.selectedValues.length > 0) ||
-      (!multiple && props.selectedValue !== null)
+      (!multiple && (props.selectedValue ?? null) !== null)
     ) {
       return (multiple && compareFn(props.selectedValues[0], item.value)) ||
-        (!multiple && compareFn(props.selectedValue, item.value))
+        (!multiple && compareFn(props.selectedValue ?? null, item.value))
         ? true
         : undefined;
     }
@@ -89,7 +89,7 @@ export function List<T>(props: ListProps<T>) {
                   ? props.selectedValues.some((selectedValue) =>
                       compareFn(selectedValue, item.value),
                     )
-                  : compareFn(props.selectedValue, item.value)
+                  : compareFn(props.selectedValue ?? null, item.value)
               }
             />
           ))}
