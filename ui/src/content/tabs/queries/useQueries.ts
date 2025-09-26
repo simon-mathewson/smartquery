@@ -127,7 +127,7 @@ export const useQueries = () => {
         // If there are multiple columns with the same name, we only keep the first.
         // This can happen if all columns of multiple tables are selected.
         // Prefer visible columns.
-        const tableColumns = uniqBy(sortBy(columnsWithDuplicates, 'name'), 'isVisible');
+        const tableColumns = uniqBy(sortBy(columnsWithDuplicates, 'isVisible'), 'name');
         const virtualColumns = getVirtualColumns(
           firstSelectResult,
           tableColumns.map((column) => column.name),
