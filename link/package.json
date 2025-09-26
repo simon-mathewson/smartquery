@@ -1,7 +1,7 @@
 {
   "name": "smartquery-link",
   "productName": "SmartQuery Link",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Background service for SmartQuery",
   "type": "module",
   "main": "./out/main/main.js",
@@ -67,7 +67,7 @@
     "@types/pg": "8.10.7",
     "dotenv-cli": "7.4.2",
     "electron": "37.2.2",
-    "electron-builder": "26.0.20",
+    "electron-builder": "26.0.12",
     "electron-vite": "4.0.0",
     "eslint": "9.36.0",
     "ts-essentials": "9.4.2",
