@@ -2,7 +2,7 @@ export const isValidJson = (value: string) => {
   try {
     JSON.parse(value);
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };
@@ -10,7 +10,7 @@ export const isValidJson = (value: string) => {
 export const formatJson = (value: string) => {
   try {
     return JSON.stringify(JSON.parse(value), null, 2);
-  } catch (error) {
+  } catch {
     return value;
   }
 };

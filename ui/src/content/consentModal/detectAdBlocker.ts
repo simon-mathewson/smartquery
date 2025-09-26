@@ -3,7 +3,7 @@ export const detectAdBlocker = async (): Promise<boolean> => {
   try {
     await fetch(new Request(googleAdUrl));
     return false;
-  } catch (e) {
+  } catch {
     return true;
   }
 };

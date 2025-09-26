@@ -1,12 +1,10 @@
-import { uniqueId } from "lodash-es";
-import { createSshTunnel } from "./createSshTunnel";
-import { RemoteConnection } from "@/connections/types";
-import { MySqlClient, PostgresClient } from "./prisma";
-import { Connector } from "./types";
+import { uniqueId } from 'lodash-es';
+import { createSshTunnel } from './createSshTunnel';
+import type { RemoteConnection } from '@/connections/types';
+import { MySqlClient, PostgresClient } from './prisma';
+import type { Connector } from './types';
 
-export const connect = async (
-  connection: RemoteConnection
-): Promise<Connector> => {
+export const connect = async (connection: RemoteConnection): Promise<Connector> => {
   const {
     database,
     engine,
@@ -32,17 +30,17 @@ export const connect = async (
   const port = sshLocalPort ?? remotePort;
 
   const client = (() => {
-    const encodedPassword = password ? encodeURIComponent(password) : "";
+    const encodedPassword = password ? encodeURIComponent(password) : '';
 
-    if (engine === "mysql") {
+    if (engine === 'mysql') {
       return new MySqlClient({
         datasourceUrl: `mysql://${user}:${encodedPassword}@${host}:${port}/${database}`,
       });
     }
-    if (engine === "postgres") {
+    if (engine === 'postgres') {
       return new PostgresClient({
         datasourceUrl: `postgres://${user}:${encodedPassword}@${host}:${port}/${database}${
-          schema ? `?schema=${schema}` : ""
+          schema ? `?schema=${schema}` : ''
         }`,
       });
     }

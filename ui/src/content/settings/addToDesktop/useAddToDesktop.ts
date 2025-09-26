@@ -28,8 +28,9 @@ export const useAddToDesktop = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     window.addEventListener('beforeinstallprompt' as any, handleBeforeInstallPrompt);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    () => window.removeEventListener('beforeinstallprompt' as any, handleBeforeInstallPrompt);
+    return () =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      window.removeEventListener('beforeinstallprompt' as any, handleBeforeInstallPrompt);
   });
 
   return useMemo(() => ({ canBeInstalled: promptEvent !== null, install }), [install, promptEvent]);

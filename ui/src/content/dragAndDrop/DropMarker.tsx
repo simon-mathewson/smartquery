@@ -20,7 +20,7 @@ export const DropMarker: React.FC<DropMarkerProps> = (props) => {
   useEffect(() => {
     addDropMarker(marker);
 
-    () => removeDropMarker(marker);
+    return () => removeDropMarker(marker);
   }, [addDropMarker, marker, removeDropMarker]);
 
   return (

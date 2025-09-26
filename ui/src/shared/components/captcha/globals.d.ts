@@ -1,8 +1,3 @@
-interface CaptchaError extends Error {
-  kind: 'internal_error' | 'network_error' | 'token_error' | 'client_error';
-  statusCode?: number;
-}
-
 declare global {
   interface Window {
     AwsWafCaptcha?: {

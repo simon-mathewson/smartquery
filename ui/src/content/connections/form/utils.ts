@@ -91,7 +91,7 @@ export const isFormValid = (form: FormValues) => {
   try {
     getConnectionFromForm({ ...form, id: 'id' });
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };

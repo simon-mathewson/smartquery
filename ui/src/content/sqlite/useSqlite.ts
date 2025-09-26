@@ -72,7 +72,7 @@ export const useSqlite = () => {
   const requestFileHandlePermission = useCallback(async (fileHandle: FileSystemFileHandle) => {
     try {
       await fileHandle.requestPermission({ mode: 'readwrite' });
-    } catch (error) {
+    } catch {
       throw new Error(`Unable to request permission to edit ${fileHandle.name}`);
     }
 
@@ -98,7 +98,7 @@ export const useSqlite = () => {
         }
 
         return new sqlite.Database(new Uint8Array(fileOrFileHandle));
-      } catch (error) {
+      } catch {
         return new Promise<SqliteDatabase>((resolve, reject) => {
           toast.add({
             color: 'danger',

@@ -158,6 +158,16 @@ phases:
     commands:
       - |
         set -e  # Exit immediately if any command fails
+        if [ $SKIP_SHARED -eq 1 ]; then
+          echo "Shared package is unchanged. Skipping checks."
+        else
+          cd ../shared
+          pnpm typecheck
+          pnpm lint
+        fi
+
+      - |
+        set -e  # Exit immediately if any command fails
         if [ $SKIP_ABOUT -eq 1 ]; then
           echo "About package is unchanged. Skipping build."
         else

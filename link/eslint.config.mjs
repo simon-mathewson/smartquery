@@ -1,21 +1,34 @@
 import js from '@eslint/js';
 import globals from 'globals';
-import tseslint from 'typescript-eslint';
-import { defineConfig, globalIgnores } from 'eslint/config';
+import tseslint from '@electron-toolkit/eslint-config-ts';
+import configPrettier from '@electron-toolkit/eslint-config-prettier';
 
-export default defineConfig([
-  globalIgnores(['.rollup.cache', 'prisma/generated', 'dist']),
-  { files: ['**/*.{js,mjs,cjs,ts,mts,cts}'], plugins: { js }, extends: ['js/recommended'] },
-  { files: ['**/*.{js,mjs,cjs,ts,mts,cts}'], languageOptions: { globals: globals.browser } },
-  tseslint.configs.recommended,
+export default tseslint.config(
+  {
+    ignores: [
+      'dist',
+      'out',
+      'node_modules',
+      'prisma/client',
+      '*.config.js',
+      '*.config.cjs',
+      '*.config.mjs',
+    ],
+  },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
+      globals: {
+        ...globals.node,
+      },
       parserOptions: {
         project: './tsconfig.json',
       },
     },
     rules: {
+      '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-unused-vars': [
@@ -28,4 +41,5 @@ export default defineConfig([
       ],
     },
   },
-]);
+  configPrettier,
+);

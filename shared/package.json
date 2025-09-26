@@ -6,7 +6,8 @@
   "scripts": {
     "db:generate": "prisma generate --schema=connector/prisma/mysql.prisma && prisma generate --schema=connector/prisma/postgres.prisma",
     "postinstall": "pnpm db:generate",
-    "typecheck": "tsc --noEmit --skipLibCheck"
+    "typecheck": "tsc --noEmit --skipLibCheck",
+    "lint": "eslint . --ext .ts,.js,.mjs,.cjs"
   },
   "dependencies": {
     "prisma": "6.9.0"
@@ -18,12 +19,16 @@
     "lodash-es": "4.17.21",
     "node-ssh-forward": "0.7.2",
     "superjson": "1.12.4",
-    "zod": "3.23.8"
+    "zod": "3.24.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
     "@types/lodash-es": "4.17.12",
     "@types/node": "24.0.10",
-    "typescript": "5.8.3"
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
+    "typescript": "5.8.3",
+    "typescript-eslint": "^8.0.0"
   },
   "packageManager": "pnpm@9.0.6+sha512.f6d863130973207cb7a336d6b439a242a26ac8068077df530d6a86069419853dc1ffe64029ec594a9c505a3a410d19643c870aba6776330f5cfddcf10a9c1617"
 }

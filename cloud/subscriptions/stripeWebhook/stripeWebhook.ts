@@ -31,7 +31,6 @@ export const stripeWebhook: RequestHandler = async (request, response) => {
 
   console.log('Stripe webhook event', event.type);
 
-  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (event.type) {
     case 'customer.subscription.deleted':
       await revokeSubscription({ prisma, stripeSubscription: event.data.object });

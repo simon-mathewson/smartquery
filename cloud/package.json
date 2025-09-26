@@ -24,7 +24,7 @@
     "lodash": "^4.17.21",
     "stripe": "18.4.0",
     "superjson": "1.12.4",
-    "zod": "3.23.8"
+    "zod": "3.24.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
@@ -39,7 +39,7 @@
     "@types/node": "^22.13.5",
     "dotenv-flow-cli": "^1.1.1",
     "esbuild": "^0.17.10",
-    "eslint": "^9.26.0",
+    "eslint": "9.36.0",
     "globals": "^16.2.0",
     "prisma": "6.9.0",
     "rollup": "^4.42.0",

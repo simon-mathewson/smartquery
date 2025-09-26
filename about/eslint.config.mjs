@@ -24,7 +24,10 @@ const eslintConfig = [
         "warn",
         { ignoreRestSiblings: true, argsIgnorePattern: "^_" },
       ],
-      "@typescript-eslint/switch-exhaustiveness-check": "error",
+      "@typescript-eslint/switch-exhaustiveness-check": [
+        "error",
+        { considerDefaultExhaustiveForUnions: true },
+      ],
     },
   },
 ];

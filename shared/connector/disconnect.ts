@@ -1,4 +1,4 @@
-import { Connector } from "./types";
+import type { Connector } from './types';
 
 export const disconnect = async (connector: Connector) => {
   await connector.prisma.$disconnect();

@@ -33,7 +33,13 @@ describe('getAstForSql', () => {
   });
 
   test('returns null for invalid SQL', async () => {
-    expect(await getAstForSql({ engine: 'mysql', statement: postgresSelectStatement })).toBeNull();
+    expect(
+      await getAstForSql({
+        engine: 'mysql',
+        skipLogging: true,
+        statement: postgresSelectStatement,
+      }),
+    ).toBeNull();
   });
 
   test('parses first statement if multiple statements are provided', async () => {

@@ -90,7 +90,7 @@ export const formatSql = async (sql: string, languageProp?: Engine | 'sql') => {
 
   try {
     return formatSql(sql, { language });
-  } catch (error) {
+  } catch {
     return sql;
   }
 };

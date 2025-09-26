@@ -1,6 +1,6 @@
-import { SSHConnection } from "node-ssh-forward";
-import { MySqlClient, PostgresClient } from "./prisma";
-import { RemoteConnection } from "@/connections/types";
+import type { SSHConnection } from 'node-ssh-forward';
+import type { MySqlClient, PostgresClient } from './prisma';
+import type { RemoteConnection } from '@/connections/types';
 
 export type Connector = {
   connection: RemoteConnection;
