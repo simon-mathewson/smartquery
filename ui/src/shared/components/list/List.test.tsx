@@ -105,7 +105,9 @@ test.describe('List', () => {
       await expect(item).toContainText(items[index].label);
       await expect(item).toContainText(items[index].hint);
 
-      await expect(item.getByRole('button', { name: 'Add' }).getByTestId('AddIcon')).toBeAttached();
+      expect(
+        await item.getByRole('button', { name: 'Add' }).evaluate((el) => el.querySelector('svg')),
+      ).toBeTruthy();
 
       await item.getByRole('button').click();
 

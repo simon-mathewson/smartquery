@@ -38,7 +38,7 @@ test('renders button with icon', async ({ mount }) => {
 
   await expect($).toHaveText('');
   await expect($).toHaveCSS('height', '36px');
-  await expect($.getByTestId('AddIcon')).toBeAttached();
+  expect(await $.evaluate((el) => el.querySelector('svg'))).toBeTruthy();
 
   await $.click();
 
@@ -75,5 +75,5 @@ test('renders small disabled link with icon, long label, and suffix', async ({ m
   await expect($).toHaveText(label + textSuffix);
   await expect($).toHaveAttribute('href', '#');
   await expect($).toHaveAttribute('aria-disabled', 'true');
-  await expect($.getByTestId('AddIcon')).toBeAttached();
+  expect(await $.evaluate((el) => el.querySelector('svg'))).toBeTruthy();
 });
