@@ -39,7 +39,7 @@ export const LineChart = (props: LineChartProps) => {
         },
       ]}
       yAxis={[{ scaleType: 'linear', min: 0, label: chart.yColumn }]}
-      className="pr-4 [&_.MuiAreaElement-root]:!fill-[url('#gradient')] [&_.MuiChartsAxis-label_tspan]:fill-textSecondary [&_.MuiChartsAxis-label_tspan]:text-xs [&_.MuiChartsAxis-line]:!stroke-border [&_.MuiChartsAxis-tickLabel]:!fill-textSecondary [&_.MuiChartsAxis-tick]:!stroke-border [&_.MuiLineElement-root]:!stroke-primary"
+      className="pr-4 [&_.MuiAreaElement-root]:!fill-[url('#gradient')] [&_.MuiChartsAxis-label_tspan]:fill-textSecondary [&_.MuiChartsAxis-label_tspan]:text-xs [&_.MuiChartsAxis-line]:!stroke-border [&_.MuiChartsAxis-tickLabel]:!fill-textSecondary [&_.MuiChartsAxis-tick]:!stroke-border [&_.MuiLineElement-root]:!stroke-blue-600 dark:[&_.MuiLineElement-root]:!stroke-blue-500"
     >
       <defs>
         <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">

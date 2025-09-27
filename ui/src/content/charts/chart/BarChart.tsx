@@ -34,7 +34,7 @@ export const BarChart = (props: BarChartProps) => {
           label: chart.yColumn,
         },
       ]}
-      className="[&_.MuiChartsAxis-label_tspan]:text-xs [&_.MuiChartsAxis-line]:!stroke-border [&_.MuiChartsAxis-tickLabel]:!fill-textSecondary [&_.MuiChartsAxis-tick]:!stroke-border [&_.MuiLineElement-root]:!stroke-primary"
+      className="[&_.MuiBarElement-root]:!fill-blue-600 dark:[&_.MuiBarElement-root]:!fill-blue-500 [&_.MuiChartsAxis-label_tspan]:text-xs [&_.MuiChartsAxis-line]:!stroke-border [&_.MuiChartsAxis-tickLabel]:!fill-textSecondary [&_.MuiChartsAxis-tick]:!stroke-border"
     />
   );
 };

@@ -4,7 +4,7 @@ export const aiTextContentSchema = z.object({
   role: z.enum(['user', 'model']),
   parts: z.array(
     z.object({
-      text: z.string().min(1),
+      text: z.string(),
     }),
   ),
 });

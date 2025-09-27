@@ -7,15 +7,17 @@ import {
   Send,
   Stop,
 } from '@mui/icons-material';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, LinearProgress } from '@mui/material';
 import classNames from 'classnames';
 import { useCallback, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { PulseLoader } from 'react-spinners';
 import remarkGfm from 'remark-gfm';
-import colors from 'tailwindcss/colors';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { AuthContext } from '~/content/auth/Context';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import { copilotChatSuggestions } from '~/content/connections/demo/copilotChatSuggestions';
+import { routes } from '~/router/routes';
+import { ActionList } from '~/shared/components/actionList/ActionList';
 import { Button } from '~/shared/components/button/Button';
 import { Card } from '~/shared/components/card/Card';
 import { Field } from '~/shared/components/field/Field';
@@ -29,10 +31,6 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { CopilotContext } from '../Context';
 import { CodeSnippet } from './CodeSnippet/CodeSnippet';
 import { CopilotSidebarContext } from './Context';
-import { ActionList } from '~/shared/components/actionList/ActionList';
-import { copilotChatSuggestions } from '~/content/connections/demo/copilotChatSuggestions';
-import { AuthContext } from '~/content/auth/Context';
-import { routes } from '~/router/routes';
 
 export const CopilotSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -54,6 +52,7 @@ export const CopilotSidebar: React.FC = () => {
   const isMobile = useIsMobile();
 
   const threadContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const submit = useCallback(
     (inputToSend: string) => {
@@ -63,11 +62,11 @@ export const CopilotSidebar: React.FC = () => {
 
       // Scroll user message into view, not response
       setTimeout(() => {
-        threadContainerRef.current?.scrollTo({
-          top: threadContainerRef.current?.scrollHeight,
+        scrollContainerRef.current?.scrollTo({
+          top: threadContainerRef.current?.clientHeight,
           behavior: 'smooth',
         });
-      });
+      }, 100);
     },
     [sendMessage, track],
   );
@@ -133,42 +132,54 @@ export const CopilotSidebar: React.FC = () => {
             />
           }
         />
-        <div className="flex flex-col gap-4 overflow-auto px-1" ref={threadContainerRef}>
-          {thread.map((message, index) => (
-            <div
-              className={classNames({ 'flex justify-end pl-[32px]': message.role === 'user' })}
-              key={index}
-            >
+        <div className="overflow-auto px-1" ref={scrollContainerRef}>
+          <div className="space-y-4" ref={threadContainerRef}>
+            {thread.map((message, index) => (
               <div
-                className={classNames(
-                  'prose max-w-none space-y-2 overflow-hidden break-words text-sm leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
-                  {
-                    'rounded-xl bg-primary px-2 py-1.5 text-white': message.role === 'user',
-                  },
-                )}
+                className={classNames({ 'flex justify-end pl-[32px]': message.role === 'user' })}
+                key={index}
               >
-                {message.content.map((item, itemIndex) =>
-                  typeof item === 'string' ? (
-                    <ReactMarkdown
-                      components={{
-                        a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" />,
-                        code: CodeSnippet,
-                      }}
-                      key={itemIndex}
-                      remarkPlugins={[remarkGfm]}
-                    >
-                      {item}
-                    </ReactMarkdown>
-                  ) : (
-                    <CodeSnippet query={item} key={itemIndex}>
-                      {item.sql}
-                    </CodeSnippet>
-                  ),
-                )}
+                <div
+                  className={classNames(
+                    'prose max-w-none space-y-3 overflow-hidden break-words text-sm leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
+                    {
+                      'prose-invert rounded-xl bg-primary px-2 py-1.5 text-white':
+                        message.role === 'user',
+                    },
+                  )}
+                >
+                  {message.content.map((item, itemIndex) =>
+                    typeof item === 'string' ? (
+                      <ReactMarkdown
+                        components={{
+                          a: (props) => (
+                            <a
+                              {...props}
+                              {...(!props.href?.startsWith('#')
+                                ? { target: '_blank', rel: 'noopener noreferrer' }
+                                : {})}
+                            />
+                          ),
+                          code: CodeSnippet,
+                        }}
+                        key={itemIndex}
+                        remarkPlugins={[remarkGfm]}
+                      >
+                        {item}
+                      </ReactMarkdown>
+                    ) : (
+                      <CodeSnippet query={item} key={itemIndex}>
+                        {item.sql}
+                      </CodeSnippet>
+                    ),
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-          {isLoading && <PulseLoader color={colors.neutral[400]} size={8} />}
+            ))}
+          </div>
+          {isLoading && (
+            <LinearProgress className="!h-1 rounded-full !bg-primaryHighlightHover [&_.MuiLinearProgress-bar]:!bg-primary" />
+          )}
           {activeConnection.id === 'demo' && (
             <ActionList
               actions={copilotChatSuggestions
@@ -185,10 +196,11 @@ export const CopilotSidebar: React.FC = () => {
                   label: suggestion,
                   icon: LightbulbOutline,
                   onClick: () => {
-                    void sendMessage(suggestion);
+                    submit(suggestion);
                   },
                 }))}
               compact
+              htmlProps={{ className: 'mt-4' }}
             />
           )}
         </div>
