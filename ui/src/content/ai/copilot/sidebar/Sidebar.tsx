@@ -143,14 +143,17 @@ export const CopilotSidebar: React.FC = () => {
                 className={classNames(
                   'prose max-w-none space-y-2 overflow-hidden break-words text-sm leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
                   {
-                    'rounded-xl bg-primary px-2 py-1 text-white': message.role === 'user',
+                    'rounded-xl bg-primary px-2 py-1.5 text-white': message.role === 'user',
                   },
                 )}
               >
                 {message.content.map((item, itemIndex) =>
                   typeof item === 'string' ? (
                     <ReactMarkdown
-                      components={{ code: CodeSnippet }}
+                      components={{
+                        a: (props) => <a {...props} target="_blank" rel="noopener noreferrer" />,
+                        code: CodeSnippet,
+                      }}
                       key={itemIndex}
                       remarkPlugins={[remarkGfm]}
                     >

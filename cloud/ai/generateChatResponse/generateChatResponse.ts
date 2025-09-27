@@ -19,7 +19,7 @@ export const generateChatResponse = async function* (
 
     'When generating SQL, use quotes as necessary, particularly to ensure correct casing.',
 
-    'Return a list of text sections as well as query objects if necessary. Query objects contain a name and a SQL query.',
+    'Return a list where each item is either markdown text or a query object. Query objects contain a name and a SQL query.',
 
     'Suggest a chart in the query object only if it is useful to visualize the data. Do not suggest a chart if the data is not suitable for visualization, particularly if there is no numerical column for the y-axis.',
     'xColumn: The alias or name of the column for the x-axis of line and bar charts, and for the categories of pie charts. If line chart, only return continiuous data types like numbers or datetimes.',
