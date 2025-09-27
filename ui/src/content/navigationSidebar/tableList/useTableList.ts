@@ -121,7 +121,9 @@ export const useTableList = () => {
           openIfExists: !selectedTables.includes(table),
         }),
       );
+
       track('table_list_select');
+
       navigationSidebar.setIsOpen(false);
     },
     [addQuery, getQuery, selectedTables, navigationSidebar, track],

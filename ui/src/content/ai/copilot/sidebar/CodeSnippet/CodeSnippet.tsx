@@ -1,5 +1,5 @@
 import type { SavedQuery } from '@/savedQueries/types';
-import { ContentCopyOutlined } from '@mui/icons-material';
+import { ContentCopyOutlined, EditOutlined } from '@mui/icons-material';
 import classNames from 'classnames';
 import React, { useCallback } from 'react';
 import type { ExtraProps } from 'react-markdown';
@@ -9,8 +9,9 @@ import { ToastContext } from '~/content/toast/Context';
 import type { ButtonProps } from '~/shared/components/button/Button';
 import { CodeEditor } from '~/shared/components/codeEditor/CodeEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import Add from '~/shared/icons/Add.svg?react';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import Play from '~/shared/icons/Play.svg?react';
+import { CopilotSidebarContext } from '../Context';
 
 export type CodeSnippetProps = {
   children?: React.ReactNode;
@@ -24,6 +25,9 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
   const { track } = useDefinedContext(AnalyticsContext);
   const toast = useDefinedContext(ToastContext);
   const { addQuery } = useDefinedContext(QueriesContext);
+  const { setIsOpen } = useDefinedContext(CopilotSidebarContext);
+
+  const isMobile = useIsMobile();
 
   const match = /language-(.+)/.exec(className || '');
   const language = query ? 'sql' : match?.[1];
@@ -47,6 +51,10 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
                 },
                 { afterActiveTab: true, alwaysRun: true },
               );
+
+              if (isMobile) {
+                setIsOpen(false);
+              }
             },
           },
           icon: <Play />,
@@ -55,7 +63,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
         {
           htmlProps: {
             onClick: () => {
-              track('copilot_add_query');
+              track('copilot_edit_query');
 
               void addQuery(
                 {
@@ -64,10 +72,14 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
                 },
                 { afterActiveTab: true },
               );
+
+              if (isMobile) {
+                setIsOpen(false);
+              }
             },
           },
-          icon: <Add />,
-          tooltip: 'Add tab',
+          icon: <EditOutlined />,
+          tooltip: 'Edit',
         },
         {
           htmlProps: {
@@ -85,7 +97,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
           tooltip: 'Copy',
         },
       ] satisfies ButtonProps[],
-    [track, addQuery, query, toast],
+    [track, addQuery, query, isMobile, setIsOpen, toast],
   );
 
   if (!language) {
