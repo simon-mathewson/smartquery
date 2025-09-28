@@ -1,6 +1,7 @@
 import {
   ArrowBackOutlined,
   BrushOutlined,
+  GitHub,
   LogoutOutlined,
   PersonAddAlt1Outlined,
   QuestionAnswerOutlined,
@@ -172,7 +173,21 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
             />
           </Field>
           <AddToDesktop />
-          <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
+          <div>
+            <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
+              <Button
+                align="left"
+                color="secondary"
+                element="a"
+                htmlProps={{
+                  className: 'w-full',
+                  href: import.meta.env.VITE_GITHUB_URL,
+                  target: '_blank',
+                }}
+                icon={<GitHub />}
+                label="GitHub"
+              />
+            </Field>
             <Button
               align="left"
               color="secondary"
@@ -185,7 +200,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               icon={<QuestionAnswerOutlined />}
               label="Discord"
             />
-          </Field>
+          </div>
         </>
       )}
       {section === 'connectivity' && (

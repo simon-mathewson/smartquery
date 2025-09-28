@@ -1,7 +1,7 @@
 import {
+  GitHub,
   LightbulbOutlined,
   PersonAddAlt1Outlined,
-  QuestionAnswerOutlined,
   SettingsOutlined,
   VpnKeyOutlined,
 } from '@mui/icons-material';
@@ -105,13 +105,13 @@ export const Footer: React.FC<FooterProps> = (props) => {
             element="a"
             htmlProps={{
               className: '[&>svg]:text-textTertiary',
-              href: import.meta.env.VITE_DISCORD_INVITE_URL,
+              href: import.meta.env.VITE_GITHUB_URL,
               target: '_blank',
             }}
-            icon={<QuestionAnswerOutlined />}
-            tooltip="Ask questions and share your feedback, feature requests, and bug reports on Discord"
+            icon={<GitHub />}
+            tooltip="GitHub"
           />
-          <div className="flex flex-col gap-[2px] overflow-hidden">
+          <div className="flex flex-col gap-[2px] overflow-hidden pr-1">
             <div className="truncate text-xs text-textTertiary">© 2025 Simon Mathewson</div>
             <div className="flex items-center gap-1 overflow-hidden">
               <a

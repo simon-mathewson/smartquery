@@ -1,7 +1,7 @@
 /// <reference types="electron-vite/node" />
 
 interface ImportMetaEnv {
-  readonly VITE_DISCORD_INVITE_URL: string;
+  readonly VITE_GITHUB_URL: string;
   readonly VITE_MYSQL_PORT: string;
   readonly VITE_PORT: string;
   readonly VITE_POSTGRES_PORT: string;
