@@ -5,7 +5,6 @@ import {
   Language,
   LightbulbOutline,
   Send,
-  Stop,
 } from '@mui/icons-material';
 import { CircularProgress, LinearProgress } from '@mui/material';
 import classNames from 'classnames';
@@ -52,7 +51,6 @@ export const CopilotSidebar: React.FC = () => {
   const isMobile = useIsMobile();
 
   const threadContainerRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const submit = useCallback(
     (inputToSend: string) => {
@@ -62,9 +60,10 @@ export const CopilotSidebar: React.FC = () => {
 
       // Scroll user message into view, not response
       setTimeout(() => {
-        scrollContainerRef.current?.scrollTo({
-          top: threadContainerRef.current?.clientHeight,
+        if (!threadContainerRef.current) return;
+        [...threadContainerRef.current.querySelectorAll('.user-message')].at(-1)?.scrollIntoView({
           behavior: 'smooth',
+          block: 'start',
         });
       }, 100);
     },
@@ -110,6 +109,7 @@ export const CopilotSidebar: React.FC = () => {
                   onClick: () => {
                     clearThread();
                     track('copilot_clear_thread');
+                    threadContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
                   },
                 }}
                 icon={<DeleteOutline />}
@@ -132,55 +132,59 @@ export const CopilotSidebar: React.FC = () => {
             />
           }
         />
-        <div className="overflow-auto px-1" ref={scrollContainerRef}>
-          <div className="space-y-4" ref={threadContainerRef}>
-            {thread.map((message, index) => (
-              <div
-                className={classNames({ 'flex justify-end pl-[32px]': message.role === 'user' })}
-                key={index}
-              >
+        <div className="overflow-auto px-1" ref={threadContainerRef}>
+          <div className="space-y-4">
+            {thread.map((message, index) => {
+              if (message.content.length === 0) return null;
+
+              return (
                 <div
-                  className={classNames(
-                    'prose max-w-none space-y-3 overflow-hidden break-words text-sm leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
-                    {
-                      'prose-invert rounded-xl bg-primary px-2 py-1.5 text-white':
-                        message.role === 'user',
-                    },
-                  )}
+                  className={classNames({ 'flex justify-end pl-[32px]': message.role === 'user' })}
+                  key={index}
                 >
-                  {message.content.map((item, itemIndex) =>
-                    typeof item === 'string' ? (
-                      <ReactMarkdown
-                        components={{
-                          a: (props) => (
-                            <a
-                              {...props}
-                              {...(!props.href?.startsWith('#')
-                                ? { target: '_blank', rel: 'noopener noreferrer' }
-                                : {})}
-                            />
-                          ),
-                          code: CodeSnippet,
-                        }}
-                        key={itemIndex}
-                        remarkPlugins={[remarkGfm]}
-                      >
-                        {item}
-                      </ReactMarkdown>
-                    ) : (
-                      <CodeSnippet query={item} key={itemIndex}>
-                        {item.sql}
-                      </CodeSnippet>
-                    ),
-                  )}
+                  <div
+                    className={classNames(
+                      'prose max-w-none space-y-3 overflow-hidden break-words text-sm leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
+                      {
+                        'user-message prose-invert rounded-xl bg-primary px-2 py-1.5 text-white':
+                          message.role === 'user',
+                      },
+                    )}
+                  >
+                    {message.content.map((item, itemIndex) =>
+                      typeof item === 'string' ? (
+                        <ReactMarkdown
+                          components={{
+                            a: (props) => (
+                              <a
+                                {...props}
+                                {...(!props.href?.startsWith('#')
+                                  ? { target: '_blank', rel: 'noopener noreferrer' }
+                                  : {})}
+                              />
+                            ),
+                            code: CodeSnippet,
+                          }}
+                          key={itemIndex}
+                          remarkPlugins={[remarkGfm]}
+                        >
+                          {item}
+                        </ReactMarkdown>
+                      ) : (
+                        <CodeSnippet query={item} key={itemIndex}>
+                          {item.sql}
+                        </CodeSnippet>
+                      ),
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           {isLoading && (
-            <LinearProgress className="!h-1 rounded-full !bg-primaryHighlightHover [&_.MuiLinearProgress-bar]:!bg-primary" />
+            <LinearProgress className="mt-4 !h-1 rounded-full !bg-primaryHighlightHover [&_.MuiLinearProgress-bar]:!bg-primary" />
           )}
-          {activeConnection.id === 'demo' && (
+          {activeConnection.id === 'demo' && !isLoading && (
             <ActionList
               actions={copilotChatSuggestions
                 .filter(
@@ -203,6 +207,7 @@ export const CopilotSidebar: React.FC = () => {
               htmlProps={{ className: 'mt-4' }}
             />
           )}
+          <div className="h-screen w-full" />
         </div>
         <div>
           {isLoadingSchemaDefinitions && (
@@ -267,17 +272,23 @@ export const CopilotSidebar: React.FC = () => {
                 onChange={setInput}
               />
               {isLoading ? (
-                <Button
-                  htmlProps={{
-                    onClick: () => {
-                      stopGenerating();
-                      track('copilot_stop_generating');
-                    },
-                  }}
-                  icon={<Stop />}
-                  key="stop"
-                  tooltip="Stop generating"
-                />
+                <div className="relative h-fit w-fit">
+                  <Button
+                    htmlProps={{
+                      onClick: () => {
+                        stopGenerating();
+                        track('copilot_stop_generating');
+                      },
+                    }}
+                    icon={<Close />}
+                    key="stop"
+                    tooltip="Stop generating"
+                  />
+                  <CircularProgress
+                    className="absolute left-[4px] top-[4px] !text-primary"
+                    size={28}
+                  />
+                </div>
               ) : (
                 <Button
                   htmlProps={{

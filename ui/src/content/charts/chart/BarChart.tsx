@@ -17,6 +17,7 @@ export const BarChart = (props: BarChartProps) => {
 
   return (
     <MuiBarChart
+      borderRadius={4}
       colors={colors}
       height={200}
       series={[{ dataKey: 'y' }]}
