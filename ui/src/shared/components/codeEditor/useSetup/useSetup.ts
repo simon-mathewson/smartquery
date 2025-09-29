@@ -61,6 +61,7 @@ export const useSetup = (props: {
   const options = useMemo<editor.IEditorOptions & editor.IGlobalEditorOptions>(
     () => ({
       folding: false,
+      fontFamily: 'Google Sans Code',
       fontSize: 12,
       glyphMargin: true,
       inlineSuggest: { suppressSuggestions: false },

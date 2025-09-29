@@ -118,7 +118,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
-        mono: ['"Fira Mono"', 'monospace'],
+        mono: ['"Google Sans Code"', 'monospace'],
       },
     },
   },

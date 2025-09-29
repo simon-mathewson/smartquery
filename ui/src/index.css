@@ -35,30 +35,6 @@
   }
 }
 
-@font-face {
-  font-family: 'Fira Mono';
-  font-weight: 400;
-  src: url(fonts/FiraMono-Regular.ttf);
-}
-
-@font-face {
-  font-family: 'Fira Mono';
-  font-weight: 500;
-  src: url(fonts/FiraMono-Medium.ttf);
-}
-
-@font-face {
-  font-family: 'Inter';
-  font-weight: 400;
-  src: url(fonts/Inter-Regular.ttf);
-}
-
-@font-face {
-  font-family: 'Inter';
-  font-weight: 500;
-  src: url(fonts/Inter-Medium.ttf);
-}
-
 @layer components {
   /* Keep in sync with selectors in `getFocusableElements.ts` */
   a:not([aria-disabled='true']):not(.hidden),
