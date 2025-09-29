@@ -98,7 +98,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         </div>
       )}
       <div
-        className="h-full w-full overflow-hidden transition-all ease-in-out"
+        className="h-full w-full overflow-hidden transition-all ease-in-out [&_.iPadShowKeyboard]:hidden"
         onWheelCapture={(event) => {
           if (hostRef.current?.contains(document.activeElement)) {
             return;
