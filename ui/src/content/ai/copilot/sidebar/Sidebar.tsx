@@ -1,5 +1,6 @@
 import {
   ArrowForward,
+  AutoAwesomeOutlined,
   Close,
   DeleteOutline,
   Language,
@@ -117,7 +118,12 @@ export const CopilotSidebar: React.FC = () => {
               />
             ) : null
           }
-          middle={<div className="text-center text-sm font-medium text-textPrimary">Copilot</div>}
+          middle={
+            <div className="flex items-center gap-3">
+              <AutoAwesomeOutlined className="!h-5 !w-5 text-primary" />
+              <div className="text-center text-sm font-medium text-textPrimary">Copilot</div>
+            </div>
+          }
           right={
             <Button
               color="secondary"
