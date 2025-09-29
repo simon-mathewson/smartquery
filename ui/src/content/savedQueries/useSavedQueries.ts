@@ -2,7 +2,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { CloudApiContext } from '../cloud/api/Context';
 import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { ActiveConnectionContext } from '../connections/activeConnection/Context';
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { assert } from 'ts-essentials';
 import type { Chart, SavedQuery } from '@/savedQueries/types';
 import { AnalyticsContext } from '../analytics/Context';
@@ -10,15 +10,17 @@ import { ToastContext } from '../toast/Context';
 import { QueriesContext } from '../tabs/queries/Context';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { v4 as uuid } from 'uuid';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { demoConnectionId } from '../connections/demo/constants';
 import { demoSavedQueries } from '../connections/demo/savedQueries';
+import { TabsContext } from '../tabs/Context';
+import { getNewQuery } from '../tabs/queries/utils/getNewQuery';
 
 export const useSavedQueries = () => {
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const activeConnectionContext = useContext(ActiveConnectionContext);
   const activeConnection = activeConnectionContext?.activeConnection;
   const { track } = useDefinedContext(AnalyticsContext);
+  const { addTab } = useDefinedContext(TabsContext);
   const { updateQuery } = useDefinedContext(QueriesContext);
   const toast = useDefinedContext(ToastContext);
 
@@ -37,14 +39,15 @@ export const useSavedQueries = () => {
     [],
   );
 
-  useEffectOnce(
-    () => {
-      if (activeConnection?.id === demoConnectionId && localSavedQueries.length === 0) {
-        setLocalSavedQueries(demoSavedQueries);
-      }
-    },
-    { enabled: Boolean(activeConnection) },
-  );
+  useEffect(() => {
+    if (activeConnection?.id === demoConnectionId && localSavedQueries.length === 0) {
+      setLocalSavedQueries(demoSavedQueries);
+      void getNewQuery({
+        addQueryOptions: demoSavedQueries[0],
+        connection: activeConnection,
+      }).then((q) => addTab([[q]]));
+    }
+  }, [activeConnection, addTab, localSavedQueries, setLocalSavedQueries]);
 
   const {
     hasRun,
