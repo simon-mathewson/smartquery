@@ -17,7 +17,7 @@ export const getColumnRef = (column: Column): ColumnRef => {
 
 export const getColumnRefFromAst = (
   column: NodeSqlParser.ColumnRef | NodeSqlParser.Column,
-): ColumnRef => {
+): ColumnRef | null => {
   const ref = 'expr' in column ? column.expr : column;
 
   const columnName = (() => {
@@ -38,7 +38,7 @@ export const getColumnRefFromAst = (
   const tableName = 'table' in ref ? ref.table : null;
 
   if (!columnName) {
-    throw new Error(`Unable to find column in expression: ${JSON.stringify(ref)}`);
+    return null;
   }
 
   return {

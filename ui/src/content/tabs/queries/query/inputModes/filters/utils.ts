@@ -103,6 +103,9 @@ export const getFilterFromAst = (
   const right = expression.right as NodeSqlParser.Value;
 
   const columnRef = getColumnRefFromAst(left);
+  if (!columnRef) {
+    throw new Error(`Unable to find column in expression: ${JSON.stringify(left)}`);
+  }
 
   if (operator === 'IS') {
     if (right.type !== 'null' || right.value !== null) {

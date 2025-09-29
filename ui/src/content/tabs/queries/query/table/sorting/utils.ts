@@ -11,6 +11,8 @@ export const getSortedColumnFromAst = (select: Select) => {
 
   const columnRef = getColumnRefFromAst(orderBy.expr as NodeSqlParser.ColumnRef);
 
+  if (!columnRef) return null;
+
   return {
     ...columnRef,
     direction: orderBy.type,
