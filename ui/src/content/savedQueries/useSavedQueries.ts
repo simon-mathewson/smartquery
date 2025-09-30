@@ -50,7 +50,7 @@ export const useSavedQueries = () => {
   }, [activeConnection, addTab, localSavedQueries, setLocalSavedQueries]);
 
   const {
-    hasRun,
+    isLoading,
     results: cloudSavedQueries,
     run: refetchSavedQueries,
   } = useCloudQuery(
@@ -74,8 +74,6 @@ export const useSavedQueries = () => {
     () => [...localSavedQueries, ...(cloudSavedQueries ?? [])],
     [localSavedQueries, cloudSavedQueries],
   );
-
-  const isLoading = !hasRun;
 
   const deleteSavedQuery = useCallback(
     async (savedQuery: SavedQuery, queryId: string, onSuccess?: () => void) => {

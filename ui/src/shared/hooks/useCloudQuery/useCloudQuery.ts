@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 export const useCloudQuery = <T>(query: () => Promise<T>, options?: { disabled?: boolean }) => {
   const [results, setResults] = useState<T | null>(null);
 
-  const [hasRun, setHasRun] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const run = useCallback(async () => {
     if (options?.disabled) {
@@ -11,10 +11,14 @@ export const useCloudQuery = <T>(query: () => Promise<T>, options?: { disabled?:
       return;
     }
 
-    const response = await query();
-    setResults(response);
+    setIsLoading(true);
 
-    setHasRun(true);
+    try {
+      const response = await query();
+      setResults(response);
+    } finally {
+      setIsLoading(false);
+    }
   }, [options, query]);
 
   useEffect(() => {
@@ -25,10 +29,10 @@ export const useCloudQuery = <T>(query: () => Promise<T>, options?: { disabled?:
   return useMemo(
     () =>
       ({
-        hasRun,
+        isLoading,
         results,
         run,
       }) as const,
-    [results, run, hasRun],
+    [results, run, isLoading],
   );
 };

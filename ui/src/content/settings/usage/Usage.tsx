@@ -46,7 +46,7 @@ export const Usage: React.FC = () => {
 
   return (
     <div>
-      {!usageQuery.results && (
+      {usageQuery.isLoading && (
         <div className="relative h-[200px]">
           <Loading />
         </div>
