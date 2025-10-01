@@ -10,9 +10,11 @@ export const useTabs = () => {
 
   const localStorageSuffix = activeConnectionContext
     ? `${activeConnectionContext.activeConnection.id}-${activeConnectionContext.activeConnection.database}`
-    : '';
+    : null;
+  const tabsStorageKey = localStorageSuffix ? `tabs-${localStorageSuffix}` : null;
+  const activeTabIdStorageKey = localStorageSuffix ? `activeTabId-${localStorageSuffix}` : null;
 
-  const [tabs, setTabs] = useStoredState<Tab[]>(`tabs-${localStorageSuffix}`, [], sessionStorage, [
+  const [tabs, setTabs] = useStoredState<Tab[]>(tabsStorageKey, [], sessionStorage, [
     (tabs) =>
       tabs.map((t) => ({
         ...t,
@@ -39,7 +41,7 @@ export const useTabs = () => {
   ]);
 
   const [activeTabId, setActiveTabId] = useStoredState<string | null>(
-    `activeTabId-${localStorageSuffix}`,
+    activeTabIdStorageKey,
     null,
     sessionStorage,
   );

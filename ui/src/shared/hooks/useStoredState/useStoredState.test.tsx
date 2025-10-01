@@ -4,6 +4,36 @@ import type { UseStoredStateStoryProps } from './useStoredState.story';
 import { UseStoredStateStory } from './useStoredState.story';
 
 test.describe('useStoredState', () => {
+  const expectReturnValue = async (
+    $: MountResult,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    value: any,
+  ) => {
+    expect(await $.evaluate((root) => root.querySelector('.value')?.textContent)).toBe(
+      String(value),
+    );
+  };
+
+  const expectStoredValue = async (
+    $: MountResult,
+    props: UseStoredStateStoryProps,
+    storedValue: string,
+  ) => {
+    expect(
+      await $.evaluate(
+        (_, props) =>
+          (props.storage === 'session' ? sessionStorage : localStorage).getItem(props.storageKey!),
+        props,
+      ),
+    ).toEqual(storedValue);
+  };
+
+  const expectIsInitialized = async ($: MountResult, isInitialized: boolean) => {
+    expect(await $.evaluate((root) => root.querySelector('.is-initialized')?.textContent)).toBe(
+      isInitialized ? 'true' : 'false',
+    );
+  };
+
   const expectValue = async (
     $: MountResult,
     props: UseStoredStateStoryProps,
@@ -11,15 +41,9 @@ test.describe('useStoredState', () => {
     value: any,
     storedValue: string,
   ) => {
-    await expect($).toHaveText(String(value));
-
-    expect(
-      await $.evaluate(
-        (_, props) =>
-          (props.storage === 'session' ? sessionStorage : localStorage).getItem(props.storageKey),
-        props,
-      ),
-    ).toEqual(storedValue);
+    await expectReturnValue($, value);
+    await expectStoredValue($, props, storedValue);
+    await expectIsInitialized($, true);
   };
 
   (['session', 'local'] as const).forEach((storage) => {
@@ -69,5 +93,23 @@ test.describe('useStoredState', () => {
     const $ = await mount(<UseStoredStateStory {...props} />);
 
     await expectValue($, props, 'testValue', '{"json":"testValue"}');
+  });
+
+  test('should handle null key', async ({ mount }) => {
+    const props = {
+      defaultValue: 'testValue',
+      storage: 'local',
+      storageKey: null,
+    } satisfies UseStoredStateStoryProps;
+
+    const $ = await mount(<UseStoredStateStory {...props} />);
+
+    await expectReturnValue($, 'testValue');
+    await expectIsInitialized($, false);
+
+    await $.update(<UseStoredStateStory {...props} storageKey="testKey" />);
+
+    await expectReturnValue($, 'testValue');
+    await expectIsInitialized($, true);
   });
 });

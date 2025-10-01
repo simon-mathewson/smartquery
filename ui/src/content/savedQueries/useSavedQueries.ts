@@ -25,7 +25,7 @@ export const useSavedQueries = () => {
   const toast = useDefinedContext(ToastContext);
 
   const getStorageKey = () => {
-    if (!activeConnectionContext) return '';
+    if (!activeConnectionContext) return null;
 
     const {
       activeConnection: { id, engine, database },
@@ -34,20 +34,31 @@ export const useSavedQueries = () => {
     return `savedQueries.${id}${engine === 'postgres' ? `.${database}` : ''}`;
   };
 
-  const [localSavedQueries, setLocalSavedQueries] = useStoredState<SavedQuery[]>(
-    getStorageKey(),
-    [],
-  );
+  const [
+    localSavedQueries,
+    setLocalSavedQueries,
+    { isInitialized: isLocalSavedQueriesInitialized },
+  ] = useStoredState<SavedQuery[]>(getStorageKey(), []);
 
   useEffect(() => {
-    if (activeConnection?.id === demoConnectionId && localSavedQueries.length === 0) {
+    if (
+      activeConnection?.id === demoConnectionId &&
+      localSavedQueries.length === 0 &&
+      isLocalSavedQueriesInitialized
+    ) {
       setLocalSavedQueries(demoSavedQueries);
       void getNewQuery({
         addQueryOptions: demoSavedQueries[0],
         connection: activeConnection,
       }).then((q) => addTab([[q]]));
     }
-  }, [activeConnection, addTab, localSavedQueries, setLocalSavedQueries]);
+  }, [
+    activeConnection,
+    addTab,
+    isLocalSavedQueriesInitialized,
+    localSavedQueries,
+    setLocalSavedQueries,
+  ]);
 
   const {
     isLoading,
@@ -86,7 +97,7 @@ export const useSavedQueries = () => {
         await cloudApi.savedQueries.delete.mutate(savedQuery.id);
         await refetchSavedQueries();
       } else {
-        setLocalSavedQueries(localSavedQueries.filter((sq) => sq.id !== savedQuery.id));
+        setLocalSavedQueries((sqs) => sqs.filter((sq) => sq.id !== savedQuery.id));
       }
 
       await updateQuery({ id: queryId, savedQueryId: null });
@@ -106,7 +117,6 @@ export const useSavedQueries = () => {
       cloudApi,
       refetchSavedQueries,
       setLocalSavedQueries,
-      localSavedQueries,
     ],
   );
 
@@ -137,7 +147,7 @@ export const useSavedQueries = () => {
           await updateQuery({ id: queryId, savedQueryId: id });
         } else {
           const id = uuid();
-          setLocalSavedQueries([...localSavedQueries, { id, name, sql, chart }]);
+          setLocalSavedQueries((sqs) => [...sqs, { id, name, sql, chart }]);
 
           await updateQuery({ id: queryId, savedQueryId: id });
         }
@@ -165,7 +175,6 @@ export const useSavedQueries = () => {
       refetchSavedQueries,
       updateQuery,
       setLocalSavedQueries,
-      localSavedQueries,
     ],
   );
 

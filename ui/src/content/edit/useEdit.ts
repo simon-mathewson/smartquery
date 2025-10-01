@@ -16,19 +16,20 @@ import { doChangeLocationsMatch, getValueString } from './utils';
 
 export const useEdit = () => {
   const activeConnectionContext = useContext(ActiveConnectionContext);
+  const activeConnectionId = activeConnectionContext?.activeConnection.id;
 
   const [createChanges, setCreateChanges] = useStoredState<CreateChange[]>(
-    `createChanges-${activeConnectionContext?.activeConnection.id}`,
+    activeConnectionId ? `createChanges-${activeConnectionId}` : null,
     [],
     sessionStorage,
   );
   const [deleteChanges, setDeleteChanges] = useStoredState<DeleteChange[]>(
-    `deleteChanges-${activeConnectionContext?.activeConnection.id}`,
+    activeConnectionId ? `deleteChanges-${activeConnectionId}` : null,
     [],
     sessionStorage,
   );
   const [updateChanges, setUpdateChanges] = useStoredState<UpdateChange[]>(
-    `updateChanges-${activeConnectionContext?.activeConnection.id}`,
+    activeConnectionId ? `updateChanges-${activeConnectionId}` : null,
     [],
     sessionStorage,
   );

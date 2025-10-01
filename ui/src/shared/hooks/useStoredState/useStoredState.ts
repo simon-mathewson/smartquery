@@ -2,23 +2,34 @@ import { useState, useEffect } from 'react';
 import superjson from 'superjson';
 
 export const useStoredState = <T>(
-  key: string,
+  key: string | null,
   defaultValue: T | (() => T),
   storage = localStorage,
   migrations: Array<(storedValue: T) => T> = [],
 ) => {
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const getDefaultValue = () =>
+    typeof defaultValue === 'function' ? (defaultValue as () => T)() : defaultValue;
+
   const getInitialValue = () => {
+    if (key === null) return getDefaultValue();
+
+    setIsInitialized(true);
+
     const storedValue = storage.getItem(key);
     if (storedValue) {
       const parsedValue = superjson.parse<T>(storedValue);
       return migrations.reduce((value, migration) => migration(value), parsedValue);
     }
-    return typeof defaultValue === 'function' ? (defaultValue as () => T)() : defaultValue;
+
+    return getDefaultValue();
   };
 
   const [state, setState] = useState<T>(getInitialValue);
 
   useEffect(() => {
+    if (key === null) return;
     storage.setItem(key, superjson.stringify(state));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
@@ -45,5 +56,5 @@ export const useStoredState = <T>(
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [key, migrations]);
 
-  return [state, setState] as const;
+  return [state, setState, { isInitialized }] as const;
 };
