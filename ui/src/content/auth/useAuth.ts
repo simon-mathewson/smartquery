@@ -93,18 +93,10 @@ export const useAuth = () => {
       }
     };
 
-    const handleFocus = async () => {
-      if (shouldRefreshToken()) {
-        await refreshAuth();
-      }
-    };
-
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', handleFocus);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', handleFocus);
     };
   }, [refreshAuth, shouldRefreshToken, user]);
 
