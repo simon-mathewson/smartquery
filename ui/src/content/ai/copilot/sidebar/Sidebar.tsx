@@ -77,11 +77,11 @@ export const CopilotSidebar: React.FC = () => {
 
   return (
     <div
+      tabIndex={isOpen ? undefined : -1}
       className={classNames(
         'absolute right-0 z-50 h-screen bg-background p-3 sm:relative sm:right-0 sm:pl-1 sm:pt-[60px]',
         {
-          'sm:!w-0 sm:!p-0': !isOpen,
-          '!-right-full': !isOpen && isMobile,
+          hidden: !isOpen,
         },
       )}
       style={{ width: isMobile ? '100%' : `${desktopWidth}px` }}
