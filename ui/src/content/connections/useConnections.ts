@@ -529,7 +529,7 @@ export const useConnections = (props: UseConnectionsProps) => {
     ],
   );
 
-  const isReady = !isInitializingAuth && (!user || cloudConnectionsQuery.results !== null);
+  const isReady = !isInitializingAuth && (!user || cloudConnectionsQuery.hasRun);
 
   // Connect based on URL params
   useEffect(() => {

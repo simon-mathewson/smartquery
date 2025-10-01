@@ -4,6 +4,7 @@ export const useCloudQuery = <T>(query: () => Promise<T>, options?: { disabled?:
   const [results, setResults] = useState<T | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [hasRun, setHasRun] = useState(false);
 
   const run = useCallback(async () => {
     if (options?.disabled) {
@@ -18,6 +19,7 @@ export const useCloudQuery = <T>(query: () => Promise<T>, options?: { disabled?:
       setResults(response);
     } finally {
       setIsLoading(false);
+      setHasRun(true);
     }
   }, [options, query]);
 
@@ -29,10 +31,11 @@ export const useCloudQuery = <T>(query: () => Promise<T>, options?: { disabled?:
   return useMemo(
     () =>
       ({
+        hasRun,
         isLoading,
         results,
         run,
       }) as const,
-    [results, run, isLoading],
+    [results, run, isLoading, hasRun],
   );
 };
