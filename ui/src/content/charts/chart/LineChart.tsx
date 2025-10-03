@@ -1,13 +1,15 @@
 import type { Chart } from '@/savedQueries/types';
 import { LineChart as MuiLineChart } from '@mui/x-charts';
+import { sortBy } from 'lodash';
+import { useMemo } from 'react';
 import { assert } from 'ts-essentials';
 import { isDateTimeType } from '~/shared/dataTypes/utils';
-import type { Column } from '~/shared/types';
+import type { Column, Value } from '~/shared/types';
 
 export type LineChartProps = {
   chart: Chart;
   colors: string[];
-  data: { x: Date | string; y: number }[];
+  data: { x: Date | Value; y: number }[];
   valueFormatter: ((value: Date) => string) | undefined;
   xColumn: Column;
 };
@@ -17,13 +19,22 @@ export const LineChart = (props: LineChartProps) => {
 
   assert(chart.yColumn, 'Y axis is required');
 
+  const processedData = useMemo(() => {
+    const withoutNulls = data
+      .map((point) => ({ x: point.x, y: point.y }))
+      .filter((data): data is { x: Date | Value; y: number } => data.x !== null);
+
+    // Sort ascending to avoid missing tooltips (occurs with reverse order dates)
+    return sortBy(withoutNulls, (point) => point.x);
+  }, [data]);
+
   return (
     <MuiLineChart
       colors={colors}
       height={200}
       series={[
         {
-          data: data.map((point) => point.y),
+          data: processedData.map((point) => point.y),
           baseline: 'min',
           area: true,
           showMark: false,
@@ -32,7 +43,7 @@ export const LineChart = (props: LineChartProps) => {
       xAxis={[
         {
           scaleType: isDateTimeType(xColumn.dataType) ? 'time' : 'linear',
-          data: data.map((point) => point.x),
+          data: processedData.map((point) => point.x),
           tickLabelMinGap: 8,
           label: chart.xColumn,
           valueFormatter,

@@ -1,14 +1,15 @@
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { LineChart } from './LineChart';
-import { QueryContext, ResultContext } from '~/content/tabs/queries/query/Context';
-import { BarChart } from './BarChart';
-import { PieChart } from './PieChart';
 import { useContext, useMemo } from 'react';
-import { isDateTimeType } from '~/shared/dataTypes/utils';
-import { ThemeContext } from '~/content/theme/Context';
 import tailwindColors from 'tailwindcss/colors';
-import { primaryColors } from '~/content/theme/primaryColors';
+import { QueryContext, ResultContext } from '~/content/tabs/queries/query/Context';
 import { compareColumnRefs } from '~/content/tabs/queries/utils/columnRefs';
+import { ThemeContext } from '~/content/theme/Context';
+import { primaryColors } from '~/content/theme/primaryColors';
+import { isDateTimeType } from '~/shared/dataTypes/utils';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import type { Value } from '~/shared/types';
+import { BarChart } from './BarChart';
+import { LineChart } from './LineChart';
+import { PieChart } from './PieChart';
 
 export const Chart = () => {
   const { mode } = useDefinedContext(ThemeContext);
@@ -31,14 +32,23 @@ export const Chart = () => {
       return null;
     }
 
-    return result.rows.map((row) => {
+    return result.rows.map<{
+      x: Date | Value;
+      y: number;
+    }>((row) => {
       const x = row[chart.xColumn];
-      const y = chart.yColumn ? row[chart.yColumn] : null;
+      const y = Number(chart.yColumn ? row[chart.yColumn] : null);
 
-      return {
-        x: isDateTimeType(xColumn.dataType) && x !== null ? new Date(x) : x,
-        y: Number(y),
-      };
+      if (isDateTimeType(xColumn.dataType) && x !== null) {
+        // Normalize ISO with missing seconds (e.g. from Postgres timestamp)
+        const xNormalized = x.replace(
+          /(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})\.(\d+)(Z|(\+|-)\d{2}:\d{2})?/,
+          '$1:00.$2$3',
+        );
+        return { x: new Date(xNormalized), y };
+      }
+
+      return { x, y };
     });
   }, [result, chart, xColumn]);
 
@@ -59,9 +69,7 @@ export const Chart = () => {
         <LineChart
           chart={chart}
           colors={colors}
-          data={chartData.filter(
-            (data): data is { x: string | Date; y: number } => data.x !== null,
-          )}
+          data={chartData}
           valueFormatter={valueFormatter}
           xColumn={xColumn}
         />
