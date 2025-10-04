@@ -1,6 +1,6 @@
 import {
   ArrowForward,
-  AutoAwesomeOutlined,
+  AutoAwesome,
   Close,
   DeleteOutline,
   Language,
@@ -122,7 +122,7 @@ export const CopilotSidebar: React.FC = () => {
           }
           middle={
             <div className="flex items-center gap-3">
-              <AutoAwesomeOutlined className="!h-5 !w-5 text-primary" />
+              <AutoAwesome className="!h-5 !w-5 text-primary" />
               <div className="text-center text-sm font-medium text-textPrimary">Copilot</div>
             </div>
           }

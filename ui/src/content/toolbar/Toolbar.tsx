@@ -1,4 +1,4 @@
-import { Add, AutoAwesomeOutlined, Menu } from '@mui/icons-material';
+import { Add, AutoAwesome, Menu } from '@mui/icons-material';
 import classNames from 'classnames';
 import React from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
@@ -61,7 +61,7 @@ export const Toolbar: React.FC = () => {
               copilotSidebar.setIsOpen(!copilotSidebar.isOpen);
             },
           }}
-          icon={<AutoAwesomeOutlined />}
+          icon={<AutoAwesome />}
           label={isMobile ? undefined : 'Copilot'}
           variant="filled"
         />
