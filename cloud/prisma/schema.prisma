@@ -105,13 +105,15 @@ model Subscription {
 
 model Usage {
   id        String    @id @default(uuid()) @db.Uuid
-  userId    String    @db.Uuid
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?   @db.Uuid
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
   type      UsageType
   amount    Int
+  ip        String?
 
   @@index([userId, type, createdAt])
+  @@index([ip, type, createdAt])
 }
 
 model User {

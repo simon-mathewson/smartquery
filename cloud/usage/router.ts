@@ -13,6 +13,6 @@ export const usageRouter = trpc.router({
         ctx: { user },
       } = props;
 
-      return getUsage({ prisma, user });
+      return getUsage({ ip: undefined, prisma, user });
     }),
 });

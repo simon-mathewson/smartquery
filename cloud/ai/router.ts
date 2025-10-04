@@ -5,22 +5,21 @@ import { trackUsage } from '~/usage/trackUsage';
 import { verifyUsageWithinLimits } from '~/usage/verifyUsageWithinLimits';
 import { trpc } from '~/trpc';
 import assert from 'assert';
-import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import { getAiCreditsForTokens } from '~/usage/getAiCreditsForTokens';
 import { prisma } from '~/prisma/client';
 
 export const aiRouter = trpc.router({
   generateChatResponse: trpc.procedure
     .input(generateChatResponseInputSchema)
-    .use(isAuthenticated)
     .mutation(async function* (props) {
       const {
-        ctx: { googleAi, user },
+        ctx: { googleAi, ip, user },
         input,
         signal,
       } = props;
 
       await verifyUsageWithinLimits({
+        ip,
         prisma,
         types: ['aiCredits'],
         user,
@@ -42,6 +41,7 @@ export const aiRouter = trpc.router({
       assert(inputTokens !== null, 'Input tokens should be tracked');
 
       void trackUsage({
+        ip,
         items: [
           {
             amount: getAiCreditsForTokens({ inputTokens, outputTokens }),
@@ -49,22 +49,22 @@ export const aiRouter = trpc.router({
           },
         ],
         prisma,
-        userId: user.id,
+        user,
       });
 
       return null;
     }),
   generateInlineCompletions: trpc.procedure
     .input(generateInlineCompletionsInputSchema)
-    .use(isAuthenticated)
     .mutation(async (props) => {
       const {
-        ctx: { googleAi, user },
+        ctx: { googleAi, ip, user },
         input,
         signal,
       } = props;
 
       await verifyUsageWithinLimits({
+        ip,
         prisma,
         types: ['aiCredits'],
         user,
@@ -74,6 +74,7 @@ export const aiRouter = trpc.router({
 
       if (response) {
         void trackUsage({
+          ip,
           items: [
             {
               amount: getAiCreditsForTokens({
@@ -84,7 +85,7 @@ export const aiRouter = trpc.router({
             },
           ],
           prisma,
-          userId: user.id,
+          user,
         });
       }
 

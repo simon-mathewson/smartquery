@@ -31,6 +31,7 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { CopilotContext } from '../Context';
 import { CodeSnippet } from './CodeSnippet/CodeSnippet';
 import { CopilotSidebarContext } from './Context';
+import { ErrorMessage } from '~/shared/components/errorMessage/ErrorMessage';
 
 export const CopilotSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -42,6 +43,7 @@ export const CopilotSidebar: React.FC = () => {
     input,
     isLoading,
     isLoadingSchemaDefinitions,
+    isQuotaExceeded,
     hasSchemaDefinitions,
     sendMessage,
     setInput,
@@ -202,7 +204,7 @@ export const CopilotSidebar: React.FC = () => {
                     ),
                 )
                 .map((suggestion) => ({
-                  disabled: user === null,
+                  disabled: isQuotaExceeded,
                   label: suggestion,
                   icon: LightbulbOutline,
                   onClick: () => {
@@ -251,7 +253,7 @@ export const CopilotSidebar: React.FC = () => {
               <Input
                 element="textarea"
                 htmlProps={{
-                  disabled: isLoading || user === null,
+                  disabled: isLoading || isQuotaExceeded,
                   placeholder: 'Ask anything about your database',
                   onKeyDown: (e) => {
                     if (e.key === 'Enter') {
@@ -308,17 +310,51 @@ export const CopilotSidebar: React.FC = () => {
               )}
             </Field>
           </form>
-          {user === null && (
-            <Button
-              element="link"
-              htmlProps={{
-                className: 'w-full mt-2',
-                href: routes.subscribePlans(),
-              }}
-              icon={<ArrowForward />}
-              label="Sign up to use Copilot for free"
-              variant="filled"
-            />
+          {isQuotaExceeded && (
+            <>
+              <ErrorMessage htmlProps={{ className: 'mt-2' }}>
+                {user === null && (
+                  <>
+                    <div>
+                      You've exceeded your quota for this month. Sign up to continue using Copilot
+                      for free.
+                    </div>
+                    <Button
+                      element="link"
+                      htmlProps={{
+                        className: 'w-full mt-2',
+                        href: routes.subscribePlans(),
+                      }}
+                      icon={<ArrowForward />}
+                      label="Sign up for free"
+                      variant="filled"
+                    />
+                  </>
+                )}
+                {user !== null && !user.activeSubscription && (
+                  <>
+                    <div>
+                      You've exceeded your quota for this month. Upgrade to continue using Copilot.
+                    </div>
+                    <Button
+                      element="link"
+                      htmlProps={{
+                        className: 'w-full mt-2',
+                        href: routes.subscribePlans(),
+                      }}
+                      icon={<ArrowForward />}
+                      label="Upgrade"
+                      variant="filled"
+                    />
+                  </>
+                )}
+                {user !== null && user.activeSubscription && (
+                  <>
+                    <div>You've exceeded your quota for this month.</div>
+                  </>
+                )}
+              </ErrorMessage>
+            </>
           )}
         </div>
       </Card>

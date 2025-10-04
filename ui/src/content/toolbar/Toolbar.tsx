@@ -52,7 +52,10 @@ export const Toolbar: React.FC = () => {
         <Button
           color="primary"
           htmlProps={{
-            className: classNames({ 'ml-auto': !allChanges.length }),
+            className: classNames('!bg-transparent !bg-gradient-to-tr from-blue-600 to-pink-500', {
+              'ml-auto': !allChanges.length,
+              'animate-bounce': !copilotSidebar.hasEverBeenOpen,
+            }),
             onClick: () => {
               track('toolbar_open_copilot');
               copilotSidebar.setIsOpen(!copilotSidebar.isOpen);
@@ -60,7 +63,7 @@ export const Toolbar: React.FC = () => {
           }}
           icon={<AutoAwesomeOutlined />}
           label={isMobile ? undefined : 'Copilot'}
-          variant={copilotSidebar.isOpen ? 'highlighted' : 'default'}
+          variant="filled"
         />
       )}
     </div>

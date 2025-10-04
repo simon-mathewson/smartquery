@@ -108,6 +108,7 @@ export const connectorRouter = trpc.router({
       }
 
       await verifyUsageWithinLimits({
+        ip: undefined,
         prisma,
         types: ['queryDurationMilliseconds', 'queryResponseBytes'],
         user,
@@ -128,6 +129,7 @@ export const connectorRouter = trpc.router({
             }
 
             void trackUsage({
+              ip: undefined,
               items: [
                 {
                   amount: Buffer.byteLength(superjson.stringify(results), 'utf-8'),
@@ -135,7 +137,7 @@ export const connectorRouter = trpc.router({
                 },
               ],
               prisma,
-              userId: user.id,
+              user,
             });
           } catch (error) {
             reject(error);
@@ -153,9 +155,10 @@ export const connectorRouter = trpc.router({
             }
 
             void trackUsage({
+              ip: undefined,
               items: [{ amount: queryDuration, type: 'queryDurationMilliseconds' }],
               prisma,
-              userId: user.id,
+              user,
             });
           }
         });

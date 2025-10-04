@@ -9,6 +9,15 @@ export type Plan = {
 };
 
 export const plans = {
+  anonymous: {
+    price: null,
+    limits: {
+      aiCredits: 10_000,
+      concurrentConnections: 0,
+      totalQueryDurationMilliseconds: 0,
+      totalQueryResponseBytes: 0,
+    },
+  },
   free: {
     price: null,
     limits: {

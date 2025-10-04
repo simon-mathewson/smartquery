@@ -2,15 +2,22 @@ import type { PrismaClient } from '~/prisma/generated';
 import type { usageSchema } from './types';
 import type { z } from 'zod';
 import type { CurrentUser } from '~/context';
+import assert from 'assert';
 
-export const getUsage = async (props: { prisma: PrismaClient; user: CurrentUser }) => {
-  const { prisma, user } = props;
+export const getUsage = async (props: {
+  ip: string | undefined;
+  prisma: PrismaClient;
+  user: CurrentUser | null;
+}) => {
+  const { ip, prisma, user } = props;
+
+  assert(user || ip, 'User or ip must be provided');
 
   const startOfMonth = new Date();
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
 
-  const subscription = user.activeSubscription;
+  const subscription = user?.activeSubscription;
 
   const billingPeriodStartDate = subscription?.startDate
     ? new Date(Math.max(subscription.startDate.getTime(), startOfMonth.getTime()))
@@ -19,7 +26,8 @@ export const getUsage = async (props: { prisma: PrismaClient; user: CurrentUser 
   const usageResults = await prisma.usage.groupBy({
     where: {
       createdAt: { gte: billingPeriodStartDate },
-      userId: user.id,
+      ip: user ? undefined : ip,
+      userId: user?.id,
     },
     by: ['type'],
     _sum: { amount: true },

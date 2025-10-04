@@ -12,6 +12,7 @@ import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions'
 import { parseResponse } from './parseResponse';
 import type { ThreadMessage } from './types';
 import { formatSql } from '~/shared/utils/sql/sql';
+import { isQuotaExceededError } from './isQuotaExceededError';
 
 export const useCopilot = () => {
   const { cloudApiStream } = useDefinedContext(CloudApiContext);
@@ -19,6 +20,8 @@ export const useCopilot = () => {
 
   const [rawThread, setRawThread] = useStoredState<AiTextContent[]>('useCopilot.thread', []);
   const [thread, setThread] = useState<Awaited<ReturnType<typeof processThread>>>([]);
+
+  const [isQuotaExceeded, setIsQuotaExceeded] = useState(false);
 
   const processThread = useCallback(
     (rawThread: AiTextContent[]) =>
@@ -86,6 +89,12 @@ export const useCopilot = () => {
         ) {
           return null;
         }
+
+        if (isQuotaExceededError(error)) {
+          setIsQuotaExceeded(true);
+          return null;
+        }
+
         throw error;
       }
     },
@@ -170,6 +179,7 @@ export const useCopilot = () => {
       isLoading,
       isLoadingSchemaDefinitions,
       hasSchemaDefinitions,
+      isQuotaExceeded,
       sendMessage,
       setInput,
       stopGenerating,
@@ -180,6 +190,7 @@ export const useCopilot = () => {
       input,
       isLoading,
       isLoadingSchemaDefinitions,
+      isQuotaExceeded,
       hasSchemaDefinitions,
       sendMessage,
       stopGenerating,

@@ -14,7 +14,7 @@ import { routes } from '~/router/routes';
 import { useLocation } from 'wouter';
 import { AnalyticsContext } from '~/content/analytics/Context';
 
-const plans = omit(allPlans, 'pro');
+const plans = omit(allPlans, 'pro', 'anonymous');
 
 export type PlansProps = {
   onBack?: () => void;

@@ -13,6 +13,7 @@ export type Context = {
   connectors: Record<string, Connector>;
   getCookie: ReturnType<typeof createGetCookie>;
   googleAi: GoogleGenAI;
+  ip: string | undefined;
   req: CreateExpressContextOptions['req'];
   res: CreateExpressContextOptions['res'];
   setCookie: ReturnType<typeof createSetCookie>;
@@ -47,6 +48,7 @@ export const createContext = async ({
   return {
     connectors: {},
     googleAi,
+    ip: req.ip,
     getCookie,
     setCookie,
     req,

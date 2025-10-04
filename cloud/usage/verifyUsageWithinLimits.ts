@@ -1,28 +1,31 @@
 import type { PrismaClient, UsageType } from '~/prisma/generated';
-import { plans } from '@/subscriptions/plans';
 import { getUsage } from './getUsage';
 import { TRPCError } from '@trpc/server';
 import type { CurrentUser } from '~/context';
+import { getLimitsForUser } from '@/subscriptions/getLimitsForUser';
 
-const getLimit = (type: UsageType, plan: keyof typeof plans) =>
-  ({
-    aiCredits: plans[plan].limits.aiCredits,
-    queryDurationMilliseconds: plans[plan].limits.totalQueryDurationMilliseconds,
-    queryResponseBytes: plans[plan].limits.totalQueryResponseBytes,
-  }[type]);
+const getLimitForType = (type: UsageType, user: CurrentUser | null) => {
+  const limits = getLimitsForUser(user);
+  return {
+    aiCredits: limits.aiCredits,
+    queryDurationMilliseconds: limits.totalQueryDurationMilliseconds,
+    queryResponseBytes: limits.totalQueryResponseBytes,
+  }[type];
+};
 
 export const verifyUsageWithinLimits = async (props: {
+  ip: string | undefined;
   prisma: PrismaClient;
   types: UsageType[];
-  user: CurrentUser;
+  user: CurrentUser | null;
 }) => {
-  const { prisma, types, user } = props;
+  const { ip, prisma, types, user } = props;
 
-  const subscriptionAndUsage = await getUsage({ prisma, user });
+  const subscriptionAndUsage = await getUsage({ ip, prisma, user });
 
   types.forEach((type) => {
     const totalUsage = subscriptionAndUsage.usage[type];
-    const limit = getLimit(type, user.activeSubscription?.type ?? 'free');
+    const limit = getLimitForType(type, user);
 
     if (totalUsage > limit) {
       throw new TRPCError({

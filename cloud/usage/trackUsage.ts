@@ -1,20 +1,26 @@
+import assert from 'assert';
+import type { CurrentUser } from '~/context';
 import type { PrismaClient, UsageType } from '~/prisma/generated';
 
 export const trackUsage = async (props: {
+  ip: string | undefined;
   items: Array<{
     amount: number;
     type: UsageType;
   }>;
   prisma: PrismaClient;
-  userId: string;
+  user: CurrentUser | null;
 }) => {
-  const { prisma, userId, items } = props;
+  const { ip, prisma, user, items } = props;
+
+  assert(user || ip, 'User or ip must be provided');
 
   await prisma.usage.createMany({
     data: items.map((item) => ({
       amount: item.amount,
       type: item.type,
-      userId,
+      userId: user?.id,
+      ip: user ? undefined : ip,
     })),
   });
 };
