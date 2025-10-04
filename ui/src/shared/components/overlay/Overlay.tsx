@@ -31,7 +31,7 @@ export const Overlay: React.FC<OverlayProps> = (props) => {
       darkenBackground,
       isOpen,
       ref,
-      styles: { animateInBackground, animateInWrapper, backgroundRef, wrapperRef },
+      styles: { animateInBackground, animateInWrapper, updateStyles, backgroundRef, wrapperRef },
     },
     htmlProps,
   } = props;
@@ -77,8 +77,11 @@ export const Overlay: React.FC<OverlayProps> = (props) => {
             className="absolute opacity-0"
             ref={(wrapper) => {
               if (wrapper && !wrapperRef.current) {
-                void animateInWrapper(wrapper);
                 wrapperRef.current = wrapper;
+                setTimeout(() => {
+                  updateStyles();
+                  void animateInWrapper(wrapper);
+                });
               }
             }}
           >

@@ -55,14 +55,8 @@ export const useOverlay = (props: UseOverlayProps) => {
     styleOptions,
   });
 
-  const {
-    animateOutBackground,
-    animateOutWrapper,
-    backgroundRef,
-    registerContent,
-    updateStyles,
-    wrapperRef,
-  } = styles;
+  const { animateOutBackground, animateOutWrapper, backgroundRef, registerContent, wrapperRef } =
+    styles;
 
   const close = useCallback(async () => {
     if (!disableFocusOnOpen) {
@@ -90,20 +84,18 @@ export const useOverlay = (props: UseOverlayProps) => {
     setIsOpen(true);
     onOpen?.();
 
-    if (!disableFocusOnOpen) {
-      setTimeout(() => {
-        updateStyles();
-
+    setTimeout(() => {
+      if (!disableFocusOnOpen) {
         if (localRef.current) {
           focusFirstControl(localRef.current);
         }
-      });
 
-      if (document.activeElement instanceof HTMLElement) {
-        previouslyFocusedElementRef.current = document.activeElement;
+        if (document.activeElement instanceof HTMLElement) {
+          previouslyFocusedElementRef.current = document.activeElement;
+        }
       }
-    }
-  }, [disableFocusOnOpen, onOpen, updateStyles]);
+    });
+  }, [disableFocusOnOpen, onOpen]);
 
   useEffect(() => {
     if (isOpenProp === undefined) return;

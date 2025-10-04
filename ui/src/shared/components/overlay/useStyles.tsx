@@ -183,10 +183,12 @@ export const useStyles = (props: UseStylesProps) => {
   }, [animationOptions, getInStyles, getOutStyles]);
 
   useEffect(() => {
-    window.addEventListener('resize', updateStyles);
+    const onResize = () => updateStyles();
+
+    window.addEventListener('resize', onResize);
 
     return () => {
-      window.removeEventListener('resize', updateStyles);
+      window.removeEventListener('resize', onResize);
     };
   }, [updateStyles]);
 
