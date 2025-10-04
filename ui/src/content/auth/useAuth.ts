@@ -52,8 +52,13 @@ export const useAuth = () => {
     try {
       await cloudApi.auth.refresh.mutate();
       lastRefreshTimeRef.current = Date.now();
-    } catch {
-      await logOut({ silent: true });
+    } catch (error) {
+      if (isUserUnauthorizedError(error)) {
+        void logOut({ silent: true });
+        return;
+      }
+
+      console.error(error);
     }
   }, [cloudApi.auth.refresh, logOut]);
 
