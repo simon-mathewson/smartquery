@@ -81,7 +81,7 @@ export const CopilotSidebar: React.FC = () => {
     <div
       tabIndex={isOpen ? undefined : -1}
       className={classNames(
-        'absolute right-0 z-50 h-screen bg-background p-3 sm:relative sm:right-0 sm:pl-1 sm:pt-[60px]',
+        'absolute right-0 z-50 h-screen bg-background p-3 sm:relative sm:right-0 sm:pl-1',
         {
           hidden: !isOpen,
         },
