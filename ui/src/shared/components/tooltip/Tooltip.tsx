@@ -31,6 +31,9 @@ export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
   const timeoutRef = useRef<number | null>(null);
 
   const onPointerEnter = useCallback(() => {
+    const anchor = anchorRef.current;
+    if (!anchor) return;
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -39,20 +42,15 @@ export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
       void overlay.open();
     }, delay) as unknown as number;
 
-    const listener = (moveEvent: MouseEvent) => {
-      if (moveEvent.target instanceof Node && anchorRef.current?.contains(moveEvent.target)) {
-        return;
-      }
-
+    const onPointerLeave = () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
 
       void overlay.close();
-      document.removeEventListener('mousemove', listener);
     };
 
-    document.addEventListener('mousemove', listener, { passive: true });
+    anchor.addEventListener('pointerleave', onPointerLeave, { once: true });
   }, [overlay, delay]);
 
   useEffect(() => {
