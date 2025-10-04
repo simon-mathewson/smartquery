@@ -86,12 +86,12 @@ export const useOverlay = (props: UseOverlayProps) => {
 
     setTimeout(() => {
       if (!disableFocusOnOpen) {
-        if (localRef.current) {
-          focusFirstControl(localRef.current);
-        }
-
         if (document.activeElement instanceof HTMLElement) {
           previouslyFocusedElementRef.current = document.activeElement;
+        }
+
+        if (localRef.current) {
+          focusFirstControl(localRef.current);
         }
       }
     });
