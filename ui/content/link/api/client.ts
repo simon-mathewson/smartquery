@@ -1,6 +1,6 @@
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import superjson from '@/superjson/superjson';
-import type { router } from '../../../../../link/src/main/router/router';
+import type { router } from '../../../../link/src/main/router/router';
 
 export const linkApiClient = createTRPCClient<typeof router>({
   links: [

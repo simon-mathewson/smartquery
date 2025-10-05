@@ -21,26 +21,11 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "~/*": ["./src/*"],
+      "~/*": ["./*"],
       "@/*": ["../shared/*"]
     }
   },
-  "include": [
-    "./globals.d.ts",
-    "./playwright-ct.config.ts",
-    "./playwright.config.ts",
-    "./playwright/**/*.ts", // Be more specific if playright only contains .ts files
-    "./pwa-assets-config.ts",
-    "./src/**/*.ts", // Only include .ts files within src
-    "./src/**/*.tsx", // Include .tsx files for react components
-    "./tailwind.config.ts",
-    "./vitest.config.ts",
-    "../shared/**/*.ts"
-  ],
-  "exclude": [
-    "../cloud", // Explicitly exclude the cloud directory
-    "node_modules", // Good practice to explicitly exclude node_modules if not already
-    "dist" // If you have a build output directory, exclude it too
-  ],
+  "include": ["./**/*.ts", "./**/*.tsx", "../shared/**/*.ts"],
+  "exclude": ["../cloud", "node_modules", "dist"],
   "references": [{ "path": "../cloud" }]
 }

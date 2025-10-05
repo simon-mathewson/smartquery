@@ -6,7 +6,7 @@ import superjson from 'superjson';
 import { CloudApiContext } from '~/content/cloud/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import type { CloudRouter } from '../../../../../cloud/router';
+import type { CloudRouter } from '../../../../cloud/router';
 import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
 import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
 import { parseResponse } from './parseResponse';

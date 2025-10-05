@@ -2,7 +2,7 @@ import type { Config } from 'tailwindcss';
 import colors from 'tailwindcss/colors';
 import { createThemes } from 'tw-colors';
 
-// Keep in sync with src/content/theme/primaryColors.ts
+// Keep in sync with content/theme/primaryColors.ts
 export const primaryColors = [
   // We want to create generic dark and light themes with the default primary color.
   // This allows using the dark and light classes without having to specify the primary color
@@ -112,7 +112,7 @@ export const themes = primaryColors.reduce((acc, primaryColor) => {
 }, {});
 
 export default {
-  content: ['./src/index.html', './src/**/*.{ts,tsx,test.ts,test.tsx}'],
+  content: ['./index.html', './**/*.{ts,tsx,test.ts,test.tsx}'],
   darkMode: 'class',
   theme: {
     extend: {

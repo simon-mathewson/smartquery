@@ -1,6 +1,6 @@
 import { createTRPCClient, httpBatchLink, httpBatchStreamLink } from '@trpc/client';
 import superjson from 'superjson';
-import type { CloudRouter } from '../../../../../cloud/router';
+import type { CloudRouter } from '../../../../cloud/router';
 import { assert } from 'ts-essentials';
 
 const batchLinkInput = {

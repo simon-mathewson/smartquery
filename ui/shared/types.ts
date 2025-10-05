@@ -1,7 +1,7 @@
 import type { Select } from '~/content/tabs/queries/types';
 import type { DataType } from './dataTypes/types';
 import type { inferRouterInputs } from '@trpc/server';
-import type { router } from '../../../link/src/main/router/router';
+import type { router } from '../../link/src/main/router/router';
 import type { Database as SqliteDatabase, SqlValue as SqliteValue } from 'sql.js';
 import type { InputMode } from '~/content/tabs/queries/query/types';
 import type { FileConnection, RemoteConnection } from '@/connections/types';

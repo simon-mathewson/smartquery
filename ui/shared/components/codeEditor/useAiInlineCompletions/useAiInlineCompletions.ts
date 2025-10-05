@@ -9,7 +9,7 @@ import { CloudApiContext } from '~/content/cloud/api/Context';
 import { omit } from 'lodash';
 import { AuthContext } from '~/content/auth/Context';
 import type { inferRouterInputs } from '@trpc/server';
-import type { CloudRouter } from '../../../../../../cloud/router';
+import type { CloudRouter } from '../../../../../cloud/router';
 
 export const useAiInlineCompletions = (props: {
   getSchemaDefinitions?: () => Promise<SchemaDefinitions | null>;
