@@ -1,11 +1,11 @@
-import Image from "next/image";
+import { ArrowBack } from "@mui/icons-material";
 import Link from "next/link";
 import { emailAddress } from "../constants";
 
 const TermsOfUse: React.FC = () => {
   return (
     <>
-      <div className="pt-8 max-w-4xl mx-auto px-4 prose leading-normal">
+      <div className="py-8 container prose leading-normal">
         <header className="border-b border-gray-200 pb-4 mb-6">
           <h1>Terms of Use</h1>
           <p className="text-sm text-gray-500 mt-2">
@@ -309,7 +309,7 @@ const TermsOfUse: React.FC = () => {
         href="/"
         className="flex gap-2 items-center font-bold bg-gray-500 text-white px-4 py-2 rounded-[32px] hover:bg-gray-600 transition-colors w-max mx-auto my-6"
       >
-        <Image src="/arrow_back.svg" alt="" width={24} height={24} />
+        <ArrowBack className="!h-6 !w-6" />
         Back to Home
       </Link>
     </>

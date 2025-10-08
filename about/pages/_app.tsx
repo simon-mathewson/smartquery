@@ -1,6 +1,8 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/header/Header";
 
 export default function App({ Component, pageProps }: AppProps) {
   const title =
@@ -22,7 +24,9 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <meta property="og:url" content="https://about.smartquery.dev" />
       </Head>
+      <Header />
       <Component {...pageProps} />
+      <Footer />
     </>
   );
 }

@@ -10,9 +10,14 @@
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "11.11.0",
+    "@mui/icons-material": "7.3.2",
+    "@mui/material": "7.3.2",
+    "classnames": "^2.5.1",
     "next": "15.2.5",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

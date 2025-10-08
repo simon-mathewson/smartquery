@@ -1,45 +1,48 @@
+import { DemoVideo } from "@/components/demoVideo/DemoVideo";
+import { LaunchButton } from "@/components/launchButton/LaunchButton";
+import { WordCarousel } from "@/components/wordCarousel/WordCarousel";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import Image from "next/image";
 
 export default function Home() {
+  const isMobile = useIsMobile();
+
   return (
     <>
-      <div className="flex flex-col items-center gap-6 pt-4">
-        <div className="flex flex-col items-center gap-4">
-          <h2 className="text-lg font-[600] text-gray-700 leading-snug text-center">
-            The fun, browser-based, AI-powered database UI.
-          </h2>
-          <a
-            href="https://smartquery.dev"
-            className="flex gap-2 items-center font-bold bg-blue-500 text-white px-4 py-2 rounded-[32px]"
-          >
-            <Image src="/arrow_forward.svg" alt="" width={24} height={24} />
-            Launch SmartQuery
-          </a>
-        </div>
-        <div className="flex justify-center gap-5 items-end">
+      <div className="flex flex-col items-center gap-6 py-8 sm:py-12 space-y-2 sm:space-y-3 container">
+        <h1 className="text-4xl sm:text-6xl flex gap-10 sm:gap-4 justify-center flex-col sm:flex-row">
+          <WordCarousel
+            align={isMobile ? "center" : "right"}
+            words={["Query", "Visualize", "Modify", "Analyze", "Explore"]}
+          />
+          <div className="max-w-[400px] text-center sm:text-left">
+            your database using natural language
+          </div>
+        </h1>
+        <LaunchButton demo />
+        <div className="flex justify-center gap-3 sm:gap-5 items-end overflow-hidden">
           <Image
             src="/postgres.svg"
             alt="PostgreSQL"
-            width={100}
-            height={100}
+            width={isMobile ? 80 : 100}
+            height={isMobile ? 80 : 100}
           />
           <Image
             src="/mysql.svg"
             alt="MySQL"
-            width={65}
-            height={65}
+            width={isMobile ? 52 : 65}
+            height={isMobile ? 52 : 65}
             className="mb-[3px]"
           />
-          <Image src="/sqlite.svg" alt="SQLite" width={100} height={100} />
+          <Image
+            src="/sqlite.svg"
+            alt="SQLite"
+            width={isMobile ? 80 : 100}
+            height={isMobile ? 80 : 100}
+          />
         </div>
-        <Image
-          src="/screen.png"
-          alt=""
-          width={800}
-          height={800}
-          className="-mt-4"
-        />
       </div>
+      <DemoVideo />
     </>
   );
 }
