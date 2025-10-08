@@ -6,6 +6,7 @@ import type { Connector } from '@/connector/types';
 import { GoogleGenAI } from '@google/genai';
 import Stripe from 'stripe';
 import { prisma } from '~/prisma/client';
+import { castArray } from 'lodash';
 
 export type CurrentUser = User & { activeSubscription: Subscription | null };
 
@@ -45,10 +46,12 @@ export const createContext = async ({
     });
   };
 
+  const ip = castArray(req.headers['x-forwarded-for']).at(0) ?? req.socket.remoteAddress;
+
   return {
     connectors: {},
     googleAi,
-    ip: req.ip,
+    ip,
     getCookie,
     setCookie,
     req,
