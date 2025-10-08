@@ -29,7 +29,7 @@ export const WordCarousel: React.FC<WordCarouselProps> = (props) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((currentIndex + 1) % repeatedWords.length);
-    }, 2000);
+    }, 3000);
     return () => clearInterval(interval);
   }, [currentIndex, repeatedWords.length]);
 
