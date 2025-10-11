@@ -7,7 +7,7 @@ export const DemoVideo: React.FC = () => {
   const [hidePlay, setHidePlay] = useState(false);
 
   return (
-    <div className="container">
+    <div className="container !max-w-xl">
       <div className="h-max relative rounded-2xl shadow-2xl ring-1 ring-gray-300 inset-ring-4 overflow-hidden">
         <video
           controls={hidePlay}
@@ -24,8 +24,8 @@ export const DemoVideo: React.FC = () => {
               setHidePlay(true);
             }}
           >
-            <PlayCircleOutline className="!h-15 !w-15 sm:!h-30 sm:!w-30 text-slate-800" />
-            <div className="text-2xl sm:text-4xl font-[Outfit] text-blue-600 font-bold">
+            <PlayCircleOutline className="!h-15 !w-15 sm:!h-20 sm:!w-20 text-slate-800" />
+            <div className="text-2xl sm:text-3xl font-[Outfit] text-blue-600 font-bold">
               Watch demo
             </div>
           </button>

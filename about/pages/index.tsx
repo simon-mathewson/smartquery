@@ -1,9 +1,10 @@
-import { ChatVisual } from "@/components/chatVisual/ChatVisual";
+import { ChatVisual } from "@/components/visuals/Chat";
 import { DemoVideo } from "@/components/demoVideo/DemoVideo";
 import { LaunchButton } from "@/components/launchButton/LaunchButton";
 import { WordCarousel } from "@/components/wordCarousel/WordCarousel";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import Image from "next/image";
+import { SchemaVisual } from "@/components/visuals/Schema";
 
 export default function Home() {
   const isMobile = useIsMobile();
@@ -21,30 +22,45 @@ export default function Home() {
           </div>
         </h1>
         <ChatVisual />
-        <LaunchButton demo />
-        <div className="flex justify-center gap-3 sm:gap-5 items-end overflow-hidden">
-          <Image
-            src="/postgres.svg"
-            alt="PostgreSQL"
-            width={isMobile ? 80 : 100}
-            height={isMobile ? 80 : 100}
-          />
-          <Image
-            src="/mysql.svg"
-            alt="MySQL"
-            width={isMobile ? 52 : 65}
-            height={isMobile ? 52 : 65}
-            className="mb-[3px]"
-          />
-          <Image
-            src="/sqlite.svg"
-            alt="SQLite"
-            width={isMobile ? 80 : 100}
-            height={isMobile ? 80 : 100}
-          />
+      </div>
+      <div className="bg-slate-50">
+        <div className="flex flex-col items-center gap-6 sm:gap-8 py-6 sm:py-8 container">
+          <LaunchButton demo />
+          <div className="flex justify-center gap-3 sm:gap-5 items-end overflow-hidden">
+            <Image
+              src="/postgres.svg"
+              alt="PostgreSQL"
+              width={isMobile ? 80 : 100}
+              height={isMobile ? 80 : 100}
+            />
+            <Image
+              src="/mysql.svg"
+              alt="MySQL"
+              width={isMobile ? 52 : 65}
+              height={isMobile ? 52 : 65}
+              className="mb-[3px]"
+            />
+            <Image
+              src="/sqlite.svg"
+              alt="SQLite"
+              width={isMobile ? 80 : 100}
+              height={isMobile ? 80 : 100}
+            />
+          </div>
         </div>
       </div>
-      <DemoVideo />
+      <div className="bg-slate-600 py-10 text-white">
+        <div className="flex flex-col items-center gap-8 sm:gap-10 py-6 sm:py-8 container">
+          <h1 className="text-3xl sm:text-4xl text-center">
+            Get tailor-made queries from a<br />
+            schema-aware AI assistant
+          </h1>
+          <SchemaVisual />
+        </div>
+      </div>
+      <div className="flex flex-col items-center gap-10 sm:gap-12 py-8 sm:py-12 container">
+        <DemoVideo />
+      </div>
     </>
   );
 }
