@@ -15,7 +15,7 @@ export const ChatVisual = () => {
         <div className="w-px h-4 ml-[2px] bg-white animate-pulse" />
       </div>
       <ArrowForwardIos className="!h-6 !w-6 text-slate-500 rotate-90 sm:rotate-0" />
-      <div className="bg-gray-50 border border-gray-300 rounded-xl p-2 shadow-xl relative h-[140px] w-[255px] overflow-hidden">
+      <div className="bg-gray-50 border border-gray-300 rounded-xl p-2 shadow-xl relative h-[140px] w-[260px] overflow-hidden">
         <div className="flex justify-between pb-1">
           <AutoAwesome className="!h-4 !w-4 text-slate-500" />
           <PlayArrowOutlined className="!h-5 !w-5 text-slate-500" />
