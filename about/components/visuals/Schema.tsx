@@ -1,5 +1,5 @@
 import {
-  ArrowForwardIos,
+  ArrowForward,
   AutoAwesome,
   CloseFullscreenOutlined,
   FormatListNumberedOutlined,
@@ -11,7 +11,7 @@ import {
 export const SchemaVisual = () => {
   return (
     <div
-      className="flex gap-4 sm:gap-6 select-none items-center flex-col sm:flex-row"
+      className="flex gap-4 sm:gap-8 select-none items-center flex-col sm:flex-row"
       aria-hidden
     >
       <div className="relative w-[240px] h-[150px]">
@@ -35,12 +35,7 @@ export const SchemaVisual = () => {
           <div>Enums</div>
         </div>
       </div>
-      <ArrowForwardIos className="!h-6 !w-6 text-white/80 rotate-90 sm:rotate-0" />
-      <div className="flex items-center flex-col gap-3 justify-center">
-        <AutoAwesome className="text-amber-400 !h-18 !w-18" />
-        <div className="text-white/90 font-bold font-[Outfit]">Copilot</div>
-      </div>
-      <ArrowForwardIos className="!h-6 !w-6 text-white/80 rotate-90 sm:rotate-0" />
+      <ArrowForward className="!h-10 !w-10 text-white/80 rotate-90 sm:rotate-0" />
       <div className="bg-gray-50 text-slate-800 border border-gray-300 rounded-xl p-2 shadow-xl relative h-[120px] w-[270px] overflow-hidden">
         <div className="flex justify-between pb-1">
           <AutoAwesome className="!h-4 !w-4 text-slate-500" />

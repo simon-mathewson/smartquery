@@ -7,7 +7,7 @@ import {
 export const ChatVisual = () => {
   return (
     <div
-      className="flex gap-2 select-none items-center flex-col sm:flex-row"
+      className="flex gap-2 sm:gap-6 select-none items-center flex-col sm:flex-row"
       aria-hidden
     >
       <div className="px-3 py-1.5 flex items-center bg-blue-600 text-white rounded-full font-bold shadow-xl w-max">

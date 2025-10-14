@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 
 const getIsMobile = () => {
   if (typeof window === "undefined") return false;
-  return window.innerWidth < 640;
+  return window.innerWidth < 896;
 };
 
 /**
- * Hook that returns true if the current viewport width is below Tailwind's 'sm' breakpoint (640px)
+ * Hook that returns true if the current viewport width is below Tailwind's 'sm' breakpoint (896px)
  */
 export const useIsMobile = (): boolean => {
   const [isMobile, setIsMobile] = useState(false);
