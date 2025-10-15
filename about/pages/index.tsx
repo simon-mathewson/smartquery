@@ -251,7 +251,7 @@ export default function Home() {
               },
               {
                 icon: FilterDramaOutlined,
-                title: "Secure web practices",
+                title: "Web best practices",
                 description:
                   "Data is always transferred via HTTPS and protected from man-in-the-middle attacks. Our cloud uses state-of-the-art protection against DDoS attacks and other threats. The web app is protected against XSS and XSRF attacks and other web vulnerabilities.",
               },
