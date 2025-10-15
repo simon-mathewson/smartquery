@@ -6,12 +6,16 @@ import { WordCarousel } from "@/components/wordCarousel/WordCarousel";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import {
   AutoAwesome,
+  AutoFixHighOutlined,
+  BarChartOutlined,
+  BrushOutlined,
   EditOutlined,
   EnhancedEncryptionOutlined,
   FilterDramaOutlined,
   GitHub,
   LightbulbOutlined,
   LockOutline,
+  PhoneIphoneOutlined,
   RoomOutlined,
   VpnKeyOutlined,
 } from "@mui/icons-material";
@@ -102,22 +106,108 @@ export default function Home() {
       <div className="bg-slate-50">
         <div className="flex flex-col sm:flex-row items-center gap-10 sm:gap-12 py-10 sm:py-14 container">
           <div className="gap-3 flex flex-col items-center sm:items-end">
-            <FilterDramaOutlined className="text-blue-600 !h-10 !w-10" />
+            <BarChartOutlined className="text-blue-600 !h-10 !w-10" />
             <h1 className="text-3xl sm:text-4xl text-center sm:text-right">
-              Sync connections across devices
+              Bring your data to life with charts
             </h1>
             <p className="text-lg font-medium text-slate-600 text-center sm:text-right">
-              Store your connections securely in the cloud to access them
-              consistently across devices.
+              Easily generate line, bar, and pie charts from your SQL results.
+              Also, Copilot will automatically suggest appropriate charts for
+              generated SQL.
             </p>
           </div>
           <Image
             className="rounded-2xl shadow-2xl border border-gray-300"
-            src="/connections.png"
+            src="/chart.png"
             alt=""
             width={500}
             height={500}
           />
+        </div>
+      </div>
+      <div className="flex flex-col-reverse sm:flex-row items-center gap-10 sm:gap-12 py-10 sm:py-14 container">
+        <Image
+          className="rounded-2xl shadow-2xl border border-gray-300"
+          src="/copilot.png"
+          alt=""
+          width={500}
+          height={500}
+        />
+        <div className="gap-3 flex flex-col items-center sm:items-start">
+          <AutoAwesome className="text-blue-600 !h-10 !w-10" />
+          <h1 className="text-3xl sm:text-4xl text-center sm:text-left">
+            Ask your database anything
+          </h1>
+          <p className="text-lg font-medium text-slate-600 text-center sm:text-left">
+            Use natural language to get precise answers from your database. Get
+            prompt suggestions and comfortably explore your data. Generate
+            complex modifications tailored to your database schema.
+          </p>
+        </div>
+      </div>
+      <div className="bg-slate-50">
+        <div className="flex flex-col sm:flex-row items-center gap-10 sm:gap-12 py-10 sm:py-14 container">
+          <div className="gap-3 flex flex-col items-center sm:items-end">
+            <AutoFixHighOutlined className="text-blue-600 !h-10 !w-10" />
+            <h1 className="text-3xl sm:text-4xl text-center sm:text-right">
+              Intellisense and inline completions
+            </h1>
+            <p className="text-lg font-medium text-slate-600 text-center sm:text-right">
+              Write SQL in a fully featured, VS Code-like editor. Get real-time
+              AI completions and intellisense based on your schema.
+            </p>
+          </div>
+          <div className="w-full max-w-[500px] h-[300px] sm:h-[400px] relative shrink-0">
+            <Image
+              className="rounded-2xl shadow-2xl border border-gray-300 absolute left-0 top-0 -rotate-3"
+              src="/intellisense.png"
+              alt=""
+              width={isMobile ? 300 : 400}
+              height={isMobile ? 300 : 400}
+            />
+            <Image
+              className="rounded-2xl shadow-2xl border border-gray-300 absolute right-0 bottom-0 rotate-1"
+              src="/inline-completions.png"
+              alt=""
+              width={isMobile ? 300 : 400}
+              height={isMobile ? 300 : 400}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col-reverse sm:flex-row items-center gap-10 sm:gap-12 py-10 sm:py-14 container">
+        <Image
+          className="rounded-2xl shadow-2xl border border-gray-300"
+          src="/light-dark.png"
+          alt=""
+          width={500}
+          height={500}
+        />
+        <div className="gap-3 flex flex-col items-center sm:items-start">
+          <BrushOutlined className="text-blue-600 !h-10 !w-10" />
+          <h1 className="text-3xl sm:text-4xl text-center sm:text-left">
+            Thoughtful, customizable design
+          </h1>
+          <p className="text-lg font-medium text-slate-600 text-center sm:text-left">
+            SmartQuery has a strong focus on user experience and accessibility.
+            Adjust the theme and primary color to your liking.
+          </p>
+        </div>
+      </div>
+      <div className="bg-slate-50">
+        <div className="flex flex-col sm:flex-row items-center gap-10 sm:gap-12 py-10 sm:py-14 container">
+          <div className="gap-3 flex flex-col items-center sm:items-end">
+            <PhoneIphoneOutlined className="text-blue-600 !h-10 !w-10" />
+            <h1 className="text-3xl sm:text-4xl text-center sm:text-right">
+              Access your data from anywhere
+            </h1>
+            <p className="text-lg font-medium text-slate-600 text-center sm:text-right">
+              SmartQuery works on any device with a browser, including desktops,
+              tablets, and phones. It can also be installed and used like a
+              regular app, including offline support.
+            </p>
+          </div>
+          <Image src="/cross-platform.png" alt="" width={500} height={500} />
         </div>
       </div>
       <div className="bg-emerald-700">
