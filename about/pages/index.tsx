@@ -133,7 +133,7 @@ export default function Home() {
               to make SmartQuery as secure as possible:
             </p>
           </div>
-          <ul className="text-lg font-medium text-white/70 gap-y-3 gap-x-5 grid grid-cols-1 sm:grid-cols-2">
+          <ul className="text-lg font-medium text-white/70 gap-y-4 gap-x-5 grid grid-cols-1 sm:grid-cols-2 items-start">
             {[
               {
                 icon: RoomOutlined,
@@ -145,25 +145,25 @@ export default function Home() {
                 icon: VpnKeyOutlined,
                 title: "Encrypted credentials",
                 description:
-                  "If you do choose to store connections in the cloud, you can opt not to store credentials and enter them every time, or store them using encryption based on your main password. This way, your credentials can only be read by you, even in the unlikely case of a data breach.",
+                  "When storing credentials in the cloud, you can encrypt them with your account password. This way, your credentials can only be read by you, even in the unlikely event of a data breach.",
               },
               {
                 icon: EnhancedEncryptionOutlined,
                 title: "Keychain support",
                 description:
-                  "Store your credentials securely in your browser's keychain to conveniently auto-fill them when connecting to databases.",
+                  "Store your credentials in your browser's keychain to conveniently auto-fill them when connecting to databases. This guards your data using your operating system's authentication methods, like fingerprint or face ID.",
               },
               {
                 icon: LightbulbOutlined,
-                title: "Need-to-know data sharing",
+                title: "Need-to-know basis",
                 description:
-                  "We always use the minimum amount of data necessary to make a feature work. For instance, row data is never sent to our AI as context, only schema information.",
+                  "Your data is never stored or logged, even when connecting through our cloud. We always use the minimum amount of data necessary to make a feature work. For instance, row data is never sent to our AI as context, only schema information.",
               },
               {
                 icon: FilterDramaOutlined,
-                title: "Secure cloud practices",
+                title: "Secure web practices",
                 description:
-                  "When accessing a database through our cloud, data is never stored or logged. Data is always transferred via HTTPS and is immune to man-in-the-middle attacks.",
+                  "Data is always transferred via HTTPS and protected from man-in-the-middle attacks. Our cloud uses state-of-the-art protection against DDoS attacks and other threats. The web app is protected against XSS and XSRF attacks and other web vulnerabilities.",
               },
               {
                 icon: GitHub,
