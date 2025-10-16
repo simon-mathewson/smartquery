@@ -1,8 +1,9 @@
-import "@/styles/globals.css";
-import type { AppProps } from "next/app";
-import Head from "next/head";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/header/Header";
+import "@/styles/globals.css";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import type { AppProps } from "next/app";
+import Head from "next/head";
 
 export default function App({ Component, pageProps }: AppProps) {
   const title =
@@ -27,6 +28,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <Header />
       <Component {...pageProps} />
       <Footer />
+      <GoogleAnalytics gaId="G-RRJ1GKVK4L" />
     </>
   );
 }

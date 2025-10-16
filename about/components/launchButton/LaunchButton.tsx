@@ -1,5 +1,6 @@
 import { ArrowForward } from "@mui/icons-material";
 import classNames from "classnames";
+import { sendGAEvent } from "@next/third-parties/google";
 
 export const LaunchButton: React.FC<{ demo?: boolean }> = ({
   demo = false,
@@ -17,6 +18,9 @@ export const LaunchButton: React.FC<{ demo?: boolean }> = ({
           "!px-3 !py-2 !text-base !gap-2": demo,
         }
       )}
+      onClick={() => {
+        sendGAEvent("event", "launch", { demo });
+      }}
       target="_blank"
     >
       <ArrowForward
