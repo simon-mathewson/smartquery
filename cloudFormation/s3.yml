@@ -127,6 +127,20 @@ Resources:
             Effect: "Allow"
             Principal: "*"
             Sid: "PublicReadGetObject"
+          - Resource: 
+              - "arn:aws:s3:::smartquery-ui"
+              - "arn:aws:s3:::smartquery-ui/sourcemaps/*"
+            Action:
+              - "s3:ListBucket"
+              - "s3:GetObject"
+            Effect: "Allow"
+            Principal:
+              Service: "rum.amazonaws.com"
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+                aws:SourceArn: !Sub "arn:${AWS::Partition}:rum:${AWS::Region}:${AWS::AccountId}:appmonitor/smartquery"
+            Sid: "RUMSourceMapAccess"
 
   S3BucketAbout:
     Type: "AWS::S3::Bucket"
