@@ -31,6 +31,7 @@ export const useErrorTracking = () => {
         'performance',
         'http',
       ],
+      releaseId: import.meta.env.VITE_UI_VERSION,
     };
 
     const APPLICATION_ID: string = '7f8ee2fc-5755-4aeb-bdc2-5728435ae926';

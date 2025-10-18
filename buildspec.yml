@@ -246,6 +246,10 @@ phases:
           pnpm playwright install --with-deps chromium
           NODE_OPTIONS='--max-old-space-size=8192' pnpm playwright test -c playwright-ct.config.ts
           pnpm build
+          
+          # Move all .js.map files to dist/sourcemaps/VITE_UI_VERSION/ for AWS RUM error tracking
+          mkdir -p dist/sourcemaps/$VITE_UI_VERSION
+          find dist -name "*.js.map" -type f -exec mv {} dist/sourcemaps/$VITE_UI_VERSION/ \;
         fi
   post_build:
     commands:
