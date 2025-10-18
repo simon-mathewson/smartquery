@@ -187,8 +187,8 @@ importers:
         specifier: ^16.2.0
         version: 16.4.0
       happy-dom:
-        specifier: 20.0.0
-        version: 20.0.0
+        specifier: 20.0.2
+        version: 20.0.2
       lodash:
         specifier: 4.17.21
         version: 4.17.21
@@ -230,7 +230,7 @@ importers:
         version: 0.19.0(@vite-pwa/assets-generator@0.2.4)(vite@5.2.8(@types/node@20.10.4)(terser@5.28.1))(workbox-build@7.0.0(@types/babel__core@7.20.5))(workbox-window@7.3.0)
       vitest:
         specifier: 3.2.4
-        version: 3.2.4(@types/debug@4.1.12)(@types/node@20.10.4)(happy-dom@20.0.0)(terser@5.28.1)
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@20.10.4)(happy-dom@20.0.2)(terser@5.28.1)
       workbox-window:
         specifier: 7.3.0
         version: 7.3.0
@@ -2877,8 +2877,8 @@ packages:
     resolution: {integrity: sha512-pCcEwRi+TKpMlxAQObHDQ56KawURgyAf6jtIY046fJ5tIv3zDe/LEIubckAO8fj6JnAxLdmWkUfNyulQ2iKdEw==}
     engines: {node: '>=14.0.0'}
 
-  happy-dom@20.0.0:
-    resolution: {integrity: sha512-GkWnwIFxVGCf2raNrxImLo397RdGhLapj5cT3R2PT7FwL62Ze1DROhzmYW7+J3p9105DYMVenEejEbnq5wA37w==}
+  happy-dom@20.0.2:
+    resolution: {integrity: sha512-pYOyu624+6HDbY+qkjILpQGnpvZOusItCk+rvF5/V+6NkcgTKnbOldpIy22tBnxoaLtlM9nXgoqAcW29/B7CIw==}
     engines: {node: '>=20.0.0'}
 
   has-bigints@1.1.0:
@@ -7772,7 +7772,7 @@ snapshots:
       - encoding
       - supports-color
 
-  happy-dom@20.0.0:
+  happy-dom@20.0.2:
     dependencies:
       '@types/node': 20.10.4
       '@types/whatwg-mimetype': 3.0.2
@@ -9745,7 +9745,7 @@ snapshots:
       fsevents: 2.3.3
       terser: 5.28.1
 
-  vitest@3.2.4(@types/debug@4.1.12)(@types/node@20.10.4)(happy-dom@20.0.0)(terser@5.28.1):
+  vitest@3.2.4(@types/debug@4.1.12)(@types/node@20.10.4)(happy-dom@20.0.2)(terser@5.28.1):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4
@@ -9773,7 +9773,7 @@ snapshots:
     optionalDependencies:
       '@types/debug': 4.1.12
       '@types/node': 20.10.4
-      happy-dom: 20.0.0
+      happy-dom: 20.0.2
     transitivePeerDependencies:
       - less
       - lightningcss
