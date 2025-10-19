@@ -22,7 +22,12 @@ AwsXRay.captureHTTPsGlobal(https);
 
 const app = express();
 
+app.get('/health', (_, res) => {
+  res.status(200).send('OK');
+});
+
 // Trace incoming requests via AWS X-Ray
+// Applied after health check to avoid tracing it
 app.use(AwsXRay.express.openSegment('cloud'));
 
 app.use(
@@ -54,10 +59,6 @@ app.use(
     },
   }),
 );
-
-app.get('/health', (_, res) => {
-  res.status(200).send('OK');
-});
 
 app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebhook);
 
