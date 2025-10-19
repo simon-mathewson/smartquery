@@ -156,6 +156,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:environment:process:default
           OptionName: Port
           Value: 8080
+        - Namespace: aws:elasticbeanstalk:xray
+          OptionName: XRayEnabled
+          Value: true
 
 Outputs:
   ElasticBeanstalkEnvironmentEndpointUrl:

@@ -4,6 +4,9 @@ import cors from 'cors';
 import { appRouter } from './router';
 import { createContext } from './context';
 import { stripeWebhook } from './subscriptions/stripeWebhook/stripeWebhook';
+import AwsXRay from 'aws-xray-sdk';
+import http from 'http';
+import https from 'https';
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -13,7 +16,14 @@ process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
 });
 
+// Trace outgoing requests via AWS X-Ray
+AwsXRay.captureHTTPsGlobal(http);
+AwsXRay.captureHTTPsGlobal(https);
+
 const app = express();
+
+// Trace incoming requests via AWS X-Ray
+app.use(AwsXRay.express.openSegment('cloud'));
 
 app.use(
   cors({
@@ -50,6 +60,8 @@ app.get('/health', (_, res) => {
 });
 
 app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebhook);
+
+app.use(AwsXRay.express.closeSegment());
 
 const port = process.env.PORT || 80;
 
