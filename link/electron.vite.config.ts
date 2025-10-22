@@ -7,6 +7,8 @@ export default {
   main: {
     build: {
       rollupOptions: {
+        // https://github.com/brianc/node-postgres/issues/2800#issuecomment-2014018129
+        external: ['pg-native'],
         input: {
           main: join(__dirname, './src/main/index.mts'),
         },
