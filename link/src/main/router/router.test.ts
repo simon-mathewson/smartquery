@@ -18,10 +18,18 @@ describe('router', () => {
   });
 
   afterEach(async () => {
+    vi.resetAllMocks();
+
     await Promise.all(
-      Object.values(context.connectors).map((client) => {
-        void client.prisma.$disconnect();
-        void client.sshTunnel?.shutdown();
+      Object.values(context.connectors).map(async (client) => {
+        if ('mysqlClient' in client) {
+          await client.mysqlClient.$disconnect();
+        } else if ('postgresPool' in client) {
+          await client.postgresPool.end();
+        } else {
+          throw new Error('Unsupported connector type');
+        }
+        await client.sshTunnel?.shutdown();
       }),
     );
   });
@@ -47,7 +55,13 @@ describe('router', () => {
           expect(connectorId).toBeTruthy();
 
           expect(client.connection).toMatchObject(connection);
-          expect(client.prisma).toBeTypeOf('object');
+          if ('mysqlClient' in client) {
+            expect(client.mysqlClient).toBeTypeOf('object');
+          } else if ('postgresPool' in client) {
+            expect(client.postgresPool).toBeTypeOf('object');
+          } else {
+            throw new Error('Unsupported connector type');
+          }
           expect(client.sshTunnel).toBeNull();
         },
       );
@@ -58,7 +72,13 @@ describe('router', () => {
     describe('disconnects from the database', async () => {
       const spyOnDisconnect = (connectorId: string) => {
         const client = context.connectors[connectorId];
-        return vi.spyOn(client.prisma, '$disconnect');
+        if ('mysqlClient' in client) {
+          return vi.spyOn(client.mysqlClient, '$disconnect');
+        } else if ('postgresPool' in client) {
+          return vi.spyOn(client.postgresPool, 'end').mockResolvedValue(undefined);
+        } else {
+          throw new Error('Unsupported connector type');
+        }
       };
 
       test.each([mocks.connections.mysql, mocks.connections.postgres])(

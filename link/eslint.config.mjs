@@ -5,15 +5,7 @@ import configPrettier from '@electron-toolkit/eslint-config-prettier';
 
 export default tseslint.config(
   {
-    ignores: [
-      'dist',
-      'out',
-      'node_modules',
-      'prisma/client',
-      '*.config.js',
-      '*.config.cjs',
-      '*.config.mjs',
-    ],
+    ignores: ['dist', 'out', 'node_modules', '*.config.js', '*.config.cjs', '*.config.mjs'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

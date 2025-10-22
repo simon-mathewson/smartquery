@@ -39,7 +39,6 @@
   "dependencies": {
     "@electron-toolkit/preload": "2.0.0",
     "@electron-toolkit/utils": "2.0.0",
-    "@prisma/client": "6.9.0",
     "@trpc/client": "11.1.4",
     "@trpc/server": "11.1.4",
     "@types/lodash-es": "4.17.12",
@@ -51,6 +50,7 @@
     "find-free-ports": "3.1.1",
     "lodash-es": "4.17.21",
     "node-ssh-forward": "0.7.2",
+    "pg": "8.16.3",
     "reflect-metadata": "0.2.2",
     "smartquery-shared": "file:../shared",
     "superjson": "1.12.4",

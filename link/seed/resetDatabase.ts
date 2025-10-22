@@ -1,18 +1,29 @@
-import { createClient } from './createClient';
-import type { Connection } from './types';
+import type { RemoteConnection } from '@/connections/types';
+import { connect } from '@/connector/connect';
+import { disconnect } from '@/connector/disconnect';
 
-export const resetDatabase = async (connection: Connection) => {
-  const { database, engine } = connection;
+export const resetDatabase = async (connection: RemoteConnection, defaultDatabase: string) => {
+  const { database } = connection;
 
-  const prisma = await createClient(connection, { useDefaultDatabase: true });
+  const connector = await connect({ ...connection, database: defaultDatabase });
 
-  await prisma.$queryRawUnsafe(`
-    DROP DATABASE IF EXISTS ${database} ${engine === 'postgres' ? 'WITH (FORCE)' : ''};
-  `);
-
-  await prisma.$queryRawUnsafe(`
-    CREATE DATABASE ${database};
-  `);
-
-  await prisma.$disconnect();
+  try {
+    if ('mysqlClient' in connector) {
+      await connector.mysqlClient.$queryRawUnsafe(`
+        DROP DATABASE IF EXISTS ${database};
+      `);
+      await connector.mysqlClient.$queryRawUnsafe(`
+        CREATE DATABASE ${database};
+      `);
+    } else if ('postgresPool' in connector) {
+      await connector.postgresPool.query(`
+        DROP DATABASE IF EXISTS ${database} WITH (FORCE);
+      `);
+      await connector.postgresPool.query(`
+        CREATE DATABASE ${database};
+      `);
+    }
+  } finally {
+    await disconnect(connector);
+  }
 };

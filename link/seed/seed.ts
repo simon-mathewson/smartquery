@@ -1,34 +1,50 @@
+import type { RemoteConnection } from '@/connections/types';
 import { createTables } from './createTables';
 import { insertData } from './insertData';
 import { resetDatabase } from './resetDatabase';
-import type { Connection } from './types';
 
 export const seed = async () => {
   console.info('Seeding databases...');
 
-  const connections: Connection[] = [
+  const connections: Array<{ connection: RemoteConnection; defaultDatabase: string }> = [
     {
-      database: 'mysql_db',
       defaultDatabase: 'mysql',
-      engine: 'mysql',
-      host: 'localhost',
-      password: 'password',
-      port: Number(process.env.VITE_MYSQL_PORT),
-      user: 'root',
+      connection: {
+        credentialStorage: 'plain',
+        database: 'mysql_db',
+        engine: 'mysql',
+        host: 'localhost',
+        id: 'mysql-connection',
+        name: 'MySQL',
+        password: 'password',
+        port: Number(process.env.VITE_MYSQL_PORT),
+        ssh: null,
+        storageLocation: 'local',
+        type: 'remote',
+        user: 'root',
+      },
     },
     {
-      database: 'postgres_db',
       defaultDatabase: 'postgres',
-      engine: 'postgres',
-      host: 'localhost',
-      password: 'password',
-      port: Number(process.env.VITE_POSTGRES_PORT),
-      user: 'postgres',
+      connection: {
+        credentialStorage: 'plain',
+        database: 'postgres_db',
+        engine: 'postgres',
+        host: 'localhost',
+        id: 'postgres-connection',
+        name: 'Postgres',
+        password: 'password',
+        port: Number(process.env.VITE_POSTGRES_PORT),
+        ssh: null,
+        storageLocation: 'local',
+        type: 'remote',
+        user: 'postgres',
+      },
     },
   ];
 
-  for (const connection of connections) {
-    await resetDatabase(connection);
+  for (const { connection, defaultDatabase } of connections) {
+    await resetDatabase(connection, defaultDatabase);
     await createTables(connection);
     await insertData(connection);
   }
