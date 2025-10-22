@@ -1,9 +1,9 @@
-import { uniqueId } from 'lodash-es';
-import { createSshTunnel } from './createSshTunnel';
 import type { RemoteConnection } from '@/connections/types';
-import { MySqlClient } from './prisma';
-import type { Connector } from './types';
+import { uniqueId } from 'lodash-es';
+import mysql from 'mysql2/promise';
 import { Pool as PostgresPool } from 'pg';
+import { createSshTunnel } from './createSshTunnel';
+import type { Connector } from './types';
 
 export const connect = async (connection: RemoteConnection): Promise<Connector> => {
   const {
@@ -30,16 +30,19 @@ export const connect = async (connection: RemoteConnection): Promise<Connector> 
   const host = sshLocalHost ?? remoteHost;
   const port = sshLocalPort ?? remotePort;
 
-  const encodedPassword = password ? encodeURIComponent(password) : '';
-
   if (engine === 'mysql') {
-    const mysqlClient = new MySqlClient({
-      datasourceUrl: `mysql://${user}:${encodedPassword}@${host}:${port}/${database}`,
+    const pool = mysql.createPool({
+      database,
+      host,
+      password: password ?? undefined,
+      port,
+      user,
     });
 
     try {
       // Connect right away so we get an error if connection is invalid
-      await mysqlClient.$connect();
+      const client = await pool.getConnection();
+      client.release();
     } catch (error: unknown) {
       console.error(error);
       if (sshTunnel) {
@@ -51,14 +54,18 @@ export const connect = async (connection: RemoteConnection): Promise<Connector> 
     return {
       connection,
       id: connectorId,
-      mysqlClient,
+      mysqlPool: pool,
       sshTunnel,
     };
   }
 
   if (engine === 'postgres') {
     const pool = new PostgresPool({
-      connectionString: `postgres://${user}:${encodedPassword}@${host}:${port}/${database}`,
+      database,
+      host,
+      password: password ?? undefined,
+      port,
+      user,
     });
 
     // Important: Handle pool errors to prevent unhandled rejections

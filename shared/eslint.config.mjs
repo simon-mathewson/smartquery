@@ -4,13 +4,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: [
-      'node_modules',
-      'connector/prisma/client',
-      '*.config.js',
-      '*.config.cjs',
-      '*.config.mjs',
-    ],
+    ignores: ['node_modules', '*.config.js', '*.config.cjs', '*.config.mjs'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

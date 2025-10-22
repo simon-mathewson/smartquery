@@ -4,13 +4,6 @@ const artifactNameWindows = '${name}_${version}_${arch}_setup.${ext}';
 export default {
   appId: 'dev.smartquery.link',
   asarUnpack: ['resources/**'],
-  extraResources: [
-    {
-      from: '../shared/connector/prisma/client/postgres',
-      to: '.prisma/client',
-      filter: ['*.node'],
-    },
-  ],
   directories: { buildResources: 'buildResources' },
   productName: 'SmartQuery Link',
   files: [

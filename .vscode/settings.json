@@ -14,8 +14,7 @@
   "eslint.workingDirectories": ["about", "cloud", "link", "shared", "ui"],
   "search.exclude": {
     "link/dist": true,
-    "link/out": true,
-    "link/prisma/client": true
+    "link/out": true
   },
   "typescript.tsdk": "link/node_modules/typescript/lib"
 }

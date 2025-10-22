@@ -5,7 +5,7 @@ import type { router } from '../../link/src/main/router/router';
 import type { Database as SqliteDatabase, SqlValue as SqliteValue } from 'sql.js';
 import type { InputMode } from '~/content/tabs/queries/query/types';
 import type { FileConnection, RemoteConnection } from '@/connections/types';
-import type { PrismaValue } from '@/prisma/types';
+import type { DbValue as RemoteDbValue } from '@/connector/types';
 import type { Chart } from '@/savedQueries/types';
 
 export type ConnectInput = inferRouterInputs<typeof router>['connectDb'];
@@ -21,7 +21,7 @@ export type Database = {
   schemas: string[];
 };
 
-export type DbValue = SqliteValue | PrismaValue;
+export type DbValue = SqliteValue | RemoteDbValue;
 
 export type Value = string | null;
 

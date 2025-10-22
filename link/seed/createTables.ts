@@ -63,8 +63,8 @@ export const createTables = async (connection: RemoteConnection) => {
       )
     `;
 
-    if ('mysqlClient' in connector) {
-      await connector.mysqlClient.$queryRawUnsafe(createDataTypesQuery);
+    if ('mysqlPool' in connector) {
+      await connector.mysqlPool.query(createDataTypesQuery);
     } else if ('postgresPool' in connector) {
       await connector.postgresPool.query(createDataTypesQuery);
     }
@@ -152,8 +152,8 @@ export const createTables = async (connection: RemoteConnection) => {
     ];
 
     for (const query of queries) {
-      if ('mysqlClient' in connector) {
-        await connector.mysqlClient.$queryRawUnsafe(query);
+      if ('mysqlPool' in connector) {
+        await connector.mysqlPool.query(query);
       } else if ('postgresPool' in connector) {
         await connector.postgresPool.query(query);
       }

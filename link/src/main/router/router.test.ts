@@ -5,6 +5,7 @@ import { setUpServer } from '../utils/setUpServer/setUpServer';
 import { cloneDeep } from 'lodash-es';
 import { mocks } from '../test/mocks';
 import { seed } from '../../../seed/seed';
+import { disconnect } from '@/connector/disconnect';
 
 describe('router', () => {
   let context = initialContext;
@@ -20,18 +21,7 @@ describe('router', () => {
   afterEach(async () => {
     vi.resetAllMocks();
 
-    await Promise.all(
-      Object.values(context.connectors).map(async (client) => {
-        if ('mysqlClient' in client) {
-          await client.mysqlClient.$disconnect();
-        } else if ('postgresPool' in client) {
-          await client.postgresPool.end();
-        } else {
-          throw new Error('Unsupported connector type');
-        }
-        await client.sshTunnel?.shutdown();
-      }),
-    );
+    await Promise.all(Object.values(context.connectors).map((client) => disconnect(client)));
   });
 
   describe('connectDb', () => {
@@ -55,8 +45,8 @@ describe('router', () => {
           expect(connectorId).toBeTruthy();
 
           expect(client.connection).toMatchObject(connection);
-          if ('mysqlClient' in client) {
-            expect(client.mysqlClient).toBeTypeOf('object');
+          if ('mysqlPool' in client) {
+            expect(client.mysqlPool).toBeTypeOf('object');
           } else if ('postgresPool' in client) {
             expect(client.postgresPool).toBeTypeOf('object');
           } else {
@@ -72,8 +62,8 @@ describe('router', () => {
     describe('disconnects from the database', async () => {
       const spyOnDisconnect = (connectorId: string) => {
         const client = context.connectors[connectorId];
-        if ('mysqlClient' in client) {
-          return vi.spyOn(client.mysqlClient, '$disconnect');
+        if ('mysqlPool' in client) {
+          return vi.spyOn(client.mysqlPool, 'end').mockResolvedValue(undefined);
         } else if ('postgresPool' in client) {
           return vi.spyOn(client.postgresPool, 'end').mockResolvedValue(undefined);
         } else {

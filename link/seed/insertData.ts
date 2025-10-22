@@ -63,8 +63,8 @@ export const insertData = async (connection: RemoteConnection) => {
       )
     `;
 
-    if ('mysqlClient' in connector) {
-      await connector.mysqlClient.$queryRawUnsafe(insertDataTypesQuery);
+    if ('mysqlPool' in connector) {
+      await connector.mysqlPool.query(insertDataTypesQuery);
     } else if ('postgresPool' in connector) {
       await connector.postgresPool.query(insertDataTypesQuery);
     }
@@ -85,8 +85,8 @@ export const insertData = async (connection: RemoteConnection) => {
         ${users.map(({ name, role, attributes }) => `('${name}', '${role}', ${attributes})`).join()}
     `;
 
-    if ('mysqlClient' in connector) {
-      await connector.mysqlClient.$queryRawUnsafe(insertUsersQuery);
+    if ('mysqlPool' in connector) {
+      await connector.mysqlPool.query(insertUsersQuery);
     } else if ('postgresPool' in connector) {
       await connector.postgresPool.query(insertUsersQuery);
     }
@@ -135,8 +135,8 @@ export const insertData = async (connection: RemoteConnection) => {
           .join()}
     `;
 
-    if ('mysqlClient' in connector) {
-      await connector.mysqlClient.$queryRawUnsafe(insertPostsQuery);
+    if ('mysqlPool' in connector) {
+      await connector.mysqlPool.query(insertPostsQuery);
     } else if ('postgresPool' in connector) {
       await connector.postgresPool.query(insertPostsQuery);
     }
@@ -192,8 +192,8 @@ export const insertData = async (connection: RemoteConnection) => {
     ];
 
     for (const query of remainingQueries) {
-      if ('mysqlClient' in connector) {
-        await connector.mysqlClient.$queryRawUnsafe(query);
+      if ('mysqlPool' in connector) {
+        await connector.mysqlPool.query(query);
       } else if ('postgresPool' in connector) {
         await connector.postgresPool.query(query);
       }

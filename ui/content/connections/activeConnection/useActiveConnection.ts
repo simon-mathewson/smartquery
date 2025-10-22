@@ -53,10 +53,7 @@ export const useActiveConnection = () => {
             error instanceof TRPCClientError &&
             (error.message.includes('Server has closed the connection.') ||
               error.message.includes("Can't reach database server at ") ||
-              error.message.includes('Client not found') ||
-              error.message.includes(
-                "Cannot destructure property 'prisma' of 'client' as it is undefined.",
-              ))
+              error.message.includes('Client not found'))
           ) {
             const newConnection = await connect(currentConnection.id, {
               database: currentConnection.database,

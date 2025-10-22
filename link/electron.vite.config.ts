@@ -11,9 +11,6 @@ export default {
           main: join(__dirname, './src/main/index.mts'),
         },
       },
-      commonjsOptions: {
-        include: [/prisma\/client/],
-      },
     },
     envPrefix: 'VITE_',
     plugins: [externalizeDepsPlugin()],

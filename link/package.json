@@ -50,7 +50,6 @@
     "find-free-ports": "3.1.1",
     "lodash-es": "4.17.21",
     "node-ssh-forward": "0.7.2",
-    "pg": "8.16.3",
     "reflect-metadata": "0.2.2",
     "smartquery-shared": "file:../shared",
     "superjson": "1.12.4",

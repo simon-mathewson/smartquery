@@ -9,7 +9,7 @@ import { type Query, type QueryResult } from '~/shared/types';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
 import { getColumnsFromResult, getColumnsStatements } from './utils/columns';
-import { convertDbValue } from './utils/convertPrismaValue';
+import { convertDbValue } from './utils/convertDbValue';
 import { getNewQuery } from './utils/getNewQuery';
 import { getTableStatements } from './utils/getTableStatement';
 import { getTotalRowsStatement } from './utils/getTotalRowsStatement';

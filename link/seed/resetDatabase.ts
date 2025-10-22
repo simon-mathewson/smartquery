@@ -8,11 +8,11 @@ export const resetDatabase = async (connection: RemoteConnection, defaultDatabas
   const connector = await connect({ ...connection, database: defaultDatabase });
 
   try {
-    if ('mysqlClient' in connector) {
-      await connector.mysqlClient.$queryRawUnsafe(`
+    if ('mysqlPool' in connector) {
+      await connector.mysqlPool.query(`
         DROP DATABASE IF EXISTS ${database};
       `);
-      await connector.mysqlClient.$queryRawUnsafe(`
+      await connector.mysqlPool.query(`
         CREATE DATABASE ${database};
       `);
     } else if ('postgresPool' in connector) {
