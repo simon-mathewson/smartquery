@@ -27,7 +27,10 @@ export const useSorting = () => {
     async (column: Column) => {
       if (!query.select) return;
 
-      const columnRef = getColumnRef(column);
+      const columnRef = getColumnRef(
+        column,
+        'schema' in activeConnection ? activeConnection.schema : activeConnection.database,
+      );
 
       const newSortDirection = (() => {
         if (!sortedColumn || !compareColumnRefs(sortedColumn, columnRef)) return 'ASC';

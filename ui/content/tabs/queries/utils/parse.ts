@@ -10,7 +10,7 @@ export const getSelectFromStatement = async (props: {
   statement: string;
 }): Promise<Select | null> => {
   const { connection, statement } = props;
-  const { engine, database: connectionDatabase } = connection;
+  const { engine, database } = connection;
 
   const parsed = await getAstForSql({ engine, statement });
 
@@ -25,27 +25,22 @@ export const getSelectFromStatement = async (props: {
             return null;
           }
 
+          const explicitSchema = ('db' in from && (from as NodeSqlParser.BaseFrom).db) || undefined;
+          const schema =
+            explicitSchema ?? (connection.engine === 'postgres' ? connection.schema : database);
+
           return {
             name: from.as ?? from.table,
             originalName: from.table,
+            schema,
           };
         })
         .filter(isNotNull)
     : [];
   if (!tables.length) return null;
 
-  const from = parsed.from[0];
-
-  const selectSchemaOrDatabase = ('db' in from && (from as NodeSqlParser.BaseFrom).db) || undefined;
-
-  const database =
-    engine === 'postgres' ? connectionDatabase : selectSchemaOrDatabase ?? connectionDatabase;
-  const schema = engine === 'postgres' ? selectSchemaOrDatabase ?? connection.schema : undefined;
-
   return {
-    database,
     parsed,
-    schema,
     tables,
   };
 };

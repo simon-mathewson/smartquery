@@ -154,7 +154,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
           return rowIndex < rows.length
             ? {
                 column,
-                uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
+                uniqueValues: getUniqueValues(columns!, rows[rowIndex])!,
                 table: tables[0].originalName,
               }
             : {

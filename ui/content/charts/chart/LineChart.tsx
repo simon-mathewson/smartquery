@@ -4,12 +4,13 @@ import { sortBy } from 'lodash';
 import { useMemo } from 'react';
 import { assert } from 'ts-essentials';
 import { isDateTimeType } from '~/shared/dataTypes/utils';
-import type { Column, Value } from '~/shared/types';
+import type { Column } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 
 export type LineChartProps = {
   chart: Chart;
   colors: string[];
-  data: { x: Date | Value; y: number }[];
+  data: { x: Date | DbValue; y: number }[];
   valueFormatter: ((value: Date) => string) | undefined;
   xColumn: Column;
 };
@@ -22,7 +23,7 @@ export const LineChart = (props: LineChartProps) => {
   const processedData = useMemo(() => {
     const withoutNulls = data
       .map((point) => ({ x: point.x, y: point.y }))
-      .filter((data): data is { x: Date | Value; y: number } => data.x !== null);
+      .filter((data): data is { x: Date | DbValue; y: number } => data.x !== null);
 
     // Sort ascending to avoid missing tooltips (occurs with reverse order dates)
     return sortBy(withoutNulls, (point) => point.x);

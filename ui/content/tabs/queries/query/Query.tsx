@@ -43,7 +43,7 @@ export const Query: React.FC = () => {
 
   const isEditable = Boolean(
     result?.columns &&
-      getUniqueValues(result.columns, result.rows, 0)?.length &&
+      getUniqueValues(result.columns, result.rows[0])?.length &&
       result.tables.length === 1 &&
       result.tables[0].type === 'BASE TABLE',
   );
@@ -90,7 +90,7 @@ export const Query: React.FC = () => {
                   </Tooltip>
                   {query.isLoading && (
                     <CircularProgress
-                      className="absolute left-[4px] top-[4px] !text-primary"
+                      className="pointer-events-none absolute left-[4px] top-[4px] !text-primary"
                       size={28}
                     />
                   )}

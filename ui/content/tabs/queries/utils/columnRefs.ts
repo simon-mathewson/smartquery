@@ -4,14 +4,17 @@ import type NodeSqlParser from 'node-sql-parser';
 export type ColumnRef = {
   column: string;
   table: string | null;
+  schema: string | null;
 };
 
-export const getColumnRef = (column: Column): ColumnRef => {
-  const isColumnAlias = column.name !== column.originalName;
+export const getColumnRef = (column: Column, currentSchema: string | undefined): ColumnRef => {
+  const table = column.table?.originalName;
+  const schema = column.table?.schema;
 
   return {
-    column: column.name,
-    table: isColumnAlias ? null : column.table?.name ?? null,
+    column: column.originalName,
+    table: table ?? null,
+    schema: schema === currentSchema ? null : schema ?? null,
   };
 };
 
@@ -35,7 +38,14 @@ export const getColumnRefFromAst = (
     }
   })();
 
-  const tableName = 'table' in ref ? ref.table : null;
+  const tableName = 'table' in ref ? (ref.table as string | { value: string }) : null;
+  const actualTableName =
+    tableName && typeof tableName === 'object' && 'value' in tableName
+      ? tableName.value
+      : tableName;
+  const schema = 'db' in ref ? (ref.db as string | { value: string }) : null;
+  const actualSchema =
+    schema && typeof schema === 'object' && 'value' in schema ? schema.value : schema;
 
   if (!columnName) {
     return null;
@@ -43,9 +53,13 @@ export const getColumnRefFromAst = (
 
   return {
     column: columnName,
-    table: tableName,
+    table: actualTableName,
+    schema: actualSchema,
   };
 };
 
 export const compareColumnRefs = (a: ColumnRef | null, b: ColumnRef | null) =>
-  (!a && !b) || (a?.column === b?.column && (!a?.table || !b?.table || a.table === b.table));
+  (!a && !b) ||
+  (a?.column === b?.column &&
+    (!a?.table || !b?.table || a.table === b.table) &&
+    (!a?.schema || !b?.schema || a.schema === b.schema));

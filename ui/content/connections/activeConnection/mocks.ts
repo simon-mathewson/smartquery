@@ -10,5 +10,6 @@ export const getActiveConnectionMock = () =>
       { name: 'staging', schemas: [] },
     ],
     isLoadingDatabases: false,
-    runQuery: async (statements: string[]) => Array(statements.length).fill([]),
+    runQuery: async (statements: string[]) =>
+      Array(statements.length).fill({ fields: [], rows: [] }),
   }) satisfies ActiveConnectionContextType;

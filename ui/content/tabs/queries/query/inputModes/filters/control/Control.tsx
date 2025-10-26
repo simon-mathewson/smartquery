@@ -11,6 +11,7 @@ import { Close } from '@mui/icons-material';
 import { Button } from '~/shared/components/button/Button';
 import type { ColumnRef } from '~/content/tabs/queries/utils/columnRefs';
 import { compareColumnRefs, getColumnRef } from '~/content/tabs/queries/utils/columnRefs';
+import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 
 export interface FilterControlProps {
   filter: FormFilter;
@@ -22,11 +23,16 @@ export interface FilterControlProps {
 export const FilterControl: React.FC<FilterControlProps> = (props) => {
   const { filter, isFirst, removeFilter, updateFilter } = props;
 
+  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
+
+  const currentSchema =
+    'schema' in activeConnection ? activeConnection.schema : activeConnection.database;
+
   const { columns, tables } = useDefinedContext(ResultContext);
   assert(columns);
 
   const column = filter.columnRef
-    ? columns.find((col) => compareColumnRefs(getColumnRef(col), filter.columnRef))
+    ? columns.find((col) => compareColumnRefs(getColumnRef(col, currentSchema), filter.columnRef))
     : null;
 
   return (
@@ -40,10 +46,12 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
         onChange={(newColumnRef) => {
           updateFilter((current) => ({ ...current, columnRef: newColumnRef }));
         }}
-        options={columns.map((col) => ({
-          label: col.table && tables.length > 1 ? `${col.table.name}.${col.name}` : col.name,
-          value: getColumnRef(col),
-        }))}
+        options={columns
+          .filter((col) => col.isVisible)
+          .map((col) => ({
+            label: col.table && tables.length > 1 ? `${col.table.name}.${col.name}` : col.name,
+            value: getColumnRef(col, currentSchema),
+          }))}
         placeholder="Column"
         value={filter.columnRef}
       />

@@ -21,12 +21,16 @@ export const getAstOperator = (operator: Operator, filter: Filter): string => {
   return operator;
 };
 
-export const getAstFromFilters = (props: { columns: Column[]; filters: Filter[] }) => {
-  const { columns, filters } = props;
+export const getAstFromFilters = (props: {
+  columns: Column[];
+  filters: Filter[];
+  currentSchema: string | undefined;
+}) => {
+  const { columns, filters, currentSchema } = props;
 
   return filters.reduce<NodeSqlParser.Expr | null>((all, filter) => {
     const column = columns.find((column) =>
-      compareColumnRefs(filter.columnRef, getColumnRef(column)),
+      compareColumnRefs(filter.columnRef, getColumnRef(column, currentSchema)),
     );
 
     if (!column) {

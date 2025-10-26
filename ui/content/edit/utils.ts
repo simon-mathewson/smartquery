@@ -1,4 +1,4 @@
-import type { Value } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 import type { Engine } from '@/connections/types';
 import { escapeValue } from '~/shared/utils/sql/sql';
 import type { CreateValue, Location, UniqueValue } from './types';
@@ -19,7 +19,7 @@ export const doChangeLocationsMatch = (
     )) &&
   (!('column' in change1) || !('column' in change2) || change1.column === change2.column);
 
-export const getValueString = (value: Value | CreateValue, engine: Engine) => {
+export const getValueString = (value: DbValue | CreateValue, engine: Engine) => {
   if (value === null) {
     return 'NULL';
   }

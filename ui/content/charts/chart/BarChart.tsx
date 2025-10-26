@@ -1,12 +1,12 @@
 import type { Chart } from '@/savedQueries/types';
 import { BarChart as MuiBarChart } from '@mui/x-charts';
 import { assert } from 'ts-essentials';
-import type { Value } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 
 export type BarChartProps = {
   chart: Chart;
   colors: string[];
-  data: { x: Date | Value; y: number }[];
+  data: { x: Date | DbValue; y: number }[];
   valueFormatter: ((value: Date) => string) | undefined;
 };
 

@@ -1,13 +1,8 @@
 import { assert, type XOR } from 'ts-essentials';
 import classNames from 'classnames';
 import React, { useCallback } from 'react';
-import { type Column, type Value } from '~/shared/types';
-import {
-  isDateOrTimeType,
-  isDateTimeType,
-  isEnumType,
-  isNumberType,
-} from '~/shared/dataTypes/utils';
+import { type Column } from '~/shared/types';
+import { isDateOrTimeType, isEnumType, isNumberType } from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { QueryContext } from '../../Context';
 import type { CreateValue } from '~/content/edit/types';
@@ -21,12 +16,14 @@ import type { ResizeHandleProps } from '~/shared/components/resizeHandle/ResizeH
 import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
 import { isNil } from 'lodash';
 import { compareColumnRefs, getColumnRef } from '../../../utils/columnRefs';
+import { getBooleanLabel } from '../../../utils/getBooleanLabel';
+import type { DbValue } from '@/connector/types';
 
 export type CellProps = {
   column: Column | string;
   columnIndex: number;
   visibleColumnCount: number;
-  value: Value | CreateValue;
+  value: DbValue | CreateValue;
   setColumnWidth: ResizeHandleProps['onResize'];
 } & XOR<
   {
@@ -115,7 +112,13 @@ export const Cell: React.FC<CellProps> = (props) => {
   }, [activeConnection.engine, addQuery, column, value]);
 
   const isSortedColumn = sorting
-    ? compareColumnRefs(sorting.sortedColumn, getColumnRef(column as Column))
+    ? compareColumnRefs(
+        sorting.sortedColumn,
+        getColumnRef(
+          column as Column,
+          'schema' in activeConnection ? activeConnection.schema : activeConnection.database,
+        ),
+      )
     : false;
 
   return (
@@ -231,14 +234,17 @@ export const Cell: React.FC<CellProps> = (props) => {
           })}
         >
           {(() => {
+            if (type === 'header') {
+              return value;
+            }
             if (value === null) {
               return 'NULL';
             }
             if (value === undefined) {
               return 'EMPTY';
             }
-            if (typeof column === 'object' && isDateTimeType(column.dataType)) {
-              return value.replace('T', ' ');
+            if (typeof column === 'object' && column.dataType === 'boolean') {
+              return getBooleanLabel(value);
             }
             return value;
           })()}

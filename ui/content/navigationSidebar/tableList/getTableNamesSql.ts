@@ -16,7 +16,6 @@ export const getTableNamesSql = (activeConection: ActiveConnection) => {
         SELECT table_name AS t, table_schema AS s FROM information_schema.tables
         WHERE table_type = 'BASE TABLE'
         ${'schema' in activeConection ? `AND table_schema = '${activeConection.schema}'` : ''}
-        AND table_catalog = '${database}'
         ORDER BY t ASC
       `;
     case 'sqlite':

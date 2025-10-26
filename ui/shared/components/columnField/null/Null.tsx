@@ -1,11 +1,11 @@
 import React from 'react';
-import type { Value } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 
 export type NullButtonProps = {
   isNullable?: boolean;
-  onChange: (newValue: Value) => void;
-  value: Value | undefined;
+  onChange: (newValue: DbValue) => void;
+  value: DbValue | undefined;
 };
 
 export const NullButton: React.FC<NullButtonProps> = (props) => {

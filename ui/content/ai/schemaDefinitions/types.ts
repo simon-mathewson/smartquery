@@ -1,9 +1,14 @@
-import type { DbValue } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 
 export type SqliteSchemaDefinitions = {
   createdAt: Date;
   definitions: {
-    tables: { name: string }[];
+    tables: {
+      name: string;
+      tbl_name: string;
+      type: string;
+      sql: string;
+    }[];
   };
 };
 

@@ -2,6 +2,7 @@ import { omit } from 'lodash';
 import { DateTime } from 'luxon';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import { getResultsAsRecords } from '~/content/tabs/queries/utils/getResultsAsRecords';
 import { ToastContext } from '~/content/toast/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
@@ -40,9 +41,11 @@ export const useSchemaDefinitions = () => {
 
       try {
         if ('sqliteDb' in activeConnection) {
-          const [sqliteResults] = await runQuery([
+          const [sqliteResultsRaw] = await runQuery([
             'SELECT type, name, tbl_name, sql FROM sqlite_master',
           ]);
+
+          const sqliteResults = getResultsAsRecords(sqliteResultsRaw);
 
           const sqliteDefinitions = {
             createdAt: new Date(),
@@ -58,7 +61,12 @@ export const useSchemaDefinitions = () => {
 
         const results = await runQuery(getStatements(activeConnection));
 
-        const [tables, columns, tableConstraints, views] = results;
+        const [tablesResult, columnsResult, tableConstraintsResult, viewsResult] = results;
+
+        const tables = getResultsAsRecords(tablesResult);
+        const columns = getResultsAsRecords(columnsResult);
+        const tableConstraints = getResultsAsRecords(tableConstraintsResult);
+        const views = getResultsAsRecords(viewsResult);
 
         const processedTables = tables.map((table) => {
           return {

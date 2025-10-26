@@ -1,22 +1,22 @@
+import type { Chart } from '@/savedQueries/types';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import { ToastContext } from '~/content/toast/Context';
 import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { Row, TableType } from '~/shared/types';
+import type { TableType } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
-import { getColumnsFromResult, getColumnsStatements } from './utils/columns';
-import { convertDbValue } from './utils/convertDbValue';
+import { getAllColumns, getColumnsStatements } from './utils/columns';
 import { getNewQuery } from './utils/getNewQuery';
-import { getTableStatements } from './utils/getTableStatement';
+import { getResultsAsRecords } from './utils/getResultsAsRecords';
+import { getTableStatements } from './utils/getTableStatements';
 import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
+import { getVirtualColumn } from './utils/getVirtualColumn';
 import { parseQuery } from './utils/parse';
-import type { Chart } from '@/savedQueries/types';
-import { chunk, sortBy, uniqBy } from 'lodash';
-import { getVirtualColumns } from './utils/getVirtualColumns';
+import { uniqBy } from 'lodash';
 
 export const useQueries = () => {
   const toast = useDefinedContext(ToastContext);
@@ -106,51 +106,34 @@ export const useQueries = () => {
         const results = await runQuery(statementsWithMetadata, { skipSqliteWrite: true });
 
         const firstSelectResult = results[0];
-        const columnsResults = results.slice(1, columnsStatements.length + 1);
-        const tableResults = results.slice(
-          columnsStatements.length + 1,
-          columnsStatements.length + tableStatements.length + 1,
-        );
-        const totalRowsResult = totalRowsStatement ? results[results.length - 1] : null;
+        const columnsResults = results
+          .slice(1, columnsStatements.length + 1)
+          .map((result) => getResultsAsRecords(result, { convertFieldNameToLowerCase: true }));
+        const tableResults = results
+          .slice(
+            columnsStatements.length + 1,
+            columnsStatements.length + tableStatements.length + 1,
+          )
+          .map((result) => getResultsAsRecords(result, { convertFieldNameToLowerCase: true }));
+        const totalRowsResult = totalRowsStatement
+          ? getResultsAsRecords(results[results.length - 1])
+          : null;
 
-        const columnsWithDuplicates = chunk(columnsResults, 2).flatMap(
-          ([columnsResult, constraintsResult], index) =>
-            getColumnsFromResult({
-              connection: activeConnection,
-              parsedStatement: select!.parsed,
-              columnsResult,
-              constraintsResult,
-              table: select.tables[index],
-            }),
-        );
+        const columns = getAllColumns({
+          fields: firstSelectResult.fields,
+          columnsResults,
+          connection: activeConnection,
+          records: getResultsAsRecords(firstSelectResult),
+          select,
+          tableResults,
+        });
 
-        // If there are multiple columns with the same name, we only keep the first.
-        // This can happen if all columns of multiple tables are selected.
-        // Prefer visible columns.
-        const tableColumns = uniqBy(
-          sortBy(columnsWithDuplicates, (column) => (column.isVisible ? 0 : 1)),
-          'name',
-        );
-        const virtualColumns = getVirtualColumns(
-          firstSelectResult,
-          tableColumns.map((column) => column.name),
-        );
-        const columns = [...tableColumns, ...virtualColumns];
+        const totalRows = Number(totalRowsResult?.at(0)?.count);
 
-        const rows = firstSelectResult.map<Row>((row) =>
-          Object.fromEntries(
-            Object.entries(row).map(([columnName, value]) => {
-              const column = columns.find((column) => column.name === columnName);
-              return [columnName, convertDbValue(value, column?.dataType)];
-            }),
-          ),
-        );
-
-        const totalRows = Number(totalRowsResult?.[0].count);
-
-        const tables = select.tables.map(({ name, originalName }, index) => ({
+        const tables = select.tables.map(({ name, originalName, schema }, index) => ({
           name,
           originalName,
+          schema,
           type: (tableResults[index].at(0)?.table_type ?? 'SYSTEM_VIEW') as TableType,
         }));
 
@@ -158,8 +141,7 @@ export const useQueries = () => {
           ...currentQueryResults,
           [query.id]: {
             columns,
-            rows,
-            schema: activeConnection.engine === 'postgres' ? select!.schema : undefined,
+            rows: firstSelectResult.rows,
             tables,
             totalRows,
           },
@@ -194,16 +176,20 @@ export const useQueries = () => {
       try {
         const results = await runQuery(statements);
 
-        const rawRows = results.find((result) => result.length) ?? null;
-        const rows = rawRows
-          ? rawRows.map((row) =>
-              Object.fromEntries(
-                Object.entries(row).map(([key, value]) => [key, convertDbValue(value)]),
-              ),
-            )
-          : null;
+        const firstResultWithRows = results.find((result) => result.rows.length) ?? null;
 
-        const columns = rawRows ? getVirtualColumns(rawRows) : [];
+        const records = firstResultWithRows ? getResultsAsRecords(firstResultWithRows) : [];
+        const uniqueFields = firstResultWithRows ? uniqBy(firstResultWithRows.fields, 'name') : [];
+        const columns = uniqueFields.map((field) => getVirtualColumn(records, field.name));
+
+        const rows = firstResultWithRows?.rows.map((row) =>
+          uniqueFields.map((field) => {
+            const originalIndex = firstResultWithRows.fields.findIndex(
+              (f) => f.name === field.name,
+            );
+            return row[originalIndex];
+          }),
+        );
 
         if (rows) {
           setQueryResults((currentQueryResults) => ({

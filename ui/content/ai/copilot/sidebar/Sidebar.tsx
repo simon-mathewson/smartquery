@@ -293,7 +293,7 @@ export const CopilotSidebar: React.FC = () => {
                     tooltip="Stop generating"
                   />
                   <CircularProgress
-                    className="absolute left-[4px] top-[4px] !text-primary"
+                    className="pointer-events-none absolute left-[4px] top-[4px] !text-primary"
                     size={28}
                   />
                 </div>

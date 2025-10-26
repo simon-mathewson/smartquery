@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { CodeInput } from '~/shared/components/codeInput/CodeInput';
 import { Field } from '~/shared/components/field/Field';
 import { isEnumType } from '~/shared/dataTypes/utils';
-import { type Column, type Value } from '~/shared/types';
+import { type Column } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 import { Alphanumeric } from './alphanumeric/Alphanumeric';
 import { BooleanField } from './boolean/Boolean';
 import { EnumField } from './enumField/EnumField';
@@ -14,9 +15,9 @@ export type ColumnFieldProps = {
   column: Column;
   hideLabel?: boolean;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
-  onChange: (newValue: Value) => void;
+  onChange: (newValue: DbValue) => void;
   placeholder?: string;
-  value: Value;
+  value: DbValue;
 };
 
 export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
@@ -32,7 +33,7 @@ export const ColumnField: React.FC<ColumnFieldProps> = (props) => {
 
   const [stringValue, setStringValue] = useState(value ?? '');
 
-  const onChange = (newValue: Value) => {
+  const onChange = (newValue: DbValue) => {
     if (newValue !== null) {
       setStringValue(newValue ?? '');
     }

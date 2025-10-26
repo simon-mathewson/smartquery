@@ -27,7 +27,7 @@ export const Delete: React.FC<DeleteProps> = (props) => {
           selection.forEach((_, rowIndex) => {
             handleDeleteChange({
               location: {
-                uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
+                uniqueValues: getUniqueValues(columns!, rows[rowIndex])!,
                 table: tables[0].originalName,
                 type: 'delete',
               },

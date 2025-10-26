@@ -3,7 +3,8 @@ import { EditContext } from '~/content/edit/Context';
 import type { CreateChange, CreateLocation, UpdateLocation } from '~/content/edit/types';
 import { ColumnField } from '~/shared/components/columnField/ColumnField';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { type Column, type Value } from '~/shared/types';
+import { type Column } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 
 export type EditOverlayFieldProps = {
   autoFocus?: boolean;
@@ -34,7 +35,7 @@ export const EditOverlayField: React.FC<EditOverlayFieldProps> = (props) => {
   const value = values[0];
   const commonValue = multipleValues ? undefined : value;
 
-  const handleChange = (newValue: Value) => {
+  const handleChange = (newValue: DbValue) => {
     locations.forEach((location) => {
       if (location.type === 'create') {
         const createChange = getChangeAtLocation(location) as CreateChange;

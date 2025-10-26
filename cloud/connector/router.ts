@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { remoteConnectionSchema } from '@/connections/types';
 import { connect } from '@/connector/connect';
 import { disconnect } from '@/connector/disconnect';
-import type { Results } from '@/connector/runQuery';
+import type { Results } from '@/connector/types';
 import { runQuery } from '@/connector/runQuery';
 import { trpc } from '~/trpc';
 import { isAuthenticated } from '~/middlewares/isAuthenticated';

@@ -27,7 +27,12 @@ export const useFilters = () => {
 
       const newStatement = cloneDeep(select.parsed);
 
-      newStatement.where = getAstFromFilters({ columns, filters });
+      newStatement.where = getAstFromFilters({
+        columns,
+        filters,
+        currentSchema:
+          'schema' in activeConnection ? activeConnection.schema : activeConnection.database,
+      });
 
       // Remove offset
       const limitAndOffset = getLimitAndOffset(newStatement);

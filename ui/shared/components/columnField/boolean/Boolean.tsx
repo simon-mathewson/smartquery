@@ -1,16 +1,19 @@
 import React from 'react';
 import { isNil } from 'lodash';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
-import type { Value } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
+import { getBooleanLabel } from '~/content/tabs/queries/utils/getBooleanLabel';
 
 export type BooleanFieldProps = {
   isNullable?: boolean;
-  onChange: (newValue: Value) => void;
-  value: Value | undefined;
+  onChange: (newValue: DbValue) => void;
+  value: DbValue | undefined;
 };
 
 export const BooleanField: React.FC<BooleanFieldProps> = (props) => {
   const { isNullable, onChange, value } = props;
+
+  const normalizedValue = value ? getBooleanLabel(value) : undefined;
 
   return (
     <ButtonSelect<boolean | null>
@@ -23,7 +26,7 @@ export const BooleanField: React.FC<BooleanFieldProps> = (props) => {
         { button: { label: 'TRUE', monospace: true }, value: true },
         { button: { label: 'FALSE', monospace: true }, value: false },
       ]}
-      value={isNil(value) ? undefined : value.toLowerCase() === 'true' || value === '1'}
+      value={isNil(normalizedValue) ? undefined : normalizedValue === 'TRUE'}
     />
   );
 };

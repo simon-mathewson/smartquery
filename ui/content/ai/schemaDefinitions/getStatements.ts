@@ -9,25 +9,21 @@ export const getStatements = (
     case 'postgres':
       return [
         `
-        SELECT table_name, table_type  FROM information_schema.tables 
-        WHERE table_catalog = '${database}'
-        AND table_schema = '${activeConnection.schema}'
+        SELECT table_name, table_type FROM information_schema.tables 
+        WHERE table_schema = '${activeConnection.schema}'
       `,
         `
         SELECT table_name, column_name, ordinal_position, column_default, is_nullable, data_type, character_maximum_length, numeric_precision, numeric_scale FROM information_schema.columns
-        WHERE table_catalog = '${database}'
-        AND table_schema = '${activeConnection.schema}'
+        WHERE table_schema = '${activeConnection.schema}'
       `,
         `
-        SELECT constraint_name, table_name, constraint_type FROM information_schema.table_constraints
-        WHERE table_catalog = '${database}'
-        AND table_schema = '${activeConnection.schema}'
+        SELECT table_name, constraint_name, constraint_type FROM information_schema.table_constraints
+        WHERE table_schema = '${activeConnection.schema}'
         AND constraint_type <> 'CHECK'
       `,
         `
         SELECT table_name, view_definition FROM information_schema.views
-        WHERE table_catalog = '${database}'
-        AND table_schema = '${activeConnection.schema}'
+        WHERE table_schema = '${activeConnection.schema}'
       `,
       ];
     case 'mysql':
@@ -41,7 +37,7 @@ export const getStatements = (
           WHERE TABLE_SCHEMA = '${database}'
         `,
         `
-          SELECT CONSTRAINT_NAME constraint_name, TABLE_NAME table_name, CONSTRAINT_TYPE constraint_type FROM information_schema.table_constraints
+          SELECT TABLE_NAME table_name, CONSTRAINT_NAME constraint_name, CONSTRAINT_TYPE constraint_type FROM information_schema.table_constraints
           WHERE TABLE_SCHEMA = '${database}'
           AND CONSTRAINT_TYPE <> 'CHECK'
         `,

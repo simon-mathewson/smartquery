@@ -1,10 +1,10 @@
 import { PieChart as MuiPieChart } from '@mui/x-charts';
 import { useMemo } from 'react';
-import type { Value } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 
 export type PieChartProps = {
   colors: string[];
-  data: { x: Date | Value; y: number }[];
+  data: { x: Date | DbValue; y: number }[];
 };
 
 export const PieChart = (props: PieChartProps) => {

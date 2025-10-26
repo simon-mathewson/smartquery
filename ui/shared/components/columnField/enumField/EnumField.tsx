@@ -1,13 +1,14 @@
 import { isNil } from 'lodash';
 import React from 'react';
-import { type Column, type Value } from '~/shared/types';
+import { type Column } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 import { Select } from '~/shared/components/select/Select';
 
 export type EnumFieldProps = {
   column: Column;
-  onChange: (newValue: Value) => void;
+  onChange: (newValue: DbValue) => void;
   placeholder?: string;
-  stringValue: Value;
+  stringValue: DbValue;
 };
 
 export const EnumField: React.FC<EnumFieldProps> = (props) => {

@@ -125,7 +125,7 @@ export const Table: React.FC<TableProps> = (props) => {
   // Compute column width based on median value length
   useEffect(() => {
     setColumnWidths(
-      visibleColumns.map((column) => {
+      visibleColumns.map((column, columnIndex) => {
         if (isEmpty) return '1fr';
 
         const columnName = typeof column === 'object' ? column.name : column;
@@ -137,7 +137,12 @@ export const Table: React.FC<TableProps> = (props) => {
         const sample = [...rows, ...rowsToCreate]
           .sort(() => Math.random() - 0.5)
           .slice(0, sampleSize);
-        const lengths = [columnName.length, ...sample.map((row) => String(row[columnName]).length)];
+        const lengths = [
+          columnName.length,
+          ...sample.map(
+            (row) => String(Array.isArray(row) ? row[columnIndex] : row[columnName]).length,
+          ),
+        ];
         const medianLength = median(lengths);
         const finalWidthChars = Math.max(Math.min(medianLength, 60), 10);
         const finalWidth = finalWidthChars * 9;
@@ -213,13 +218,13 @@ export const Table: React.FC<TableProps> = (props) => {
               return visibleColumns.map((column, columnIndex) => {
                 const columnName = typeof column === 'object' ? column.name : column;
                 const table = typeof column === 'object' ? column.table ?? null : null;
-                const value = row[columnName];
+                const value = row[columnIndex];
                 const change =
                   isEditable && typeof column === 'object' && table
                     ? (getChangeAtLocation({
                         column: column.originalName,
                         originalValue: value,
-                        uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
+                        uniqueValues: getUniqueValues(columns!, row)!,
                         table: table.originalName,
                         type: 'update',
                       }) as DeleteChange | UpdateChange | undefined)

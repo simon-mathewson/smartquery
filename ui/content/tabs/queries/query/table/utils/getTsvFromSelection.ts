@@ -1,9 +1,9 @@
 import type { CreateRow } from '~/content/edit/types';
-import type { Row } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 
 const nullString = 'NULL';
 
-export const getTsvFromSelection = (selection: number[][], rows: Array<Row | CreateRow>) => {
+export const getTsvFromSelection = (selection: number[][], rows: Array<DbValue[] | CreateRow>) => {
   const minColumnIndex = Math.min(
     ...selection.flatMap((columnIndices) => (columnIndices.length === 0 ? [0] : columnIndices)),
   );

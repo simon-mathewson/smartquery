@@ -1,10 +1,10 @@
 import type { Engine } from '@/connections/types';
-import type { Select } from '../../types';
-import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
 import type { TableExpr } from 'node-sql-parser';
+import { getSqlForAst } from '~/shared/utils/sqlParser/getSqlForAst';
+import type { Select } from '../../types';
 
-export const getSql = (props: { engine: Engine; select: Select; table: string }) => {
-  const { engine, select, table } = props;
+export const getSql = (props: { engine: Engine; select: Select; table: Select['tables'][0] }) => {
+  const { engine, table } = props;
 
   if (engine === 'sqlite') {
     return getSqlForAst(
@@ -34,7 +34,7 @@ export const getSql = (props: { engine: Engine; select: Select; table: string })
                 value: [
                   {
                     type: 'single_quote_string',
-                    value: table,
+                    value: table.originalName,
                   },
                 ],
               },
@@ -85,13 +85,13 @@ export const getSql = (props: { engine: Engine; select: Select; table: string })
             type: 'binary_expr',
             operator: '=',
             left: { type: 'column_ref', table: null, column: 'table_name' },
-            right: { type: 'single_quote_string', value: table },
+            right: { type: 'single_quote_string', value: table.originalName },
           },
           right: {
             type: 'binary_expr',
             operator: '=',
             left: { type: 'column_ref', table: null, column: 'table_schema' },
-            right: { type: 'single_quote_string', value: select.database },
+            right: { type: 'single_quote_string', value: table.schema },
           },
         },
         groupby: {
@@ -129,25 +129,15 @@ export const getSql = (props: { engine: Engine; select: Select; table: string })
         operator: 'AND',
         left: {
           type: 'binary_expr',
-          operator: 'AND',
-          left: {
-            type: 'binary_expr',
-            operator: '=',
-            left: { type: 'column_ref', table: null, column: 'table_name' },
-            right: { type: 'single_quote_string', value: table },
-          },
-          right: {
-            type: 'binary_expr',
-            operator: '=',
-            left: { type: 'column_ref', table: null, column: 'table_schema' },
-            right: { type: 'single_quote_string', value: select.schema },
-          },
+          operator: '=',
+          left: { type: 'column_ref', table: null, column: 'table_name' },
+          right: { type: 'single_quote_string', value: table.originalName },
         },
         right: {
           type: 'binary_expr',
           operator: '=',
-          left: { type: 'column_ref', table: null, column: 'table_catalog' },
-          right: { type: 'single_quote_string', value: select.database },
+          left: { type: 'column_ref', table: null, column: 'table_schema' },
+          right: { type: 'single_quote_string', value: table.schema },
         },
       },
       groupby: {

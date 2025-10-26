@@ -30,38 +30,33 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
         const selectedColumnIndices =
           _selectedColumnIndices.length === 0 ? range(columnCount) : _selectedColumnIndices;
 
-        selectedColumnIndices
-          .filter((columnIndex) => {
-            const column = columns![columnIndex];
-            return column.isVisible;
-          })
-          .forEach((columnIndex) => {
-            const column = columns![columnIndex];
+        selectedColumnIndices.forEach((columnIndex) => {
+          const column = columns![columnIndex];
 
-            if (column.isVirtual) return;
+          if (column.isVirtual) return;
 
-            if (!newColumnsWithValues[columnIndex]) {
-              newColumnsWithValues[columnIndex] = { column, locations: [] };
-            }
+          if (!newColumnsWithValues[columnIndex]) {
+            newColumnsWithValues[columnIndex] = { column, locations: [] };
+          }
 
-            if (rows[rowIndex]) {
-              const value = rows[rowIndex][column.name];
+          if (rows[rowIndex]) {
+            const value = rows[rowIndex][columnIndex];
 
-              newColumnsWithValues[columnIndex].locations.push({
-                column: column.originalName,
-                originalValue: value,
-                uniqueValues: getUniqueValues(columns!, rows, rowIndex)!,
-                table: tables[0].originalName,
-                type: 'update',
-              });
-            } else {
-              newColumnsWithValues[columnIndex].locations.push({
-                index: rowIndex - rows.length,
-                table: tables[0].originalName,
-                type: 'create',
-              });
-            }
-          });
+            newColumnsWithValues[columnIndex].locations.push({
+              column: column.originalName,
+              originalValue: value,
+              uniqueValues: getUniqueValues(columns!, rows[rowIndex])!,
+              table: tables[0].originalName,
+              type: 'update',
+            });
+          } else {
+            newColumnsWithValues[columnIndex].locations.push({
+              index: rowIndex - rows.length,
+              table: tables[0].originalName,
+              type: 'create',
+            });
+          }
+        });
         return newColumnsWithValues;
       },
       [],

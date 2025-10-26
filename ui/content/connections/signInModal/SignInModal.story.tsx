@@ -22,7 +22,7 @@ export const SignInModalStory: React.FC<SignInModalStoryProps> = ({
               ...componentProps.input,
               onSignIn: showError
                 ? () => {
-                    throw new Error('Authentication failed');
+                    throw new Error('Access denied for user test');
                   }
                 : async (credentials) => {
                     await new Promise<void>((resolve) => setTimeout(resolve, 1000));

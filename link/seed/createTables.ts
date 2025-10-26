@@ -35,6 +35,8 @@ export const createTables = async (connection: RemoteConnection) => {
         text_column_nullable TEXT NULL,
         boolean_column ${booleanType} NOT NULL,
         boolean_column_nullable ${booleanType} NULL,
+        date_column DATE NOT NULL,
+        date_column_nullable DATE NULL,
         datetime_column ${datetimeType} NOT NULL DEFAULT CURRENT_TIMESTAMP,
         datetime_column_nullable ${datetimeType} NULL,
         datetime_with_time_zone_column ${datetimeWithTimeZoneType} NOT NULL DEFAULT CURRENT_TIMESTAMP,

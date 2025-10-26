@@ -14,7 +14,7 @@ import { useOverlay } from '~/shared/components/overlay/useOverlay';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { Select } from '~/shared/components/select/Select';
 import type { DataType } from '~/shared/dataTypes/types';
-import { isDateOrTimeType, isNumberType } from '~/shared/dataTypes/utils';
+import { isDateTimeType, isNumberType } from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 
 export const ChartEditOverlay: React.FC = () => {
@@ -34,10 +34,10 @@ export const ChartEditOverlay: React.FC = () => {
 
   const [type, setType] = useState<Chart['type']>(chart?.type ?? 'line');
   const [x, setX] = useState<ColumnRef | null>(
-    chart?.xColumn ? { column: chart.xColumn, table: chart.xTable } : null,
+    chart?.xColumn ? { column: chart.xColumn, table: chart.xTable, schema: null } : null,
   );
   const [y, setY] = useState<ColumnRef | null>(
-    chart?.yColumn ? { column: chart.yColumn, table: chart.yTable } : null,
+    chart?.yColumn ? { column: chart.yColumn, table: chart.yTable, schema: null } : null,
   );
 
   const [isSaving, setIsSaving] = useState(false);
@@ -112,7 +112,7 @@ export const ChartEditOverlay: React.FC = () => {
 
   const getIsAllowed = (axis: 'x' | 'y', dataType: DataType) => {
     if (axis === 'x' && type === 'line') {
-      return isNumberType(dataType) || isDateOrTimeType(dataType);
+      return isNumberType(dataType) || isDateTimeType(dataType);
     }
     if (axis === 'y') {
       return isNumberType(dataType);
@@ -129,7 +129,11 @@ export const ChartEditOverlay: React.FC = () => {
           column.table && result.tables.length > 1
             ? `${column.table.name}.${column.name}`
             : column.name,
-        value: { column: column.name, table: column.table?.name ?? null },
+        value: {
+          column: column.name,
+          table: column.table?.name ?? null,
+          schema: null,
+        },
       })) ?? [];
 
   return (

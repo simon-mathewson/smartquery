@@ -1,4 +1,4 @@
-import type { Value } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 
 export type UniqueValue = { column: string; value: string };
 
@@ -10,7 +10,7 @@ export type CreateLocation = {
 
 export type UpdateLocation = {
   column: string;
-  originalValue: Value;
+  originalValue: DbValue;
   uniqueValues: UniqueValue[];
   table: string;
   type: 'update';
@@ -24,7 +24,7 @@ export type DeleteLocation = {
 
 export type Location = CreateLocation | UpdateLocation | DeleteLocation;
 
-export type CreateValue = Value | undefined;
+export type CreateValue = DbValue | undefined;
 
 export type CreateRow = {
   [column: string]: CreateValue;
@@ -43,7 +43,7 @@ export type CreateChangeInput = Omit<CreateChange, 'location'> & {
 export type UpdateChange = {
   location: UpdateLocation;
   type: 'update';
-  value: Value;
+  value: DbValue;
 };
 
 export type DeleteChange = {
@@ -60,7 +60,7 @@ export type AggregatedCreateChanges = {
 
 export type AggregatedUpdateChanges = {
   location: Pick<UpdateLocation, 'column' | 'table'> & { uniqueValues: UniqueValue[][] };
-  value: Value;
+  value: DbValue;
 };
 
 export type AggregatedDeleteChanges = {

@@ -19,7 +19,7 @@ export const ViewColumnsButton: React.FC = () => {
     const sql = await getSql({
       engine: activeConnection.engine,
       select: query.select,
-      table: query.select.tables[0].originalName,
+      table: query.select.tables[0],
     });
 
     void addQuery({ sql }, { afterActiveTab: true, alwaysRun: true });

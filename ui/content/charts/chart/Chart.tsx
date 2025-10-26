@@ -6,7 +6,7 @@ import { ThemeContext } from '~/content/theme/Context';
 import { primaryColors } from '~/content/theme/primaryColors';
 import { isDateTimeType } from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { Value } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 import { BarChart } from './BarChart';
 import { LineChart } from './LineChart';
 import { PieChart } from './PieChart';
@@ -18,26 +18,44 @@ export const Chart = () => {
   } = useDefinedContext(QueryContext);
   const result = useContext(ResultContext);
 
-  const xColumn = chart
-    ? result?.columns?.find((column) =>
+  const xColumnIndex = chart
+    ? result?.columns?.findIndex((column) =>
         compareColumnRefs(
-          { column: chart.xColumn, table: chart.xTable },
-          { column: column.name, table: column.table?.name ?? null },
+          { column: chart.xColumn, table: chart.xTable, schema: null },
+          { column: column.name, table: column.table?.name ?? null, schema: null },
         ),
-      )
+      ) ?? null
+    : null;
+  const xColumn = xColumnIndex === null ? null : result?.columns?.[xColumnIndex] ?? null;
+
+  const yColumnIndex = chart
+    ? result?.columns?.findIndex((column) =>
+        compareColumnRefs(
+          { column: chart.yColumn, table: chart.yTable, schema: null },
+          { column: column.name, table: column.table?.name ?? null, schema: null },
+        ),
+      ) ?? null
     : null;
 
   const chartData = useMemo(() => {
-    if (!result || !chart || !xColumn) {
+    if (
+      !result ||
+      !chart ||
+      !xColumn ||
+      xColumnIndex === null ||
+      xColumnIndex < 0 ||
+      yColumnIndex === null ||
+      yColumnIndex < 0
+    ) {
       return null;
     }
 
     return result.rows.map<{
-      x: Date | Value;
+      x: Date | DbValue;
       y: number;
     }>((row) => {
-      const x = row[chart.xColumn];
-      const y = Number(chart.yColumn ? row[chart.yColumn] : null);
+      const x = row[xColumnIndex];
+      const y = Number(row[yColumnIndex]);
 
       if (isDateTimeType(xColumn.dataType) && x !== null) {
         // Normalize ISO with missing seconds (e.g. from Postgres timestamp)
@@ -50,7 +68,7 @@ export const Chart = () => {
 
       return { x, y };
     });
-  }, [result, chart, xColumn]);
+  }, [result, chart, xColumn, xColumnIndex, yColumnIndex]);
 
   if (!chart || !chartData || !xColumn) {
     return null;

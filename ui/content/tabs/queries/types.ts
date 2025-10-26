@@ -11,11 +11,10 @@ export type AddQueryOptions = {
 };
 
 export type Select = {
-  database: string;
   parsed: NodeSqlParser.Select;
-  schema?: string;
   tables: {
     name: string;
     originalName: string;
+    schema?: string;
   }[];
 };

@@ -9,4 +9,20 @@ export type Connector = {
   sshTunnel: SSHConnection | null;
 } & ({ mysqlPool: MySqlPool } | { postgresPool: PostgresPool });
 
-export type DbValue = string | string[] | number | bigint | boolean | Date | Buffer | null;
+export type DbValue = string | null;
+
+export type Field = {
+  name: string;
+} & (
+  | {
+      type: 'column';
+      ref:
+        | { column: string; schema?: string; table: string }
+        | { columnId: number; tableId: number };
+    }
+  | { type: 'virtual' | 'column-or-virtual' }
+);
+
+export type LegacyResults = Array<Array<Record<string, DbValue>>>;
+
+export type Results = Array<{ fields: Field[]; rows: DbValue[][] }> | LegacyResults;

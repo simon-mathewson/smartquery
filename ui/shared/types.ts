@@ -2,11 +2,11 @@ import type { Select } from '~/content/tabs/queries/types';
 import type { DataType } from './dataTypes/types';
 import type { inferRouterInputs } from '@trpc/server';
 import type { router } from '../../link/src/main/router/router';
-import type { Database as SqliteDatabase, SqlValue as SqliteValue } from 'sql.js';
+import type { Database as SqliteDatabase } from 'sql.js';
 import type { InputMode } from '~/content/tabs/queries/query/types';
 import type { FileConnection, RemoteConnection } from '@/connections/types';
-import type { DbValue as RemoteDbValue } from '@/connector/types';
 import type { Chart } from '@/savedQueries/types';
+import type { DbValue } from '@/connector/types';
 
 export type ConnectInput = inferRouterInputs<typeof router>['connectDb'];
 
@@ -19,14 +19,6 @@ export type ActiveConnection =
 export type Database = {
   name: string;
   schemas: string[];
-};
-
-export type DbValue = SqliteValue | RemoteDbValue;
-
-export type Value = string | null;
-
-export type Row = {
-  [column: string]: Value;
 };
 
 export type Column = {
@@ -44,7 +36,7 @@ export type Column = {
   isUnique?: boolean;
   name: string;
   originalName: string;
-  table?: { name: string; originalName: string } | null;
+  table?: { name: string; originalName: string; schema?: string } | null;
 };
 
 export type Query = {
@@ -63,11 +55,11 @@ export type TableType = 'BASE TABLE' | 'SYSTEM_VIEW' | 'VIEW';
 
 export type QueryResult = {
   columns: Column[] | null;
-  rows: Row[];
-  schema?: string;
+  rows: DbValue[][];
   tables: {
     name: string;
     originalName: string;
+    schema?: string;
     type: TableType | null;
   }[];
   totalRows?: number;

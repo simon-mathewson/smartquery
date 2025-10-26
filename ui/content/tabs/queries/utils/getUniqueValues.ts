@@ -1,15 +1,15 @@
-import type { Column, Row } from '~/shared/types';
+import type { Column } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 
-export const getUniqueValues = (columns: Column[], rows: Row[], rowIndex: number) => {
-  const uniqueColumns = columns.filter((column) => column.isPrimaryKey || column.isUnique);
-
-  const row = rows.at(rowIndex);
+export const getUniqueValues = (columns: Column[], row: DbValue[] | undefined) => {
   if (!row) return null;
 
-  return uniqueColumns
-    .filter((column) => column.name in row)
-    .map((column) => ({
-      column: column.originalName,
-      value: rows[rowIndex][column.name] as string,
-    }));
+  const uniqueColumns = columns
+    .filter((column, index) => (column.isPrimaryKey || column.isUnique) && index in row)
+    .map((column, index) => ({ column, index }));
+
+  return uniqueColumns.map(({ column, index }) => ({
+    column: column.originalName,
+    value: row[index] as string,
+  }));
 };

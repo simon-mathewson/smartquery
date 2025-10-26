@@ -1,16 +1,16 @@
+import type { LegacyResults, Results } from '@/connector/types';
+import { TRPCClientError } from '@trpc/client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { assert } from 'ts-essentials';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { ActiveConnection, Database, DbValue } from '~/shared/types';
-import { LinkApiContext } from '../../link/api/Context';
-import { ConnectionsContext } from '../Context';
+import { CloudApiContext } from '~/content/cloud/api/Context';
 import { SqliteContext } from '~/content/sqlite/Context';
-import { convertSqliteResultsToRecords } from './convertSqliteResultsToRecords';
 import { getSelectFromStatement } from '~/content/tabs/queries/utils/parse';
 import { ToastContext } from '~/content/toast/Context';
 import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
-import { TRPCClientError } from '@trpc/client';
-import { CloudApiContext } from '~/content/cloud/api/Context';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import type { ActiveConnection, Database } from '~/shared/types';
+import { LinkApiContext } from '../../link/api/Context';
+import { ConnectionsContext } from '../Context';
 
 export const useActiveConnection = () => {
   const toast = useDefinedContext(ToastContext);
@@ -34,18 +34,28 @@ export const useActiveConnection = () => {
 
       if (currentConnection.engine !== 'sqlite') {
         try {
-          if (currentConnection.connectedViaCloud) {
-            return await cloudApi.connector.sendQuery.mutate({
-              connectorId: currentConnection.connectorId,
-              statements,
-            });
-          } else {
-            return await linkApi.sendQuery.mutate({
-              clientId: currentConnection.connectorId,
-              connectorId: currentConnection.connectorId,
-              statements,
-            });
-          }
+          const results = await (currentConnection.connectedViaCloud
+            ? cloudApi.connector.sendQuery.mutate
+            : linkApi.sendQuery.mutate)({
+            connectorId: currentConnection.connectorId,
+            statements,
+          });
+
+          const isLegacy = Array.isArray(results.at(0));
+
+          if (!isLegacy) return results as Exclude<Results, LegacyResults>;
+
+          const convertedResults: Exclude<Results, LegacyResults> = (results as LegacyResults).map(
+            (result) => ({
+              fields: Object.keys(result[0]).map((key) => ({
+                name: key,
+                type: 'column-or-virtual',
+              })),
+              rows: result.map((row) => Object.values(row)),
+            }),
+          );
+
+          return convertedResults;
         } catch (error) {
           console.error(error);
 
@@ -95,9 +105,15 @@ export const useActiveConnection = () => {
         }
       }
 
-      const results = convertSqliteResultsToRecords(
-        statements.map((statement) => currentConnection.sqliteDb.exec(statement)[0]),
-      ) as Record<string, DbValue>[][];
+      const results: Results = statements.map((statement) => {
+        const result = currentConnection.sqliteDb.exec(statement).at(0);
+
+        return {
+          fields:
+            result?.columns.map((column) => ({ name: column, type: 'column-or-virtual' })) ?? [],
+          rows: result?.values.map((row) => row.map((v) => (v === null ? null : String(v)))) ?? [],
+        };
+      });
 
       if (fileHandle) {
         const updatedDb = currentConnection.sqliteDb.export();
@@ -134,32 +150,31 @@ export const useActiveConnection = () => {
 
     const databasesStatement = {
       mysql:
-        "SELECT schema_name AS db FROM information_schema.schemata WHERE schema_name NOT IN ('information_schema', 'performance_schema', 'sys') ORDER BY schema_name ASC",
-      postgres:
-        'SELECT datname AS db FROM pg_database WHERE datistemplate = false ORDER BY datname ASC',
+        "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT IN ('information_schema', 'performance_schema', 'sys') ORDER BY schema_name ASC",
+      postgres: 'SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname ASC',
     }[activeConnection.engine];
 
     const statements = [databasesStatement];
 
     if (activeConnection.engine === 'postgres') {
       statements.push(
-        "SELECT schema_name AS schema, catalog_name AS db FROM information_schema.schemata WHERE schema_name <> 'information_schema' AND schema_name NOT LIKE 'pg_%' ORDER BY schema_name ASC",
+        "SELECT schema_name, catalog_name FROM information_schema.schemata WHERE schema_name <> 'information_schema' AND schema_name NOT LIKE 'pg_%' ORDER BY schema_name ASC",
       );
     }
 
     setIsLoadingDatabases(true);
 
     try {
-      await runQuery(statements).then(([dbRows, schemaRows]) => {
+      await runQuery(statements).then(([dbResults, schemaResults]) => {
         setDatabases(
-          dbRows.map((dbRow) => {
-            const db = String(dbRow.db);
+          dbResults.rows.map(([dbValue]) => {
+            const db = String(dbValue);
             return {
               name: db,
               schemas:
-                schemaRows
-                  ?.filter((schemaRow) => db === String(schemaRow.db))
-                  .map((schemaRow) => String(schemaRow.schema)) ?? [],
+                schemaResults?.rows
+                  .filter(([_, schemaDb]) => db === String(schemaDb))
+                  .map(([schema]) => String(schema)) ?? [],
             };
           }),
         );

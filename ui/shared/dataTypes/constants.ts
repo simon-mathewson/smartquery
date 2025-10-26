@@ -3,6 +3,7 @@ export const dataTypes = [
   'boolean',
   'char',
   'character varying',
+  'date',
   'datetime',
   'decimal',
   'enum',

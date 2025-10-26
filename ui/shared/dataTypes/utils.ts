@@ -22,4 +22,4 @@ export const isTimeType = (dataType: DataType) =>
   includes(['time', 'time with time zone', 'time without time zone'], dataType);
 
 export const isDateOrTimeType = (dataType: DataType) =>
-  isDateTimeType(dataType) || isTimeType(dataType);
+  dataType === 'date' || isDateTimeType(dataType) || isTimeType(dataType);

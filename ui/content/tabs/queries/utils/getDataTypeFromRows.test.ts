@@ -1,16 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import { getDataTypeFromRows } from './getDataTypeFromRows';
-import type { DbValue } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 
 describe('getDataTypeFromRows', () => {
   describe('Boolean detection', () => {
     test('detects boolean values', () => {
-      const rows = [{ column: true }, { column: false }, { column: true }];
-      const result = getDataTypeFromRows(rows, 'column');
-      expect(result).toEqual({ dataType: 'boolean', isNullable: false });
-    });
-
-    test('detects string boolean values', () => {
       const rows = [
         { column: 'true' },
         { column: 'false' },
@@ -20,15 +14,13 @@ describe('getDataTypeFromRows', () => {
         { column: 'no' },
         { column: 'y' },
         { column: 'n' },
-        { column: '1' },
-        { column: '0' },
       ];
       const result = getDataTypeFromRows(rows, 'column');
       expect(result).toEqual({ dataType: 'boolean', isNullable: false });
     });
 
     test('detects nullable boolean values', () => {
-      const rows = [{ column: true }, { column: null }, { column: false }];
+      const rows = [{ column: 'true' }, { column: null }, { column: 'false' }];
       const result = getDataTypeFromRows(rows, 'column');
       expect(result).toEqual({ dataType: 'boolean', isNullable: true });
     });
@@ -36,13 +28,7 @@ describe('getDataTypeFromRows', () => {
 
   describe('Numeric detection', () => {
     test('detects integer values', () => {
-      const rows = [{ column: 1 }, { column: 42 }, { column: -100 }];
-      const result = getDataTypeFromRows(rows, 'column');
-      expect(result).toEqual({ dataType: 'int', isNullable: false });
-    });
-
-    test('detects string integer values', () => {
-      const rows = [{ column: '123' }, { column: '-456' }, { column: '0' }];
+      const rows = [{ column: '1' }, { column: '42' }, { column: '-100' }];
       const result = getDataTypeFromRows(rows, 'column');
       expect(result).toEqual({ dataType: 'int', isNullable: false });
     });
@@ -54,12 +40,6 @@ describe('getDataTypeFromRows', () => {
     });
 
     test('detects decimal values', () => {
-      const rows = [{ column: 1.5 }, { column: 3.14 }, { column: -2.7 }];
-      const result = getDataTypeFromRows(rows, 'column');
-      expect(result).toEqual({ dataType: 'decimal', isNullable: false });
-    });
-
-    test('detects string decimal values', () => {
       const rows = [{ column: '1.5' }, { column: '3.14' }, { column: '-2.7' }];
       const result = getDataTypeFromRows(rows, 'column');
       expect(result).toEqual({ dataType: 'decimal', isNullable: false });
@@ -85,12 +65,6 @@ describe('getDataTypeFromRows', () => {
 
     test('detects BigInt literals', () => {
       const rows = [{ column: '2n' }, { column: '123n' }, { column: '1_000_000n' }];
-      const result = getDataTypeFromRows(rows, 'column');
-      expect(result).toEqual({ dataType: 'bigint', isNullable: false });
-    });
-
-    test('detects BigInt objects', () => {
-      const rows = [{ column: BigInt(2) }, { column: BigInt(123) }, { column: BigInt(1000000) }];
       const result = getDataTypeFromRows(rows, 'column');
       expect(result).toEqual({ dataType: 'bigint', isNullable: false });
     });
@@ -163,15 +137,6 @@ describe('getDataTypeFromRows', () => {
       const rows = [
         { column: '2023-12-25T10:30:00+02:00' },
         { column: '2024-01-01T15:45:30-05:00' },
-      ];
-      const result = getDataTypeFromRows(rows, 'column');
-      expect(result).toEqual({ dataType: 'datetime', isNullable: false });
-    });
-
-    test('detects Date objects', () => {
-      const rows = [
-        { column: new Date('2023-12-25') },
-        { column: new Date('2024-01-01T10:30:00') },
       ];
       const result = getDataTypeFromRows(rows, 'column');
       expect(result).toEqual({ dataType: 'datetime', isNullable: false });
@@ -274,13 +239,13 @@ describe('getDataTypeFromRows', () => {
     });
 
     test('limits to first 10,000 rows', () => {
-      const rows = Array.from({ length: 15000 }, (_, i) => ({ column: i }));
+      const rows = Array.from({ length: 15000 }, (_, i) => ({ column: String(i) }));
       const result = getDataTypeFromRows(rows, 'column');
       expect(result).toEqual({ dataType: 'int', isNullable: false });
     });
 
     test('handles mixed types (falls back to varchar)', () => {
-      const rows = [{ column: 'string' }, { column: 123 }, { column: true }];
+      const rows = [{ column: 'string' }, { column: '123' }, { column: 'true' }];
       const result = getDataTypeFromRows(rows, 'column');
       expect(result).toEqual({ dataType: 'varchar', isNullable: false });
     });
@@ -305,7 +270,7 @@ describe('getDataTypeFromRows', () => {
     test('handles missing column', () => {
       const rows = [{ otherColumn: 'test' }, { otherColumn: 'value' }];
       const result = getDataTypeFromRows(rows, 'missingColumn');
-      expect(result).toEqual({ dataType: 'varchar', isNullable: false });
+      expect(result).toEqual({ dataType: 'varchar', isNullable: true });
     });
   });
 });

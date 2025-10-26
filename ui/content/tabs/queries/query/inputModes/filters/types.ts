@@ -1,4 +1,4 @@
-import type { Value } from '~/shared/types';
+import type { DbValue } from '@/connector/types';
 import type { NULL_OPERATORS, OPERATORS } from './constants';
 import type { ColumnRef } from '../../../utils/columnRefs';
 
@@ -18,7 +18,7 @@ export type FilterWithoutValue = {
 
 export type FilterWithValue = Omit<FilterWithoutValue, 'operator'> & {
   operator: OperatorWithValue;
-  value: Value;
+  value: DbValue;
 };
 
 export type Filter = FilterWithValue | FilterWithoutValue;

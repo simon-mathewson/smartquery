@@ -32,8 +32,10 @@ export const useTableList = () => {
     setIsLoading(true);
 
     void runQuery([tableNamesStatement], { skipSqliteWrite: true })
-      .then(([rows]) => {
-        setTables(rows.map(({ t, s }) => ({ name: String(t), schema: s ? String(s) : undefined })));
+      .then(([results]) => {
+        setTables(
+          results.rows.map(([t, s]) => ({ name: String(t), schema: s ? String(s) : undefined })),
+        );
       })
       .finally(() => {
         setIsLoading(false);
@@ -47,7 +49,11 @@ export const useTableList = () => {
         .map((q) => {
           const result = q.id in queryResults ? queryResults[q.id] : null;
           return !q.savedQueryId && result?.tables.length === 1
-            ? tables.find((t) => t.name === result.tables[0].name && t.schema === result.schema)
+            ? tables.find(
+                (t) =>
+                  t.name === result.tables[0].name &&
+                  (!result.tables[0].schema || t.schema === result.tables[0].schema),
+              )
             : undefined;
         })
         .filter(isNotUndefined),

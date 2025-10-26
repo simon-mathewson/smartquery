@@ -22,9 +22,7 @@ describe('Query parsing utils', () => {
 
         expect(result.statements).toEqual(['SELECT id, name FROM users']);
         expect(result.select).toEqual({
-          database: 'test_db',
-          schema: undefined,
-          tables: [{ name: 'users', originalName: 'users' }],
+          tables: [{ name: 'users', originalName: 'users', schema: 'test_db' }],
           parsed: expect.any(Object),
         });
       });
@@ -35,9 +33,7 @@ describe('Query parsing utils', () => {
 
         expect(result.statements).toEqual(['SELECT id, name FROM other_db.users']);
         expect(result.select).toEqual({
-          database: 'other_db',
-          schema: undefined,
-          tables: [{ name: 'users', originalName: 'users' }],
+          tables: [{ name: 'users', originalName: 'users', schema: 'other_db' }],
           parsed: expect.any(Object),
         });
       });
@@ -50,11 +46,9 @@ describe('Query parsing utils', () => {
           'SELECT u.id, u.name FROM users u JOIN orders o ON u.id = o.user_id',
         ]);
         expect(result.select).toEqual({
-          database: 'test_db',
-          schema: undefined,
           tables: [
-            { name: 'u', originalName: 'users' },
-            { name: 'o', originalName: 'orders' },
+            { name: 'u', originalName: 'users', schema: 'test_db' },
+            { name: 'o', originalName: 'orders', schema: 'test_db' },
           ],
           parsed: expect.any(Object),
         });
@@ -76,9 +70,7 @@ describe('Query parsing utils', () => {
 
         expect(result.statements).toEqual(['SELECT id, name FROM users']);
         expect(result.select).toEqual({
-          database: 'test_db',
-          schema: 'public',
-          tables: [{ name: 'users', originalName: 'users' }],
+          tables: [{ name: 'users', originalName: 'users', schema: 'public' }],
           parsed: expect.any(Object),
         });
       });
@@ -89,9 +81,7 @@ describe('Query parsing utils', () => {
 
         expect(result.statements).toEqual(['SELECT id, name FROM custom_schema.users']);
         expect(result.select).toEqual({
-          database: 'test_db',
-          schema: 'custom_schema',
-          tables: [{ name: 'users', originalName: 'users' }],
+          tables: [{ name: 'users', originalName: 'users', schema: 'custom_schema' }],
           parsed: expect.any(Object),
         });
       });
@@ -104,11 +94,9 @@ describe('Query parsing utils', () => {
           'SELECT u.id, u.name FROM users u JOIN orders o ON u.id = o.user_id',
         ]);
         expect(result.select).toEqual({
-          database: 'test_db',
-          schema: 'public',
           tables: [
-            { name: 'u', originalName: 'users' },
-            { name: 'o', originalName: 'orders' },
+            { name: 'u', originalName: 'users', schema: 'public' },
+            { name: 'o', originalName: 'orders', schema: 'public' },
           ],
           parsed: expect.any(Object),
         });

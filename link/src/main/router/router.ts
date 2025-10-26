@@ -44,8 +44,6 @@ export const router = trpc.router({
   sendQuery: trpc.procedure
     .input(
       z.object({
-        /** @deprecated Use connectorId instead */
-        clientId: z.string().optional(),
         connectorId: z.string().optional(),
         statements: z.array(z.string()),
       }),
@@ -53,10 +51,8 @@ export const router = trpc.router({
     .mutation(async (props) => {
       const {
         ctx: { connectors },
-        input: { statements },
+        input: { connectorId, statements },
       } = props;
-
-      const connectorId = props.input.clientId ?? props.input.connectorId;
 
       if (!connectorId) {
         throw new Error('Connector ID is required');
