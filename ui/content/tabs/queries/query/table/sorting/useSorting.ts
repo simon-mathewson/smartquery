@@ -29,7 +29,9 @@ export const useSorting = () => {
 
       const columnRef = getColumnRef(
         column,
-        'schema' in activeConnection ? activeConnection.schema : activeConnection.database,
+        activeConnection.engine === 'postgres'
+          ? activeConnection.schema
+          : activeConnection.database,
       );
 
       const newSortDirection = (() => {

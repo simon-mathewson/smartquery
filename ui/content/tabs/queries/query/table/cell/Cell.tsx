@@ -116,7 +116,9 @@ export const Cell: React.FC<CellProps> = (props) => {
         sorting.sortedColumn,
         getColumnRef(
           column as Column,
-          'schema' in activeConnection ? activeConnection.schema : activeConnection.database,
+          activeConnection.engine === 'postgres'
+            ? activeConnection.schema
+            : activeConnection.database,
         ),
       )
     : false;

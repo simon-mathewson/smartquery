@@ -111,7 +111,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const resizedColumnWidthsStorageKey = `Table.resizedColumnWidths.${activeConnection.id}.${
     activeConnection.database
-  }${'schema' in activeConnection ? `.${activeConnection.schema}` : ''}.${tables
+  }${activeConnection.engine === 'postgres' ? `.${activeConnection.schema}` : ''}.${tables
     .map(({ name }) => name)
     .join('-')}`;
 

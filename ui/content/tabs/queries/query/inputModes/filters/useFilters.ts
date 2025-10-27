@@ -31,7 +31,9 @@ export const useFilters = () => {
         columns,
         filters,
         currentSchema:
-          'schema' in activeConnection ? activeConnection.schema : activeConnection.database,
+          activeConnection.engine === 'postgres'
+            ? activeConnection.schema
+            : activeConnection.database,
       });
 
       // Remove offset

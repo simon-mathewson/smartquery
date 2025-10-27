@@ -26,7 +26,7 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
 
   const currentSchema =
-    'schema' in activeConnection ? activeConnection.schema : activeConnection.database;
+    activeConnection.engine === 'postgres' ? activeConnection.schema : activeConnection.database;
 
   const { columns, tables } = useDefinedContext(ResultContext);
   assert(columns);
@@ -47,7 +47,8 @@ export const FilterControl: React.FC<FilterControlProps> = (props) => {
           updateFilter((current) => ({ ...current, columnRef: newColumnRef }));
         }}
         options={columns
-          .filter((col) => col.isVisible)
+          /** Virtual columns are currently not supported. TODO: Add support via HAVING clause. */
+          .filter((col) => col.isVisible && !col.isVirtual)
           .map((col) => ({
             label: col.table && tables.length > 1 ? `${col.table.name}.${col.name}` : col.name,
             value: getColumnRef(col, currentSchema),

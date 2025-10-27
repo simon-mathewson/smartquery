@@ -74,6 +74,11 @@ export const getDataTypeFromRows = (
     }
   }
 
+  const isAllDateOnly = values.every((value) => REGEX_PATTERNS.DATE_ONLY.test(value));
+  if (isAllDateOnly) {
+    return { dataType: 'date', isNullable };
+  }
+
   // Check for date/time values
   const isAllDateTime = values.every((value) => {
     // Check year-month pattern first with validation
@@ -84,7 +89,6 @@ export const getDataTypeFromRows = (
 
     // Check other date formats
     const otherDateFormats = [
-      REGEX_PATTERNS.DATE_ONLY,
       REGEX_PATTERNS.DATETIME,
       REGEX_PATTERNS.ISO_DATETIME,
       REGEX_PATTERNS.DATETIME_MILLIS,

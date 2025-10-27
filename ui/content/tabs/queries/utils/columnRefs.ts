@@ -8,13 +8,19 @@ export type ColumnRef = {
 };
 
 export const getColumnRef = (column: Column, currentSchema: string | undefined): ColumnRef => {
-  const table = column.table?.originalName;
-  const schema = column.table?.schema;
+  // Don't use column aliases as they don't work in Postgres WHERE clauses
+  const columnNameToUse = column.originalName;
+
+  const tableNameToUse = column.table?.name ?? null;
+  const isTableAlias = tableNameToUse && tableNameToUse !== column.table?.originalName;
+
+  const schemaName = column.table?.schema ?? null;
+  const schemaNameToUse = isTableAlias || schemaName === currentSchema ? null : schemaName;
 
   return {
-    column: column.originalName,
-    table: table ?? null,
-    schema: schema === currentSchema ? null : schema ?? null,
+    column: columnNameToUse,
+    table: tableNameToUse,
+    schema: schemaNameToUse,
   };
 };
 

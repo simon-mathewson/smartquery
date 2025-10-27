@@ -112,7 +112,7 @@ describe('getDataTypeFromRows', () => {
     test('detects date-only values', () => {
       const rows = [{ column: '2023-12-25' }, { column: '2024-01-01' }];
       const result = getDataTypeFromRows(rows, 'column');
-      expect(result).toEqual({ dataType: 'datetime', isNullable: false });
+      expect(result).toEqual({ dataType: 'date', isNullable: false });
     });
 
     test('detects datetime values', () => {
