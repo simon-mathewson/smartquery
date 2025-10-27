@@ -50,9 +50,15 @@ export const ResizeHandle = (props: ResizeHandleProps) => {
     [maxWidth, minWidth, position, onResize],
   );
 
+  const onClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
+
   return (
     <div
       className="absolute top-0 z-10 h-full w-[18px] cursor-col-resize bg-clip-content px-2 transition-all ease-linear hover:bg-primary"
+      onClick={onClick}
       onMouseDown={onMouseDown}
       style={{
         [position]: `-${offset}px`,
