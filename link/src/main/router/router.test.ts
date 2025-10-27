@@ -6,6 +6,7 @@ import { cloneDeep } from 'lodash-es';
 import { mocks } from '../test/mocks';
 import { seed } from '../../../seed/seed';
 import { disconnect } from '@/connector/disconnect';
+import assert from 'node:assert';
 
 describe('router', () => {
   let context = initialContext;
@@ -107,11 +108,16 @@ describe('router', () => {
               ],
             });
 
+            assert(
+              response.every((r) => 'rows' in r),
+              'Response is an array of objects with a rows property',
+            );
+
             expect(response).toHaveLength(4);
-            expect(response[0]).toHaveLength(3);
-            expect(response[1]).toHaveLength(0);
-            expect(response[2]).toHaveLength(0);
-            expect(response[3]).toHaveLength(0);
+            expect(response[0].rows).toHaveLength(3);
+            expect(response[1].rows).toHaveLength(0);
+            expect(response[2].rows).toHaveLength(0);
+            expect(response[3].rows).toHaveLength(0);
           },
         );
       });
@@ -134,8 +140,13 @@ describe('router', () => {
               statements: ['SELECT * FROM simple WHERE id = 10'],
             });
 
+            assert(
+              response.every((r) => 'rows' in r),
+              'Response is an array of objects with a rows property',
+            );
+
             expect(response).toHaveLength(1);
-            expect(response[0]).toHaveLength(0);
+            expect(response[0].rows).toHaveLength(0);
           },
         );
       });
