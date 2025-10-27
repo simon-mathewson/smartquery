@@ -13,7 +13,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild:all": "pnpm run typecheck && pnpm run lint",
-    "build:all": "pnpm build:node && pnpm run build:linux && pnpm run build:mac && pnpm run build:win",
+    "build:all": "pnpm build:node && rm -rf dist && pnpm run build:linux && pnpm run build:mac && pnpm run build:win",
     "build:linux": "electron-builder --linux --config --publish always",
     "build:mac:arm64": "electron-builder --mac --config --arm64 --publish always",
     "build:mac:x64": "electron-builder --mac --config --x64 --publish always",
