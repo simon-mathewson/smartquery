@@ -6,6 +6,7 @@ import { getResultsAsRecords } from '~/content/tabs/queries/utils/getResultsAsRe
 import { ToastContext } from '~/content/toast/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import { getSortedEnumValues } from '~/shared/utils/dbEnums/dbEnums';
 import { getStatements } from './getStatements';
 import type { RemoteSchemaDefinitions, SchemaDefinitions, SqliteSchemaDefinitions } from './types';
 
@@ -73,7 +74,13 @@ export const useSchemaDefinitions = () => {
             ...table,
             columns: columns
               .filter((column) => column.table_name === table.table_name)
-              .map((column) => omit(column, 'table_name')),
+              .map((column) => {
+                const enumValues = getSortedEnumValues(column, engine);
+                return {
+                  ...omit(column, 'table_name', 'postgres_enum_values', 'mysql_column_type'),
+                  ...(enumValues ? { enumValues } : {}),
+                };
+              }),
             tableConstraints: tableConstraints
               .filter((constraint) => constraint.table_name === table.table_name)
               .map((constraint) => omit(constraint, 'table_name')),
@@ -101,7 +108,14 @@ export const useSchemaDefinitions = () => {
       } finally {
         setIsLoading(false);
       }
-    }, [storedSchemaDefinitions, activeConnection, runQuery, setStoredSchemaDefinitions, toast]);
+    }, [
+      storedSchemaDefinitions,
+      activeConnection,
+      runQuery,
+      setStoredSchemaDefinitions,
+      toast,
+      engine,
+    ]);
 
   // Fetch schema definitions when active connection changes
   useEffect(() => {

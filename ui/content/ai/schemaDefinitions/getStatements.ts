@@ -13,8 +13,22 @@ export const getStatements = (
         WHERE table_schema = '${activeConnection.schema}'
       `,
         `
-        SELECT table_name, column_name, ordinal_position, column_default, is_nullable, data_type, character_maximum_length, numeric_precision, numeric_scale FROM information_schema.columns
-        WHERE table_schema = '${activeConnection.schema}'
+        SELECT 
+          c.table_name, 
+          c.column_name, 
+          c.ordinal_position, 
+          c.column_default, 
+          c.is_nullable, 
+          c.data_type, 
+          c.character_maximum_length, 
+          c.numeric_precision, 
+          c.numeric_scale,
+          array_remove(array_agg(e.enumlabel), NULL) as postgres_enum_values
+        FROM information_schema.columns AS c
+        LEFT JOIN pg_type AS t ON c.udt_name = t.typname
+        LEFT JOIN pg_enum AS e ON e.enumtypid = t.oid
+        WHERE c.table_schema = '${activeConnection.schema}'
+        GROUP BY c.table_name, c.column_name, c.ordinal_position, c.column_default, c.is_nullable, c.data_type, c.character_maximum_length, c.numeric_precision, c.numeric_scale
       `,
         `
         SELECT table_name, constraint_name, constraint_type FROM information_schema.table_constraints
@@ -33,7 +47,7 @@ export const getStatements = (
           WHERE TABLE_SCHEMA = '${database}'
         `,
         `
-          SELECT TABLE_NAME table_name, COLUMN_NAME column_name, ORDINAL_POSITION ordinal_position, COLUMN_DEFAULT column_default, IS_NULLABLE is_nullable, DATA_TYPE data_type, CHARACTER_MAXIMUM_LENGTH character_maximum_length, NUMERIC_PRECISION numeric_precision, NUMERIC_SCALE numeric_scale FROM information_schema.columns
+          SELECT TABLE_NAME table_name, COLUMN_NAME column_name, ORDINAL_POSITION ordinal_position, COLUMN_DEFAULT column_default, IS_NULLABLE is_nullable, DATA_TYPE data_type, CHARACTER_MAXIMUM_LENGTH character_maximum_length, NUMERIC_PRECISION numeric_precision, NUMERIC_SCALE numeric_scale, COLUMN_TYPE mysql_column_type FROM information_schema.columns
           WHERE TABLE_SCHEMA = '${database}'
         `,
         `

@@ -3,17 +3,10 @@ import type { DbValue, Field } from '@/connector/types';
 import { sortBy, uniqWith } from 'lodash';
 import type { DataType } from '~/shared/dataTypes/types';
 import type { Column } from '~/shared/types';
+import { getSortedEnumValues } from '~/shared/utils/dbEnums/dbEnums';
 import type { Select } from '../types';
 import { getVirtualColumn } from './getVirtualColumn';
 import { assert } from 'ts-essentials';
-
-export const getMySqlEnumValuesFromColumnType = (columnType: string) => {
-  if (!columnType.startsWith('enum(')) return null;
-
-  return [...columnType.matchAll(/'((?:[^']|'')*)'/g)].map(([_, value]) =>
-    value.replaceAll("''", "'"),
-  );
-};
 
 export const getColumnsStatements = (props: {
   connection: Connection;
@@ -219,25 +212,10 @@ export const getColumn = (props: {
     sqlite_is_unique,
   } = column;
 
-  const getEnumValues = () => {
-    if (engine === 'mysql' && mysql_column_type) {
-      return getMySqlEnumValuesFromColumnType(mysql_column_type);
-    }
-
-    if (engine === 'postgres') {
-      const enumValues = postgres_enum_values?.slice(1, -1).split(',') ?? [];
-
-      if (enumValues.length) {
-        return enumValues;
-      }
-
-      return null;
-    }
-
-    return null;
-  };
-
-  const orderedEnumValues = sortBy(getEnumValues());
+  const orderedEnumValues = getSortedEnumValues(
+    { postgres_enum_values, mysql_column_type },
+    engine,
+  );
 
   const getForeignKey = () => {
     const constraint = columnConstraints.find(
