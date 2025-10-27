@@ -66,6 +66,7 @@ export const connect = async (connection: RemoteConnection): Promise<Connector> 
       password: password ?? undefined,
       port,
       user,
+      ssl: { rejectUnauthorized: false },
     });
 
     // Important: Handle pool errors to prevent unhandled rejections
