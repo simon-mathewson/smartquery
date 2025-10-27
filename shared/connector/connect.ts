@@ -5,7 +5,10 @@ import { Pool as PostgresPool } from 'pg';
 import { createSshTunnel } from './createSshTunnel';
 import type { Connector } from './types';
 
-export const connect = async (connection: RemoteConnection): Promise<Connector> => {
+export const connect = async (
+  connection: RemoteConnection,
+  options?: { retryWithoutSsl?: boolean },
+): Promise<Connector> => {
   const {
     database,
     engine,
@@ -37,6 +40,7 @@ export const connect = async (connection: RemoteConnection): Promise<Connector> 
       password: password ?? undefined,
       port,
       user,
+      ssl: options?.retryWithoutSsl ? undefined : { rejectUnauthorized: false },
     });
 
     try {
@@ -44,6 +48,14 @@ export const connect = async (connection: RemoteConnection): Promise<Connector> 
       const client = await pool.getConnection();
       client.release();
     } catch (error: unknown) {
+      if (
+        error instanceof Error &&
+        error.message === 'Server does not support secure connection' &&
+        !options?.retryWithoutSsl
+      ) {
+        return connect(connection, { retryWithoutSsl: true });
+      }
+
       console.error(error);
       if (sshTunnel) {
         void sshTunnel.shutdown();
@@ -66,7 +78,7 @@ export const connect = async (connection: RemoteConnection): Promise<Connector> 
       password: password ?? undefined,
       port,
       user,
-      ssl: { rejectUnauthorized: false },
+      ssl: options?.retryWithoutSsl ? false : { rejectUnauthorized: false },
     });
 
     // Important: Handle pool errors to prevent unhandled rejections
@@ -82,6 +94,14 @@ export const connect = async (connection: RemoteConnection): Promise<Connector> 
         await pool.query(`SET search_path TO ${schema}`);
       }
     } catch (error: unknown) {
+      if (
+        error instanceof Error &&
+        error.message === 'The server does not support SSL connections' &&
+        !options?.retryWithoutSsl
+      ) {
+        return connect(connection, { retryWithoutSsl: true });
+      }
+
       console.error(error);
       if (sshTunnel) {
         void sshTunnel.shutdown();
