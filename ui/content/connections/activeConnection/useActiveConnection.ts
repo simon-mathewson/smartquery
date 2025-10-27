@@ -1,4 +1,4 @@
-import type { LegacyResults, Results } from '@/connector/types';
+import type { LegacyResults, NewResults, Results } from '@/connector/types';
 import { TRPCClientError } from '@trpc/client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { assert } from 'ts-essentials';
@@ -43,17 +43,15 @@ export const useActiveConnection = () => {
 
           const isLegacy = Array.isArray(results.at(0));
 
-          if (!isLegacy) return results as Exclude<Results, LegacyResults>;
+          if (!isLegacy) return results as NewResults;
 
-          const convertedResults: Exclude<Results, LegacyResults> = (results as LegacyResults).map(
-            (result) => ({
-              fields: Object.keys(result[0]).map((key) => ({
-                name: key,
-                type: 'column-or-virtual',
-              })),
-              rows: result.map((row) => Object.values(row)),
-            }),
-          );
+          const convertedResults: NewResults = (results as LegacyResults).map((result) => ({
+            fields: Object.keys(result[0]).map((key) => ({
+              name: key,
+              type: 'column-or-virtual',
+            })),
+            rows: result.map((row) => Object.values(row)),
+          }));
 
           return convertedResults;
         } catch (error) {

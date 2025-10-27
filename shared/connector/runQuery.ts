@@ -1,4 +1,4 @@
-import type { Connector, DbValue, Results } from './types';
+import type { Connector, DbValue, NewResults, Results } from './types';
 
 export const runQuery = async (connector: Connector, statements: string[]): Promise<Results> => {
   if ('mysqlPool' in connector) {
@@ -46,7 +46,7 @@ export const runQuery = async (connector: Connector, statements: string[]): Prom
             };
           }),
           rows: rows as DbValue[][],
-        };
+        } satisfies NewResults[number];
       });
     } catch (error) {
       await client.query('ROLLBACK');
@@ -76,26 +76,29 @@ export const runQuery = async (connector: Connector, statements: string[]): Prom
 
       await client.query('COMMIT');
 
-      return results.map((result) => ({
-        rows: result.rows,
-        fields: result.fields.map((field) => {
-          if (field.columnID === 0) {
-            return {
-              type: 'virtual',
-              name: field.name,
-            };
-          }
+      return results.map(
+        (result) =>
+          ({
+            rows: result.rows,
+            fields: result.fields.map((field) => {
+              if (field.columnID === 0) {
+                return {
+                  type: 'virtual',
+                  name: field.name,
+                };
+              }
 
-          return {
-            type: 'column',
-            name: field.name,
-            ref: {
-              columnId: field.columnID,
-              tableId: field.tableID,
-            },
-          };
-        }),
-      }));
+              return {
+                type: 'column',
+                name: field.name,
+                ref: {
+                  columnId: field.columnID,
+                  tableId: field.tableID,
+                },
+              };
+            }),
+          } satisfies NewResults[number]),
+      );
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;

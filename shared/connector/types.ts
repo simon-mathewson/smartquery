@@ -25,4 +25,6 @@ export type Field = {
 
 export type LegacyResults = Array<Array<Record<string, DbValue>>>;
 
-export type Results = Array<{ fields: Field[]; rows: DbValue[][] }> | LegacyResults;
+export type NewResults = Array<{ fields: Field[]; rows: DbValue[][] }>;
+
+export type Results = NewResults | LegacyResults;
