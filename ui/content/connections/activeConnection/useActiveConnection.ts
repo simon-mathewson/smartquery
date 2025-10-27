@@ -46,11 +46,15 @@ export const useActiveConnection = () => {
           if (!isLegacy) return results as NewResults;
 
           const convertedResults: NewResults = (results as LegacyResults).map((result) => ({
-            fields: Object.keys(result[0]).map((key) => ({
-              name: key,
-              type: 'column-or-virtual',
-            })),
-            rows: result.map((row) => Object.values(row)),
+            fields: result.length
+              ? Object.keys(result[0]).map((key) => ({
+                  name: key,
+                  type: 'column-or-virtual',
+                }))
+              : [],
+            rows: result.map((row) =>
+              Object.values(row).map((v) => (v === null ? null : String(v))),
+            ),
           }));
 
           return convertedResults;
