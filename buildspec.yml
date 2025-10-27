@@ -248,8 +248,7 @@ phases:
           pnpm build
           
           # Move all .js.map files to dist/sourcemaps/VITE_UI_VERSION/ for AWS RUM error tracking
-          mkdir -p dist/sourcemaps/$VITE_UI_VERSION
-          find dist -name "*.js.map" -type f -exec mv {} dist/sourcemaps/$VITE_UI_VERSION/ \;
+          find dist -name "*.js.map" -type f -exec sh -c 'mkdir -p "dist/sourcemaps/$VITE_UI_VERSION/$(dirname "${1#dist/}")" && mv "$1" "dist/sourcemaps/$VITE_UI_VERSION/${1#dist/}"' _ {} \;
         fi
   post_build:
     commands:
