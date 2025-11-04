@@ -1,8 +1,8 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { OverlayCard } from '../overlayCard/OverlayCard';
+import React, { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { Button } from '../button/Button';
 import { useOverlay } from '../overlay/useOverlay';
+import { OverlayCard } from '../overlayCard/OverlayCard';
 
 export type ConfirmDeletePopoverProps = {
   onConfirm: () => Promise<void> | void;
@@ -13,30 +13,23 @@ export type ConfirmDeletePopoverProps = {
 export const ConfirmDeletePopover: React.FC<ConfirmDeletePopoverProps> = (props) => {
   const { onConfirm, renderTrigger, text } = props;
 
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
-
   const [menuId] = useState(uuid);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const triggerProps = useMemo(
-    () =>
-      ({
-        'aria-controls': menuId,
-        'aria-expanded': isOpen,
-        'aria-haspopup': 'menu',
-        'aria-label': text,
-        ref: triggerRef,
-      }) as const,
-    [isOpen, menuId, text],
-  );
 
   const overlay = useOverlay({
     align: 'right',
     onClose: () => setIsOpen(false),
     onOpen: () => setIsOpen(true),
-    triggerRef,
   });
+
+  const triggerProps = {
+    'aria-controls': menuId,
+    'aria-expanded': isOpen,
+    'aria-haspopup': 'menu',
+    'aria-label': text,
+    ...overlay.triggerProps,
+  } as const;
 
   return (
     <>

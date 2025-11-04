@@ -1,24 +1,23 @@
 import { range } from 'lodash';
 import { useMemo } from 'react';
+import type { OverlayControl } from '~/shared/components/overlay/useOverlay';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
-import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays/arrays';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays/arrays';
+import { getUniqueValues } from '../../../utils/getUniqueValues';
 import { ResultContext } from '../../Context';
 import type { EditOverlayFieldProps } from './field/Field';
 import { EditOverlayField } from './field/Field';
-import { getUniqueValues } from '../../../utils/getUniqueValues';
-import { useOverlay } from '~/shared/components/overlay/useOverlay';
 
 export type EditModalProps = {
   columnCount: number;
-  editButtonRef: React.MutableRefObject<HTMLElement | null>;
+  overlay: OverlayControl;
   selection: number[][];
-  selectionActionsPopoverRef: React.MutableRefObject<HTMLElement | null>;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const EditOverlay: React.FC<EditModalProps> = (props) => {
-  const { columnCount, editButtonRef, selection, selectionActionsPopoverRef, setIsEditing } = props;
+  const { columnCount, overlay, selection } = props;
 
   const { columns, rows, tables } = useDefinedContext(ResultContext);
 
@@ -62,14 +61,6 @@ export const EditOverlay: React.FC<EditModalProps> = (props) => {
       [],
     );
   }, [columnCount, columns, rows, selection, tables]);
-
-  const overlay = useOverlay({
-    align: 'center',
-    anchorRef: selectionActionsPopoverRef,
-    onClose: () => setIsEditing(false),
-    onOpen: () => setIsEditing(true),
-    triggerRef: editButtonRef,
-  });
 
   if (selection.length === 0) return null;
 

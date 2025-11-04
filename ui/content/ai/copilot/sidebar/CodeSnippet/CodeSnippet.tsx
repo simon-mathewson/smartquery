@@ -9,25 +9,21 @@ import { ToastContext } from '~/content/toast/Context';
 import type { ButtonProps } from '~/shared/components/button/Button';
 import { CodeEditor } from '~/shared/components/codeEditor/CodeEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import Play from '~/shared/icons/Play.svg?react';
-import { CopilotSidebarContext } from '../Context';
 
 export type CodeSnippetProps = {
   children?: React.ReactNode;
   className?: string;
   query?: Omit<SavedQuery, 'id'>;
+  onCloseCopilot?: () => void;
 } & ExtraProps;
 
 export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
-  const { children, className, node, query } = props;
+  const { children, className, node, query, onCloseCopilot } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
   const toast = useDefinedContext(ToastContext);
   const { addQuery } = useDefinedContext(QueriesContext);
-  const { setIsOpen } = useDefinedContext(CopilotSidebarContext);
-
-  const isMobile = useIsMobile();
 
   const match = /language-(.+)/.exec(className || '');
   const language = query ? 'sql' : match?.[1];
@@ -51,9 +47,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
                 { afterActiveTab: true, alwaysRun: true },
               );
 
-              if (isMobile) {
-                setIsOpen(false);
-              }
+              onCloseCopilot?.();
             },
           },
           icon: <Play />,
@@ -72,9 +66,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
                 { afterActiveTab: true },
               );
 
-              if (isMobile) {
-                setIsOpen(false);
-              }
+              onCloseCopilot?.();
             },
           },
           icon: <EditOutlined />,
@@ -96,7 +88,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
           tooltip: 'Copy',
         },
       ] satisfies ButtonProps[],
-    [track, addQuery, query, isMobile, setIsOpen, toast],
+    [track, addQuery, query, onCloseCopilot, toast],
   );
 
   if (!language) {

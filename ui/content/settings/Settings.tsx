@@ -32,9 +32,11 @@ import type { ThemeModePreference } from '../theme/types';
 import { AddToDesktop } from './addToDesktop/AddToDesktop';
 import { Usage } from './usage/Usage';
 import { Subscription } from './Subscription';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
+import { AboutLinks } from '~/shared/components/aboutLinks/AboutLinks';
 
 export type SettingsProps = {
-  close: () => Promise<void>;
+  close: () => Promise<void> | void;
 };
 
 const sections = [
@@ -57,6 +59,7 @@ const labels: Record<Section, string> = {
 } as const;
 
 export const Settings: React.FC<SettingsProps> = ({ close }) => {
+  const isMobile = useIsMobile();
   const { isConsentGranted, setIsConsentGranted } = useDefinedContext(ErrorTrackingContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { logOut, user } = useDefinedContext(AuthContext);
@@ -67,7 +70,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
   const [section, setSection] = useState<Section>('home');
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex h-full flex-col gap-2">
       <Header
         left={
           section !== 'home' && (
@@ -248,6 +251,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
       )}
       {section === 'subscription' && <Subscription close={close} />}
       {section === 'usage' && <Usage />}
+      {isMobile && <AboutLinks />}
     </div>
   );
 };

@@ -23,14 +23,11 @@ export const OverlayStoryInner: React.FC<OverlayStoryProps> = ({
 }) => {
   const anchorRef = useRef<HTMLDivElement>(null);
 
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
   const triggerProps = trigger === true ? {} : trigger;
 
   const overlay = useOverlay({
     ...useOverlayProps,
     anchorRef: anchor ? anchorRef : undefined,
-    triggerRef: trigger ? triggerRef : undefined,
   });
 
   return (
@@ -38,7 +35,7 @@ export const OverlayStoryInner: React.FC<OverlayStoryProps> = ({
       {triggerProps && (
         <Button
           {...triggerProps}
-          htmlProps={{ ...triggerProps?.htmlProps, ref: triggerRef }}
+          htmlProps={{ ...triggerProps?.htmlProps, ...overlay.triggerProps }}
           label="Open"
         />
       )}

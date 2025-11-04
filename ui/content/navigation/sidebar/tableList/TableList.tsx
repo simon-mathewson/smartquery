@@ -6,24 +6,36 @@ import type { Table } from './useTableList';
 import { useTableList } from './useTableList';
 import { Button } from '~/shared/components/button/Button';
 import SearchIcon from '~/shared/icons/Search.svg?react';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 
-export const TableList: React.FC = () => {
+export type TableListProps = {
+  onSelect?: () => void;
+};
+
+export const TableList: React.FC<TableListProps> = (props) => {
   const {
     filteredTables,
     getHandleMouseDown,
     isDragging,
     isLoading,
     isLoadingDatabases,
-    onSelect,
     search,
     selectedTables,
     setSearch,
+    ...tableList
   } = useTableList();
+
+  const onSelect = (table: Table) => {
+    props.onSelect?.();
+    tableList.onSelect(table);
+  };
+
+  const isMobile = useIsMobile();
 
   return (
     <div className="flex w-full flex-col gap-1 py-2">
       <div className="flex items-center justify-between gap-2 pl-2">
-        <div className="truncate text-xs font-medium text-textTertiary">Tables</div>
+        <div className="truncate text-sm font-medium text-textTertiary sm:text-xs">Tables</div>
         <div className="flex items-center gap-2">
           <Button
             color="secondary"
@@ -31,7 +43,7 @@ export const TableList: React.FC = () => {
               onClick: () => setSearch((search) => (search !== undefined ? undefined : '')),
             }}
             icon={<SearchIcon />}
-            size="small"
+            size={isMobile ? 'normal' : 'small'}
             tooltip="Search tables"
             variant={search === undefined ? 'default' : 'highlighted'}
           />

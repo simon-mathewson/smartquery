@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 import { DateTime } from 'luxon';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import { getResultsAsRecords } from '~/content/tabs/queries/utils/getResultsAsRecords';
 import { ToastContext } from '~/content/toast/Context';
@@ -9,26 +9,29 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { getSortedEnumValues } from '~/shared/utils/dbEnums/dbEnums';
 import { getStatements } from './getStatements';
 import type { RemoteSchemaDefinitions, SchemaDefinitions, SqliteSchemaDefinitions } from './types';
+import { assert } from 'ts-essentials';
 
 export const useSchemaDefinitions = () => {
   const toast = useDefinedContext(ToastContext);
 
-  const { activeConnection, runQuery } = useDefinedContext(ActiveConnectionContext);
-
-  const { engine, id, database } = activeConnection;
+  const { activeConnection, runQuery } = useContext(ActiveConnectionContext) ?? {};
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const storageKey = activeConnection
+    ? `useSchemaDefinitions.schemaDefinitions.${activeConnection.id}.${activeConnection.database}${
+        activeConnection.engine === 'postgres' ? `.${activeConnection.schema}` : ''
+      }`
+    : null;
+
   const [storedSchemaDefinitions, setStoredSchemaDefinitions] =
-    useStoredState<SchemaDefinitions | null>(
-      `useSchemaDefinitions.schemaDefinitions.${id}.${database}${
-        engine === 'postgres' ? `.${activeConnection.schema}` : ''
-      }`,
-      null,
-    );
+    useStoredState<SchemaDefinitions | null>(storageKey, null);
 
   const getAndRefreshSchemaDefinitions =
     useCallback(async (): Promise<SchemaDefinitions | null> => {
+      assert(activeConnection);
+      assert(runQuery);
+
       if (
         storedSchemaDefinitions &&
         Math.abs(
@@ -75,7 +78,7 @@ export const useSchemaDefinitions = () => {
             columns: columns
               .filter((column) => column.table_name === table.table_name)
               .map((column) => {
-                const enumValues = getSortedEnumValues(column, engine);
+                const enumValues = getSortedEnumValues(column, activeConnection.engine);
                 return {
                   ...omit(column, 'table_name', 'postgres_enum_values', 'mysql_column_type'),
                   ...(enumValues ? { enumValues } : {}),
@@ -108,18 +111,13 @@ export const useSchemaDefinitions = () => {
       } finally {
         setIsLoading(false);
       }
-    }, [
-      storedSchemaDefinitions,
-      activeConnection,
-      runQuery,
-      setStoredSchemaDefinitions,
-      toast,
-      engine,
-    ]);
+    }, [storedSchemaDefinitions, activeConnection, runQuery, setStoredSchemaDefinitions, toast]);
 
   // Fetch schema definitions when active connection changes
   useEffect(() => {
-    void getAndRefreshSchemaDefinitions();
+    if (activeConnection) {
+      void getAndRefreshSchemaDefinitions();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConnection]);
 

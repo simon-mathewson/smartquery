@@ -1,7 +1,7 @@
 import type { AiTextContent } from '@/ai/types';
 import type { inferRouterInputs } from '@trpc/server';
 import { cloneDeep, omit } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import superjson from 'superjson';
 import { CloudApiContext } from '~/content/cloud/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -13,10 +13,11 @@ import { parseResponse } from './parseResponse';
 import type { ThreadMessage } from './types';
 import { formatSql } from '~/shared/utils/sql/sql';
 import { isQuotaExceededError } from './isQuotaExceededError';
+import { assert } from 'ts-essentials';
 
 export const useCopilot = () => {
   const { cloudApiStream } = useDefinedContext(CloudApiContext);
-  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
+  const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
 
   const [rawThread, setRawThread] = useStoredState<AiTextContent[]>('useCopilot.thread', []);
   const [thread, setThread] = useState<Awaited<ReturnType<typeof processThread>>>([]);
@@ -24,8 +25,10 @@ export const useCopilot = () => {
   const [isQuotaExceeded, setIsQuotaExceeded] = useState(false);
 
   const processThread = useCallback(
-    (rawThread: AiTextContent[]) =>
-      Promise.all(
+    (rawThread: AiTextContent[]) => {
+      assert(activeConnection);
+
+      return Promise.all(
         rawThread.map(async (item) =>
           item.role === 'user'
             ? ({
@@ -43,13 +46,16 @@ export const useCopilot = () => {
                 role: 'model',
               } as const),
         ),
-      ),
-    [activeConnection.engine],
+      );
+    },
+    [activeConnection],
   );
 
   useEffect(() => {
-    void processThread(rawThread).then(setThread);
-  }, [processThread, rawThread]);
+    if (activeConnection) {
+      void processThread(rawThread).then(setThread);
+    }
+  }, [activeConnection, processThread, rawThread]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -103,6 +109,8 @@ export const useCopilot = () => {
 
   const sendMessage = useCallback(
     async (message: string) => {
+      assert(activeConnection);
+
       setIsLoading(true);
 
       abortControllerRef.current.abort();
@@ -154,11 +162,11 @@ export const useCopilot = () => {
       }
     },
     [
+      activeConnection,
       rawThread,
       setRawThread,
       getAndRefreshSchemaDefinitions,
       generateChatResponse,
-      activeConnection.engine,
     ],
   );
 

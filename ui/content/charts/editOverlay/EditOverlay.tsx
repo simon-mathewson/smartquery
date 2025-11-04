@@ -1,6 +1,6 @@
 import type { Chart } from '@/savedQueries/types';
 import { BarChartOutlined, DeleteOutline, Done } from '@mui/icons-material';
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { SavedQueriesContext } from '~/content/savedQueries/Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
 import { QueryContext, ResultContext } from '~/content/tabs/queries/query/Context';
@@ -26,11 +26,7 @@ export const ChartEditOverlay: React.FC = () => {
 
   const chart = query.chart;
 
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
-  const overlay = useOverlay({
-    triggerRef,
-  });
+  const overlay = useOverlay();
 
   const [type, setType] = useState<Chart['type']>(chart?.type ?? 'line');
   const [x, setX] = useState<ColumnRef | null>(
@@ -232,7 +228,7 @@ export const ChartEditOverlay: React.FC = () => {
       <Button
         color="secondary"
         icon={<BarChartOutlined />}
-        htmlProps={{ disabled: !chart && !result?.columns, ref: triggerRef }}
+        htmlProps={{ disabled: !chart && !result?.columns, ...overlay.triggerProps }}
         label="Chart"
         size="small"
       />

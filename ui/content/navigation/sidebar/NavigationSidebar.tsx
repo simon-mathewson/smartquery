@@ -1,22 +1,22 @@
+import { Close } from '@mui/icons-material';
 import classNames from 'classnames';
 import React, { useRef } from 'react';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { Footer } from '~/shared/components/footer/Footer';
-import { Logo } from '~/shared/components/logo/LogoIcon';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
-import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
-import { Connections } from '../connections/Connections';
-import { ConnectionsContext } from '../connections/Context';
+import { ConnectionsContext } from '../../connections/Context';
+import { NavigationSidebarContext } from './Context';
 import { SavedQueryList } from './savedQueryList/SavedQueryList';
 import { TableList } from './tableList/TableList';
-import { NavigationSidebarContext } from './Context';
-import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
-import { Close } from '@mui/icons-material';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
+import { Connections } from '~/content/connections/Connections';
+import { routes } from '~/router/routes';
+import { Logo } from '~/shared/components/logo/LogoIcon';
 
 export const NavigationSidebar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -25,14 +25,13 @@ export const NavigationSidebar: React.FC = () => {
 
   const isMobile = useIsMobile();
 
-  const connectionsTriggerRef = useRef<HTMLButtonElement | null>(null);
   const homeButtonRef = useRef<HTMLAnchorElement | null>(null);
 
   const connectionsOverlay = useOverlay({
     align: 'left',
     anchorRef: homeButtonRef,
     darkenBackground: true,
-    triggerRef: connectionsTriggerRef,
+    onOpen: () => track('navigation_sidebar_open_connections'),
   });
 
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -66,11 +65,8 @@ export const NavigationSidebar: React.FC = () => {
           icon={<Logo htmlProps={{ className: 'w-6 h-6' }} />}
         />
         <button
+          {...connectionsOverlay.triggerProps}
           className="grid w-full cursor-pointer select-none gap-[2px] rounded-lg p-[6px] text-left text-sm hover:bg-secondaryHighlight"
-          ref={connectionsTriggerRef}
-          onClick={() => {
-            track('navigation_sidebar_open_connections');
-          }}
         >
           {activeConnection && (
             <>
@@ -84,6 +80,9 @@ export const NavigationSidebar: React.FC = () => {
             </>
           )}
         </button>
+        <OverlayCard htmlProps={{ className: 'w-max p-2 shadow-2xl' }} overlay={connectionsOverlay}>
+          {() => <Connections />}
+        </OverlayCard>
         {isMobile && (
           <Button
             color="secondary"
@@ -92,9 +91,6 @@ export const NavigationSidebar: React.FC = () => {
           />
         )}
       </div>
-      <OverlayCard htmlProps={{ className: 'w-max p-2 shadow-2xl' }} overlay={connectionsOverlay}>
-        {() => <Connections />}
-      </OverlayCard>
       {activeConnection && (
         <div className="flex w-full grow flex-col overflow-auto">
           <SavedQueryList />

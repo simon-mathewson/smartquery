@@ -13,7 +13,10 @@ export const Queries: React.FC = () => {
     return (
       <div className="flex grow items-center justify-center">
         <Logo
-          htmlProps={{ className: 'w-[200px] h-[200px] pointer-events-none opacity-10 grayscale' }}
+          htmlProps={{
+            className:
+              'w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] pointer-events-none opacity-10 grayscale',
+          }}
         />
       </div>
     );

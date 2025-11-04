@@ -3,6 +3,7 @@ import { ListItem, type ListItemProps } from './Item';
 import { useKeyboardNavigation } from './useKeyboardNavigation';
 import { Input } from '../input/Input';
 import SearchIcon from '~/shared/icons/Search.svg?react';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 
 export type ListProps<T> = {
   autoFocusFirstItem?: boolean;
@@ -34,6 +35,8 @@ export function List<T>(props: ListProps<T>) {
     setSearch,
   } = props;
 
+  const isMobile = useIsMobile();
+
   const { onKeyDown } = useKeyboardNavigation();
 
   const getAutoFocus = (item: (typeof items)[number], index: number) => {
@@ -64,7 +67,7 @@ export function List<T>(props: ListProps<T>) {
           }}
           icon={<SearchIcon />}
           onChange={setSearch}
-          small
+          small={!isMobile}
         />
       )}
       {items.length === 0 ? (

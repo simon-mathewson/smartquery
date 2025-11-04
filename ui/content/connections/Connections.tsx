@@ -14,11 +14,12 @@ import { routes } from '~/router/routes';
 export type ConnectionsProps = {
   hideDatabases?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
+  onSelect?: () => void;
   shouldNavigate?: boolean;
 };
 
 export const Connections: React.FC<ConnectionsProps> = (props) => {
-  const { hideDatabases, htmlProps, shouldNavigate } = props;
+  const { hideDatabases, htmlProps, shouldNavigate, onSelect } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection, connections } = useDefinedContext(ConnectionsContext);
@@ -106,11 +107,14 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                 selectedVariant: 'primary',
                 value: connection,
               }))}
-              onSelect={() => track('connections_select')}
+              onSelect={() => {
+                track('connections_select');
+                onSelect?.();
+              }}
               selectedValue={connections.find((c) => c.id === activeConnection?.id) ?? null}
             />
           </div>
-          {!hideDatabases && activeConnection && <DatabaseList />}
+          {!hideDatabases && activeConnection && <DatabaseList onSelect={onSelect} />}
         </div>
       )}
     </>

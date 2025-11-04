@@ -48,7 +48,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
       aria-disabled={disabled}
       aria-selected={selected}
       className={classNames(
-        'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-1.5',
+        'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-2 sm:py-1.5',
         {
           'bg-primary hover:bg-primaryHover': selectedVariant === 'primary' && selected,
           'bg-secondaryHighlight hover:bg-secondaryHighlightHover':
@@ -69,7 +69,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
       <div className="flex flex-col justify-center overflow-hidden">
         <div
           className={classNames(
-            'overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-textSecondary',
+            'overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-textSecondary sm:text-xs',
             {
               'text-white': selectedVariant === 'primary' && selected,
             },

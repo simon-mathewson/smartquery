@@ -5,6 +5,8 @@ import classNames from 'classnames';
 import { Link } from 'wouter';
 import { routes } from '~/router/routes';
 import { Footer } from '../footer/Footer';
+import { useIsMobile } from '../../hooks/useIsMobile/useIsMobile';
+import { MobileNavigation } from '~/content/navigation/mobile/MobileNavigation';
 
 export type PageProps = React.PropsWithChildren<{
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
@@ -14,6 +16,8 @@ export type PageProps = React.PropsWithChildren<{
 export const Page: React.FC<PageProps> = (props) => {
   const { children, htmlProps, title } = props;
 
+  const isMobile = useIsMobile();
+
   return (
     <>
       <Helmet>
@@ -22,7 +26,7 @@ export const Page: React.FC<PageProps> = (props) => {
       <div className="relative flex min-h-screen flex-col">
         <div
           className={classNames(
-            'mx-auto flex w-full max-w-[356px] flex-col items-center gap-6 pb-16 pt-8',
+            'mx-auto flex w-full max-w-[356px] flex-col items-center gap-6 pb-4 pt-8',
             htmlProps?.className,
           )}
         >
@@ -31,7 +35,8 @@ export const Page: React.FC<PageProps> = (props) => {
           </Link>
           {children}
         </div>
-        <Footer htmlProps={{ className: 'px-2 pt-2 !w-full sm:!w-[236px]' }} />
+        {!isMobile && <Footer htmlProps={{ className: 'px-2 pt-2 !w-full sm:!w-[236px]' }} />}
+        <MobileNavigation />
       </div>
     </>
   );

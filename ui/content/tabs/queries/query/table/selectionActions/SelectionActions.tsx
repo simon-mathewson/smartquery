@@ -17,6 +17,7 @@ import { popoverHeight, popoverMargin } from './constants';
 import { cloneArrayWithEmptyValues } from '~/shared/utils/arrays/arrays';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { isNotNull } from '~/shared/utils/typescript/typescript';
+import { useOverlay } from '~/shared/components/overlay/useOverlay';
 
 export type SelectionActionsProps = {
   columnCount: number;
@@ -38,8 +39,6 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
   const [tableWidth, setTableWidth] = useState<number>();
 
   const [scrollLeft, setScrollLeft] = useState(0);
-
-  const editButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const getSelectionRect = useCallback(() => {
     if (selection.length === 0 || !tableRef.current) return null;
@@ -185,6 +184,16 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
     return { isSelectionEditable, isEntireSelectionDeleted, selectedChanges };
   }, [allChanges, columnCount, columns, rows, selection, tables]);
 
+  const editOverlay = useOverlay({
+    align: 'center',
+    anchorRef: popoverRef,
+    onClose: () => setIsEditing(false),
+    onOpen: () => {
+      setIsEditing(true);
+      track('table_selection_edit');
+    },
+  });
+
   return (
     <>
       {popoverStyles && isSelectionEditable && (
@@ -199,8 +208,7 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
             <Button
               htmlProps={{
                 className: 'edit-button',
-                onClick: () => track('table_selection_edit'),
-                ref: editButtonRef,
+                ...editOverlay.triggerProps,
               }}
               icon={<EditOutlined />}
               tooltip="Edit"
@@ -243,9 +251,8 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
       <div style={{ height: `${popoverHeight + popoverMargin * 3}px` }} />
       <EditOverlay
         columnCount={columnCount}
-        editButtonRef={editButtonRef}
+        overlay={editOverlay}
         selection={selection}
-        selectionActionsPopoverRef={popoverRef}
         setIsEditing={setIsEditing}
       />
     </>

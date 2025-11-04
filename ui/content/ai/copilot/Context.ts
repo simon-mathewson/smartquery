@@ -1,6 +1,8 @@
 import { createContext } from 'react';
 import type { useCopilot } from './useCopilot';
 
-export const CopilotContext = createContext<ReturnType<typeof useCopilot> | null>(null);
+export type CopilotContextType = ReturnType<typeof useCopilot>;
+
+export const CopilotContext = createContext<CopilotContextType | null>(null);
 
 CopilotContext.displayName = 'CopilotContext';

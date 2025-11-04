@@ -21,6 +21,9 @@ import { ErrorTrackingMockProvider } from '~/content/errors/tracking/MockProvide
 import { UpdateAvailableMockProvider } from '~/content/updateAvailable/MockProvider';
 import { ActiveConnectionMockProvider } from '~/content/connections/activeConnection/MockProvider';
 import { SavedQueriesMockProvider } from '~/content/savedQueries/MockProvider';
+import { CopilotSidebarProvider } from '~/content/ai/copilot/sidebar/Provider';
+import { NavigationSidebarProvider } from '~/content/navigation/sidebar/Provider';
+import { CopilotProvider } from '~/content/ai/copilot/Provider';
 
 const mockProviders = {
   ErrorTrackingProvider: ErrorTrackingMockProvider,
@@ -42,6 +45,9 @@ const mockProviders = {
   SavedQueriesProvider: SavedQueriesMockProvider,
   DragAndDropProvider,
   AddToDesktopProvider,
+  CopilotProvider,
+  CopilotSidebarProvider,
+  NavigationSidebarProvider,
 } as const;
 
 export type ProviderOverrides = DeepPartial<ContextTypes>;

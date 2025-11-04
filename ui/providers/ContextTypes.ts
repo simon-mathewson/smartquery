@@ -17,6 +17,9 @@ import type { ErrorTrackingContextType } from '~/content/errors/tracking/Context
 import type { UpdateAvailableContextType } from '~/content/updateAvailable/Context';
 import type { ActiveConnectionContextType } from '~/content/connections/activeConnection/Context';
 import type { SavedQueriesContextType } from '~/content/savedQueries/Context';
+import type { CopilotSidebarContextType } from '~/content/ai/copilot/sidebar/Context';
+import type { NavigationSidebarContextType } from '~/content/navigation/sidebar/Context';
+import type { CopilotContextType } from '~/content/ai/copilot/Context';
 
 export type ContextTypes = {
   ActiveConnectionProvider: ActiveConnectionContextType;
@@ -25,12 +28,15 @@ export type ContextTypes = {
   AuthProvider: AuthContextType;
   CloudApiProvider: CloudApiContextType;
   ConnectionsProvider: ConnectionsContextType;
+  CopilotProvider: CopilotContextType;
+  CopilotSidebarProvider: CopilotSidebarContextType;
   DragAndDropProvider: DragAndDropContextType;
   EditProvider: EditContextType;
   ErrorTrackingProvider: ErrorTrackingContextType;
   EscapeStackProvider: EscapeStackContextType;
   LinkApiProvider: LinkApiContextType;
   LinkProvider: LinkContextType;
+  NavigationSidebarProvider: NavigationSidebarContextType;
   QueriesProvider: QueriesContextType;
   SavedQueriesProvider: SavedQueriesContextType;
   SqliteProvider: SqliteContextType;

@@ -1,11 +1,11 @@
-import { useContext, useRef, useState } from 'react';
-import { OverlayCard } from '../overlayCard/OverlayCard';
 import { ExpandMore } from '@mui/icons-material';
 import classNames from 'classnames';
+import { useContext, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { FieldContext } from '../field/FieldContext';
 import { List } from '../list/List';
 import { useOverlay } from '../overlay/useOverlay';
+import { OverlayCard } from '../overlayCard/OverlayCard';
 
 export type SelectProps<T> = {
   compareFn?: (a: T | null, b: T | null) => boolean;
@@ -30,8 +30,6 @@ export function Select<T = string | null>(props: SelectProps<T>) {
 
   const fieldContext = useContext(FieldContext);
 
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
-
   const selectedOption = options.find(({ value }) => compareFn(value, selectedValue));
 
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +40,6 @@ export function Select<T = string | null>(props: SelectProps<T>) {
     matchTriggerWidth: true,
     onClose: () => setIsOpen(false),
     onOpen: () => setIsOpen(true),
-    triggerRef,
   });
 
   return (
@@ -50,6 +47,7 @@ export function Select<T = string | null>(props: SelectProps<T>) {
       <button
         {...htmlProps}
         {...fieldContext?.controlHtmlProps}
+        {...overlay.triggerProps}
         aria-controls={listboxId}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -61,7 +59,6 @@ export function Select<T = string | null>(props: SelectProps<T>) {
           htmlProps?.className,
         )}
         data-value={selectedValue}
-        ref={triggerRef}
         type="button"
       >
         <div

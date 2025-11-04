@@ -13,11 +13,17 @@ export type UseStylesProps = Pick<
 export const useStyles = (props: UseStylesProps) => {
   const {
     align = 'left',
-    anchorRef,
+    anchorRef: anchorRefProp,
     matchTriggerWidth,
     position,
     styleOptions: styleOptionsProp,
   } = props;
+
+  const triggerRef = useRef<(HTMLDivElement & HTMLAnchorElement & HTMLButtonElement) | null>(null);
+  const localAnchorRef = useRef<(HTMLDivElement & HTMLAnchorElement & HTMLButtonElement) | null>(
+    null,
+  );
+  const anchorRef = anchorRefProp ?? localAnchorRef;
 
   const styleOptions = useMemo(
     () => merge({}, defaultStyleOptions, styleOptionsProp),
@@ -112,7 +118,7 @@ export const useStyles = (props: UseStylesProps) => {
   }, [overlayMargin, position?.x, position?.y]);
 
   const updateStyles = useCallback(() => {
-    const anchor = anchorRef?.current;
+    const anchor = anchorRef?.current ?? triggerRef.current;
 
     if (anchor) {
       updateStylesBasedOnAnchor(anchor);
@@ -213,21 +219,25 @@ export const useStyles = (props: UseStylesProps) => {
 
   return useMemo(
     () => ({
+      anchorRef,
       animateInBackground,
       animateInWrapper,
       animateOutBackground,
       animateOutWrapper,
       backgroundRef,
       registerContent,
+      triggerRef,
       updateStyles,
       wrapperRef,
     }),
     [
+      anchorRef,
       animateInBackground,
       animateInWrapper,
       animateOutBackground,
       animateOutWrapper,
       registerContent,
+      triggerRef,
       updateStyles,
     ],
   );

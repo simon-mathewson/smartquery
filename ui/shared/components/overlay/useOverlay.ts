@@ -9,7 +9,7 @@ import type { StyleOptions } from './styleOptions';
 
 export type UseOverlayProps = {
   align?: 'left' | 'center' | 'right';
-  anchorRef?: React.MutableRefObject<HTMLElement | null>;
+  anchorRef?: React.RefObject<HTMLElement>;
   closeOnOutsideClick?: boolean;
   darkenBackground?: boolean;
   disableFocusOnOpen?: boolean;
@@ -22,14 +22,14 @@ export type UseOverlayProps = {
     y: 'top' | 'center' | 'bottom';
   };
   styleOptions?: Partial<StyleOptions>;
-  triggerRef?: React.MutableRefObject<HTMLElement | null>;
 };
 
 export type OverlayControl = ReturnType<typeof useOverlay>;
 
-export const useOverlay = (props: UseOverlayProps) => {
+export const useOverlay = (props?: UseOverlayProps) => {
   const {
     align,
+    anchorRef: anchorRefProp,
     closeOnOutsideClick = true,
     darkenBackground,
     disableFocusOnOpen,
@@ -38,10 +38,8 @@ export const useOverlay = (props: UseOverlayProps) => {
     onClose,
     onOpen,
     position,
-    triggerRef,
-    anchorRef = triggerRef,
     styleOptions,
-  } = props;
+  } = props ?? {};
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -49,14 +47,21 @@ export const useOverlay = (props: UseOverlayProps) => {
 
   const styles = useStyles({
     align,
-    anchorRef,
+    anchorRef: anchorRefProp,
     matchTriggerWidth,
     position,
     styleOptions,
   });
 
-  const { animateOutBackground, animateOutWrapper, backgroundRef, registerContent, wrapperRef } =
-    styles;
+  const {
+    anchorRef,
+    animateOutBackground,
+    animateOutWrapper,
+    backgroundRef,
+    registerContent,
+    triggerRef,
+    wrapperRef,
+  } = styles;
 
   const close = useCallback(async () => {
     if (!disableFocusOnOpen) {
@@ -107,24 +112,28 @@ export const useOverlay = (props: UseOverlayProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenProp]);
 
-  useEffect(() => {
-    const trigger = triggerRef?.current;
-    if (!trigger) return;
+  const onTriggerClick = useCallback(() => {
+    if (isOpen) {
+      void close();
+    } else {
+      void open();
+    }
+  }, [close, isOpen, open]);
 
-    const handleClick = () => {
-      if (isOpen) {
-        void close();
-      } else {
-        void open();
-      }
-    };
+  const triggerProps = useMemo(
+    () => ({
+      onClick: onTriggerClick,
+      ref: triggerRef,
+    }),
+    [onTriggerClick, triggerRef],
+  );
 
-    trigger.addEventListener('click', handleClick);
-
-    return () => {
-      trigger.removeEventListener('click', handleClick);
-    };
-  }, [close, isOpen, open, triggerRef]);
+  const anchorProps = useMemo(
+    () => ({
+      ref: anchorRef,
+    }),
+    [anchorRef],
+  );
 
   const localRef = useRef<HTMLDivElement | null>(null);
 
@@ -150,6 +159,7 @@ export const useOverlay = (props: UseOverlayProps) => {
 
   return useMemo(
     () => ({
+      anchorProps,
       childrenProps,
       close,
       darkenBackground,
@@ -157,7 +167,8 @@ export const useOverlay = (props: UseOverlayProps) => {
       open,
       ref,
       styles,
+      triggerProps,
     }),
-    [childrenProps, close, darkenBackground, isOpen, open, ref, styles],
+    [anchorProps, childrenProps, close, darkenBackground, isOpen, open, ref, styles, triggerProps],
   );
 };

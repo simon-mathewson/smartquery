@@ -6,6 +6,7 @@ import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/C
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ReviewChangesCard } from './reviewChangesCard/ReviewChangesCard';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { useOverlay } from '~/shared/components/overlay/useOverlay';
 
 export const Changes: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -13,7 +14,10 @@ export const Changes: React.FC = () => {
 
   const changeCount = allChanges.length;
 
-  const reviewChangesCardTriggerRef = React.createRef<HTMLButtonElement>();
+  const reviewChangesCardOverlay = useOverlay({
+    align: 'right',
+    onOpen: () => track('toolbar_changes_review'),
+  });
 
   return (
     <div className="ml-auto flex shrink-0 items-center gap-2">
@@ -31,17 +35,12 @@ export const Changes: React.FC = () => {
         text={`Delete ${changeCount} change${changeCount > 1 ? 's' : ''}`}
       />
       <Button
-        htmlProps={{
-          onClick: () => {
-            track('toolbar_changes_review');
-          },
-          ref: reviewChangesCardTriggerRef,
-        }}
+        htmlProps={reviewChangesCardOverlay.triggerProps}
         icon={<ArrowForward />}
         label="Review & Submit"
         variant="filled"
       />
-      <ReviewChangesCard triggerRef={reviewChangesCardTriggerRef} />
+      <ReviewChangesCard overlay={reviewChangesCardOverlay} />
     </div>
   );
 };

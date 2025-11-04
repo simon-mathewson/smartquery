@@ -8,7 +8,13 @@ import { routes } from '~/router/routes';
 import { Loading } from '~/shared/components/loading/Loading';
 import { ActiveConnectionContext } from '../activeConnection/Context';
 
-export const DatabaseList: React.FC = () => {
+export type DatabaseListProps = {
+  onSelect?: () => void;
+};
+
+export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
+  const { onSelect } = props;
+
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection, databases, isLoadingDatabases } =
     useDefinedContext(ActiveConnectionContext);
@@ -55,7 +61,10 @@ export const DatabaseList: React.FC = () => {
             selectedVariant: 'primary',
             value: database.name,
           }))}
-          onSelect={() => track('database_list_select')}
+          onSelect={() => {
+            track('database_list_select');
+            onSelect?.();
+          }}
           selectedValue={activeConnection.database}
         />
       </div>
@@ -84,7 +93,10 @@ export const DatabaseList: React.FC = () => {
                 selectedVariant: 'primary',
                 value: schema,
               }))}
-              onSelect={() => track('database_list_select_schema')}
+              onSelect={() => {
+                track('database_list_select_schema');
+                onSelect?.();
+              }}
               selectedValue={activeConnection.schema}
             />
           </div>

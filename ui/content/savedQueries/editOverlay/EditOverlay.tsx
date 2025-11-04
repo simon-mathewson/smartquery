@@ -1,5 +1,5 @@
 import { BookmarkBorderOutlined, BookmarkOutlined, DeleteOutline, Done } from '@mui/icons-material';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { assert } from 'ts-essentials';
 import {
   QueryContext,
@@ -24,11 +24,7 @@ export const SavedQueryEditOverlay: React.FC = () => {
   const result = useContext(ResultContext);
   const savedQuery = useContext(SavedQueryContext);
 
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
-  const overlay = useOverlay({
-    triggerRef,
-  });
+  const overlay = useOverlay();
 
   const title = savedQuery ? 'Saved query' : 'Save Query';
 
@@ -114,7 +110,7 @@ export const SavedQueryEditOverlay: React.FC = () => {
       </OverlayCard>
       <Button
         icon={savedQuery ? <BookmarkOutlined /> : <BookmarkBorderOutlined />}
-        htmlProps={{ disabled: !savedQuery && !query.sql, ref: triggerRef }}
+        htmlProps={{ disabled: !savedQuery && !query.sql, ...overlay.triggerProps }}
         tooltip={title}
       />
     </>
