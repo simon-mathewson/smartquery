@@ -9,7 +9,7 @@ import {
 } from '@mui/icons-material';
 import { CircularProgress, LinearProgress } from '@mui/material';
 import classNames from 'classnames';
-import { useCallback, useRef } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { AnalyticsContext } from '~/content/analytics/Context';
@@ -39,7 +39,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
 
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
-  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
+  const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
   const { setIsOpen } = useDefinedContext(CopilotSidebarContext);
   const {
     clearThread,
@@ -168,7 +168,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
         {isLoading && (
           <LinearProgress className="mt-4 !h-1 rounded-full !bg-primaryHighlightHover [&_.MuiLinearProgress-bar]:!bg-primary" />
         )}
-        {activeConnection.id === 'demo' && !isLoading && (
+        {activeConnection?.id === 'demo' && !isLoading && (
           <ActionList
             actions={copilotChatSuggestions
               .filter(

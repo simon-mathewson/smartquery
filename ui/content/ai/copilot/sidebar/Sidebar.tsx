@@ -6,9 +6,10 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { CopilotSidebarContext } from './Context';
 import { Copilot } from './Copilot';
+import { useContext } from 'react';
 
 export const CopilotSidebar: React.FC = () => {
-  const { activeConnection } = useDefinedContext(ActiveConnectionContext);
+  const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
   const { isOpen } = useDefinedContext(CopilotSidebarContext);
 
   const [desktopWidth, setDesktopWidth] = useStoredState('CopilotSidebar.width', 328);
