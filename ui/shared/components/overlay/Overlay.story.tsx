@@ -31,7 +31,7 @@ export const OverlayStoryInner: React.FC<OverlayStoryProps> = ({
   });
 
   return (
-    <div className="h-dvh flex items-center justify-center">
+    <div className="flex h-[100dvh] items-center justify-center">
       {triggerProps && (
         <Button
           {...triggerProps}

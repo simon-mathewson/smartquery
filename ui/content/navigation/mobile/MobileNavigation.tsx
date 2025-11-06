@@ -81,11 +81,14 @@ export const MobileNavigation: React.FC = () => {
     <>
       <div className="h-[64px] shrink-0" />
       <div
-        className={classNames('h-dvh pointer-events-none fixed left-0 right-0 top-0 z-40 w-full', {
-          '!pointer-events-auto bg-background/60 backdrop-blur-xl': overlayPage,
-        })}
+        className={classNames(
+          'pointer-events-none fixed left-0 right-0 top-0 z-40 h-[100dvh] w-full',
+          {
+            '!pointer-events-auto bg-background/60 backdrop-blur-xl': overlayPage,
+          },
+        )}
       >
-        <div className="h-full grow overflow-y-auto pb-[72px]">
+        <div className="h-full grow overflow-y-auto p-2 pb-[64px]">
           {overlayPage === 'tables' && <TableList onSelect={() => setOverlayPage(null)} />}
           {overlayPage === 'copilot' && <Copilot onCloseCopilot={() => setOverlayPage(null)} />}
           {overlayPage === 'settings' && <Settings close={() => setOverlayPage(null)} />}

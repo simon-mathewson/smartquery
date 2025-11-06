@@ -23,7 +23,7 @@ export const Page: React.FC<PageProps> = (props) => {
       <Helmet>
         <title>{title} – SmartQuery</title>
       </Helmet>
-      <div className="min-h-dvh relative flex flex-col">
+      <div className="relative flex min-h-[100dvh] flex-col">
         <div
           className={classNames(
             'mx-auto flex w-full max-w-[356px] flex-col items-center gap-6 pb-4 pt-8',

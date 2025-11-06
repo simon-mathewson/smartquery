@@ -59,7 +59,7 @@ export const Overlay: React.FC<OverlayProps> = (props) => {
       {isOpen && (
         <div
           className={classNames(
-            'h-dvh pointer-events-none fixed left-0 top-0 z-50 w-screen overflow-hidden',
+            'pointer-events-none fixed left-0 top-0 z-50 h-[100dvh] w-screen overflow-hidden',
             {
               '!pointer-events-auto': darkenBackground,
             },

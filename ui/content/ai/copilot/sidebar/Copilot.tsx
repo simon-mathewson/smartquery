@@ -189,7 +189,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
             htmlProps={{ className: 'mt-4' }}
           />
         )}
-        <div className="h-dvh w-full" />
+        <div className="h-[100dvh] w-full" />
       </div>
       <div>
         {isLoadingSchemaDefinitions && (

@@ -7,11 +7,14 @@ import { ToastContext } from './Context';
 import { useEffect, useState } from 'react';
 import type { ToastProps } from './useToast';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 
 export const Toast: React.FC = () => {
   const { queue, remove } = useDefinedContext(ToastContext);
 
   const [currentToast, setCurrentToast] = useState<ToastProps | null>(null);
+
+  const isMobile = useIsMobile();
 
   const overlay = useOverlay({
     isOpen: Boolean(currentToast),
@@ -24,7 +27,7 @@ export const Toast: React.FC = () => {
     },
     position: { x: 'center', y: 'bottom' },
     styleOptions: {
-      overlayMargin: 16,
+      overlayMargin: isMobile ? 64 : 16,
     },
   });
 
