@@ -33,7 +33,7 @@ export const Connection: React.FC = () => {
           <meta name="description" content={demoDescription} />
         </Helmet>
       )}
-      <div className="relative flex h-screen flex-col justify-between">
+      <div className="h-dvh relative flex flex-col justify-between">
         <div className="relative grid h-full grid-cols-1 overflow-hidden bg-background sm:grid-cols-[max-content_1fr_max-content]">
           {!activeConnection && <Loading size="large" />}
           <NavigationSidebar />

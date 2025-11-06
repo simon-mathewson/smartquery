@@ -12,7 +12,7 @@ export const OverlayCardStoryInner: React.FC = () => {
   });
 
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className="h-dvh flex items-center justify-center">
       <OverlayCard overlay={overlay}>
         {() => (
           <>

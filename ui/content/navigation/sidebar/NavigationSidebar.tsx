@@ -41,7 +41,7 @@ export const NavigationSidebar: React.FC = () => {
   return (
     <div
       className={classNames(
-        'absolute -left-full top-0 z-50 flex h-screen flex-col items-start gap-1 bg-background px-2 pt-2 transition-[left] sm:sticky sm:left-0',
+        'h-dvh absolute -left-full top-0 z-50 flex flex-col items-start gap-1 bg-background px-2 pt-2 transition-[left] sm:sticky sm:left-0',
         {
           '!left-0': isOpen,
         },

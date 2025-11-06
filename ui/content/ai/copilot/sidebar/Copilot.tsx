@@ -75,7 +75,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
   );
 
   return (
-    <div className="flex h-max max-h-full flex-col gap-2">
+    <div className="flex max-h-full flex-col gap-2">
       <Header
         left={
           thread.length ? (
@@ -189,7 +189,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
             htmlProps={{ className: 'mt-4' }}
           />
         )}
-        <div className="h-screen w-full" />
+        <div className="h-dvh w-full" />
       </div>
       <div>
         {isLoadingSchemaDefinitions && (

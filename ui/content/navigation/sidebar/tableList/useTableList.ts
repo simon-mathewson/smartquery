@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
@@ -18,7 +18,7 @@ export type Table = { name: string; schema: string | undefined };
 export const useTableList = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection, isLoadingDatabases, runQuery } =
-    useDefinedContext(ActiveConnectionContext);
+    useContext(ActiveConnectionContext) ?? {};
   const { activeTab } = useDefinedContext(TabsContext);
   const { addQuery, queryResults } = useDefinedContext(QueriesContext);
   const navigationSidebar = useDefinedContext(NavigationSidebarContext);
@@ -27,6 +27,8 @@ export const useTableList = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    if (!activeConnection || !runQuery) return;
+
     const tableNamesStatement = getTableNamesSql(activeConnection);
 
     setIsLoading(true);
