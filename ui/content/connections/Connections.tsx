@@ -10,111 +10,125 @@ import { List } from '~/shared/components/list/List';
 import { v4 as uuid } from 'uuid';
 import { AnalyticsContext } from '../analytics/Context';
 import { routes } from '~/router/routes';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
+import { Header } from '~/shared/components/header/Header';
 
 export type ConnectionsProps = {
   hideDatabases?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
-  onSelect?: () => void;
   shouldNavigate?: boolean;
 };
 
 export const Connections: React.FC<ConnectionsProps> = (props) => {
-  const { hideDatabases, htmlProps, shouldNavigate, onSelect } = props;
+  const { hideDatabases, htmlProps, shouldNavigate } = props;
+
+  const isMobile = useIsMobile();
 
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection, connections } = useDefinedContext(ConnectionsContext);
-
-  const [isAddingOrEditing, setIsAddingOrEditing] = useState(() => connections.length === 0);
 
   const [connectionToEditId, setConnectionToEditId] = useState<string | undefined>(undefined);
 
   const [connectionsLabelId] = useState(uuid);
 
+  const [stage, setStage] = useState<'connections' | 'databases' | 'schemas' | 'form'>(
+    'connections',
+  );
+
   return (
     <>
-      {isAddingOrEditing ? (
+      {stage === 'form' ? (
         <ConnectionForm
           htmlProps={{
             ...htmlProps,
-            className: classNames(htmlProps?.className, { 'w-[320px]': !hideDatabases }),
+            className: classNames(htmlProps?.className, { 'w-full sm:w-[320px]': !hideDatabases }),
           }}
           connectionToEditId={connectionToEditId}
           hideBackButton={connections.length === 0}
           exit={() => {
             setConnectionToEditId(undefined);
-            setIsAddingOrEditing(false);
+            setStage('connections');
           }}
         />
       ) : (
         <div
-          className={classNames('grid gap-3', {
+          className={classNames('gap-3 sm:grid', {
             'grid-cols-[280px_auto]': !hideDatabases,
             'grid-cols-[280px]': hideDatabases,
           })}
           {...htmlProps}
         >
-          <div>
-            <div className="flex items-center justify-between pb-2 pl-1">
-              <div
-                className="overflow-hidden text-ellipsis whitespace-nowrap pl-1 text-sm font-medium text-textPrimary"
-                id={connectionsLabelId}
-              >
-                Connections
-              </div>
-              <Button
-                element={shouldNavigate ? 'link' : 'button'}
-                htmlProps={{
-                  href: shouldNavigate ? routes.addConnection() : undefined,
-                  onClick: () => {
-                    if (!shouldNavigate) {
-                      setIsAddingOrEditing(true);
-                    }
-                    track('connections_add');
-                  },
-                }}
-                icon={<Add />}
-                label="Add"
+          <div className="space-y-2">
+            {stage === 'connections' && (
+              <Header
+                evenColumns={isMobile}
+                left={isMobile ? undefined : 'Connections'}
+                middle={isMobile ? 'Connections' : undefined}
+                right={
+                  <Button
+                    element={shouldNavigate ? 'link' : 'button'}
+                    htmlProps={{
+                      href: shouldNavigate ? routes.addConnection() : undefined,
+                      onClick: () => {
+                        if (!shouldNavigate) {
+                          setStage('form');
+                        }
+                        track('connections_add');
+                      },
+                    }}
+                    icon={<Add />}
+                    label="Add"
+                  />
+                }
               />
-            </div>
-            <List
-              autoFocusFirstItem
-              htmlProps={{ 'aria-labelledby': connectionsLabelId }}
-              items={connections.map((connection) => ({
-                actions: [
-                  {
-                    icon: <EditOutlined />,
-                    label: 'Edit',
-                    onClick: () => {
-                      setConnectionToEditId(connection.id);
-                      setIsAddingOrEditing(true);
-                      track('connections_edit');
+            )}
+            {stage === 'connections' && (
+              <List
+                autoFocusFirstItem
+                htmlProps={{ 'aria-labelledby': connectionsLabelId }}
+                items={connections.map((connection) => ({
+                  actions: [
+                    {
+                      icon: <EditOutlined />,
+                      label: 'Edit',
+                      onClick: () => {
+                        setConnectionToEditId(connection.id);
+                        setStage('form');
+                        track('connections_edit');
+                      },
+                      tooltip: 'Edit',
                     },
-                    tooltip: 'Edit',
+                  ],
+                  hint:
+                    connection.type === 'remote'
+                      ? `${connection.user}@${connection.host}:${connection.port}`
+                      : undefined,
+                  htmlProps: {
+                    href: routes.connection({
+                      connectionId: connection.id,
+                      database: connection.database,
+                      schema: connection.engine === 'postgres' ? connection.schema ?? '' : '',
+                    }),
                   },
-                ],
-                hint:
-                  connection.type === 'remote'
-                    ? `${connection.user}@${connection.host}:${connection.port}`
-                    : undefined,
-                htmlProps: {
-                  href: routes.connection({
-                    connectionId: connection.id,
-                    database: connection.database,
-                    schema: connection.engine === 'postgres' ? connection.schema ?? '' : '',
-                  }),
-                },
-                label: connection.name,
-                selectedVariant: 'primary',
-                value: connection,
-              }))}
-              onSelect={() => {
-                track('connections_select');
-                onSelect?.();
-              }}
-              selectedValue={connections.find((c) => c.id === activeConnection?.id) ?? null}
-            />
+                  label: connection.name,
+                  selectedVariant: 'primary',
+                  value: connection,
+                }))}
+                onSelect={() => {
+                  track('connections_select');
+                  if (isMobile) {
+                    setStage('databases');
+                  }
+                }}
+                selectedValue={connections.find((c) => c.id === activeConnection?.id) ?? null}
+              />
+            )}
           </div>
-          {!hideDatabases && activeConnection && <DatabaseList onSelect={onSelect} />}
+          {!hideDatabases &&
+            activeConnection &&
+            (!isMobile || stage === 'databases' || stage === 'schemas') && (
+              <DatabaseList stage={stage} setStage={setStage} />
+            )}
         </div>
       )}
     </>

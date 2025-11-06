@@ -14,8 +14,6 @@ import { Connections } from '~/content/connections/Connections';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { Settings } from '~/content/settings/Settings';
 import { routes } from '~/router/routes';
-import { useOverlay } from '~/shared/components/overlay/useOverlay';
-import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { TableList } from '../sidebar/tableList/TableList';
@@ -30,12 +28,9 @@ export const MobileNavigation: React.FC = () => {
 
   const isMobile = useIsMobile();
 
-  const connectionsOverlay = useOverlay({
-    align: 'left',
-    darkenBackground: true,
-  });
-
-  const [overlayPage, setOverlayPage] = useState<'tables' | 'settings' | 'copilot' | null>(null);
+  const [overlayPage, setOverlayPage] = useState<
+    'connections' | 'tables' | 'settings' | 'copilot' | null
+  >(null);
 
   if (!isMobile) return null;
 
@@ -89,6 +84,7 @@ export const MobileNavigation: React.FC = () => {
         )}
       >
         <div className="h-full grow overflow-y-auto p-2 pb-[64px]">
+          {overlayPage === 'connections' && <Connections />}
           {overlayPage === 'tables' && <TableList onSelect={() => setOverlayPage(null)} />}
           {overlayPage === 'copilot' && <Copilot onCloseCopilot={() => setOverlayPage(null)} />}
           {overlayPage === 'settings' && <Settings close={() => setOverlayPage(null)} />}
@@ -98,7 +94,7 @@ export const MobileNavigation: React.FC = () => {
             <div className="flex min-w-[33%] grow items-center rounded-3xl border border-border bg-background/60 shadow-2xl backdrop-blur-xl focus-within:outline focus-within:outline-primary">
               <button
                 className="flex w-full cursor-pointer select-none items-center gap-[2px] overflow-hidden rounded-lg py-2 pl-4 pr-2 text-left text-sm focus:!outline-none"
-                {...connectionsOverlay.triggerProps}
+                onClick={() => setOverlayPage('connections')}
               >
                 <div className="flex grow flex-col gap-1 overflow-hidden">
                   <div className="truncate text-xs font-medium leading-tight text-textPrimary">
@@ -111,12 +107,6 @@ export const MobileNavigation: React.FC = () => {
                 </div>
                 <ExpandMoreOutlined className="text-textTertiary" />
               </button>
-              <OverlayCard
-                htmlProps={{ className: 'w-max p-2 shadow-2xl' }}
-                overlay={connectionsOverlay}
-              >
-                {() => <Connections onSelect={() => connectionsOverlay.close()} />}
-              </OverlayCard>
             </div>
           )}
           <div
