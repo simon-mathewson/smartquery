@@ -17,7 +17,7 @@ export const Tabs: React.FC = () => {
   }
 
   return (
-    <div className="no-scrollbar grid grid-flow-col items-center gap-2 overflow-auto">
+    <div className="no-scrollbar grid grid-flow-col items-center gap-1.5 overflow-auto">
       {tabs.map((tab) => {
         return (
           <Button

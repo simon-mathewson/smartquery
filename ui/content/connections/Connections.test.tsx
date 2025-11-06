@@ -5,7 +5,7 @@ import { routes } from '~/router/routes';
 import { mysqlConnectionMock } from './mocks';
 
 test.use({
-  viewport: { height: 520, width: 520 },
+  viewport: { height: 520, width: 800 },
 });
 
 test.describe('Connections', () => {

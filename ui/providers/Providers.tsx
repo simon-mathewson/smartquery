@@ -22,7 +22,6 @@ import { UpdateAvailableProvider } from '~/content/updateAvailable/Provider';
 import { ActiveConnectionProvider } from '~/content/connections/activeConnection/Provider';
 import { SavedQueriesProvider } from '~/content/savedQueries/Provider';
 import { CopilotSidebarProvider } from '~/content/ai/copilot/sidebar/Provider';
-import { NavigationSidebarProvider } from '~/content/navigation/sidebar/Provider';
 import { CopilotProvider } from '~/content/ai/copilot/Provider';
 
 const providers = {
@@ -47,7 +46,6 @@ const providers = {
   AddToDesktopProvider,
   CopilotSidebarProvider,
   CopilotProvider,
-  NavigationSidebarProvider,
 } satisfies Record<keyof ContextTypes, React.FC<PropsWithChildren>>;
 
 export type ProvidersProps = PropsWithChildren;

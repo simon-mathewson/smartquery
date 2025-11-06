@@ -52,7 +52,7 @@ export function Select<T = string | null>(props: SelectProps<T>) {
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         className={classNames(
-          'flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-lg border-[1.5px] border-border bg-background px-2 outline-none hover:bg-secondaryHighlight focus:border-primary',
+          'bg-control flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-full px-3 outline-none focus:border-primary',
           {
             'pointer-events-none': htmlProps?.disabled,
           },
@@ -72,7 +72,7 @@ export function Select<T = string | null>(props: SelectProps<T>) {
         >
           {selectedOption?.label ?? placeholder ?? 'Select'}
         </div>
-        <ExpandMore className="text-secondary" />
+        <ExpandMore className="text-textTertiary" />
       </button>
       <OverlayCard htmlProps={{ className: '!p-0' }} overlay={overlay}>
         {({ close }) => (

@@ -55,7 +55,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
     <div
       ref={containerRef}
       className={classNames(
-        'pr-2 transition-all ease-in-out [&_.margin]:!bg-background [&_.monaco-editor-background]:!bg-background [&_.monaco-editor]:!bg-background [&_.monaco-editor]:!outline-none [&_.scroll-decoration]:hidden [&_.scrollbar.vertical]:!w-[12px] [&_.scrollbar.vertical_.slider]:!w-[10px] [&_.scrollbar.vertical_.slider]:!rounded-[5px] [&_.scrollbar.vertical_.slider]:!bg-black/10 hover:[&_.scrollbar.vertical_.slider]:!bg-black/20 dark:[&_.scrollbar.vertical_.slider]:!bg-white/5 hover:dark:[&_.scrollbar.vertical_.slider]:!bg-white/10 [&_.sticky-widget]:!bg-background [&_.suggest-widget>.message]:text-[12px]',
+        '[&_.margin]:!bg-control [&_.monaco-editor-background]:!bg-control [&_.monaco-editor]:!bg-control [&_.sticky-widget]:!bg-control hover:dark:[&_.scrollbar.vertical_.slider]:!bg-control/10 bg-control pr-2 transition-all ease-in-out [&_.monaco-editor]:!outline-none [&_.scroll-decoration]:hidden [&_.scrollbar.vertical]:!w-[12px] [&_.scrollbar.vertical_.slider]:!w-[10px] [&_.scrollbar.vertical_.slider]:!rounded-[5px] [&_.scrollbar.vertical_.slider]:!bg-black/10 hover:[&_.scrollbar.vertical_.slider]:!bg-black/20 dark:[&_.scrollbar.vertical_.slider]:!bg-white/5 [&_.suggest-widget>.message]:text-[12px]',
         htmlProps?.className,
         {
           '[&_.monaco-editor_.cursors-layer_>_.cursor]:!hidden': readOnly,
@@ -74,7 +74,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = (props) => {
         <div className="pointer-events-none absolute left-0 right-0 top-0 z-20 flex">
           <div
             className={classNames(
-              'pointer-events-auto ml-auto flex h-9 items-center gap-3 rounded-bl-[18px] bg-background pr-2 pt-2',
+              'bg-control pointer-events-auto ml-auto flex h-9 items-center gap-3 rounded-bl-[18px] pr-2 pt-2',
               {
                 'pb-1 pl-1': !large,
                 'p-2 pb-0': large,

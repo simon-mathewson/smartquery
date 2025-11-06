@@ -9,7 +9,7 @@ import { getActiveConnectionMock } from '../activeConnection/mocks';
 import type { ActiveConnectionContextType } from '../activeConnection/Context';
 
 test.use({
-  viewport: { width: 500, height: 400 },
+  viewport: { width: 800, height: 400 },
 });
 
 test.describe('DatabaseList', () => {
@@ -21,7 +21,7 @@ test.describe('DatabaseList', () => {
       <DatabaseListStory testApp={{ providerOverrides: { ConnectionsProvider: connections } }} />,
     );
 
-    await expect($.getByRole('heading', { level: 2 }).first()).toHaveText('Databases');
+    await expect($.getByText('Databases')).toBeAttached();
 
     await expect($.getByRole('option', { selected: true }).first()).toHaveText(
       activeConnection.database,
@@ -79,7 +79,7 @@ test.describe('DatabaseList', () => {
       />,
     );
 
-    await expect($.getByRole('heading', { level: 2 }).last()).toHaveText('Schemas');
+    await expect($.getByText('Schemas')).toBeAttached();
 
     await expect($.getByRole('option', { selected: true }).last()).toHaveText(
       connections.activeConnection.schema,

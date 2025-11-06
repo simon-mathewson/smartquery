@@ -74,16 +74,16 @@ export const MobileNavigation: React.FC = () => {
 
   return (
     <>
-      <div className="h-[64px] shrink-0" />
+      <div className="h-[72px] shrink-0" />
       <div
         className={classNames(
           'pointer-events-none fixed left-0 right-0 top-0 z-40 h-[100dvh] w-full',
           {
-            '!pointer-events-auto bg-background/60 backdrop-blur-xl': overlayPage,
+            '!pointer-events-auto bg-card/60 backdrop-blur-xl': overlayPage,
           },
         )}
       >
-        <div className="h-full grow overflow-y-auto p-2 pb-[64px]">
+        <div className="h-full grow overflow-y-auto p-2 pb-[72px]">
           {overlayPage === 'connections' && <Connections />}
           {overlayPage === 'tables' && <TableList onSelect={() => setOverlayPage(null)} />}
           {overlayPage === 'copilot' && <Copilot onCloseCopilot={() => setOverlayPage(null)} />}
@@ -91,16 +91,16 @@ export const MobileNavigation: React.FC = () => {
         </div>
         <div className="pointer-events-auto sticky bottom-0 flex shrink-0 items-center justify-center gap-2 px-2 pb-2">
           {activeConnection && (
-            <div className="flex min-w-[33%] grow items-center rounded-3xl border border-border bg-background/60 shadow-2xl backdrop-blur-xl focus-within:outline focus-within:outline-primary">
+            <div className="flex h-[56px] min-w-[33%] grow items-center rounded-full border border-border bg-background/60 shadow-2xl backdrop-blur-xl focus-within:outline focus-within:outline-primary">
               <button
-                className="flex w-full cursor-pointer select-none items-center gap-[2px] overflow-hidden rounded-lg py-2 pl-4 pr-2 text-left text-sm focus:!outline-none"
+                className="flex w-full cursor-pointer select-none items-center gap-[2px] overflow-hidden py-2 pl-4 pr-2 text-left text-sm focus:!outline-none"
                 onClick={() => setOverlayPage('connections')}
               >
                 <div className="flex grow flex-col gap-1 overflow-hidden">
-                  <div className="truncate text-xs font-medium leading-tight text-textPrimary">
+                  <div className="truncate text-sm font-medium leading-tight text-textPrimary">
                     {activeConnection.name}
                   </div>
-                  <div className="truncate text-[11px] font-medium leading-none text-textTertiary">
+                  <div className="truncate text-xs font-medium leading-none text-textTertiary">
                     {activeConnection.database}
                     {activeConnection.engine === 'postgres' && ` ⁠– ${activeConnection.schema}`}
                   </div>
@@ -110,13 +110,13 @@ export const MobileNavigation: React.FC = () => {
             </div>
           )}
           <div
-            className="grid w-max max-w-full grid-rows-1 items-center rounded-3xl border border-border bg-background/60 p-1 shadow-2xl backdrop-blur-xl"
+            className="grid w-max max-w-full grid-rows-1 items-center rounded-full border border-border bg-background/60 p-1 shadow-2xl backdrop-blur-xl"
             style={{ gridTemplateColumns: `repeat(${menuItems.length}, minmax(50px, 80px))` }}
           >
             {menuItems.map(({ active, icon, label, onClick }) => (
               <button
                 className={classNames(
-                  'flex flex-col items-center gap-[2px] rounded-3xl pb-[3px] pt-[1px] text-primary [&>svg]:h-[22px] [&>svg]:w-[22px]',
+                  'flex flex-col items-center gap-[4px] rounded-3xl pb-[4px] pt-[2px] text-primary [&>svg]:h-[26px] [&>svg]:w-[26px]',
                   {
                     'bg-secondaryHighlight': active,
                   },
@@ -125,7 +125,7 @@ export const MobileNavigation: React.FC = () => {
                 onClick={onClick}
               >
                 {icon}
-                <div className="text-[11px] font-medium leading-none text-textPrimary">{label}</div>
+                <div className="text-[10px] font-medium leading-none text-textPrimary">{label}</div>
               </button>
             ))}
           </div>

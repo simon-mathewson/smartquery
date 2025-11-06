@@ -117,7 +117,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
       <div className="transition-all ease-in-out" style={{ height: initialHeight }} />
       <div
         className={classNames(
-          'max-h-content absolute inset-0 z-40 w-full overflow-hidden rounded-lg border border-border bg-background transition-all ease-in-out',
+          'max-h-content absolute inset-0 z-40 w-full overflow-hidden rounded-2xl border border-border bg-background transition-all ease-in-out',
           {
             'shadow-xl': isExtended && extendOnFocus,
           },

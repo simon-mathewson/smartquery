@@ -22,7 +22,6 @@ import { UpdateAvailableMockProvider } from '~/content/updateAvailable/MockProvi
 import { ActiveConnectionMockProvider } from '~/content/connections/activeConnection/MockProvider';
 import { SavedQueriesMockProvider } from '~/content/savedQueries/MockProvider';
 import { CopilotSidebarProvider } from '~/content/ai/copilot/sidebar/Provider';
-import { NavigationSidebarProvider } from '~/content/navigation/sidebar/Provider';
 import { CopilotProvider } from '~/content/ai/copilot/Provider';
 
 const mockProviders = {
@@ -47,7 +46,6 @@ const mockProviders = {
   AddToDesktopProvider,
   CopilotProvider,
   CopilotSidebarProvider,
-  NavigationSidebarProvider,
 } as const;
 
 export type ProviderOverrides = DeepPartial<ContextTypes>;

@@ -8,7 +8,7 @@ export const ErrorMessage: React.FC<
     <div
       {...htmlProps}
       className={classNames(
-        'rounded-lg bg-dangerHighlight px-2 py-1 text-xs font-medium leading-normal text-danger',
+        'rounded-xl bg-dangerHighlight px-2 py-1 text-xs font-medium leading-normal text-danger',
         htmlProps?.className,
       )}
     >

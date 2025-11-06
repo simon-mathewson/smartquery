@@ -1,25 +1,24 @@
+import type { CopilotContextType } from '~/content/ai/copilot/Context';
+import type { CopilotSidebarContextType } from '~/content/ai/copilot/sidebar/Context';
 import type { AnalyticsContextType } from '~/content/analytics/Context';
-import type { AddToDesktopContextType } from '~/content/settings/addToDesktop/Context';
 import type { AuthContextType } from '~/content/auth/Context';
 import type { CloudApiContextType } from '~/content/cloud/api/Context';
+import type { ActiveConnectionContextType } from '~/content/connections/activeConnection/Context';
 import type { ConnectionsContextType } from '~/content/connections/Context';
 import type { DragAndDropContextType } from '~/content/dragAndDrop/Context';
 import type { EditContextType } from '~/content/edit/Context';
-import type { EscapeStackContextType } from '~/shared/hooks/useEscape/useStack/Context';
+import type { ErrorTrackingContextType } from '~/content/errors/tracking/Context';
 import type { LinkApiContextType } from '~/content/link/api/Context';
 import type { LinkContextType } from '~/content/link/Context';
-import type { QueriesContextType } from '~/content/tabs/queries/Context';
+import type { SavedQueriesContextType } from '~/content/savedQueries/Context';
+import type { AddToDesktopContextType } from '~/content/settings/addToDesktop/Context';
 import type { SqliteContextType } from '~/content/sqlite/Context';
 import type { TabsContextType } from '~/content/tabs/Context';
+import type { QueriesContextType } from '~/content/tabs/queries/Context';
 import type { ThemeContextType } from '~/content/theme/Context';
 import type { ToastContextType } from '~/content/toast/Context';
-import type { ErrorTrackingContextType } from '~/content/errors/tracking/Context';
 import type { UpdateAvailableContextType } from '~/content/updateAvailable/Context';
-import type { ActiveConnectionContextType } from '~/content/connections/activeConnection/Context';
-import type { SavedQueriesContextType } from '~/content/savedQueries/Context';
-import type { CopilotSidebarContextType } from '~/content/ai/copilot/sidebar/Context';
-import type { NavigationSidebarContextType } from '~/content/navigation/sidebar/Context';
-import type { CopilotContextType } from '~/content/ai/copilot/Context';
+import type { EscapeStackContextType } from '~/shared/hooks/useEscape/useStack/Context';
 
 export type ContextTypes = {
   ActiveConnectionProvider: ActiveConnectionContextType;
@@ -36,7 +35,6 @@ export type ContextTypes = {
   EscapeStackProvider: EscapeStackContextType;
   LinkApiProvider: LinkApiContextType;
   LinkProvider: LinkContextType;
-  NavigationSidebarProvider: NavigationSidebarContextType;
   QueriesProvider: QueriesContextType;
   SavedQueriesProvider: SavedQueriesContextType;
   SqliteProvider: SqliteContextType;

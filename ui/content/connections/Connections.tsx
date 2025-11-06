@@ -41,7 +41,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
         <ConnectionForm
           htmlProps={{
             ...htmlProps,
-            className: classNames(htmlProps?.className, { 'w-full sm:w-[320px]': !hideDatabases }),
+            className: classNames(htmlProps?.className, { 'w-full sm:w-[328px]': !hideDatabases }),
           }}
           connectionToEditId={connectionToEditId}
           hideBackButton={connections.length === 0}
@@ -62,8 +62,8 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
             {stage === 'connections' && (
               <Header
                 evenColumns={isMobile}
-                left={isMobile ? undefined : 'Connections'}
-                middle={isMobile ? 'Connections' : undefined}
+                left={isMobile ? undefined : <div id={connectionsLabelId}>Connections</div>}
+                middle={isMobile ? <div id={connectionsLabelId}>Connections</div> : undefined}
                 right={
                   <Button
                     element={shouldNavigate ? 'link' : 'button'}

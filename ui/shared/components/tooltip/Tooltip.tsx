@@ -82,7 +82,7 @@ export const Tooltip = <T extends HTMLElement>(props: TooltipProps<T>) => {
           <div
             {...root.htmlProps}
             className={classNames(
-              '!pointer-events-none max-w-[160px] rounded-lg bg-background px-1.5 py-0.5 text-center text-xs font-medium text-textPrimary light:bg-opacity-70 light:dark dark:bg-opacity-90 dark:light',
+              '!pointer-events-none max-w-[160px] rounded-xl bg-background px-1.5 py-0.5 text-center text-xs font-medium text-textPrimary backdrop-blur-xl light:bg-opacity-70 light:dark dark:bg-opacity-90 dark:light',
               root.htmlProps.className,
             )}
           >

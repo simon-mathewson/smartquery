@@ -16,7 +16,7 @@ export const CodeInput: React.FC<CodeInputProps> = (props) => {
     <div
       {...htmlProps}
       className={classNames(
-        'max-h-[200px] min-h-[36px] w-full overflow-hidden rounded-lg border-[1.5px] border-border bg-background focus:border-primary',
+        'bg-control max-h-[200px] min-h-[36px] w-full overflow-hidden rounded-[18px] focus:border-primary',
         {
           'cursor-pointer opacity-50': editorProps?.readOnly,
         },

@@ -11,7 +11,10 @@ export const Card: React.FC<CardProps> = (props) => {
   return (
     <div
       {...htmlProps}
-      className={classNames('rounded-xl border border-border bg-card p-2', htmlProps?.className)}
+      className={classNames(
+        'rounded-2xl border border-border bg-card p-2 shadow-2xl',
+        htmlProps?.className,
+      )}
     >
       {children}
     </div>

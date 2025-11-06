@@ -40,7 +40,7 @@ export const ActionList: React.FC<ActionListProps> = (props) => {
                 ? { disabled: action.disabled }
                 : { 'aria-disabled': action.disabled })}
               className={classNames(
-                'flex min-h-[56px] cursor-pointer items-center gap-3 overflow-hidden rounded-xl border border-border bg-card px-4 py-2 text-left hover:border-borderHover',
+                'flex min-h-[56px] cursor-pointer items-center gap-3 overflow-hidden rounded-2xl border border-border bg-card px-4 py-2 text-left shadow-2xl hover:border-borderHover',
                 {
                   '!min-h-[40px] !gap-2 !px-2': compact,
                   'pointer-events-none opacity-50': action.disabled,

@@ -193,7 +193,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
       </div>
       <div>
         {isLoadingSchemaDefinitions && (
-          <div className="mb-2 mt-1 flex w-max items-center gap-2 rounded-lg bg-primaryHighlight px-2 py-1 text-xs font-[500] text-textSecondary">
+          <div className="mb-2 mt-1 flex w-max items-center gap-2 rounded-full bg-primaryHighlight px-2 py-1 text-xs font-[500] text-textSecondary">
             <CircularProgress size={15} className="!text-textSecondary" />
             <div className="text-xs text-textSecondary">Loading schema definitions...</div>
           </div>
@@ -204,7 +204,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
               <div
                 {...htmlProps}
                 className={classNames(
-                  'mb-2 mt-1 flex w-max items-center gap-2 rounded-lg bg-primaryHighlight px-2 py-1 text-xs font-[500] text-textSecondary',
+                  'mb-2 mt-1 flex w-max items-center gap-2 rounded-full bg-primaryHighlight px-2 py-1 text-xs font-[500] text-textSecondary',
                   htmlProps.className,
                 )}
               >

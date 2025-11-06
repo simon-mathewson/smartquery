@@ -1,6 +1,6 @@
 import { ArrowBackIosNewOutlined } from '@mui/icons-material';
 import classNames from 'classnames';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
@@ -10,6 +10,7 @@ import { Loading } from '~/shared/components/loading/Loading';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { ActiveConnectionContext } from '../activeConnection/Context';
+import { v4 as uuid } from 'uuid';
 
 export type DatabaseListProps = {
   stage: 'databases' | 'schemas' | 'connections';
@@ -30,6 +31,9 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
 
     return databases.find((database) => database.name === activeConnection.database)?.schemas ?? [];
   }, [activeConnection, databases]);
+
+  const [databasesLabelId] = useState(uuid);
+  const [schemasLabelId] = useState(uuid);
 
   if (!activeConnection) {
     return null;
@@ -56,13 +60,14 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
                   htmlProps={{ onClick: () => setStage('connections') }}
                 />
               ) : (
-                'Databases'
+                <div id={databasesLabelId}>Databases</div>
               )
             }
-            middle={isMobile ? 'Databases' : undefined}
+            middle={isMobile ? <div id={databasesLabelId}>Databases</div> : undefined}
           />
           {isLoadingDatabases && <Loading />}
           <List
+            htmlProps={{ 'aria-labelledby': databasesLabelId }}
             items={databases.map((database) => ({
               htmlProps: {
                 href: routes.connection({
@@ -99,13 +104,14 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
                     htmlProps={{ onClick: () => setStage('databases') }}
                   />
                 ) : (
-                  'Schemas'
+                  <div id={schemasLabelId}>Schemas</div>
                 )
               }
-              middle={isMobile ? 'Schemas' : undefined}
+              middle={isMobile ? <div id={schemasLabelId}>Schemas</div> : undefined}
             />
             {isLoadingDatabases && <Loading />}
             <List
+              htmlProps={{ 'aria-labelledby': schemasLabelId }}
               items={schemas.map((schema) => ({
                 htmlProps: {
                   href: routes.connection({

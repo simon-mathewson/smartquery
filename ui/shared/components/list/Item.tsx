@@ -48,7 +48,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
       aria-disabled={disabled}
       aria-selected={selected}
       className={classNames(
-        'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-md px-2 py-2 sm:py-1.5',
+        'grid w-full cursor-pointer select-none grid-cols-[1fr_max-content] gap-2 rounded-lg px-2 py-2 sm:py-1.5',
         {
           'bg-primary hover:bg-primaryHover': selectedVariant === 'primary' && selected,
           'bg-secondaryHighlight hover:bg-secondaryHighlightHover':

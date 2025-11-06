@@ -50,16 +50,13 @@ export const Query: React.FC = () => {
 
   return (
     <div
-      className={classNames(
-        'relative ml-3 mt-3 flex min-h-[240px] flex-col rounded-xl border border-border bg-card',
-        {
-          '!ml-0': columnIndex === 0,
-          '!mt-0': rowIndex === 0,
-        },
-      )}
+      className={classNames('relative ml-3 mt-3 flex h-full flex-col gap-2', {
+        '!ml-0': columnIndex === 0,
+        '!mt-0': rowIndex === 0,
+      })}
       data-query={query.id}
     >
-      <div className="space-y-2 p-2">
+      <div className="space-y-2">
         <Header
           left={
             result ? <InputModesSelect inputMode={inputMode} setInputMode={setInputMode} /> : null
@@ -117,14 +114,14 @@ export const Query: React.FC = () => {
         <InputModes inputMode={inputMode} />
       </div>
       {result && (
-        <div className="flex flex-col gap-2 overflow-y-auto">
-          <div className="sticky top-0 z-30 flex gap-2 bg-card px-2 pb-3">
+        <div className="flex h-full flex-col gap-2 overflow-y-auto">
+          <div className="sticky top-0 z-30 flex gap-2 pb-3">
             <ChartEditOverlay />
             <ViewColumnsButton />
           </div>
           <Chart />
           <Table handleRowCreationRef={handleRowCreationRef} isEditable={isEditable} />
-          <div className="shrink-0 p-2">
+          <div className="shrink-0 py-2">
             <BottomToolbar handleRowCreationRef={handleRowCreationRef} isEditable={isEditable} />
           </div>
         </div>

@@ -9,8 +9,11 @@ import { Toolbar } from '~/content/toolbar/Toolbar';
 import { Queries } from '~/content/tabs/queries/Queries';
 import { CopilotSidebar } from '~/content/ai/copilot/sidebar/Sidebar';
 import { MobileNavigation } from '~/content/navigation/mobile/MobileNavigation';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 
 export const Connection: React.FC = () => {
+  const isMobile = useIsMobile();
+
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const title = `${
@@ -36,8 +39,8 @@ export const Connection: React.FC = () => {
       <div className="relative flex h-[100dvh] flex-col justify-between">
         <div className="relative grid h-full grid-cols-1 overflow-hidden bg-background sm:grid-cols-[max-content_1fr_max-content]">
           {!activeConnection && <Loading size="large" />}
-          <NavigationSidebar />
-          <div className="flex h-full flex-col overflow-hidden pb-3 pl-3 pr-3 sm:pl-1">
+          {!isMobile && <NavigationSidebar />}
+          <div className="flex h-full flex-col overflow-hidden pl-3 pr-3 sm:pl-1">
             {activeConnection && (
               <>
                 <Toolbar />

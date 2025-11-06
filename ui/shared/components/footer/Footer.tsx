@@ -54,7 +54,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
       </OverlayCard>
       <div
         className={classNames(
-          'sticky bottom-0 mt-auto w-full space-y-1 overflow-hidden bg-background py-1',
+          'sticky bottom-0 mt-auto w-full space-y-1 overflow-hidden py-1',
           htmlProps?.className,
         )}
       >

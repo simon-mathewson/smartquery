@@ -9,14 +9,12 @@ import { TabsContext } from '~/content/tabs/Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { isNotUndefined } from '~/shared/utils/typescript/typescript';
-import { NavigationSidebarContext } from '../Context';
 
 export const useSavedQueryList = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeTab } = useDefinedContext(TabsContext);
   const { addQuery } = useDefinedContext(QueriesContext);
   const { savedQueries, isLoading } = useDefinedContext(SavedQueriesContext);
-  const navigationSidebar = useDefinedContext(NavigationSidebarContext);
 
   const selectedSavedQueries = uniq(
     activeTab?.queries.flatMap((queries) =>
@@ -75,10 +73,8 @@ export const useSavedQueryList = () => {
       );
 
       track('saved_query_list_select');
-
-      navigationSidebar.setIsOpen(false);
     },
-    [addQuery, navigationSidebar, selectedSavedQueries, track],
+    [addQuery, selectedSavedQueries, track],
   );
 
   return useMemo(

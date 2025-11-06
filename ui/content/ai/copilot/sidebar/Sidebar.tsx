@@ -29,7 +29,7 @@ export const CopilotSidebar: React.FC = () => {
     >
       {isOpen && (
         <ResizeHandle
-          offset={13}
+          offset={12}
           position="left"
           onResize={setDesktopWidth}
           minWidth={200}

@@ -156,7 +156,7 @@ export const Cell: React.FC<CellProps> = (props) => {
             return 'data-[row-hover=true]:bg-secondaryHighlight ';
           })(),
           {
-            'h-10 border-y bg-card': type === 'header',
+            'h-10 border-y bg-background/60 backdrop-blur-xl': type === 'header',
             'cursor-pointer': type === 'header' && query.select,
             '-mt-[1px] border-y py-2': type === 'body',
             'border-l-0 pl-4': columnIndex === 0,
@@ -283,7 +283,7 @@ export const Cell: React.FC<CellProps> = (props) => {
           className={classNames(
             'h-8 w-full border-y border-y-border shadow-[inset_1px_0_0_0_#e5e5e5] dark:shadow-[inset_1px_0_0_0_#404040]',
             {
-              'z-10 -ml-px bg-card': type === 'header',
+              'z-10 -ml-px bg-background/60 backdrop-blur-xl': type === 'header',
               '-ml-px -mt-px': type === 'body',
             },
           )}
