@@ -5,8 +5,6 @@ import { CodeEditor } from '../codeEditor/CodeEditor';
 import { QueryContext } from '~/content/tabs/queries/query/Context';
 import { useSchemaDefinitions } from '~/content/ai/schemaDefinitions/useSchemaDefinitions';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
-import classNames from 'classnames';
-import { useEscape } from '~/shared/hooks/useEscape/useEscape';
 import { useDebouncedCallback } from 'use-debounce';
 
 export type SqlEditorProps = {
@@ -14,7 +12,6 @@ export type SqlEditorProps = {
     htmlProps: React.HTMLAttributes<HTMLElement>;
     value: string;
   }) => React.ReactNode;
-  extendOnFocus?: boolean;
   isResetDisabled?: boolean;
   isSubmitDisabled?: boolean;
   onChange?: (sql: string) => void;
@@ -27,7 +24,6 @@ export type SqlEditorProps = {
 export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const {
     bottomToolbarActions,
-    extendOnFocus,
     isResetDisabled,
     isSubmitDisabled,
     onChange,
@@ -43,43 +39,6 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   const { getAndRefreshSchemaDefinitions } = useSchemaDefinitions();
 
-  const [isExtended, setIsExtended] = useState(!extendOnFocus);
-
-  useEffect(() => {
-    setIsExtended(!extendOnFocus);
-
-    const sqlEditor = sqlEditorRef.current;
-
-    const onMousedown = (event: MouseEvent) => {
-      if (extendOnFocus && sqlEditor && !sqlEditor.contains(event.target as Node)) {
-        setIsExtended(false);
-      }
-    };
-
-    const onKeydown = (event: KeyboardEvent) => {
-      if (extendOnFocus && event.key === 'Escape') {
-        setIsExtended(false);
-      }
-    };
-
-    window.addEventListener('mousedown', onMousedown);
-    window.addEventListener('keydown', onKeydown);
-
-    return () => {
-      window.removeEventListener('mousedown', onMousedown);
-      window.removeEventListener('keydown', onKeydown);
-    };
-  }, [extendOnFocus]);
-
-  useEscape({
-    active: isExtended,
-    handler: () => {
-      if (document.activeElement instanceof HTMLElement) {
-        document.activeElement.blur();
-      }
-    },
-  });
-
   const submitQuery = useCallback(
     async (event?: React.FormEvent) => {
       event?.preventDefault();
@@ -88,21 +47,17 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
       if (document.activeElement instanceof HTMLElement) {
         document.activeElement.blur();
-        if (extendOnFocus) {
-          setIsExtended(false);
-        }
       }
     },
-    [onSubmit, extendOnFocus],
+    [onSubmit],
   );
 
-  const getDefaultHeight = () => Math.min(window.innerHeight * 0.5, 480);
-  const initialHeight = extendOnFocus ? 136 : getDefaultHeight();
-  const [extendedHeight, setExtendedHeight] = useState(getDefaultHeight());
-  const height = isExtended ? extendedHeight : initialHeight;
+  const initialHeight = 136;
+  const getMaxHeight = () => Math.min(window.innerHeight * 0.5, 480);
+  const [maxHeight, setMaxHeight] = useState(getMaxHeight);
 
   const handleResize = useDebouncedCallback(() => {
-    setExtendedHeight(getDefaultHeight());
+    setMaxHeight(getMaxHeight());
   }, 100);
 
   useEffect(() => {
@@ -113,17 +68,8 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const sqlEditorRef = useRef<HTMLFormElement | null>(null);
 
   return (
-    <form className="relative flex flex-col gap-3" onSubmit={submitQuery} ref={sqlEditorRef}>
-      <div className="transition-all ease-in-out" style={{ height: initialHeight }} />
-      <div
-        className={classNames(
-          'max-h-content border-controlBorder absolute inset-0 z-40 w-full overflow-hidden rounded-2xl border bg-background transition-all ease-in-out',
-          {
-            'shadow-xl': isExtended && extendOnFocus,
-          },
-        )}
-        style={{ height }}
-      >
+    <form className="flex flex-col gap-3" onSubmit={submitQuery} ref={sqlEditorRef}>
+      <div className="max-h-content border-controlBorder w-full overflow-hidden rounded-2xl border bg-background transition-all ease-in-out">
         <CodeEditor
           bottomToolbar={
             <div className="flex justify-end gap-3 px-2.5 py-3">
@@ -158,15 +104,10 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
           getSchemaDefinitions={getAndRefreshSchemaDefinitions}
           language={activeConnection?.engine ?? 'sql'}
           large
-          height={height}
-          maxHeight={height}
+          height={initialHeight}
+          maxHeight={maxHeight}
           onChange={onChange}
           onKeyDown={onKeyDown}
-          onFocus={() => {
-            if (extendOnFocus) {
-              setIsExtended(true);
-            }
-          }}
           submit={submitQuery}
           value={value}
         />

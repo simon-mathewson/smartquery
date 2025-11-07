@@ -100,7 +100,6 @@ export const Sql: React.FC = () => {
             />
           )
         }
-        extendOnFocus={queryResult !== null || Boolean(query.sql)}
         isResetDisabled={(query.sql ?? '') === value}
         isSubmitDisabled={isSubmitDisabled}
         onChange={onChange}
