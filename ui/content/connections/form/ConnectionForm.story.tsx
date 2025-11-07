@@ -9,6 +9,8 @@ export const ConnectionFormStory: React.FC<StoryProps<ConnectionFormProps>> = ({
   testApp,
 }) => (
   <TestApp {...testApp}>
-    <ConnectionForm {...componentProps} />
+    <div className="w-[384px]">
+      <ConnectionForm {...componentProps} />
+    </div>
   </TestApp>
 );
