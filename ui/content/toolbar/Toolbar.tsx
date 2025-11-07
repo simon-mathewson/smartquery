@@ -22,7 +22,7 @@ export const Toolbar: React.FC = () => {
   const isMobile = useIsMobile();
 
   return (
-    <div className="mb-3 flex items-center gap-3 pl-4 pr-2 pt-2">
+    <div className="mb-3 flex items-center gap-3 pl-2 pr-2 pt-2 sm:pl-3">
       <Tabs />
       <Button
         align="left"

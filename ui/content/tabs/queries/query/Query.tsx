@@ -56,7 +56,7 @@ export const Query: React.FC = () => {
       })}
       data-query={query.id}
     >
-      <div className="space-y-2 pl-3 pr-2">
+      <div className="space-y-2 pl-2 pr-2 sm:pl-3">
         <Header
           left={
             result ? <InputModesSelect inputMode={inputMode} setInputMode={setInputMode} /> : null
@@ -119,11 +119,11 @@ export const Query: React.FC = () => {
             <ChartEditOverlay />
             <ViewColumnsButton />
           </div>
-          <div className="pl-4 pr-2">
+          <div className="pl-2 pr-2 sm:pl-4">
             <Chart />
           </div>
           <Table handleRowCreationRef={handleRowCreationRef} isEditable={isEditable} />
-          <div className="shrink-0 p-2 pl-4">
+          <div className="shrink-0 p-2 pl-2 sm:pl-4">
             <BottomToolbar handleRowCreationRef={handleRowCreationRef} isEditable={isEditable} />
           </div>
         </div>

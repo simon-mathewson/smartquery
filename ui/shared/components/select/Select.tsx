@@ -52,9 +52,10 @@ export function Select<T = string | null>(props: SelectProps<T>) {
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         className={classNames(
-          'bg-control flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-full px-3 outline-none focus:border-primary',
+          'bg-control border-controlBorder flex h-[36px] w-full cursor-pointer items-center justify-between gap-2 rounded-full border-[1.5px] px-3 outline-none focus:border-primary',
           {
             'pointer-events-none': htmlProps?.disabled,
+            'border-[1.5px] border-primary': overlay.isOpen,
           },
           htmlProps?.className,
         )}

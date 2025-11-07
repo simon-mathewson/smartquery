@@ -38,6 +38,7 @@ export const themes = primaryColors.reduce((acc, primaryColor) => {
       borderHover: colors.neutral[600],
       card: colors.neutral[900],
       control: '#0E0E0E',
+      controlBorder: '#303030',
 
       textPrimary: '#FFFFFFE9',
       textSecondary: '#FFFFFFC0',
@@ -76,7 +77,8 @@ export const themes = primaryColors.reduce((acc, primaryColor) => {
       border: colors.neutral[200],
       borderHover: colors.neutral[300],
       card: colors.white,
-      control: '#F3F3F3',
+      control: colors.neutral[50],
+      controlBorder: '#ECECEC',
 
       textPrimary: colors.neutral[800],
       textSecondary: colors.neutral[600],
