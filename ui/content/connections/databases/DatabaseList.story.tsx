@@ -8,7 +8,7 @@ export const DatabaseListStory: React.FC<StoryProps> = (props) => {
 
   return (
     <TestApp {...testApp}>
-      <DatabaseList />
+      <DatabaseList stage="databases" setStage={() => {}} />
     </TestApp>
   );
 };
