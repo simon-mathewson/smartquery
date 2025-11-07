@@ -43,7 +43,9 @@ export const Tabs: React.FC = () => {
                 size="small"
               />
             }
-            textSuffix={tab.queries.length > 1 ? `+${tab.queries.flat(2).length - 1}` : undefined}
+            textSuffix={
+              tab.queries.flat().length > 1 ? `+${tab.queries.flat(2).length - 1}` : undefined
+            }
             variant="highlighted"
           />
         );

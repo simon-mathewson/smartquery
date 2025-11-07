@@ -35,10 +35,10 @@ export const NavigationSidebar: React.FC = () => {
   const [desktopWidth, setDesktopWidth] = useStoredState('NavigationSidebar.width', 236);
 
   return (
-    <div className="z-50 h-[100dvh] p-2">
+    <div className="relative z-50 h-[100dvh] p-2 pr-0">
       {!isMobile && (
         <ResizeHandle
-          offset={7}
+          offset={9}
           position="right"
           onResize={setDesktopWidth}
           minWidth={100}

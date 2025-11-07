@@ -20,7 +20,7 @@ export const CopilotSidebar: React.FC = () => {
     <div
       tabIndex={isOpen ? undefined : -1}
       className={classNames(
-        'absolute right-0 z-50 h-[100dvh] bg-background p-3 sm:relative sm:right-0 sm:pl-1',
+        'absolute right-0 z-50 h-[100dvh] bg-background p-2 pl-0 sm:relative sm:right-0',
         {
           hidden: !isOpen,
         },
@@ -29,7 +29,7 @@ export const CopilotSidebar: React.FC = () => {
     >
       {isOpen && (
         <ResizeHandle
-          offset={12}
+          offset={9}
           position="left"
           onResize={setDesktopWidth}
           minWidth={200}

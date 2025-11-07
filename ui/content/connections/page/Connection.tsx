@@ -40,7 +40,7 @@ export const Connection: React.FC = () => {
         <div className="relative grid h-full grid-cols-1 overflow-hidden bg-background sm:grid-cols-[max-content_1fr_max-content]">
           {!activeConnection && <Loading size="large" />}
           {!isMobile && <NavigationSidebar />}
-          <div className="flex h-full flex-col overflow-hidden pl-3 pr-3 sm:pl-1">
+          <div className="flex h-full flex-col overflow-hidden">
             {activeConnection && (
               <>
                 <Toolbar />

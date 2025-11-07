@@ -25,7 +25,7 @@ export const DropMarker: React.FC<DropMarkerProps> = (props) => {
 
   return (
     <div
-      className={classNames('z-10 shrink-0', {
+      className={classNames('z-50 shrink-0', {
         '-mt-[2px] h-[2px] w-full first:-mb-[2px] first:mt-0': horizontal,
         '-ml-[2px] h-full w-[2px] first:-mr-[2px] first:ml-0': !horizontal,
         'bg-primary': active,

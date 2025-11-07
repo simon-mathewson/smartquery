@@ -159,7 +159,8 @@ export const Cell: React.FC<CellProps> = (props) => {
             'h-10 border-y bg-background/60 backdrop-blur-xl': type === 'header',
             'cursor-pointer': type === 'header' && query.select,
             '-mt-[1px] border-y py-2': type === 'body',
-            'border-l-0 pl-4': columnIndex === 0,
+            'border-l-0 pl-6': columnIndex === 0,
+            'pr-6': columnIndex === visibleColumnCount - 1,
             'border-b-1': type === 'body' && rowIndex === rowCount - 1,
             'z-10 !border-whiteHighlightHover': type === 'body' && selected,
             'border-y-border':
