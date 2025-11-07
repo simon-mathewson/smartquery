@@ -27,7 +27,7 @@ export const Toast: React.FC = () => {
     },
     position: { x: 'center', y: 'bottom' },
     styleOptions: {
-      overlayMargin: isMobile ? 64 : 16,
+      overlayMargin: isMobile ? 72 : 16,
     },
   });
 
