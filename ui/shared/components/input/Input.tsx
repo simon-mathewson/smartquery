@@ -43,7 +43,7 @@ export const Input: React.FC<InputProps> = (props) => {
       if (Element === 'textarea') {
         const textArea = element as HTMLTextAreaElement;
         textArea.style.height = 'auto';
-        textArea.style.height = `${Math.max(36, Math.min(200, textArea.scrollHeight))}px`;
+        textArea.style.height = `${Math.max(36, Math.min(200, textArea.scrollHeight + 3))}px`;
       }
     },
     [Element],
