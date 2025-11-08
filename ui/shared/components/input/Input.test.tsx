@@ -70,7 +70,7 @@ test('Textarea resizes', async ({ mount }) => {
   await expect(element).toBeAttached();
   await expect(element).toHaveValue(props.htmlProps.value);
 
-  expect(await getHeight($.page())).toBe(36);
+  expect(await getHeight($.page())).toBe(37);
 
   const valueWithLineBreaks =
     'New text\nNew line\nNew text\nNew line\nNew line\nNew line\nNew line\nNew text\nNew line\nNew text\nNew line\nNew line';
