@@ -138,13 +138,12 @@ export const Table: React.FC<TableProps> = (props) => {
           .sort(() => Math.random() - 0.5)
           .slice(0, sampleSize);
         const lengths = [
-          columnName.length,
           ...sample.map(
             (row) => String(Array.isArray(row) ? row[columnIndex] : row[columnName]).length,
           ),
         ];
-        const medianLength = median(lengths);
-        const finalWidthChars = Math.max(Math.min(medianLength, 60), 10);
+        const expectedChars = Math.max(median(lengths), columnName.length) + 2;
+        const finalWidthChars = Math.max(Math.min(expectedChars, 60), 10);
         const finalWidth = finalWidthChars * 9;
 
         return `${finalWidth}px`;

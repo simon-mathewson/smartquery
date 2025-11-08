@@ -197,44 +197,48 @@ export const Cell: React.FC<CellProps> = (props) => {
         <ResizeHandle
           position="right"
           onResize={setColumnWidth}
-          minWidth={30}
+          minWidth={40}
           maxWidth={600}
           offset={8}
         />
         <div
-          className={classNames('overflow-hidden text-ellipsis whitespace-nowrap text-xs', {
-            'font-mono font-medium text-textPrimary': type === 'header',
-            'text-white': selected,
-            'font-mono font-medium':
-              type === 'body' &&
-              (value === null ||
-                value === undefined ||
-                (typeof column === 'object' &&
-                  (column.isUnique ||
-                    column.foreignKey ||
-                    column.isPrimaryKey ||
-                    ['boolean', 'json'].includes(column.dataType) ||
-                    isDateOrTimeType(column.dataType) ||
-                    isEnumType(column.dataType) ||
-                    isNumberType(column.dataType)))),
-            ...(type === 'body' &&
-              typeof column === 'object' &&
-              !selected && {
-                'text-emerald-700 dark:text-emerald-400':
-                  !isNil(value) && isNumberType(column.dataType),
-                'text-amber-700 dark:text-amber-400':
-                  !isNil(value) && isDateOrTimeType(column.dataType),
-                '!text-blue-700 dark:!text-blue-400': !isNil(value) && column.isPrimaryKey,
-                '!text-sky-700 dark:!text-sky-400':
-                  !isNil(value) && !column.isPrimaryKey && column.foreignKey !== null,
-                '!text-indigo-700 dark:!text-indigo-400': !isNil(value) && column.isUnique,
-                'text-teal-700 dark:text-teal-400': !isNil(value) && column.dataType === 'boolean',
-                'text-fuchsia-700 dark:text-fuchsia-400':
-                  !isNil(value) && isEnumType(column.dataType),
-              }),
-            'text-textTertiary':
-              !selected && type === 'body' && (value === null || value === undefined),
-          })}
+          className={classNames(
+            'overflow-hidden text-ellipsis whitespace-nowrap font-mono text-xs',
+            {
+              'font-medium text-textPrimary': type === 'header',
+              'text-white': selected,
+              'font-medium':
+                type === 'body' &&
+                (value === null ||
+                  value === undefined ||
+                  (typeof column === 'object' &&
+                    (column.isUnique ||
+                      column.foreignKey ||
+                      column.isPrimaryKey ||
+                      ['boolean', 'json'].includes(column.dataType) ||
+                      isDateOrTimeType(column.dataType) ||
+                      isEnumType(column.dataType) ||
+                      isNumberType(column.dataType)))),
+              ...(type === 'body' &&
+                typeof column === 'object' &&
+                !selected && {
+                  'text-emerald-700 dark:text-emerald-400':
+                    !isNil(value) && isNumberType(column.dataType),
+                  'text-amber-700 dark:text-amber-400':
+                    !isNil(value) && isDateOrTimeType(column.dataType),
+                  '!text-blue-700 dark:!text-blue-400': !isNil(value) && column.isPrimaryKey,
+                  '!text-sky-700 dark:!text-sky-400':
+                    !isNil(value) && !column.isPrimaryKey && column.foreignKey !== null,
+                  '!text-indigo-700 dark:!text-indigo-400': !isNil(value) && column.isUnique,
+                  'text-teal-700 dark:text-teal-400':
+                    !isNil(value) && column.dataType === 'boolean',
+                  'text-fuchsia-700 dark:text-fuchsia-400':
+                    !isNil(value) && isEnumType(column.dataType),
+                }),
+              'text-textTertiary':
+                !selected && type === 'body' && (value === null || value === undefined),
+            },
+          )}
         >
           {(() => {
             if (type === 'header') {
