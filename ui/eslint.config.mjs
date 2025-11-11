@@ -3,8 +3,9 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
+import { defineConfig } from 'eslint/config';
 
-export default tseslint.config(
+export default defineConfig([
   {
     ignores: [
       'dist',
@@ -20,7 +21,7 @@ export default tseslint.config(
     ],
   },
   js.configs.recommended,
-  ...tseslint.configs.recommended,
+  tseslint.configs.recommended,
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,tsx}'],
     languageOptions: {
@@ -51,4 +52,4 @@ export default tseslint.config(
       ],
     },
   },
-);
+]);

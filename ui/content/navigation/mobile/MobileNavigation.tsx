@@ -17,6 +17,7 @@ import { routes } from '~/router/routes';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { TableList } from '../sidebar/tableList/TableList';
+import { MOBILE_NAVIGATION_HEIGHT } from './constants';
 
 export const MobileNavigation: React.FC = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -74,7 +75,7 @@ export const MobileNavigation: React.FC = () => {
 
   return (
     <>
-      <div className="h-[72px] shrink-0" />
+      <div className="shrink-0" style={{ height: `${MOBILE_NAVIGATION_HEIGHT}px` }} />
       <div
         className={classNames(
           'pointer-events-none fixed left-0 right-0 top-0 z-40 h-[100dvh] w-full',
@@ -83,13 +84,21 @@ export const MobileNavigation: React.FC = () => {
           },
         )}
       >
-        <div className="h-full grow overflow-y-auto p-2 pb-[72px]">
+        <div
+          className="h-full grow overflow-y-auto p-2"
+          style={{ paddingBottom: `${MOBILE_NAVIGATION_HEIGHT}px` }}
+        >
           {overlayPage === 'connections' && <Connections />}
           {overlayPage === 'tables' && <TableList onSelect={() => setOverlayPage(null)} />}
           {overlayPage === 'copilot' && <Copilot onCloseCopilot={() => setOverlayPage(null)} />}
           {overlayPage === 'settings' && <Settings close={() => setOverlayPage(null)} />}
         </div>
-        <div className="pointer-events-auto sticky bottom-0 flex shrink-0 items-center justify-center gap-2 px-2 pb-2">
+        <div
+          className={classNames(
+            'pointer-events-auto sticky bottom-0 flex shrink-0 items-center justify-center gap-2 px-2 pb-2',
+            { 'px-5 pb-5': window.native },
+          )}
+        >
           {activeConnection && (
             <div className="flex h-[56px] min-w-[33%] grow items-center rounded-full border border-border bg-background/60 shadow-2xl backdrop-blur-xl focus-within:outline focus-within:outline-primary">
               <button

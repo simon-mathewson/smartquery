@@ -6,6 +6,7 @@ declare module 'tailwindcss-easing' {
 
 declare global {
   interface Window {
+    native?: boolean;
     showOpenFilePicker: (options?: {
       types: {
         description: string;

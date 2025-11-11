@@ -11,7 +11,14 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "eslint.workingDirectories": ["about", "cloud", "link", "shared", "ui"],
+  "eslint.workingDirectories": [
+    "about",
+    "cloud",
+    "link",
+    "native",
+    "shared",
+    "ui"
+  ],
   "search.exclude": {
     "link/dist": true,
     "link/out": true

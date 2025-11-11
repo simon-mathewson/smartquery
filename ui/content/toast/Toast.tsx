@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import type { ToastProps } from './useToast';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
+import { MOBILE_NAVIGATION_HEIGHT } from '../navigation/mobile/constants';
 
 export const Toast: React.FC = () => {
   const { queue, remove } = useDefinedContext(ToastContext);
@@ -27,7 +28,7 @@ export const Toast: React.FC = () => {
     },
     position: { x: 'center', y: 'bottom' },
     styleOptions: {
-      overlayMargin: isMobile ? 72 : 16,
+      overlayMargin: isMobile ? MOBILE_NAVIGATION_HEIGHT + 8 : 16,
     },
   });
 
