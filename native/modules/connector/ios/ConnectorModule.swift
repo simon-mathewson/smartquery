@@ -2,7 +2,7 @@ import ExpoModulesCore
 import PostgresClientKit
 
 internal struct Connector {
-  let pool: PostgresClientKit.ConnectionPool
+  let postgresPool: PostgresClientKit.ConnectionPool
 }
 
 public class ConnectorModule: Module {
@@ -22,114 +22,128 @@ public class ConnectorModule: Module {
       let user = props["user"] as! String
       let password = props["password"] as? String
       
-      var configuration = PostgresClientKit.ConnectionConfiguration()
-      configuration.host = host
-      configuration.database = database
-      configuration.user = user
-      configuration.credential = password == nil ? .trust : .scramSHA256(password: password!)
-      configuration.port = port
-      configuration.ssl = true
-
-      let poolConfiguration = PostgresClientKit.ConnectionPoolConfiguration()
-
-      var pool: PostgresClientKit.ConnectionPool
-      do {
-        pool = try PostgresClientKit.ConnectionPool(
-          connectionPoolConfiguration: poolConfiguration,
-          connectionConfiguration: configuration
-        )
-
-        // Test connection
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-          pool.withConnection { result in
-            do {
-              let connection = try result.get()
-              continuation.resume()
-            } catch {
-              continuation.resume(throwing: error)
-            }
-          }
-        }
-      } catch PostgresClientKit.PostgresError.sslNotSupported {
-        // Retry with SSL disabled
-        configuration.ssl = false
-        pool = try PostgresClientKit.ConnectionPool(
-          connectionPoolConfiguration: poolConfiguration,
-          connectionConfiguration: configuration
-        )
-      }
+      let postgresPool = try await connectPostgres(host: host, port: port, database: database, user: user, password: password)
       
       let connectorId = UUID().uuidString
-      self.connectors[connectorId] = Connector(pool: pool)
+      self.connectors[connectorId] = Connector(postgresPool: postgresPool)
 
       return connectorId
     }
 
     Function("disconnectDb") { (connectorId: String) in
-      self.connectors[connectorId]?.pool.close()
+      guard let connector = self.connectors[connectorId] else {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connector not found"])
+      }
+
+      connector.postgresPool.close()
+      
       self.connectors.removeValue(forKey: connectorId)
     }
 
     AsyncFunction("runQuery") { (connectorId: String, statements: [String]) in
-      return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[[String: Any]], Error>) in
-        guard let pool = self.connectors[connectorId]?.pool else {
-          continuation.resume(throwing: NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connector not found"]))
-          return
+      guard let connector = self.connectors[connectorId] else {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connector not found"])
+      }
+
+      return try await runQueryPostgres(connector: connector, statements: statements)
+    }
+  }
+}
+
+private func connectPostgres(host: String, port: Int, database: String, user: String, password: String?) async throws -> PostgresClientKit.ConnectionPool {
+  var configuration = PostgresClientKit.ConnectionConfiguration()
+  configuration.host = host
+  configuration.database = database
+  configuration.user = user
+  configuration.credential = password == nil ? .trust : .scramSHA256(password: password!)
+  configuration.port = port
+  configuration.ssl = true
+
+  let poolConfiguration = PostgresClientKit.ConnectionPoolConfiguration()
+
+  var postgresPool: PostgresClientKit.ConnectionPool
+  do {
+    postgresPool = try PostgresClientKit.ConnectionPool(
+      connectionPoolConfiguration: poolConfiguration,
+      connectionConfiguration: configuration
+    )
+
+    // Test connection
+    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+      postgresPool.withConnection { result in
+        do {
+          let connection = try result.get()
+          continuation.resume()
+        } catch {
+          continuation.resume(throwing: error)
         }
+      }
+    }
+  } catch PostgresClientKit.PostgresError.sslNotSupported {
+    // Retry with SSL disabled
+    configuration.ssl = false
+    postgresPool = try PostgresClientKit.ConnectionPool(
+      connectionPoolConfiguration: poolConfiguration,
+      connectionConfiguration: configuration
+    )
+  }
+
+  return postgresPool
+}
+
+private func runQueryPostgres(connector: Connector, statements: [String]) async throws -> [[String: Any]] {
+  return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[[String: Any]], Error>) in
+    connector.postgresPool.withConnection { result in
+      do {
+        let connection = try result.get()
+        var results: [[String: Any]] = []
         
-        pool.withConnection { result in
-          do {
-            let connection = try result.get()
-            var results: [[String: Any]] = []
+        do {
+          try connection.beginTransaction()
+          
+          for statement in statements {
+            let parsedStatement = try connection.prepareStatement(text: statement)
+            defer { parsedStatement.close() }
+
+            let cursor = try parsedStatement.execute(retrieveColumnMetadata: true)
+            defer { cursor.close() }
             
-            do {
-              try connection.beginTransaction()
-              
-              for statement in statements {
-                let parsedStatement = try connection.prepareStatement(text: statement)
-                defer { parsedStatement.close() }
-
-                let cursor = try parsedStatement.execute(retrieveColumnMetadata: true)
-                defer { cursor.close() }
-                
-                let columns = (cursor.columns ?? []).map { column in
-                  column.columnAttributeNumber == 0
-                    ? [
-                      "name": column.name,
-                      "type": "virtual"
-                    ]
-                    : [
-                      "name": column.name,
-                      "ref": [
-                        "columnId": column.columnAttributeNumber,
-                        "tableId": column.tableOID
-                      ],
-                      "type": "column"
-                    ]
-                }
-                var rows: [[String?]] = []
-
-                for row in cursor {
-                  let values = try row.get().columns.map { $0.rawValue }
-                  rows.append(values)
-                }
-                
-                results.append([
-                  "columns": columns,
-                  "rows": rows
-                ])
-              }
-
-              try connection.commitTransaction()
-              continuation.resume(returning: results)
-            } catch {
-              try? connection.rollbackTransaction()
-              continuation.resume(throwing: error)
+            let columns = (cursor.columns ?? []).map { column in
+              column.columnAttributeNumber == 0
+                ? [
+                  "name": column.name,
+                  "type": "virtual"
+                ]
+                : [
+                  "name": column.name,
+                  "ref": [
+                    "columnId": column.columnAttributeNumber,
+                    "tableId": column.tableOID
+                  ],
+                  "type": "column"
+                ]
             }
-          } catch {
-            continuation.resume(throwing: error)
+            var rows: [[String?]] = []
+
+            for row in cursor {
+              let values = try row.get().columns.map { $0.rawValue }
+              rows.append(values)
+            }
+            
+            results.append([
+              "columns": columns,
+              "rows": rows
+            ])
           }
+
+          try connection.commitTransaction()
+          continuation.resume(returning: results)
+        } catch {
+          try? connection.rollbackTransaction()
+          continuation.resume(throwing: error)
         }
+      } catch {
+        continuation.resume(throwing: error)
       }
     }
   }
