@@ -28,14 +28,36 @@ public class ConnectorModule: Module {
       configuration.user = user
       configuration.credential = password == nil ? .trust : .scramSHA256(password: password!)
       configuration.port = port
-      configuration.ssl = false
+      configuration.ssl = true
 
       let poolConfiguration = PostgresClientKit.ConnectionPoolConfiguration()
 
-      let pool = try PostgresClientKit.ConnectionPool(
-        connectionPoolConfiguration: poolConfiguration,
-        connectionConfiguration: configuration
-      )
+      var pool: PostgresClientKit.ConnectionPool
+      do {
+        pool = try PostgresClientKit.ConnectionPool(
+          connectionPoolConfiguration: poolConfiguration,
+          connectionConfiguration: configuration
+        )
+
+        // Test connection
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+          pool.withConnection { result in
+            do {
+              let connection = try result.get()
+              continuation.resume()
+            } catch {
+              continuation.resume(throwing: error)
+            }
+          }
+        }
+      } catch PostgresClientKit.PostgresError.sslNotSupported {
+        // Retry with SSL disabled
+        configuration.ssl = false
+        pool = try PostgresClientKit.ConnectionPool(
+          connectionPoolConfiguration: poolConfiguration,
+          connectionConfiguration: configuration
+        )
+      }
       
       let connectorId = UUID().uuidString
       self.connectors[connectorId] = Connector(pool: pool)
