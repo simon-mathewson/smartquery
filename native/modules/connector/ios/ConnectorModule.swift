@@ -2,7 +2,8 @@ import ExpoModulesCore
 import PostgresClientKit
 
 internal struct Connector {
-  let postgresPool: PostgresClientKit.ConnectionPool
+  let postgresPool: PostgresClientKit.ConnectionPool?
+  let mysqlPool: MySQL.ConnectionPool?
 }
 
 public class ConnectorModule: Module {
@@ -11,7 +12,7 @@ public class ConnectorModule: Module {
   public func definition() -> ModuleDefinition {
     Name("Connector")
 
-    AsyncFunction("connectDb") { (props: [String: Any]) in
+    AsyncFunction("connectDb") { (props: [String: Any]) in    
       if let sshValue = props["ssh"], sshValue is [String: Any] {
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH is not supported"])
       }
@@ -21,11 +22,12 @@ public class ConnectorModule: Module {
       let database = props["database"] as! String
       let user = props["user"] as! String
       let password = props["password"] as? String
-      
-      let postgresPool = try await connectPostgres(host: host, port: port, database: database, user: user, password: password)
-      
+
       let connectorId = UUID().uuidString
-      self.connectors[connectorId] = Connector(postgresPool: postgresPool)
+
+      self.connectors[connectorId] = props["engine"] as! String == "mysql"
+        ? Connector(postgresPool: nil, mysqlPool: try await connectMysql(host: host, port: port, database: database, user: user, password: password))
+        : Connector(postgresPool: try await connectPostgres(host: host, port: port, database: database, user: user, password: password), mysqlPool: nil)
 
       return connectorId
     }
@@ -35,7 +37,8 @@ public class ConnectorModule: Module {
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connector not found"])
       }
 
-      connector.postgresPool.close()
+      connector.postgresPool?.close()
+      connector.mysqlPool?.free(nil)
       
       self.connectors.removeValue(forKey: connectorId)
     }
@@ -45,7 +48,9 @@ public class ConnectorModule: Module {
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connector not found"])
       }
 
-      return try await runQueryPostgres(connector: connector, statements: statements)
+      return try await connector.postgresPool != nil
+        ? runQueryPostgres(pool: connector.postgresPool!, statements: statements)
+        : runQueryMysql(pool: connector.mysqlPool!, statements: statements)
     }
   }
 }
@@ -91,9 +96,9 @@ private func connectPostgres(host: String, port: Int, database: String, user: St
   return postgresPool
 }
 
-private func runQueryPostgres(connector: Connector, statements: [String]) async throws -> [[String: Any]] {
+private func runQueryPostgres(pool: PostgresClientKit.ConnectionPool, statements: [String]) async throws -> [[String: Any]] {
   return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[[String: Any]], Error>) in
-    connector.postgresPool.withConnection { result in
+    pool.withConnection { result in
       do {
         let connection = try result.get()
         var results: [[String: Any]] = []
@@ -147,4 +152,62 @@ private func runQueryPostgres(connector: Connector, statements: [String]) async 
       }
     }
   }
+}
+
+private func connectMysql(host: String, port: Int, database: String, user: String, password: String?) async throws -> MySQL.ConnectionPool {
+  let connection = try MySQL.Connection()
+
+  // Test connection
+  try connection.open(addr: host, user: user, passwd: password, dbname: database, port: port)
+  try connection.close()
+  
+  let pool = try MySQL.ConnectionPool(num: 10, connection: connection)
+
+  return pool
+}
+
+private func runQueryMysql(pool: MySQL.ConnectionPool, statements: [String]) async throws -> [[String: Any]] {
+  guard let connection = pool.getConnection() else {
+    throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to get connection"])
+  }
+
+  var results: [[String: Any]] = []
+
+  for statement in statements {
+    let prepared = try connection.prepare(statement)
+    let result = try prepared.query([])
+    let rows = try result.readAllRows()
+
+    if rows == nil || connection.columns == nil {
+      results.append([
+        "columns": [],
+        "rows": []
+      ])
+      continue
+    }
+
+    let columns = connection.columns!.map { column in
+      column.origName.count > 0 ? [
+        "type": "column",
+        "name": column.name,
+        "ref": [
+          "column": column.origName,
+          "schema": column.database,
+          "table": column.originalTableName
+        ]
+      ] : [
+        "type": "virtual",
+        "name": column.name
+      ]
+    }
+    
+    results.append([
+      "columns": columns,
+      "rows": rows
+    ])
+  }
+
+  pool.free(connection)
+
+  return results
 }
