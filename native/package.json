@@ -16,6 +16,7 @@
     "@react-navigation/bottom-tabs": "7.8.4",
     "@react-navigation/elements": "2.8.1",
     "@react-navigation/native": "7.1.19",
+    "assert": "^2.1.0",
     "expo": "54.0.23",
     "expo-constants": "18.0.10",
     "expo-dev-client": "6.0.17",
@@ -45,9 +46,9 @@
     "@types/react": "19.1.0",
     "@typescript-eslint/eslint-plugin": "8.46.3",
     "@typescript-eslint/parser": "8.46.3",
-    "eslint-config-expo": "10.0.0",
     "eslint": "9.25.0",
-    "typescript-eslint": "8.46.3",
-    "typescript": "5.9.2"
+    "eslint-config-expo": "10.0.0",
+    "typescript": "5.9.2",
+    "typescript-eslint": "8.46.3"
   }
 }

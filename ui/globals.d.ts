@@ -7,6 +7,10 @@ declare module 'tailwindcss-easing' {
 declare global {
   interface Window {
     native?: boolean;
+    ReactNativeWebView?: {
+      postMessage: (message: string) => void;
+    };
+
     showOpenFilePicker: (options?: {
       types: {
         description: string;

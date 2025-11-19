@@ -6,30 +6,19 @@ public extension MySQL.Connection {
         self.columns = try readColumns(resLen)
         
         return MySQL.TextRow(con: self)
-        
     }
-    
-    func prepare(_ q:String) throws -> MySQL.Statement {
+
+
+    func query(_ q:String) throws -> MysqlResult {
         guard self.socket != nil else {
             throw MySQL.Connection.ConnectionError.notConnected
         }
+
+        try self.writeCommandPacketStr(MysqlCommands.COM_QUERY, q: q)
         
-        try writeCommandPacketStr(MysqlCommands.COM_STMT_PREPARE, q: q)
-        let stmt = MySQL.Statement(con: self)
+        let resLen = try self.readResultSetHeaderPacket()
+        self.columns = try self.readColumns(resLen)
         
-        if let colCount = try stmt.readPrepareResultPacket(), let  paramCount = stmt.paramCount {
-            if paramCount > 0 {
-                try readUntilEOF()
-            }
-            
-            if colCount > 0 {
-                try readUntilEOF()
-            }
-        }
-        else {
-            throw MySQL.Connection.ConnectionError.statementPrepareError("Could not get col and param count")
-        }
-        
-        return stmt
+        return MySQL.TextRow(con: self)
     }
 }

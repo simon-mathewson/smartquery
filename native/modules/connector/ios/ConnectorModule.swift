@@ -43,7 +43,10 @@ public class ConnectorModule: Module {
       self.connectors.removeValue(forKey: connectorId)
     }
 
-    AsyncFunction("runQuery") { (connectorId: String, statements: [String]) in
+    AsyncFunction("runQuery") { (props: [String: Any]) in
+      let connectorId = props["connectorId"] as! String
+      let statements = props["statements"] as! [String]
+
       guard let connector = self.connectors[connectorId] else {
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connector not found"])
       }
@@ -136,7 +139,7 @@ private func runQueryPostgres(pool: PostgresClientKit.ConnectionPool, statements
             }
             
             results.append([
-              "columns": columns,
+              "fields": columns,
               "rows": rows
             ])
           }
@@ -173,38 +176,46 @@ private func runQueryMysql(pool: MySQL.ConnectionPool, statements: [String]) asy
 
   var results: [[String: Any]] = []
 
-  for statement in statements {
-    let prepared = try connection.prepare(statement)
-    let result = try prepared.query([])
-    let rows = try result.readAllRows()
+  try connection.query("START TRANSACTION")
+  
+  do {
+    for statement in statements {
+      let result = try connection.query(statement)
+      let rows = try result.readAllRows()?.first
 
-    if rows == nil || connection.columns == nil {
-      results.append([
-        "columns": [],
-        "rows": []
-      ])
-      continue
-    }
+      if rows == nil || connection.columns == nil {
+        results.append([
+          "columns": [],
+          "rows": []
+        ])
+        continue
+      }
 
-    let columns = connection.columns!.map { column in
-      column.origName.count > 0 ? [
-        "type": "column",
-        "name": column.name,
-        "ref": [
-          "column": column.origName,
-          "schema": column.database,
-          "table": column.originalTableName
+      let columns = connection.columns!.map { column in
+        column.origName.count > 0 ? [
+          "type": "column",
+          "name": column.name,
+          "ref": [
+            "column": column.origName,
+            "schema": column.database,
+            "table": column.originalTableName
+          ]
+        ] : [
+          "type": "virtual",
+          "name": column.name
         ]
-      ] : [
-        "type": "virtual",
-        "name": column.name
-      ]
+      }
+      
+      results.append([
+        "fields": columns,
+        "rows": rows
+      ])
     }
-    
-    results.append([
-      "columns": columns,
-      "rows": rows
-    ])
+
+    try connection.query("COMMIT")
+  } catch {
+    try connection.query("ROLLBACK")
+    throw error
   }
 
   pool.free(connection)

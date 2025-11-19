@@ -21,6 +21,7 @@ import type { SignInModalInput } from './signInModal/types';
 import type { UserPasswordModalInput } from './userPasswordModal/types';
 import { AnalyticsContext } from '../analytics/Context';
 import { getOrCreateDemoConnection } from './demo/getOrCreateDemoConnection';
+import { useNative } from '~/shared/hooks/useNative/useNative';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -223,17 +224,27 @@ export const useConnections = (props: UseConnectionsProps) => {
     ],
   );
 
+  const native = useNative();
+
   const disconnectRemote = useCallback(
     async (props: { connectedViaCloud: boolean; connectorId: string }) => {
       const { connectedViaCloud, connectorId } = props;
 
-      const endpoint = connectedViaCloud
-        ? cloudApi.connector.disconnectDb.mutate
-        : linkApi.disconnectDb.mutate;
+      const endpoint = (() => {
+        if (connectedViaCloud) {
+          return cloudApi.connector.disconnectDb.mutate;
+        }
+
+        if (window.ReactNativeWebView) {
+          return native.disconnectDb;
+        }
+
+        return linkApi.disconnectDb.mutate;
+      })();
 
       await endpoint(connectorId);
     },
-    [cloudApi, linkApi],
+    [cloudApi, linkApi, native],
   );
 
   const disconnect = useCallback(async () => {
@@ -398,9 +409,17 @@ export const useConnections = (props: UseConnectionsProps) => {
 
       const connectedViaCloud = getShouldConnectViaCloud(connection);
 
-      const endpoint = connectedViaCloud
-        ? cloudApi.connector.connectDb.mutate
-        : linkApi.connectDb.mutate;
+      const endpoint = (() => {
+        if (connectedViaCloud) {
+          return cloudApi.connector.connectDb.mutate;
+        }
+
+        if (window.ReactNativeWebView) {
+          return native.connectDb;
+        }
+
+        return linkApi.connectDb.mutate;
+      })();
 
       const connectorId = await endpoint({
         ...connection,
@@ -417,7 +436,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
       return { connectedViaCloud, connectorId };
     },
-    [getShouldConnectViaCloud, cloudApi, linkApi, signInModal, userPasswordModal],
+    [getShouldConnectViaCloud, cloudApi, linkApi, signInModal, userPasswordModal, native],
   );
 
   const connect = useCallback(

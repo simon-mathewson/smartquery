@@ -11,6 +11,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import type { ActiveConnection, Database } from '~/shared/types';
 import { LinkApiContext } from '../../link/api/Context';
 import { ConnectionsContext } from '../Context';
+import { useNative } from '~/shared/hooks/useNative/useNative';
 
 export const useActiveConnection = () => {
   const toast = useDefinedContext(ToastContext);
@@ -23,6 +24,8 @@ export const useActiveConnection = () => {
   const [databases, setDatabases] = useState<Database[]>([]);
   const [isLoadingDatabases, setIsLoadingDatabases] = useState(false);
 
+  const native = useNative();
+
   const runQuery = useCallback(
     async (
       statements: string[],
@@ -34,9 +37,19 @@ export const useActiveConnection = () => {
 
       if (currentConnection.engine !== 'sqlite') {
         try {
-          const results = await (currentConnection.connectedViaCloud
-            ? cloudApi.connector.sendQuery.mutate
-            : linkApi.sendQuery.mutate)({
+          const endpoint = (() => {
+            if (currentConnection.connectedViaCloud) {
+              return cloudApi.connector.sendQuery.mutate;
+            }
+
+            if (window.ReactNativeWebView) {
+              return native.runQuery;
+            }
+
+            return linkApi.sendQuery.mutate;
+          })();
+
+          const results = await endpoint({
             connectorId: currentConnection.connectorId,
             statements,
           });
@@ -140,6 +153,7 @@ export const useActiveConnection = () => {
       requestFileHandlePermission,
       storeSqliteContent,
       toast,
+      native,
     ],
   );
 

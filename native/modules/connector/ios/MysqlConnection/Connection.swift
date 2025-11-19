@@ -45,12 +45,6 @@ public extension MySQL.Connection {
         self.hasMoreResults = false
         self.EOFfound = true
         self.isConnected = false
-        /*
-        self.user = nil
-        self.passwd = nil
-        self.addr = nil
-        self.dbname = nil
-        */
     }
     
 	func reopen() throws {

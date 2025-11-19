@@ -96,7 +96,7 @@ export const MobileNavigation: React.FC = () => {
         <div
           className={classNames(
             'pointer-events-auto sticky bottom-0 flex shrink-0 items-center justify-center gap-2 px-2 pb-2',
-            { 'px-5 pb-5': window.native },
+            { 'px-5 pb-5': window.ReactNativeWebView },
           )}
         >
           {activeConnection && (
