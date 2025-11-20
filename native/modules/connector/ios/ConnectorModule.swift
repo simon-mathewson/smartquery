@@ -14,7 +14,7 @@ public class ConnectorModule: Module {
 
     AsyncFunction("connectDb") { (props: [String: Any]) in    
       if let sshValue = props["ssh"], sshValue is [String: Any] {
-        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH is not supported"])
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH is not supported on iOS"])
       }
     
       let host = props["host"] as! String
@@ -58,14 +58,22 @@ public class ConnectorModule: Module {
   }
 }
 
-private func connectPostgres(host: String, port: Int, database: String, user: String, password: String?) async throws -> PostgresClientKit.ConnectionPool {
+private func connectPostgres(
+  host: String,
+  port: Int,
+  database: String,
+  user: String,
+  password: String?,
+  ssl: Bool = true,
+  credential: PostgresClientKit.Credential? = nil
+) async throws -> PostgresClientKit.ConnectionPool {
   var configuration = PostgresClientKit.ConnectionConfiguration()
   configuration.host = host
   configuration.database = database
   configuration.user = user
-  configuration.credential = password == nil ? .trust : .scramSHA256(password: password!)
+  configuration.credential = password == nil ? .trust : credential ?? .scramSHA256(password: password!)
   configuration.port = port
-  configuration.ssl = true
+  configuration.ssl = ssl
 
   let poolConfiguration = PostgresClientKit.ConnectionPoolConfiguration()
 
@@ -88,12 +96,23 @@ private func connectPostgres(host: String, port: Int, database: String, user: St
       }
     }
   } catch PostgresClientKit.PostgresError.sslNotSupported {
-    // Retry with SSL disabled
-    configuration.ssl = false
-    postgresPool = try PostgresClientKit.ConnectionPool(
-      connectionPoolConfiguration: poolConfiguration,
-      connectionConfiguration: configuration
-    )
+    if !ssl {
+      throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "No SSL retry failed"])
+    }
+    
+    return try await connectPostgres(host: host, port: port, database: database, user: user, password: password, ssl: false, credential: credential)
+  } catch PostgresClientKit.PostgresError.md5PasswordCredentialRequired {
+    if case .md5Password(password: let password) = credential {
+      throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "MD5 password retry failed"])
+    }
+
+    return try await connectPostgres(host: host, port: port, database: database, user: user, password: password, ssl: ssl, credential: PostgresClientKit.Credential.md5Password(password: password!))
+  } catch PostgresClientKit.PostgresError.cleartextPasswordCredentialRequired {
+    if case .cleartextPassword(password: let password) = credential {
+      throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Cleartext password retry failed"])
+    }
+
+    return try await connectPostgres(host: host, port: port, database: database, user: user, password: password, ssl: ssl, credential: PostgresClientKit.Credential.cleartextPassword(password: password!))
   }
 
   return postgresPool
