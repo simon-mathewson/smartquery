@@ -1,13 +1,18 @@
+import { useOrientation } from "@/hooks/useOrientation";
 import ConnectorModule from "@/modules/connector/src/ConnectorModule";
-import Constants from "expo-constants";
 import assert from "assert";
+import Constants from "expo-constants";
+import { Orientation } from "expo-screen-orientation";
 import { useRef } from "react";
-import { StyleSheet } from "react-native";
+import { useColorScheme } from "react-native";
 import type { WebViewMessageEvent } from "react-native-webview";
 import { WebView } from "react-native-webview";
 import type { NativeWebviewMessage } from "../../shared/native/types";
 
 export default function Index() {
+  const colorScheme = useColorScheme();
+  const orientation = useOrientation();
+
   const webviewRef = useRef<WebView>(null);
 
   const onMessage = async (payload: WebViewMessageEvent) => {
@@ -86,17 +91,25 @@ export default function Index() {
     <WebView
       ref={webviewRef}
       source={{ uri: "http://localhost:5173" }}
-      style={styles.container}
+      style={{
+        flex: 1,
+        paddingLeft:
+          orientation === Orientation.LANDSCAPE_RIGHT
+            ? Constants.statusBarHeight
+            : 0,
+        paddingRight:
+          orientation === Orientation.LANDSCAPE_LEFT
+            ? Constants.statusBarHeight
+            : 0,
+        paddingTop:
+          orientation === Orientation.PORTRAIT_UP
+            ? Constants.statusBarHeight
+            : 0,
+        backgroundColor: colorScheme === "dark" ? "#0a0a0a" : "#ffffff",
+      }}
       // Required for the injectedJavaScript to work
       onMessage={onMessage}
       injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: Constants.statusBarHeight,
-  },
-});
