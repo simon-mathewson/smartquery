@@ -5,7 +5,6 @@ import { sqliteChooseFileOptions } from '~/content/sqlite/sqlite';
 import { ToastContext } from '../toast/Context';
 import type { SqliteDatabase } from '~/shared/types';
 import { useNative } from '~/shared/hooks/useNative/useNative';
-import { demoConnectionId } from '../connections/demo/constants';
 
 const indexedDbConnection = 'sqliteStorage';
 const indexedDbStore = 'sqlite';
@@ -31,39 +30,28 @@ export const useSqlite = () => {
     return sqlite;
   }, []);
 
-  const writeSqliteFile = useCallback(
-    async (sqliteFile: SqliteFile, connectionId: string) => {
-      if (
-        'base64' in sqliteFile &&
-        window.ReactNativeWebView &&
-        connectionId !== demoConnectionId
-      ) {
-        await native.writeSqliteFile(connectionId, sqliteFile.base64);
-      }
+  const writeSqliteFile = useCallback(async (sqliteFile: SqliteFile, connectionId: string) => {
+    await new Promise<void>((resolve, reject) => {
+      const request = indexedDB.open(indexedDbConnection, 1);
 
-      await new Promise<void>((resolve, reject) => {
-        const request = indexedDB.open(indexedDbConnection, 1);
+      request.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
 
-        request.onupgradeneeded = (event) => {
-          const db = (event.target as IDBOpenDBRequest).result;
+        if (!db.objectStoreNames.contains('sqlite')) {
+          db.createObjectStore('sqlite');
+        }
+      };
 
-          if (!db.objectStoreNames.contains('sqlite')) {
-            db.createObjectStore('sqlite');
-          }
-        };
-
-        request.onsuccess = (event) => {
-          const db = (event.target as IDBOpenDBRequest).result;
-          const tx = db.transaction(indexedDbStore, 'readwrite');
-          const store = tx.objectStore(indexedDbStore);
-          store.put(sqliteFile, connectionId);
-          tx.oncomplete = () => resolve();
-          tx.onerror = (error) => reject(error);
-        };
-      });
-    },
-    [native],
-  );
+      request.onsuccess = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        const tx = db.transaction(indexedDbStore, 'readwrite');
+        const store = tx.objectStore(indexedDbStore);
+        store.put(sqliteFile, connectionId);
+        tx.oncomplete = () => resolve();
+        tx.onerror = (error) => reject(error);
+      };
+    });
+  }, []);
 
   const getSqliteFile = useCallback(async (id: string) => {
     return new Promise<SqliteFile>((resolve, reject) => {

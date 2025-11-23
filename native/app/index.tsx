@@ -12,7 +12,6 @@ import { WebView } from "react-native-webview";
 import type {
   GetSqliteFile,
   NativeWebviewMessage,
-  WriteSqliteFile,
 } from "../../shared/native/types";
 
 export default function Index() {
@@ -49,14 +48,6 @@ export default function Index() {
     [getOrPickSqliteFile]
   );
 
-  const writeSqliteFile = useCallback<WriteSqliteFile>(
-    async (connectionId, base64) => {
-      const file = await getOrPickSqliteFile(connectionId);
-      file.write(base64, { encoding: "base64" });
-    },
-    [getOrPickSqliteFile]
-  );
-
   const onMessage = async (payload: WebViewMessageEvent) => {
     let parsed;
     try {
@@ -89,8 +80,6 @@ export default function Index() {
               return ConnectorModule.runQuery(...args);
             case "getSqliteFile":
               return getSqliteFile(...args);
-            case "writeSqliteFile":
-              return writeSqliteFile(...args);
           }
         })();
 

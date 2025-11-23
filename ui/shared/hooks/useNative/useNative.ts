@@ -4,10 +4,9 @@ import type {
   GetSqliteFile,
   NativeWebviewMessage,
   RunQuery,
-  WriteSqliteFile,
 } from '@/native/types';
-import { assert } from 'ts-essentials';
 import { useCallback, useMemo } from 'react';
+import { assert } from 'ts-essentials';
 import { v4 as uuid } from 'uuid';
 
 export const useNative = () => {
@@ -63,19 +62,13 @@ export const useNative = () => {
     [request],
   );
 
-  const writeSqliteFile = useCallback<WriteSqliteFile>(
-    (connectionId, base64) => request<WriteSqliteFile>('writeSqliteFile', [connectionId, base64]),
-    [request],
-  );
-
   return useMemo(
     () => ({
       connectDb,
       disconnectDb,
       runQuery,
       getSqliteFile,
-      writeSqliteFile,
     }),
-    [connectDb, disconnectDb, runQuery, getSqliteFile, writeSqliteFile],
+    [connectDb, disconnectDb, runQuery, getSqliteFile],
   );
 };
