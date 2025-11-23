@@ -40,7 +40,7 @@ export const useConnections = (props: UseConnectionsProps) => {
   const linkApi = useDefinedContext(LinkApiContext);
   const { user, isInitializing: isInitializingAuth } = useDefinedContext(AuthContext);
   const toast = useDefinedContext(ToastContext);
-  const { getSqliteDb, storeSqliteContent } = useDefinedContext(SqliteContext);
+  const { getSqliteDb, writeSqliteFile } = useDefinedContext(SqliteContext);
 
   const [localConnections, setLocalConnections] = useStoredState<Connection[]>(
     'connections',
@@ -449,7 +449,7 @@ export const useConnections = (props: UseConnectionsProps) => {
     ) => {
       const connection =
         id === demoConnectionId
-          ? await getOrCreateDemoConnection({ addConnection, connections, storeSqliteContent })
+          ? await getOrCreateDemoConnection({ addConnection, connections, writeSqliteFile })
           : connections.find((c) => c.id === id);
 
       if (!connection) {
@@ -537,7 +537,7 @@ export const useConnections = (props: UseConnectionsProps) => {
     [
       addConnection,
       connections,
-      storeSqliteContent,
+      writeSqliteFile,
       disconnect,
       toast,
       navigate,

@@ -12,13 +12,14 @@ import type { ActiveConnection, Database } from '~/shared/types';
 import { LinkApiContext } from '../../link/api/Context';
 import { ConnectionsContext } from '../Context';
 import { useNative } from '~/shared/hooks/useNative/useNative';
+import type { SqliteFile } from '~/content/sqlite/useSqlite';
 
 export const useActiveConnection = () => {
   const toast = useDefinedContext(ToastContext);
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const linkApi = useDefinedContext(LinkApiContext);
   const { activeConnection, connect } = useDefinedContext(ConnectionsContext);
-  const { getSqliteContent, requestFileHandlePermission, storeSqliteContent } =
+  const { getSqliteFile, requestFileHandlePermission, writeSqliteFile } =
     useDefinedContext(SqliteContext);
 
   const [databases, setDatabases] = useState<Database[]>([]);
@@ -104,7 +105,7 @@ export const useActiveConnection = () => {
         }
       }
 
-      let fileHandle: FileSystemFileHandle | ArrayBuffer | null = null;
+      let sqliteFile: SqliteFile | null = null;
 
       const hasOnlySelectStatements = await Promise.all(
         statements.map((statement) =>
@@ -113,10 +114,10 @@ export const useActiveConnection = () => {
       ).then((results) => results.every((result) => result !== null));
 
       if (!hasOnlySelectStatements && !options?.skipSqliteWrite) {
-        fileHandle = await getSqliteContent(currentConnection.id);
+        sqliteFile = await getSqliteFile(currentConnection.id);
 
-        if (fileHandle instanceof FileSystemFileHandle) {
-          await requestFileHandlePermission(fileHandle);
+        if (sqliteFile instanceof FileSystemFileHandle) {
+          await requestFileHandlePermission(sqliteFile);
         }
       }
 
@@ -130,15 +131,18 @@ export const useActiveConnection = () => {
         };
       });
 
-      if (fileHandle) {
+      if (sqliteFile) {
         const updatedDb = currentConnection.sqliteDb.export();
 
-        if (fileHandle instanceof FileSystemFileHandle) {
-          const writable = await fileHandle.createWritable();
+        if (sqliteFile instanceof FileSystemFileHandle) {
+          const writable = await sqliteFile.createWritable();
           await writable.write(updatedDb);
           await writable.close();
         } else {
-          await storeSqliteContent(updatedDb, currentConnection.id);
+          let binary = '';
+          updatedDb.forEach((b) => (binary += String.fromCharCode(b)));
+          const base64 = btoa(binary);
+          await writeSqliteFile({ ...sqliteFile, base64 }, currentConnection.id);
         }
       }
 
@@ -148,10 +152,10 @@ export const useActiveConnection = () => {
       activeConnection,
       cloudApi,
       connect,
-      getSqliteContent,
+      getSqliteFile,
       linkApi,
       requestFileHandlePermission,
-      storeSqliteContent,
+      writeSqliteFile,
       toast,
       native,
     ],

@@ -9,9 +9,9 @@ export const getOrCreateDemoConnection = async (
       connection: Connection,
       options?: { onSuccess?: () => void; skipToast?: boolean },
     ) => Promise<void>;
-  } & Pick<SqliteContextType, 'storeSqliteContent'>,
+  } & Pick<SqliteContextType, 'writeSqliteFile'>,
 ): Promise<Connection> => {
-  const { connections, addConnection, storeSqliteContent } = props;
+  const { connections, addConnection, writeSqliteFile } = props;
 
   const demoConnection = connections.find((c) => c.id === demoConnectionId);
 
@@ -20,8 +20,11 @@ export const getOrCreateDemoConnection = async (
   }
 
   const response = await fetch('/demo.sqlite');
-  const buffer = await response.arrayBuffer();
-  await storeSqliteContent(buffer, demoConnectionId);
+  let binary = '';
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  bytes.forEach((b) => (binary += String.fromCharCode(b)));
+  const base64 = btoa(binary);
+  await writeSqliteFile({ name: 'demo.sqlite', base64 }, demoConnectionId);
 
   const newDemoConnection = {
     database: 'demo',

@@ -24,9 +24,7 @@ import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
 import { FileHandleSelect } from '~/shared/components/fileHandleSelect/FileHandleSelect';
 import { assert } from 'ts-essentials';
-import { v4 as uuid } from 'uuid';
 import { SqliteContext } from '~/content/sqlite/Context';
-import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
 import { LinkSetup as LinkSetup } from '~/content/link/setup/Setup';
 import { demoConnectionId } from '~/content/connections/demo/constants';
 import { AuthContext } from '~/content/auth/Context';
@@ -34,6 +32,7 @@ import { AnalyticsContext } from '~/content/analytics/Context';
 import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
 import classNames from 'classnames';
+import { useSqlite } from '~/content/sqlite/useSqlite';
 
 export type ConnectionFormProps = {
   connectionToEditId?: string;
@@ -56,7 +55,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
 
-  const { getSqliteContent, storeSqliteContent } = useDefinedContext(SqliteContext);
+  const { getSqliteFile, writeSqliteFile } = useDefinedContext(SqliteContext);
 
   const mode = connectionToEditId ? 'edit' : 'add';
 
@@ -71,7 +70,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const [isCloudConnection, setIsCloudConnection] = useState<boolean>();
 
   useEffectOnce(() => {
-    void getInitialFormValues({ connectionToEdit, getSqliteContent, user }).then(
+    void getInitialFormValues({ connectionToEdit, getSqliteFile, user }).then(
       (initialFormValues) => {
         const finalInitialFormValues = {
           ...initialFormValues,
@@ -101,13 +100,11 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
     event.preventDefault();
 
-    const finalFormValues = { ...formValues, id: formValues.id || uuid() };
+    const connection = getConnectionFromForm(formValues);
 
-    const connection = getConnectionFromForm(finalFormValues);
-
-    if (finalFormValues.type === 'file') {
-      assert(finalFormValues.fileHandle);
-      await storeSqliteContent(finalFormValues.fileHandle, finalFormValues.id);
+    if (formValues.type === 'file') {
+      assert(formValues.sqliteFile);
+      await writeSqliteFile(formValues.sqliteFile, formValues.id);
     }
 
     if (connectionToEdit) {
@@ -139,6 +136,8 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
       focusFirstControl(formRef.current);
     });
   });
+
+  const sqlite = useSqlite();
 
   if (!formValues) return null;
 
@@ -325,9 +324,9 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
               </div>
             ) : (
               <FileHandleSelect
-                options={sqliteChooseFileOptions}
-                value={formValues.fileHandle}
-                onChange={(value) => setFormValue('fileHandle', value)}
+                pickFile={() => sqlite.pickFile(formValues.id)}
+                value={formValues.sqliteFile}
+                onChange={(value) => setFormValue('sqliteFile', value)}
               />
             )}
           </Field>

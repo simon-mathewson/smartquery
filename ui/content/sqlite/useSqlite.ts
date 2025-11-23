@@ -1,17 +1,23 @@
 import { useCallback, useMemo, useRef } from 'react';
 import type { SqlJsStatic } from 'sql.js';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { sqliteChooseFileOptions } from '~/shared/utils/sqlite/sqlite';
+import { sqliteChooseFileOptions } from '~/content/sqlite/sqlite';
 import { ToastContext } from '../toast/Context';
 import type { SqliteDatabase } from '~/shared/types';
+import { useNative } from '~/shared/hooks/useNative/useNative';
+import { demoConnectionId } from '../connections/demo/constants';
 
 const indexedDbConnection = 'sqliteStorage';
 const indexedDbStore = 'sqlite';
+
+export type SqliteFile = FileSystemFileHandle | { name: string; base64: string };
 
 export const useSqlite = () => {
   const toast = useDefinedContext(ToastContext);
 
   const sqliteRef = useRef<SqlJsStatic | null>(null);
+
+  const native = useNative();
 
   const getSqlite = useCallback(async (): Promise<SqlJsStatic> => {
     if (sqliteRef.current) return Promise.resolve(sqliteRef.current);
@@ -25,12 +31,17 @@ export const useSqlite = () => {
     return sqlite;
   }, []);
 
-  const storeSqliteContent = useCallback(
-    async (
-      fileOrFileHandle: FileSystemFileHandle | ArrayBuffer | Uint8Array<ArrayBufferLike>,
-      id: string,
-    ) =>
-      new Promise<void>((resolve, reject) => {
+  const writeSqliteFile = useCallback(
+    async (sqliteFile: SqliteFile, connectionId: string) => {
+      if (
+        'base64' in sqliteFile &&
+        window.ReactNativeWebView &&
+        connectionId !== demoConnectionId
+      ) {
+        await native.writeSqliteFile(connectionId, sqliteFile.base64);
+      }
+
+      await new Promise<void>((resolve, reject) => {
         const request = indexedDB.open(indexedDbConnection, 1);
 
         request.onupgradeneeded = (event) => {
@@ -45,16 +56,17 @@ export const useSqlite = () => {
           const db = (event.target as IDBOpenDBRequest).result;
           const tx = db.transaction(indexedDbStore, 'readwrite');
           const store = tx.objectStore(indexedDbStore);
-          store.put(fileOrFileHandle, id);
+          store.put(sqliteFile, connectionId);
           tx.oncomplete = () => resolve();
           tx.onerror = (error) => reject(error);
         };
-      }),
-    [],
+      });
+    },
+    [native],
   );
 
-  const getSqliteContent = useCallback(async (id: string) => {
-    return new Promise<ArrayBuffer | FileSystemFileHandle>((resolve, reject) => {
+  const getSqliteFile = useCallback(async (id: string) => {
+    return new Promise<SqliteFile>((resolve, reject) => {
       const request = indexedDB.open(indexedDbConnection, 1);
 
       request.onsuccess = (event) => {
@@ -62,8 +74,7 @@ export const useSqlite = () => {
         const tx = db.transaction(indexedDbStore, 'readonly');
         const store = tx.objectStore(indexedDbStore);
         const getRequest = store.get(id);
-        getRequest.onsuccess = () =>
-          resolve(getRequest.result as ArrayBuffer | FileSystemFileHandle);
+        getRequest.onsuccess = () => resolve(getRequest.result as SqliteFile);
         getRequest.onerror = (error) => reject(error);
       };
     });
@@ -88,7 +99,7 @@ export const useSqlite = () => {
       const sqlite = await getSqlite();
 
       try {
-        const fileOrFileHandle = await getSqliteContent(connectionId);
+        const fileOrFileHandle = await getSqliteFile(connectionId);
 
         if (fileOrFileHandle instanceof FileSystemFileHandle) {
           await requestFileHandlePermission(fileOrFileHandle);
@@ -97,7 +108,9 @@ export const useSqlite = () => {
           return new sqlite.Database(new Uint8Array(await file.arrayBuffer()));
         }
 
-        return new sqlite.Database(new Uint8Array(fileOrFileHandle));
+        return new sqlite.Database(
+          Uint8Array.from(atob(fileOrFileHandle.base64), (c) => c.charCodeAt(0)),
+        );
       } catch {
         return new Promise<SqliteDatabase>((resolve, reject) => {
           toast.add({
@@ -110,7 +123,7 @@ export const useSqlite = () => {
 
                   await requestFileHandlePermission(handle);
 
-                  await storeSqliteContent(handle, connectionId);
+                  await writeSqliteFile(handle, connectionId);
 
                   const file = await handle.getFile();
                   resolve(new sqlite.Database(new Uint8Array(await file.arrayBuffer())));
@@ -123,17 +136,30 @@ export const useSqlite = () => {
         });
       }
     },
-    [getSqlite, getSqliteContent, requestFileHandlePermission, storeSqliteContent, toast],
+    [getSqlite, getSqliteFile, requestFileHandlePermission, writeSqliteFile, toast],
+  );
+
+  const pickFile = useCallback(
+    async (connectionId: string): Promise<SqliteFile> => {
+      if (window.ReactNativeWebView) {
+        return native.getSqliteFile(connectionId);
+      }
+
+      const [handle] = await window.showOpenFilePicker(sqliteChooseFileOptions);
+      return handle;
+    },
+    [native],
   );
 
   return useMemo(
     () => ({
       getSqlite,
       getSqliteDb,
-      getSqliteContent,
+      getSqliteFile,
       requestFileHandlePermission,
-      storeSqliteContent,
+      writeSqliteFile,
+      pickFile,
     }),
-    [getSqlite, getSqliteDb, getSqliteContent, requestFileHandlePermission, storeSqliteContent],
+    [getSqlite, getSqliteDb, getSqliteFile, requestFileHandlePermission, writeSqliteFile, pickFile],
   );
 };

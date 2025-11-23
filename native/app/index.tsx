@@ -2,18 +2,60 @@ import { useOrientation } from "@/hooks/useOrientation";
 import ConnectorModule from "@/modules/connector/src/ConnectorModule";
 import assert from "assert";
 import Constants from "expo-constants";
+import { File } from "expo-file-system";
 import { Orientation } from "expo-screen-orientation";
-import { useRef } from "react";
+import { castArray } from "lodash";
+import { useCallback, useRef } from "react";
 import { useColorScheme } from "react-native";
 import type { WebViewMessageEvent } from "react-native-webview";
 import { WebView } from "react-native-webview";
-import type { NativeWebviewMessage } from "../../shared/native/types";
+import type {
+  GetSqliteFile,
+  NativeWebviewMessage,
+  WriteSqliteFile,
+} from "../../shared/native/types";
 
 export default function Index() {
   const colorScheme = useColorScheme();
   const orientation = useOrientation();
 
   const webviewRef = useRef<WebView>(null);
+
+  const sqliteFiles = useRef<{ [connectionId: string]: File }>({});
+
+  const getOrPickSqliteFile = useCallback(async (connectionId: string) => {
+    if (connectionId in sqliteFiles.current) {
+      return sqliteFiles.current[connectionId];
+    }
+
+    const files = (await File.pickFileAsync()) as unknown as File | File[];
+
+    const file: File | undefined = castArray(files).at(0);
+    if (!file) {
+      throw new Error(`No file selected`);
+    }
+
+    sqliteFiles.current[connectionId] = file;
+
+    return file;
+  }, []);
+
+  const getSqliteFile = useCallback<GetSqliteFile>(
+    async (connectionId) => {
+      const file = await getOrPickSqliteFile(connectionId);
+
+      return { name: file.name, base64: await file.base64() };
+    },
+    [getOrPickSqliteFile]
+  );
+
+  const writeSqliteFile = useCallback<WriteSqliteFile>(
+    async (connectionId, base64) => {
+      const file = await getOrPickSqliteFile(connectionId);
+      file.write(base64, { encoding: "base64" });
+    },
+    [getOrPickSqliteFile]
+  );
 
   const onMessage = async (payload: WebViewMessageEvent) => {
     let parsed;
@@ -43,9 +85,12 @@ export default function Index() {
               return ConnectorModule.connectDb(...args);
             case "disconnectDb":
               return ConnectorModule.disconnectDb(...args);
-            case "runQuery": {
+            case "runQuery":
               return ConnectorModule.runQuery(...args);
-            }
+            case "getSqliteFile":
+              return getSqliteFile(...args);
+            case "writeSqliteFile":
+              return writeSqliteFile(...args);
           }
         })();
 

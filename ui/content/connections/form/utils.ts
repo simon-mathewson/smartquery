@@ -8,6 +8,8 @@ import {
   fileConnectionSchema,
   remoteConnectionSchema,
 } from '@/connections/types';
+import { v4 as uuid } from 'uuid';
+import type { SqliteFile } from '~/content/sqlite/useSqlite';
 
 export const formSchema = z.discriminatedUnion('type', [
   remoteConnectionSchema.extend({
@@ -25,7 +27,12 @@ export const formSchema = z.discriminatedUnion('type', [
     type: z.literal('remote'),
   }),
   fileConnectionSchema.extend({
-    fileHandle: z.instanceof(window.FileSystemFileHandle).nullable(),
+    sqliteFile: z
+      .union([
+        z.instanceof(window.FileSystemFileHandle),
+        z.object({ name: z.string(), base64: z.string() }),
+      ])
+      .nullable(),
     type: z.literal('file'),
   }),
 ]);
@@ -34,18 +41,16 @@ export type FormValues = z.infer<typeof formSchema>;
 
 export const getInitialFormValues = async (props: {
   connectionToEdit: Connection | null;
-  getSqliteContent: (id: string) => Promise<ArrayBuffer | FileSystemFileHandle>;
+  getSqliteFile: (id: string) => Promise<SqliteFile>;
   user: User | null;
 }): Promise<FormValues> => {
-  const { connectionToEdit, getSqliteContent, user } = props;
+  const { connectionToEdit, getSqliteFile, user } = props;
 
   if (connectionToEdit) {
     if (connectionToEdit.type === 'file') {
-      const fileHandle = await getSqliteContent(connectionToEdit.id);
-
       return {
         ...connectionToEdit,
-        fileHandle: fileHandle instanceof FileSystemFileHandle ? fileHandle : null,
+        sqliteFile: await getSqliteFile(connectionToEdit.id),
       };
     }
 
@@ -75,7 +80,7 @@ export const getInitialFormValues = async (props: {
     database: '',
     engine: 'postgres',
     host: '',
-    id: '',
+    id: uuid(),
     name: '',
     password: '',
     port: null,
@@ -114,9 +119,9 @@ export const getConnectionFromForm = (formArg: FormValues) => {
       form.schema = undefined;
     }
   } else {
-    assert(form.fileHandle);
+    assert(form.sqliteFile);
 
-    form.database = form.fileHandle.name.split('.')[0];
+    form.database = form.sqliteFile.name.split('.')[0];
   }
 
   const connection = connectionSchema.parse(form);

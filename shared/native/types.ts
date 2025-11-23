@@ -8,6 +8,9 @@ export type RunQuery = (props: {
   statements: string[];
 }) => Promise<NewResults>;
 
+export type GetSqliteFile = (connectionId: string) => Promise<{ name: string; base64: string }>;
+export type WriteSqliteFile = (connectionId: string, base64: string) => Promise<void>;
+
 export type NativeWebviewMessage =
   | {
       type: 'console';
@@ -21,6 +24,8 @@ export type NativeWebviewMessage =
       | { method: 'connectDb'; args: [RemoteConnection] }
       | { method: 'disconnectDb'; args: [string] }
       | { method: 'runQuery'; args: [{ connectorId: string; statements: string[] }] }
+      | { method: 'getSqliteFile'; args: [string] }
+      | { method: 'writeSqliteFile'; args: [string, string] }
     ))
   | ({
       type: 'response';
