@@ -145,7 +145,7 @@ export default function Index() {
   return (
     <WebView
       ref={webviewRef}
-      source={{ uri: "http://localhost:5173" }}
+      source={{ uri: "https://smartquery.dev" }}
       style={{
         flex: 1,
         paddingLeft:

@@ -14,7 +14,7 @@ public class ConnectorModule: Module {
 
     AsyncFunction("connectDb") { (props: [String: Any]) in    
       if let sshValue = props["ssh"], sshValue is [String: Any] {
-        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH is not supported on iOS"])
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH is not supported on iOS. Upgrade to use SSH through the cloud."])
       }
     
       let host = props["host"] as! String

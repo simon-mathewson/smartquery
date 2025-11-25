@@ -64,7 +64,7 @@ export const LinkSetup: React.FC<LinkSetupProps> = (props) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  if (hidden) {
+  if (hidden || window.ReactNativeWebView) {
     return null;
   }
 
