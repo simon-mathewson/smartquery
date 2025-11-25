@@ -12,7 +12,8 @@ export const ErrorTrackingMockProvider: React.FC<MockProviderProps<ErrorTracking
       value={Object.assign(
         {
           isConsentGranted: false,
-          setIsConsentGranted: () => {},
+          grantConsent: () => {},
+          revokeConsent: () => {},
           trackError: () => {},
         },
         overrides,
