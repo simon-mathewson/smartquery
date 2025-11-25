@@ -53,7 +53,7 @@ export const useErrorTracking = () => {
 
   useEffect(() => {
     if (window.ReactNativeWebView) {
-      native.getAnalyticsConsent().then(setIsConsentGranted);
+      void native.getAnalyticsConsent().then(setIsConsentGranted);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
