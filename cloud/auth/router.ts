@@ -17,6 +17,11 @@ export const authRouter = trpc.router({
     .use(isAuthenticated)
     .output(currentUserSchema)
     .query(async ({ ctx: { user } }) => user),
+  deleteAccount: trpc.procedure.use(isAuthenticated).mutation(async ({ ctx: { user } }) => {
+    await prisma.user.delete({
+      where: { id: user.id },
+    });
+  }),
   logIn: trpc.procedure
     .input(
       z.object({

@@ -36,7 +36,7 @@ model Connection {
   sshPrivateKeyPassphraseNonce       String?
   useSshPrivateKeyPassphrase         Boolean      @default(false)
   isSshPrivateKeyPassphraseEncrypted Boolean      @default(false)
-  user                               User         @relation(fields: [userId], references: [id])
+  user                               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   savedQueries                       SavedQuery[]
 
   @@index([userId])

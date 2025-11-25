@@ -34,6 +34,7 @@ import { Usage } from './usage/Usage';
 import { Subscription } from './Subscription';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { AboutLinks } from '~/shared/components/aboutLinks/AboutLinks';
+import { DeleteAccount } from './deleteAccount/DeleteAccount';
 
 export type SettingsProps = {
   close: () => Promise<void> | void;
@@ -210,6 +211,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               label="Discord"
             />
           </div>
+          <DeleteAccount />
         </>
       )}
       {section === 'connectivity' && (
