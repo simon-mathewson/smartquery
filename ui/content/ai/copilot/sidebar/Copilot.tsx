@@ -310,16 +310,18 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                   <div>
                     You've exceeded your quota for this month. Upgrade to continue using Copilot.
                   </div>
-                  <Button
-                    element="link"
-                    htmlProps={{
-                      className: 'w-full mt-2',
-                      href: routes.subscribePlans(),
-                    }}
-                    icon={<ArrowForward />}
-                    label="Upgrade"
-                    variant="filled"
-                  />
+                  {!window.ReactNativeWebView && (
+                    <Button
+                      element="link"
+                      htmlProps={{
+                        className: 'w-full mt-2',
+                        href: routes.subscribePlans(),
+                      }}
+                      icon={<ArrowForward />}
+                      label="Upgrade"
+                      variant="filled"
+                    />
+                  )}
                 </>
               )}
               {user !== null && user.activeSubscription && (

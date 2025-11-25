@@ -105,6 +105,16 @@ export const Router: React.FC = () => {
         <Route path={routes.subscribe()}>
           <Redirect to={routes.subscribePlans()} />
         </Route>
+        {window.ReactNativeWebView && (
+          <>
+            <Route path={routes.subscribePlans()}>
+              <Redirect to={routes.signup()} />
+            </Route>
+            <Route path={routes.subscribeCheckout()}>
+              <Redirect to={routes.root()} />
+            </Route>
+          </>
+        )}
         <Route path={routes.subscribePlans()} component={SubscribePlans} />
         <Route path={routes.subscribeAuth()} component={SubscribeAuth} />
         <Route path={routes.subscribeCheckout()} component={SubscribeCheckout} />

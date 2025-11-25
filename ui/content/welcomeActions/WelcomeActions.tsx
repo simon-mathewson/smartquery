@@ -65,7 +65,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
               },
             ]
           : []),
-        ...(user && !user.activeSubscription
+        ...(user && !user.activeSubscription && !window.ReactNativeWebView
           ? [
               {
                 hint: 'Get access to all features',
