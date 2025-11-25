@@ -3,6 +3,7 @@ import { OverlayCard } from '../overlayCard/OverlayCard';
 import type { ModalControl } from './types';
 import { v4 as uuid } from 'uuid';
 import { useOverlay } from '../overlay/useOverlay';
+import classNames from 'classnames';
 
 export type ModalProps = PropsWithChildren<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,13 +35,14 @@ export const Modal = (props: ModalProps) => {
         'aria-labelledby': titleId,
         'aria-modal': true,
         role: 'dialog',
+        className: classNames('p-3 mx-2', htmlProps?.className),
       }}
       overlay={overlay}
     >
       {() => (
         <>
           {(title || subtitle) && (
-            <div className="flex flex-col gap-1 pb-2 pt-1">
+            <div className="mb-3 flex flex-col gap-1">
               {title && (
                 <h1 className="truncate text-center text-lg font-medium" id={titleId}>
                   {title}

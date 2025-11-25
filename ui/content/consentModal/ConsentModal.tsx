@@ -52,8 +52,8 @@ export const ConsentModal: React.FC = () => {
   );
 
   return (
-    <Modal {...modal} htmlProps={{ className: 'max-w-[400px]' }} title="Welcome to SmartQuery!">
-      <div className="text-sm text-textTertiary">
+    <Modal {...modal} htmlProps={{ className: 'max-w-[360px]' }} title="Welcome to SmartQuery!">
+      <div className="text-sm text-textSecondary">
         <p className="mb-2">
           By using SmartQuery, you agree to the{' '}
           <a className="underline" href={import.meta.env.VITE_TERMS_URL} target="_blank">
