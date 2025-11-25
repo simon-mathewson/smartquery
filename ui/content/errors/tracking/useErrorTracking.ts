@@ -2,6 +2,7 @@ import type { AwsRumConfig } from 'aws-rum-web';
 import { AwsRum } from 'aws-rum-web';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { isUserUnauthorizedError } from '~/content/auth/isUserUnauthorizedError';
+import { useNative } from '~/shared/hooks/useNative/useNative';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 
 export const useErrorTracking = () => {
@@ -48,8 +49,30 @@ export const useErrorTracking = () => {
     }
   }, [isConsentGranted, rum]);
 
+  const native = useNative();
+
+  useEffect(() => {
+    if (window.ReactNativeWebView) {
+      native.getAnalyticsConsent().then(setIsConsentGranted);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const grantConsent = useCallback(async () => {
+    if (window.ReactNativeWebView) {
+      const isNativeConsentGranted = await native.requestAnalyticsConsent();
+      setIsConsentGranted(isNativeConsentGranted);
+    } else {
+      setIsConsentGranted(true);
+    }
+  }, [native, setIsConsentGranted]);
+
+  const revokeConsent = useCallback(() => {
+    setIsConsentGranted(false);
+  }, [setIsConsentGranted]);
+
   return useMemo(
-    () => ({ isConsentGranted, setIsConsentGranted, trackError }),
-    [isConsentGranted, setIsConsentGranted, trackError],
+    () => ({ isConsentGranted, grantConsent, revokeConsent, trackError }),
+    [isConsentGranted, grantConsent, revokeConsent, trackError],
   );
 };

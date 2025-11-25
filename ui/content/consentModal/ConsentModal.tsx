@@ -39,8 +39,12 @@ export const ConsentModal: React.FC = () => {
   } satisfies Omit<ToastProps, 'id'>;
 
   const finalize = useCallback(
-    (isConsentGranted: boolean) => {
-      errorTracking.setIsConsentGranted(isConsentGranted);
+    async (isConsentGranted: boolean) => {
+      if (isConsentGranted) {
+        await errorTracking.grantConsent();
+      } else {
+        errorTracking.revokeConsent();
+      }
       modal.close();
       toast.add(successToast);
     },

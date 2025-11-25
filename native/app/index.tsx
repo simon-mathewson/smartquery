@@ -10,9 +10,15 @@ import { useColorScheme } from "react-native";
 import type { WebViewMessageEvent } from "react-native-webview";
 import { WebView } from "react-native-webview";
 import type {
+  GetAnalyticsConsent,
   GetSqliteFile,
   NativeWebviewMessage,
+  RequestAnalyticsConsent,
 } from "../../shared/native/types";
+import {
+  requestTrackingPermissionsAsync,
+  getTrackingPermissionsAsync,
+} from "expo-tracking-transparency";
 
 export default function Index() {
   const colorScheme = useColorScheme();
@@ -48,6 +54,17 @@ export default function Index() {
     [getOrPickSqliteFile]
   );
 
+  const requestAnalyticsConsent =
+    useCallback<RequestAnalyticsConsent>(async () => {
+      const { status } = await requestTrackingPermissionsAsync();
+      return status === "granted";
+    }, []);
+
+  const getAnalyticsConsent = useCallback<GetAnalyticsConsent>(async () => {
+    const { status } = await getTrackingPermissionsAsync();
+    return status === "granted";
+  }, []);
+
   const onMessage = async (payload: WebViewMessageEvent) => {
     let parsed;
     try {
@@ -80,6 +97,10 @@ export default function Index() {
               return ConnectorModule.runQuery(...args);
             case "getSqliteFile":
               return getSqliteFile(...args);
+            case "requestAnalyticsConsent":
+              return requestAnalyticsConsent();
+            case "getAnalyticsConsent":
+              return getAnalyticsConsent();
           }
         })();
 

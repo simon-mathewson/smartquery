@@ -10,6 +10,9 @@ export type RunQuery = (props: {
 
 export type GetSqliteFile = (connectionId: string) => Promise<{ name: string; base64: string }>;
 
+export type RequestAnalyticsConsent = () => Promise<boolean>;
+export type GetAnalyticsConsent = () => Promise<boolean>;
+
 export type NativeWebviewMessage =
   | {
       type: 'console';
@@ -24,6 +27,8 @@ export type NativeWebviewMessage =
       | { method: 'disconnectDb'; args: [string] }
       | { method: 'runQuery'; args: [{ connectorId: string; statements: string[] }] }
       | { method: 'getSqliteFile'; args: [string] }
+      | { method: 'requestAnalyticsConsent'; args: [] }
+      | { method: 'getAnalyticsConsent'; args: [] }
     ))
   | ({
       type: 'response';

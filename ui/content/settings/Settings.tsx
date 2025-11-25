@@ -60,7 +60,7 @@ const labels: Record<Section, string> = {
 
 export const Settings: React.FC<SettingsProps> = ({ close }) => {
   const isMobile = useIsMobile();
-  const { isConsentGranted, setIsConsentGranted } = useDefinedContext(ErrorTrackingContext);
+  const { isConsentGranted, grantConsent, revokeConsent } = useDefinedContext(ErrorTrackingContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { logOut, user } = useDefinedContext(AuthContext);
   const { modePreference, setModePreference, primaryColor, setPrimaryColor } =
@@ -171,7 +171,13 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
             <Toggle
               hint="Help improve SmartQuery"
               label="Share anonymous usage data"
-              onChange={(value) => setIsConsentGranted(Boolean(value))}
+              onChange={(value) => {
+                if (value) {
+                  void grantConsent();
+                } else {
+                  revokeConsent();
+                }
+              }}
               value={isConsentGranted ?? false}
             />
           </Field>

@@ -1,8 +1,10 @@
 import type {
   ConnectDb,
   DisconnectDb,
+  GetAnalyticsConsent,
   GetSqliteFile,
   NativeWebviewMessage,
+  RequestAnalyticsConsent,
   RunQuery,
 } from '@/native/types';
 import { useCallback, useMemo } from 'react';
@@ -62,13 +64,32 @@ export const useNative = () => {
     [request],
   );
 
+  const requestAnalyticsConsent = useCallback<RequestAnalyticsConsent>(
+    () => request<RequestAnalyticsConsent>('requestAnalyticsConsent', []),
+    [request],
+  );
+
+  const getAnalyticsConsent = useCallback<GetAnalyticsConsent>(
+    () => request<GetAnalyticsConsent>('getAnalyticsConsent', []),
+    [request],
+  );
+
   return useMemo(
     () => ({
       connectDb,
       disconnectDb,
       runQuery,
       getSqliteFile,
+      requestAnalyticsConsent,
+      getAnalyticsConsent,
     }),
-    [connectDb, disconnectDb, runQuery, getSqliteFile],
+    [
+      connectDb,
+      disconnectDb,
+      runQuery,
+      getSqliteFile,
+      requestAnalyticsConsent,
+      getAnalyticsConsent,
+    ],
   );
 };

@@ -33,6 +33,23 @@
             "backgroundColor": "#0A0A0A"
           }
         }
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "We ask for your consent to collect anonymous analytics data to help us improve your experience."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1",
+            "infoPlist": {
+              "NSUserTrackingUsageDescription": "We ask for your consent to collect anonymous analytics data to help us improve your experience."
+            }
+          }
+        }
       ]
     ],
     "experiments": {
