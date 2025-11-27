@@ -1,4 +1,4 @@
-import { GitHub } from '@mui/icons-material';
+import { QuestionAnswerOutlined } from '@mui/icons-material';
 import { Button } from '../button/Button';
 import classNames from 'classnames';
 
@@ -20,11 +20,11 @@ export const AboutLinks: React.FC<AboutLinksProps> = (props) => {
         element="a"
         htmlProps={{
           className: '[&>svg]:text-textTertiary',
-          href: import.meta.env.VITE_GITHUB_URL,
+          href: import.meta.env.VITE_DISCORD_INVITE_URL,
           target: '_blank',
         }}
-        icon={<GitHub />}
-        tooltip="GitHub"
+        icon={<QuestionAnswerOutlined />}
+        tooltip="Discord"
       />
       <div className="flex flex-col gap-[2px] overflow-hidden pr-1">
         <div className="truncate text-xs text-textTertiary">© 2025 Simon Mathewson</div>

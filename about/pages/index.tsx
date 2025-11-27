@@ -12,7 +12,6 @@ import {
   EditOutlined,
   EnhancedEncryptionOutlined,
   FilterDramaOutlined,
-  GitHub,
   LightbulbOutlined,
   LockOutline,
   PhoneIphoneOutlined,
@@ -254,24 +253,6 @@ export default function Home() {
                 title: "Web best practices",
                 description:
                   "Data is always transferred via HTTPS and protected from man-in-the-middle attacks. Our cloud uses state-of-the-art protection against DDoS attacks and other threats. The web app is protected against XSS and XSRF attacks and other web vulnerabilities.",
-              },
-              {
-                icon: GitHub,
-                title: "Published source code",
-                description: (
-                  <>
-                    The source code for SmartQuery is publically accessible and
-                    can be audited by anyone:{" "}
-                    <a
-                      href="https://github.com/simon-mathewson/smartquery"
-                      className="text-white"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      github.com/simon-mathewson/smartquery
-                    </a>
-                  </>
-                ),
               },
             ].map((item) => (
               <li key={item.title} className="flex items-center gap-4">

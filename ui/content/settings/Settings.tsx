@@ -1,7 +1,6 @@
 import {
   ArrowBackOutlined,
   BrushOutlined,
-  GitHub,
   LogoutOutlined,
   PersonAddAlt1Outlined,
   QuestionAnswerOutlined,
@@ -14,6 +13,7 @@ import {
 import React, { useState } from 'react';
 import { assert } from 'ts-essentials';
 import { routes } from '~/router/routes';
+import { AboutLinks } from '~/shared/components/aboutLinks/AboutLinks';
 import { Button } from '~/shared/components/button/Button';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { Field } from '~/shared/components/field/Field';
@@ -22,6 +22,7 @@ import { List } from '~/shared/components/list/List';
 import { ThemeColorSelect } from '~/shared/components/themeColorSelect/ThemeColorSelect';
 import { Toggle } from '~/shared/components/toggle/Toggle';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { AnalyticsContext } from '../analytics/Context';
 import { AuthContext } from '../auth/Context';
 import { ConnectionsContext } from '../connections/Context';
@@ -30,11 +31,9 @@ import { LinkSetup } from '../link/setup/Setup';
 import { ThemeContext } from '../theme/Context';
 import type { ThemeModePreference } from '../theme/types';
 import { AddToDesktop } from './addToDesktop/AddToDesktop';
-import { Usage } from './usage/Usage';
-import { Subscription } from './Subscription';
-import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
-import { AboutLinks } from '~/shared/components/aboutLinks/AboutLinks';
 import { DeleteAccount } from './deleteAccount/DeleteAccount';
+import { Subscription } from './Subscription';
+import { Usage } from './usage/Usage';
 
 export type SettingsProps = {
   close: () => Promise<void> | void;
@@ -191,25 +190,13 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
                 element="a"
                 htmlProps={{
                   className: 'w-full',
-                  href: import.meta.env.VITE_GITHUB_URL,
+                  href: import.meta.env.VITE_DISCORD_INVITE_URL,
                   target: '_blank',
                 }}
-                icon={<GitHub />}
-                label="GitHub"
+                icon={<QuestionAnswerOutlined />}
+                label="Discord"
               />
             </Field>
-            <Button
-              align="left"
-              color="secondary"
-              element="a"
-              htmlProps={{
-                className: 'w-full',
-                href: import.meta.env.VITE_DISCORD_INVITE_URL,
-                target: '_blank',
-              }}
-              icon={<QuestionAnswerOutlined />}
-              label="Discord"
-            />
           </div>
           <DeleteAccount />
         </>
