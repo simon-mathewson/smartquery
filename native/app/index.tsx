@@ -19,6 +19,7 @@ import {
   requestTrackingPermissionsAsync,
   getTrackingPermissionsAsync,
 } from "expo-tracking-transparency";
+import * as Device from "expo-device";
 
 export default function Index() {
   const colorScheme = useColorScheme();
@@ -149,15 +150,18 @@ export default function Index() {
       style={{
         flex: 1,
         paddingLeft:
-          orientation === Orientation.LANDSCAPE_RIGHT
+          orientation === Orientation.LANDSCAPE_RIGHT &&
+          Device.deviceType === Device.DeviceType.PHONE
             ? Constants.statusBarHeight
             : 0,
         paddingRight:
-          orientation === Orientation.LANDSCAPE_LEFT
+          orientation === Orientation.LANDSCAPE_LEFT &&
+          Device.deviceType === Device.DeviceType.PHONE
             ? Constants.statusBarHeight
             : 0,
         paddingTop:
-          orientation === Orientation.PORTRAIT_UP
+          orientation === Orientation.PORTRAIT_UP ||
+          Device.deviceType !== Device.DeviceType.PHONE
             ? Constants.statusBarHeight
             : 0,
         backgroundColor: colorScheme === "dark" ? "#0a0a0a" : "#ffffff",
