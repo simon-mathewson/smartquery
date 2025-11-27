@@ -221,8 +221,8 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
             <Toggle
               hint={
                 window.ReactNativeWebView
-                  ? 'Use SmartQuery servers for remote connections. Local connections still require SmartQuery Link.'
-                  : 'Use SmartQuery servers for remote connections.'
+                  ? 'Use SmartQuery servers for remote connections.'
+                  : 'Use SmartQuery servers for remote connections. Local connections still require SmartQuery Link.'
               }
               label="Connect via Cloud"
               onChange={(value) => setConnectViaCloud(value)}
