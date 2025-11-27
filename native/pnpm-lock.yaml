@@ -74,9 +74,6 @@ importers:
       expo-system-ui:
         specifier: ~6.0.8
         version: 6.0.8(expo@54.0.23)(react-native-web@0.21.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))
-      expo-tracking-transparency:
-        specifier: ~6.0.7
-        version: 6.0.7(expo@54.0.23)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))
       expo-web-browser:
         specifier: 15.0.9
         version: 15.0.9(expo@54.0.23)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))
@@ -2382,12 +2379,6 @@ packages:
     peerDependenciesMeta:
       react-native-web:
         optional: true
-
-  expo-tracking-transparency@6.0.7:
-    resolution: {integrity: sha512-GOMgrVYVWLuC70F/BnH3lNfRiiiO7RWAXEIEz1gIEHZ4ki5aOzcBIe2QmqEqOuVafrZnhTUwcfFWMZ1IYCGL7Q==}
-    peerDependencies:
-      expo: '*'
-      react-native: '*'
 
   expo-updates-interface@2.0.0:
     resolution: {integrity: sha512-pTzAIufEZdVPKql6iMi5ylVSPqV1qbEopz9G6TSECQmnNde2nwq42PxdFBaUEd8IZJ/fdJLQnOT3m6+XJ5s7jg==}
@@ -7208,11 +7199,6 @@ snapshots:
       react-native-web: 0.21.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     transitivePeerDependencies:
       - supports-color
-
-  expo-tracking-transparency@6.0.7(expo@54.0.23)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0)):
-    dependencies:
-      expo: 54.0.23(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.14)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0))(react@19.1.0)
-      react-native: 0.81.5(@babel/core@7.28.5)(@types/react@19.1.0)(react@19.1.0)
 
   expo-updates-interface@2.0.0(expo@54.0.23):
     dependencies:
