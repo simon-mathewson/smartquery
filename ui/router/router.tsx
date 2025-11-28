@@ -108,10 +108,10 @@ export const Router: React.FC = () => {
         {window.ReactNativeWebView && (
           <>
             <Route path={routes.subscribePlans()}>
-              <Redirect to={routes.signup()} />
+              <Redirect to={routes.signup()} replace />
             </Route>
             <Route path={routes.subscribeCheckout()}>
-              <Redirect to={routes.root()} />
+              <Redirect to={routes.root()} replace />
             </Route>
           </>
         )}

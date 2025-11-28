@@ -71,7 +71,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
             label="Log in"
           />
         )}
-        {!user?.activeSubscription && (
+        {!user?.activeSubscription && (!window.ReactNativeWebView || !user) && (
           <Button
             align="left"
             htmlProps={{
