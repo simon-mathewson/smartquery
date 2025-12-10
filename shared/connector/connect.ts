@@ -9,16 +9,7 @@ export const connect = async (
   connection: RemoteConnection,
   options?: { retryWithoutSsl?: boolean },
 ): Promise<Connector> => {
-  const {
-    database,
-    engine,
-    host: remoteHost,
-    password,
-    port: remotePort,
-    schema,
-    ssh,
-    user,
-  } = connection;
+  const { database, engine, host: remoteHost, password, port: remotePort, ssh, user } = connection;
 
   const connectorId = uniqueId();
 
@@ -90,9 +81,6 @@ export const connect = async (
       // Connect right away so we get an error if connection is invalid
       const client = await pool.connect();
       client.release();
-      if (schema) {
-        await pool.query(`SET search_path TO ${schema}`);
-      }
     } catch (error: unknown) {
       if (
         error instanceof Error &&

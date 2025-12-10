@@ -60,6 +60,11 @@ export const runQuery = async (connector: Connector, statements: string[]): Prom
     const client = await connector.postgresPool.connect();
 
     try {
+      const { schema } = connector.connection;
+      if (schema) {
+        await client.query(`SET search_path TO ${schema}`);
+      }
+
       await client.query('BEGIN');
 
       const results = await Promise.all(
