@@ -4,7 +4,9 @@ import PostgresClientKit
 internal struct Connector {
   let postgresPool: PostgresClientKit.ConnectionPool?
   let mysqlPool: MySQL.ConnectionPool?
+  let sshClient: Ssh.Client?
 }
+
 
 public class ConnectorModule: Module {
   private var connectors: [String: Connector] = [:]
@@ -12,22 +14,53 @@ public class ConnectorModule: Module {
   public func definition() -> ModuleDefinition {
     Name("Connector")
 
-    AsyncFunction("connectDb") { (props: [String: Any]) in    
-      if let sshValue = props["ssh"], sshValue is [String: Any] {
-        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH is not supported on iOS. Upgrade to use SSH through the cloud."])
+    AsyncFunction("connectDb") { (props: [String: Any]) in
+      var host = props["host"] as! String
+      var port = props["port"] as! Int
+
+      var sshClient: Ssh.Client?
+      
+      if let sshValue = props["ssh"] as? [String: Any] {
+        let sshHost = sshValue["host"] as! String
+        let sshPort = sshValue["port"] as! Int
+        let sshUser = sshValue["user"] as! String
+        let sshPassword = sshValue["password"] as! String
+        
+        let remoteHost = host
+        let remotePort = port
+        
+        sshClient = Ssh.Client()
+        let result = try await sshClient!.forward(
+          sshHost: sshHost,
+          sshPort: sshPort,
+          sshUser: sshUser,
+          sshPassword: sshPassword,
+          remoteHost: remoteHost,
+          remotePort: remotePort
+        )
+        
+        host = result.host
+        port = result.port
       }
     
-      let host = props["host"] as! String
-      let port = props["port"] as! Int
       let database = props["database"] as! String
       let user = props["user"] as! String
       let password = props["password"] as? String
 
       let connectorId = UUID().uuidString
+      print(host, port)
 
       self.connectors[connectorId] = props["engine"] as! String == "mysql"
-        ? Connector(postgresPool: nil, mysqlPool: try await connectMysql(host: host, port: port, database: database, user: user, password: password))
-        : Connector(postgresPool: try await connectPostgres(host: host, port: port, database: database, user: user, password: password), mysqlPool: nil)
+        ? Connector(
+            postgresPool: nil,
+            mysqlPool: try await connectMysql(host: host, port: port, database: database, user: user, password: password),
+            sshClient: sshClient
+          )
+        : Connector(
+            postgresPool: try await connectPostgres(host: host, port: port, database: database, user: user, password: password),
+            mysqlPool: nil,
+            sshClient: sshClient
+          )
 
       return connectorId
     }
@@ -39,6 +72,8 @@ public class ConnectorModule: Module {
 
       connector.postgresPool?.close()
       connector.mysqlPool?.free(nil)
+      
+      connector.sshClient?.shutDown()
       
       self.connectors.removeValue(forKey: connectorId)
     }
