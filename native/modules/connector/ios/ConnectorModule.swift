@@ -24,7 +24,7 @@ public class ConnectorModule: Module {
         let sshHost = sshValue["host"] as! String
         let sshPort = sshValue["port"] as! Int
         let sshUser = sshValue["user"] as! String
-        let sshPassword = sshValue["password"] as! String
+        let sshPassword = sshValue["password"] as? String ?? ""
         
         let remoteHost = host
         let remotePort = port
@@ -48,7 +48,6 @@ public class ConnectorModule: Module {
       let password = props["password"] as? String
 
       let connectorId = UUID().uuidString
-      print(host, port)
 
       self.connectors[connectorId] = props["engine"] as! String == "mysql"
         ? Connector(

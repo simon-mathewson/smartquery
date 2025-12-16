@@ -50,6 +50,88 @@ public extension Ssh.Client {
           }
         }
         
+        // Wait for authentication to complete and verify it succeeded
+        guard let channel = self.sshConnection else {
+          throw NSError(domain: "SshClient", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH connection not established"])
+        }
+        
+        // Verify authentication by attempting to create a test channel
+        // If authentication failed, the channel will be closed or channel creation will fail
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+          var hasResolved = false
+          
+          // Listen for channel close (authentication failures close the channel)
+          channel.closeFuture.whenComplete { _ in
+            if !hasResolved {
+              hasResolved = true
+              continuation.resume(throwing: NSError(domain: "SshClient", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH connection closed - authentication failed"]))
+            }
+          }
+          
+          // Wait briefly for authentication, then verify by creating a test channel
+          channel.eventLoop.scheduleTask(in: .milliseconds(500)) {
+            guard !hasResolved, channel.isActive else {
+              if !hasResolved {
+                hasResolved = true
+                continuation.resume(throwing: NSError(domain: "SshClient", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH connection closed - authentication failed"]))
+              }
+              return
+            }
+            
+            channel.pipeline.handler(type: NIOSSHHandler.self).whenComplete { handlerResult in
+              guard !hasResolved else { return }
+              
+              switch handlerResult {
+              case .success(let sshHandler):
+                let testPromise = channel.eventLoop.makePromise(of: Channel.self)
+                
+                // Create a session channel to verify authentication (fails if not authenticated)
+                sshHandler.createChannel(testPromise, channelType: .session) { child, _ in
+                  child.close(promise: nil)
+                  return channel.eventLoop.makeSucceededFuture(())
+                }
+                
+                // Timeout for test channel creation
+                channel.eventLoop.scheduleTask(in: .milliseconds(300)) {
+                  if !hasResolved {
+                    testPromise.fail(NSError(domain: "SshClient", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH authentication verification timeout"]))
+                  }
+                }
+                
+                testPromise.futureResult.whenComplete { result in
+                  guard !hasResolved else { return }
+                  hasResolved = true
+                  
+                  switch result {
+                  case .success:
+                    continuation.resume()
+                  case .failure(let error):
+                    print("SSH authentication failed: \(error.localizedDescription)")
+                    continuation.resume(throwing: NSError(domain: "SshClient", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH authentication failed"]))
+                  }
+                }
+                
+              case .failure(let error):
+                hasResolved = true
+                continuation.resume(throwing: error)
+              }
+            }
+          }
+          
+          // Overall timeout
+          channel.eventLoop.scheduleTask(in: .milliseconds(1500)) {
+            if !hasResolved {
+              hasResolved = true
+              continuation.resume(throwing: NSError(domain: "SshClient", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH authentication verification timeout"]))
+            }
+          }
+        }
+        
+        // Final check: ensure connection is still active
+        guard channel.isActive else {
+          throw NSError(domain: "SshClient", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSH connection is not active - authentication failed"])
+        }
+        
         // Start local listener; for each inbound TCP connection, open SSH `.directTCPIP` and glue
         // Create default originator address (use IPv4)
         let defaultOriginatorAddress = try SocketAddress(ipAddress: "127.0.0.1", port: 0)
