@@ -5,6 +5,7 @@ internal struct Connector {
   let postgresPool: PostgresClientKit.ConnectionPool?
   let mysqlPool: MySQL.ConnectionPool?
   let sshClient: Ssh.Client?
+  let connection: [String: Any]
 }
 
 
@@ -57,12 +58,14 @@ public class ConnectorModule: Module {
         ? Connector(
             postgresPool: nil,
             mysqlPool: try await connectMysql(host: host, port: port, database: database, user: user, password: password),
-            sshClient: sshClient
+            sshClient: sshClient,
+            connection: props
           )
         : Connector(
             postgresPool: try await connectPostgres(host: host, port: port, database: database, user: user, password: password),
             mysqlPool: nil,
-            sshClient: sshClient
+            sshClient: sshClient,
+            connection: props
           )
 
       return connectorId
@@ -90,7 +93,7 @@ public class ConnectorModule: Module {
       }
 
       return try await connector.postgresPool != nil
-        ? runQueryPostgres(pool: connector.postgresPool!, statements: statements)
+        ? runQueryPostgres(pool: connector.postgresPool!, statements: statements, connectionProps: connector.connection)
         : runQueryMysql(pool: connector.mysqlPool!, statements: statements)
     }
   }
@@ -156,7 +159,7 @@ private func connectPostgres(
   return postgresPool
 }
 
-private func runQueryPostgres(pool: PostgresClientKit.ConnectionPool, statements: [String]) async throws -> [[String: Any]] {
+private func runQueryPostgres(pool: PostgresClientKit.ConnectionPool, statements: [String], connectionProps: [String: Any]) async throws -> [[String: Any]] {
   return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[[String: Any]], Error>) in
     pool.withConnection { result in
       do {
@@ -164,6 +167,12 @@ private func runQueryPostgres(pool: PostgresClientKit.ConnectionPool, statements
         var results: [[String: Any]] = []
         
         do {
+          if let schema = connectionProps["schema"] as? String {
+            let setSearchPathStatement = try connection.prepareStatement(text: "SET search_path TO \(schema)")
+            defer { setSearchPathStatement.close() }
+            try setSearchPathStatement.execute()
+          }
+          
           try connection.beginTransaction()
           
           for statement in statements {
