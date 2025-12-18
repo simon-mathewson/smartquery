@@ -24,7 +24,9 @@ public class ConnectorModule: Module {
         let sshHost = sshValue["host"] as! String
         let sshPort = sshValue["port"] as! Int
         let sshUser = sshValue["user"] as! String
-        let sshPassword = sshValue["password"] as? String ?? ""
+        let sshPassword = sshValue["password"] as? String
+        let sshPrivateKey = sshValue["privateKey"] as? String
+        let sshPrivateKeyPassphrase = sshValue["privateKeyPassphrase"] as? String
         
         let remoteHost = host
         let remotePort = port
@@ -35,6 +37,8 @@ public class ConnectorModule: Module {
           sshPort: sshPort,
           sshUser: sshUser,
           sshPassword: sshPassword,
+          sshPrivateKey: sshPrivateKey,
+          sshPrivateKeyPassphrase: sshPrivateKeyPassphrase,
           remoteHost: remoteHost,
           remotePort: remotePort
         )

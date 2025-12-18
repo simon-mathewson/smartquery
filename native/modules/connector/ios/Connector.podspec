@@ -7,8 +7,8 @@ Pod::Spec.new do |s|
   s.homepage       = 'https://docs.expo.dev/modules/'
   s.license        = { :type => 'MIT' }
   s.platforms      = {
-    :ios => '15.1',
-    :tvos => '15.1'
+    :ios => '17.0',
+    :tvos => '17.0'
   }
   s.source         = { git: '', :tag => s.version.to_s }
   s.static_framework = true
@@ -17,15 +17,16 @@ Pod::Spec.new do |s|
   s.dependency 'PostgresClientKit'
 
   spm_dependency(s,
-    url: 'https://github.com/apple/swift-nio-ssh.git',
-    requirement: {kind: 'upToNextMajorVersion', minimumVersion: '0.12.0'},
-    products: ['NIOSSH']
+    url: 'https://github.com/simon-mathewson/Citadel.git',
+    requirement: { kind: 'revision', revision: 'e4ba6d5bedf1ac84c5a64331ad15f0f1c205c60f' },
+    products: ['Citadel']
   )
 
+  
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
   }
-
+  
   s.source_files = "**/*.{h,m,mm,swift,hpp,cpp}"
 end

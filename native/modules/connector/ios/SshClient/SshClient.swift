@@ -7,7 +7,9 @@ public extension Ssh.Client {
             sshHost: String,
             sshPort: Int,
             sshUser: String,
-            sshPassword: String,
+            sshPassword: String? = nil,
+            sshPrivateKey: String? = nil,
+            sshPrivateKeyPassphrase: String? = nil,
             remoteHost: String,
             remotePort: Int
         ) async throws -> Ssh.ForwardResult {
@@ -18,12 +20,24 @@ public extension Ssh.Client {
         self.eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let group = self.eventLoopGroup!
         
+        // Determine authentication method
+        let userAuth: NIOSSHClientUserAuthenticationDelegate
+        if let privateKeyString = sshPrivateKey {
+            // Use private key authentication
+            let niosshPrivateKey = try OpenSSHKeyParser.parsePrivateKey(privateKeyString, passphrase: sshPrivateKeyPassphrase)
+            userAuth = PrivateKeyAuthDelegate(username: sshUser, privateKey: niosshPrivateKey)
+        } else if let password = sshPassword {
+            // Use password authentication
+            userAuth = PasswordAuthDelegate(username: sshUser, password: password)
+        } else {
+            throw NSError(domain: "SshClient", code: 1, userInfo: [NSLocalizedDescriptionKey: "Either sshPassword or sshPrivateKey must be provided"])
+        }
+        
         // Create the SSH connection channel
         let sshBootstrap = ClientBootstrap(group: group)
           .channelInitializer { channel in
             // Allow half-closure: important for SSH forwarding semantics
             channel.setOption(ChannelOptions.allowRemoteHalfClosure, value: true).flatMap {
-              let userAuth = PasswordAuthDelegate(username: sshUser, password: sshPassword)
               let serverAuth = AcceptAllHostKeysDelegate()
               
               let sshHandler = NIOSSHHandler(
