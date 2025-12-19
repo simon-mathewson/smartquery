@@ -80,7 +80,7 @@ export const MobileNavigation: React.FC = () => {
         className={classNames(
           'pointer-events-none fixed left-0 right-0 top-0 z-40 h-[100dvh] w-full',
           {
-            '!pointer-events-auto bg-card/60 backdrop-blur-xl': overlayPage,
+            '!pointer-events-auto bg-card/80 backdrop-blur-xl': overlayPage,
           },
         )}
       >
