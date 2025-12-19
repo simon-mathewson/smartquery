@@ -2,7 +2,7 @@
   "name": "native",
   "type": "module",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "expo start",
