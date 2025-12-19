@@ -16,8 +16,8 @@ import { Settings } from '~/content/settings/Settings';
 import { routes } from '~/router/routes';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
-import { TableList } from '../sidebar/tableList/TableList';
 import { MOBILE_NAVIGATION_HEIGHT } from './constants';
+import { QueriesPage } from './QueriesPage/QueriesPage';
 
 export const MobileNavigation: React.FC = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -30,7 +30,7 @@ export const MobileNavigation: React.FC = () => {
   const isMobile = useIsMobile();
 
   const [overlayPage, setOverlayPage] = useState<
-    'connections' | 'tables' | 'settings' | 'copilot' | null
+    'connections' | 'queries' | 'settings' | 'copilot' | null
   >(null);
 
   if (!isMobile) return null;
@@ -39,10 +39,10 @@ export const MobileNavigation: React.FC = () => {
     ...(activeConnection
       ? [
           {
-            active: overlayPage === 'tables',
+            active: overlayPage === 'queries',
             icon: <FormatListBulletedOutlined />,
-            label: 'Tables',
-            onClick: () => setOverlayPage('tables'),
+            label: 'Queries',
+            onClick: () => setOverlayPage('queries'),
           },
           {
             active: isAnyConnectionRoute && !overlayPage,
@@ -89,7 +89,7 @@ export const MobileNavigation: React.FC = () => {
           style={{ paddingBottom: `${MOBILE_NAVIGATION_HEIGHT}px` }}
         >
           {overlayPage === 'connections' && <Connections />}
-          {overlayPage === 'tables' && <TableList onSelect={() => setOverlayPage(null)} />}
+          {overlayPage === 'queries' && <QueriesPage onSelect={() => setOverlayPage(null)} />}
           {overlayPage === 'copilot' && <Copilot onCloseCopilot={() => setOverlayPage(null)} />}
           {overlayPage === 'settings' && <Settings close={() => setOverlayPage(null)} />}
         </div>

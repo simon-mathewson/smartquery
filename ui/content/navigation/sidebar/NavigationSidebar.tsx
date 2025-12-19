@@ -82,7 +82,7 @@ export const NavigationSidebar: React.FC = () => {
         {activeConnection && (
           <div className="flex w-full grow flex-col overflow-auto">
             <SavedQueryList />
-            {<TableList />}
+            <TableList />
           </div>
         )}
         <Footer htmlProps={{ className: 'shrink-0' }} />

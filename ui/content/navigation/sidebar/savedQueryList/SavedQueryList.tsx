@@ -6,18 +6,30 @@ import { List } from '~/shared/components/list/List';
 import { Loading } from '~/shared/components/loading/Loading';
 import SearchIcon from '~/shared/icons/Search.svg?react';
 import { useSavedQueryList } from './useSavedQueryList';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 
-export const SavedQueryList: React.FC = () => {
+export type SavedQueryListProps = {
+  onSelect?: (savedQuery: SavedQuery) => void;
+};
+
+export const SavedQueryList: React.FC<SavedQueryListProps> = (props) => {
+  const isMobile = useIsMobile();
+
   const {
     filteredSavedQueries,
     getHandleMouseDown,
     isDragging,
     isLoading,
-    onSelect,
     search,
     selectedSavedQueries,
     setSearch,
+    ...savedQueryList
   } = useSavedQueryList();
+
+  const onSelect = (savedQuery: SavedQuery) => {
+    props.onSelect?.(savedQuery);
+    savedQueryList.onSelect(savedQuery);
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -38,7 +50,7 @@ export const SavedQueryList: React.FC = () => {
               onClick: () => setSearch((search) => (search !== undefined ? undefined : '')),
             }}
             icon={<SearchIcon />}
-            size="small"
+            size={isMobile ? 'normal' : 'small'}
             tooltip="Search queries"
             variant={search === undefined ? 'default' : 'highlighted'}
           />
