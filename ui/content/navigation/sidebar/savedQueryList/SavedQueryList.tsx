@@ -42,7 +42,7 @@ export const SavedQueryList: React.FC<SavedQueryListProps> = (props) => {
   return (
     <div className="relative flex w-full flex-col gap-1 py-2">
       <div className="flex items-center justify-between gap-2 pl-2">
-        <div className="truncate text-xs font-medium text-textTertiary">Queries</div>
+        <div className="truncate text-sm font-medium text-textTertiary sm:text-xs">Queries</div>
         <div className="flex items-center gap-2">
           <Button
             color="secondary"
