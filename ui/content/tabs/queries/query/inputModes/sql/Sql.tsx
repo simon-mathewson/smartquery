@@ -1,5 +1,5 @@
 import { BookmarkAddedOutlined } from '@mui/icons-material';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { SavedQueriesContext } from '~/content/savedQueries/Context';
@@ -8,14 +8,13 @@ import { SqlEditor } from '~/shared/components/sqlEditor/SqlEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { QueriesContext } from '../../../Context';
-import { QueryContext, ResultContext } from '../../Context';
+import { QueryContext } from '../../Context';
 
 export const Sql: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { updateQuery } = useDefinedContext(QueriesContext);
   const { query } = useDefinedContext(QueryContext);
   const { updateSavedQuery } = useDefinedContext(SavedQueriesContext);
-  const queryResult = useContext(ResultContext);
 
   const [value, setValue] = useStoredState<string>(
     `query-${query.id}-sql`,
@@ -64,8 +63,6 @@ export const Sql: React.FC = () => {
     setIsDraft(false);
   }, [query.sql, setIsDraft, setValue]);
 
-  const isSubmitDisabled = !isDraft && query.sql === value && queryResult !== null;
-
   const [isUpdatingSavedQuery, setIsUpdatingSavedQuery] = useState(false);
 
   const onOpdateSavedQuery = useCallback(
@@ -101,7 +98,6 @@ export const Sql: React.FC = () => {
           )
         }
         isResetDisabled={(query.sql ?? '') === value}
-        isSubmitDisabled={isSubmitDisabled}
         onChange={onChange}
         onKeyDown={onKeyDown}
         onReset={onReset}

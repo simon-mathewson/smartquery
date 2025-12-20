@@ -22,16 +22,8 @@ export type SqlEditorProps = {
 };
 
 export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
-  const {
-    bottomToolbarActions,
-    isResetDisabled,
-    isSubmitDisabled,
-    onChange,
-    onKeyDown,
-    onReset,
-    onSubmit,
-    value,
-  } = props;
+  const { bottomToolbarActions, isResetDisabled, onChange, onKeyDown, onReset, onSubmit, value } =
+    props;
 
   const activeConnection = useContext(ActiveConnectionContext)?.activeConnection;
 
@@ -69,7 +61,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
 
   return (
     <form className="flex flex-col gap-3" onSubmit={submitQuery} ref={sqlEditorRef}>
-      <div className="max-h-content border-controlBorder w-full overflow-hidden rounded-2xl border bg-background transition-all ease-in-out">
+      <div className="max-h-content w-full overflow-hidden rounded-2xl border border-controlBorder bg-background transition-all ease-in-out">
         <CodeEditor
           bottomToolbar={
             <div className="flex justify-end gap-3 px-2.5 py-3">
@@ -92,7 +84,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = (props) => {
               <Button
                 htmlProps={{
                   className: 'w-36 pointer-events-auto flex-shrink-0',
-                  disabled: !value?.trim() || query?.query.isLoading || isSubmitDisabled,
+                  disabled: !value?.trim() || query?.query.isLoading,
                   type: 'submit',
                 }}
                 icon={<Send />}

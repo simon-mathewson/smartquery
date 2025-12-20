@@ -209,7 +209,7 @@ export const useQueries = () => {
           toast.add({
             color: 'success',
             description: 'No results returned',
-            title: 'Query completed',
+            title: 'Query successful',
           });
         }
       } catch (error) {
