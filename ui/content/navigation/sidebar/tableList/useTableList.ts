@@ -24,22 +24,23 @@ export const useTableList = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
+  const refreshTables = useCallback(async () => {
     if (!activeConnection || !runQuery) return;
-
-    const tableNamesStatement = getTableNamesSql(activeConnection);
 
     setIsLoading(true);
 
-    void runQuery([tableNamesStatement], { skipSqliteWrite: true })
-      .then(([results]) => {
-        setTables(
-          results.rows.map(([t, s]) => ({ name: String(t), schema: s ? String(s) : undefined })),
-        );
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    try {
+      const [results] = await runQuery([getTableNamesSql(activeConnection)]);
+      setTables(
+        results.rows.map(([t, s]) => ({ name: String(t), schema: s ? String(s) : undefined })),
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, [activeConnection, runQuery]);
+
+  useEffect(() => {
+    void refreshTables();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConnection]);
 
@@ -141,6 +142,7 @@ export const useTableList = () => {
       isLoading,
       isLoadingDatabases,
       onSelect,
+      refreshTables,
       search,
       selectedTables,
       setSearch,
@@ -152,6 +154,7 @@ export const useTableList = () => {
       isLoading,
       isLoadingDatabases,
       onSelect,
+      refreshTables,
       search,
       selectedTables,
       setSearch,
