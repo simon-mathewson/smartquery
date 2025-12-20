@@ -1,0 +1,23 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "Z54HUKL257.dev.smartquery",
+        "paths": [
+          "*"
+        ]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": [
+      "Z54HUKL257.dev.smartquery"
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "Z54HUKL257.dev.smartquery"
+    ]
+  }
+}

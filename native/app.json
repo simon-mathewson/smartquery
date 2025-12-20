@@ -8,6 +8,9 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "associatedDomains": [
+        "applinks:smartquery.dev"
+      ],
       "bundleIdentifier": "dev.smartquery",
       "supportsTablet": true
     },
