@@ -8,7 +8,6 @@ Pod::Spec.new do |s|
   s.license        = { :type => 'MIT' }
   s.platforms      = {
     :ios => '17.0',
-    :tvos => '17.0'
   }
   s.source         = { git: '', :tag => s.version.to_s }
   s.static_framework = true

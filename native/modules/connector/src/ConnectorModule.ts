@@ -7,6 +7,8 @@ import type {
 } from "../../../../shared/native/types";
 
 declare class ConnectorModule extends NativeModule {
+  isIosOnMac: boolean;
+  writeToClipboard: (text: string) => void;
   connectDb: ConnectDb;
   disconnectDb: DisconnectDb;
   runQuery: RunQuery;

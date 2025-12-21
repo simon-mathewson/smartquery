@@ -6,8 +6,8 @@ import * as Device from "expo-device";
 import { File } from "expo-file-system";
 import { Orientation } from "expo-screen-orientation";
 import { castArray } from "lodash";
-import { useCallback, useRef } from "react";
-import { useColorScheme } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useColorScheme, Dimensions } from "react-native";
 import * as Keychain from "react-native-keychain";
 import type { WebViewMessageEvent } from "react-native-webview";
 import { WebView } from "react-native-webview";
@@ -21,6 +21,18 @@ export default function Index() {
   const orientation = useOrientation();
 
   const webviewRef = useRef<WebView>(null);
+
+  const [windowDimensions, setWindowDimensions] = useState(() =>
+    Dimensions.get("window")
+  );
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener("change", ({ window }) => {
+      setWindowDimensions(window);
+    });
+
+    return () => subscription?.remove();
+  }, []);
 
   const addToKeychain = useCallback(
     async (username: string, password: string) =>
@@ -70,9 +82,9 @@ export default function Index() {
     if (!parsed) return;
 
     if (parsed.type === "console") {
-      const { level, message } = parsed;
+      const { level, messages } = parsed;
 
-      console[level](`[webview] ${message}`);
+      console[level](`[webview]`, ...(messages ?? []));
       return;
     }
 
@@ -94,6 +106,8 @@ export default function Index() {
               return ConnectorModule.runQuery(...args);
             case "getSqliteFile":
               return getSqliteFile(...args);
+            case "writeToClipboard":
+              return ConnectorModule.writeToClipboard(...args);
           }
         })();
 
@@ -122,45 +136,67 @@ export default function Index() {
   const injectedJavaScript = `
     window.statusBarHeight = ${Constants.statusBarHeight};
   
-    const consoleLog = (type, message) => ReactNativeWebView.postMessage(JSON.stringify({type: 'console', level: type, message}));
+    const consoleLog = (type, ...messages) => ReactNativeWebView.postMessage(JSON.stringify({type: 'console', level: type, messages}));
 
     console = {
-      log: (message) => consoleLog('log', message),
-      debug: (message) => consoleLog('debug', message),
-      info: (message) => consoleLog('info', message),
-      warn: (message) => consoleLog('warn', message),
-      error: (message) => consoleLog('error', message),
+      log: (...messages) => consoleLog('log', ...messages),
+      debug: (...messages) => consoleLog('debug', ...messages),
+      info: (...messages) => consoleLog('info', ...messages),
+      warn: (...messages) => consoleLog('warn', ...messages),
+      error: (...messages) => consoleLog('error', ...messages),
     };
 
     void(0);
   `;
+
+  const { isIosOnMac } = ConnectorModule;
+
+  const paddingTop =
+    !isIosOnMac &&
+    (orientation === Orientation.PORTRAIT_UP ||
+      Device.deviceType !== Device.DeviceType.PHONE)
+      ? Constants.statusBarHeight
+      : 0;
+  const paddingLeft =
+    !isIosOnMac &&
+    orientation === Orientation.LANDSCAPE_RIGHT &&
+    Device.deviceType === Device.DeviceType.PHONE
+      ? Constants.statusBarHeight
+      : 0;
+  const paddingRight =
+    !isIosOnMac &&
+    orientation === Orientation.LANDSCAPE_LEFT &&
+    Device.deviceType === Device.DeviceType.PHONE
+      ? Constants.statusBarHeight
+      : 0;
+
+  const scale = isIosOnMac ? 1.3 : 1;
+  const { height: screenHeight, width: screenWidth } = windowDimensions;
+  const webviewWidth = Math.ceil(screenWidth * (1 / scale));
+  const webviewHeight = Math.ceil(screenHeight * (1 / scale));
+  const webviewLeft = (screenWidth - webviewWidth) / 2;
+  const webviewTop = (screenHeight - webviewHeight) / 2;
 
   return (
     <WebView
       ref={webviewRef}
       source={{ uri: "https://smartquery.dev" }}
       style={{
-        flex: 1,
-        paddingLeft:
-          orientation === Orientation.LANDSCAPE_RIGHT &&
-          Device.deviceType === Device.DeviceType.PHONE
-            ? Constants.statusBarHeight
-            : 0,
-        paddingRight:
-          orientation === Orientation.LANDSCAPE_LEFT &&
-          Device.deviceType === Device.DeviceType.PHONE
-            ? Constants.statusBarHeight
-            : 0,
-        paddingTop:
-          orientation === Orientation.PORTRAIT_UP ||
-          Device.deviceType !== Device.DeviceType.PHONE
-            ? Constants.statusBarHeight
-            : 0,
+        position: "absolute",
+        top: webviewTop,
+        left: webviewLeft,
+        width: webviewWidth,
+        height: webviewHeight,
+        paddingTop,
+        paddingLeft,
+        paddingRight,
         backgroundColor: colorScheme === "dark" ? "#0a0a0a" : "#ffffff",
+        transform: [{ scale }],
       }}
       // Required for the injectedJavaScript to work
       onMessage={onMessage}
       injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
+      hideKeyboardAccessoryView={isIosOnMac}
     />
   );
 }

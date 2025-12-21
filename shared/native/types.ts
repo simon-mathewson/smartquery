@@ -12,11 +12,13 @@ export type GetSqliteFile = (connectionId: string) => Promise<{ name: string; ba
 
 export type AddToKeychain = (username: string, password: string) => Promise<void>;
 
+export type WriteToClipboard = (text: string) => void;
+
 export type NativeWebviewMessage =
   | {
       type: 'console';
       level: 'log' | 'debug' | 'info' | 'warn' | 'error';
-      message: string;
+      messages?: string[];
     }
   | ({
       type: 'request';
@@ -27,6 +29,7 @@ export type NativeWebviewMessage =
       | { method: 'disconnectDb'; args: [string] }
       | { method: 'runQuery'; args: [{ connectorId: string; statements: string[] }] }
       | { method: 'getSqliteFile'; args: [string] }
+      | { method: 'writeToClipboard'; args: [string] }
     ))
   | ({
       type: 'response';

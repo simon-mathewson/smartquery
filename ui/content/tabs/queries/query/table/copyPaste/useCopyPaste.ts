@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { getTsvFromSelection } from '../utils/getTsvFromSelection';
 import type { CreateRow } from '~/content/edit/types';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { useNative } from '~/shared/hooks/useNative/useNative';
 
 export const useCopyPaste = (
   selection: number[][],
@@ -12,6 +13,8 @@ export const useCopyPaste = (
 ) => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { rows } = useDefinedContext(ResultContext);
+
+  const native = useNative();
 
   const onKeydown = useCallback(
     (event: KeyboardEvent) => {
@@ -25,7 +28,11 @@ export const useCopyPaste = (
       if (event.key === 'c' && (event.ctrlKey || event.metaKey)) {
         event.preventDefault();
         const tsv = getTsvFromSelection(selection, [...rows, ...rowsToCreate]);
-        void navigator.clipboard.writeText(tsv);
+        if (window.ReactNativeWebView) {
+          native.writeToClipboard(tsv);
+        } else {
+          void navigator.clipboard.writeText(tsv);
+        }
 
         track('table_copy');
       }
@@ -35,7 +42,7 @@ export const useCopyPaste = (
         track('table_paste');
       }
     },
-    [rows, rowsToCreate, selection, tableRef, track],
+    [native, rows, rowsToCreate, selection, tableRef, track],
   );
 
   useEffect(() => {

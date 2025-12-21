@@ -286,7 +286,7 @@ export const Cell: React.FC<CellProps> = (props) => {
       {columnIndex === visibleColumnCount - 1 && (
         <div
           className={classNames(
-            'h-8 w-full border-y border-y-border shadow-[inset_1px_0_0_0_#e5e5e5] dark:shadow-[inset_1px_0_0_0_#404040]',
+            'h-8 w-full select-none border-y border-y-border shadow-[inset_1px_0_0_0_#e5e5e5] dark:shadow-[inset_1px_0_0_0_#404040]',
             {
               'z-10 -ml-px bg-background/60 backdrop-blur-xl': type === 'header',
               '-ml-px -mt-px': type === 'body',

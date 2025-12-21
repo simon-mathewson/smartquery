@@ -15,6 +15,14 @@ public class ConnectorModule: Module {
   public func definition() -> ModuleDefinition {
     Name("Connector")
 
+    Constant("isIosOnMac") {
+      ProcessInfo.processInfo.isiOSAppOnMac
+    }
+
+    Function("writeToClipboard") { (text: String) in
+      UIPasteboard.general.string = text
+    }
+
     AsyncFunction("connectDb") { (props: [String: Any]) in
       var host = props["host"] as! String
       var port = props["port"] as! Int

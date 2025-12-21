@@ -5,6 +5,7 @@ import type {
   GetSqliteFile,
   NativeWebviewMessage,
   RunQuery,
+  WriteToClipboard,
 } from '@/native/types';
 import { useCallback, useMemo } from 'react';
 import { assert } from 'ts-essentials';
@@ -68,6 +69,11 @@ export const useNative = () => {
     [request],
   );
 
+  const writeToClipboard = useCallback<WriteToClipboard>(
+    (text) => request<WriteToClipboard>('writeToClipboard', [text]),
+    [request],
+  );
+
   return useMemo(
     () => ({
       addToKeychain,
@@ -75,7 +81,8 @@ export const useNative = () => {
       disconnectDb,
       runQuery,
       getSqliteFile,
+      writeToClipboard,
     }),
-    [addToKeychain, connectDb, disconnectDb, runQuery, getSqliteFile],
+    [addToKeychain, connectDb, disconnectDb, runQuery, getSqliteFile, writeToClipboard],
   );
 };

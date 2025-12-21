@@ -9,6 +9,7 @@ import { ToastContext } from '~/content/toast/Context';
 import type { ButtonProps } from '~/shared/components/button/Button';
 import { CodeEditor } from '~/shared/components/codeEditor/CodeEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useNative } from '~/shared/hooks/useNative/useNative';
 import Play from '~/shared/icons/Play.svg?react';
 
 export type CodeSnippetProps = {
@@ -24,6 +25,8 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
   const { track } = useDefinedContext(AnalyticsContext);
   const toast = useDefinedContext(ToastContext);
   const { addQuery } = useDefinedContext(QueriesContext);
+
+  const native = useNative();
 
   const match = /language-(.+)/.exec(className || '');
   const language = query ? 'sql' : match?.[1];
@@ -74,10 +77,15 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
         },
         {
           htmlProps: {
-            onClick: () => {
+            onClick: async () => {
               track('copilot_copy_query');
 
-              void navigator.clipboard.writeText(code);
+              if (window.ReactNativeWebView) {
+                native.writeToClipboard(code);
+              } else {
+                await navigator.clipboard.writeText(code);
+              }
+
               toast.add({
                 title: 'Copied to clipboard',
                 color: 'success',
@@ -88,7 +96,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
           tooltip: 'Copy',
         },
       ] satisfies ButtonProps[],
-    [track, addQuery, query, onCloseCopilot, toast],
+    [track, addQuery, query, onCloseCopilot, toast, native],
   );
 
   if (!language) {
