@@ -310,6 +310,7 @@ phases:
         else
           cd ../ui
           aws s3 sync dist s3://smartquery-ui
+          aws s3 cp s3://smartquery-ui/.well-known/apple-app-site-association s3://smartquery-ui/.well-known/apple-app-site-association --content-type application/json
           aws s3 cp s3://smartquery-ui/version s3://smartquery-ui/version --content-type text/plain
           aws cloudfront create-invalidation --distribution-id $SMARTQUERY_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
         fi
