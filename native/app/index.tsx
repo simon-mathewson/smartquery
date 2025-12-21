@@ -4,6 +4,7 @@ import assert from "assert";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
 import { File } from "expo-file-system";
+import * as SplashScreen from "expo-splash-screen";
 import { Orientation } from "expo-screen-orientation";
 import { castArray } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -25,6 +26,11 @@ export default function Index() {
   const [windowDimensions, setWindowDimensions] = useState(() =>
     Dimensions.get("window")
   );
+
+  // Prevent splash screen from auto-hiding
+  useEffect(() => {
+    void SplashScreen.preventAutoHideAsync();
+  }, []);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener("change", ({ window }) => {
@@ -197,6 +203,8 @@ export default function Index() {
       onMessage={onMessage}
       injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
       hideKeyboardAccessoryView={isIosOnMac}
+      onLoadEnd={SplashScreen.hideAsync}
+      onError={SplashScreen.hideAsync}
     />
   );
 }
