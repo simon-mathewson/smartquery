@@ -1,4 +1,5 @@
 import type {
+  AddToKeychain,
   ConnectDb,
   DisconnectDb,
   GetSqliteFile,
@@ -42,6 +43,11 @@ export const useNative = () => {
     [],
   );
 
+  const addToKeychain = useCallback<AddToKeychain>(
+    (username, password) => request<AddToKeychain>('addToKeychain', [username, password]),
+    [request],
+  );
+
   const connectDb = useCallback<ConnectDb>(
     (connection) => request<ConnectDb>('connectDb', [connection]),
     [request],
@@ -64,11 +70,12 @@ export const useNative = () => {
 
   return useMemo(
     () => ({
+      addToKeychain,
       connectDb,
       disconnectDb,
       runQuery,
       getSqliteFile,
     }),
-    [connectDb, disconnectDb, runQuery, getSqliteFile],
+    [addToKeychain, connectDb, disconnectDb, runQuery, getSqliteFile],
   );
 };

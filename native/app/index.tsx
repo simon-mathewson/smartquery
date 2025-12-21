@@ -2,24 +2,35 @@ import { useOrientation } from "@/hooks/useOrientation";
 import ConnectorModule from "@/modules/connector/src/ConnectorModule";
 import assert from "assert";
 import Constants from "expo-constants";
+import * as Device from "expo-device";
 import { File } from "expo-file-system";
 import { Orientation } from "expo-screen-orientation";
 import { castArray } from "lodash";
 import { useCallback, useRef } from "react";
 import { useColorScheme } from "react-native";
+import * as Keychain from "react-native-keychain";
 import type { WebViewMessageEvent } from "react-native-webview";
 import { WebView } from "react-native-webview";
 import type {
   GetSqliteFile,
   NativeWebviewMessage,
 } from "../../shared/native/types";
-import * as Device from "expo-device";
 
 export default function Index() {
   const colorScheme = useColorScheme();
   const orientation = useOrientation();
 
   const webviewRef = useRef<WebView>(null);
+
+  const addToKeychain = useCallback(
+    async (username: string, password: string) =>
+      Keychain.setSharedWebCredentials(
+        "https://smartquery.dev",
+        username,
+        password
+      ),
+    []
+  );
 
   const sqliteFiles = useRef<{ [connectionId: string]: File }>({});
 
@@ -73,6 +84,8 @@ export default function Index() {
       try {
         const responseData = await (async () => {
           switch (method) {
+            case "addToKeychain":
+              return addToKeychain(...args);
             case "connectDb":
               return ConnectorModule.connectDb(...args);
             case "disconnectDb":

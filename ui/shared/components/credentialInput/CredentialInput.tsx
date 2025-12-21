@@ -2,12 +2,9 @@ import { EnhancedEncryptionOutlined } from '@mui/icons-material';
 import { Button } from '../button/Button';
 import { Input } from '../input/Input';
 import { useCallback, useRef } from 'react';
-import {
-  getIsCredentialsApiAvailable,
-  replaceLineBreaksWithPlaceholders,
-  replacePlaceholdersWithLineBreaks,
-} from './utils';
+import { replaceLineBreaksWithPlaceholders, replacePlaceholdersWithLineBreaks } from './utils';
 import { assert } from 'ts-essentials';
+import { useNative } from '~/shared/hooks/useNative/useNative';
 
 export type CredentialInputProps = {
   htmlProps?: React.HTMLProps<HTMLInputElement>;
@@ -20,11 +17,20 @@ export type CredentialInputProps = {
 export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
   const { htmlProps, isExistingCredential, onChange, showAddToKeychain, username } = props;
 
+  const native = useNative();
+
   const ref = useRef<HTMLInputElement>(null);
 
-  const storeInKeyChain = useCallback(() => {
+  const canAddToKeychain = 'credentials' in navigator || window.ReactNativeWebView;
+
+  const addToKeychain = useCallback(() => {
     const password = ref.current?.value;
     assert(password !== undefined);
+
+    if (window.ReactNativeWebView) {
+      void native.addToKeychain(username, password).then(console.log);
+      return;
+    }
 
     void navigator.credentials.store(
       new PasswordCredential({
@@ -32,7 +38,7 @@ export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
         password: password,
       }),
     );
-  }, [username]);
+  }, [username, native]);
 
   return (
     <>
@@ -65,9 +71,9 @@ export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
           }}
           onChange={(newValue) => onChange?.(replacePlaceholdersWithLineBreaks(newValue))}
         />
-        {getIsCredentialsApiAvailable() && showAddToKeychain && (
+        {canAddToKeychain && showAddToKeychain && (
           <Button
-            htmlProps={{ onClick: storeInKeyChain }}
+            htmlProps={{ onClick: addToKeychain }}
             icon={<EnhancedEncryptionOutlined />}
             tooltip="Add to keychain"
           />

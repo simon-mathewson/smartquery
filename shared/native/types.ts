@@ -10,6 +10,8 @@ export type RunQuery = (props: {
 
 export type GetSqliteFile = (connectionId: string) => Promise<{ name: string; base64: string }>;
 
+export type AddToKeychain = (username: string, password: string) => Promise<void>;
+
 export type NativeWebviewMessage =
   | {
       type: 'console';
@@ -20,6 +22,7 @@ export type NativeWebviewMessage =
       type: 'request';
       id: string;
     } & (
+      | { method: 'addToKeychain'; args: [string, string] }
       | { method: 'connectDb'; args: [RemoteConnection] }
       | { method: 'disconnectDb'; args: [string] }
       | { method: 'runQuery'; args: [{ connectorId: string; statements: string[] }] }
