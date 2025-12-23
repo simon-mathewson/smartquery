@@ -30,7 +30,9 @@ export const InputModesSelect: React.FC<InputModesSelectProps> = (props) => {
     },
   ];
 
-  if (columns) {
+  const filterableColumns = columns?.filter((col) => col.isVisible && !col.isVirtual);
+
+  if (filterableColumns?.length) {
     options.push(
       {
         button: {

@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import { ResultContext } from '../Context';
+import React from 'react';
 import type { InputMode } from '../types';
 import { Filters } from './filters/Filters';
 import { Search } from './search/Search';
@@ -12,15 +11,11 @@ export type InputModesProps = {
 export const InputModes: React.FC<InputModesProps> = (props) => {
   const { inputMode } = props;
 
-  const result = useContext(ResultContext);
-
   if (!inputMode) return null;
 
   if (inputMode === 'editor') {
     return <Sql />;
   }
-
-  if (!result?.columns) return null;
 
   if (inputMode === 'search') {
     return <Search />;

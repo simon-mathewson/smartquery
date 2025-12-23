@@ -48,7 +48,7 @@ export const Filters: React.FC = () => {
 
   return (
     <form
-      className="flex w-max flex-col gap-2 pb-2"
+      className="flex flex-col gap-2 pb-2"
       onSubmit={(event) => {
         event.preventDefault();
 
@@ -58,7 +58,7 @@ export const Filters: React.FC = () => {
       }}
     >
       {formFilters.map((filter, index) => (
-        <div className="flex gap-2" key={index}>
+        <div className="flex gap-4 sm:gap-2" key={index}>
           <FilterControl
             filter={filter}
             isFirst={index === 0}
@@ -79,28 +79,8 @@ export const Filters: React.FC = () => {
               track('query_filters_update');
             }}
           />
-          {index === formFilters.length - 1 && isChanged && (
-            <Button
-              color="primary"
-              htmlProps={{ disabled: !isValid, type: 'submit' }}
-              icon={<Send />}
-              variant="filled"
-              tooltip="Apply"
-            />
-          )}
         </div>
       ))}
-      {formFilters.length === 0 && isChanged && (
-        <div className="pl-2">
-          <Button
-            color="primary"
-            htmlProps={{ disabled: !isValid, type: 'submit' }}
-            icon={<Send />}
-            variant="filled"
-            tooltip="Apply"
-          />
-        </div>
-      )}
       <div className="flex gap-2">
         <Button
           htmlProps={{
@@ -122,6 +102,15 @@ export const Filters: React.FC = () => {
             label="OR"
             monospace
             size="small"
+          />
+        )}
+        {isChanged && (
+          <Button
+            color="primary"
+            htmlProps={{ className: 'ml-auto w-36', disabled: !isValid, type: 'submit' }}
+            icon={<Send />}
+            variant="filled"
+            label="Submit"
           />
         )}
       </div>
