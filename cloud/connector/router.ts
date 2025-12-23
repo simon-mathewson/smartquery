@@ -13,6 +13,7 @@ import superjson from 'superjson';
 import { getLimitsForUser } from '@/subscriptions/getLimitsForUser';
 import type { CurrentUser } from '@/user/types';
 import { prisma } from '~/prisma/client';
+import { ConnectorNotFoundError } from '@/errors/ConnectorNotFoundError';
 
 const connectors: Record<
   string,
@@ -104,7 +105,7 @@ export const connectorRouter = trpc.router({
       }
 
       if (!(connectorId in connectors)) {
-        throw new Error('Connector not found');
+        throw new ConnectorNotFoundError();
       }
 
       await verifyUsageWithinLimits({

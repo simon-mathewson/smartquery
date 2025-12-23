@@ -150,6 +150,7 @@ export default function Index() {
       info: (...messages) => consoleLog('info', ...messages),
       warn: (...messages) => consoleLog('warn', ...messages),
       error: (...messages) => consoleLog('error', ...messages),
+      dir: (...messages) => consoleLog('dir', ...messages),
     };
 
     void(0);

@@ -1,18 +1,19 @@
 import type { LegacyResults, NewResults, Results } from '@/connector/types';
-import { TRPCClientError } from '@trpc/client';
+import { ConnectorNotFoundError } from '@/errors/ConnectorNotFoundError';
+import { NoLongerConnectedError } from '@/errors/NoLongerConnectedError';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { CloudApiContext } from '~/content/cloud/api/Context';
 import { SqliteContext } from '~/content/sqlite/Context';
+import type { SqliteFile } from '~/content/sqlite/useSqlite';
 import { getSelectFromStatement } from '~/content/tabs/queries/utils/parse';
 import { ToastContext } from '~/content/toast/Context';
 import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useNative } from '~/shared/hooks/useNative/useNative';
 import type { ActiveConnection, Database } from '~/shared/types';
 import { LinkApiContext } from '../../link/api/Context';
 import { ConnectionsContext } from '../Context';
-import { useNative } from '~/shared/hooks/useNative/useNative';
-import type { SqliteFile } from '~/content/sqlite/useSqlite';
 
 export const useActiveConnection = () => {
   const toast = useDefinedContext(ToastContext);
@@ -73,13 +74,10 @@ export const useActiveConnection = () => {
 
           return convertedResults;
         } catch (error) {
-          console.error(error);
-
           if (
-            error instanceof TRPCClientError &&
-            (error.message.includes('Server has closed the connection.') ||
-              error.message.includes("Can't reach database server at ") ||
-              error.message.includes('Client not found'))
+            error instanceof Error &&
+            (error.message === NoLongerConnectedError.code ||
+              error.message === ConnectorNotFoundError.code)
           ) {
             const newConnection = await connect(currentConnection.id, {
               database: currentConnection.database,
@@ -87,6 +85,11 @@ export const useActiveConnection = () => {
             });
 
             if (newConnection) {
+              toast.add({
+                color: 'success',
+                title: 'Reconnected successfully',
+              });
+
               return runQuery(statements, { overrideActiveConnection: newConnection });
             } else {
               throw error;

@@ -81,7 +81,7 @@ public class ConnectorModule: Module {
 
     Function("disconnectDb") { (connectorId: String) in
       guard let connector = self.connectors[connectorId] else {
-        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connector not found"])
+        return
       }
 
       connector.postgresPool?.close()
@@ -97,12 +97,23 @@ public class ConnectorModule: Module {
       let statements = props["statements"] as! [String]
 
       guard let connector = self.connectors[connectorId] else {
-        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connector not found"])
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "CONNECTOR_NOT_FOUND"])
       }
 
-      return try await connector.postgresPool != nil
-        ? runQueryPostgres(pool: connector.postgresPool!, statements: statements, connectionProps: connector.connection)
-        : runQueryMysql(pool: connector.mysqlPool!, statements: statements)
+      do {
+        let results = try await connector.postgresPool != nil
+          ? runQueryPostgres(pool: connector.postgresPool!, statements: statements, connectionProps: connector.connection)
+          : runQueryMysql(pool: connector.mysqlPool!, statements: statements)
+        return results
+      } catch Socket.SocketError.recvFailed {
+        // MySQL no longer connected
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "NO_LONGER_CONNECTED"])
+      } catch PostgresClientKit.PostgresError.sqlError(let notice) where notice.code == "57P01" && notice.message == "terminating connection due to administrator command" {
+        // Postgres no longer connected
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "NO_LONGER_CONNECTED"])
+      } catch {
+        throw error
+      }
     }
   }
 }

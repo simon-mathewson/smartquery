@@ -6,6 +6,7 @@ import { remoteConnectionSchema } from '@/connections/types';
 import { connect } from '@/connector/connect';
 import { disconnect } from '@/connector/disconnect';
 import { runQuery } from '@/connector/runQuery';
+import { ConnectorNotFoundError } from '@/errors/ConnectorNotFoundError';
 
 const trpc = initTRPC.context<Context>().create({ transformer: superjson });
 
@@ -63,7 +64,7 @@ export const router = trpc.router({
       }
 
       if (!(connectorId in connectors)) {
-        throw new Error('Connector not found');
+        throw new ConnectorNotFoundError();
       }
 
       const results = await runQuery(connectors[connectorId], statements);
