@@ -1,12 +1,7 @@
-import 'reflect-metadata';
-
 import log from 'electron-log';
 import { electronApp } from '@electron-toolkit/utils';
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron';
 import { join } from 'path';
-import { setUpServer } from './utils/setUpServer/setUpServer';
-import { initialContext } from './utils/setUpServer/context';
-import { cloneDeep } from 'lodash-es';
 import electronUpdater from 'electron-updater';
 import unhandled from 'electron-unhandled';
 import { connect } from '@/connector/connect';
@@ -14,6 +9,7 @@ import { disconnect } from '@/connector/disconnect';
 import { runQuery } from '@/connector/runQuery';
 import type { RemoteConnection } from '@/connections/types';
 import assert from 'assert';
+import { Connector } from '@/connector/types';
 
 Object.assign(console, log.functions);
 
@@ -73,13 +69,9 @@ void app.whenReady().then(() => {
     void electronUpdater.autoUpdater.checkForUpdatesAndNotify();
   }
 
-  const context = cloneDeep(initialContext);
-
-  setUpServer({
-    createContext: () => context,
-  });
-
   createWindow();
+
+  const connectors: Record<string, Connector> = {};
 
   ipcMain.handle('handle-request', async (_, method: string, args: unknown[]) => {
     switch (method) {
@@ -91,21 +83,21 @@ void app.whenReady().then(() => {
           console.info('Connected to', connection.id);
         }
 
-        context.connectors[connector.id] = connector;
+        connectors[connector.id] = connector;
 
         return connector.id;
       }
       case 'disconnectDb': {
         const [connectorId] = args as [string];
-        if (!(connectorId in context.connectors)) return;
+        if (!(connectorId in connectors)) return;
 
-        await disconnect(context.connectors[connectorId]);
+        await disconnect(connectors[connectorId]);
 
         if (import.meta.env.DEV) {
           console.info('Disconnected from', connectorId);
         }
 
-        delete context.connectors[connectorId];
+        delete connectors[connectorId];
         return;
       }
       case 'runQuery': {
@@ -116,11 +108,11 @@ void app.whenReady().then(() => {
           console.info(`Processing ${statements.length} queries`);
         }
 
-        if (!(connectorId in context.connectors)) {
+        if (!(connectorId in connectors)) {
           throw new Error('Connector not found');
         }
 
-        const results = await runQuery(context.connectors[connectorId], statements);
+        const results = await runQuery(connectors[connectorId], statements);
 
         if (import.meta.env.DEV) {
           console.info('Executed queries', results.length);

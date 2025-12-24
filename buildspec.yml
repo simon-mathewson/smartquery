@@ -204,10 +204,6 @@ phases:
           cd ../desktop
           pnpm typecheck
           pnpm lint
-          pnpm db:up:test
-          sleep 15
-          pnpm test -- --watch false --reporter junit --outputFile test-report.xml
-          pnpm db:down:test
           pnpm build:node
         fi
 
@@ -310,10 +306,6 @@ phases:
         fi
 
 reports:
-  desktop:
-    files:
-      - "desktop/test-report.xml"
-    file-format: "JUNITXML"
   ui:
     files:
       - "ui/test-report.xml"

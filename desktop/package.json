@@ -21,9 +21,7 @@
     "build:node": "electron-vite build",
     "build:win": "electron-builder --win --config --publish always",
     "db:down:dev": "docker-compose -f docker-compose/docker-compose.yml -p smartquery-desktop-dev --env-file .env.development down",
-    "db:down:test": "docker-compose -f docker-compose/docker-compose.yml -p smartquery-desktop-test --env-file .env.test down",
     "db:up:dev": "docker-compose -f docker-compose/docker-compose.yml -p smartquery-desktop-dev --env-file .env.development up -d",
-    "db:up:test": "docker-compose -f docker-compose/docker-compose.yml -p smartquery-desktop-test --env-file .env.test up -d",
     "dev": "electron-vite dev --inspect --sourcemap",
     "fix": "rm -rf node_modules/electron/dist && node node_modules/electron/install.js",
     "format": "prettier --write .",
@@ -31,18 +29,13 @@
     "postinstall": "electron-builder install-app-deps",
     "publish": "aws s3 sync ./dist s3://smartquery-desktop",
     "seed:dev": "pnpm dotenv -e .env.development -- tsx ./seed/main.ts",
-    "seed:test": "pnpm dotenv -e .env.test -- tsx ./seed/main.ts",
     "start": "electron-vite preview",
-    "test": "vitest",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
     "@electron-toolkit/preload": "2.0.0",
     "@electron-toolkit/utils": "2.0.0",
-    "@trpc/client": "11.1.4",
-    "@trpc/server": "11.1.4",
     "@types/lodash-es": "4.17.12",
-    "cors": "2.8.5",
     "electron-log": "5.4.1",
     "electron-store": "8.2.0",
     "electron-unhandled": "5.0.0",
@@ -50,10 +43,7 @@
     "find-free-ports": "3.1.1",
     "lodash-es": "4.17.21",
     "node-ssh-forward": "0.7.2",
-    "reflect-metadata": "0.2.2",
-    "smartquery-shared": "file:../shared",
-    "superjson": "1.12.4",
-    "zod": "3.24.1"
+    "smartquery-shared": "file:../shared"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "3.0.0",
@@ -62,7 +52,6 @@
     "@eslint/js": "^9.36.0",
     "@faker-js/faker": "10.0.0",
     "@swc/core": "1.5.7",
-    "@types/cors": "2.8.17",
     "@types/node": "24.0.14",
     "@types/pg": "8.10.7",
     "dotenv-cli": "7.4.2",
@@ -73,8 +62,7 @@
     "ts-essentials": "9.4.2",
     "tsx": "4.20.3",
     "typescript": "5.8.3",
-    "typescript-eslint": "^8.33.0",
-    "vitest": "3.2.4"
+    "typescript-eslint": "^8.33.0"
   },
   "pnpm": {
     "overrides": {
