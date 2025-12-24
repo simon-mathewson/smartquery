@@ -69,11 +69,6 @@ void app.whenReady().then(() => {
   // https://learn.microsoft.com/en-us/windows/win32/shell/appids
   electronApp.setAppUserModelId('dev.smartquery');
 
-  // Set dock icon for macOS
-  if (process.platform === 'darwin') {
-    app.dock?.setIcon(join(__dirname, '../../resources/apple-icon.png'));
-  }
-
   if (import.meta.env.PROD) {
     void electronUpdater.autoUpdater.checkForUpdatesAndNotify();
   }
