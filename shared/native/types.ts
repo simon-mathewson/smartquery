@@ -1,12 +1,9 @@
 import type { RemoteConnection } from '@/connections/types';
-import type { NewResults } from '@/connector/types';
+import type { Results } from '@/connector/types';
 
 export type ConnectDb = (connection: RemoteConnection) => Promise<string>;
 export type DisconnectDb = (connectorId: string) => Promise<void>;
-export type RunQuery = (props: {
-  connectorId: string;
-  statements: string[];
-}) => Promise<NewResults>;
+export type RunQuery = (props: { connectorId: string; statements: string[] }) => Promise<Results>;
 
 export type GetSqliteFile = (connectionId: string) => Promise<{ name: string; base64: string }>;
 

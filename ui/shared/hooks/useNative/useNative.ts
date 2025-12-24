@@ -3,7 +3,7 @@ import type {
   ConnectDb,
   DisconnectDb,
   GetSqliteFile,
-  NativeWebviewMessage,
+  NativeBridgeMessage,
   RunQuery,
   WriteToClipboard,
 } from '@/native/types';
@@ -26,7 +26,7 @@ export const useNative = () => {
 
       return new Promise<R>((resolve, reject) => {
         const onMessage = (event: MessageEvent) => {
-          const parsed = JSON.parse(event.data) as NativeWebviewMessage;
+          const parsed = JSON.parse(event.data) as NativeBridgeMessage;
           if (parsed.type === 'response' && parsed.requestId === id) {
             window.removeEventListener('message', onMessage);
 

@@ -6,8 +6,6 @@ import { ConnectionsProvider } from '~/content/connections/Provider';
 import { DragAndDropProvider } from '~/content/dragAndDrop/Provider';
 import { EditProvider } from '~/content/edit/Provider';
 import { EscapeStackProvider } from '../shared/hooks/useEscape/useStack/Provider';
-import { LinkApiProvider } from '~/content/link/api/Provider';
-import { LinkProvider } from '~/content/link/Provider';
 import { ProviderStack } from './ProviderStack';
 import { QueriesProvider } from '~/content/tabs/queries/Provider';
 import { SqliteProvider } from '~/content/sqlite/Provider';
@@ -30,13 +28,11 @@ const providers = {
   ErrorTrackingProvider,
   NativeProvider,
   CloudApiProvider,
-  LinkApiProvider,
   AnalyticsProvider,
   ToastProvider,
   AuthProvider,
   EscapeStackProvider,
   UpdateAvailableProvider,
-  LinkProvider,
   SqliteProvider,
   ConnectionsProvider,
   ActiveConnectionProvider,

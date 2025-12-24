@@ -1,11 +1,11 @@
 import {
   ArrowBackOutlined,
   BrushOutlined,
+  InstallDesktopOutlined,
   LogoutOutlined,
   PersonAddAlt1Outlined,
   QuestionAnswerOutlined,
   ReplayOutlined,
-  SettingsEthernetOutlined,
   SettingsOutlined,
   SpeedOutlined,
   VpnKeyOutlined,
@@ -25,34 +25,26 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { AnalyticsContext } from '../analytics/Context';
 import { AuthContext } from '../auth/Context';
-import { ConnectionsContext } from '../connections/Context';
+import { DesktopSetup } from '../desktop/setup/Setup';
 import { ErrorTrackingContext } from '../errors/tracking/Context';
-import { LinkSetup } from '../link/setup/Setup';
-import { NativeContext } from '../native/Context';
 import { ThemeContext } from '../theme/Context';
 import type { ThemeModePreference } from '../theme/types';
 import { AddToDesktop } from './addToDesktop/AddToDesktop';
 import { DeleteAccount } from './deleteAccount/DeleteAccount';
 import { Subscription } from './Subscription';
 import { Usage } from './usage/Usage';
+import { NativeContext } from '../native/Context';
 
 export type SettingsProps = {
   close: () => Promise<void> | void;
 };
 
-const sections = [
-  'home',
-  'general',
-  'connectivity',
-  'appearance',
-  'usage',
-  'subscription',
-] as const;
+const sections = ['home', 'general', 'install', 'appearance', 'usage', 'subscription'] as const;
 type Section = (typeof sections)[number];
 
 const labels: Record<Section, string> = {
   appearance: 'Appearance',
-  connectivity: 'Connectivity',
+  install: 'Install',
   general: 'General',
   home: 'Settings',
   subscription: 'Subscription',
@@ -68,7 +60,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
   const { logOut, user } = useDefinedContext(AuthContext);
   const { modePreference, setModePreference, primaryColor, setPrimaryColor } =
     useDefinedContext(ThemeContext);
-  const { connectViaCloud, setConnectViaCloud } = useDefinedContext(ConnectionsContext);
 
   const [section, setSection] = useState<Section>('home');
 
@@ -95,11 +86,15 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               label: labels.general,
               value: 'general',
             },
-            {
-              icon: <SettingsEthernetOutlined />,
-              label: labels.connectivity,
-              value: 'connectivity',
-            },
+            ...(native.isNative
+              ? []
+              : [
+                  {
+                    icon: <InstallDesktopOutlined />,
+                    label: labels.install,
+                    value: 'install',
+                  },
+                ]),
             {
               icon: <BrushOutlined />,
               label: labels.appearance,
@@ -184,7 +179,6 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               value={isConsentGranted ?? false}
             />
           </Field>
-          <AddToDesktop />
           <div>
             <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
               <Button
@@ -204,21 +198,10 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           <DeleteAccount />
         </>
       )}
-      {section === 'connectivity' && (
+      {section === 'install' && (
         <>
-          <LinkSetup />
-          <Field>
-            <Toggle
-              hint={
-                native.isNative
-                  ? 'Use SmartQuery servers for remote connections.'
-                  : 'Use SmartQuery servers for remote connections. Local connections still require SmartQuery Link.'
-              }
-              label="Connect via Cloud"
-              onChange={(value) => setConnectViaCloud(value)}
-              value={connectViaCloud ?? false}
-            />
-          </Field>
+          <DesktopSetup />
+          <AddToDesktop />
         </>
       )}
       {section === 'appearance' && (

@@ -51,7 +51,6 @@ export const sqliteConnectionMock = {
 export const getConnectionsMock = () =>
   ({
     activeConnection: {
-      connectedViaCloud: false,
       connectorId: '1',
       ...mysqlConnectionMock,
     } as ActiveConnection,

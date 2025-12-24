@@ -1,9 +1,8 @@
-import type { LegacyResults, NewResults, Results } from '@/connector/types';
+import type { Results } from '@/connector/types';
 import { ConnectorNotFoundError } from '@/errors/ConnectorNotFoundError';
 import { NoLongerConnectedError } from '@/errors/NoLongerConnectedError';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { assert } from 'ts-essentials';
-import { CloudApiContext } from '~/content/cloud/api/Context';
 import { NativeContext } from '~/content/native/Context';
 import { SqliteContext } from '~/content/sqlite/Context';
 import type { SqliteFile } from '~/content/sqlite/useSqlite';
@@ -12,14 +11,11 @@ import { ToastContext } from '~/content/toast/Context';
 import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { ActiveConnection, Database } from '~/shared/types';
-import { LinkApiContext } from '../../link/api/Context';
 import { ConnectionsContext } from '../Context';
 
 export const useActiveConnection = () => {
   const native = useDefinedContext(NativeContext);
   const toast = useDefinedContext(ToastContext);
-  const { cloudApi } = useDefinedContext(CloudApiContext);
-  const linkApi = useDefinedContext(LinkApiContext);
   const { activeConnection, connect } = useDefinedContext(ConnectionsContext);
   const { getSqliteFile, requestFileHandlePermission, writeSqliteFile } =
     useDefinedContext(SqliteContext);
@@ -38,40 +34,10 @@ export const useActiveConnection = () => {
 
       if (currentConnection.engine !== 'sqlite') {
         try {
-          const endpoint = (() => {
-            if (currentConnection.connectedViaCloud) {
-              return cloudApi.connector.sendQuery.mutate;
-            }
-
-            if (native.isNative) {
-              return native.runQuery;
-            }
-
-            return linkApi.sendQuery.mutate;
-          })();
-
-          const results = await endpoint({
+          return await native.runQuery({
             connectorId: currentConnection.connectorId,
             statements,
           });
-
-          const isLegacy = Array.isArray(results.at(0));
-
-          if (!isLegacy) return results as NewResults;
-
-          const convertedResults: NewResults = (results as LegacyResults).map((result) => ({
-            fields: result.length
-              ? Object.keys(result[0]).map((key) => ({
-                  name: key,
-                  type: 'column-or-virtual',
-                }))
-              : [],
-            rows: result.map((row) =>
-              Object.values(row).map((v) => (v === null ? null : String(v))),
-            ),
-          }));
-
-          return convertedResults;
         } catch (error) {
           if (
             error instanceof Error &&
@@ -152,10 +118,8 @@ export const useActiveConnection = () => {
     },
     [
       activeConnection,
-      cloudApi,
       connect,
       getSqliteFile,
-      linkApi,
       requestFileHandlePermission,
       writeSqliteFile,
       toast,

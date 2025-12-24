@@ -6,8 +6,6 @@ import { ConnectionsMockProvider } from '~/content/connections/MockProvider';
 import { DragAndDropProvider } from '~/content/dragAndDrop/Provider';
 import { EditProvider } from '~/content/edit/Provider';
 import { EscapeStackProvider } from '~/shared/hooks/useEscape/useStack/Provider';
-import { LinkApiMockProvider } from '~/content/link/api/MockProvider';
-import { LinkProvider } from '~/content/link/Provider';
 import { ProviderStack } from './ProviderStack';
 import { QueriesProvider } from '~/content/tabs/queries/Provider';
 import { SqliteProvider } from '~/content/sqlite/Provider';
@@ -35,8 +33,6 @@ const mockProviders = {
   UpdateAvailableProvider: UpdateAvailableMockProvider,
   CloudApiProvider: CloudApiMockProvider,
   AuthProvider: AuthMockProvider,
-  LinkApiProvider: LinkApiMockProvider,
-  LinkProvider,
   SqliteProvider,
   ConnectionsProvider: ConnectionsMockProvider,
   ActiveConnectionProvider: ActiveConnectionMockProvider,

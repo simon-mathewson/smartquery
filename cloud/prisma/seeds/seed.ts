@@ -173,7 +173,7 @@ void (async () => {
     });
 
     const sshKey = fs.readFileSync(
-      path.join(__dirname, '../../../link/docker-compose/ssh_key.pem'),
+      path.join(__dirname, '../../../desktop/docker-compose/ssh_key.pem'),
       'utf8',
     );
 
@@ -226,7 +226,7 @@ void (async () => {
     });
 
     const sshKeyWithPassphrase = fs.readFileSync(
-      path.join(__dirname, '../../../link/docker-compose/ssh_key_with_passphrase.pem'),
+      path.join(__dirname, '../../../desktop/docker-compose/ssh_key_with_passphrase.pem'),
       'utf8',
     );
 

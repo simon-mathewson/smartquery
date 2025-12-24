@@ -1,5 +1,5 @@
 import { NoLongerConnectedError } from '@/errors/NoLongerConnectedError';
-import type { Connector, DbValue, NewResults, Results } from './types';
+import type { Connector, DbValue, Results } from './types';
 
 export const runQuery = async (connector: Connector, statements: string[]): Promise<Results> => {
   try {
@@ -48,7 +48,7 @@ export const runQuery = async (connector: Connector, statements: string[]): Prom
               };
             }),
             rows: rows as DbValue[][],
-          } satisfies NewResults[number];
+          } satisfies Results[number];
         });
       } catch (error) {
         await client.query('ROLLBACK');
@@ -105,7 +105,7 @@ export const runQuery = async (connector: Connector, statements: string[]): Prom
                   },
                 };
               }),
-            } satisfies NewResults[number]),
+            } satisfies Results[number]),
         );
       } catch (error) {
         await client.query('ROLLBACK');

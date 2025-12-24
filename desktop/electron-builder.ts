@@ -41,7 +41,7 @@ export default {
   dmg: {
     artifactName,
     sign: false,
-    title: 'smartquery-link', // Mac ARM build fails if this contains spaces
+    title: 'smartquery-desktop', // Mac ARM build fails if this contains spaces
   },
   linux: {
     target: [{ target: 'deb', arch: ['x64', 'arm64'] }],
@@ -52,7 +52,7 @@ export default {
   npmRebuild: false,
   publish: {
     acl: null,
-    bucket: 'smartquery-link',
+    bucket: 'smartquery-desktop',
     provider: 's3',
     region: 'eu-central-1',
   },

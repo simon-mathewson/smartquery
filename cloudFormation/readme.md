@@ -35,10 +35,10 @@ Go to https://us-east-1.console.aws.amazon.com/route53/v2/hostedzones?region=eu-
 
 In Stripe settings -> Business -> Customer emails -> Your custom email domains set up smartquery.dev. Add value to Stripe records in cloudFormation/route53.yml.
 
-### 6. Build and publish link:
+### 6. Build and publish desktop:
 
 ```
-cd link
+cd desktop
 pnpm build:all
 ```
 

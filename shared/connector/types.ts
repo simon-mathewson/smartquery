@@ -23,8 +23,4 @@ export type Field = {
   | { type: 'virtual' | 'column-or-virtual' }
 );
 
-export type LegacyResults = Array<Array<Record<string, DbValue>>>;
-
-export type NewResults = Array<{ fields: Field[]; rows: DbValue[][] }>;
-
-export type Results = NewResults | LegacyResults;
+export type Results = Array<{ fields: Field[]; rows: DbValue[][] }>;

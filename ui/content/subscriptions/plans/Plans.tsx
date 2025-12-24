@@ -1,18 +1,16 @@
 import { plans as allPlans } from '@/subscriptions/plans';
-import { formatBytes } from '@/utils/formatBytes';
-import { formatDuration } from '@/utils/formatDuration';
 import { formatNumber } from '@/utils/formatNumber';
 import { ArrowBack, ArrowForward, Close, Done } from '@mui/icons-material';
+import { omit } from 'lodash';
 import React from 'react';
+import { useLocation } from 'wouter';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { Header } from '~/shared/components/header/Header';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../../auth/Context';
-import { omit } from 'lodash';
 import { Cell } from './Cell';
-import { routes } from '~/router/routes';
-import { useLocation } from 'wouter';
-import { AnalyticsContext } from '~/content/analytics/Context';
 
 const plans = omit(allPlans, 'pro', 'anonymous');
 
@@ -72,25 +70,6 @@ export const Plans: React.FC<PlansProps> = (props) => {
         {planNames.map((plan) => (
           <Cell className="text-textSecondary" key={plan}>
             {formatNumber(plans[plan].limits.aiCredits)}
-          </Cell>
-        ))}
-        <Cell feature>SmartQuery Link queries</Cell>
-        {planNames.map((plan) => (
-          <Cell className="text-textSecondary" key={plan}>
-            Unlimited
-          </Cell>
-        ))}
-        <Cell feature>Cloud queries</Cell>
-        {planNames.map((plan) => (
-          <Cell className="text-textSecondary" key={plan}>
-            {formatBytes(plans[plan].limits.totalQueryResponseBytes)} /{' '}
-            {formatDuration(plans[plan].limits.totalQueryDurationMilliseconds)}
-          </Cell>
-        ))}
-        <Cell feature>Concurrent connections</Cell>
-        {planNames.map((plan) => (
-          <Cell className="text-textSecondary" key={plan}>
-            {plans[plan].limits.concurrentConnections}
           </Cell>
         ))}
         <Cell feature>Change theme color</Cell>

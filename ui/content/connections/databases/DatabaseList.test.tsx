@@ -56,7 +56,6 @@ test.describe('DatabaseList', () => {
       ...getConnectionsMock(),
       activeConnection: {
         ...postgresConnectionMock,
-        connectedViaCloud: false,
         connectorId: '2',
         credentialStorage: 'plain',
       } satisfies ActiveConnection,

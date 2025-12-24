@@ -19,7 +19,8 @@ Resources:
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
 
-  S3BucketLink:
+
+  S3BucketDesktop:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
@@ -29,7 +30,7 @@ Resources:
         IgnorePublicAcls: false
         BlockPublicPolicy: false
         BlockPublicAcls: false
-      BucketName: "smartquery-link"
+      BucketName: "smartquery-desktop"
       OwnershipControls:
         Rules:
           - ObjectOwnership: "BucketOwnerEnforced"
@@ -39,16 +40,16 @@ Resources:
             ServerSideEncryptionByDefault:
               SSEAlgorithm: "AES256"
 
-  S3BucketPolicyLink:
+  S3BucketPolicyDesktop:
     Type: "AWS::S3::BucketPolicy"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
-      Bucket: !Ref S3BucketLink
+      Bucket: !Ref S3BucketDesktop
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Resource: "arn:aws:s3:::smartquery-link/*"
+          - Resource: "arn:aws:s3:::smartquery-desktop/*"
             Action: "s3:GetObject"
             Effect: "Allow"
             Principal: "*"

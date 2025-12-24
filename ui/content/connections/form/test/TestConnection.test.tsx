@@ -60,7 +60,7 @@ test.describe('TestConnection', () => {
       [expectedConnectInput],
     ]);
     expect(props.testApp.providerOverrides.ConnectionsProvider.disconnectRemote.calls).toEqual([
-      [{ connectedViaCloud: false, connectorId: '1' }],
+      [{ connectorId: '1' }],
     ]);
   });
 
