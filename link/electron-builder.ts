@@ -2,10 +2,10 @@ const artifactName = '${name}_${version}_${arch}.${ext}';
 const artifactNameWindows = '${name}_${version}_${arch}_setup.${ext}';
 
 export default {
-  appId: 'dev.smartquery.link',
+  appId: 'dev.smartquery',
   asarUnpack: ['resources/**'],
   directories: { buildResources: 'buildResources' },
-  productName: 'SmartQuery Link',
+  productName: 'SmartQuery',
   files: [
     '!**/.vscode/**',
     '!src/*',

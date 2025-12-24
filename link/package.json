@@ -1,6 +1,6 @@
 {
   "name": "smartquery-link",
-  "productName": "SmartQuery Link",
+  "productName": "SmartQuery",
   "version": "1.0.8",
   "description": "Background service for SmartQuery",
   "type": "module",

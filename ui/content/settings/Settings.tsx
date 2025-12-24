@@ -28,6 +28,7 @@ import { AuthContext } from '../auth/Context';
 import { ConnectionsContext } from '../connections/Context';
 import { ErrorTrackingContext } from '../errors/tracking/Context';
 import { LinkSetup } from '../link/setup/Setup';
+import { NativeContext } from '../native/Context';
 import { ThemeContext } from '../theme/Context';
 import type { ThemeModePreference } from '../theme/types';
 import { AddToDesktop } from './addToDesktop/AddToDesktop';
@@ -60,6 +61,8 @@ const labels: Record<Section, string> = {
 
 export const Settings: React.FC<SettingsProps> = ({ close }) => {
   const isMobile = useIsMobile();
+
+  const native = useDefinedContext(NativeContext);
   const { isConsentGranted, grantConsent, revokeConsent } = useDefinedContext(ErrorTrackingContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { logOut, user } = useDefinedContext(AuthContext);
@@ -207,7 +210,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           <Field>
             <Toggle
               hint={
-                window.ReactNativeWebView
+                native.isNative
                   ? 'Use SmartQuery servers for remote connections.'
                   : 'Use SmartQuery servers for remote connections. Local connections still require SmartQuery Link.'
               }

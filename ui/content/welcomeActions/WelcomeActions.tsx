@@ -8,11 +8,12 @@ import React, { useMemo } from 'react';
 import { routes } from '~/router/routes';
 import type { Action } from '~/shared/components/actionList/ActionList';
 import { ActionList } from '~/shared/components/actionList/ActionList';
-import Add from '~/shared/icons/Add.svg?react';
-import { ConnectionsContext } from '../connections/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { AuthContext } from '../auth/Context';
+import Add from '~/shared/icons/Add.svg?react';
 import { AnalyticsContext } from '../analytics/Context';
+import { AuthContext } from '../auth/Context';
+import { ConnectionsContext } from '../connections/Context';
+import { NativeContext } from '../native/Context';
 
 export type WelcomeActionsProps = {
   hideAddConnection?: boolean;
@@ -21,6 +22,7 @@ export type WelcomeActionsProps = {
 export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
   const { hideAddConnection } = props;
 
+  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
   const { connections } = useDefinedContext(ConnectionsContext);
@@ -65,7 +67,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
               },
             ]
           : []),
-        ...(user && !user.activeSubscription && !window.ReactNativeWebView
+        ...(user && !user.activeSubscription && !native.isReactNative
           ? [
               {
                 hint: 'Get access to all features',
@@ -77,7 +79,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
             ]
           : []),
       ] satisfies Action[],
-    [connections.length, hideAddConnection, track, user],
+    [connections.length, hideAddConnection, native.isReactNative, track, user],
   );
 
   return <ActionList actions={actions} />;

@@ -4,18 +4,19 @@ import { NoLongerConnectedError } from '@/errors/NoLongerConnectedError';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { CloudApiContext } from '~/content/cloud/api/Context';
+import { NativeContext } from '~/content/native/Context';
 import { SqliteContext } from '~/content/sqlite/Context';
 import type { SqliteFile } from '~/content/sqlite/useSqlite';
 import { getSelectFromStatement } from '~/content/tabs/queries/utils/parse';
 import { ToastContext } from '~/content/toast/Context';
 import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { useNative } from '~/shared/hooks/useNative/useNative';
 import type { ActiveConnection, Database } from '~/shared/types';
 import { LinkApiContext } from '../../link/api/Context';
 import { ConnectionsContext } from '../Context';
 
 export const useActiveConnection = () => {
+  const native = useDefinedContext(NativeContext);
   const toast = useDefinedContext(ToastContext);
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const linkApi = useDefinedContext(LinkApiContext);
@@ -25,8 +26,6 @@ export const useActiveConnection = () => {
 
   const [databases, setDatabases] = useState<Database[]>([]);
   const [isLoadingDatabases, setIsLoadingDatabases] = useState(false);
-
-  const native = useNative();
 
   const runQuery = useCallback(
     async (
@@ -44,7 +43,7 @@ export const useActiveConnection = () => {
               return cloudApi.connector.sendQuery.mutate;
             }
 
-            if (window.ReactNativeWebView) {
+            if (native.isNative) {
               return native.runQuery;
             }
 

@@ -10,18 +10,18 @@ import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { ActiveConnection } from '~/shared/types';
+import { AnalyticsContext } from '../analytics/Context';
 import { AuthContext } from '../auth/Context';
 import { CloudApiContext } from '../cloud/api/Context';
 import { LinkApiContext } from '../link/api/Context';
+import { NativeContext } from '../native/Context';
 import { SqliteContext } from '../sqlite/Context';
 import { ToastContext } from '../toast/Context';
 import { ConnectCanceledError } from './connectAbortedError';
 import { demoConnectionId } from './demo/constants';
+import { getOrCreateDemoConnection } from './demo/getOrCreateDemoConnection';
 import type { SignInModalInput } from './signInModal/types';
 import type { UserPasswordModalInput } from './userPasswordModal/types';
-import { AnalyticsContext } from '../analytics/Context';
-import { getOrCreateDemoConnection } from './demo/getOrCreateDemoConnection';
-import { useNative } from '~/shared/hooks/useNative/useNative';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -35,6 +35,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const [, navigate] = useLocation();
 
+  const native = useDefinedContext(NativeContext);
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const linkApi = useDefinedContext(LinkApiContext);
@@ -224,8 +225,6 @@ export const useConnections = (props: UseConnectionsProps) => {
     ],
   );
 
-  const native = useNative();
-
   const disconnectRemote = useCallback(
     async (props: { connectedViaCloud: boolean; connectorId: string }) => {
       const { connectedViaCloud, connectorId } = props;
@@ -235,7 +234,7 @@ export const useConnections = (props: UseConnectionsProps) => {
           return cloudApi.connector.disconnectDb.mutate;
         }
 
-        if (window.ReactNativeWebView) {
+        if (native.isNative) {
           return native.disconnectDb;
         }
 
@@ -414,7 +413,7 @@ export const useConnections = (props: UseConnectionsProps) => {
           return cloudApi.connector.connectDb.mutate;
         }
 
-        if (window.ReactNativeWebView) {
+        if (native.isNative) {
           return native.connectDb;
         }
 

@@ -5,6 +5,7 @@ import {
   VpnKeyOutlined,
 } from '@mui/icons-material';
 import classNames from 'classnames';
+import { NativeContext } from '~/content/native/Context';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
@@ -23,6 +24,7 @@ export type FooterProps = {
 export const Footer: React.FC<FooterProps> = (props) => {
   const { htmlProps } = props;
 
+  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
 
@@ -71,7 +73,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
             label="Log in"
           />
         )}
-        {!user?.activeSubscription && !window.ReactNativeWebView && (
+        {!user?.activeSubscription && !native.isReactNative && (
           <Button
             align="left"
             htmlProps={{

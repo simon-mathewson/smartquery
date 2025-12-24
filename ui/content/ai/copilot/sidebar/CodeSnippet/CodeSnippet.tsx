@@ -4,12 +4,12 @@ import classNames from 'classnames';
 import React, { useCallback } from 'react';
 import type { ExtraProps } from 'react-markdown';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { NativeContext } from '~/content/native/Context';
 import { QueriesContext } from '~/content/tabs/queries/Context';
 import { ToastContext } from '~/content/toast/Context';
 import type { ButtonProps } from '~/shared/components/button/Button';
 import { CodeEditor } from '~/shared/components/codeEditor/CodeEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { useNative } from '~/shared/hooks/useNative/useNative';
 import Play from '~/shared/icons/Play.svg?react';
 
 export type CodeSnippetProps = {
@@ -22,11 +22,10 @@ export type CodeSnippetProps = {
 export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
   const { children, className, node, query, onCloseCopilot } = props;
 
+  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const toast = useDefinedContext(ToastContext);
   const { addQuery } = useDefinedContext(QueriesContext);
-
-  const native = useNative();
 
   const match = /language-(.+)/.exec(className || '');
   const language = query ? 'sql' : match?.[1];
@@ -80,7 +79,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
             onClick: async () => {
               track('copilot_copy_query');
 
-              if (window.ReactNativeWebView) {
+              if (native.isReactNative) {
                 native.writeToClipboard(code);
               } else {
                 await navigator.clipboard.writeText(code);

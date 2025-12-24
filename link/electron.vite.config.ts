@@ -22,4 +22,30 @@ export default {
       },
     },
   },
+  preload: {
+    build: {
+      rollupOptions: {
+        input: {
+          index: join(__dirname, './src/preload/index.ts'),
+        },
+        output: {
+          format: 'cjs',
+          entryFileNames: '[name].js',
+        },
+      },
+    },
+    plugins: [externalizeDepsPlugin()],
+  },
+  renderer: {
+    build: {
+      rollupOptions: {
+        input: join(__dirname, 'src/renderer/index.html'),
+      },
+    },
+    resolve: {
+      alias: {
+        '@': join(dirname(__dirname), 'shared'),
+      },
+    },
+  },
 } satisfies UserConfig;

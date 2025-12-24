@@ -4,35 +4,36 @@ import {
   Done,
   InsertDriveFileOutlined as FileIcon,
 } from '@mui/icons-material';
+import classNames from 'classnames';
 import { cloneDeep, set } from 'lodash';
 import React, { useRef, useState } from 'react';
+import { assert } from 'ts-essentials';
+import { useLocation } from 'wouter';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { AuthContext } from '~/content/auth/Context';
 import { ConnectionsContext } from '~/content/connections/Context';
+import { demoConnectionId } from '~/content/connections/demo/constants';
 import { getCredentialId } from '~/content/connections/utils';
+import { LinkSetup } from '~/content/link/setup/Setup';
+import { NativeContext } from '~/content/native/Context';
+import { SqliteContext } from '~/content/sqlite/Context';
+import { useSqlite } from '~/content/sqlite/useSqlite';
+import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { ConfirmDeletePopover } from '~/shared/components/confirmDeletePopover/ConfirmDeletePopover';
+import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
 import { Field } from '~/shared/components/field/Field';
-import { Input } from '~/shared/components/input/Input';
+import { FileHandleSelect } from '~/shared/components/fileHandleSelect/FileHandleSelect';
 import { Header } from '~/shared/components/header/Header';
+import { Input } from '~/shared/components/input/Input';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
+import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
 import { SshFormSection } from './ssh/SshFormSection';
 import { TestConnection } from './test/TestConnection';
 import type { FormValues } from './utils';
 import { getConnectionFromForm, getDefaultPort, getInitialFormValues, isFormValid } from './utils';
-import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { focusFirstControl } from '~/shared/utils/focusFirstControl/focusFirstControl';
-import { FileHandleSelect } from '~/shared/components/fileHandleSelect/FileHandleSelect';
-import { assert } from 'ts-essentials';
-import { SqliteContext } from '~/content/sqlite/Context';
-import { LinkSetup as LinkSetup } from '~/content/link/setup/Setup';
-import { demoConnectionId } from '~/content/connections/demo/constants';
-import { AuthContext } from '~/content/auth/Context';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { useLocation } from 'wouter';
-import { routes } from '~/router/routes';
-import classNames from 'classnames';
-import { useSqlite } from '~/content/sqlite/useSqlite';
 
 export type ConnectionFormProps = {
   connectionToEditId?: string;
@@ -52,6 +53,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { connectionToEditId, exit, hideBackButton, htmlProps, overrideInitialValues } = props;
 
   const [, navigate] = useLocation();
+  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
 
@@ -312,7 +314,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         </Field>
         {formValues.engine === 'sqlite' ? (
           <Field
-            hint="Database will be read from and written to the file system."
+            hint={!native.isNative && 'Database will be read from and written to the file system.'}
             label="Database file"
           >
             {formValues.id === demoConnectionId ? (

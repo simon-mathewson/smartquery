@@ -6,18 +6,19 @@ import {
   FileDownloadOutlined,
   RefreshOutlined,
 } from '@mui/icons-material';
+import { CircularProgress } from '@mui/material';
+import classNames from 'classnames';
 import { useCallback, useState } from 'react';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { ConnectionsContext } from '~/content/connections/Context';
+import { NativeContext } from '~/content/native/Context';
 import { Button } from '~/shared/components/button/Button';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
 import { LinkContext } from '../Context';
 import type { Os } from './types';
 import { getCurrentOs, getDistributables, getDistributableUrl } from './utils';
-import { useEffectOnce } from '~/shared/hooks/useEffectOnce/useEffectOnce';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import classNames from 'classnames';
-import { CircularProgress } from '@mui/material';
-import { ConnectionsContext } from '~/content/connections/Context';
 
 export type LinkSetupProps = {
   hideIfReadyOrCloud?: boolean;
@@ -26,6 +27,7 @@ export type LinkSetupProps = {
 export const LinkSetup: React.FC<LinkSetupProps> = (props) => {
   const { hideIfReadyOrCloud } = props;
 
+  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { checkIfReady, isReady } = useDefinedContext(LinkContext);
   const { connectViaCloud } = useDefinedContext(ConnectionsContext);
@@ -64,7 +66,7 @@ export const LinkSetup: React.FC<LinkSetupProps> = (props) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  if (hidden || window.ReactNativeWebView) {
+  if (hidden || native.isNative) {
     return null;
   }
 

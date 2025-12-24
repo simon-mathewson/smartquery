@@ -11,9 +11,11 @@ import { Tabs } from './tabs/Tabs';
 import { CopilotSidebarContext } from '../ai/copilot/sidebar/Context';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import classNames from 'classnames';
+import { NativeContext } from '../native/Context';
 
 export const Toolbar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
+  const native = useDefinedContext(NativeContext);
   const { tabs } = useDefinedContext(TabsContext);
   const { addQuery } = useDefinedContext(QueriesContext);
   const { allChanges } = useDefinedContext(EditContext);
@@ -22,7 +24,12 @@ export const Toolbar: React.FC = () => {
   const isMobile = useIsMobile();
 
   return (
-    <div className="mb-3 flex items-center gap-3 pl-2 pr-2 pt-2 sm:pl-3">
+    <div
+      className={classNames('mb-3 flex items-center gap-3 pl-2 pr-2 pt-2 sm:pl-3', {
+        'pt-10': native.isElectron && isMobile,
+        'pt-6': native.isElectron && !isMobile,
+      })}
+    >
       <Tabs />
       <Button
         align="left"

@@ -14,7 +14,8 @@ export type AddToKeychain = (username: string, password: string) => Promise<void
 
 export type WriteToClipboard = (text: string) => void;
 
-export type NativeWebviewMessage =
+export type NativeBridgeMessage =
+  | { type: 'electron-ready' }
   | {
       type: 'console';
       level: 'log' | 'debug' | 'info' | 'warn' | 'error';

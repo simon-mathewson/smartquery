@@ -1,10 +1,11 @@
 import { EnhancedEncryptionOutlined } from '@mui/icons-material';
+import { useCallback, useRef } from 'react';
+import { assert } from 'ts-essentials';
+import { NativeContext } from '~/content/native/Context';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { Button } from '../button/Button';
 import { Input } from '../input/Input';
-import { useCallback, useRef } from 'react';
 import { replaceLineBreaksWithPlaceholders, replacePlaceholdersWithLineBreaks } from './utils';
-import { assert } from 'ts-essentials';
-import { useNative } from '~/shared/hooks/useNative/useNative';
 
 export type CredentialInputProps = {
   htmlProps?: React.HTMLProps<HTMLInputElement>;
@@ -17,17 +18,17 @@ export type CredentialInputProps = {
 export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
   const { htmlProps, isExistingCredential, onChange, showAddToKeychain, username } = props;
 
-  const native = useNative();
+  const native = useDefinedContext(NativeContext);
 
   const ref = useRef<HTMLInputElement>(null);
 
-  const canAddToKeychain = 'credentials' in navigator || window.ReactNativeWebView;
+  const canAddToKeychain = 'credentials' in navigator || native.isReactNative;
 
   const addToKeychain = useCallback(() => {
     const password = ref.current?.value;
     assert(password !== undefined);
 
-    if (window.ReactNativeWebView) {
+    if (native.isReactNative) {
       void native.addToKeychain(username, password).then(console.log);
       return;
     }

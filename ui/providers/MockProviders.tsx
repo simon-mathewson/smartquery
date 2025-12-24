@@ -23,11 +23,13 @@ import { ActiveConnectionMockProvider } from '~/content/connections/activeConnec
 import { SavedQueriesMockProvider } from '~/content/savedQueries/MockProvider';
 import { CopilotSidebarProvider } from '~/content/ai/copilot/sidebar/Provider';
 import { CopilotProvider } from '~/content/ai/copilot/Provider';
+import { NativeProvider } from '~/content/native/Provider';
 
 const mockProviders = {
-  ErrorTrackingProvider: ErrorTrackingMockProvider,
-  AnalyticsProvider: AnalyticsMockProvider,
   ThemeProvider,
+  ErrorTrackingProvider: ErrorTrackingMockProvider,
+  NativeProvider,
+  AnalyticsProvider: AnalyticsMockProvider,
   EscapeStackProvider,
   ToastProvider,
   UpdateAvailableProvider: UpdateAvailableMockProvider,

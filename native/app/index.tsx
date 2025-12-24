@@ -14,7 +14,7 @@ import type { WebViewMessageEvent } from "react-native-webview";
 import { WebView } from "react-native-webview";
 import type {
   GetSqliteFile,
-  NativeWebviewMessage,
+  NativeBridgeMessage,
 } from "../../shared/native/types";
 
 export default function Index() {
@@ -81,7 +81,7 @@ export default function Index() {
   const onMessage = async (payload: WebViewMessageEvent) => {
     let parsed;
     try {
-      parsed = JSON.parse(payload.nativeEvent.data) as NativeWebviewMessage;
+      parsed = JSON.parse(payload.nativeEvent.data) as NativeBridgeMessage;
       // eslint-disable-next-line no-empty
     } catch {}
 

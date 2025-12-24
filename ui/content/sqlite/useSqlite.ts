@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useRef } from 'react';
 import type { SqlJsStatic } from 'sql.js';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { sqliteChooseFileOptions } from '~/content/sqlite/sqlite';
-import { ToastContext } from '../toast/Context';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { SqliteDatabase } from '~/shared/types';
-import { useNative } from '~/shared/hooks/useNative/useNative';
+import { NativeContext } from '../native/Context';
+import { ToastContext } from '../toast/Context';
 
 const indexedDbConnection = 'sqliteStorage';
 const indexedDbStore = 'sqlite';
@@ -12,11 +12,10 @@ const indexedDbStore = 'sqlite';
 export type SqliteFile = FileSystemFileHandle | { name: string; base64: string };
 
 export const useSqlite = () => {
+  const native = useDefinedContext(NativeContext);
   const toast = useDefinedContext(ToastContext);
 
   const sqliteRef = useRef<SqlJsStatic | null>(null);
-
-  const native = useNative();
 
   const getSqlite = useCallback(async (): Promise<SqlJsStatic> => {
     if (sqliteRef.current) return Promise.resolve(sqliteRef.current);
@@ -129,7 +128,7 @@ export const useSqlite = () => {
 
   const pickFile = useCallback(
     async (connectionId: string): Promise<SqliteFile> => {
-      if (window.ReactNativeWebView) {
+      if (native.isNative) {
         return native.getSqliteFile(connectionId);
       }
 

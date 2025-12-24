@@ -10,6 +10,7 @@ import type { EditContextType } from '~/content/edit/Context';
 import type { ErrorTrackingContextType } from '~/content/errors/tracking/Context';
 import type { LinkApiContextType } from '~/content/link/api/Context';
 import type { LinkContextType } from '~/content/link/Context';
+import type { NativeContextType } from '~/content/native/Context';
 import type { SavedQueriesContextType } from '~/content/savedQueries/Context';
 import type { AddToDesktopContextType } from '~/content/settings/addToDesktop/Context';
 import type { SqliteContextType } from '~/content/sqlite/Context';
@@ -35,6 +36,7 @@ export type ContextTypes = {
   EscapeStackProvider: EscapeStackContextType;
   LinkApiProvider: LinkApiContextType;
   LinkProvider: LinkContextType;
+  NativeProvider: NativeContextType;
   QueriesProvider: QueriesContextType;
   SavedQueriesProvider: SavedQueriesContextType;
   SqliteProvider: SqliteContextType;

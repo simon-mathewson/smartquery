@@ -23,10 +23,12 @@ import { ActiveConnectionProvider } from '~/content/connections/activeConnection
 import { SavedQueriesProvider } from '~/content/savedQueries/Provider';
 import { CopilotSidebarProvider } from '~/content/ai/copilot/sidebar/Provider';
 import { CopilotProvider } from '~/content/ai/copilot/Provider';
+import { NativeProvider } from '~/content/native/Provider';
 
 const providers = {
   ThemeProvider,
   ErrorTrackingProvider,
+  NativeProvider,
   CloudApiProvider,
   LinkApiProvider,
   AnalyticsProvider,

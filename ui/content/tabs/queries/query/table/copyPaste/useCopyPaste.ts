@@ -1,20 +1,19 @@
+import { useCallback, useEffect } from 'react';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import type { CreateRow } from '~/content/edit/types';
+import { NativeContext } from '~/content/native/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../Context';
-import { useCallback, useEffect } from 'react';
 import { getTsvFromSelection } from '../utils/getTsvFromSelection';
-import type { CreateRow } from '~/content/edit/types';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { useNative } from '~/shared/hooks/useNative/useNative';
 
 export const useCopyPaste = (
   selection: number[][],
   rowsToCreate: CreateRow[],
   tableRef: React.RefObject<HTMLDivElement>,
 ) => {
+  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { rows } = useDefinedContext(ResultContext);
-
-  const native = useNative();
 
   const onKeydown = useCallback(
     (event: KeyboardEvent) => {
@@ -28,7 +27,7 @@ export const useCopyPaste = (
       if (event.key === 'c' && (event.ctrlKey || event.metaKey)) {
         event.preventDefault();
         const tsv = getTsvFromSelection(selection, [...rows, ...rowsToCreate]);
-        if (window.ReactNativeWebView) {
+        if (native.isReactNative) {
           native.writeToClipboard(tsv);
         } else {
           void navigator.clipboard.writeText(tsv);
