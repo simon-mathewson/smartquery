@@ -12,7 +12,7 @@ phases:
       - export IS_ABOUT_UNCHANGED=0
       - export IS_CLOUD_UNCHANGED=0
       - export IS_CLOUD_FORMATION_UNCHANGED=0
-      - export IS_LINK_UNCHANGED=0
+      - export IS_DESKTOP_UNCHANGED=0
       - export IS_SHARED_UNCHANGED=0
       - export IS_UI_UNCHANGED=0
 
@@ -66,8 +66,8 @@ phases:
             export IS_CLOUD_FORMATION_UNCHANGED=1
           fi
           
-          if diff -r last_source/link link >/dev/null 2>&1; then
-            export IS_LINK_UNCHANGED=1
+          if diff -r last_source/desktop desktop >/dev/null 2>&1; then
+            export IS_DESKTOP_UNCHANGED=1
           fi
           
           if diff -r last_source/shared shared >/dev/null 2>&1; then
@@ -83,7 +83,7 @@ phases:
         echo "IS_ABOUT_UNCHANGED: $IS_ABOUT_UNCHANGED"
         echo "IS_CLOUD_UNCHANGED: $IS_CLOUD_UNCHANGED"
         echo "IS_CLOUD_FORMATION_UNCHANGED: $IS_CLOUD_FORMATION_UNCHANGED"
-        echo "IS_LINK_UNCHANGED: $IS_LINK_UNCHANGED"
+        echo "IS_DESKTOP_UNCHANGED: $IS_DESKTOP_UNCHANGED"
         echo "IS_SHARED_UNCHANGED: $IS_SHARED_UNCHANGED"
         echo "IS_UI_UNCHANGED: $IS_UI_UNCHANGED"
 
@@ -91,15 +91,15 @@ phases:
         export SKIP_ABOUT=$(($IS_ABOUT_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_SHARED_UNCHANGED))
         export SKIP_CLOUD=$(($IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_SHARED_UNCHANGED))
         export SKIP_CLOUD_FORMATION=$(($IS_CLOUD_FORMATION_UNCHANGED))
-        export SKIP_LINK=$(($IS_LINK_UNCHANGED * $IS_SHARED_UNCHANGED))
-        export SKIP_SHARED=$(($IS_SHARED_UNCHANGED * $IS_ABOUT_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_LINK_UNCHANGED * $IS_UI_UNCHANGED))
-        export SKIP_UI=$(($IS_UI_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_LINK_UNCHANGED * $IS_SHARED_UNCHANGED))
+        export SKIP_DESKTOP=$(($IS_DESKTOP_UNCHANGED * $IS_SHARED_UNCHANGED))
+        export SKIP_SHARED=$(($IS_SHARED_UNCHANGED * $IS_ABOUT_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_DESKTOP_UNCHANGED * $IS_UI_UNCHANGED))
+        export SKIP_UI=$(($IS_UI_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_DESKTOP_UNCHANGED * $IS_SHARED_UNCHANGED))
 
       - |
         echo "SKIP_ABOUT: $SKIP_ABOUT"
         echo "SKIP_CLOUD: $SKIP_CLOUD"
         echo "SKIP_CLOUD_FORMATION: $SKIP_CLOUD_FORMATION"
-        echo "SKIP_LINK: $SKIP_LINK"
+        echo "SKIP_DESKTOP: $SKIP_DESKTOP"
         echo "SKIP_SHARED: $SKIP_SHARED"
         echo "SKIP_UI: $SKIP_UI"
 
@@ -138,10 +138,10 @@ phases:
 
       - |
         set -e  # Exit immediately if any command fails
-        if [ $SKIP_LINK -eq 1 ]; then
-          echo "Link package is unchanged. Skipping install."
+        if [ $SKIP_DESKTOP -eq 1 ]; then
+          echo "Desktop package is unchanged. Skipping install."
         else
-          cd ../link
+          cd ../desktop
           pnpm install
         fi
 
@@ -195,13 +195,13 @@ phases:
 
       - |
         set -e  # Exit immediately if any command fails
-        if [ $SKIP_LINK -eq 1 ]; then
-          echo "Link package is unchanged. Skipping build."
+        if [ $SKIP_DESKTOP -eq 1 ]; then
+          echo "Desktop package is unchanged. Skipping build."
 
           # Add empty test results to prevent artifacts upload failure
-          echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><testsuites/>" > ../link/test-report.xml
+          echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><testsuites/>" > ../desktop/test-report.xml
         else
-          cd ../link
+          cd ../desktop
           pnpm typecheck
           pnpm lint
           pnpm db:up:test
@@ -228,12 +228,6 @@ phases:
             cd ../cloud
             pnpm install
             pnpm prisma generate
-          fi
-
-          # Initialize link types, they are needed for UI build because of the tRPC router import
-          if [ $SKIP_LINK -eq 1 ]; then
-            cd ../link
-            pnpm install
           fi
 
           cd ../ui
@@ -316,9 +310,9 @@ phases:
         fi
 
 reports:
-  link:
+  desktop:
     files:
-      - "link/test-report.xml"
+      - "desktop/test-report.xml"
     file-format: "JUNITXML"
   ui:
     files:
