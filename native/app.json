@@ -12,10 +12,11 @@
         "applinks:smartquery.dev"
       ],
       "bundleIdentifier": "dev.smartquery",
-      "supportsTablet": true,
+      "icon": "./assets/images/icon.icon",
       "infoPlist": {
         "NSFaceIDUsageDescription": "We use Face ID to secure your credentials."
-      }
+      },
+      "supportsTablet": true
     },
     "android": {
       "edgeToEdgeEnabled": true,
