@@ -1,5 +1,3 @@
-/// <reference types="vitest" />
-
 import { externalizeDepsPlugin, type UserConfig } from 'electron-vite';
 import { dirname, join } from 'node:path';
 
