@@ -37,6 +37,7 @@ export default {
     },
     gatekeeperAssess: false,
     hardenedRuntime: true,
+    icon: 'buildResources/icon.icon',
   },
   dmg: {
     artifactName,
