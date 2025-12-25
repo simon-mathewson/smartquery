@@ -1,6 +1,15 @@
 import type { NativeBridgeMessage } from '@/native/types';
 import { assert } from 'ts-essentials';
 
+const updateTheme = () => {
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.body.classList.toggle('dark', isDark);
+};
+
+updateTheme();
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+
 const iframe = document.getElementById('iframe') as HTMLIFrameElement | null;
 const iframeWindow = iframe?.contentWindow;
 assert(iframeWindow, 'iframe window not found');
