@@ -55,7 +55,7 @@ export const authRouter = trpc.router({
         httpOnly: true,
         maxAge: 15 * 60, // 15 minutes
         path: '/',
-        sameSite: 'lax',
+        sameSite: 'none',
         secure: process.env.NODE_ENV === 'production',
       });
 
@@ -63,7 +63,7 @@ export const authRouter = trpc.router({
         httpOnly: true,
         maxAge: 60 * 60 * 24 * 30, // 30 days
         path: '/trpc/auth.refresh', // Crucial: Only sent to refresh endpoint
-        sameSite: 'lax',
+        sameSite: 'none',
         secure: process.env.NODE_ENV === 'production',
       });
 
@@ -71,7 +71,7 @@ export const authRouter = trpc.router({
         httpOnly: true,
         maxAge: 60 * 60 * 24 * 30, // 30 days
         path: '/',
-        sameSite: 'lax',
+        sameSite: 'none',
         secure: process.env.NODE_ENV === 'production',
       });
     }),
@@ -88,7 +88,7 @@ export const authRouter = trpc.router({
       httpOnly: true,
       maxAge: 0,
       path: '/',
-      sameSite: 'lax',
+      sameSite: 'none',
       secure: process.env.NODE_ENV === 'production',
     });
 
@@ -96,7 +96,7 @@ export const authRouter = trpc.router({
       httpOnly: true,
       maxAge: 0,
       path: '/trpc/auth.refresh',
-      sameSite: 'lax',
+      sameSite: 'none',
       secure: process.env.NODE_ENV === 'production',
     });
 
@@ -104,7 +104,7 @@ export const authRouter = trpc.router({
       httpOnly: true,
       maxAge: 0,
       path: '/',
-      sameSite: 'lax',
+      sameSite: 'none',
       secure: process.env.NODE_ENV === 'production',
     });
   }),
@@ -127,7 +127,7 @@ export const authRouter = trpc.router({
         httpOnly: true,
         maxAge: 15 * 60, // 15 minutes
         path: '/',
-        sameSite: 'lax',
+        sameSite: 'none',
         secure: process.env.NODE_ENV === 'production',
       });
     } catch {
