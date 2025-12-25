@@ -33,6 +33,7 @@ const createWindow = (): void => {
     icon: join(__dirname, '../../resources/icon.png'),
     show: false,
     title: 'SmartQuery',
+    titleBarOverlay: true,
     titleBarStyle: 'hidden',
     trafficLightPosition: { x: 18, y: 17 },
     webPreferences: {
