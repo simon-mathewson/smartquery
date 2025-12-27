@@ -5,6 +5,7 @@ import React, { useCallback } from 'react';
 import type { ExtraProps } from 'react-markdown';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { NativeContext } from '~/content/native/Context';
+import { isReactNative } from '~/content/native/useNative';
 import { QueriesContext } from '~/content/tabs/queries/Context';
 import { ToastContext } from '~/content/toast/Context';
 import type { ButtonProps } from '~/shared/components/button/Button';
@@ -79,7 +80,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
             onClick: async () => {
               track('copilot_copy_query');
 
-              if (native.isReactNative) {
+              if (isReactNative) {
                 native.writeToClipboard(code);
               } else {
                 await navigator.clipboard.writeText(code);

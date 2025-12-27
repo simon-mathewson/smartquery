@@ -1,7 +1,7 @@
 import { FileDownloadOutlined } from '@mui/icons-material';
 import { useState } from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
-import { NativeContext } from '~/content/native/Context';
+import { isNative } from '~/content/native/useNative';
 import { Button } from '~/shared/components/button/Button';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -9,12 +9,11 @@ import type { Os } from './types';
 import { getCurrentOs, getDistributables, getDistributableUrl } from './utils';
 
 export const DesktopSetup: React.FC = () => {
-  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
 
   const [os, setOs] = useState<Os>(getCurrentOs());
 
-  if (native.isNative) {
+  if (isNative) {
     return null;
   }
 

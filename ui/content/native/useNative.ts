@@ -7,50 +7,30 @@ import type {
   RunQuery,
   WriteToClipboard,
 } from '@/native/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { assert } from 'ts-essentials';
 import { v4 as uuid } from 'uuid';
 
+export const isElectron = Boolean(window.electronAPI);
+export const isReactNative = Boolean(window.ReactNativeWebView);
+export const isNative = isElectron || isReactNative;
+
 export const useNative = () => {
-  const [isElectron, setIsElectron] = useState(false);
-  const [isReactNative] = useState(Boolean(window.ReactNativeWebView));
-  const isNative = isElectron || isReactNative;
-
-  useEffect(() => {
-    const onMessage = (event: MessageEvent) => {
-      const parsed = JSON.parse(event.data) as NativeBridgeMessage;
-      if (parsed.type === 'electron-ready') {
-        setIsElectron(true);
-      }
-    };
-
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
-  }, [isElectron, isNative, isReactNative]);
-
-  const postMessage = useCallback(
-    (message: string) => {
-      if (isReactNative) {
-        assert(window.ReactNativeWebView, 'Native is not available');
-        window.ReactNativeWebView.postMessage(message);
-      } else {
-        window.parent.postMessage(message, '*');
-      }
-    },
-    [isReactNative],
-  );
-
   const request = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <T extends (...args: any) => any, R = Awaited<ReturnType<T>>>(
       method: string,
       args: unknown[],
     ) => {
-      assert(isNative, 'Native is not available');
+      if (isElectron) {
+        assert(window.electronAPI, 'Electron is not available');
+        return window.electronAPI.handleRequest(method, args) as Promise<R>;
+      }
+
+      assert(window.ReactNativeWebView, 'Native is not available');
 
       const id = uuid();
-
-      postMessage(JSON.stringify({ type: 'request', id, method, args }));
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'request', id, method, args }));
 
       return new Promise<R>((resolve, reject) => {
         const onMessage = (event: MessageEvent) => {
@@ -69,7 +49,7 @@ export const useNative = () => {
         window.addEventListener('message', onMessage);
       });
     },
-    [isNative, postMessage],
+    [],
   );
 
   const addToKeychain = useCallback<AddToKeychain>(
@@ -108,22 +88,9 @@ export const useNative = () => {
       connectDb,
       disconnectDb,
       getSqliteFile,
-      isElectron,
-      isNative,
-      isReactNative,
       runQuery,
       writeToClipboard,
     }),
-    [
-      addToKeychain,
-      connectDb,
-      disconnectDb,
-      getSqliteFile,
-      isElectron,
-      isNative,
-      isReactNative,
-      runQuery,
-      writeToClipboard,
-    ],
+    [addToKeychain, connectDb, disconnectDb, getSqliteFile, runQuery, writeToClipboard],
   );
 };

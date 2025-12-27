@@ -1,8 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'wouter';
-import { NativeContext } from '~/content/native/Context';
+import { isReactNative } from '~/content/native/useNative';
 import { Loading } from '~/shared/components/loading/Loading';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { routes } from './routes';
 
 // Lazy load all components
@@ -79,8 +78,6 @@ const ConnectToMysql = React.lazy(() =>
 export const Router: React.FC = () => {
   const [location] = useLocation();
 
-  const native = useDefinedContext(NativeContext);
-
   // Scroll to top on route change
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -109,7 +106,7 @@ export const Router: React.FC = () => {
         <Route path={routes.subscribe()}>
           <Redirect to={routes.subscribePlans()} />
         </Route>
-        {native.isReactNative && (
+        {isReactNative && (
           <>
             <Route path={routes.subscribePlans()}>
               <Redirect to={routes.signup()} replace />

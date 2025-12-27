@@ -8,7 +8,6 @@ import { connect } from '@/connector/connect';
 import { disconnect } from '@/connector/disconnect';
 import { runQuery } from '@/connector/runQuery';
 import type { RemoteConnection } from '@/connections/types';
-import assert from 'assert';
 import { Connector } from '@/connector/types';
 
 Object.assign(console, log.functions);
@@ -50,15 +49,7 @@ const createWindow = (): void => {
     mainWindow?.show();
   });
 
-  if (import.meta.env.DEV) {
-    const rendererUrl = process.env['ELECTRON_RENDERER_URL'];
-    assert(rendererUrl, 'ELECTRON_RENDERER_URL is not set');
-
-    void mainWindow.loadURL(rendererUrl);
-  } else {
-    const rendererPath = join(__dirname, '../renderer/index.html');
-    void mainWindow.loadFile(rendererPath);
-  }
+  void mainWindow.loadURL(import.meta.env.VITE_UI_URL);
 };
 
 void app.whenReady().then(() => {

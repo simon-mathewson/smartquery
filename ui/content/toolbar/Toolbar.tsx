@@ -1,21 +1,20 @@
 import { Add, AutoAwesome } from '@mui/icons-material';
+import classNames from 'classnames';
 import React from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
+import { CopilotSidebarContext } from '../ai/copilot/sidebar/Context';
 import { EditContext } from '../edit/Context';
+import { isElectron } from '../native/useNative';
 import { TabsContext } from '../tabs/Context';
 import { QueriesContext } from '../tabs/queries/Context';
 import { Changes } from './changes/Changes';
 import { Tabs } from './tabs/Tabs';
-import { CopilotSidebarContext } from '../ai/copilot/sidebar/Context';
-import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
-import classNames from 'classnames';
-import { NativeContext } from '../native/Context';
 
 export const Toolbar: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
-  const native = useDefinedContext(NativeContext);
   const { tabs } = useDefinedContext(TabsContext);
   const { addQuery } = useDefinedContext(QueriesContext);
   const { allChanges } = useDefinedContext(EditContext);
@@ -26,8 +25,8 @@ export const Toolbar: React.FC = () => {
   return (
     <div
       className={classNames('mb-3 flex items-center gap-3 pl-2 pr-2 pt-2 sm:pl-3', {
-        'pt-10': native.isElectron && isMobile,
-        'pt-6': native.isElectron && !isMobile,
+        '!pt-10': isElectron && isMobile,
+        '!pt-6': isElectron && !isMobile,
       })}
     >
       <Tabs />

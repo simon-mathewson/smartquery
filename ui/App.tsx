@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet';
 import { ConsentModal } from './content/consentModal/ConsentModal';
 import { Providers } from './providers/Providers';
 import { Router } from './router/router';
+import { isElectron } from './content/native/useNative';
 
 export const App: React.FC = () => {
   const description =
@@ -17,6 +18,10 @@ export const App: React.FC = () => {
         <meta name="description" content={description} />
       </Helmet>
       <Providers>
+        {isElectron && (
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          <div className="absolute h-6 w-full" style={{ WebkitAppRegion: 'drag' } as any}></div>
+        )}
         <ConsentModal />
         <Router />
       </Providers>

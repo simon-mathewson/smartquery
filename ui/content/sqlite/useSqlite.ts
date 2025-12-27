@@ -5,6 +5,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import type { SqliteDatabase } from '~/shared/types';
 import { NativeContext } from '../native/Context';
 import { ToastContext } from '../toast/Context';
+import { isNative } from '../native/useNative';
 
 const indexedDbConnection = 'sqliteStorage';
 const indexedDbStore = 'sqlite';
@@ -128,7 +129,7 @@ export const useSqlite = () => {
 
   const pickFile = useCallback(
     async (connectionId: string): Promise<SqliteFile> => {
-      if (native.isNative) {
+      if (isNative) {
         return native.getSqliteFile(connectionId);
       }
 

@@ -27,13 +27,13 @@ import { AnalyticsContext } from '../analytics/Context';
 import { AuthContext } from '../auth/Context';
 import { DesktopSetup } from '../desktop/setup/Setup';
 import { ErrorTrackingContext } from '../errors/tracking/Context';
+import { isNative } from '../native/useNative';
 import { ThemeContext } from '../theme/Context';
 import type { ThemeModePreference } from '../theme/types';
 import { AddToDesktop } from './addToDesktop/AddToDesktop';
 import { DeleteAccount } from './deleteAccount/DeleteAccount';
 import { Subscription } from './Subscription';
 import { Usage } from './usage/Usage';
-import { NativeContext } from '../native/Context';
 
 export type SettingsProps = {
   close: () => Promise<void> | void;
@@ -54,7 +54,6 @@ const labels: Record<Section, string> = {
 export const Settings: React.FC<SettingsProps> = ({ close }) => {
   const isMobile = useIsMobile();
 
-  const native = useDefinedContext(NativeContext);
   const { isConsentGranted, grantConsent, revokeConsent } = useDefinedContext(ErrorTrackingContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { logOut, user } = useDefinedContext(AuthContext);
@@ -86,7 +85,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
               label: labels.general,
               value: 'general',
             },
-            ...(native.isNative
+            ...(isNative
               ? []
               : [
                   {

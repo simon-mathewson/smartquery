@@ -13,7 +13,7 @@ import Add from '~/shared/icons/Add.svg?react';
 import { AnalyticsContext } from '../analytics/Context';
 import { AuthContext } from '../auth/Context';
 import { ConnectionsContext } from '../connections/Context';
-import { NativeContext } from '../native/Context';
+import { isReactNative } from '../native/useNative';
 
 export type WelcomeActionsProps = {
   hideAddConnection?: boolean;
@@ -22,7 +22,6 @@ export type WelcomeActionsProps = {
 export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
   const { hideAddConnection } = props;
 
-  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
   const { connections } = useDefinedContext(ConnectionsContext);
@@ -67,7 +66,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
               },
             ]
           : []),
-        ...(user && !user.activeSubscription && !native.isReactNative
+        ...(user && !user.activeSubscription && !isReactNative
           ? [
               {
                 hint: 'Get access to all features',
@@ -79,7 +78,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
             ]
           : []),
       ] satisfies Action[],
-    [connections.length, hideAddConnection, native.isReactNative, track, user],
+    [connections.length, hideAddConnection, track, user],
   );
 
   return <ActionList actions={actions} />;

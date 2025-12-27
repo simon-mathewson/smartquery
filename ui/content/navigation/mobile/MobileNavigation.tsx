@@ -12,7 +12,7 @@ import { useRoute } from 'wouter';
 import { Copilot } from '~/content/ai/copilot/sidebar/Copilot';
 import { Connections } from '~/content/connections/Connections';
 import { ConnectionsContext } from '~/content/connections/Context';
-import { NativeContext } from '~/content/native/Context';
+import { isElectron, isReactNative } from '~/content/native/useNative';
 import { Settings } from '~/content/settings/Settings';
 import { routes } from '~/router/routes';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -21,7 +21,6 @@ import { MOBILE_NAVIGATION_HEIGHT } from './constants';
 import { QueriesPage } from './QueriesPage/QueriesPage';
 
 export const MobileNavigation: React.FC = () => {
-  const native = useDefinedContext(NativeContext);
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
   const [isConnectionRoute] = useRoute(routes.connection({ database: '', schema: '' }));
@@ -88,7 +87,7 @@ export const MobileNavigation: React.FC = () => {
       >
         <div
           className={classNames('h-full grow overflow-y-auto p-2', {
-            'pt-8': native.isElectron,
+            'pt-8': isElectron,
           })}
           style={{ paddingBottom: `${MOBILE_NAVIGATION_HEIGHT}px` }}
         >
@@ -100,7 +99,7 @@ export const MobileNavigation: React.FC = () => {
         <div
           className={classNames(
             'pointer-events-auto sticky bottom-0 flex shrink-0 items-center justify-center gap-2 px-2 pb-2',
-            { 'px-5 pb-5': native.isReactNative },
+            { 'px-5 pb-5': isReactNative },
           )}
         >
           {activeConnection && (

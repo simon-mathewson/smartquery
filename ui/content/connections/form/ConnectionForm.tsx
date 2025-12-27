@@ -15,7 +15,7 @@ import { ConnectionsContext } from '~/content/connections/Context';
 import { demoConnectionId } from '~/content/connections/demo/constants';
 import { getCredentialId } from '~/content/connections/utils';
 import { DesktopSetup } from '~/content/desktop/setup/Setup';
-import { NativeContext } from '~/content/native/Context';
+import { isNative } from '~/content/native/useNative';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { useSqlite } from '~/content/sqlite/useSqlite';
 import { routes } from '~/router/routes';
@@ -53,7 +53,6 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { connectionToEditId, exit, hideBackButton, htmlProps, overrideInitialValues } = props;
 
   const [, navigate] = useLocation();
-  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
 
@@ -314,7 +313,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         </Field>
         {formValues.engine === 'sqlite' ? (
           <Field
-            hint={!native.isNative && 'Database will be read from and written to the file system.'}
+            hint={!isNative && 'Database will be read from and written to the file system.'}
             label="Database file"
           >
             {formValues.id === demoConnectionId ? (

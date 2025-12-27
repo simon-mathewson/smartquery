@@ -20,6 +20,7 @@ import { demoConnectionId } from './demo/constants';
 import { getOrCreateDemoConnection } from './demo/getOrCreateDemoConnection';
 import type { SignInModalInput } from './signInModal/types';
 import type { UserPasswordModalInput } from './userPasswordModal/types';
+import { isNative } from '../native/useNative';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -438,7 +439,7 @@ export const useConnections = (props: UseConnectionsProps) => {
           overrides?.schema ?? (connection.type === 'remote' ? connection.schema : undefined);
 
         if (connection.type === 'remote') {
-          if (!native.isNative) {
+          if (!isNative) {
             toast.add({
               color: 'danger',
               title: 'Use SmartQuery Desktop or mobile app for this connection',
@@ -491,7 +492,6 @@ export const useConnections = (props: UseConnectionsProps) => {
       navigate,
       getSqliteDb,
       track,
-      native.isNative,
       connectRemote,
     ],
   );

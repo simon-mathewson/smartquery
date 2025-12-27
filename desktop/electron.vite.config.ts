@@ -34,16 +34,4 @@ export default {
     },
     plugins: [externalizeDepsPlugin()],
   },
-  renderer: {
-    build: {
-      rollupOptions: {
-        input: join(__dirname, 'src/renderer/index.html'),
-      },
-    },
-    resolve: {
-      alias: {
-        '@': join(dirname(__dirname), 'shared'),
-      },
-    },
-  },
 } satisfies UserConfig;

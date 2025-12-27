@@ -5,6 +5,7 @@ import { NativeContext } from '~/content/native/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../Context';
 import { getTsvFromSelection } from '../utils/getTsvFromSelection';
+import { isReactNative } from '~/content/native/useNative';
 
 export const useCopyPaste = (
   selection: number[][],
@@ -27,7 +28,7 @@ export const useCopyPaste = (
       if (event.key === 'c' && (event.ctrlKey || event.metaKey)) {
         event.preventDefault();
         const tsv = getTsvFromSelection(selection, [...rows, ...rowsToCreate]);
-        if (native.isReactNative) {
+        if (isReactNative) {
           native.writeToClipboard(tsv);
         } else {
           void navigator.clipboard.writeText(tsv);

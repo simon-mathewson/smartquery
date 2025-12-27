@@ -6,6 +6,10 @@ declare module 'tailwindcss-easing' {
 
 declare global {
   interface Window {
+    electronAPI?: {
+      handleRequest: (method: string, args: unknown[]) => Promise<unknown>;
+    };
+
     ReactNativeWebView?: {
       postMessage: (message: string) => void;
     };

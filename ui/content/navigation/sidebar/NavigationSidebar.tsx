@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { useRef } from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { Connections } from '~/content/connections/Connections';
-import { NativeContext } from '~/content/native/Context';
+import { isElectron } from '~/content/native/useNative';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { Footer } from '~/shared/components/footer/Footer';
@@ -18,7 +18,6 @@ import { SavedQueryList } from './savedQueryList/SavedQueryList';
 import { TableList } from './tableList/TableList';
 
 export const NavigationSidebar: React.FC = () => {
-  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ConnectionsContext);
 
@@ -51,7 +50,7 @@ export const NavigationSidebar: React.FC = () => {
       <div
         className={classNames(
           'flex h-full flex-col items-start gap-1 rounded-2xl border border-border bg-card/60 px-2 pt-2 shadow-2xl backdrop-blur-xl',
-          { 'pt-8': native.isElectron },
+          { 'pt-8': isElectron },
         )}
         ref={sidebarRef}
         style={{ width: isMobile ? '100%' : `${desktopWidth}px` }}

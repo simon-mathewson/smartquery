@@ -16,7 +16,7 @@ import { AnalyticsContext } from '~/content/analytics/Context';
 import { AuthContext } from '~/content/auth/Context';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import { copilotChatSuggestions } from '~/content/connections/demo/copilotChatSuggestions';
-import { NativeContext } from '~/content/native/Context';
+import { isReactNative } from '~/content/native/useNative';
 import { routes } from '~/router/routes';
 import { ActionList } from '~/shared/components/actionList/ActionList';
 import { Button } from '~/shared/components/button/Button';
@@ -38,7 +38,6 @@ export type CopilotProps = {
 export const Copilot: React.FC<CopilotProps> = (props) => {
   const { onCloseCopilot, showClose } = props;
 
-  const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
   const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
@@ -312,7 +311,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                   <div>
                     You've exceeded your quota for this month. Upgrade to continue using Copilot.
                   </div>
-                  {!native.isReactNative && (
+                  {!isReactNative && (
                     <Button
                       element="link"
                       htmlProps={{

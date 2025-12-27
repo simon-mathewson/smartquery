@@ -29,6 +29,10 @@ export default function Index() {
 
   // Prevent splash screen from auto-hiding
   useEffect(() => {
+    SplashScreen.setOptions({
+      duration: 200,
+      fade: true,
+    });
     void SplashScreen.preventAutoHideAsync();
   }, []);
 
