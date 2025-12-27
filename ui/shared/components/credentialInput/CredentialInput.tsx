@@ -2,7 +2,7 @@ import { EnhancedEncryptionOutlined } from '@mui/icons-material';
 import { useCallback, useRef } from 'react';
 import { assert } from 'ts-essentials';
 import { NativeContext } from '~/content/native/Context';
-import { isReactNative } from '~/content/native/useNative';
+import { isElectron, isReactNative } from '~/content/native/useNative';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { Button } from '../button/Button';
 import { Input } from '../input/Input';
@@ -23,7 +23,7 @@ export const CredentialInput: React.FC<CredentialInputProps> = (props) => {
 
   const ref = useRef<HTMLInputElement>(null);
 
-  const canAddToKeychain = 'credentials' in navigator || isReactNative;
+  const canAddToKeychain = ('credentials' in navigator && !isElectron) || isReactNative;
 
   const addToKeychain = useCallback(() => {
     const password = ref.current?.value;
