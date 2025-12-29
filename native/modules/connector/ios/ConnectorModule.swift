@@ -62,21 +62,31 @@ public class ConnectorModule: Module {
 
       let connectorId = UUID().uuidString
 
-      self.connectors[connectorId] = props["engine"] as! String == "mysql"
-        ? Connector(
-            postgresPool: nil,
-            mysqlPool: try await connectMysql(host: host, port: port, database: database, user: user, password: password),
-            sshClient: sshClient,
-            connection: props
-          )
-        : Connector(
-            postgresPool: try await connectPostgres(host: host, port: port, database: database, user: user, password: password),
-            mysqlPool: nil,
-            sshClient: sshClient,
-            connection: props
-          )
+      do {
+        self.connectors[connectorId] = props["engine"] as! String == "mysql"
+          ? Connector(
+              postgresPool: nil,
+              mysqlPool: try await connectMysql(host: host, port: port, database: database, user: user, password: password),
+              sshClient: sshClient,
+              connection: props
+            )
+          : Connector(
+              postgresPool: try await connectPostgres(host: host, port: port, database: database, user: user, password: password),
+              mysqlPool: nil,
+              sshClient: sshClient,
+              connection: props
+            )
 
-      return connectorId
+        return connectorId
+      } catch Socket.SocketError.recvFailed {
+        // MySQL connection failed
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "CONNECTION_FAILED"])
+      } catch PostgresClientKit.PostgresError.sqlError(let notice) where notice.code == "57P01" && notice.message == "terminating connection due to administrator command" {
+        // Postgres connection failed
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "CONNECTION_FAILED"])
+      } catch {
+        throw error
+      }
     }
 
     Function("disconnectDb") { (connectorId: String) in

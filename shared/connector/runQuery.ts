@@ -115,7 +115,14 @@ export const runQuery = async (connector: Connector, statements: string[]): Prom
       }
     }
   } catch (error) {
-    if (error instanceof Error && 'code' in error && error.code === 'ECONNREFUSED') {
+    if (
+      error instanceof Error &&
+      (('code' in error &&
+        (error.code === 'ECONNREFUSED' ||
+          error.code === 'ETIMEDOUT' ||
+          error.code === 'PROTOCOL_CONNECTION_LOST')) ||
+        error.message === 'Connection terminated due to connection timeout')
+    ) {
       throw new NoLongerConnectedError();
     }
 

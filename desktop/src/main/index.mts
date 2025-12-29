@@ -9,6 +9,7 @@ import { disconnect } from '@/connector/disconnect';
 import { runQuery } from '@/connector/runQuery';
 import type { RemoteConnection } from '@/connections/types';
 import { Connector } from '@/connector/types';
+import { ConnectorNotFoundError } from '@/errors/ConnectorNotFoundError';
 
 Object.assign(console, log.functions);
 
@@ -101,7 +102,7 @@ void app.whenReady().then(() => {
         }
 
         if (!(connectorId in connectors)) {
-          throw new Error('Connector not found');
+          throw new ConnectorNotFoundError();
         }
 
         const results = await runQuery(connectors[connectorId], statements);

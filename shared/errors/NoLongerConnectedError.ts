@@ -1,7 +1,10 @@
 export class NoLongerConnectedError extends Error {
-  public static readonly code = 'NO_LONGER_CONNECTED';
+  public static readonly name = 'NO_LONGER_CONNECTED';
+
+  public static readonly message = 'No longer connected';
 
   constructor() {
-    super(NoLongerConnectedError.code);
+    super(NoLongerConnectedError.message);
+    this.name = NoLongerConnectedError.name;
   }
 }

@@ -1,7 +1,10 @@
 export class ConnectorNotFoundError extends Error {
-  public static readonly code = 'CONNECTOR_NOT_FOUND';
+  public static readonly name = 'CONNECTOR_NOT_FOUND';
+
+  public static readonly message = 'Connector not found';
 
   constructor() {
-    super(ConnectorNotFoundError.code);
+    super(ConnectorNotFoundError.message);
+    this.name = ConnectorNotFoundError.name;
   }
 }

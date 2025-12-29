@@ -1,3 +1,4 @@
+import { errors } from '@/errors/errors';
 import type {
   AddToKeychain,
   ConnectDb,
@@ -18,13 +19,34 @@ export const isNative = isElectron || isReactNative;
 export const useNative = () => {
   const request = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <T extends (...args: any) => any, R = Awaited<ReturnType<T>>>(
+    async <T extends (...args: any) => any, R = Awaited<ReturnType<T>>>(
       method: string,
       args: unknown[],
     ) => {
       if (isElectron) {
         assert(window.electronAPI, 'Electron is not available');
-        return window.electronAPI.handleRequest(method, args) as Promise<R>;
+        try {
+          return (await window.electronAPI.handleRequest(method, args)) as Promise<R>;
+        } catch (error) {
+          const [, errorName, errorMessage] =
+            error instanceof Error
+              ? error.message.match(
+                  /^Error invoking remote method 'handle-request': ([^:]+)(?:: (.+))?$/,
+                ) ?? []
+              : [];
+
+          if (errorName) {
+            const KnownError = errors.find((ec) => errorName === ec.name);
+            if (KnownError) {
+              throw new KnownError();
+            }
+
+            const otherError = new Error(errorMessage);
+            otherError.name = errorName;
+
+            throw otherError;
+          }
+        }
       }
 
       assert(window.ReactNativeWebView, 'Native is not available');
@@ -39,7 +61,7 @@ export const useNative = () => {
             window.removeEventListener('message', onMessage);
 
             if ('error' in parsed) {
-              reject(new Error(parsed.error));
+              reject(errors.find((ec) => parsed.error === ec.name) ?? new Error(parsed.error));
             } else {
               resolve(parsed.data as R);
             }

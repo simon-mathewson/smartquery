@@ -39,11 +39,7 @@ export const useActiveConnection = () => {
             statements,
           });
         } catch (error) {
-          if (
-            error instanceof Error &&
-            (error.message === NoLongerConnectedError.code ||
-              error.message === ConnectorNotFoundError.code)
-          ) {
+          if (error instanceof NoLongerConnectedError || error instanceof ConnectorNotFoundError) {
             const newConnection = await connect(currentConnection.id, {
               database: currentConnection.database,
               schema: currentConnection.schema,
