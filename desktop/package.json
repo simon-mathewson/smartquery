@@ -18,7 +18,7 @@
     "build:mac:arm64": "electron-builder --mac --config --arm64 --publish always",
     "build:mac:x64": "electron-builder --mac --config --x64 --publish always",
     "build:mac": "pnpm build:mac:arm64 && pnpm build:mac:x64",
-    "build:node": "electron-vite build",
+    "build:node": "rm -rf out && electron-vite build",
     "build:win": "electron-builder --win --config --publish always",
     "db:down:dev": "docker-compose -f docker-compose/docker-compose.yml -p smartquery-desktop-dev --env-file .env.development down",
     "db:up:dev": "docker-compose -f docker-compose/docker-compose.yml -p smartquery-desktop-dev --env-file .env.development up -d",
