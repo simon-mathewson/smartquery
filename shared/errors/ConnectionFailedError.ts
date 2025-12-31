@@ -1,6 +1,7 @@
 export class ConnectionFailedError extends Error {
+  public static readonly code = 'CONNECTION_FAILED';
+
   constructor() {
-    super('Connection failed');
-    this.name = 'CONNECTION_FAILED';
+    super('Failed to connect to database');
   }
 }

@@ -204,7 +204,6 @@ extension MySQL {
             if #available(iOS 10.0, *) {
                 let str = String(bytes: key, encoding: .ascii);
                 let bstr = str?.components(separatedBy: "-----")[2].trimmingCharacters(in: .whitespacesAndNewlines);
-                print(bstr!);
                 let dbstr = Data(base64Encoded: bstr!, options: .ignoreUnknownCharacters);
                                 
                 let d2 = dbstr! as CFData;

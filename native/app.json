@@ -2,7 +2,7 @@
   "expo": {
     "name": "SmartQuery",
     "slug": "smartquery",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "icon": "./assets/images/icon.png",
     "scheme": "smartquery",
     "userInterfaceStyle": "automatic",

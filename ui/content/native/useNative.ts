@@ -61,7 +61,8 @@ export const useNative = () => {
             window.removeEventListener('message', onMessage);
 
             if ('error' in parsed) {
-              reject(errors.find((ec) => parsed.error === ec.name) ?? new Error(parsed.error));
+              const KnownError = errors.find((ec) => parsed.error === ec.code);
+              reject(KnownError ? new KnownError() : new Error(parsed.error));
             } else {
               resolve(parsed.data as R);
             }

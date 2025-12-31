@@ -78,14 +78,10 @@ public class ConnectorModule: Module {
             )
 
         return connectorId
-      } catch Socket.SocketError.recvFailed {
-        // MySQL connection failed
-        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "CONNECTION_FAILED"])
-      } catch PostgresClientKit.PostgresError.sqlError(let notice) where notice.code == "57P01" && notice.message == "terminating connection due to administrator command" {
+      } catch {
+        print(error)
         // Postgres connection failed
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "CONNECTION_FAILED"])
-      } catch {
-        throw error
       }
     }
 
@@ -122,6 +118,7 @@ public class ConnectorModule: Module {
         // Postgres no longer connected
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "NO_LONGER_CONNECTED"])
       } catch {
+        print(error)
         throw error
       }
     }

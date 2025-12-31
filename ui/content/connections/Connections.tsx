@@ -1,17 +1,17 @@
 import { Add, EditOutlined } from '@mui/icons-material';
+import classNames from 'classnames';
+import { useEffect, useState } from 'react';
+import { v4 as uuid } from 'uuid';
+import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
+import { Header } from '~/shared/components/header/Header';
+import { List } from '~/shared/components/list/List';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
+import { AnalyticsContext } from '../analytics/Context';
 import { ConnectionsContext } from './Context';
-import { useState } from 'react';
 import { DatabaseList } from './databases/DatabaseList';
 import { ConnectionForm } from './form/ConnectionForm';
-import classNames from 'classnames';
-import { List } from '~/shared/components/list/List';
-import { v4 as uuid } from 'uuid';
-import { AnalyticsContext } from '../analytics/Context';
-import { routes } from '~/router/routes';
-import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
-import { Header } from '~/shared/components/header/Header';
 
 export type ConnectionsProps = {
   hideDatabases?: boolean;
@@ -34,6 +34,12 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
   const [stage, setStage] = useState<'connections' | 'databases' | 'schemas' | 'form'>(
     'connections',
   );
+
+  useEffect(() => {
+    if (!activeConnection && isMobile && (stage === 'databases' || stage === 'schemas')) {
+      setStage('connections');
+    }
+  }, [activeConnection, connections, isMobile, stage]);
 
   return (
     <>

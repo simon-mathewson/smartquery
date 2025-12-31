@@ -21,6 +21,7 @@ import { getOrCreateDemoConnection } from './demo/getOrCreateDemoConnection';
 import type { SignInModalInput } from './signInModal/types';
 import type { UserPasswordModalInput } from './userPasswordModal/types';
 import { isNative } from '../native/useNative';
+import { ConnectionFailedError } from '@/errors/ConnectionFailedError';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -470,7 +471,12 @@ export const useConnections = (props: UseConnectionsProps) => {
           return newActiveConnection;
         }
       } catch (error) {
-        if (!(error instanceof ConnectCanceledError)) {
+        if (error instanceof ConnectionFailedError) {
+          toast.add({
+            color: 'danger',
+            title: error.message,
+          });
+        } else if (!(error instanceof ConnectCanceledError)) {
           toast.add({
             color: 'danger',
             description: (error as Error).message,
