@@ -8,7 +8,7 @@ export const getCurrentOs = (): Os => {
 };
 
 export const getDistributableUrl = ({ fileName }: Distributable): string =>
-  `${import.meta.env.VITE_LINK_S3_URL}/${fileName}`;
+  `${import.meta.env.VITE_DESKTOP_S3_URL}/${fileName}`;
 
 export const getDistributables = (os: Os): Array<Distributable> => {
   const version = import.meta.env.VITE_DESKTOP_VERSION;
