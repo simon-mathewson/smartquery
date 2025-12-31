@@ -27,26 +27,63 @@ export default function Home() {
     <div className="bg-slate-50">
       <div className="flex flex-col items-center gap-6 sm:gap-8 py-8 sm:py-10 container">
         <LaunchButton demo />
-        <div className="flex justify-center gap-3 sm:gap-5 items-end overflow-hidden">
-          <Image
-            src="/postgres.svg"
-            alt="PostgreSQL"
-            width={isMobile ? 80 : 100}
-            height={isMobile ? 80 : 100}
-          />
-          <Image
-            src="/mysql.svg"
-            alt="MySQL"
-            width={isMobile ? 52 : 65}
-            height={isMobile ? 52 : 65}
-            className="mb-[3px]"
-          />
-          <Image
-            src="/sqlite.svg"
-            alt="SQLite"
-            width={isMobile ? 80 : 100}
-            height={isMobile ? 80 : 100}
-          />
+        <div className="flex justify-center gap-3 sm:gap-5 items-center sm:flex-row flex-col">
+          <div className="flex justify-center gap-3 sm:gap-5 items-center ">
+            <Image
+              src="/postgres.svg"
+              alt="PostgreSQL"
+              title="PostgreSQL"
+              width={isMobile ? 80 : 100}
+              height={isMobile ? 80 : 100}
+            />
+            <Image
+              src="/mysql.svg"
+              alt="MySQL"
+              title="MySQL"
+              width={isMobile ? 52 : 65}
+              height={isMobile ? 52 : 65}
+              className="mb-[3px]"
+            />
+            <Image
+              src="/sqlite.svg"
+              alt="SQLite"
+              title="SQLite"
+              width={isMobile ? 80 : 100}
+              height={isMobile ? 80 : 100}
+            />
+          </div>
+          <div className="sm:w-px sm:h-4 bg-gray-300 sm:mx-2 w-12 h-px my-2 sm:my-0" />
+          <div className="flex justify-center gap-3 sm:gap-5 items-center ">
+            <Image
+              src="/macos.svg"
+              alt="macOS"
+              title="macOS"
+              width={isMobile ? 80 : 100}
+              height={isMobile ? 80 : 100}
+            />
+            <Image
+              src="/ios.svg"
+              alt="iOS"
+              title="iOS"
+              width={isMobile ? 40 : 48}
+              height={isMobile ? 40 : 48}
+            />
+            <Image
+              className="mx-2"
+              src="/windows.svg"
+              alt="Windows"
+              title="Windows"
+              width={isMobile ? 40 : 40}
+              height={isMobile ? 40 : 40}
+            />
+            <Image
+              src="/debian.svg"
+              alt="Debian"
+              title="Debian"
+              width={isMobile ? 32 : 40}
+              height={isMobile ? 32 : 40}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -201,9 +238,9 @@ export default function Home() {
               Access your data from anywhere
             </h1>
             <p className="text-lg font-medium text-slate-600 text-center sm:text-right">
-              SmartQuery works on any device with a browser, including desktops,
-              tablets, and phones. It can also be installed and used like a
-              regular app, including offline support.
+              SmartQuery is available on the web, iOS, macOS, Windows, and
+              Debian-based Linux distributions. The interface is optimized for
+              mobile, tablet, and desktop devices.
             </p>
           </div>
           <Image src="/cross-platform.png" alt="" width={500} height={500} />
@@ -246,7 +283,7 @@ export default function Home() {
                 icon: LightbulbOutlined,
                 title: "Need-to-know basis",
                 description:
-                  "Your data is never stored or logged, even when connecting through our cloud. We always use the minimum amount of data necessary to make a feature work. For instance, row data is never sent to our AI as context, only schema information.",
+                  "Your data is never stored or logged. We always use the minimum amount of data necessary to make a feature work. For instance, row data is never sent to our AI as context, only schema information.",
               },
               {
                 icon: FilterDramaOutlined,

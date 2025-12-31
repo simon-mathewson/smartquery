@@ -16,11 +16,10 @@ const TermsOfUse: React.FC = () => {
           <p>
             Welcome to SmartQuery! These Terms of Use (&quot;Terms&quot;) govern
             your access to and use of the SmartQuery application, including the
-            website (https://smartquery.dev), any associated desktop
-            applications (&quot;SmartQuery Link&quot;), cloud services
-            (&quot;SmartQuery Cloud&quot;), and all related services
-            (collectively, the &quot;Service&quot;). The Service is provided by
-            Simon Mathewson (&quot;we,&quot; &quot;us,&quot; or
+            website (https://smartquery.dev), native applications for iOS,
+            macOS, Windows, and Debian-based distributions, and all related
+            services (collectively, the &quot;Service&quot;). The Service is
+            provided by Simon Mathewson (&quot;we,&quot; &quot;us,&quot; or
             &quot;our&quot;).
           </p>
           <p>
@@ -33,21 +32,20 @@ const TermsOfUse: React.FC = () => {
             <p>
               SmartQuery is a database viewer that allows users to connect to
               and interact with open-source databases such as PostgreSQL, MySQL,
-              and SQLite. Users can connect to their databases through different
-              methods, including a direct local connection via our desktop
-              application (&quot;SmartQuery Link&quot;) or through our managed
-              proxy service (&quot;SmartQuery Cloud&quot;).
+              and SQLite. Users can connect to their databases natively from
+              their device through our native applications for iOS, macOS,
+              Windows, and Debian-based distributions. Web support is available
+              for SQLite databases.
             </p>
           </section>
           <section>
             <h3>2. Accounts</h3>
             <p>
               Using the core functionality of SmartQuery for direct database
-              connections (e.g., via SmartQuery Link) does not require an
-              account. However, to save and sync your connections, and to access
-              the features provided under our Free Tier (such as AI Credits and
-              SmartQuery Cloud queries), you must create a free account. Upon
-              signing up, you are automatically enrolled in the Free Tier.
+              connections does not require an account. However, to save and sync
+              your connections, and to access the features provided under our
+              Free Tier (such as AI Credits), you must create a free account.
+              Upon signing up, you are automatically enrolled in the Free Tier.
             </p>
             <ul>
               <li>
@@ -82,17 +80,6 @@ const TermsOfUse: React.FC = () => {
               <li>
                 <strong>AI Credits:</strong> 100,000
               </li>
-              <li>
-                <strong>Queries via SmartQuery Link:</strong> Unlimited
-              </li>
-              <li>
-                <strong>Queries via SmartQuery Cloud:</strong>
-                <ul>
-                  <li>Concurrent Connections: 1</li>
-                  <li>Total Query Duration: 10 minutes</li>
-                  <li>Total Query Response Size: 100 MB</li>
-                </ul>
-              </li>
             </ul>
 
             <h4>3.2. SmartQuery Plus Subscription</h4>
@@ -106,15 +93,7 @@ const TermsOfUse: React.FC = () => {
                 <strong>AI Credits:</strong> 900,000
               </li>
               <li>
-                <strong>Queries via SmartQuery Link:</strong> Unlimited
-              </li>
-              <li>
-                <strong>Queries via SmartQuery Cloud:</strong>
-                <ul>
-                  <li>Concurrent Connections: 3</li>
-                  <li>Total Query Duration: 1 hours</li>
-                  <li>Total Query Response Size: 1 GB</li>
-                </ul>
+                <strong>Database Queries:</strong> Unlimited
               </li>
             </ul>
 
@@ -211,11 +190,11 @@ const TermsOfUse: React.FC = () => {
             <p>
               The Service and its original content, features, and functionality,
               including but not limited to the SmartQuery application, the
-              &quot;SmartQuery Link&quot; software, the website design, logos,
-              and all underlying source code, are and will remain the exclusive
-              property of Simon Mathewson. The Service is protected by
-              copyright, trademark, and other laws of both Germany and foreign
-              countries.
+              native applications for iOS, macOS, Windows, and Debian-based
+              distributions, the website design, logos, and all underlying
+              source code, are and will remain the exclusive property of Simon
+              Mathewson. The Service is protected by copyright, trademark, and
+              other laws of both Germany and foreign countries.
             </p>
             <p>
               You are granted a limited, non-exclusive, non-transferable,

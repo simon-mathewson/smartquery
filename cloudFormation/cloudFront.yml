@@ -28,6 +28,27 @@ Resources:
           return request;
         }
 
+  CloudFrontFunctionSetContentType:
+    Type: "AWS::CloudFront::Function"
+    Properties:
+      Name: "set-content-type"
+      AutoPublish: true
+      FunctionConfig:
+        Comment: "Set content-type for apple-app-site-association"
+        Runtime: "cloudfront-js-2.0"
+      FunctionCode: |
+        function handler(event) {
+          var response = event.response;
+          var uri = event.request.uri;
+          
+          // Set content-type to application/json for apple-app-site-association
+          if (uri === '/.well-known/apple-app-site-association') {
+            response.headers['content-type'] = { value: 'application/json' };
+          }
+          
+          return response;
+        }
+
   CloudFrontDistributionUi:
     Type: "AWS::CloudFront::Distribution"
     Properties:
@@ -148,6 +169,8 @@ Resources:
           FunctionAssociations:
             - EventType: "viewer-request"
               FunctionARN: !GetAtt CloudFrontFunctionRewriteUrls.FunctionARN
+            - EventType: "viewer-response"
+              FunctionARN: !GetAtt CloudFrontFunctionSetContentType.FunctionARN
           AllowedMethods:
             - "HEAD"
             - "GET"

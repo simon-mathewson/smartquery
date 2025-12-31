@@ -47,11 +47,12 @@ const PrivacyPolicy: React.FC = () => {
             <h3>2. General Principles of Data Processing</h3>
             <p>
               SmartQuery is designed with a &quot;local-first&quot; approach.
-              Core functions can run directly on your device without sending
-              sensitive data to our servers. For enhanced functionality, such as
-              account syncing, AI assistance, and cloud connectivity, we offer
-              optional services that involve processing data on our secure
-              infrastructure, as detailed in this policy.
+              Core functions run directly on your device without sending
+              sensitive data to our servers. Database connections are made
+              natively from your device. For enhanced functionality, such as
+              account syncing and AI assistance, we offer optional services that
+              involve processing data on our secure infrastructure, as detailed
+              in this policy.
             </p>
           </section>
           <section>
@@ -70,8 +71,8 @@ const PrivacyPolicy: React.FC = () => {
               <div>
                 <h4>b) When You Create an Account</h4>
                 <p>
-                  To use features like connection syncing, SmartQuery Cloud, or
-                  the AI assistant, you must create an account. We collect:
+                  To use features like connection syncing or the AI assistant,
+                  you must create an account. We collect:
                 </p>
                 <ul>
                   <li>
@@ -121,30 +122,7 @@ const PrivacyPolicy: React.FC = () => {
                 </p>
               </div>
               <div>
-                <h4>e) When You Use SmartQuery Cloud</h4>
-                <p>
-                  SmartQuery Cloud acts as a proxy, allowing you to connect to
-                  your databases through our servers. When you use this feature,
-                  your database queries and the resulting data pass through our
-                  servers.
-                </p>
-                <ul>
-                  <li>
-                    <strong>Privacy Commitment:</strong> The content of your
-                    database queries and the data returned from your database
-                    are processed transiently to facilitate the connection. They
-                    are <strong>never logged, stored, or inspected</strong> on
-                    our servers.
-                  </li>
-                </ul>
-                <p>
-                  This transient processing is technically necessary to provide
-                  the SmartQuery Cloud service, based on the performance of our
-                  contract with you (Art. 6(1)(b) GDPR).
-                </p>
-              </div>
-              <div>
-                <h4>f) When You Use the AI Feature</h4>
+                <h4>e) When You Use the AI Feature</h4>
                 <p>
                   When you use the integrated AI assistant, we act as an
                   intermediary to send data to the Google Gemini API on your
@@ -168,7 +146,7 @@ const PrivacyPolicy: React.FC = () => {
                 </p>
               </div>
               <div>
-                <h4>g) Analytics and Performance Monitoring</h4>
+                <h4>f) Analytics and Performance Monitoring</h4>
                 <p>
                   We use Google Analytics and AWS CloudWatch RUM to understand
                   service usage and monitor performance. These tools are only
