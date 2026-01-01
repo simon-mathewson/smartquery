@@ -24,7 +24,7 @@ export const DistributableLink: React.FC<DistributableLinkProps> = ({
         <img
           src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us?releaseDate=1765843200"
           alt="Download on the App Store"
-          className="w-[120px] h-[40px] object-contain"
+          className="w-[144px] h-[48px] object-contain"
         />
       </a>
     );

@@ -1,8 +1,9 @@
 export type Os = "debian" | "ios" | "macos" | "windows";
+export type Arch = "x64" | "arm64";
 
 export const detectOS = async (): Promise<{
-  os: string;
-  arch: string;
+  os: Os;
+  arch: Arch;
 } | null> => {
   const ua = navigator.userAgent.toLowerCase();
 
@@ -26,20 +27,16 @@ export const detectOS = async (): Promise<{
 
   function archResultMac() {
     // Safari on Apple Silicon falsely reports Intel → assume ARM unless clearly x86
-    if (isArm()) return "arm";
-    if (isAmd()) return "amd";
-    return "arm";
+    if (isArm()) return "arm64";
+    if (isAmd()) return "x64";
+    return "arm64";
   }
 
   function archResult() {
-    return isArm() ? "arm" : "amd";
+    return isArm() ? "arm64" : "x64";
   }
 
-  // Check for iOS first - check both user agent and platform
-  const platform = navigator.platform?.toLowerCase() || "";
-  if (/iphone|ipad|ipod/.test(ua) || /iphone|ipad|ipod/.test(platform)) {
-    return { os: "ios", arch: "arm" };
-  }
+  if (/iphone|ipad|ipod|ios/.test(ua)) return { os: "ios", arch: "arm64" };
 
   if (/mac os|macintosh/.test(ua))
     return { os: "macos", arch: archResultMac() };
@@ -53,7 +50,14 @@ export const detectOS = async (): Promise<{
 
 export const version = process.env.NEXT_PUBLIC_DESKTOP_VERSION;
 
-export const distributables = [
+export type Distributable = {
+  arch: Arch;
+  fileExtension: string;
+  fileName: string;
+  label: string;
+  os: Os;
+};
+export const distributables: Distributable[] = [
   {
     arch: "x64",
     fileExtension: "deb",
@@ -103,5 +107,3 @@ export const getDistributableUrl = ({
 }: {
   fileName: string;
 }): string => `${process.env.NEXT_PUBLIC_DESKTOP_S3_URL}/${fileName}`;
-
-export type Distributable = (typeof distributables)[number];

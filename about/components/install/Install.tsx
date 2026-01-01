@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { DistributableLink } from "./DistributableLink";
+import type { Arch, Os } from "./utils";
 import { detectOS, distributables } from "./utils";
 import { ExpandLessOutlined, ExpandMoreOutlined } from "@mui/icons-material";
 
 export const Install: React.FC = () => {
   const [currentOs, setCurrentOs] = useState<{
-    os: string;
-    arch: string;
+    os: Os;
+    arch: Arch;
   } | null>(null);
 
   useEffect(() => {
