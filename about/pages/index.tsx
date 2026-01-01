@@ -1,4 +1,5 @@
 import { DemoVideo } from "@/components/demoVideo/DemoVideo";
+import { Install } from "@/components/install/Install";
 import { LaunchButton } from "@/components/launchButton/LaunchButton";
 import { ChatVisual } from "@/components/visuals/Chat";
 import { SchemaVisual } from "@/components/visuals/Schema";
@@ -26,9 +27,10 @@ export default function Home() {
   const launchDemoSection = (
     <div className="bg-slate-50">
       <div className="flex flex-col items-center gap-6 sm:gap-8 py-8 sm:py-10 container">
+        <Install />
         <LaunchButton demo />
         <div className="flex justify-center gap-3 sm:gap-5 items-center sm:flex-row flex-col">
-          <div className="flex justify-center gap-3 sm:gap-5 items-center ">
+          <div className="flex justify-center gap-3 sm:gap-5 items-center">
             <Image
               src="/postgres.svg"
               alt="PostgreSQL"

@@ -13,10 +13,7 @@ export const LaunchButton: React.FC<{ demo?: boolean }> = ({
           : "https://smartquery.dev"
       }
       className={classNames(
-        "flex gap-1 items-center font-semibold !bg-gradient-to-tr from-blue-600 to-pink-500 text-white px-2 p-1.5 rounded-full text-sm",
-        {
-          "!px-3 !py-2 !text-base !gap-2": demo,
-        }
+        "flex gap-1 items-center font-semibold border-2 !border-blue-600 text-blue-600 px-2 p-1.5 rounded-full text-sm"
       )}
       onClick={() => {
         sendGAEvent("event", "launch", { demo });
