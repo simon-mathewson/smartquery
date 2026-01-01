@@ -1,9 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 import classNames from "classnames";
 import type { Distributable } from "./utils";
 import { getDistributableUrl } from "./utils";
 import { sendGAEvent } from "@next/third-parties/google";
 import { FileDownloadOutlined } from "@mui/icons-material";
-import Image from "next/image";
 
 export type DistributableLinkProps = {
   distributable: Distributable;
@@ -16,13 +16,15 @@ export const DistributableLink: React.FC<DistributableLinkProps> = ({
 }) => {
   if (distributable.os === "ios") {
     return (
-      <a href={process.env.NEXT_PUBLIC_IOS_APP_STORE_URL!} target="_blank">
-        <Image
-          className="mx-auto cursor-pointer select-none"
-          src="/app-store-badge.svg"
-          alt=""
-          width={120}
-          height={40}
+      <a
+        href="https://apps.apple.com/us/app/smartquery/id6755796701?itscg=30200&itsct=apps_box_badge&mttnsubad=6755796701"
+        className="block mx-auto cursor-pointer user-select-none"
+        target="_blank"
+      >
+        <img
+          src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us?releaseDate=1765843200"
+          alt="Download on the App Store"
+          className="w-[120px] h-[40px] object-contain"
         />
       </a>
     );

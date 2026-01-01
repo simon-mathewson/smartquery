@@ -35,7 +35,11 @@ export const detectOS = async (): Promise<{
     return isArm() ? "arm" : "amd";
   }
 
-  if (/iphone|ipad|ipod|ios/.test(ua)) return { os: "ios", arch: "arm" };
+  // Check for iOS first - check both user agent and platform
+  const platform = navigator.platform?.toLowerCase() || "";
+  if (/iphone|ipad|ipod/.test(ua) || /iphone|ipad|ipod/.test(platform)) {
+    return { os: "ios", arch: "arm" };
+  }
 
   if (/mac os|macintosh/.test(ua))
     return { os: "macos", arch: archResultMac() };
