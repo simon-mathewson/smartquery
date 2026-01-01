@@ -1,4 +1,4 @@
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "~/hooks/useIsMobile";
 import { NavItem } from "./NavItem";
 
 export const Navigation: React.FC = () => {

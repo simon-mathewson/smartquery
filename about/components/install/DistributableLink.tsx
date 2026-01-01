@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import classNames from "classnames";
-import type { Distributable } from "./utils";
-import { getDistributableUrl } from "./utils";
+import type { Distributable } from "@/desktop/distributables";
 import { sendGAEvent } from "@next/third-parties/google";
 import { FileDownloadOutlined } from "@mui/icons-material";
 
@@ -18,8 +17,7 @@ export const DistributableLink: React.FC<DistributableLinkProps> = ({
     return (
       <a
         href="https://apps.apple.com/us/app/smartquery/id6755796701?itscg=30200&itsct=apps_box_badge&mttnsubad=6755796701"
-        className="block mx-auto cursor-pointer user-select-none"
-        target="_blank"
+        className="mx-auto block cursor-pointer select-none"
       >
         <img
           src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us?releaseDate=1765843200"
@@ -32,7 +30,7 @@ export const DistributableLink: React.FC<DistributableLinkProps> = ({
 
   return (
     <a
-      href={getDistributableUrl(distributable)}
+      href={distributable.url}
       className={classNames(
         "flex gap-1 px-1.5 py-1 items-center font-semibold !bg-gradient-to-tr rounded-full text-sm border-2 justify-center border-blue-600 text-blue-600",
         {
@@ -46,7 +44,6 @@ export const DistributableLink: React.FC<DistributableLinkProps> = ({
           arch: distributable.arch,
         });
       }}
-      target="_blank"
     >
       <FileDownloadOutlined
         className={classNames("!h-5 !w-5", { "!h-6 !w-6": highlight })}

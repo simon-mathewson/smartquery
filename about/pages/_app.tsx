@@ -1,7 +1,7 @@
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/header/Header";
-import { ConsentBanner } from "@/components/consentBanner/ConsentBanner";
-import "@/styles/globals.css";
+import { Footer } from "~/components/Footer";
+import { Header } from "~/components/header/Header";
+import { ConsentBanner } from "~/components/consentBanner/ConsentBanner";
+import "~/styles/globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { AppProps } from "next/app";
 import Head from "next/head";

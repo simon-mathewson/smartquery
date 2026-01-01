@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { DistributableLink } from "./DistributableLink";
-import type { Arch, Os } from "./utils";
-import { detectOS, distributables } from "./utils";
+import type { Os, Arch } from "@/desktop/distributables";
+import { detectOS, distributables } from "@/desktop/distributables";
 import { ExpandLessOutlined, ExpandMoreOutlined } from "@mui/icons-material";
 
 export const Install: React.FC = () => {

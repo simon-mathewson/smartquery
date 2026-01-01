@@ -1,65 +1,57 @@
-import { FileDownloadOutlined } from '@mui/icons-material';
-import { useState } from 'react';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { isNative } from '~/content/native/useNative';
-import { Button } from '~/shared/components/button/Button';
-import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { Os } from './types';
-import { getCurrentOs, getDistributables, getDistributableUrl } from './utils';
+import type { Arch, Os } from '@/desktop/distributables';
+import { detectOS, distributables } from '@/desktop/distributables';
+import { ExpandLessOutlined, ExpandMoreOutlined } from '@mui/icons-material';
+import { useEffect, useState } from 'react';
+import { DistributableLink } from './DistributableLink';
 
 export const DesktopSetup: React.FC = () => {
-  const { track } = useDefinedContext(AnalyticsContext);
+  const [currentOs, setCurrentOs] = useState<{
+    os: Os;
+    arch: Arch;
+  } | null>(null);
 
-  const [os, setOs] = useState<Os>(getCurrentOs());
+  useEffect(() => {
+    void detectOS().then(setCurrentOs);
+  }, []);
 
-  if (isNative) {
-    return null;
-  }
+  const [showOtherPlatforms, setShowOtherPlatforms] = useState(false);
+
+  const currentDistributable =
+    distributables.find(({ arch, os }) => os === currentOs?.os && arch === currentOs?.arch) ??
+    distributables.find(({ arch, os }) => os === 'macos' && arch === 'arm64')!;
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-background px-3 py-2">
-        <div className="flex items-center justify-between gap-2">
-          <div className="text-xs font-medium text-textSecondary">Install SmartQuery Desktop</div>
+    <div className="flex flex-col gap-2 rounded-xl border border-border bg-background px-3 py-2">
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-xs font-medium text-textSecondary">Install SmartQuery</div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <div className="text-xs leading-snug text-textSecondary">
+          Postgres and MySQL require SmartQuery's desktop or mobile app.
         </div>
-        <div className="flex flex-col gap-2">
-          <div className="text-xs leading-snug text-textSecondary">
-            Postgres and MySQL require SmartQuery's desktop app.
-          </div>
+        <DistributableLink distributable={currentDistributable} highlight />
+        <button
+          className="flex cursor-pointer items-center justify-center gap-0.5 text-sm font-medium text-slate-500"
+          onClick={() => setShowOtherPlatforms(!showOtherPlatforms)}
+        >
+          {showOtherPlatforms ? <ExpandLessOutlined /> : <ExpandMoreOutlined />}
+          {showOtherPlatforms ? 'Hide other platforms' : 'Show other platforms'}
+        </button>
+        {showOtherPlatforms && (
           <div className="flex flex-col gap-2">
-            <ButtonSelect<Os>
-              fullWidth
-              onChange={setOs}
-              options={[
-                { button: { label: 'Linux' }, value: 'linux' },
-                { button: { label: 'Mac' }, value: 'mac' },
-                { button: { label: 'Windows' }, value: 'windows' },
-              ]}
-              required
-              value={os}
-            />
-            <div className="flex gap-2">
-              {getDistributables(os).map((distributable) => (
-                <Button
-                  element="a"
-                  htmlProps={{
-                    className: 'grow basis-0',
-                    href: getDistributableUrl(distributable),
-                    onClick: () =>
-                      track('desktop_setup_download', {
-                        os,
-                        file_extension: distributable.fileExtension,
-                      }),
-                  }}
-                  icon={<FileDownloadOutlined />}
-                  key={getDistributableUrl(distributable)}
-                  label={`.${distributable.fileExtension} (${distributable.arch})`}
+            {distributables
+              .filter(
+                ({ arch, os }) =>
+                  os !== currentDistributable?.os || arch !== currentDistributable?.arch,
+              )
+              .map((distributable) => (
+                <DistributableLink
+                  key={distributable.os + distributable.arch}
+                  distributable={distributable}
                 />
               ))}
-            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

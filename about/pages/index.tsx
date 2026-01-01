@@ -1,10 +1,10 @@
-import { DemoVideo } from "@/components/demoVideo/DemoVideo";
-import { Install } from "@/components/install/Install";
-import { LaunchButton } from "@/components/launchButton/LaunchButton";
-import { ChatVisual } from "@/components/visuals/Chat";
-import { SchemaVisual } from "@/components/visuals/Schema";
-import { WordCarousel } from "@/components/wordCarousel/WordCarousel";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { DemoVideo } from "~/components/demoVideo/DemoVideo";
+import { Install } from "~/components/install/Install";
+import { LaunchButton } from "~/components/launchButton/LaunchButton";
+import { ChatVisual } from "~/components/visuals/Chat";
+import { SchemaVisual } from "~/components/visuals/Schema";
+import { WordCarousel } from "~/components/wordCarousel/WordCarousel";
+import { useIsMobile } from "~/hooks/useIsMobile";
 import {
   AutoAwesome,
   AutoFixHighOutlined,
