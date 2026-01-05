@@ -12,6 +12,7 @@ import { AnalyticsContext } from '../analytics/Context';
 import { ConnectionsContext } from './Context';
 import { DatabaseList } from './databases/DatabaseList';
 import { ConnectionForm } from './form/ConnectionForm';
+import { Menu } from './menu/Menu';
 
 export type ConnectionsProps = {
   hideDatabases?: boolean;
@@ -71,20 +72,23 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                 left={isMobile ? undefined : <div id={connectionsLabelId}>Connections</div>}
                 middle={isMobile ? <div id={connectionsLabelId}>Connections</div> : undefined}
                 right={
-                  <Button
-                    element={shouldNavigate ? 'link' : 'button'}
-                    htmlProps={{
-                      href: shouldNavigate ? routes.addConnection() : undefined,
-                      onClick: () => {
-                        if (!shouldNavigate) {
-                          setStage('form');
-                        }
-                        track('connections_add');
-                      },
-                    }}
-                    icon={<Add />}
-                    label="Add"
-                  />
+                  <div className="flex items-center gap-0">
+                    <Button
+                      element={shouldNavigate ? 'link' : 'button'}
+                      htmlProps={{
+                        href: shouldNavigate ? routes.addConnection() : undefined,
+                        onClick: () => {
+                          if (!shouldNavigate) {
+                            setStage('form');
+                          }
+                          track('connections_add');
+                        },
+                      }}
+                      icon={<Add />}
+                      label="Add"
+                    />
+                    <Menu />
+                  </div>
                 }
               />
             )}
