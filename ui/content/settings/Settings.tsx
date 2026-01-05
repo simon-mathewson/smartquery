@@ -25,7 +25,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { AnalyticsContext } from '../analytics/Context';
 import { AuthContext } from '../auth/Context';
-import { DesktopSetup } from '../desktop/setup/Setup';
+import { NativeSetup } from '../native/setup/Setup';
 import { ErrorTrackingContext } from '../errors/tracking/Context';
 import { isNative } from '../native/useNative';
 import { ThemeContext } from '../theme/Context';
@@ -199,7 +199,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
       )}
       {section === 'install' && (
         <>
-          <DesktopSetup />
+          <NativeSetup />
           <AddToDesktop />
         </>
       )}

@@ -14,7 +14,7 @@ import { AuthContext } from '~/content/auth/Context';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { demoConnectionId } from '~/content/connections/demo/constants';
 import { getCredentialId } from '~/content/connections/utils';
-import { DesktopSetup } from '~/content/desktop/setup/Setup';
+import { NativeSetup } from '~/content/native/setup/Setup';
 import { isNative } from '~/content/native/useNative';
 import { SqliteContext } from '~/content/sqlite/Context';
 import { useSqlite } from '~/content/sqlite/useSqlite';
@@ -213,7 +213,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
             value={formValues.engine}
           />
         </Field>
-        {formValues.type === 'remote' && <DesktopSetup />}
+        {formValues.type === 'remote' && !isNative && <NativeSetup />}
         <Field label="Storage location">
           <ButtonSelect<FormValues['storageLocation'] | null>
             fullWidth

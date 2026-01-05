@@ -4,7 +4,7 @@ import { ExpandLessOutlined, ExpandMoreOutlined } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { DistributableLink } from './DistributableLink';
 
-export const DesktopSetup: React.FC = () => {
+export const NativeSetup: React.FC = () => {
   const [currentOs, setCurrentOs] = useState<{
     os: Os;
     arch: Arch;
@@ -33,6 +33,7 @@ export const DesktopSetup: React.FC = () => {
         <button
           className="flex cursor-pointer items-center justify-center gap-0.5 text-sm font-medium text-slate-500"
           onClick={() => setShowOtherPlatforms(!showOtherPlatforms)}
+          type="button"
         >
           {showOtherPlatforms ? <ExpandLessOutlined /> : <ExpandMoreOutlined />}
           {showOtherPlatforms ? 'Hide other platforms' : 'Show other platforms'}
