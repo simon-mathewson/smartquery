@@ -3,5 +3,6 @@ export class NoLongerConnectedError extends Error {
 
   constructor() {
     super('No longer connected');
+    this.name = NoLongerConnectedError.code;
   }
 }

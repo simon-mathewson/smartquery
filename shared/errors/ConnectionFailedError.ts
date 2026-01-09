@@ -3,5 +3,6 @@ export class ConnectionFailedError extends Error {
 
   constructor() {
     super('Failed to connect to database');
+    this.name = ConnectionFailedError.code;
   }
 }

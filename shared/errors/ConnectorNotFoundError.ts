@@ -3,5 +3,6 @@ export class ConnectorNotFoundError extends Error {
 
   constructor() {
     super('Connector not found');
+    this.name = ConnectorNotFoundError.code;
   }
 }

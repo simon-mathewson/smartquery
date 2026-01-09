@@ -36,7 +36,7 @@ export const useNative = () => {
               : [];
 
           if (errorName) {
-            const KnownError = errors.find((ec) => errorName === ec.name);
+            const KnownError = errors.find((ec) => errorName === ec.code);
             if (KnownError) {
               throw new KnownError();
             }
