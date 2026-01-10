@@ -14,6 +14,7 @@ services:
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgres_db
+    command: postgres -c log_connections=on
     ports:
       - '${VITE_POSTGRES_PORT}:5432'
     networks:

@@ -18,9 +18,10 @@ export const Install: React.FC = () => {
 
   const currentDistributable =
     distributables.find(
-      ({ arch, os }) => os === currentOs?.os && arch === currentOs?.arch
-    ) ??
-    distributables.find(({ arch, os }) => os === "macos" && arch === "arm64")!;
+      ({ arch, os }) =>
+        os === currentOs?.os &&
+        (arch === currentOs?.arch || arch === "universal")
+    ) ?? distributables.find(({ os }) => os === "macos")!;
 
   return (
     <div className="flex flex-col gap-3">

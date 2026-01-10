@@ -1,7 +1,7 @@
 import { DESKTOP_S3_URL, DESKTOP_VERSION } from '@/constants';
 
 export type Os = 'debian' | 'ios' | 'macos' | 'windows';
-export type Arch = 'x64' | 'arm64';
+export type Arch = 'x64' | 'arm64' | 'universal';
 
 export const detectOS = async (): Promise<{
   os: Os;
@@ -73,18 +73,11 @@ export const distributables: Distributable[] = [
     url: getDistributableUrl({ fileName: `smartquery-desktop_${DESKTOP_VERSION}_arm64.deb` }),
   },
   {
-    arch: 'x64',
+    arch: 'universal',
     fileExtension: 'dmg',
-    label: 'macOS (x64)',
+    label: 'macOS (Universal)',
     os: 'macos',
-    url: getDistributableUrl({ fileName: `smartquery-desktop_${DESKTOP_VERSION}_x64.dmg` }),
-  },
-  {
-    arch: 'arm64',
-    fileExtension: 'dmg',
-    label: 'macOS (arm64)',
-    os: 'macos',
-    url: getDistributableUrl({ fileName: `smartquery-desktop_${DESKTOP_VERSION}_arm64.dmg` }),
+    url: getDistributableUrl({ fileName: `smartquery-desktop_${DESKTOP_VERSION}_universal.dmg` }),
   },
   {
     arch: 'x64',
