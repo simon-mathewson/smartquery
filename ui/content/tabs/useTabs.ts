@@ -7,9 +7,12 @@ import { ActiveConnectionContext } from '../connections/activeConnection/Context
 
 export const useTabs = () => {
   const activeConnectionContext = useContext(ActiveConnectionContext);
+  const activeConnection = activeConnectionContext?.activeConnection;
 
-  const localStorageSuffix = activeConnectionContext
-    ? `${activeConnectionContext.activeConnection.id}-${activeConnectionContext.activeConnection.database}`
+  const localStorageSuffix = activeConnection
+    ? `${activeConnection.id}.${activeConnection.database}${
+        activeConnection.engine === 'postgres' ? `.${activeConnection.schema}` : ''
+      }`
     : null;
   const tabsStorageKey = localStorageSuffix ? `tabs-${localStorageSuffix}` : null;
   const activeTabIdStorageKey = localStorageSuffix ? `activeTabId-${localStorageSuffix}` : null;
