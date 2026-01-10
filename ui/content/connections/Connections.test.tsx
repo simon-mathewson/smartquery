@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/experimental-ct-react';
+import { routes } from '~/router/routes';
 import { TestApp } from '~/test/componentTests/TestApp';
 import { Connections } from './Connections';
-import { routes } from '~/router/routes';
-import { mysqlConnectionMock } from './mocks';
+import { postgresConnectionMock } from './mocks';
 
 test.use({
   viewport: { height: 520, width: 800 },
@@ -23,13 +23,13 @@ test.describe('Connections', () => {
     await expect($.page().locator('form')).not.toBeAttached();
 
     expect(
-      await $.getByRole('option', { name: mysqlConnectionMock.name }).evaluate(
+      await $.getByRole('option', { name: postgresConnectionMock.name }).evaluate(
         (el) => (el as HTMLAnchorElement).href,
       ),
     ).toMatch(
       routes.connection({
-        connectionId: mysqlConnectionMock.id,
-        database: mysqlConnectionMock.database,
+        connectionId: postgresConnectionMock.id,
+        database: postgresConnectionMock.database,
         schema: '',
       }),
     );

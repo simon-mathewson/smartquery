@@ -87,14 +87,14 @@ test.describe('DatabaseList', () => {
     await expect($).toHaveScreenshot('withSchemas.png');
 
     expect(
-      await $.getByRole('option', { name: connections.activeConnection.schema }).evaluate(
+      await $.getByRole('option', { name: 'information_schema' }).evaluate(
         (el) => (el as HTMLAnchorElement).href,
       ),
     ).toMatch(
       routes.connection({
         connectionId: connections.activeConnection.id,
         database: connections.activeConnection.database,
-        schema: connections.activeConnection.schema,
+        schema: 'information_schema',
       }),
     );
   });
