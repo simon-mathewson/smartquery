@@ -1,6 +1,6 @@
 import type { RemoteConnection } from '@/connections/types';
-import { disconnect } from '@/connector/disconnect';
-import { connect } from '@/connector/connect';
+import { disconnect } from '~/main/connector/disconnect';
+import { connect } from '~/main/connector/connect';
 import { faker } from '@faker-js/faker';
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';

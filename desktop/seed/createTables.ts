@@ -1,6 +1,6 @@
 import type { RemoteConnection } from '@/connections/types';
-import { connect } from '@/connector/connect';
-import { disconnect } from '@/connector/disconnect';
+import { connect } from '~/main/connector/connect';
+import { disconnect } from '~/main/connector/disconnect';
 
 export const createTables = async (connection: RemoteConnection) => {
   const connector = await connect(connection);

@@ -4,11 +4,11 @@ import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron';
 import { join } from 'path';
 import electronUpdater from 'electron-updater';
 import unhandled from 'electron-unhandled';
-import { connect } from '@/connector/connect';
-import { disconnect } from '@/connector/disconnect';
-import { runQuery } from '@/connector/runQuery';
+import { connect } from './connector/connect';
+import { disconnect } from './connector/disconnect';
+import { runQuery } from './connector/runQuery';
 import type { RemoteConnection } from '@/connections/types';
-import { Connector } from '@/connector/types';
+import { Connector } from './connector/types';
 import { ConnectorNotFoundError } from '@/errors/ConnectorNotFoundError';
 
 Object.assign(console, log.functions);

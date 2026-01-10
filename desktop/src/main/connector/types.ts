@@ -8,19 +8,3 @@ export type Connector = {
   id: string;
   sshTunnel: SSHConnection | null;
 } & ({ mysqlPool: MySqlPool } | { postgresPool: PostgresPool });
-
-export type DbValue = string | null;
-
-export type Field = {
-  name: string;
-} & (
-  | {
-      type: 'column';
-      ref:
-        | { column: string; schema?: string; table: string }
-        | { columnId: number; tableId: number };
-    }
-  | { type: 'virtual' | 'column-or-virtual' }
-);
-
-export type Results = Array<{ fields: Field[]; rows: DbValue[][] }>;

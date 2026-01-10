@@ -1,5 +1,20 @@
 import type { RemoteConnection } from '@/connections/types';
-import type { Results } from '@/connector/types';
+
+export type DbValue = string | null;
+
+export type Field = {
+  name: string;
+} & (
+  | {
+      type: 'column';
+      ref:
+        | { column: string; schema?: string; table: string }
+        | { columnId: number; tableId: number };
+    }
+  | { type: 'virtual' | 'column-or-virtual' }
+);
+
+export type Results = Array<{ fields: Field[]; rows: DbValue[][] }>;
 
 export type ConnectDb = (connection: RemoteConnection) => Promise<string>;
 export type DisconnectDb = (connectorId: string) => Promise<void>;

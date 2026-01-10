@@ -105,7 +105,7 @@ export const runQuery = async (connector: Connector, statements: string[]): Prom
                   },
                 };
               }),
-            } satisfies Results[number]),
+            }) satisfies Results[number],
         );
       } catch (error) {
         await client.query('ROLLBACK');

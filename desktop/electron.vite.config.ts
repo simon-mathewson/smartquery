@@ -16,6 +16,7 @@ export default {
     plugins: [externalizeDepsPlugin()],
     resolve: {
       alias: {
+        '~': './src',
         '@': join(dirname(__dirname), 'shared'),
       },
     },
