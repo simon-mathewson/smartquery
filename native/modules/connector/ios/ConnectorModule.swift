@@ -85,6 +85,143 @@ public class ConnectorModule: Module {
       }
     }
 
+    AsyncFunction("switchCatalogOrSchema") { (connectorId: String, catalog: String?, schema: String?) in
+      guard let connector = self.connectors[connectorId] else {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "CONNECTOR_NOT_FOUND"])
+      }
+
+      let engine = connector.connection["engine"] as! String
+
+      if engine == "mysql" {
+        if catalog != nil {
+          throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Can't switch catalog for MySQL"])
+        }
+
+        guard let schema = schema else {
+          throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Schema is required for switching schema for MySQL"])
+        }
+
+        guard let mysqlPool = connector.mysqlPool else {
+          throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "MySQL pool not found"])
+        }
+
+        guard let connection = mysqlPool.getConnection() else {
+          throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to get connection"])
+        }
+
+        do {
+          try connection.query("USE \(schema)")
+          mysqlPool.free(connection)
+
+          var updatedConnection = connector.connection
+          updatedConnection["database"] = schema
+
+          self.connectors[connectorId] = Connector(
+            postgresPool: nil,
+            mysqlPool: mysqlPool,
+            sshClient: connector.sshClient,
+            connection: updatedConnection
+          )
+        } catch {
+          mysqlPool.free(connection)
+          throw error
+        }
+      } else {
+        // Postgres
+        if let catalog = catalog {
+          // Disconnect current connection
+          connector.postgresPool?.close()
+          connector.sshClient?.shutDown()
+
+          // Extract connection details
+          var host = connector.connection["host"] as! String
+          var port = connector.connection["port"] as! Int
+          let user = connector.connection["user"] as! String
+          let password = connector.connection["password"] as? String
+
+          var sshClient: Ssh.Client?
+
+          // Re-establish SSH tunnel if needed
+          if let sshValue = connector.connection["ssh"] as? [String: Any] {
+            let sshHost = sshValue["host"] as! String
+            let sshPort = sshValue["port"] as! Int
+            let sshUser = sshValue["user"] as! String
+            let sshPassword = sshValue["password"] as? String
+            let sshPrivateKey = sshValue["privateKey"] as? String
+            let sshPrivateKeyPassphrase = sshValue["privateKeyPassphrase"] as? String
+
+            let remoteHost = host
+            let remotePort = port
+
+            sshClient = Ssh.Client()
+            let result = try await sshClient!.forward(
+              sshHost: sshHost,
+              sshPort: sshPort,
+              sshUser: sshUser,
+              sshPassword: sshPassword,
+              sshPrivateKey: sshPrivateKey,
+              sshPrivateKeyPassphrase: sshPrivateKeyPassphrase,
+              remoteHost: remoteHost,
+              remotePort: remotePort
+            )
+
+            host = result.host
+            port = result.port
+          }
+
+          // Create new connection with new database
+          let postgresPool = try await connectPostgres(host: host, port: port, database: catalog, user: user, password: password)
+
+          var updatedConnection = connector.connection
+          updatedConnection["database"] = catalog
+          if let schema = schema {
+            updatedConnection["schema"] = schema
+          }
+
+          self.connectors[connectorId] = Connector(
+            postgresPool: postgresPool,
+            mysqlPool: nil,
+            sshClient: sshClient,
+            connection: updatedConnection
+          )
+        } else {
+          guard let schema = schema else {
+            throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Either catalog or schema is required to switch catalog/schema for Postgres"])
+          }
+
+          guard let postgresPool = connector.postgresPool else {
+            throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Postgres pool not found"])
+          }
+
+          // Execute SET search_path query
+          try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            postgresPool.withConnection { result in
+              do {
+                let connection = try result.get()
+                let setSearchPathStatement = try connection.prepareStatement(text: "SET search_path TO \(schema)")
+                defer { setSearchPathStatement.close() }
+                try setSearchPathStatement.execute()
+                continuation.resume()
+              } catch {
+                continuation.resume(throwing: error)
+              }
+            }
+          }
+
+          // Update connection dictionary
+          var updatedConnection = connector.connection
+          updatedConnection["schema"] = schema
+
+          self.connectors[connectorId] = Connector(
+            postgresPool: postgresPool,
+            mysqlPool: nil,
+            sshClient: connector.sshClient,
+            connection: updatedConnection
+          )
+        }
+      }
+    }
+
     Function("disconnectDb") { (connectorId: String) in
       guard let connector = self.connectors[connectorId] else {
         return

@@ -1,4 +1,4 @@
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 import type { NULL_OPERATORS, OPERATORS } from './constants';
 import type { ColumnRef } from '../../../utils/columnRefs';
 

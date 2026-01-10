@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { assert } from 'ts-essentials';
 import { isDateTimeType } from '~/shared/dataTypes/utils';
 import type { Column } from '~/shared/types';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 
 export type LineChartProps = {
   chart: Chart;

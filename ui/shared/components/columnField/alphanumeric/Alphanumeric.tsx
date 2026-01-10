@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 import { Input } from '~/shared/components/input/Input';
 import { isDateTimeType, isIntegerType, isTimeType } from '~/shared/dataTypes/utils';
 import type { DataType } from '~/shared/dataTypes/types';

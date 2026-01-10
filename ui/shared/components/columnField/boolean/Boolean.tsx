@@ -1,7 +1,7 @@
 import React from 'react';
 import { isNil } from 'lodash';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 import { getBooleanLabel } from '~/content/tabs/queries/utils/getBooleanLabel';
 
 export type BooleanFieldProps = {

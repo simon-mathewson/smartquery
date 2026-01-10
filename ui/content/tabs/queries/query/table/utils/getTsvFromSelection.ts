@@ -1,5 +1,5 @@
 import type { CreateRow } from '~/content/edit/types';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 
 const nullString = 'NULL';
 

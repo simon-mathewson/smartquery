@@ -1,4 +1,4 @@
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 import type { Engine } from '@/connections/types';
 import { escapeValue } from '~/shared/utils/sql/sql';
 import type { CreateValue, Location, UniqueValue } from './types';

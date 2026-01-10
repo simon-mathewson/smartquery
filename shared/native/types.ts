@@ -17,6 +17,11 @@ export type Field = {
 export type Results = Array<{ fields: Field[]; rows: DbValue[][] }>;
 
 export type ConnectDb = (connection: RemoteConnection) => Promise<string>;
+export type SwitchCatalogOrSchema = (
+  connectorId: string,
+  catalog?: string,
+  schema?: string,
+) => Promise<void>;
 export type DisconnectDb = (connectorId: string) => Promise<void>;
 export type RunQuery = (props: { connectorId: string; statements: string[] }) => Promise<Results>;
 
@@ -39,6 +44,7 @@ export type NativeBridgeMessage =
     } & (
       | { method: 'addToKeychain'; args: [string, string] }
       | { method: 'connectDb'; args: [RemoteConnection] }
+      | { method: 'switchCatalogOrSchema'; args: [string, string?, string?] }
       | { method: 'disconnectDb'; args: [string] }
       | { method: 'runQuery'; args: [{ connectorId: string; statements: string[] }] }
       | { method: 'getSqliteFile'; args: [string] }

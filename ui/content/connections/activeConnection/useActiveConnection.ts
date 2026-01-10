@@ -1,4 +1,4 @@
-import type { Results } from '@/connector/types';
+import type { Results } from '@/native/types';
 import { ConnectorNotFoundError } from '@/errors/ConnectorNotFoundError';
 import { NoLongerConnectedError } from '@/errors/NoLongerConnectedError';
 import { useCallback, useEffect, useMemo, useState } from 'react';

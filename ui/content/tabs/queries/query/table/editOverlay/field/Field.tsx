@@ -4,7 +4,7 @@ import type { CreateChange, CreateLocation, UpdateLocation } from '~/content/edi
 import { ColumnField } from '~/shared/components/columnField/ColumnField';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { type Column } from '~/shared/types';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 
 export type EditOverlayFieldProps = {
   autoFocus?: boolean;

@@ -6,6 +6,7 @@ import type {
   GetSqliteFile,
   NativeBridgeMessage,
   RunQuery,
+  SwitchCatalogOrSchema,
   WriteToClipboard,
 } from '@/native/types';
 import { useCallback, useMemo } from 'react';
@@ -85,6 +86,12 @@ export const useNative = () => {
     [request],
   );
 
+  const switchCatalogOrSchema = useCallback<SwitchCatalogOrSchema>(
+    (connectorId, catalog, schema) =>
+      request<SwitchCatalogOrSchema>('switchCatalogOrSchema', [connectorId, catalog, schema]),
+    [request],
+  );
+
   const disconnectDb = useCallback<DisconnectDb>(
     (connectorId) => request<DisconnectDb>('disconnectDb', [connectorId]),
     [request],
@@ -109,11 +116,20 @@ export const useNative = () => {
     () => ({
       addToKeychain,
       connectDb,
+      switchCatalogOrSchema,
       disconnectDb,
       getSqliteFile,
       runQuery,
       writeToClipboard,
     }),
-    [addToKeychain, connectDb, disconnectDb, getSqliteFile, runQuery, writeToClipboard],
+    [
+      addToKeychain,
+      connectDb,
+      switchCatalogOrSchema,
+      disconnectDb,
+      getSqliteFile,
+      runQuery,
+      writeToClipboard,
+    ],
   );
 };

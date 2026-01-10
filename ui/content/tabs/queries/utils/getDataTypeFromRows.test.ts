@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { getDataTypeFromRows } from './getDataTypeFromRows';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 
 describe('getDataTypeFromRows', () => {
   describe('Boolean detection', () => {

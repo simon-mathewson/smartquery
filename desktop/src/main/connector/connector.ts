@@ -1,11 +1,18 @@
-import type { ConnectDb, DisconnectDb, GetSqliteFile, RunQuery } from '@/native/types';
-import { connect } from './connect';
-import { runQuery as runQueryFn } from './runQuery';
-import type { Connector } from './types';
-import { disconnect } from './disconnect';
 import { ConnectorNotFoundError } from '@/errors/ConnectorNotFoundError';
+import type {
+  ConnectDb,
+  DisconnectDb,
+  GetSqliteFile,
+  RunQuery,
+  SwitchCatalogOrSchema,
+} from '@/native/types';
+import assert from 'assert';
 import type { BrowserWindow } from 'electron';
 import { dialog } from 'electron';
+import { connect } from './connect';
+import { disconnect } from './disconnect';
+import { runQuery as runQueryFn } from './runQuery';
+import type { Connector } from './types';
 
 const connectors: Record<string, Connector> = {};
 
@@ -19,6 +26,47 @@ export const connectDb: ConnectDb = async (connection) => {
   connectors[connector.id] = connector;
 
   return connector.id;
+};
+
+export const switchCatalogOrSchema: SwitchCatalogOrSchema = async (
+  connectorId,
+  catalog,
+  schema,
+) => {
+  if (!(connectorId in connectors)) {
+    throw new ConnectorNotFoundError();
+  }
+
+  const connector = connectors[connectorId];
+
+  if ('mysqlPool' in connector) {
+    assert(!catalog, "Can't switch catalog for MySQL");
+    assert(schema, 'Schema is required for switching schema for MySQL');
+
+    await connector.mysqlPool.query(`USE ${schema}`);
+
+    connector.connection.database = schema;
+  } else if ('postgresPool' in connector) {
+    if (catalog) {
+      await disconnect(connector);
+      const newConnection = { ...connector.connection, database: catalog };
+
+      if (schema) {
+        newConnection.schema = schema;
+      }
+
+      const newConnector = await connect(newConnection);
+
+      connectors[connectorId] = newConnector;
+      return;
+    }
+
+    assert(schema, 'Either catalog or schema is required to switch catalog/schema for Postgres');
+
+    await connector.postgresPool.query(`SET search_path TO ${schema}`);
+
+    connector.connection.schema = schema;
+  }
 };
 
 export const disconnectDb: DisconnectDb = async (connectorId) => {

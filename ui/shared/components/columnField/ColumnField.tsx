@@ -4,7 +4,7 @@ import { CodeInput } from '~/shared/components/codeInput/CodeInput';
 import { Field } from '~/shared/components/field/Field';
 import { isEnumType } from '~/shared/dataTypes/utils';
 import { type Column } from '~/shared/types';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 import { Alphanumeric } from './alphanumeric/Alphanumeric';
 import { BooleanField } from './boolean/Boolean';
 import { EnumField } from './enumField/EnumField';

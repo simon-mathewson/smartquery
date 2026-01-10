@@ -1,5 +1,5 @@
 import type { Column } from '~/shared/types';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 import { getDataTypeFromRows } from './getDataTypeFromRows';
 
 export const getVirtualColumn = (rows: Record<string, DbValue>[], column: string): Column => ({

@@ -1,4 +1,4 @@
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 
 export type UniqueValue = { column: string; value: string };
 

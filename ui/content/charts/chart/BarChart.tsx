@@ -1,7 +1,7 @@
 import type { Chart } from '@/savedQueries/types';
 import { BarChart as MuiBarChart } from '@mui/x-charts';
 import { assert } from 'ts-essentials';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 
 export type BarChartProps = {
   chart: Chart;

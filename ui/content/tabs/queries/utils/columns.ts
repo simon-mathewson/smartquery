@@ -1,5 +1,5 @@
 import type { Connection } from '@/connections/types';
-import type { DbValue, Field } from '@/connector/types';
+import type { DbValue, Field } from '@/native/types';
 import { sortBy, uniqWith } from 'lodash';
 import type { DataType } from '~/shared/dataTypes/types';
 import type { Column } from '~/shared/types';

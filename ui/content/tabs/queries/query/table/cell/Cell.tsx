@@ -17,7 +17,7 @@ import { ResizeHandle } from '~/shared/components/resizeHandle/ResizeHandle';
 import { isNil } from 'lodash';
 import { compareColumnRefs, getColumnRef } from '../../../utils/columnRefs';
 import { getBooleanLabel } from '../../../utils/getBooleanLabel';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 
 export type CellProps = {
   column: Column | string;

@@ -1,4 +1,4 @@
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 import type { DataType } from '~/shared/dataTypes/types';
 
 const REGEX_PATTERNS = {

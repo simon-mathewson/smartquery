@@ -110,6 +110,8 @@ export default function Index() {
               return addToKeychain(...args);
             case "connectDb":
               return ConnectorModule.connectDb(...args);
+            case "switchCatalogOrSchema":
+              return ConnectorModule.switchCatalogOrSchema(...args);
             case "disconnectDb":
               return ConnectorModule.disconnectDb(...args);
             case "runQuery":
@@ -191,7 +193,7 @@ export default function Index() {
   return (
     <WebView
       ref={webviewRef}
-      source={{ uri: "https://smartquery.dev" }}
+      source={{ uri: process.env.EXPO_PUBLIC_UI_URL }}
       style={{
         position: "absolute",
         top: webviewTop,

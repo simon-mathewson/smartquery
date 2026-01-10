@@ -1,4 +1,4 @@
-import type { DbValue, Field } from '@/connector/types';
+import type { DbValue, Field } from '@/native/types';
 
 export const getResultsAsRecords = (
   result: { fields: Field[]; rows: DbValue[][] },

@@ -1,7 +1,7 @@
 import { isNil } from 'lodash';
 import React from 'react';
 import { type Column } from '~/shared/types';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 import { Select } from '~/shared/components/select/Select';
 
 export type EnumFieldProps = {

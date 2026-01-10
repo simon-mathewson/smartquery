@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { useDebouncedCallback } from 'use-debounce';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 import { CELL_HEIGHT } from './cell/constants';
 
 const ROW_HEIGHT = CELL_HEIGHT;

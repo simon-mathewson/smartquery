@@ -1,11 +1,17 @@
-import { ConnectDb, DisconnectDb, RunQuery } from '@/native/types';
+import { ConnectDb, DisconnectDb, RunQuery, SwitchCatalogOrSchema } from '@/native/types';
 import { electronApp } from '@electron-toolkit/utils';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
 import unhandled from 'electron-unhandled';
 import electronUpdater from 'electron-updater';
 import { join } from 'path';
-import { connectDb, disconnectDb, getSqliteFile, runQuery } from './connector/connector';
+import {
+  connectDb,
+  disconnectDb,
+  getSqliteFile,
+  runQuery,
+  switchCatalogOrSchema,
+} from './connector/connector';
 
 Object.assign(console, log.functions);
 
@@ -64,6 +70,9 @@ void app.whenReady().then(() => {
     switch (method) {
       case 'connectDb': {
         return connectDb(...(args as Parameters<ConnectDb>));
+      }
+      case 'switchCatalogOrSchema': {
+        return switchCatalogOrSchema(...(args as Parameters<SwitchCatalogOrSchema>));
       }
       case 'disconnectDb': {
         return disconnectDb(...(args as Parameters<DisconnectDb>));

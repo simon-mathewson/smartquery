@@ -1,10 +1,10 @@
 import type { FileConnection, RemoteConnection } from '@/connections/types';
-import type { DbValue } from '@/connector/types';
 import type { Chart } from '@/savedQueries/types';
 import type { Database as SqliteDatabase } from 'sql.js';
 import type { InputMode } from '~/content/tabs/queries/query/types';
 import type { Select } from '~/content/tabs/queries/types';
 import type { DataType } from './dataTypes/types';
+import type { DbValue } from '@/native/types';
 
 export { SqliteDatabase };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 import { ButtonSelect } from '~/shared/components/buttonSelect/ButtonSelect';
 
 export type NullButtonProps = {

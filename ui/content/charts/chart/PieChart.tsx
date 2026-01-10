@@ -1,6 +1,6 @@
 import { PieChart as MuiPieChart } from '@mui/x-charts';
 import { useMemo } from 'react';
-import type { DbValue } from '@/connector/types';
+import type { DbValue } from '@/native/types';
 
 export type PieChartProps = {
   colors: string[];
