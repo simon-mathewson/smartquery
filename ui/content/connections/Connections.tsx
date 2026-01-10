@@ -114,11 +114,14 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                       ? `${connection.user}@${connection.host}:${connection.port}`
                       : undefined,
                   htmlProps: {
-                    href: routes.connection({
-                      connectionId: connection.id,
-                      database: connection.database,
-                      schema: connection.engine === 'postgres' ? connection.schema ?? '' : '',
-                    }),
+                    href:
+                      connection.id !== activeConnection?.id
+                        ? routes.connection({
+                            connectionId: connection.id,
+                            database: connection.database,
+                            schema: connection.engine === 'postgres' ? connection.schema ?? '' : '',
+                          })
+                        : undefined,
                   },
                   label: connection.name,
                   selectedVariant: 'primary',

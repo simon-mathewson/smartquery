@@ -70,11 +70,14 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
             htmlProps={{ 'aria-labelledby': databasesLabelId }}
             items={databases.map((database) => ({
               htmlProps: {
-                href: routes.connection({
-                  connectionId: activeConnection.id,
-                  database: database.name,
-                  schema: '',
-                }),
+                href:
+                  activeConnection.database !== database.name
+                    ? routes.connection({
+                        connectionId: activeConnection.id,
+                        database: database.name,
+                        schema: '',
+                      })
+                    : undefined,
               },
               label: database.name,
               selectedVariant: 'primary',
@@ -114,11 +117,14 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
               htmlProps={{ 'aria-labelledby': schemasLabelId }}
               items={schemas.map((schema) => ({
                 htmlProps: {
-                  href: routes.connection({
-                    connectionId: activeConnection.id,
-                    database: activeConnection.database,
-                    schema,
-                  }),
+                  href:
+                    activeConnection.schema !== schema
+                      ? routes.connection({
+                          connectionId: activeConnection.id,
+                          database: activeConnection.database,
+                          schema,
+                        })
+                      : undefined,
                 },
                 label: schema,
                 selectedVariant: 'primary',
