@@ -91,15 +91,8 @@ export const connectionsRouter = trpc.router({
       const prismaInput = await (async () => {
         const prismaInputUnencrypted = mapConnectionToPrisma(input.connection);
 
-        const connection = await prisma.connection.upsert({
+        const existingConnection = await prisma.connection.findFirst({
           where: { id: input.connection.id, userId: user.id },
-          update: {
-            ...prismaInputUnencrypted,
-          },
-          create: {
-            ...prismaInputUnencrypted,
-            userId: user.id,
-          },
         });
 
         if (
@@ -111,7 +104,7 @@ export const connectionsRouter = trpc.router({
 
           return encryptCredentials({
             connection: prismaInputUnencrypted,
-            existingConnection: connection,
+            existingConnection: existingConnection ?? undefined,
             prisma,
             userId: user.id,
             userPassword: input.userPassword,
@@ -120,12 +113,12 @@ export const connectionsRouter = trpc.router({
 
         // When encryption gets removed from connection, decrypt those credentials which were not
         // changed
-        if (input.connection.type === 'remote' && connection.encryptCredentials) {
+        if (input.connection.type === 'remote' && existingConnection?.encryptCredentials) {
           assert(input.userPassword);
           await verifyPassword(user, input.userPassword);
 
           const decryptedConnection = await decryptCredentials({
-            connection: connection,
+            connection: existingConnection,
             prisma,
             userId: user.id,
             userPassword: input.userPassword,
@@ -134,17 +127,19 @@ export const connectionsRouter = trpc.router({
           return {
             ...prismaInputUnencrypted,
             password:
-              input.connection.password === connection.password
+              input.connection.password === existingConnection.password
                 ? decryptedConnection.password
                 : input.connection.password,
             passwordNonce: null,
             sshPassword:
-              input.connection.ssh && input.connection.ssh.password === connection.sshPassword
+              input.connection.ssh &&
+              input.connection.ssh.password === existingConnection.sshPassword
                 ? decryptedConnection.sshPassword
                 : input.connection.ssh?.password,
             sshPasswordNonce: null,
             sshPrivateKey:
-              input.connection.ssh && input.connection.ssh.privateKey === connection.sshPrivateKey
+              input.connection.ssh &&
+              input.connection.ssh.privateKey === existingConnection.sshPrivateKey
                 ? decryptedConnection.sshPrivateKey
                 : input.connection.ssh?.privateKey,
             sshPrivateKeyNonce: null,
@@ -154,9 +149,13 @@ export const connectionsRouter = trpc.router({
         return prismaInputUnencrypted;
       })();
 
-      await prisma.connection.update({
+      await prisma.connection.upsert({
         where: { id: input.connection.id, userId: user.id },
-        data: prismaInput,
+        create: {
+          ...prismaInput,
+          userId: user.id,
+        },
+        update: prismaInput,
       });
     }),
 });
