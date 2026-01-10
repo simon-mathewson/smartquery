@@ -9,7 +9,7 @@ export const AddConnectionPage: React.FC = () => {
 
   return (
     <Page title="Add connection">
-      <Card htmlProps={{ className: 'flex flex-col p-3' }}>
+      <Card htmlProps={{ className: 'flex flex-col p-3 w-full' }}>
         <ConnectionForm exit={() => navigate(routes.root())} />
       </Card>
     </Page>

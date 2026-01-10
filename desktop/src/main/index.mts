@@ -1,15 +1,11 @@
-import log from 'electron-log';
+import { ConnectDb, DisconnectDb, RunQuery } from '@/native/types';
 import { electronApp } from '@electron-toolkit/utils';
-import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron';
-import { join } from 'path';
-import electronUpdater from 'electron-updater';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import log from 'electron-log';
 import unhandled from 'electron-unhandled';
-import { connect } from './connector/connect';
-import { disconnect } from './connector/disconnect';
-import { runQuery } from './connector/runQuery';
-import type { RemoteConnection } from '@/connections/types';
-import { Connector } from './connector/types';
-import { ConnectorNotFoundError } from '@/errors/ConnectorNotFoundError';
+import electronUpdater from 'electron-updater';
+import { join } from 'path';
+import { connectDb, disconnectDb, getSqliteFile, runQuery } from './connector/connector';
 
 Object.assign(console, log.functions);
 
@@ -64,74 +60,19 @@ void app.whenReady().then(() => {
 
   createWindow();
 
-  const connectors: Record<string, Connector> = {};
-
   ipcMain.handle('handle-request', async (_, method: string, args: unknown[]) => {
     switch (method) {
       case 'connectDb': {
-        const [connection] = args as [RemoteConnection];
-        const connector = await connect(connection);
-
-        if (import.meta.env.DEV) {
-          console.info('Connected to', connection.id);
-        }
-
-        connectors[connector.id] = connector;
-
-        return connector.id;
+        return connectDb(...(args as Parameters<ConnectDb>));
       }
       case 'disconnectDb': {
-        const [connectorId] = args as [string];
-        if (!(connectorId in connectors)) return;
-
-        await disconnect(connectors[connectorId]);
-
-        if (import.meta.env.DEV) {
-          console.info('Disconnected from', connectorId);
-        }
-
-        delete connectors[connectorId];
-        return;
+        return disconnectDb(...(args as Parameters<DisconnectDb>));
       }
       case 'runQuery': {
-        const [props] = args as [{ connectorId: string; statements: string[] }];
-        const { connectorId, statements } = props;
-
-        if (import.meta.env.DEV) {
-          console.info(`Processing ${statements.length} queries`);
-        }
-
-        if (!(connectorId in connectors)) {
-          throw new ConnectorNotFoundError();
-        }
-
-        const results = await runQuery(connectors[connectorId], statements);
-
-        if (import.meta.env.DEV) {
-          console.info('Executed queries', results.length);
-        }
-
-        return results;
+        return runQuery(...(args as Parameters<RunQuery>));
       }
       case 'getSqliteFile': {
-        // File picker for SQLite files
-        const result = await dialog.showOpenDialog(mainWindow!, {
-          title: 'Select SQLite Database File',
-          filters: [{ name: 'SQLite Database', extensions: ['db', 'sqlite', 'sqlite3'] }],
-          properties: ['openFile'],
-        });
-
-        if (result.canceled || result.filePaths.length === 0) {
-          throw new Error('No file selected');
-        }
-
-        const fs = await import('fs/promises');
-        const filePath = result.filePaths[0];
-        const fileBuffer = await fs.readFile(filePath);
-        const base64 = fileBuffer.toString('base64');
-        const fileName = filePath.split(/[/\\]/).pop() || 'database.db';
-
-        return { name: fileName, base64 };
+        return getSqliteFile(mainWindow!);
       }
       default:
         throw new Error(`Unknown method: ${method}`);

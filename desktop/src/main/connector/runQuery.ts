@@ -1,5 +1,6 @@
 import { NoLongerConnectedError } from '@/errors/NoLongerConnectedError';
-import type { Connector, DbValue, Results } from './types';
+import type { Connector } from './types';
+import type { DbValue, Results } from '@/native/types';
 
 export const runQuery = async (connector: Connector, statements: string[]): Promise<Results> => {
   try {
