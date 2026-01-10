@@ -15,6 +15,7 @@
     "prebuild:all": "pnpm run typecheck && pnpm run lint",
     "build:all": "pnpm build:node && rm -rf dist && pnpm run build:linux && pnpm run build:mac && pnpm run build:win",
     "build:linux": "electron-builder --linux --publish always",
+    "prebuild:mac": "test -f electron-builder.env || (echo 'Error: electron-builder.env file is required for Mac build' && exit 1)",
     "build:mac": "pnpm electron-builder --mac --universal --publish always",
     "build:node": "rm -rf out && electron-vite build",
     "build:win": "electron-builder --win --publish always",
