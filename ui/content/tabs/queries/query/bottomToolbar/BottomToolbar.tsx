@@ -11,11 +11,11 @@ import { formatNumber } from '@/utils/formatNumber';
 
 export type BottomToolbarProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
-  isEditable: boolean;
+  canAdd: boolean;
 };
 
 export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
-  const { handleRowCreationRef, isEditable } = props;
+  const { handleRowCreationRef, canAdd } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
   const { rows } = useDefinedContext(ResultContext);
@@ -34,7 +34,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
 
   return (
     <Header
-      left={isEditable && <Add handleRowCreationRef={handleRowCreationRef} />}
+      left={canAdd && <Add handleRowCreationRef={handleRowCreationRef} />}
       middle={
         ((totalRows !== undefined && totalRows > 0) || rows.length > 0) && (
           <div className="text-xs text-textSecondary">

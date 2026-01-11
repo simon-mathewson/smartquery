@@ -22,6 +22,7 @@ import type { InputMode } from './types';
 import { getQueryTitle } from './utils';
 import { ViewColumnsButton } from './viewColumnsButton/ViewColumnsButton';
 import { getUniqueValues } from '../utils/getUniqueValues';
+import { getUniqueColumns } from '../utils/getUniqueColumns';
 
 export const Query: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -41,11 +42,16 @@ export const Query: React.FC = () => {
 
   const handleRowCreationRef = React.useRef<(() => void) | null>(null);
 
+  const isEditableBase = Boolean(
+    result && result.tables.length === 1 && result.tables[0].type === 'BASE TABLE',
+  );
+
   const isEditable = Boolean(
-    result?.columns &&
-      getUniqueValues(result.columns, result.rows[0])?.length &&
-      result.tables.length === 1 &&
-      result.tables[0].type === 'BASE TABLE',
+    isEditableBase && result?.columns && getUniqueValues(result.columns, result.rows[0])?.length,
+  );
+
+  const canAdd = Boolean(
+    isEditableBase && result?.columns && getUniqueColumns(result.columns).length,
   );
 
   return (
@@ -122,9 +128,13 @@ export const Query: React.FC = () => {
           <div className="pl-2 pr-2 sm:pl-4">
             <Chart />
           </div>
-          <Table handleRowCreationRef={handleRowCreationRef} isEditable={isEditable} />
+          <Table
+            handleRowCreationRef={handleRowCreationRef}
+            isEditable={isEditable}
+            canAdd={canAdd}
+          />
           <div className="shrink-0 p-2 pl-2 sm:pl-4">
-            <BottomToolbar handleRowCreationRef={handleRowCreationRef} isEditable={isEditable} />
+            <BottomToolbar handleRowCreationRef={handleRowCreationRef} canAdd={canAdd} />
           </div>
         </div>
       )}

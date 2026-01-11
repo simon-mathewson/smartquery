@@ -20,10 +20,11 @@ import { ActiveConnectionContext } from '~/content/connections/activeConnection/
 export type TableProps = {
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
   isEditable: boolean;
+  canAdd: boolean;
 };
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { handleRowCreationRef, isEditable } = props;
+  const { handleRowCreationRef, isEditable, canAdd } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
@@ -87,12 +88,12 @@ export const Table: React.FC<TableProps> = (props) => {
 
   const rowsToCreate = useMemo(
     () =>
-      isEditable
+      canAdd
         ? createChanges
             .filter((change) => tables[0].originalName === change.location.table)
             .map((change) => change.row)
         : [],
-    [createChanges, isEditable, tables],
+    [canAdd, createChanges, tables],
   );
 
   useCopyPaste(selection, rowsToCreate, tableRef);
@@ -153,7 +154,7 @@ export const Table: React.FC<TableProps> = (props) => {
   }, [visibleColumnNamesKey, isEmpty, resizedColumnWidths]);
 
   const { topRowsHiddenCount, visibleRowCount, bottomRowsHiddenCount } = useVirtualization(
-    rows,
+    rows.length + rowsToCreate.length,
     tableRef,
   );
 
@@ -283,7 +284,7 @@ export const Table: React.FC<TableProps> = (props) => {
               });
             })}
           </div>
-          {isEditable && (
+          {(isEditable || canAdd) && (
             <SelectionActions
               columnCount={visibleColumns!.length}
               isEditing={isEditing}

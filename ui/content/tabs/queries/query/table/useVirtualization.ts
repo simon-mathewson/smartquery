@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { useDebouncedCallback } from 'use-debounce';
-import type { DbValue } from '@/native/types';
 import { CELL_HEIGHT } from './cell/constants';
 
 const ROW_HEIGHT = CELL_HEIGHT;
 const BUFFER_ROWS = 50;
 
-export const useVirtualization = (rows: DbValue[][], tableRef: React.RefObject<HTMLDivElement>) => {
+export const useVirtualization = (rows: number, tableRef: React.RefObject<HTMLDivElement>) => {
   const [topRowsHiddenCount, setTopRowsHiddenCount] = useState(0);
   const [visibleRowCount, setVisibleRowCount] = useState(0);
-  const bottomRowsHiddenCount = Math.max(0, rows.length - topRowsHiddenCount - visibleRowCount);
+  const bottomRowsHiddenCount = Math.max(0, rows - topRowsHiddenCount - visibleRowCount);
 
   const onScroll = useDebouncedCallback(
     () => {
