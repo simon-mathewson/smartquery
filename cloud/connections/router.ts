@@ -113,7 +113,10 @@ export const connectionsRouter = trpc.router({
 
         // When encryption gets removed from connection, decrypt those credentials which were not
         // changed
-        if (input.connection.type === 'remote' && existingConnection?.encryptCredentials) {
+        if (
+          input.connection.type === 'remote' &&
+          existingConnection?.credentialStorage === 'encrypted'
+        ) {
           assert(input.userPassword);
           await verifyPassword(user, input.userPassword);
 

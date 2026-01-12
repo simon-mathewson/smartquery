@@ -46,7 +46,7 @@ test.describe('SshFormSection', () => {
       [
         'ssh',
         {
-          credentialStorage: 'alwaysAsk',
+          credentialStorage: 'keychain',
           credentialType: 'password',
           host: '',
           password: '',
@@ -138,7 +138,7 @@ test.describe('SshFormSection', () => {
       <SshFormSectionStory
         componentProps={{
           ...props,
-          formValues: { ...props.formValues, credentialStorage: 'alwaysAsk' },
+          formValues: { ...props.formValues, credentialStorage: 'keychain' },
         }}
       />,
     );

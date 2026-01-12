@@ -20,8 +20,10 @@ import { demoConnectionId } from './demo/constants';
 import { getOrCreateDemoConnection } from './demo/getOrCreateDemoConnection';
 import type { SignInModalInput } from './signInModal/types';
 import type { UserPasswordModalInput } from './userPasswordModal/types';
+import { getCredentialId } from './utils';
 import { isNative } from '../native/useNative';
 import { ConnectionFailedError } from '@/errors/ConnectionFailedError';
+import { CredentialsContext } from '../credentials/Context';
 
 export type Connections = ReturnType<typeof useConnections>;
 
@@ -36,6 +38,7 @@ export const useConnections = (props: UseConnectionsProps) => {
   const [, navigate] = useLocation();
 
   const native = useDefinedContext(NativeContext);
+  const credentials = useDefinedContext(CredentialsContext);
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { user, isInitializing: isInitializingAuth } = useDefinedContext(AuthContext);
@@ -298,11 +301,76 @@ export const useConnections = (props: UseConnectionsProps) => {
         sshPrivateKeyPassphrase: connection.ssh?.privateKeyPassphrase ?? undefined,
       };
 
-      if (
-        connection.password === null ||
-        connection.ssh?.password === null ||
-        connection.ssh?.privateKey === null
-      ) {
+      const requiresCredentials = connection.password === null;
+
+      // On native/desktop, try to get credentials from keychain first
+      if (isNative && requiresCredentials && connection.credentialStorage === 'keychain') {
+        const keychainCredentials: {
+          password?: string;
+          sshPassword?: string;
+          sshPrivateKey?: string;
+          sshPrivateKeyPassphrase?: string;
+        } = {};
+
+        if (connection.password === null) {
+          const keychainPassword = await credentials.getCredential(
+            getCredentialId(connection, 'password'),
+          );
+          if (keychainPassword) {
+            keychainCredentials.password = keychainPassword;
+          }
+        }
+
+        if (connection.ssh?.password === null) {
+          const keychainSshPassword = await credentials.getCredential(
+            getCredentialId(connection.ssh, 'sshPassword'),
+          );
+          if (keychainSshPassword) {
+            keychainCredentials.sshPassword = keychainSshPassword;
+          }
+        }
+
+        if (connection.ssh?.privateKey === null) {
+          const keychainSshPrivateKey = await credentials.getCredential(
+            getCredentialId(connection.ssh, 'sshPrivateKey'),
+          );
+          if (keychainSshPrivateKey) {
+            keychainCredentials.sshPrivateKey = keychainSshPrivateKey;
+          }
+        }
+
+        if (connection.ssh?.privateKeyPassphrase === null) {
+          const keychainSshPrivateKeyPassphrase = await credentials.getCredential(
+            getCredentialId(connection.ssh, 'sshPrivateKeyPassphrase'),
+          );
+          if (keychainSshPrivateKeyPassphrase) {
+            keychainCredentials.sshPrivateKeyPassphrase = keychainSshPrivateKeyPassphrase;
+          }
+        }
+
+        // If we got all required credentials from keychain, return them
+        const hasAllRequiredCredentials =
+          (connection.password !== null || keychainCredentials.password !== undefined) &&
+          (connection.ssh?.password !== null ||
+            connection.ssh?.password === undefined ||
+            keychainCredentials.sshPassword !== undefined) &&
+          (connection.ssh?.privateKey !== null ||
+            connection.ssh?.privateKey === undefined ||
+            keychainCredentials.sshPrivateKey !== undefined);
+
+        if (hasAllRequiredCredentials) {
+          return {
+            password: keychainCredentials.password ?? storedCredentials.password,
+            sshPassword: keychainCredentials.sshPassword ?? storedCredentials.sshPassword,
+            sshPrivateKey: keychainCredentials.sshPrivateKey ?? storedCredentials.sshPrivateKey,
+            sshPrivateKeyPassphrase:
+              keychainCredentials.sshPrivateKeyPassphrase ??
+              storedCredentials.sshPrivateKeyPassphrase,
+          };
+        }
+      }
+
+      if (requiresCredentials) {
         return new Promise<{
           password: string;
           sshPassword: string | undefined;
@@ -312,7 +380,34 @@ export const useConnections = (props: UseConnectionsProps) => {
           signInModal.open(
             {
               connection,
-              onSignIn: async (enteredCredentials) =>
+              onSignIn: async (enteredCredentials) => {
+                if (connection.credentialStorage === 'keychain') {
+                  if (enteredCredentials.password) {
+                    await credentials.storeCredential(
+                      getCredentialId(connection, 'password'),
+                      enteredCredentials.password,
+                    );
+                  }
+                  if (enteredCredentials.sshPassword) {
+                    await credentials.storeCredential(
+                      getCredentialId(connection.ssh!, 'sshPassword'),
+                      enteredCredentials.sshPassword,
+                    );
+                  }
+                  if (enteredCredentials.sshPrivateKey) {
+                    await credentials.storeCredential(
+                      getCredentialId(connection.ssh!, 'sshPrivateKey'),
+                      enteredCredentials.sshPrivateKey,
+                    );
+                  }
+                  if (enteredCredentials.sshPrivateKeyPassphrase) {
+                    await credentials.storeCredential(
+                      getCredentialId(connection.ssh!, 'sshPrivateKeyPassphrase'),
+                      enteredCredentials.sshPrivateKeyPassphrase,
+                    );
+                  }
+                }
+
                 resolve({
                   password: enteredCredentials.password ?? storedCredentials.password,
                   sshPassword: enteredCredentials.sshPassword ?? storedCredentials.sshPassword,
@@ -321,7 +416,8 @@ export const useConnections = (props: UseConnectionsProps) => {
                   sshPrivateKeyPassphrase:
                     enteredCredentials.sshPrivateKeyPassphrase ??
                     storedCredentials.sshPrivateKeyPassphrase,
-                }),
+                });
+              },
             },
             { onClose: () => reject(new ConnectCanceledError()) },
           );
@@ -332,6 +428,39 @@ export const useConnections = (props: UseConnectionsProps) => {
         connection.credentialStorage === 'encrypted' &&
         !(skipDecryption.password && skipDecryption.ssh)
       ) {
+        // On native/desktop, try to get user password from keychain first
+        if (isNative && user) {
+          const userPassword = await credentials.getCredential(user.email);
+          if (userPassword) {
+            try {
+              const decryptedConnection = await cloudApi.connections.decryptCredentials.mutate({
+                id: connection.id,
+                userPassword,
+              });
+
+              assert(decryptedConnection.type === 'remote');
+
+              return {
+                password: skipDecryption.password
+                  ? storedCredentials.password
+                  : decryptedConnection.password ?? '',
+                sshPassword: skipDecryption.ssh
+                  ? storedCredentials.sshPassword
+                  : decryptedConnection.ssh?.password ?? undefined,
+                sshPrivateKey: skipDecryption.ssh
+                  ? storedCredentials.sshPrivateKey
+                  : decryptedConnection.ssh?.privateKey ?? undefined,
+                sshPrivateKeyPassphrase: skipDecryption.ssh
+                  ? storedCredentials.sshPrivateKeyPassphrase
+                  : decryptedConnection.ssh?.privateKeyPassphrase ?? undefined,
+              };
+            } catch (error) {
+              console.error(error);
+              // If decryption fails, fall through to show modal
+            }
+          }
+        }
+
         return new Promise<{
           password: string;
           sshPassword: string | undefined;
@@ -372,7 +501,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
       return storedCredentials;
     },
-    [cloudApi, signInModal, userPasswordModal],
+    [credentials, signInModal, user, cloudApi, userPasswordModal],
   );
 
   const switchCatalogOrSchema = useCallback(

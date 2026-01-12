@@ -13,7 +13,7 @@ export const decryptCredentials = async (props: {
 }): Promise<Connection> => {
   const { connection, prisma, userId, userPassword } = props;
 
-  assert(connection.encryptCredentials);
+  assert(connection.credentialStorage === 'encrypted');
 
   const newConnection = cloneDeep(connection);
 

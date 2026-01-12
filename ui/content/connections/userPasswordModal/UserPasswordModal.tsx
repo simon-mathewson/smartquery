@@ -80,7 +80,6 @@ export const UserPasswordModal: React.FC<UserPasswordModalProps> = (props) => {
                 htmlProps={{ value: password }}
                 isExistingCredential
                 onChange={setPassword}
-                showAddToKeychain
                 username={user.email}
               />
             </Field>

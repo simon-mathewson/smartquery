@@ -76,7 +76,7 @@ export const getInitialFormValues = async (props: {
   }
 
   return {
-    credentialStorage: user ? 'encrypted' : 'alwaysAsk',
+    credentialStorage: user ? 'encrypted' : 'keychain',
     database: '',
     engine: 'postgres',
     host: '',
@@ -127,14 +127,20 @@ export const getConnectionFromForm = (formArg: FormValues) => {
   const connection = connectionSchema.parse(form);
 
   if (form.type === 'remote' && connection.type === 'remote') {
-    if (connection.credentialStorage === 'alwaysAsk') {
+    if (
+      connection.credentialStorage === 'alwaysAsk' ||
+      connection.credentialStorage === 'keychain'
+    ) {
       connection.password = null;
     }
 
     if (form.ssh) {
       assert(connection.ssh);
 
-      if (connection.credentialStorage === 'alwaysAsk') {
+      if (
+        connection.credentialStorage === 'alwaysAsk' ||
+        connection.credentialStorage === 'keychain'
+      ) {
         if (form.ssh.credentialType === 'password') {
           connection.ssh.password = null;
         } else {

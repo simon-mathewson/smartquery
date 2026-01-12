@@ -1,5 +1,5 @@
-import { useOrientation } from "@/hooks/useOrientation";
-import ConnectorModule from "@/modules/connector/src/ConnectorModule";
+import { useOrientation } from "~/hooks/useOrientation";
+import ConnectorModule from "~/modules/connector/src/ConnectorModule";
 import assert from "assert";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
@@ -16,6 +16,7 @@ import type {
   GetSqliteFile,
   NativeBridgeMessage,
 } from "../../shared/native/types";
+import { getKeychainServiceName } from "~/utils/getKeychainServiceName";
 
 export default function Index() {
   const colorScheme = useColorScheme();
@@ -45,14 +46,37 @@ export default function Index() {
   }, []);
 
   const addToKeychain = useCallback(
-    async (username: string, password: string) =>
-      Keychain.setSharedWebCredentials(
-        "https://smartquery.dev",
-        username,
-        password
-      ),
+    async (
+      username: string,
+      password: string,
+      preferWebCredentials?: boolean
+    ) => {
+      if (preferWebCredentials) {
+        await Keychain.setSharedWebCredentials(
+          "https://smartquery.dev",
+          username,
+          password
+        );
+      } else {
+        await Keychain.setGenericPassword(username, password, {
+          service: getKeychainServiceName(username),
+          cloudSync: true,
+        });
+      }
+    },
     []
   );
+
+  const getFromKeychain = useCallback(async (username: string) => {
+    const credentials = await Keychain.getGenericPassword({
+      service: getKeychainServiceName(username),
+      cloudSync: true,
+    });
+    if (credentials) {
+      return credentials.password;
+    }
+    return null;
+  }, []);
 
   const sqliteFiles = useRef<{ [connectionId: string]: File }>({});
 
@@ -108,6 +132,8 @@ export default function Index() {
           switch (method) {
             case "addToKeychain":
               return addToKeychain(...args);
+            case "getFromKeychain":
+              return getFromKeychain(...args);
             case "connectDb":
               return ConnectorModule.connectDb(...args);
             case "switchCatalogOrSchema":

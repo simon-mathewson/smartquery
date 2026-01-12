@@ -7,7 +7,10 @@ import { Card } from '~/shared/components/card/Card';
 import { Field } from '~/shared/components/field/Field';
 import { Header } from '~/shared/components/header/Header';
 import { Input } from '~/shared/components/input/Input';
+import { Toggle } from '~/shared/components/toggle/Toggle';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { isNative } from '~/content/native/useNative';
+import { CredentialsContext } from '~/content/credentials/Context';
 import { AuthContext } from '../Context';
 
 export type LoginProps = {
@@ -20,17 +23,26 @@ export const Login: React.FC<LoginProps> = (props) => {
   const { onBack, onSuccess, onShowSignup } = props;
 
   const auth = useDefinedContext(AuthContext);
+  const credentials = useDefinedContext(CredentialsContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [storeInKeychain, setStoreInKeychain] = useState(true);
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      await auth.logIn(email, password, { onSuccess });
+      await auth.logIn(email, password, {
+        onSuccess: async () => {
+          if (storeInKeychain && isNative) {
+            await credentials.storeCredential(email, password, true);
+          }
+          onSuccess();
+        },
+      });
     },
-    [auth, email, onSuccess, password],
+    [auth, email, onSuccess, password, storeInKeychain, credentials],
   );
 
   return (
@@ -62,6 +74,15 @@ export const Login: React.FC<LoginProps> = (props) => {
               onChange={setPassword}
             />
           </Field>
+          {isNative && (
+            <Field htmlProps={{ className: 'mt-2' }}>
+              <Toggle
+                label="Store in Keychain"
+                value={storeInKeychain}
+                onChange={setStoreInKeychain}
+              />
+            </Field>
+          )}
           <Button
             element="link"
             htmlProps={{

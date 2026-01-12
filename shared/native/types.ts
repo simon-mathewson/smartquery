@@ -27,7 +27,12 @@ export type RunQuery = (props: { connectorId: string; statements: string[] }) =>
 
 export type GetSqliteFile = (connectionId: string) => Promise<{ name: string; base64: string }>;
 
-export type AddToKeychain = (username: string, password: string) => Promise<void>;
+export type AddToKeychain = (
+  username: string,
+  password: string,
+  preferWebCredentials?: boolean,
+) => Promise<void>;
+export type GetFromKeychain = (username: string) => Promise<string | null>;
 
 export type WriteToClipboard = (text: string) => void;
 
@@ -42,7 +47,8 @@ export type NativeBridgeMessage =
       type: 'request';
       id: string;
     } & (
-      | { method: 'addToKeychain'; args: [string, string] }
+      | { method: 'addToKeychain'; args: [string, string, boolean?] }
+      | { method: 'getFromKeychain'; args: [string] }
       | { method: 'connectDb'; args: [RemoteConnection] }
       | { method: 'switchCatalogOrSchema'; args: [string, string?, string?] }
       | { method: 'disconnectDb'; args: [string] }

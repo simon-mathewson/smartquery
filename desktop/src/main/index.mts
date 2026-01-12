@@ -4,6 +4,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
 import unhandled from 'electron-unhandled';
 import electronUpdater from 'electron-updater';
+import keytar from 'keytar';
 import { join } from 'path';
 import {
   connectDb,
@@ -12,6 +13,7 @@ import {
   runQuery,
   switchCatalogOrSchema,
 } from './connector/connector';
+import { getKeychainServiceName } from '@/utils/getKeychainServiceName';
 
 Object.assign(console, log.functions);
 
@@ -68,6 +70,16 @@ void app.whenReady().then(() => {
 
   ipcMain.handle('handle-request', async (_, method: string, args: unknown[]) => {
     switch (method) {
+      case 'addToKeychain': {
+        const [username, password] = args as [string, string, boolean?];
+        // Desktop always uses generic keychain via keytar (preferWebCredentials is ignored)
+        await keytar.setPassword(getKeychainServiceName(username), username, password);
+        return;
+      }
+      case 'getFromKeychain': {
+        const [username] = args as [string];
+        return await keytar.getPassword(getKeychainServiceName(username), username);
+      }
       case 'connectDb': {
         return connectDb(...(args as Parameters<ConnectDb>));
       }

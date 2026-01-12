@@ -34,6 +34,7 @@ import { SshFormSection } from './ssh/SshFormSection';
 import { TestConnection } from './test/TestConnection';
 import type { FormValues } from './utils';
 import { getConnectionFromForm, getDefaultPort, getInitialFormValues, isFormValid } from './utils';
+import { CredentialsContext } from '~/content/credentials/Context';
 
 export type ConnectionFormProps = {
   connectionToEditId?: string;
@@ -53,15 +54,16 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const { connectionToEditId, exit, hideBackButton, htmlProps, overrideInitialValues } = props;
 
   const [, navigate] = useLocation();
+
   const { track } = useDefinedContext(AnalyticsContext);
   const { user } = useDefinedContext(AuthContext);
-
   const { getSqliteFile, writeSqliteFile } = useDefinedContext(SqliteContext);
 
   const mode = connectionToEditId ? 'edit' : 'add';
 
   const { addConnection, connections, removeConnection, updateConnection } =
     useDefinedContext(ConnectionsContext);
+  const { storeCredential } = useDefinedContext(CredentialsContext);
   const connectionToEdit = connectionToEditId
     ? connections.find((connection) => connection.id === connectionToEditId) ?? null
     : null;
@@ -106,6 +108,37 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
     if (formValues.type === 'file') {
       assert(formValues.sqliteFile);
       await writeSqliteFile(formValues.sqliteFile, formValues.id);
+    }
+
+    if (
+      formValues.type === 'remote' &&
+      formValues.credentialStorage === 'keychain' &&
+      connection.type === 'remote'
+    ) {
+      if (formValues.password) {
+        await storeCredential(getCredentialId(connection, 'password'), formValues.password);
+      }
+
+      if (formValues.ssh) {
+        if (formValues.ssh.password && connection.ssh) {
+          await storeCredential(
+            getCredentialId(connection.ssh, 'sshPassword'),
+            formValues.ssh.password,
+          );
+        }
+        if (formValues.ssh.privateKey && connection.ssh) {
+          await storeCredential(
+            getCredentialId(connection.ssh, 'sshPrivateKey'),
+            formValues.ssh.privateKey,
+          );
+        }
+        if (formValues.ssh.privateKeyPassphrase && connection.ssh) {
+          await storeCredential(
+            getCredentialId(connection.ssh, 'sshPrivateKeyPassphrase'),
+            formValues.ssh.privateKeyPassphrase,
+          );
+        }
+      }
     }
 
     if (connectionToEdit) {
@@ -224,7 +257,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 formValues.type === 'remote' &&
                 formValues.credentialStorage === 'encrypted'
               ) {
-                setFormValue('credentialStorage', 'alwaysAsk');
+                setFormValue('credentialStorage', 'keychain');
               }
             }}
             options={[
@@ -267,20 +300,30 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
         {formValues.type === 'remote' && (
           <>
             <Field label="Password storage">
-              <ButtonSelect<'alwaysAsk' | 'encrypted' | 'plain'>
+              <ButtonSelect<'alwaysAsk' | 'encrypted' | 'keychain' | 'plain'>
+                columns={2}
                 fullWidth
                 onChange={(value) => setFormValue('credentialStorage', value)}
                 options={[
                   {
                     button: {
                       htmlProps: { disabled: formValues.storageLocation !== 'cloud' },
-                      label: 'Encrypted',
+                      label: 'Cloud',
                       tooltip:
                         formValues.storageLocation !== 'cloud'
                           ? 'Only supported when storing in cloud'
                           : 'Stores credentials in your account and encrypts them based on your main password. Requires entering main password every time you connect. Storing and auto-filling main password with browser keychain is supported.',
                     },
                     value: 'encrypted',
+                  },
+                  {
+                    button: {
+                      label: 'Keychain',
+                      tooltip: isNative
+                        ? 'Stores credentials in your device keychain.'
+                        : 'Stores credentials in your browser keychain. Browser will automatically fill credentials when connecting.',
+                    },
+                    value: 'keychain',
                   },
                   {
                     button: {
@@ -300,6 +343,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                   },
                 ]}
                 required
+                rows={2}
                 value={formValues.credentialStorage}
               />
             </Field>

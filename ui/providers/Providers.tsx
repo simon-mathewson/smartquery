@@ -3,6 +3,7 @@ import { AnalyticsProvider } from '~/content/analytics/Provider';
 import { AuthProvider } from '~/content/auth/Provider';
 import { CloudApiProvider } from '~/content/cloud/api/Provider';
 import { ConnectionsProvider } from '~/content/connections/Provider';
+import { CredentialsProvider } from '~/content/credentials/Provider';
 import { DragAndDropProvider } from '~/content/dragAndDrop/Provider';
 import { EditProvider } from '~/content/edit/Provider';
 import { EscapeStackProvider } from '../shared/hooks/useEscape/useStack/Provider';
@@ -27,6 +28,7 @@ const providers = {
   ThemeProvider,
   ErrorTrackingProvider,
   NativeProvider,
+  CredentialsProvider,
   CloudApiProvider,
   AnalyticsProvider,
   ToastProvider,

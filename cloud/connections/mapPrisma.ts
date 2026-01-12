@@ -4,17 +4,8 @@ import type { CreateConnectionInput } from './schemas';
 import { omit } from 'lodash';
 
 export const mapPrismaToConnection = (c: DbConnection) => {
-  const credentialStorage = (() => {
-    if (c.encryptCredentials) {
-      return 'encrypted';
-    }
-
-    return c.password === null ? 'alwaysAsk' : 'plain';
-  })();
-
   return {
     ...c,
-    credentialStorage,
     engine: c.engine,
     host: c.host!,
     port: c.port!,
@@ -40,9 +31,8 @@ export const mapPrismaToConnection = (c: DbConnection) => {
 export const mapConnectionToPrisma = (
   c: CreateConnectionInput['connection'],
 ): Prisma.ConnectionCreateWithoutUserInput => ({
-  ...omit(c, 'credentialStorage', 'ssh', 'storageLocation', 'type', 'user'),
+  ...omit(c, 'ssh', 'storageLocation', 'type', 'user'),
   dbUser: c.user,
-  encryptCredentials: c.credentialStorage === 'encrypted',
   ...(c.ssh
     ? {
         sshHost: c.ssh.host,

@@ -31,27 +31,17 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
       event?.stopPropagation();
 
       assert(input);
-      const { connection, onSignIn } = input;
+      const { onSignIn } = input;
 
       setIsConnecting(true);
       setShowAuthFailed(false);
 
       try {
         await onSignIn({
-          password: connection.credentialStorage === 'alwaysAsk' ? password : undefined,
-          sshPassword:
-            connection.credentialStorage === 'alwaysAsk' && connection.ssh?.password !== undefined
-              ? sshPassword
-              : undefined,
-          sshPrivateKey:
-            connection.credentialStorage === 'alwaysAsk' && connection.ssh?.privateKey !== undefined
-              ? sshPrivateKey
-              : undefined,
-          sshPrivateKeyPassphrase:
-            connection.credentialStorage === 'alwaysAsk' &&
-            connection.ssh?.privateKeyPassphrase !== undefined
-              ? sshPrivateKeyPassphrase
-              : undefined,
+          password,
+          sshPassword,
+          sshPrivateKey,
+          sshPrivateKeyPassphrase,
         });
 
         close();
@@ -82,7 +72,8 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
   const userHandle = getUserHandle(connection);
   const passwordId = getCredentialId(connection, 'password');
 
-  const showDbLogin = connection.credentialStorage === 'alwaysAsk';
+  const showDbLogin =
+    connection.credentialStorage === 'alwaysAsk' || connection.credentialStorage === 'keychain';
 
   return (
     <Modal
@@ -103,7 +94,6 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
                   htmlProps={{ value: password }}
                   isExistingCredential
                   onChange={setPassword}
-                  showAddToKeychain
                   username={passwordId}
                 />
               </Field>
@@ -112,7 +102,7 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
             </fieldset>
           </form>
         )}
-        {connection.credentialStorage === 'alwaysAsk' && connection.ssh && (
+        {showDbLogin && connection.ssh && (
           <form onSubmit={onSubmit}>
             <fieldset className="flex flex-col gap-2" disabled={isConnecting}>
               <Field label="SSH User">
@@ -124,7 +114,6 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
                     htmlProps={{ value: sshPassword }}
                     isExistingCredential
                     onChange={setSshPassword}
-                    showAddToKeychain
                     username={getCredentialId(connection.ssh, 'sshPassword')}
                   />
                 </Field>
@@ -135,7 +124,6 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
                     htmlProps={{ value: sshPrivateKey }}
                     isExistingCredential
                     onChange={setSshPrivateKey}
-                    showAddToKeychain
                     username={getCredentialId(connection.ssh, 'sshPrivateKey')}
                   />
                 </Field>
@@ -146,7 +134,6 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
                     htmlProps={{ value: sshPrivateKeyPassphrase }}
                     isExistingCredential
                     onChange={setSshPrivateKeyPassphrase}
-                    showAddToKeychain
                     username={getCredentialId(connection.ssh, 'sshPrivateKeyPassphrase')}
                   />
                 </Field>

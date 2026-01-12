@@ -5,6 +5,7 @@ import type { AuthContextType } from '~/content/auth/Context';
 import type { CloudApiContextType } from '~/content/cloud/api/Context';
 import type { ActiveConnectionContextType } from '~/content/connections/activeConnection/Context';
 import type { ConnectionsContextType } from '~/content/connections/Context';
+import type { CredentialsContextType } from '~/content/credentials/Context';
 import type { DragAndDropContextType } from '~/content/dragAndDrop/Context';
 import type { EditContextType } from '~/content/edit/Context';
 import type { ErrorTrackingContextType } from '~/content/errors/tracking/Context';
@@ -28,6 +29,7 @@ export type ContextTypes = {
   ConnectionsProvider: ConnectionsContextType;
   CopilotProvider: CopilotContextType;
   CopilotSidebarProvider: CopilotSidebarContextType;
+  CredentialsProvider: CredentialsContextType;
   DragAndDropProvider: DragAndDropContextType;
   EditProvider: EditContextType;
   ErrorTrackingProvider: ErrorTrackingContextType;

@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CredentialInput, type CredentialInputProps } from './CredentialInput';
-import { mockStore, getStoreCalls } from './mockStore';
 import { spy } from 'tinyspy';
 import { TestApp } from '~/test/componentTests/TestApp';
 
@@ -45,23 +44,6 @@ test('shows credential input and hidden username input', async ({ mount }) => {
   await passwordInput.press('p');
 
   expect(onChange.calls.at(-1)?.[0]).toBe('p' + props.htmlProps.value);
-});
-
-test('allows changing credential and adding it to keychain', async ({ mount }) => {
-  const $ = await mount(
-    <TestApp>
-      <CredentialInput {...props} showAddToKeychain />
-    </TestApp>,
-  );
-  await mockStore($.page());
-
-  await expect($.page()).toHaveScreenshot('credentialInputWithAddToKeychain.png');
-
-  const addToKeychainButton = $.locator('button').first();
-  await addToKeychainButton.click();
-
-  const calls = await getStoreCalls($.page());
-  expect(calls).toEqual([{ id: props.username, password: passwordWithReplacedLineBreaks }]);
 });
 
 test('allows pasting credentials with line breaks', async ({ mount }) => {

@@ -3,6 +3,7 @@ import type {
   AddToKeychain,
   ConnectDb,
   DisconnectDb,
+  GetFromKeychain,
   GetSqliteFile,
   NativeBridgeMessage,
   RunQuery,
@@ -77,7 +78,13 @@ export const useNative = () => {
   );
 
   const addToKeychain = useCallback<AddToKeychain>(
-    (username, password) => request<AddToKeychain>('addToKeychain', [username, password]),
+    (username, password, preferWebCredentials) =>
+      request<AddToKeychain>('addToKeychain', [username, password, preferWebCredentials]),
+    [request],
+  );
+
+  const getFromKeychain = useCallback<GetFromKeychain>(
+    (username) => request<GetFromKeychain>('getFromKeychain', [username]),
     [request],
   );
 
@@ -115,6 +122,7 @@ export const useNative = () => {
   return useMemo(
     () => ({
       addToKeychain,
+      getFromKeychain,
       connectDb,
       switchCatalogOrSchema,
       disconnectDb,
@@ -124,6 +132,7 @@ export const useNative = () => {
     }),
     [
       addToKeychain,
+      getFromKeychain,
       connectDb,
       switchCatalogOrSchema,
       disconnectDb,

@@ -7,6 +7,8 @@ import { Field } from '~/shared/components/field/Field';
 import { Input } from '~/shared/components/input/Input';
 import { useModal } from '~/shared/components/modal/useModal';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { isNative } from '~/content/native/useNative';
+import { CredentialsContext } from '~/content/credentials/Context';
 import { AuthContext } from '../Context';
 import { PasswordFields } from '../PasswordFields';
 import { Card } from '~/shared/components/card/Card';
@@ -22,10 +24,12 @@ export type SignupProps = {
 
 export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess, onShowLogin }) => {
   const auth = useDefinedContext(AuthContext);
+  const credentials = useDefinedContext(CredentialsContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
+  const [storeInKeychain, setStoreInKeychain] = useState(true);
 
   const captchaModal = useModal<CaptchaModalInput>();
 
@@ -37,11 +41,14 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess, onShowLogin }
         onSuccess: async () => {
           captchaModal.close();
           await auth.signUp(email, password);
+          if (storeInKeychain && isNative) {
+            await credentials.storeCredential(email, password, true);
+          }
           onSuccess();
         },
       });
     },
-    [auth, captchaModal, email, onSuccess, password],
+    [auth, captchaModal, email, onSuccess, password, storeInKeychain, credentials],
   );
 
   const [isAgreementAccepted, setIsAgreementAccepted] = useState(false);
@@ -71,6 +78,15 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess, onShowLogin }
             setPassword={setPassword}
             setRepeatPassword={setRepeatPassword}
           />
+          {isNative && (
+            <Field htmlProps={{ className: 'mt-2' }}>
+              <Toggle
+                label="Store in Keychain"
+                value={storeInKeychain}
+                onChange={setStoreInKeychain}
+              />
+            </Field>
+          )}
           <Toggle
             label={
               <>

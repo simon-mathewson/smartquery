@@ -33,7 +33,6 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
               'ssh',
               newSshEnabled
                 ? ({
-                    credentialStorage: 'alwaysAsk',
                     credentialType: 'password',
                     host: '',
                     password: '',

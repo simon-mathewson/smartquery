@@ -15,7 +15,7 @@ export const encryptCredentials = async (props: {
 }): Promise<Prisma.ConnectionCreateWithoutUserInput> => {
   const { connection, existingConnection, prisma, userId, userPassword } = props;
 
-  if (!connection.encryptCredentials) {
+  if (connection.credentialStorage !== 'encrypted') {
     return connection;
   }
 
@@ -40,7 +40,7 @@ export const encryptCredentials = async (props: {
   );
 
   const isNewPassword =
-    !existingConnection?.encryptCredentials ||
+    existingConnection?.credentialStorage !== 'encrypted' ||
     existingConnection.password !== newConnection.password;
 
   if (isNewPassword) {
@@ -51,13 +51,13 @@ export const encryptCredentials = async (props: {
   }
 
   const isNewSshPassword =
-    !existingConnection?.encryptCredentials ||
+    existingConnection?.credentialStorage !== 'encrypted' ||
     existingConnection.sshPassword !== newConnection.sshPassword;
   const isNewSshPrivateKey =
-    !existingConnection?.encryptCredentials ||
+    existingConnection?.credentialStorage !== 'encrypted' ||
     existingConnection.sshPrivateKey !== newConnection.sshPrivateKey;
   const isNewSshPrivateKeyPassphrase =
-    !existingConnection?.encryptCredentials ||
+    existingConnection?.credentialStorage !== 'encrypted' ||
     !existingConnection.isSshPrivateKeyPassphraseEncrypted ||
     existingConnection.sshPrivateKeyPassphrase !== newConnection.sshPrivateKeyPassphrase;
 

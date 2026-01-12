@@ -1,16 +1,13 @@
 import { CheckCircleOutline, SettingsEthernet, WarningAmber } from '@mui/icons-material';
-import { Button } from '~/shared/components/button/Button';
 import React, { useEffect, useState } from 'react';
+import { assert } from 'ts-essentials';
+import { AnalyticsContext } from '~/content/analytics/Context';
+import { Button } from '~/shared/components/button/Button';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { ConnectCanceledError } from '../../connectAbortedError';
+import { ConnectionsContext } from '../../Context';
 import type { FormValues } from '../utils';
 import { getConnectionFromForm, isFormValid } from '../utils';
-import type { SignInModalInput } from '~/content/connections/signInModal/types';
-import { useModal } from '~/shared/components/modal/useModal';
-import { SignInModal } from '~/content/connections/signInModal/SignInModal';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { assert } from 'ts-essentials';
-import { ConnectionsContext } from '../../Context';
-import { AnalyticsContext } from '~/content/analytics/Context';
-import { ConnectCanceledError } from '../../connectAbortedError';
 
 export type TestConnectionProps = {
   formValues: FormValues;
@@ -26,8 +23,6 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
   const [hasSucceeded, setHasSucceeded] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
 
-  const signInModal = useModal<SignInModalInput>();
-
   useEffect(() => {
     setHasFailed(false);
     setHasSucceeded(false);
@@ -38,6 +33,20 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     const isNewConnection = formValues.id === '';
     const connection = getConnectionFromForm({ ...formValues, id: formValues.id || 'id' });
     assert(connection.type === 'remote');
+
+    // Restore credentials for keychain storage, as they are not persisted for the test
+    if (connection.credentialStorage === 'keychain') {
+      assert(formValues.type === 'remote');
+
+      connection.password = formValues.password;
+      if (connection.ssh) {
+        assert(formValues.ssh);
+
+        connection.ssh.password = formValues.ssh.password;
+        connection.ssh.privateKey = formValues.ssh.privateKey;
+        connection.ssh.privateKeyPassphrase = formValues.ssh.privateKeyPassphrase;
+      }
+    }
 
     const existingConnection = connections.find((c) => c.id === connection.id);
     if (existingConnection) {
@@ -103,7 +112,6 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
 
   return (
     <>
-      <SignInModal {...signInModal} />
       <Button
         htmlProps={{
           disabled: isTesting || !isFormValid(formValues),

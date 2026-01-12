@@ -10,11 +10,11 @@ datasource db {
 }
 
 model Connection {
-  createdAt                          DateTime     @default(now())
-  updatedAt                          DateTime     @updatedAt
+  createdAt                          DateTime          @default(now())
+  updatedAt                          DateTime          @updatedAt
   database                           String
   dbUser                             String
-  encryptCredentials                 Boolean
+  credentialStorage                  CredentialStorage
   engine                             Engine
   host                               String
   name                               String
@@ -30,13 +30,13 @@ model Connection {
   sshPasswordNonce                   String?
   sshPrivateKeyNonce                 String?
   sshUsePrivateKey                   Boolean?
-  id                                 String       @id @default(uuid()) @db.Uuid
-  userId                             String       @db.Uuid
+  id                                 String            @id @default(uuid()) @db.Uuid
+  userId                             String            @db.Uuid
   sshPrivateKeyPassphrase            String?
   sshPrivateKeyPassphraseNonce       String?
-  useSshPrivateKeyPassphrase         Boolean      @default(false)
-  isSshPrivateKeyPassphraseEncrypted Boolean      @default(false)
-  user                               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  useSshPrivateKeyPassphrase         Boolean           @default(false)
+  isSshPrivateKeyPassphraseEncrypted Boolean           @default(false)
+  user                               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   savedQueries                       SavedQuery[]
 
   @@index([userId])
@@ -147,6 +147,13 @@ enum ChartType {
   bar
   line
   pie
+}
+
+enum CredentialStorage {
+  encrypted
+  keychain
+  alwaysAsk
+  plain
 }
 
 enum Engine {
