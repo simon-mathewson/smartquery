@@ -55,7 +55,7 @@ test.describe('ConnectionForm', () => {
     expect(addConnection.calls).toEqual([
       [
         {
-          credentialStorage: 'alwaysAsk',
+          credentialStorage: 'keychain',
           database: 'db',
           engine: 'postgres',
           host: 'localhost',
@@ -147,7 +147,8 @@ test.describe('ConnectionForm', () => {
 
     await fillOutForm($);
 
-    await expect($.getByRole('radio', { name: 'Always ask', checked: true })).toBeAttached();
+    await expect($.getByRole('radio', { name: 'Keychain', checked: true })).toBeAttached();
+    await $.getByRole('radio', { name: 'Always ask' }).click();
     const passwordInput = $.getByRole('textbox', { name: 'Password' }).last();
     await expect(passwordInput).not.toBeAttached();
 

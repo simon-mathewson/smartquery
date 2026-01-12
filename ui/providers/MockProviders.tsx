@@ -22,11 +22,13 @@ import { SavedQueriesMockProvider } from '~/content/savedQueries/MockProvider';
 import { CopilotSidebarProvider } from '~/content/ai/copilot/sidebar/Provider';
 import { CopilotProvider } from '~/content/ai/copilot/Provider';
 import { NativeProvider } from '~/content/native/Provider';
+import { CredentialsProvider } from '~/content/credentials/Provider';
 
 const mockProviders = {
   ThemeProvider,
   ErrorTrackingProvider: ErrorTrackingMockProvider,
   NativeProvider,
+  CredentialsProvider,
   AnalyticsProvider: AnalyticsMockProvider,
   EscapeStackProvider,
   ToastProvider,

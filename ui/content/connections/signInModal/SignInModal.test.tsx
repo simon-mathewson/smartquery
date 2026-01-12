@@ -50,8 +50,9 @@ test.describe('SignInModal', () => {
       [
         {
           password: 'password',
-          sshPassword: undefined,
-          sshPrivateKey: undefined,
+          sshPassword: '',
+          sshPrivateKey: '',
+          sshPrivateKeyPassphrase: '',
         },
       ],
     ]);
@@ -108,8 +109,9 @@ test.describe('SignInModal', () => {
       [
         {
           password: 'password',
-          sshPassword: undefined,
+          sshPassword: '',
           sshPrivateKey: 'private key',
+          sshPrivateKeyPassphrase: '',
         },
       ],
     ]);
@@ -157,7 +159,7 @@ test.describe('SignInModal', () => {
       [
         {
           password: 'password',
-          sshPassword: undefined,
+          sshPassword: '',
           sshPrivateKey: 'private key',
           sshPrivateKeyPassphrase: 'passphrase',
         },
@@ -213,7 +215,8 @@ test.describe('SignInModal', () => {
         {
           password: 'password',
           sshPassword: 'ssh password',
-          sshPrivateKey: undefined,
+          sshPrivateKey: '',
+          sshPrivateKeyPassphrase: '',
         },
       ],
     ]);
