@@ -1,15 +1,18 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { NativeContext } from '../native/Context';
 import { isNative } from '../native/useNative';
+import { type Credential, type CredentialType } from '@/utils/credentials';
 
 export const useCredentials = () => {
   const native = useDefinedContext(NativeContext);
 
   const storeCredential = useCallback(
-    async (username: string, password: string, preferWebCredentials?: boolean): Promise<void> => {
+    async (props: { username: string; password: string; type: CredentialType }): Promise<void> => {
+      const { username, password, type } = props;
+
       if (isNative) {
-        await native.addToKeychain(username, password, preferWebCredentials);
+        await native.addToKeychain(username, password, type);
         return;
       }
 
@@ -26,32 +29,10 @@ export const useCredentials = () => {
   );
 
   const getCredential = useCallback(
-    async (username: string): Promise<string | null> => {
+    async (props: { username: string; type: CredentialType }): Promise<string | null> => {
+      const { username, type } = props;
       if (isNative) {
-        return native.getFromKeychain(username);
-      }
-
-      if ('credentials' in navigator) {
-        // Should not be used at this time, relying on autofill instead
-
-        try {
-          const credential = await navigator.credentials.get({
-            password: true,
-            mediation: 'optional',
-          });
-
-          if (
-            credential &&
-            'password' in credential &&
-            typeof credential.password === 'string' &&
-            credential.id === username
-          ) {
-            return credential.password;
-          }
-        } catch {
-          // User cancelled, no credentials found, or not supported by browser
-          return null;
-        }
+        return native.getFromKeychain(username, type);
       }
 
       return null;
@@ -59,8 +40,30 @@ export const useCredentials = () => {
     [native],
   );
 
-  return {
-    getCredential,
-    storeCredential,
-  };
+  const removeUserCredential = useCallback(
+    async (username: string): Promise<void> => {
+      if (isNative) {
+        await native.removeFromKeychain(username, 'user');
+      }
+    },
+    [native],
+  );
+
+  const getUserCredential = useCallback(async (): Promise<Credential | null> => {
+    if (isNative) {
+      return native.getUserCredential();
+    }
+
+    return null;
+  }, [native]);
+
+  return useMemo(
+    () => ({
+      getCredential,
+      getUserCredential,
+      storeCredential,
+      removeUserCredential,
+    }),
+    [getCredential, getUserCredential, storeCredential, removeUserCredential],
+  );
 };

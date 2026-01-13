@@ -1,4 +1,5 @@
 import type { RemoteConnection } from '@/connections/types';
+import type { Credential, CredentialType } from '@/utils/credentials';
 
 export type DbValue = string | null;
 
@@ -30,9 +31,11 @@ export type GetSqliteFile = (connectionId: string) => Promise<{ name: string; ba
 export type AddToKeychain = (
   username: string,
   password: string,
-  preferWebCredentials?: boolean,
+  type: CredentialType,
 ) => Promise<void>;
-export type GetFromKeychain = (username: string) => Promise<string | null>;
+export type GetFromKeychain = (username: string, type: CredentialType) => Promise<string | null>;
+export type RemoveFromKeychain = (username: string, type: CredentialType) => Promise<void>;
+export type GetUserCredential = () => Promise<Credential | null>;
 
 export type WriteToClipboard = (text: string) => void;
 
@@ -47,8 +50,10 @@ export type NativeBridgeMessage =
       type: 'request';
       id: string;
     } & (
-      | { method: 'addToKeychain'; args: [string, string, boolean?] }
-      | { method: 'getFromKeychain'; args: [string] }
+      | { method: 'addToKeychain'; args: [string, string, CredentialType] }
+      | { method: 'getFromKeychain'; args: [string, CredentialType] }
+      | { method: 'removeFromKeychain'; args: [string, CredentialType] }
+      | { method: 'getUserCredential'; args: [] }
       | { method: 'connectDb'; args: [RemoteConnection] }
       | { method: 'switchCatalogOrSchema'; args: [string, string?, string?] }
       | { method: 'disconnectDb'; args: [string] }

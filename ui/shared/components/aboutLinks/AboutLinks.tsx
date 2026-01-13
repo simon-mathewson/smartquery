@@ -11,7 +11,7 @@ export const AboutLinks: React.FC<AboutLinksProps> = (props) => {
 
   return (
     <div
-      className={classNames('mt-auto flex items-center overflow-hidden', {
+      className={classNames('mt-auto flex items-center overflow-hidden sm:pl-1', {
         'gap-2': !compact,
       })}
     >

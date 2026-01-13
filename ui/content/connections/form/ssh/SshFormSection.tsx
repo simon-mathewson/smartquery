@@ -8,6 +8,7 @@ import { isNil } from 'lodash';
 import { defaultSshPort } from '../constants';
 import classNames from 'classnames';
 import { Toggle } from '~/shared/components/toggle/Toggle';
+import { buildCredentialUsername } from '@/utils/credentials';
 
 export type SshFormSectionProps = {
   formValues: Pick<Extract<FormValues, { type: 'remote' }>, 'credentialStorage' | 'ssh'>;
@@ -101,13 +102,13 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
             <Field label="Password">
               <CredentialInput
                 onChange={(value) => setFormValue('ssh.password', value)}
-                username={getCredentialId(
-                  {
+                username={buildCredentialUsername({
+                  username: getCredentialId({
                     ...formValues.ssh,
                     port: formValues.ssh.port ?? defaultSshPort,
-                  },
-                  'sshPassword',
-                )}
+                  }),
+                  type: 'sshPassword',
+                })}
                 htmlProps={{
                   value:
                     formValues.credentialStorage === 'alwaysAsk' ? '' : formValues.ssh.password,
@@ -119,13 +120,13 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
             <Field label="Private key">
               <CredentialInput
                 onChange={(value) => setFormValue('ssh.privateKey', value)}
-                username={getCredentialId(
-                  {
+                username={buildCredentialUsername({
+                  username: getCredentialId({
                     ...formValues.ssh,
                     port: formValues.ssh.port ?? defaultSshPort,
-                  },
-                  'sshPrivateKey',
-                )}
+                  }),
+                  type: 'sshPrivateKey',
+                })}
                 htmlProps={{ value: formValues.ssh.privateKey }}
               />
             </Field>
@@ -145,13 +146,13 @@ export const SshFormSection: React.FC<SshFormSectionProps> = (props) => {
             <Field label="Passphrase">
               <CredentialInput
                 onChange={(value) => setFormValue('ssh.privateKeyPassphrase', value)}
-                username={getCredentialId(
-                  {
+                username={buildCredentialUsername({
+                  username: getCredentialId({
                     ...formValues.ssh,
                     port: formValues.ssh.port ?? defaultSshPort,
-                  },
-                  'sshPrivateKeyPassphrase',
-                )}
+                  }),
+                  type: 'sshPrivateKeyPassphrase',
+                })}
                 htmlProps={{ value: formValues.ssh.privateKeyPassphrase }}
               />
             </Field>

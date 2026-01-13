@@ -130,6 +130,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
             ...(!user
               ? [
                   {
+                    element: 'link' as const,
                     htmlProps: {
                       href: routes.signup(),
                     },
@@ -142,6 +143,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
                     value: 'signUp',
                   },
                   {
+                    element: 'link' as const,
                     htmlProps: {
                       href: routes.login(),
                     },

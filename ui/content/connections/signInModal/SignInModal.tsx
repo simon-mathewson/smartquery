@@ -11,6 +11,7 @@ import { isAuthError } from '~/shared/utils/isAuthError/isAuthError';
 import { getCredentialId, getUserHandle } from '../utils';
 import type { SignInModalInput } from './types';
 import { CredentialInput } from '~/shared/components/credentialInput/CredentialInput';
+import { buildCredentialUsername } from '@/utils/credentials';
 
 export type SignInModalProps = ModalControl<SignInModalInput>;
 
@@ -70,7 +71,10 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
   const { connection } = input;
 
   const userHandle = getUserHandle(connection);
-  const passwordId = getCredentialId(connection, 'password');
+  const passwordId = buildCredentialUsername({
+    username: getCredentialId(connection),
+    type: 'password',
+  });
 
   const showDbLogin =
     connection.credentialStorage === 'alwaysAsk' || connection.credentialStorage === 'keychain';
@@ -114,7 +118,10 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
                     htmlProps={{ value: sshPassword }}
                     isExistingCredential
                     onChange={setSshPassword}
-                    username={getCredentialId(connection.ssh, 'sshPassword')}
+                    username={buildCredentialUsername({
+                      username: getCredentialId(connection.ssh),
+                      type: 'sshPassword',
+                    })}
                   />
                 </Field>
               )}
@@ -124,7 +131,10 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
                     htmlProps={{ value: sshPrivateKey }}
                     isExistingCredential
                     onChange={setSshPrivateKey}
-                    username={getCredentialId(connection.ssh, 'sshPrivateKey')}
+                    username={buildCredentialUsername({
+                      username: getCredentialId(connection.ssh),
+                      type: 'sshPrivateKey',
+                    })}
                   />
                 </Field>
               )}
@@ -134,7 +144,10 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
                     htmlProps={{ value: sshPrivateKeyPassphrase }}
                     isExistingCredential
                     onChange={setSshPrivateKeyPassphrase}
-                    username={getCredentialId(connection.ssh, 'sshPrivateKeyPassphrase')}
+                    username={buildCredentialUsername({
+                      username: getCredentialId(connection.ssh),
+                      type: 'sshPrivateKeyPassphrase',
+                    })}
                   />
                 </Field>
               )}

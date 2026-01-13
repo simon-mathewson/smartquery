@@ -17,6 +17,9 @@ importers:
       superjson:
         specifier: 1.12.4
         version: 1.12.4
+      ts-essentials:
+        specifier: 9.4.1
+        version: 9.4.1(typescript@5.8.3)
       zod:
         specifier: 3.24.1
         version: 3.24.1
@@ -609,6 +612,14 @@ packages:
     engines: {node: '>=18.12'}
     peerDependencies:
       typescript: '>=4.8.4'
+
+  ts-essentials@9.4.1:
+    resolution: {integrity: sha512-oke0rI2EN9pzHsesdmrOrnqv1eQODmJpd/noJjwj2ZPC3Z4N2wbjrOEqnsEgmvlO2+4fBb0a794DCna2elEVIQ==}
+    peerDependencies:
+      typescript: '>=4.1.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -1278,6 +1289,10 @@ snapshots:
 
   ts-api-utils@2.1.0(typescript@5.8.3):
     dependencies:
+      typescript: 5.8.3
+
+  ts-essentials@9.4.1(typescript@5.8.3):
+    optionalDependencies:
       typescript: 5.8.3
 
   type-check@0.4.0:

@@ -29,7 +29,7 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess, onShowLogin }
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
-  const [storeInKeychain, setStoreInKeychain] = useState(true);
+  const [storeInKeychain, setStoreInKeychain] = useState(false);
 
   const captchaModal = useModal<CaptchaModalInput>();
 
@@ -42,7 +42,11 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess, onShowLogin }
           captchaModal.close();
           await auth.signUp(email, password);
           if (storeInKeychain && isNative) {
-            await credentials.storeCredential(email, password, true);
+            await credentials.storeCredential({
+              username: email,
+              password,
+              type: 'user',
+            });
           }
           onSuccess();
         },
@@ -81,7 +85,7 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess, onShowLogin }
           {isNative && (
             <Field htmlProps={{ className: 'mt-2' }}>
               <Toggle
-                label="Store in Keychain"
+                label="Store in keychain"
                 value={storeInKeychain}
                 onChange={setStoreInKeychain}
               />
@@ -131,8 +135,8 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess, onShowLogin }
           {
             hint: 'Log in',
             label: 'Already have an account?',
-            icon: VpnKeyOutlined,
-            onClick: onShowLogin,
+            icon: <VpnKeyOutlined />,
+            htmlProps: { onClick: onShowLogin },
           },
         ]}
       />

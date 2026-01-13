@@ -5,7 +5,9 @@ import type {
   DisconnectDb,
   GetFromKeychain,
   GetSqliteFile,
+  GetUserCredential,
   NativeBridgeMessage,
+  RemoveFromKeychain,
   RunQuery,
   SwitchCatalogOrSchema,
   WriteToClipboard,
@@ -78,13 +80,23 @@ export const useNative = () => {
   );
 
   const addToKeychain = useCallback<AddToKeychain>(
-    (username, password, preferWebCredentials) =>
-      request<AddToKeychain>('addToKeychain', [username, password, preferWebCredentials]),
+    (username, password, type) =>
+      request<AddToKeychain>('addToKeychain', [username, password, type]),
     [request],
   );
 
   const getFromKeychain = useCallback<GetFromKeychain>(
     (username) => request<GetFromKeychain>('getFromKeychain', [username]),
+    [request],
+  );
+
+  const removeFromKeychain = useCallback<RemoveFromKeychain>(
+    (username, type) => request<RemoveFromKeychain>('removeFromKeychain', [username, type]),
+    [request],
+  );
+
+  const getUserCredential = useCallback<GetUserCredential>(
+    () => request<GetUserCredential>('getUserCredential', []),
     [request],
   );
 
@@ -123,6 +135,8 @@ export const useNative = () => {
     () => ({
       addToKeychain,
       getFromKeychain,
+      removeFromKeychain,
+      getUserCredential,
       connectDb,
       switchCatalogOrSchema,
       disconnectDb,
@@ -133,6 +147,8 @@ export const useNative = () => {
     [
       addToKeychain,
       getFromKeychain,
+      removeFromKeychain,
+      getUserCredential,
       connectDb,
       switchCatalogOrSchema,
       disconnectDb,

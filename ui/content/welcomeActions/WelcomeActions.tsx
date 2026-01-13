@@ -6,7 +6,6 @@ import {
 } from '@mui/icons-material';
 import React, { useMemo } from 'react';
 import { routes } from '~/router/routes';
-import type { Action } from '~/shared/components/actionList/ActionList';
 import { ActionList } from '~/shared/components/actionList/ActionList';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import Add from '~/shared/icons/Add.svg?react';
@@ -27,57 +26,71 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
   const { connections } = useDefinedContext(ConnectionsContext);
 
   const actions = useMemo(
-    () =>
-      [
-        {
-          hint: 'See how SmartQuery works with dummy data',
-          icon: ScienceOutlined,
-          label: 'Open demo database',
-          route: routes.demo(),
+    () => [
+      {
+        element: 'link' as const,
+        hint: 'See how SmartQuery works with dummy data',
+        icon: <ScienceOutlined />,
+        label: 'Open demo database',
+        htmlProps: {
+          href: routes.demo(),
           onClick: () => {
             track('home_open_demo_database');
           },
         },
-        ...(!hideAddConnection && connections.length === 0
-          ? [
-              {
-                hint: 'Connect to your database',
-                icon: Add,
-                label: 'Add connection',
-                route: routes.addConnection(),
+      },
+      ...(!hideAddConnection && connections.length === 0
+        ? [
+            {
+              element: 'link' as const,
+              hint: 'Connect to your database',
+              icon: <Add />,
+              label: 'Add connection',
+              htmlProps: {
+                href: routes.addConnection(),
                 onClick: () => track('home_add_connection'),
               },
-            ]
-          : []),
-        ...(!user
-          ? [
-              {
-                hint: 'Get free AI and cloud features',
-                label: 'Sign up',
-                icon: PersonAddAlt1Outlined,
-                route: routes.subscribePlans(),
+            },
+          ]
+        : []),
+      ...(!user
+        ? [
+            {
+              element: 'link' as const,
+              hint: 'Get free AI and cloud features',
+              label: 'Sign up',
+              icon: <PersonAddAlt1Outlined />,
+              htmlProps: {
+                href: routes.subscribePlans(),
                 onClick: () => track('home_sign_up'),
               },
-              {
-                label: 'Log in',
-                icon: VpnKeyOutlined,
-                route: routes.login(),
+            },
+            {
+              element: 'link' as const,
+              label: 'Log in',
+              icon: <VpnKeyOutlined />,
+              htmlProps: {
+                href: routes.login(),
                 onClick: () => track('home_log_in'),
               },
-            ]
-          : []),
-        ...(user && !user.activeSubscription && !isReactNative
-          ? [
-              {
-                hint: 'Get access to all features',
-                label: 'Subscribe',
-                icon: LightbulbOutlined,
-                route: routes.subscribePlans(),
+            },
+          ]
+        : []),
+      ...(user && !user.activeSubscription && !isReactNative
+        ? [
+            {
+              element: 'link' as const,
+              hint: 'Get access to all features',
+              label: 'Subscribe',
+              icon: <LightbulbOutlined />,
+              htmlProps: {
+                href: routes.subscribePlans(),
                 onClick: () => track('home_subscribe'),
               },
-            ]
-          : []),
-      ] satisfies Action[],
+            },
+          ]
+        : []),
+    ],
     [connections.length, hideAddConnection, track, user],
   );
 

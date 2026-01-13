@@ -109,6 +109,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                       tooltip: 'Edit',
                     },
                   ],
+                  element: 'link',
                   hint:
                     connection.type === 'remote'
                       ? `${connection.user}@${connection.host}:${connection.port}`

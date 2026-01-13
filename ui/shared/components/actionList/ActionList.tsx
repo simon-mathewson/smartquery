@@ -1,19 +1,10 @@
-import type { SvgIconComponent } from '@mui/icons-material';
 import classNames from 'classnames';
 import React from 'react';
-import { Link } from 'wouter';
-
-export type Action = {
-  disabled?: boolean;
-  hint?: string;
-  icon: SvgIconComponent | React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
-  label: string;
-  onClick?: () => void;
-  route?: string;
-};
+import type { ButtonProps } from '../button/Button';
+import { Button } from '../button/Button';
 
 export type ActionListProps = {
-  actions: Action[];
+  actions: ButtonProps[];
   compact?: boolean;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
 };
@@ -30,46 +21,25 @@ export const ActionList: React.FC<ActionListProps> = (props) => {
         htmlProps?.className,
       )}
     >
-      {actions.map((action) => {
-        const Element = action.route ? Link : 'button';
-
-        return (
-          <React.Fragment key={action.label}>
-            <Element
-              {...(Element === 'button'
-                ? { disabled: action.disabled }
-                : { 'aria-disabled': action.disabled })}
-              className={classNames(
-                'flex min-h-[56px] cursor-pointer items-center gap-3 overflow-hidden rounded-2xl border border-border bg-card px-4 py-2 text-left shadow-2xl hover:border-borderHover',
+      {actions.map((action) => (
+        <React.Fragment key={action.label}>
+          <Button
+            {...action}
+            align="left"
+            htmlProps={{
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ...(action.htmlProps as any),
+              className: classNames(
+                'flex !min-h-[56px] cursor-pointer items-center gap-3 overflow-hidden focus:!bg-card hover:!bg-card focus:!bg-background !text-textPrimary !justify-start !rounded-2xl border border-border bg-card px-2 py-2 text-left shadow-2xl hover:border-borderHover',
                 {
                   '!min-h-[40px] !gap-2 !px-2': compact,
-                  'pointer-events-none opacity-50': action.disabled,
                 },
-              )}
-              onClick={action.onClick}
-              href={action.route as string}
-              tabIndex={0}
-            >
-              <action.icon
-                className={classNames('text-primary', {
-                  '!h-7 !w-7': !compact,
-                  '!h-5 !w-5': compact,
-                })}
-              />
-              <div className="flex flex-col items-start gap-[2px]">
-                <div
-                  className={classNames('text-sm font-medium text-textPrimary', {
-                    '!text-xs': compact,
-                  })}
-                >
-                  {action.label}
-                </div>
-                {action.hint && <div className="text-xs text-textTertiary">{action.hint}</div>}
-              </div>
-            </Element>
-          </React.Fragment>
-        );
-      })}
+              ),
+            }}
+            truncate={false}
+          />
+        </React.Fragment>
+      ))}
     </div>
   );
 };

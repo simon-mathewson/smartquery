@@ -13,10 +13,19 @@ import * as Keychain from "react-native-keychain";
 import type { WebViewMessageEvent } from "react-native-webview";
 import { WebView } from "react-native-webview";
 import type {
+  AddToKeychain,
+  GetFromKeychain,
   GetSqliteFile,
+  GetUserCredential,
   NativeBridgeMessage,
+  RemoveFromKeychain,
 } from "../../shared/native/types";
-import { getKeychainServiceName } from "~/utils/getKeychainServiceName";
+import {
+  Credential,
+  getKeychainServiceName,
+  parseCredentialUsername,
+} from "~/utils/credentials";
+import { buildCredentialUsername } from "~/utils/credentials";
 
 export default function Index() {
   const colorScheme = useColorScheme();
@@ -45,37 +54,62 @@ export default function Index() {
     return () => subscription?.remove();
   }, []);
 
-  const addToKeychain = useCallback(
-    async (
-      username: string,
-      password: string,
-      preferWebCredentials?: boolean
-    ) => {
-      if (preferWebCredentials) {
-        await Keychain.setSharedWebCredentials(
-          "https://smartquery.dev",
-          username,
-          password
-        );
-      } else {
-        await Keychain.setGenericPassword(username, password, {
-          service: getKeychainServiceName(username),
-          cloudSync: true,
-        });
-      }
+  const addToKeychain = useCallback<AddToKeychain>(
+    async (username, password, type) => {
+      const fullUsername = buildCredentialUsername({ username, type });
+
+      await Keychain.setGenericPassword(fullUsername, password, {
+        service: getKeychainServiceName(fullUsername),
+      });
     },
     []
   );
 
-  const getFromKeychain = useCallback(async (username: string) => {
-    const credentials = await Keychain.getGenericPassword({
-      service: getKeychainServiceName(username),
-      cloudSync: true,
-    });
-    if (credentials) {
-      return credentials.password;
+  const getFromKeychain = useCallback<GetFromKeychain>(
+    async (username, type) => {
+      const fullUsername = buildCredentialUsername({ username, type });
+
+      const credentials = await Keychain.getGenericPassword({
+        service: getKeychainServiceName(fullUsername),
+      });
+      if (credentials) {
+        return credentials.password;
+      }
+      return null;
+    },
+    []
+  );
+
+  const removeFromKeychain = useCallback<RemoveFromKeychain>(
+    async (username, type) => {
+      const fullUsername = buildCredentialUsername({ username, type });
+      await Keychain.resetGenericPassword({
+        service: getKeychainServiceName(fullUsername),
+      });
+    },
+    []
+  );
+
+  const getUserCredential = useCallback<GetUserCredential>(async () => {
+    const items: Array<Credential> = [];
+
+    const genericPasswordServices =
+      await Keychain.getAllGenericPasswordServices({
+        skipUIAuth: true,
+      });
+
+    for (const service of genericPasswordServices) {
+      const credentials = await Keychain.getGenericPassword({ service });
+      if (credentials) {
+        items.push(credentials);
+      }
     }
-    return null;
+
+    return (
+      items.find(
+        (item) => parseCredentialUsername(item.username).type === "user"
+      ) ?? null
+    );
   }, []);
 
   const sqliteFiles = useRef<{ [connectionId: string]: File }>({});
@@ -134,6 +168,10 @@ export default function Index() {
               return addToKeychain(...args);
             case "getFromKeychain":
               return getFromKeychain(...args);
+            case "removeFromKeychain":
+              return removeFromKeychain(...args);
+            case "getUserCredential":
+              return getUserCredential();
             case "connectDb":
               return ConnectorModule.connectDb(...args);
             case "switchCatalogOrSchema":

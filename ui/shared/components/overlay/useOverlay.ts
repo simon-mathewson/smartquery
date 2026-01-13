@@ -112,13 +112,18 @@ export const useOverlay = (props?: UseOverlayProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenProp]);
 
-  const onTriggerClick = useCallback(() => {
-    if (isOpen) {
-      void close();
-    } else {
-      void open();
-    }
-  }, [close, isOpen, open]);
+  const onTriggerClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      event.stopPropagation();
+
+      if (isOpen) {
+        void close();
+      } else {
+        void open();
+      }
+    },
+    [close, isOpen, open],
+  );
 
   const triggerProps = useMemo(
     () => ({

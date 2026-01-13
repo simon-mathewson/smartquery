@@ -10,6 +10,7 @@ import { isNotUndefined } from '~/shared/utils/typescript/typescript';
 type BaseProps = {
   align?: 'left' | 'center' | 'right';
   color?: Color;
+  hint?: string;
   icon?: React.ReactNode;
   label?: string;
   monospace?: boolean;
@@ -17,6 +18,7 @@ type BaseProps = {
   suffix?: React.ReactNode;
   textSuffix?: string;
   tooltip?: string;
+  truncate?: boolean;
   variant?: 'default' | 'filled' | 'highlighted';
 };
 
@@ -47,6 +49,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
     align = 'center',
     color = 'primary',
     element = 'button',
+    hint,
     htmlProps,
     icon,
     label,
@@ -55,6 +58,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
     suffix,
     textSuffix,
     tooltip,
+    truncate = true,
     variant = 'default',
   } = props;
 
@@ -75,8 +79,9 @@ export const Button: React.FC<ButtonProps> = (props) => {
             aria-disabled={props.htmlProps?.disabled}
             aria-labelledby={label ? labelId : undefined}
             className={classNames(
-              'flex h-[36px] cursor-pointer select-none items-center gap-2 rounded-full px-3 py-2 disabled:cursor-default [&>svg]:text-[20px]',
+              'flex cursor-pointer select-none items-center gap-2 rounded-full px-3 py-2 text-sm disabled:cursor-default [&>svg]:text-[20px]',
               {
+                '!min-h-[36px]': !truncate,
                 '!h-[24px] !gap-1 [&>svg]:h-[16px] [&>svg]:w-[16px]': size === 'small',
                 '!rounded-full': icon && !label,
                 '!px-2': icon && !label && size === 'normal',
@@ -84,6 +89,9 @@ export const Button: React.FC<ButtonProps> = (props) => {
                 'justify-start': align === 'left',
                 'justify-center': align === 'center',
                 'justify-end': align === 'right',
+                'text-left': align === 'left',
+                'text-center': align === 'center',
+                'text-right': align === 'right',
                 'cursor-default opacity-50': htmlProps?.disabled,
                 'font-mono font-medium': monospace,
 
@@ -108,11 +116,11 @@ export const Button: React.FC<ButtonProps> = (props) => {
                 'bg-primaryHighlight text-primary hover:bg-primaryHighlightHover focus:bg-primaryHighlightHover':
                   color === 'primary' && variant === 'highlighted',
 
-                'text-secondary hover:bg-secondaryHighlight focus:bg-secondaryHighlight [&>svg]:text-secondary':
+                'text-textSecondary hover:bg-secondaryHighlight focus:bg-secondaryHighlight [&>svg]:text-textSecondary':
                   color === 'secondary' && variant === 'default',
                 'bg-secondary text-white hover:bg-secondaryHover focus:bg-secondaryHover [&>svg]:text-white':
                   color === 'secondary' && variant === 'filled',
-                'bg-secondaryHighlight text-secondary hover:bg-secondaryHighlightHover focus:bg-secondaryHighlightHover':
+                'bg-secondaryHighlight text-textSecondary hover:bg-secondaryHighlightHover focus:bg-secondaryHighlightHover':
                   color === 'secondary' && variant === 'highlighted',
 
                 'text-success hover:bg-successHighlight focus:bg-successHighlight [&>svg]:text-success':
@@ -136,12 +144,15 @@ export const Button: React.FC<ButtonProps> = (props) => {
           >
             {icon}
             {label && (
-              <div className="truncate text-sm font-medium" id={labelId}>
-                {label}
+              <div className="flex flex-col gap-[2px] overflow-hidden">
+                <div className={classNames('font-medium', { truncate })} id={labelId}>
+                  {label}
+                </div>
+                {hint && <div className="text-xs text-textTertiary">{hint}</div>}
               </div>
             )}
             {textSuffix && <div className="text-sm font-medium">{textSuffix}</div>}
-            {suffix}
+            {suffix && <div className="ml-auto">{suffix}</div>}
           </Element>
         );
       }}

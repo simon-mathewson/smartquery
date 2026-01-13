@@ -35,6 +35,7 @@ import { TestConnection } from './test/TestConnection';
 import type { FormValues } from './utils';
 import { getConnectionFromForm, getDefaultPort, getInitialFormValues, isFormValid } from './utils';
 import { CredentialsContext } from '~/content/credentials/Context';
+import { buildCredentialUsername } from '@/utils/credentials';
 
 export type ConnectionFormProps = {
   connectionToEditId?: string;
@@ -116,27 +117,34 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
       connection.type === 'remote'
     ) {
       if (formValues.password) {
-        await storeCredential(getCredentialId(connection, 'password'), formValues.password);
+        await storeCredential({
+          username: getCredentialId(connection),
+          type: 'password',
+          password: formValues.password,
+        });
       }
 
       if (formValues.ssh) {
         if (formValues.ssh.password && connection.ssh) {
-          await storeCredential(
-            getCredentialId(connection.ssh, 'sshPassword'),
-            formValues.ssh.password,
-          );
+          await storeCredential({
+            username: getCredentialId(connection.ssh),
+            type: 'sshPassword',
+            password: formValues.ssh.password,
+          });
         }
         if (formValues.ssh.privateKey && connection.ssh) {
-          await storeCredential(
-            getCredentialId(connection.ssh, 'sshPrivateKey'),
-            formValues.ssh.privateKey,
-          );
+          await storeCredential({
+            username: getCredentialId(connection.ssh),
+            type: 'sshPrivateKey',
+            password: formValues.ssh.privateKey,
+          });
         }
         if (formValues.ssh.privateKeyPassphrase && connection.ssh) {
-          await storeCredential(
-            getCredentialId(connection.ssh, 'sshPrivateKeyPassphrase'),
-            formValues.ssh.privateKeyPassphrase,
-          );
+          await storeCredential({
+            username: getCredentialId(connection.ssh),
+            type: 'sshPrivateKeyPassphrase',
+            password: formValues.ssh.privateKeyPassphrase,
+          });
         }
       }
     }
@@ -406,15 +414,15 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 <CredentialInput
                   htmlProps={{ value: formValues.password }}
                   onChange={(value) => setFormValue('password', value)}
-                  username={getCredentialId(
-                    {
+                  username={buildCredentialUsername({
+                    username: getCredentialId({
                       ...formValues,
                       port:
                         formValues.port ??
                         (formValues.engine ? getDefaultPort(formValues.engine) : -1),
-                    },
-                    'password',
-                  )}
+                    }),
+                    type: 'password',
+                  })}
                 />
               </Field>
             )}

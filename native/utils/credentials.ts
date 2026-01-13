@@ -1,0 +1,52 @@
+import assert from "assert";
+
+export const KEYCHAIN_SERVICE_NAME = "dev.smartquery";
+
+/** With react-native-keychain, we need to use the service prop to retrieve specific credentials. */
+export const getKeychainServiceName = (username: string): string => {
+  return `${KEYCHAIN_SERVICE_NAME}:${username}`;
+};
+
+export const credentialTypes = [
+  "user",
+  "password",
+  "sshPassword",
+  "sshPrivateKey",
+  "sshPrivateKeyPassphrase",
+] as const;
+
+export type CredentialType = (typeof credentialTypes)[number];
+
+export type Credential = {
+  username: string;
+  password: string;
+};
+
+export const buildCredentialUsername = (props: {
+  username: string;
+  type: CredentialType;
+}): string => {
+  if (props.type === "user") {
+    return props.username;
+  }
+  return `${props.username}_${props.type}`;
+};
+
+export const parseCredentialUsername = (
+  username: string
+): {
+  rawUsername: string;
+  type: CredentialType;
+} => {
+  const match = username.match(
+    new RegExp(`^(.+?)(?:_(${credentialTypes.join("|")}))?$`)
+  );
+
+  const rawUsername = match?.[1];
+  assert(rawUsername, "Unable to find username in $");
+
+  const type = (match?.[2] ?? "user") as CredentialType;
+  assert(credentialTypes.includes(type), "Invalid credential type");
+
+  return { rawUsername, type };
+};

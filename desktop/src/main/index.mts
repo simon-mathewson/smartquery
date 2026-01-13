@@ -13,7 +13,12 @@ import {
   runQuery,
   switchCatalogOrSchema,
 } from './connector/connector';
-import { getKeychainServiceName } from '@/utils/getKeychainServiceName';
+import {
+  buildCredentialUsername,
+  CredentialType,
+  KEYCHAIN_SERVICE_NAME,
+} from '@/utils/credentials';
+import { parseCredentialUsername } from '@/utils/credentials';
 
 Object.assign(console, log.functions);
 
@@ -71,14 +76,41 @@ void app.whenReady().then(() => {
   ipcMain.handle('handle-request', async (_, method: string, args: unknown[]) => {
     switch (method) {
       case 'addToKeychain': {
-        const [username, password] = args as [string, string, boolean?];
-        // Desktop always uses generic keychain via keytar (preferWebCredentials is ignored)
-        await keytar.setPassword(getKeychainServiceName(username), username, password);
+        const [username, password, type] = args as [string, string, CredentialType];
+        await keytar.setPassword(
+          KEYCHAIN_SERVICE_NAME,
+          buildCredentialUsername({ username, type }),
+          password,
+        );
         return;
       }
       case 'getFromKeychain': {
-        const [username] = args as [string];
-        return await keytar.getPassword(getKeychainServiceName(username), username);
+        const [username, type] = args as [string, CredentialType];
+        return keytar.getPassword(
+          KEYCHAIN_SERVICE_NAME,
+          buildCredentialUsername({ username, type }),
+        );
+      }
+      case 'removeFromKeychain': {
+        const [username, type] = args as [string, CredentialType];
+        await keytar.deletePassword(
+          KEYCHAIN_SERVICE_NAME,
+          buildCredentialUsername({ username, type }),
+        );
+        return;
+      }
+      case 'getUserCredential': {
+        const all = await keytar.findCredentials(KEYCHAIN_SERVICE_NAME);
+        const userCredential = all.find(
+          (credential) => parseCredentialUsername(credential.account).type === 'user',
+        );
+
+        if (!userCredential) return null;
+
+        return {
+          username: userCredential.account,
+          password: userCredential.password,
+        };
       }
       case 'connectDb': {
         return connectDb(...(args as Parameters<ConnectDb>));

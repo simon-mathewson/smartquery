@@ -181,9 +181,11 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
               .map((suggestion) => ({
                 disabled: isQuotaExceeded,
                 label: suggestion,
-                icon: LightbulbOutline,
-                onClick: () => {
-                  submit(suggestion);
+                icon: <LightbulbOutline />,
+                htmlProps: {
+                  onClick: () => {
+                    submit(suggestion);
+                  },
                 },
               }))}
             compact

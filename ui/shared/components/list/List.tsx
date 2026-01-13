@@ -86,7 +86,11 @@ export function List<T>(props: ListProps<T>) {
               key={index}
               onSelect={() => onSelect?.(item.value)}
               {...item}
-              autoFocus={getAutoFocus(item, index)}
+              htmlProps={{
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ...(item.htmlProps as any),
+                autoFocus: getAutoFocus(item, index),
+              }}
               selected={
                 multiple
                   ? props.selectedValues.some((selectedValue) =>
