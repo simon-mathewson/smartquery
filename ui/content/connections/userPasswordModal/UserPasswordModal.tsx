@@ -67,7 +67,7 @@ export const UserPasswordModal: React.FC<UserPasswordModalProps> = (props) => {
       {...props}
       htmlProps={{ className: 'w-[320px]' }}
       subtitle="Enter main password"
-      title={input.mode === 'encrypt' ? 'Encrypt credentials' : 'Decrypt credentials'}
+      title={input.title}
     >
       <div className="flex flex-col gap-4">
         <form onSubmit={onSubmit}>

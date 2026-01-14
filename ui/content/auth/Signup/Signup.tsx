@@ -42,7 +42,7 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess, onShowLogin }
           captchaModal.close();
           await auth.signUp(email, password);
           if (storeInKeychain && isNative) {
-            await credentials.storeCredential({
+            await credentials.storeCredentialInKeychain({
               username: email,
               password,
               type: 'user',

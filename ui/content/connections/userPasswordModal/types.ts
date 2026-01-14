@@ -1,4 +1,4 @@
 export type UserPasswordModalInput = {
-  mode: 'encrypt' | 'decrypt';
+  title?: string;
   onSubmit: (password: string) => Promise<void>;
 };

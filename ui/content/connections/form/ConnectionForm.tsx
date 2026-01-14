@@ -64,7 +64,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
   const { addConnection, connections, removeConnection, updateConnection } =
     useDefinedContext(ConnectionsContext);
-  const { storeCredential } = useDefinedContext(CredentialsContext);
+  const { storeCredentialInKeychain } = useDefinedContext(CredentialsContext);
   const connectionToEdit = connectionToEditId
     ? connections.find((connection) => connection.id === connectionToEditId) ?? null
     : null;
@@ -117,7 +117,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
       connection.type === 'remote'
     ) {
       if (formValues.password) {
-        await storeCredential({
+        await storeCredentialInKeychain({
           username: getCredentialId(connection),
           type: 'password',
           password: formValues.password,
@@ -126,21 +126,21 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
       if (formValues.ssh) {
         if (formValues.ssh.password && connection.ssh) {
-          await storeCredential({
+          await storeCredentialInKeychain({
             username: getCredentialId(connection.ssh),
             type: 'sshPassword',
             password: formValues.ssh.password,
           });
         }
         if (formValues.ssh.privateKey && connection.ssh) {
-          await storeCredential({
+          await storeCredentialInKeychain({
             username: getCredentialId(connection.ssh),
             type: 'sshPrivateKey',
             password: formValues.ssh.privateKey,
           });
         }
         if (formValues.ssh.privateKeyPassphrase && connection.ssh) {
-          await storeCredential({
+          await storeCredentialInKeychain({
             username: getCredentialId(connection.ssh),
             type: 'sshPrivateKeyPassphrase',
             password: formValues.ssh.privateKeyPassphrase,
@@ -320,7 +320,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                       tooltip:
                         formValues.storageLocation !== 'cloud'
                           ? 'Only supported when storing in cloud'
-                          : 'Stores credentials in your account and encrypts them based on your main password. Requires entering main password every time you connect. Storing and auto-filling main password with browser keychain is supported.',
+                          : 'Stores credentials in your account and encrypts them based on your main password.',
                     },
                     value: 'encrypted',
                   },
@@ -337,7 +337,7 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                     button: {
                       label: 'Always ask',
                       tooltip:
-                        'Does not store credentials, requires entering them every time you connect. Storing and auto-filling credentials with browser keychain is supported.',
+                        'Does not store credentials, requires entering them every time you connect.',
                     },
                     value: 'alwaysAsk',
                   },

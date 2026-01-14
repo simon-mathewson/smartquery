@@ -3,11 +3,17 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { NativeContext } from '../native/Context';
 import { isNative } from '../native/useNative';
 import { type Credential, type CredentialType } from '@/utils/credentials';
+import type { ModalControl } from '~/shared/components/modal/types';
+import type { UserPasswordModalInput } from '../connections/userPasswordModal/types';
 
-export const useCredentials = () => {
+export const useCredentials = (props: {
+  userPasswordModal: ModalControl<UserPasswordModalInput>;
+}) => {
+  const { userPasswordModal } = props;
+
   const native = useDefinedContext(NativeContext);
 
-  const storeCredential = useCallback(
+  const storeCredentialInKeychain = useCallback(
     async (props: { username: string; password: string; type: CredentialType }): Promise<void> => {
       const { username, password, type } = props;
 
@@ -28,7 +34,7 @@ export const useCredentials = () => {
     [native],
   );
 
-  const getCredential = useCallback(
+  const getCredentialFromKeychain = useCallback(
     async (props: { username: string; type: CredentialType }): Promise<string | null> => {
       const { username, type } = props;
       if (isNative) {
@@ -40,7 +46,7 @@ export const useCredentials = () => {
     [native],
   );
 
-  const removeUserCredential = useCallback(
+  const removeUserCredentialFromKeychain = useCallback(
     async (username: string): Promise<void> => {
       if (isNative) {
         await native.removeFromKeychain(username, 'user');
@@ -49,7 +55,7 @@ export const useCredentials = () => {
     [native],
   );
 
-  const getUserCredential = useCallback(async (): Promise<Credential | null> => {
+  const getUserCredentialFromKeychain = useCallback(async (): Promise<Credential | null> => {
     if (isNative) {
       return native.getUserCredential();
     }
@@ -57,13 +63,43 @@ export const useCredentials = () => {
     return null;
   }, [native]);
 
+  const requestUserPassword = useCallback(
+    async (title?: string): Promise<string> => {
+      const fromKeychain = await getUserCredentialFromKeychain();
+      if (fromKeychain) {
+        return fromKeychain.password;
+      }
+
+      return new Promise<string>((resolve, reject) =>
+        userPasswordModal.open(
+          {
+            title,
+            onSubmit: (password) => {
+              resolve(password);
+              return Promise.resolve();
+            },
+          },
+          { onClose: reject },
+        ),
+      );
+    },
+    [getUserCredentialFromKeychain, userPasswordModal],
+  );
+
   return useMemo(
     () => ({
-      getCredential,
-      getUserCredential,
-      storeCredential,
-      removeUserCredential,
+      getCredentialFromKeychain,
+      getUserCredentialFromKeychain,
+      storeCredentialInKeychain,
+      removeUserCredentialFromKeychain,
+      requestUserPassword,
     }),
-    [getCredential, getUserCredential, storeCredential, removeUserCredential],
+    [
+      getCredentialFromKeychain,
+      getUserCredentialFromKeychain,
+      storeCredentialInKeychain,
+      removeUserCredentialFromKeychain,
+      requestUserPassword,
+    ],
   );
 };

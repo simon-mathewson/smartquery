@@ -42,7 +42,7 @@ export const Login: React.FC<LoginProps> = (props) => {
   } | null>(null);
 
   useEffect(() => {
-    void credentials.getUserCredential().then((credential) => {
+    void credentials.getUserCredentialFromKeychain().then((credential) => {
       if (!credential) return;
 
       setSuggestedUser({
@@ -57,7 +57,7 @@ export const Login: React.FC<LoginProps> = (props) => {
       await auth.logIn(emailToSubmit, passwordToSubmit, {
         onSuccess: async () => {
           if (storeInKeychain && isNative) {
-            await credentials.storeCredential({
+            await credentials.storeCredentialInKeychain({
               username: emailToSubmit,
               password: passwordToSubmit,
               type: 'user',
@@ -101,7 +101,7 @@ export const Login: React.FC<LoginProps> = (props) => {
                       label: 'Remove from keychain',
                       value: 'remove',
                       onSelect: async () => {
-                        await credentials.removeUserCredential(suggestedUser.email);
+                        await credentials.removeUserCredentialFromKeychain(suggestedUser.email);
                         setSuggestedUser(null);
                       },
                     },

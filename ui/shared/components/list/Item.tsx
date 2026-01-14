@@ -56,6 +56,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
             'aria-label': action.label,
             onClick: (event) => {
               event.stopPropagation();
+              event.preventDefault();
               action.onClick();
             },
           }}
