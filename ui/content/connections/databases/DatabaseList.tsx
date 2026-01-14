@@ -127,7 +127,6 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
                       : undefined,
                 },
                 label: schema,
-                selectedVariant: 'primary',
                 value: schema,
               }))}
               onSelect={() => {

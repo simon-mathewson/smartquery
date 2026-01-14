@@ -12,20 +12,11 @@ export type ListItemProps<T> = ButtonProps & {
   }>;
   onSelect: () => void;
   selected?: boolean;
-  selectedVariant?: 'primary' | 'secondary';
   value: T;
 };
 
 export function ListItem<T>(props: ListItemProps<T>) {
-  const {
-    actions,
-    color = 'secondary',
-    htmlProps,
-    onSelect,
-    selected,
-    selectedVariant = 'secondary',
-    ...otherProps
-  } = props;
+  const { actions, color = 'secondary', htmlProps, onSelect, selected, ...otherProps } = props;
 
   return (
     <Button
@@ -65,7 +56,7 @@ export function ListItem<T>(props: ListItemProps<T>) {
           tooltip={action.tooltip}
         />
       ))}
-      color={selected ? selectedVariant : color}
+      color={selected ? 'primary' : color}
       variant={selected ? 'filled' : 'default'}
     />
   );
