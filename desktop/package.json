@@ -37,7 +37,6 @@
     "@types/lodash-es": "4.17.12",
     "electron-log": "5.4.1",
     "electron-store": "8.2.0",
-    "electron-unhandled": "5.0.0",
     "electron-updater": "6.6.2",
     "find-free-ports": "3.1.1",
     "lodash-es": "4.17.21",

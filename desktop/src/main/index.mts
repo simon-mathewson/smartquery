@@ -2,7 +2,6 @@ import { ConnectDb, DisconnectDb, RunQuery, SwitchCatalogOrSchema } from '@/nati
 import { electronApp } from '@electron-toolkit/utils';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
-import unhandled from 'electron-unhandled';
 import electronUpdater from 'electron-updater';
 import keytar from 'keytar';
 import { join } from 'path';
@@ -19,19 +18,44 @@ import {
   KEYCHAIN_SERVICE_NAME,
 } from '@/utils/credentials';
 import { parseCredentialUsername } from '@/utils/credentials';
+import { dialog } from 'electron';
 
 Object.assign(console, log.functions);
 
-unhandled({
-  showDialog: true,
-  logger: log.error,
-  reportButton: () => {
-    void shell.openExternal(import.meta.env.VITE_DISCORD_INVITE_URL);
-  },
-});
+const errorHandler = (reason: unknown): void => {
+  if (
+    reason instanceof Error &&
+    (reason.message === 'Not connected' ||
+      reason.message.includes('EADDRNOTAVAIL') ||
+      reason.stack?.includes('ssh2') ||
+      reason.stack?.includes('node-ssh-forward'))
+  ) {
+    console.error('SSH tunnel connection lost:', reason);
+    return;
+  }
 
-// Disable legacy open at login
-app.setLoginItemSettings({ openAtLogin: false });
+  const errorMessage = reason instanceof Error ? reason.message : String(reason);
+  log.error(reason);
+
+  void dialog
+    .showMessageBox({
+      type: 'error',
+      title: 'Error',
+      message: 'An error occurred. Please consider reporting it.',
+      detail: errorMessage,
+      buttons: ['OK', 'Report'],
+      defaultId: 0,
+      cancelId: 0,
+    })
+    .then((result) => {
+      if (result.response === 1) {
+        void shell.openExternal(import.meta.env.VITE_DISCORD_INVITE_URL);
+      }
+    });
+};
+
+process.on('uncaughtException', errorHandler);
+process.on('unhandledRejection', errorHandler);
 
 let mainWindow: BrowserWindow | null = null;
 
