@@ -251,12 +251,91 @@ public class ConnectorModule: Module {
       } catch Socket.SocketError.recvFailed {
         // MySQL no longer connected
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "NO_LONGER_CONNECTED"])
+      } catch MySQL.MySQLError.error(let code, let message) {
+        // Extract user-friendly error message from MySQL error
+        let errorMessage = message.isEmpty ? "Database query failed" : message
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: errorMessage])
+      } catch MySQL.Connection.ConnectionError.addressNotSet {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Database address is not set"])
+      } catch MySQL.Connection.ConnectionError.usernameNotSet {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Database username is not set"])
+      } catch MySQL.Connection.ConnectionError.notConnected {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Not connected to database"])
+      } catch MySQL.Connection.ConnectionError.statementPrepareError(let error) {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to prepare statement: \(error)"])
+      } catch MySQL.Connection.ConnectionError.dataReadingError {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Error reading data from database"])
+      } catch MySQL.Connection.ConnectionError.queryInProgress {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "A query is already in progress"])
+      } catch MySQL.Connection.ConnectionError.wrongHandshake {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Database handshake failed"])
       } catch PostgresClientKit.PostgresError.sqlError(let notice) where notice.code == "57P01" && notice.message == "terminating connection due to administrator command" {
         // Postgres no longer connected
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "NO_LONGER_CONNECTED"])
+      } catch PostgresClientKit.PostgresError.sqlError(let notice) {
+        // Extract user-friendly error message from PostgreSQL notice
+        let errorMessage: String
+        if let message = notice.message, !message.isEmpty {
+          errorMessage = message
+        } else {
+          errorMessage = "Database query failed"
+        }
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: errorMessage])
+      } catch PostgresClientKit.PostgresError.sslNotSupported {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSL connection is not supported by the server"])
+      } catch PostgresClientKit.PostgresError.md5PasswordCredentialRequired {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "MD5 password authentication is required"])
+      } catch PostgresClientKit.PostgresError.cleartextPasswordCredentialRequired {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Cleartext password authentication is required"])
+      } catch PostgresClientKit.PostgresError.columnMetadataNotAvailable {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Column metadata is not available"])
+      } catch PostgresClientKit.PostgresError.connectionClosed {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connection is closed"])
+      } catch PostgresClientKit.PostgresError.connectionPoolClosed {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connection pool is closed"])
+      } catch PostgresClientKit.PostgresError.cursorClosed {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Cursor is closed"])
+      } catch PostgresClientKit.PostgresError.invalidParameterValue(let name, let value, let allowedValues) {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid parameter value for '\(name)': '\(value)'. Allowed values: \(allowedValues.joined(separator: ", "))"])
+      } catch PostgresClientKit.PostgresError.invalidUsernameString {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid username format"])
+      } catch PostgresClientKit.PostgresError.invalidPasswordString {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid password format"])
+      } catch PostgresClientKit.PostgresError.scramSHA256CredentialRequired {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SCRAM-SHA-256 authentication is required"])
+      } catch PostgresClientKit.PostgresError.serverError(let description) {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: description])
+      } catch PostgresClientKit.PostgresError.socketError(let cause) {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Network error: \(cause.localizedDescription)"])
+      } catch PostgresClientKit.PostgresError.sslError(let cause) {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSL/TLS error: \(cause.localizedDescription)"])
+      } catch PostgresClientKit.PostgresError.statementClosed {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Statement is closed"])
+      } catch PostgresClientKit.PostgresError.timedOutAcquiringConnection {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Connection request timed out"])
+      } catch PostgresClientKit.PostgresError.tooManyRequestsForConnections {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Too many connection requests"])
+      } catch PostgresClientKit.PostgresError.trustCredentialRequired {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Trust authentication is required"])
+      } catch PostgresClientKit.PostgresError.unsupportedAuthenticationType(let authenticationType) {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unsupported authentication type: \(authenticationType)"])
+      } catch PostgresClientKit.PostgresError.valueConversionError(let value, let type) {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Value conversion error: cannot convert to \(type)"])
+      } catch PostgresClientKit.PostgresError.valueIsNil {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Value is nil"])
       } catch {
-        print(error)
-        throw error
+        // For any other PostgresError or unknown errors, try to extract a meaningful message
+        if let postgresError = error as? PostgresClientKit.PostgresError {
+          let errorDescription = String(describing: postgresError)
+          throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: errorDescription])
+        }
+        
+        // For other errors, use the error's description if available
+        let nsError = error as NSError
+        let errorMessage = nsError.localizedDescription.isEmpty 
+          ? "An unexpected error occurred"
+          : nsError.localizedDescription
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: errorMessage])
       }
     }
   }
