@@ -57,18 +57,21 @@ export const useCredentials = (props: {
     [native],
   );
 
-  const getUserCredentialFromKeychain = useCallback(async (): Promise<Credential | null> => {
-    if (isNative) {
-      return native.getUserCredential();
-    }
+  const getUserCredentialFromKeychain = useCallback(
+    async (username?: string): Promise<Credential | null> => {
+      if (isNative) {
+        return native.getUserCredential(username);
+      }
 
-    return null;
-  }, [native]);
+      return null;
+    },
+    [native],
+  );
 
   const requestUserPassword = useCallback(
     async (title?: string): Promise<string> => {
-      const fromKeychain = await getUserCredentialFromKeychain();
-      if (fromKeychain && fromKeychain.username === user?.email) {
+      const fromKeychain = await getUserCredentialFromKeychain(user?.email);
+      if (fromKeychain) {
         return fromKeychain.password;
       }
 

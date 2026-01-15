@@ -90,7 +90,7 @@ export default function Index() {
     []
   );
 
-  const getUserCredential = useCallback<GetUserCredential>(async () => {
+  const getUserCredential = useCallback<GetUserCredential>(async (username) => {
     const items: Array<Credential> = [];
 
     const genericPasswordServices =
@@ -106,9 +106,10 @@ export default function Index() {
     }
 
     return (
-      items.find(
-        (item) => parseCredentialUsername(item.username).type === "user"
-      ) ?? null
+      items.find((item) => {
+        const { rawUsername, type } = parseCredentialUsername(item.username);
+        return type === "user" && (username ? rawUsername === username : true);
+      }) ?? null
     );
   }, []);
 

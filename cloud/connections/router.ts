@@ -52,6 +52,8 @@ export const connectionsRouter = trpc.router({
         where: { id: input.id, userId: user.id },
       });
 
+      await verifyPassword(user, input.userPassword);
+
       return mapPrismaToConnection(
         await decryptCredentials({
           connection,

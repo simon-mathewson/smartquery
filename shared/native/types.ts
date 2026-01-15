@@ -35,7 +35,7 @@ export type AddToKeychain = (
 ) => Promise<void>;
 export type GetFromKeychain = (username: string, type: CredentialType) => Promise<string | null>;
 export type RemoveFromKeychain = (username: string, type: CredentialType) => Promise<void>;
-export type GetUserCredential = () => Promise<Credential | null>;
+export type GetUserCredential = (username?: string) => Promise<Credential | null>;
 
 export type WriteToClipboard = (text: string) => void;
 

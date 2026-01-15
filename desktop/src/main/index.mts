@@ -124,10 +124,13 @@ void app.whenReady().then(() => {
         return;
       }
       case 'getUserCredential': {
+        const [username] = args as [string?];
+
         const all = await keytar.findCredentials(KEYCHAIN_SERVICE_NAME);
-        const userCredential = all.find(
-          (credential) => parseCredentialUsername(credential.account).type === 'user',
-        );
+        const userCredential = all.find((credential) => {
+          const { rawUsername, type } = parseCredentialUsername(credential.account);
+          return type === 'user' && (username ? rawUsername === username : true);
+        });
 
         if (!userCredential) return null;
 
