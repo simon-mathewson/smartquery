@@ -5,18 +5,11 @@ import { ActiveConnectionContext } from '~/content/connections/activeConnection/
 import { ToastContext } from '~/content/toast/Context';
 import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { TableType } from '~/shared/types';
 import { type Query, type QueryResult } from '~/shared/types';
 import { TabsContext } from '../Context';
 import type { AddQueryOptions } from './types';
-import { getAllColumns, getColumnsStatements } from './utils/columns';
 import { getNewQuery } from './utils/getNewQuery';
-import { getResultsAsRecords } from './utils/getResultsAsRecords';
-import { getTableStatements } from './utils/getTableStatements';
-import { getTotalRowsStatement } from './utils/getTotalRowsStatement';
-import { getVirtualColumn } from './utils/getVirtualColumn';
 import { parseQuery } from './utils/parse';
-import { uniqBy } from 'lodash';
 
 export const useQueries = () => {
   const toast = useDefinedContext(ToastContext);
@@ -65,140 +58,27 @@ export const useQueries = () => {
     [setQueries],
   );
 
-  const runUserSelectQuery = useCallback(
-    async (id: string) => {
-      assert(activeConnectionContext);
-      const { activeConnection, runQuery } = activeConnectionContext;
-
-      const query = queriesRef.current.find((q) => q.id === id);
-      assert(query);
-
-      const { select, statements } = query;
-      assert(select);
-      assert(statements?.length === 1);
-
-      const selectStatement = statements[0];
-
-      const columnsStatements = getColumnsStatements({
-        connection: activeConnection,
-        select,
-      });
-
-      const totalRowsStatement = await getTotalRowsStatement({
-        connection: activeConnection,
-        select,
-      });
-
-      const tableStatements = getTableStatements({
-        connection: activeConnection,
-        select,
-      });
-
-      const statementsWithMetadata = [selectStatement, ...columnsStatements, ...tableStatements];
-
-      if (totalRowsStatement) {
-        statementsWithMetadata.push(totalRowsStatement);
-      }
-
-      onStartLoading(id);
-
-      try {
-        const results = await runQuery(statementsWithMetadata, { skipSqliteWrite: true });
-
-        const firstSelectResult = results[0];
-        const columnsResults = results
-          .slice(1, columnsStatements.length + 1)
-          .map((result) => getResultsAsRecords(result, { convertFieldNameToLowerCase: true }));
-        const tableResults = results
-          .slice(
-            columnsStatements.length + 1,
-            columnsStatements.length + tableStatements.length + 1,
-          )
-          .map((result) => getResultsAsRecords(result, { convertFieldNameToLowerCase: true }));
-        const totalRowsResult = totalRowsStatement
-          ? getResultsAsRecords(results[results.length - 1])
-          : null;
-
-        const columns = getAllColumns({
-          fields: firstSelectResult.fields,
-          columnsResults,
-          connection: activeConnection,
-          records: getResultsAsRecords(firstSelectResult),
-          select,
-          tableResults,
-        });
-
-        const totalRows = Number(totalRowsResult?.at(0)?.count);
-
-        const tables = select.tables.map(({ name, originalName, schema }, index) => ({
-          name,
-          originalName,
-          schema,
-          type: (tableResults[index].at(0)?.table_type ?? 'SYSTEM_VIEW') as TableType,
-        }));
-
-        setQueryResults((currentQueryResults) => ({
-          ...currentQueryResults,
-          [query.id]: {
-            columns,
-            rows: firstSelectResult.rows,
-            tables,
-            totalRows,
-          },
-        }));
-      } finally {
-        onFinishLoading(id);
-      }
-    },
-    [activeConnectionContext, onFinishLoading, onStartLoading],
-  );
-
   const runUserQuery = useCallback(
     async (id: string) => {
       if (!activeConnectionContext) {
         throw new Error('No active connection');
       }
-      const { runQuery } = activeConnectionContext;
+      const { runUserQuery } = activeConnectionContext;
 
       const query = queriesRef.current.find((q) => q.id === id);
       assert(query);
 
-      const { select, statements } = query;
-
-      if (!statements) return;
-
-      if (select && statements.length === 1) {
-        return runUserSelectQuery(id);
-      }
+      if (!query.statements) return;
 
       onStartLoading(id);
 
       try {
-        const results = await runQuery(statements);
+        const result = await runUserQuery(query);
 
-        const firstResultWithRows = results.find((result) => result.rows.length) ?? null;
-
-        const records = firstResultWithRows ? getResultsAsRecords(firstResultWithRows) : [];
-        const uniqueFields = firstResultWithRows ? uniqBy(firstResultWithRows.fields, 'name') : [];
-        const columns = uniqueFields.map((field) => getVirtualColumn(records, field.name));
-
-        const rows = firstResultWithRows?.rows.map((row) =>
-          uniqueFields.map((field) => {
-            const originalIndex = firstResultWithRows.fields.findIndex(
-              (f) => f.name === field.name,
-            );
-            return row[originalIndex];
-          }),
-        );
-
-        if (rows) {
+        if (result) {
           setQueryResults((currentQueryResults) => ({
             ...currentQueryResults,
-            [query.id]: {
-              columns,
-              rows,
-              tables: [],
-            },
+            [query.id]: result,
           }));
         } else {
           setQueryResults((currentQueryResults) => {
@@ -206,6 +86,7 @@ export const useQueries = () => {
             delete newQueryResults[query.id];
             return newQueryResults;
           });
+
           toast.add({
             color: 'success',
             description: 'No results returned',
@@ -228,7 +109,7 @@ export const useQueries = () => {
         onFinishLoading(id);
       }
     },
-    [activeConnectionContext, onFinishLoading, onStartLoading, runUserSelectQuery, toast],
+    [activeConnectionContext, onFinishLoading, onStartLoading, toast],
   );
 
   const addQuery = useCallback(

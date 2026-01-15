@@ -1,5 +1,5 @@
 import type { SavedQuery } from '@/savedQueries/types';
-import { ContentCopyOutlined, EditOutlined } from '@mui/icons-material';
+import { ContentCopyOutlined, OpenInNewOutlined } from '@mui/icons-material';
 import classNames from 'classnames';
 import React, { useCallback } from 'react';
 import type { ExtraProps } from 'react-markdown';
@@ -8,20 +8,22 @@ import { NativeContext } from '~/content/native/Context';
 import { isReactNative } from '~/content/native/useNative';
 import { QueriesContext } from '~/content/tabs/queries/Context';
 import { ToastContext } from '~/content/toast/Context';
-import type { ButtonProps } from '~/shared/components/button/Button';
+import { type ButtonProps } from '~/shared/components/button/Button';
 import { CodeEditor } from '~/shared/components/codeEditor/CodeEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import Play from '~/shared/icons/Play.svg?react';
+import { QueryResults } from './queryResults/QueryResults';
 
 export type CodeSnippetProps = {
   children?: React.ReactNode;
   className?: string;
   query?: Omit<SavedQuery, 'id'>;
   onCloseCopilot?: () => void;
+  messageIndex: number;
+  contentIndex: number;
 } & ExtraProps;
 
 export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
-  const { children, className, node, query, onCloseCopilot } = props;
+  const { children, className, node, query, onCloseCopilot, messageIndex, contentIndex } = props;
 
   const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
@@ -33,7 +35,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
 
   const code = String(children).trim();
 
-  const showActions = language && ['sql', 'sqlite'].includes(language);
+  const isSql = language && ['sql', 'sqlite'].includes(language);
 
   const getSqlActions = useCallback(
     (code: string) =>
@@ -41,25 +43,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
         {
           htmlProps: {
             onClick: () => {
-              track('copilot_run_query');
-
-              void addQuery(
-                {
-                  ...(query ?? { sql: code }),
-                },
-                { afterActiveTab: true, alwaysRun: true },
-              );
-
-              onCloseCopilot?.();
-            },
-          },
-          icon: <Play />,
-          tooltip: 'Run',
-        },
-        {
-          htmlProps: {
-            onClick: () => {
-              track('copilot_edit_query');
+              track('copilot_open_query');
 
               void addQuery(
                 {
@@ -72,8 +56,8 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
               onCloseCopilot?.();
             },
           },
-          icon: <EditOutlined />,
-          tooltip: 'Edit',
+          icon: <OpenInNewOutlined />,
+          tooltip: 'Open in new tab',
         },
         {
           htmlProps: {
@@ -115,9 +99,9 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-background">
+    <div className="overflow-hidden rounded-xl border border-border bg-control">
       <CodeEditor
-        getActions={showActions ? () => getSqlActions(code) : undefined}
+        getActions={isSql ? () => getSqlActions(code) : undefined}
         editorOptions={{
           padding: {
             bottom: 12,
@@ -130,6 +114,11 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
         title={query?.name}
         value={code}
       />
+      {query && (
+        <div className="mt-1 border-t border-border">
+          <QueryResults messageIndex={messageIndex} contentIndex={contentIndex} query={query} />
+        </div>
+      )}
     </div>
   );
 });

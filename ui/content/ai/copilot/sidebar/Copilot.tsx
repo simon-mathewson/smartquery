@@ -75,6 +75,19 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
     [sendMessage, track],
   );
 
+  const isInitialized = useRef(false);
+
+  const initialize = useCallback(() => {
+    if (!threadContainerRef.current || isInitialized.current) return;
+    isInitialized.current = true;
+    [...threadContainerRef.current.querySelectorAll('.user-message')].at(-1)?.scrollIntoView({
+      behavior: 'instant',
+      block: 'start',
+    });
+  }, []);
+
+  if (!activeConnection) return null;
+
   return (
     <div className="flex max-h-full flex-col gap-2">
       <Header
@@ -133,6 +146,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                         message.role === 'user',
                     },
                   )}
+                  ref={() => (index === thread.length - 1 ? initialize() : undefined)}
                 >
                   {message.content.map((item, itemIndex) =>
                     typeof item === 'string' ? (
@@ -147,7 +161,12 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                             />
                           ),
                           code: (props) => (
-                            <CodeSnippet {...props} onCloseCopilot={onCloseCopilot} />
+                            <CodeSnippet
+                              {...props}
+                              onCloseCopilot={onCloseCopilot}
+                              messageIndex={index}
+                              contentIndex={itemIndex}
+                            />
                           ),
                         }}
                         key={itemIndex}
@@ -156,7 +175,13 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                         {item}
                       </ReactMarkdown>
                     ) : (
-                      <CodeSnippet query={item} key={itemIndex} onCloseCopilot={onCloseCopilot}>
+                      <CodeSnippet
+                        query={item}
+                        key={itemIndex}
+                        onCloseCopilot={onCloseCopilot}
+                        messageIndex={index}
+                        contentIndex={itemIndex}
+                      >
                         {item.sql}
                       </CodeSnippet>
                     ),

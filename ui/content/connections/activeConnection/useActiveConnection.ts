@@ -10,8 +10,14 @@ import { getSelectFromStatement } from '~/content/tabs/queries/utils/parse';
 import { ToastContext } from '~/content/toast/Context';
 import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { ActiveConnection, Database } from '~/shared/types';
+import type { ActiveConnection, Database, Query, QueryResult, TableType } from '~/shared/types';
 import { ConnectionsContext } from '../Context';
+import { getResultsAsRecords } from '~/content/tabs/queries/utils/getResultsAsRecords';
+import { uniqBy } from 'lodash';
+import { getVirtualColumn } from '~/content/tabs/queries/utils/getVirtualColumn';
+import { getAllColumns, getColumnsStatements } from '~/content/tabs/queries/utils/columns';
+import { getTotalRowsStatement } from '~/content/tabs/queries/utils/getTotalRowsStatement';
+import { getTableStatements } from '~/content/tabs/queries/utils/getTableStatements';
 
 export const useActiveConnection = () => {
   const native = useDefinedContext(NativeContext);
@@ -123,6 +129,115 @@ export const useActiveConnection = () => {
     ],
   );
 
+  const runUserSelectQuery = useCallback(
+    async (query: Query): Promise<QueryResult> => {
+      assert(activeConnection);
+
+      const { select, statements } = query;
+      assert(select);
+      assert(statements?.length === 1);
+
+      const selectStatement = statements[0];
+
+      const columnsStatements = getColumnsStatements({
+        connection: activeConnection,
+        select,
+      });
+
+      const totalRowsStatement = await getTotalRowsStatement({
+        connection: activeConnection,
+        select,
+      });
+
+      const tableStatements = getTableStatements({
+        connection: activeConnection,
+        select,
+      });
+
+      const statementsWithMetadata = [selectStatement, ...columnsStatements, ...tableStatements];
+
+      if (totalRowsStatement) {
+        statementsWithMetadata.push(totalRowsStatement);
+      }
+
+      const results = await runQuery(statementsWithMetadata, { skipSqliteWrite: true });
+
+      const firstSelectResult = results[0];
+      const columnsResults = results
+        .slice(1, columnsStatements.length + 1)
+        .map((result) => getResultsAsRecords(result, { convertFieldNameToLowerCase: true }));
+      const tableResults = results
+        .slice(columnsStatements.length + 1, columnsStatements.length + tableStatements.length + 1)
+        .map((result) => getResultsAsRecords(result, { convertFieldNameToLowerCase: true }));
+      const totalRowsResult = totalRowsStatement
+        ? getResultsAsRecords(results[results.length - 1])
+        : null;
+
+      const columns = getAllColumns({
+        fields: firstSelectResult.fields,
+        columnsResults,
+        connection: activeConnection,
+        records: getResultsAsRecords(firstSelectResult),
+        select,
+        tableResults,
+      });
+
+      const totalRows = Number(totalRowsResult?.at(0)?.count);
+
+      const tables = select.tables.map(({ name, originalName, schema }, index) => ({
+        name,
+        originalName,
+        schema,
+        type: (tableResults[index].at(0)?.table_type ?? 'SYSTEM_VIEW') as TableType,
+      }));
+
+      return {
+        columns,
+        rows: firstSelectResult.rows,
+        tables,
+        totalRows,
+      };
+    },
+    [activeConnection, runQuery],
+  );
+
+  const runUserQuery = useCallback(
+    async (query: Query): Promise<QueryResult | null> => {
+      const { select, statements } = query;
+
+      assert(activeConnection);
+      assert(statements);
+
+      if (select && statements.length === 1) {
+        return runUserSelectQuery(query);
+      }
+
+      const results = await runQuery(statements);
+
+      const firstResultWithRows = results.find((result) => result.rows.length) ?? null;
+
+      const records = firstResultWithRows ? getResultsAsRecords(firstResultWithRows) : [];
+      const uniqueFields = firstResultWithRows ? uniqBy(firstResultWithRows.fields, 'name') : [];
+      const columns = uniqueFields.map((field) => getVirtualColumn(records, field.name));
+
+      const rows = firstResultWithRows?.rows.map((row) =>
+        uniqueFields.map((field) => {
+          const originalIndex = firstResultWithRows.fields.findIndex((f) => f.name === field.name);
+          return row[originalIndex];
+        }),
+      );
+
+      if (!rows) return null;
+
+      return {
+        columns,
+        rows,
+        tables: [],
+      };
+    },
+    [activeConnection, runQuery, runUserSelectQuery],
+  );
+
   const getDatabases = useCallback(async () => {
     assert(activeConnection);
 
@@ -176,7 +291,10 @@ export const useActiveConnection = () => {
   }, [activeConnection]);
 
   return useMemo(
-    () => (activeConnection ? { activeConnection, databases, isLoadingDatabases, runQuery } : null),
-    [activeConnection, databases, isLoadingDatabases, runQuery],
+    () =>
+      activeConnection
+        ? { activeConnection, databases, runUserQuery, isLoadingDatabases, runQuery }
+        : null,
+    [activeConnection, databases, runUserQuery, isLoadingDatabases, runQuery],
   );
 };

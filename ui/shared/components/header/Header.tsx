@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 
 export type HeaderProps = {
+  compact?: boolean;
   evenColumns?: boolean;
   left?: React.ReactNode;
   middle?: React.ReactNode;
@@ -9,7 +10,7 @@ export type HeaderProps = {
 };
 
 export const Header: React.FC<HeaderProps> = (props) => {
-  const { evenColumns, left, middle, right } = props;
+  const { compact, evenColumns, left, middle, right } = props;
 
   return (
     <div
@@ -17,6 +18,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
         'grid h-9 shrink-0 grid-cols-[minmax(36px,_max-content)_1fr_minmax(36px,_max-content)] gap-2 text-sm font-medium text-textPrimary',
         {
           '!grid-cols-[1fr,1fr,1fr]': evenColumns,
+          '!h-6': compact,
         },
       )}
     >

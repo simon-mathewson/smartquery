@@ -18,13 +18,23 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 
 export type TableProps = {
+  backgroundColor?: 'control' | 'background';
+  canAdd: boolean;
+  disableSorting?: boolean;
   handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
   isEditable: boolean;
-  canAdd: boolean;
+  scrollOnlyOnFocus?: boolean;
 };
 
 export const Table: React.FC<TableProps> = (props) => {
-  const { handleRowCreationRef, isEditable, canAdd } = props;
+  const {
+    backgroundColor = 'background',
+    canAdd,
+    disableSorting = false,
+    handleRowCreationRef,
+    isEditable,
+    scrollOnlyOnFocus,
+  } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
@@ -168,8 +178,10 @@ export const Table: React.FC<TableProps> = (props) => {
     <>
       <div className="relative flex h-full min-h-[100px] grow flex-col items-start overflow-hidden">
         <div
-          className={classNames('relative w-full overflow-auto', {
-            'pointer-events-none overflow-hidden': isEditing,
+          className={classNames('relative w-full overflow-hidden', {
+            'pointer-events-none !overflow-hidden': isEditing,
+            '!overflow-auto': !scrollOnlyOnFocus,
+            'focus-within:!overflow-auto': scrollOnlyOnFocus,
           })}
           ref={tableRef}
         >
@@ -183,11 +195,12 @@ export const Table: React.FC<TableProps> = (props) => {
 
               return (
                 <Cell
+                  backgroundColor={backgroundColor}
                   column={column}
                   columnIndex={columnIndex}
                   key={columnName}
                   setColumnWidth={(updateFn) => getColumnWidthUpdater(updateFn, columnName)}
-                  sorting={sorting}
+                  sorting={disableSorting ? null : sorting}
                   type="header"
                   value={columnName}
                   visibleColumnCount={visibleColumns.length}
@@ -235,6 +248,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
                 return (
                   <Cell
+                    backgroundColor={backgroundColor}
                     column={column}
                     columnIndex={columnIndex}
                     isChanged={changedValue !== undefined}
@@ -267,6 +281,7 @@ export const Table: React.FC<TableProps> = (props) => {
 
                 return (
                   <Cell
+                    backgroundColor={backgroundColor}
                     column={column}
                     columnIndex={columnIndex}
                     isCreated

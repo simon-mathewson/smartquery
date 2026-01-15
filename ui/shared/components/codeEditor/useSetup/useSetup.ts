@@ -104,8 +104,7 @@ export const useSetup = (props: {
   const isFirstHeightChangedEvent = useRef(true);
 
   const setDimensions = useCallback(() => {
-    assert(editorRef.current);
-    assert(hostRef.current);
+    if (!editorRef.current || !hostRef.current) return;
 
     const initialHeight = height ?? (large ? 80 : 30);
 
@@ -261,8 +260,7 @@ export const useSetup = (props: {
   // Update dimensions
   useEffect(() => {
     if (!isInitialized) return;
-    assert(editorRef.current);
-    assert(hostRef.current);
+    if (!editorRef.current || !hostRef.current) return;
 
     const dispose = editorRef.current.onDidContentSizeChange(setDimensions);
 

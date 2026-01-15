@@ -69,6 +69,7 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
           <List
             htmlProps={{ 'aria-labelledby': databasesLabelId }}
             items={databases.map((database) => ({
+              element: 'link',
               htmlProps: {
                 href:
                   activeConnection.database !== database.name
@@ -116,6 +117,7 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
             <List
               htmlProps={{ 'aria-labelledby': schemasLabelId }}
               items={schemas.map((schema) => ({
+                element: 'link',
                 htmlProps: {
                   href:
                     activeConnection.schema !== schema

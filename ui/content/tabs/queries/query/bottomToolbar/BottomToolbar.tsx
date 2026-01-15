@@ -10,12 +10,14 @@ import { AnalyticsContext } from '~/content/analytics/Context';
 import { formatNumber } from '@/utils/formatNumber';
 
 export type BottomToolbarProps = {
-  handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
   canAdd: boolean;
+  compact?: boolean;
+  disablePagination?: boolean;
+  handleRowCreationRef: React.MutableRefObject<(() => void) | null>;
 };
 
 export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
-  const { handleRowCreationRef, canAdd } = props;
+  const { handleRowCreationRef, canAdd, disablePagination, compact } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
   const { rows } = useDefinedContext(ResultContext);
@@ -34,6 +36,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
 
   return (
     <Header
+      compact={compact}
       left={canAdd && <Add handleRowCreationRef={handleRowCreationRef} />}
       middle={
         ((totalRows !== undefined && totalRows > 0) || rows.length > 0) && (
@@ -43,6 +46,7 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
         )
       }
       right={
+        !disablePagination &&
         limit !== undefined &&
         totalRows !== undefined &&
         (!previousDisabled || !nextDisabled) && (

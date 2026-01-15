@@ -3,17 +3,18 @@ import type { inferRouterInputs } from '@trpc/server';
 import { cloneDeep, omit } from 'lodash';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import superjson from 'superjson';
+import { assert } from 'ts-essentials';
 import { CloudApiContext } from '~/content/cloud/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
+import type { QueryResult } from '~/shared/types';
+import { formatSql } from '~/shared/utils/sql/sql';
 import type { CloudRouter } from '../../../../cloud/router';
 import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
 import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
+import { isQuotaExceededError } from './isQuotaExceededError';
 import { parseResponse } from './parseResponse';
 import type { ThreadMessage } from './types';
-import { formatSql } from '~/shared/utils/sql/sql';
-import { isQuotaExceededError } from './isQuotaExceededError';
-import { assert } from 'ts-essentials';
 
 export const useCopilot = () => {
   const { cloudApiStream } = useDefinedContext(CloudApiContext);
@@ -21,15 +22,19 @@ export const useCopilot = () => {
 
   const [rawThread, setRawThread] = useStoredState<AiTextContent[]>('useCopilot.thread', []);
   const [thread, setThread] = useState<Awaited<ReturnType<typeof processThread>>>([]);
+  const [queryResults, setQueryResults] = useStoredState<Record<string, QueryResult | null>>(
+    'useCopilot.queryResults',
+    {},
+  );
 
   const [isQuotaExceeded, setIsQuotaExceeded] = useState(false);
 
   const processThread = useCallback(
-    (rawThread: AiTextContent[]) => {
+    (rawThread: AiTextContent[], queryResults: Record<string, QueryResult | null>) => {
       assert(activeConnection);
 
       return Promise.all(
-        rawThread.map(async (item) =>
+        rawThread.map(async (item, messageIndex) =>
           item.role === 'user'
             ? ({
                 content: [item.parts[0].text] satisfies ThreadMessage[],
@@ -37,11 +42,20 @@ export const useCopilot = () => {
               } as const)
             : ({
                 content: await Promise.all(
-                  parseResponse(item.parts[0].text).map(async (message) =>
-                    typeof message === 'string'
-                      ? message
-                      : { ...message, sql: await formatSql(message.sql, activeConnection.engine) },
-                  ),
+                  parseResponse(item.parts[0].text).map(async (message, contentIndex) => {
+                    const key = `${messageIndex}-${contentIndex}`;
+                    const result = queryResults[key];
+                    const baseContent =
+                      typeof message === 'string'
+                        ? message
+                        : {
+                            ...message,
+                            sql: await formatSql(message.sql, activeConnection.engine),
+                          };
+                    return typeof baseContent === 'string'
+                      ? baseContent
+                      : { ...baseContent, ...(result != null && { result }) };
+                  }),
                 ),
                 role: 'model',
               } as const),
@@ -53,9 +67,9 @@ export const useCopilot = () => {
 
   useEffect(() => {
     if (activeConnection) {
-      void processThread(rawThread).then(setThread);
+      void processThread(rawThread, queryResults).then(setThread);
     }
-  }, [activeConnection, processThread, rawThread]);
+  }, [activeConnection, processThread, rawThread, queryResults]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -180,27 +194,40 @@ export const useCopilot = () => {
     setRawThread([]);
   }, [setRawThread, stopGenerating]);
 
+  const setQueryResult = useCallback(
+    (messageIndex: number, contentIndex: number, result: QueryResult | null) => {
+      const key = `${messageIndex}-${contentIndex}`;
+      setQueryResults((currentQueryResults) => ({
+        ...currentQueryResults,
+        [key]: result,
+      }));
+    },
+    [setQueryResults],
+  );
+
   return useMemo(
     () => ({
       clearThread,
+      hasSchemaDefinitions,
       input,
       isLoading,
       isLoadingSchemaDefinitions,
-      hasSchemaDefinitions,
       isQuotaExceeded,
       sendMessage,
       setInput,
+      setQueryResult,
       stopGenerating,
       thread,
     }),
     [
       clearThread,
+      hasSchemaDefinitions,
       input,
       isLoading,
       isLoadingSchemaDefinitions,
       isQuotaExceeded,
-      hasSchemaDefinitions,
       sendMessage,
+      setQueryResult,
       stopGenerating,
       thread,
     ],

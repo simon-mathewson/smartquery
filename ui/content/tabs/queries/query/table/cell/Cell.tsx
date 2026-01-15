@@ -20,6 +20,7 @@ import { getBooleanLabel } from '../../../utils/getBooleanLabel';
 import type { DbValue } from '@/native/types';
 
 export type CellProps = {
+  backgroundColor: string;
   column: Column | string;
   columnIndex: number;
   visibleColumnCount: number;
@@ -27,7 +28,7 @@ export type CellProps = {
   setColumnWidth: ResizeHandleProps['onResize'];
 } & XOR<
   {
-    sorting: ReturnType<typeof useSorting>;
+    sorting: ReturnType<typeof useSorting> | null;
     type: 'header';
   },
   {
@@ -48,6 +49,7 @@ export type CellProps = {
 
 export const Cell: React.FC<CellProps> = (props) => {
   const {
+    backgroundColor,
     column,
     columnIndex,
     isCreated,
@@ -156,8 +158,10 @@ export const Cell: React.FC<CellProps> = (props) => {
             return 'data-[row-hover=true]:bg-secondaryHighlight ';
           })(),
           {
-            'h-10 border-y bg-background/60 backdrop-blur-xl': type === 'header',
-            'cursor-pointer': type === 'header' && query.select,
+            'h-10 border-y bg-opacity-60 backdrop-blur-xl': type === 'header',
+            'bg-control': type === 'header' && backgroundColor === 'control',
+            'bg-background': type === 'header' && backgroundColor === 'background',
+            'cursor-pointer': type === 'header' && query.select && sorting,
             '-mt-[1px] border-y py-2': type === 'body',
             'border-l-0 pl-6': columnIndex === 0,
             'pr-6': columnIndex === visibleColumnCount - 1,
@@ -189,7 +193,7 @@ export const Cell: React.FC<CellProps> = (props) => {
             }
           : {
               onClick: () => {
-                if (!query.select) return;
+                if (!query.select || !sorting) return;
                 void sorting.toggleSort(column as Column);
               },
             })}
@@ -269,12 +273,14 @@ export const Cell: React.FC<CellProps> = (props) => {
         )}
         {query.select && type === 'header' && (
           <>
-            {!sorting.sortedColumn ||
+            {!sorting?.sortedColumn ||
             !isSortedColumn ||
-            sorting.sortedColumn.direction === 'ASC' ? (
+            sorting?.sortedColumn.direction === 'ASC' ? (
               <ArrowDownward
                 className={classNames('!h-4 !w-4 text-primary', {
-                  '!hidden opacity-0 group-hover:!block group-hover:opacity-50': !isSortedColumn,
+                  '!hidden opacity-0 group-hover:!block group-hover:opacity-50':
+                    !isSortedColumn && sorting,
+                  '!hidden': !sorting,
                 })}
               />
             ) : (
@@ -288,7 +294,9 @@ export const Cell: React.FC<CellProps> = (props) => {
           className={classNames(
             'h-8 w-full select-none border-y border-y-border shadow-[inset_1px_0_0_0_#e5e5e5] dark:shadow-[inset_1px_0_0_0_#404040]',
             {
-              'z-10 -ml-px bg-background/60 backdrop-blur-xl': type === 'header',
+              'z-10 -ml-px bg-opacity-60 backdrop-blur-xl': type === 'header',
+              'bg-control': type === 'header' && backgroundColor === 'control',
+              'bg-background': type === 'header' && backgroundColor === 'background',
               '-ml-px -mt-px': type === 'body',
             },
           )}
