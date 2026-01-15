@@ -1,7 +1,7 @@
 {
   "name": "smartquery-desktop",
   "productName": "SmartQuery",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Postgres, MySQL, and SQLite UI",
   "type": "module",
   "main": "./out/main/main.js",

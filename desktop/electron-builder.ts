@@ -38,6 +38,8 @@ export default {
     gatekeeperAssess: false,
     hardenedRuntime: true,
     icon: 'buildResources/icon.icon',
+    mergeASARs: true,
+    x64ArchFiles: '**/keytar/build/Release/keytar.node',
   },
   dmg: {
     artifactName,
