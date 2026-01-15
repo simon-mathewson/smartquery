@@ -5,12 +5,14 @@ import { isNative } from '../native/useNative';
 import { type Credential, type CredentialType } from '@/utils/credentials';
 import type { ModalControl } from '~/shared/components/modal/types';
 import type { UserPasswordModalInput } from '../connections/userPasswordModal/types';
+import { AuthContext } from '../auth/Context';
 
 export const useCredentials = (props: {
   userPasswordModal: ModalControl<UserPasswordModalInput>;
 }) => {
   const { userPasswordModal } = props;
 
+  const { user } = useDefinedContext(AuthContext);
   const native = useDefinedContext(NativeContext);
 
   const storeCredentialInKeychain = useCallback(
@@ -66,7 +68,7 @@ export const useCredentials = (props: {
   const requestUserPassword = useCallback(
     async (title?: string): Promise<string> => {
       const fromKeychain = await getUserCredentialFromKeychain();
-      if (fromKeychain) {
+      if (fromKeychain && fromKeychain.username === user?.email) {
         return fromKeychain.password;
       }
 
@@ -83,7 +85,7 @@ export const useCredentials = (props: {
         ),
       );
     },
-    [getUserCredentialFromKeychain, userPasswordModal],
+    [getUserCredentialFromKeychain, user?.email, userPasswordModal],
   );
 
   return useMemo(

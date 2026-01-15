@@ -7,10 +7,11 @@ export type ActionListProps = {
   actions: ButtonProps[];
   compact?: boolean;
   htmlProps?: React.HTMLProps<HTMLDivElement>;
+  truncate?: boolean;
 };
 
 export const ActionList: React.FC<ActionListProps> = (props) => {
-  const { actions, compact, htmlProps } = props;
+  const { actions, compact, htmlProps, truncate = true } = props;
 
   return (
     <div
@@ -36,7 +37,7 @@ export const ActionList: React.FC<ActionListProps> = (props) => {
                 },
               ),
             }}
-            truncate={false}
+            truncate={truncate}
           />
         </React.Fragment>
       ))}

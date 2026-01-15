@@ -148,7 +148,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
                 <div className={classNames('font-medium', { truncate })} id={labelId}>
                   {label}
                 </div>
-                {hint && <div className="text-xs opacity-70">{hint}</div>}
+                {hint && <div className="truncate text-xs opacity-70">{hint}</div>}
               </div>
             )}
             {textSuffix && <div className="text-sm font-medium">{textSuffix}</div>}

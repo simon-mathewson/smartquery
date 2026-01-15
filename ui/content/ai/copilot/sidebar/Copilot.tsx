@@ -215,6 +215,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
               }))}
             compact
             htmlProps={{ className: 'mt-4' }}
+            truncate={false}
           />
         )}
         <div className="h-[100dvh] w-full" />
