@@ -29,9 +29,6 @@ importers:
       electron-store:
         specifier: 8.2.0
         version: 8.2.0
-      electron-unhandled:
-        specifier: 5.0.0
-        version: 5.0.0
       electron-updater:
         specifier: 6.6.2
         version: 6.6.2
@@ -55,7 +52,7 @@ importers:
         version: 8.16.3
       smartquery-shared:
         specifier: file:../shared
-        version: file:../shared(@google/genai@0.12.0(encoding@0.1.13))(lodash-es@4.17.21)(superjson@1.12.4)(zod@3.24.1)
+        version: file:../shared(@google/genai@0.12.0(encoding@0.1.13))(lodash-es@4.17.21)(superjson@1.12.4)(ts-essentials@9.4.2(typescript@5.8.3))(zod@3.24.1)
     devDependencies:
       '@electron-toolkit/eslint-config-prettier':
         specifier: 3.0.0
@@ -1305,10 +1302,6 @@ packages:
     resolution: {integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==}
     engines: {node: '>=6'}
 
-  clean-stack@5.2.0:
-    resolution: {integrity: sha512-TyUIUJgdFnCISzG5zu3291TAsE77ddchd0bepon1VVQrKLGKFED4iXFEDQ24mIPdPBbyE16PK3F8MYE1CmcBEQ==}
-    engines: {node: '>=14.16'}
-
   cli-cursor@3.1.0:
     resolution: {integrity: sha512-I/zHAwsKf9FqGoXM4WWRACob9+SNukZTd94DWF57E4toouRulbCxcUh6RKUEOQlYTHJnzkPMySvPNaaSLNfLZw==}
     engines: {node: '>=8'}
@@ -1526,10 +1519,6 @@ packages:
     engines: {node: '>=14.0.0'}
     hasBin: true
 
-  electron-is-dev@3.0.1:
-    resolution: {integrity: sha512-8TjjAh8Ec51hUi3o4TaU0mD3GMTOESi866oRNavj9A3IQJ7pmv+MJVmdZBFGw4GFT36X7bkqnuDNYvkQgvyI8Q==}
-    engines: {node: '>=18'}
-
   electron-log@5.4.1:
     resolution: {integrity: sha512-QvisA18Z++8E3Th0zmhUelys9dEv7aIeXJlbFw3UrxCc8H9qSRW0j8/ooTef/EtHui8tVmbKSL+EIQzP9GoRLg==}
     engines: {node: '>= 14'}
@@ -1545,10 +1534,6 @@ packages:
 
   electron-to-chromium@1.5.101:
     resolution: {integrity: sha512-L0ISiQrP/56Acgu4/i/kfPwWSgrzYZUnQrC0+QPFuhqlLP1Ir7qzPPDVS9BcKIyWTRU8+o6CC8dKw38tSWhYIA==}
-
-  electron-unhandled@5.0.0:
-    resolution: {integrity: sha512-spH7quQUrNWgTp1rJNa0sCPTPHwKywctnHLVbrQxpjxojQLhGxXHMdETBkag0No8x9Jwo/c6r2T/nfeoG+4Cxw==}
-    engines: {node: '>=18'}
 
   electron-updater@6.6.2:
     resolution: {integrity: sha512-Cr4GDOkbAUqRHP5/oeOmH/L2Bn6+FQPxVLZtPbcmKZC63a1F3uu5EefYOssgZXG3u/zBlubbJ5PJdITdMVggbw==}
@@ -1583,10 +1568,6 @@ packages:
 
   end-of-stream@1.4.5:
     resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
-
-  ensure-error@4.0.0:
-    resolution: {integrity: sha512-7Xenn3+R6tp2UqAbH9Jqs6QCSABQok+1VAhaPaF0jjm3iuhVHCblfBh18nYtpm3K9/V4Jpxz1JIqFZyrjstBtw==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   env-paths@2.2.1:
     resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
@@ -1631,10 +1612,6 @@ packages:
   escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
-
-  escape-string-regexp@5.0.0:
-    resolution: {integrity: sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==}
-    engines: {node: '>=12'}
 
   eslint-config-prettier@10.1.8:
     resolution: {integrity: sha512-82GZUjRS0p/jganf6q1rEO25VSoHH0hKPCTrgillPjdI/3bgBhAE1QzHrHTizjpRvy6pGAvKjDJtk2pF9NDq8w==}
@@ -2193,9 +2170,6 @@ packages:
 
   lodash-es@4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
-
-  lodash.debounce@4.0.8:
-    resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
 
   lodash.defaults@4.2.0:
     resolution: {integrity: sha512-qjxPLHd3r5DnsdGacqOMU6pb/avJzdh9tFX2ymgoZE27BmjXrNy/y4LoaiTeAb+O3gL8AfpJGtqfX/ae2leYYQ==}
@@ -2799,10 +2773,6 @@ packages:
   seq-queue@0.0.5:
     resolution: {integrity: sha512-hr3Wtp/GZIc/6DAGPDcV4/9WoZhjrkXsi5B/07QgX8tsdc6ilr7BFM6PM6rbdAX1kFSDYeZGLipIZZKyQP0O5Q==}
 
-  serialize-error@11.0.3:
-    resolution: {integrity: sha512-2G2y++21dhj2R7iHAdd0FIzjGwuKZld+7Pl/bTU6YIkrC2ZMbVUjm+luj6A6V34Rv9XfKJDKpTWu9W4Gse1D9g==}
-    engines: {node: '>=14.16'}
-
   serialize-error@7.0.1:
     resolution: {integrity: sha512-8I8TjW5KMOKsZQTvoxjuSIa7foAwPWGOts+6o7sgjz41/qMD9VQHEDxi6PBvK2l0MXUmqZyNpUK+T2tQaaElvw==}
     engines: {node: '>=10'}
@@ -2849,6 +2819,7 @@ packages:
       '@google/genai': 0.12.0
       lodash-es: 4.17.21
       superjson: 1.12.4
+      ts-essentials: 9.4.1
       zod: 3.24.1
 
   socks-proxy-agent@7.0.0:
@@ -4526,10 +4497,6 @@ snapshots:
 
   clean-stack@2.2.0: {}
 
-  clean-stack@5.2.0:
-    dependencies:
-      escape-string-regexp: 5.0.0
-
   cli-cursor@3.1.0:
     dependencies:
       restore-cursor: 3.1.0
@@ -4773,8 +4740,6 @@ snapshots:
       - electron-builder-squirrel-windows
       - supports-color
 
-  electron-is-dev@3.0.1: {}
-
   electron-log@5.4.1: {}
 
   electron-publish@25.1.7:
@@ -4808,14 +4773,6 @@ snapshots:
       type-fest: 2.19.0
 
   electron-to-chromium@1.5.101: {}
-
-  electron-unhandled@5.0.0:
-    dependencies:
-      clean-stack: 5.2.0
-      electron-is-dev: 3.0.1
-      ensure-error: 4.0.0
-      lodash.debounce: 4.0.8
-      serialize-error: 11.0.3
 
   electron-updater@6.6.2:
     dependencies:
@@ -4868,8 +4825,6 @@ snapshots:
   end-of-stream@1.4.5:
     dependencies:
       once: 1.4.0
-
-  ensure-error@4.0.0: {}
 
   env-paths@2.2.1: {}
 
@@ -4954,8 +4909,6 @@ snapshots:
   escalade@3.2.0: {}
 
   escape-string-regexp@4.0.0: {}
-
-  escape-string-regexp@5.0.0: {}
 
   eslint-config-prettier@10.1.8(eslint@9.36.0(jiti@2.6.0)):
     dependencies:
@@ -5580,8 +5533,6 @@ snapshots:
 
   lodash-es@4.17.21: {}
 
-  lodash.debounce@4.0.8: {}
-
   lodash.defaults@4.2.0: {}
 
   lodash.difference@4.5.0: {}
@@ -6205,10 +6156,6 @@ snapshots:
 
   seq-queue@0.0.5: {}
 
-  serialize-error@11.0.3:
-    dependencies:
-      type-fest: 2.19.0
-
   serialize-error@7.0.1:
     dependencies:
       type-fest: 0.13.1
@@ -6247,11 +6194,12 @@ snapshots:
 
   smart-buffer@4.2.0: {}
 
-  smartquery-shared@file:../shared(@google/genai@0.12.0(encoding@0.1.13))(lodash-es@4.17.21)(superjson@1.12.4)(zod@3.24.1):
+  smartquery-shared@file:../shared(@google/genai@0.12.0(encoding@0.1.13))(lodash-es@4.17.21)(superjson@1.12.4)(ts-essentials@9.4.2(typescript@5.8.3))(zod@3.24.1):
     dependencies:
       '@google/genai': 0.12.0(encoding@0.1.13)
       lodash-es: 4.17.21
       superjson: 1.12.4
+      ts-essentials: 9.4.2(typescript@5.8.3)
       zod: 3.24.1
 
   socks-proxy-agent@7.0.0:
