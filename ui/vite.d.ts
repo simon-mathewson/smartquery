@@ -7,10 +7,11 @@ interface ImportMetaEnv {
   readonly VITE_AWS_WAF_CAPTCHA_API_KEY?: string;
   readonly VITE_AWS_WAF_CAPTCHA_SCRIPT_URL?: string;
   readonly VITE_CLOUD_URL: string;
+  readonly VITE_DESKTOP_S3_URL: string;
   readonly VITE_DISCORD_INVITE_URL: string;
   readonly VITE_GOOGLE_ANALYTICS_ID: string;
   readonly VITE_IMPRINT_URL: string;
-  readonly VITE_DESKTOP_S3_URL: string;
+  readonly VITE_KEYCHAIN_SERVICE_NAME: string;
   readonly VITE_PRIVACY_URL: string;
   readonly VITE_STRIPE_PUBLISHABLE_KEY: string;
   readonly VITE_TERMS_URL: string;

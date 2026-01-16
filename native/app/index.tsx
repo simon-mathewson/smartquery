@@ -27,6 +27,8 @@ import {
 } from "~/utils/credentials";
 import { buildCredentialUsername } from "~/utils/credentials";
 
+const keychainServiceNameBase = process.env.EXPO_PUBLIC_KEYCHAIN_SERVICE_NAME;
+
 export default function Index() {
   const colorScheme = useColorScheme();
   const orientation = useOrientation();
@@ -59,7 +61,7 @@ export default function Index() {
       const fullUsername = buildCredentialUsername({ username, type });
 
       await Keychain.setGenericPassword(fullUsername, password, {
-        service: getKeychainServiceName(fullUsername),
+        service: getKeychainServiceName(keychainServiceNameBase, fullUsername),
       });
     },
     []
@@ -70,7 +72,7 @@ export default function Index() {
       const fullUsername = buildCredentialUsername({ username, type });
 
       const credentials = await Keychain.getGenericPassword({
-        service: getKeychainServiceName(fullUsername),
+        service: getKeychainServiceName(keychainServiceNameBase, fullUsername),
       });
       if (credentials) {
         return credentials.password;
@@ -84,7 +86,7 @@ export default function Index() {
     async (username, type) => {
       const fullUsername = buildCredentialUsername({ username, type });
       await Keychain.resetGenericPassword({
-        service: getKeychainServiceName(fullUsername),
+        service: getKeychainServiceName(keychainServiceNameBase, fullUsername),
       });
     },
     []

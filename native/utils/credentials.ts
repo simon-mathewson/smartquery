@@ -1,10 +1,11 @@
 import assert from "assert";
 
-export const KEYCHAIN_SERVICE_NAME = "dev.smartquery";
-
 /** With react-native-keychain, we need to use the service prop to retrieve specific credentials. */
-export const getKeychainServiceName = (username: string): string => {
-  return `${KEYCHAIN_SERVICE_NAME}:${username}`;
+export const getKeychainServiceName = (
+  keychainServiceNameBase: string,
+  username: string
+): string => {
+  return `${keychainServiceNameBase}:${username}`;
 };
 
 export const credentialTypes = [

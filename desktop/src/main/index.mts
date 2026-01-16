@@ -12,11 +12,7 @@ import {
   runQuery,
   switchCatalogOrSchema,
 } from './connector/connector';
-import {
-  buildCredentialUsername,
-  CredentialType,
-  KEYCHAIN_SERVICE_NAME,
-} from '@/utils/credentials';
+import { buildCredentialUsername, CredentialType } from '@/utils/credentials';
 import { parseCredentialUsername } from '@/utils/credentials';
 import { dialog } from 'electron';
 
@@ -102,7 +98,7 @@ void app.whenReady().then(() => {
       case 'addToKeychain': {
         const [username, password, type] = args as [string, string, CredentialType];
         await keytar.setPassword(
-          KEYCHAIN_SERVICE_NAME,
+          import.meta.env.VITE_KEYCHAIN_SERVICE_NAME,
           buildCredentialUsername({ username, type }),
           password,
         );
@@ -111,14 +107,14 @@ void app.whenReady().then(() => {
       case 'getFromKeychain': {
         const [username, type] = args as [string, CredentialType];
         return keytar.getPassword(
-          KEYCHAIN_SERVICE_NAME,
+          import.meta.env.VITE_KEYCHAIN_SERVICE_NAME,
           buildCredentialUsername({ username, type }),
         );
       }
       case 'removeFromKeychain': {
         const [username, type] = args as [string, CredentialType];
         await keytar.deletePassword(
-          KEYCHAIN_SERVICE_NAME,
+          import.meta.env.VITE_KEYCHAIN_SERVICE_NAME,
           buildCredentialUsername({ username, type }),
         );
         return;
@@ -126,7 +122,7 @@ void app.whenReady().then(() => {
       case 'getUserCredential': {
         const [username] = args as [string?];
 
-        const all = await keytar.findCredentials(KEYCHAIN_SERVICE_NAME);
+        const all = await keytar.findCredentials(import.meta.env.VITE_KEYCHAIN_SERVICE_NAME);
         const userCredential = all.find((credential) => {
           const { rawUsername, type } = parseCredentialUsername(credential.account);
           return type === 'user' && (username ? rawUsername === username : true);

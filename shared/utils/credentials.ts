@@ -1,7 +1,5 @@
 import { assert } from 'ts-essentials';
 
-export const KEYCHAIN_SERVICE_NAME = 'dev.smartquery';
-
 export const credentialTypes = [
   'user',
   'password',
