@@ -84,16 +84,30 @@ extension MySQL {
             }
             
             if num < 1 {
-                
                 return ("", n)
             }
             
-            n += Int(num!)
+            let strLength = Int(num!)
+            n += strLength
             
             if b.count >= n {
-                var str = Array(b[n-Int(num!)...n-1])
-                str.append(0)
-                return (str.string(), n)
+                let startIdx = n - strLength
+                let endIdx = n - 1
+                let strBytes = Array(b[startIdx...endIdx])
+                
+                // Create string directly from bytes (more reliable than string() method)
+                if let result = String(bytes: strBytes, encoding: .utf8) {
+                    return (result, n)
+                }
+                
+                // Fallback: try with null terminator for string() method
+                var strWithNull = strBytes
+                strWithNull.append(0)
+                if let result = strWithNull.string(), !result.isEmpty {
+                    return (result, n)
+                }
+                
+                return ("", n)
             }
             
             return ("", n)

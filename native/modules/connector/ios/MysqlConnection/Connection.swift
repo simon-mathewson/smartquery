@@ -59,13 +59,28 @@ public extension MySQL.Connection {
         var msh = MySQL.mysql_handshake()
         
         if let data = try socket?.readPacket() {
-            
             var pos = 0
             msh.proto_version = data[pos]
             pos += 1
-            msh.server_version = data[pos..<data.count].string()
-            pos += (msh.server_version?.utf8.count)! + 1
-            msh.conn_id = data[pos...pos+4].uInt32()
+            // Find the null terminator for server_version
+            let versionStart = pos
+            while pos < data.count && data[pos] != 0 {
+                pos += 1
+            }
+            // Extract server_version string (including null terminator for string() method)
+            if pos < data.count {
+                // Include the null terminator in the range for string() method
+                msh.server_version = data[versionStart...pos].string()
+                pos += 1  // Move past the null terminator
+            } else {
+                // No null terminator found, read to end of data
+                msh.server_version = data[versionStart..<data.count].string()
+                pos = data.count
+            }
+            // Read 4 bytes for UInt32 (pos through pos+3)
+            if pos + 3 < data.count {
+                msh.conn_id = data[pos...pos+3].uInt32()
+            }
             pos += 4
             msh.scramble = Array(data[pos..<pos+8])
             pos += 8 + 1
@@ -88,7 +103,63 @@ public extension MySQL.Connection {
             
             pos += 12+1;
             
-            msh.auth_plugin = data[pos...pos+auth_len].string()
+            let combinedCaps = UInt32(msh.cap_flags ?? 0) | (UInt32(msh.ext_cap_flags ?? 0) << 16)
+            let hasPluginAuth = (combinedCaps & MysqlClientCaps.CLIENT_PLUGIN_AUTH) != 0
+            
+            // auth_len of 255 (0xff) means the auth_plugin field is NOT present
+            // Only read auth_plugin if:
+            // 1. CLIENT_PLUGIN_AUTH capability is set
+            // 2. auth_len is valid (not 255/0xff)
+            // 3. We have enough data
+            if hasPluginAuth && auth_len != 255 && auth_len > 0 {
+                if pos + auth_len <= data.count {
+                    // auth_len is the length of the string, which may or may not include null terminator
+                    // Read exactly auth_len bytes
+                    let authPluginBytes = Array(data[pos..<pos+auth_len])
+                    
+                    // Check if last byte is null terminator
+                    if authPluginBytes.last == 0 {
+                        // Has null terminator, use string() method
+                        msh.auth_plugin = data[pos..<pos+auth_len].string()
+                    } else {
+                        // No null terminator, create string directly from bytes
+                        if let str = String(bytes: authPluginBytes, encoding: .utf8) {
+                            msh.auth_plugin = str
+                        }
+                    }
+                    
+                    // Fallback if still empty
+                    if msh.auth_plugin == nil || msh.auth_plugin?.isEmpty == true {
+                        // Try to find null terminator in the data beyond auth_len
+                        var endPos = pos
+                        while endPos < data.count && data[endPos] != 0 {
+                            endPos += 1
+                        }
+                        if endPos < data.count && endPos > pos {
+                            // Found null terminator, include it
+                            var authBytes = Array(data[pos...endPos])
+                            msh.auth_plugin = authBytes.string()
+                        } else {
+                            // No null terminator found, create string from raw bytes
+                            if let str = String(bytes: authPluginBytes, encoding: .utf8) {
+                                msh.auth_plugin = str
+                            }
+                        }
+                    }
+                } else {
+                    // Try to read what we can safely (up to null terminator)
+                    if pos < data.count {
+                        // Read until null terminator or end of data
+                        var endPos = pos
+                        while endPos < data.count && data[endPos] != 0 {
+                            endPos += 1
+                        }
+                        if endPos < data.count {
+                            msh.auth_plugin = data[pos...endPos].string()
+                        }
+                    }
+                }
+            }
         }
         return msh
     }
@@ -139,11 +210,40 @@ public extension MySQL.Connection {
             msh.status = data[pos]
             pos += 1;
             let name_start = pos;
-            while data[pos] != 0 {
+            
+            // Find null terminator for auth_name
+            while pos < data.count && data[pos] != 0 {
                 pos += 1;
             }
-            msh.auth_name = data[name_start..<pos+1].string()
-            msh.auth_data = Array(data[pos..<data.count])
+            
+            if pos < data.count {
+                // Include null terminator in range for string() method
+                msh.auth_name = data[name_start...pos].string()
+                
+                // If string() failed, try manual construction
+                if msh.auth_name == nil || msh.auth_name?.isEmpty == true {
+                    // Remove null terminator and create string manually
+                    let nameBytes = Array(data[name_start..<pos])
+                    if let str = String(bytes: nameBytes, encoding: .utf8) {
+                        msh.auth_name = str
+                    }
+                }
+                
+                // auth_data starts after the null terminator
+                if pos + 1 < data.count {
+                    msh.auth_data = Array(data[(pos+1)..<data.count])
+                } else {
+                    msh.auth_data = []
+                }
+            } else {
+                // Try to read what we can
+                if name_start < data.count {
+                    let nameBytes = Array(data[name_start..<data.count])
+                    if let str = String(bytes: nameBytes, encoding: .utf8) {
+                        msh.auth_name = str
+                    }
+                }
+            }
         }
         return msh;
     }
@@ -183,7 +283,6 @@ public extension MySQL.Connection {
     }
 
     private func auth() throws {
-        
         var flags :UInt32 = MysqlClientCaps.CLIENT_PROTOCOL_41 |
             MysqlClientCaps.CLIENT_LONG_PASSWORD |
             MysqlClientCaps.CLIENT_TRANSACTIONS |
@@ -194,7 +293,8 @@ public extension MySQL.Connection {
             MysqlClientCaps.CLIENT_MULTI_RESULTS |
             MysqlClientCaps.CLIENT_PLUGIN_AUTH
 
-        flags &= UInt32((mysql_Handshake?.cap_flags)!) | 0xffff0000
+        let serverCaps = UInt32((mysql_Handshake?.cap_flags)!) | 0xffff0000
+        flags &= serverCaps
         
         if self.dbname != nil {
             flags |= MysqlClientCaps.CLIENT_CONNECT_WITH_DB

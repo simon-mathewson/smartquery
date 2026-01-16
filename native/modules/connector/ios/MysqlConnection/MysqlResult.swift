@@ -31,13 +31,6 @@ extension MySQL {
             
             if !con.EOFfound, let cols = con.columns, cols.count > 0, let data = try con.socket?.readPacket()  {
                 
-       /*
-                for val in data {
-                    let u = UnicodeScalar(val)
-                    print(Character(u))
-                }
-*/
-                
                 // EOF Packet
                 if (data[0] == 0xfe) && (data.count == 5) {
                     con.EOFfound = true
@@ -62,7 +55,8 @@ extension MySQL {
                 
                 if cols.count > 0 {
                     for i in 0...cols.count-1 {
-                        let (name, n) = MySQL.Utils.lenEncStr(Array(data[pos..<data.count]))
+                        let remainingData = Array(data[pos..<data.count])
+                        let (name, n) = MySQL.Utils.lenEncStr(remainingData)
                         pos += n
                         
                         if let val = name {
