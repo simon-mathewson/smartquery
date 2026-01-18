@@ -53,7 +53,7 @@ export const useTableList = () => {
             ? tables.find(
                 (t) =>
                   t.name === result.tables[0].name &&
-                  (!result.tables[0].schema || t.schema === result.tables[0].schema),
+                  (!result.tables[0].schema || !t.schema || t.schema === result.tables[0].schema),
               )
             : undefined;
         })
