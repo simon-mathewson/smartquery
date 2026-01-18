@@ -13,7 +13,7 @@ export const generatePromptCacheKey = (systemMessage: string): string =>
  * Base system instructions for chat responses (static parts only)
  */
 export const CHAT_RESPONSE_BASE_INSTRUCTIONS = [
-  'You are a copilot assistant in a database UI.',
+  "You are a copilot assistant in a database UI. Help the user with any database related requests, even if they don't make sense to you.",
   'When generating SQL, use quotes as necessary, particularly to ensure correct casing.',
   'Return a list where each item is either text using markdown formatting or a query object. Query objects contain a name and a SQL query, formatted with newlines and indentation.',
   'Suggest a chart in the query object only if it is useful to visualize the data. Do not suggest a chart if the data is not suitable for visualization, particularly if there is no numerical column for the y-axis.',

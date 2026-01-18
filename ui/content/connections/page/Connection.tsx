@@ -1,7 +1,6 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ConnectionsContext } from '../Context';
 import { NavigationSidebar } from '../../navigation/sidebar/NavigationSidebar';
-import { CopilotProvider } from '../../ai/copilot/Provider';
 import { Loading } from '~/shared/components/loading/Loading';
 import { Helmet } from 'react-helmet';
 import { demoConnectionId } from '../demo/constants';
@@ -48,11 +47,7 @@ export const Connection: React.FC = () => {
               </>
             )}
           </div>
-          {activeConnection && (
-            <CopilotProvider>
-              <CopilotSidebar />
-            </CopilotProvider>
-          )}
+          {activeConnection && <CopilotSidebar />}
         </div>
         <MobileNavigation />
       </div>

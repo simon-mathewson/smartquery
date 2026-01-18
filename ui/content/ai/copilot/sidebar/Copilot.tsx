@@ -9,9 +9,7 @@ import {
 } from '@mui/icons-material';
 import { CircularProgress, LinearProgress } from '@mui/material';
 import classNames from 'classnames';
-import { useCallback, useContext, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { AuthContext } from '~/content/auth/Context';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
@@ -27,8 +25,9 @@ import { Input } from '~/shared/components/input/Input';
 import { Tooltip } from '~/shared/components/tooltip/Tooltip';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { CopilotContext } from '../Context';
-import { CodeSnippet } from './CodeSnippet/CodeSnippet';
 import { CopilotSidebarContext } from './Context';
+import { MessageContentItem } from './messageContent/MessageContent';
+import type { AiTextContent } from '@/ai/types';
 
 export type CopilotProps = {
   onCloseCopilot?: () => void;
@@ -57,24 +56,6 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
 
   const threadContainerRef = useRef<HTMLDivElement>(null);
 
-  const submit = useCallback(
-    (inputToSend: string) => {
-      void sendMessage(inputToSend);
-
-      track('copilot_send_message');
-
-      // Scroll user message into view, not response
-      setTimeout(() => {
-        if (!threadContainerRef.current) return;
-        [...threadContainerRef.current.querySelectorAll('.user-message')].at(-1)?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }, 100);
-    },
-    [sendMessage, track],
-  );
-
   const isInitialized = useRef(false);
 
   const initialize = useCallback(() => {
@@ -87,6 +68,24 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
       });
     });
   }, []);
+
+  const previousThread = useRef<AiTextContent[]>([]);
+
+  useEffect(() => {
+    const newMessage = thread.length !== previousThread.current.length;
+    const latestMessage = thread.at(-1);
+
+    if (!newMessage || latestMessage?.role !== 'user') return;
+
+    // Scroll user message into view, not response
+    setTimeout(() => {
+      if (!threadContainerRef.current) return;
+      [...threadContainerRef.current.querySelectorAll('.user-message')].at(-1)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 100);
+  }, [thread]);
 
   if (!activeConnection) return null;
 
@@ -150,44 +149,15 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                   )}
                   ref={() => (index === thread.length - 1 ? initialize() : undefined)}
                 >
-                  {message.content.map((item, itemIndex) =>
-                    typeof item === 'string' ? (
-                      <ReactMarkdown
-                        components={{
-                          a: (props) => (
-                            <a
-                              {...props}
-                              {...(!props.href?.startsWith('#')
-                                ? { target: '_blank', rel: 'noopener noreferrer' }
-                                : {})}
-                            />
-                          ),
-                          code: (props) => (
-                            <CodeSnippet
-                              {...props}
-                              onCloseCopilot={onCloseCopilot}
-                              messageIndex={index}
-                              contentIndex={itemIndex}
-                            />
-                          ),
-                        }}
-                        key={itemIndex}
-                        remarkPlugins={[remarkGfm]}
-                      >
-                        {item}
-                      </ReactMarkdown>
-                    ) : (
-                      <CodeSnippet
-                        query={item}
-                        key={itemIndex}
-                        onCloseCopilot={onCloseCopilot}
-                        messageIndex={index}
-                        contentIndex={itemIndex}
-                      >
-                        {item.sql}
-                      </CodeSnippet>
-                    ),
-                  )}
+                  {message.content.map((item, itemIndex) => (
+                    <MessageContentItem
+                      key={itemIndex}
+                      item={item}
+                      itemIndex={itemIndex}
+                      messageIndex={index}
+                      onCloseCopilot={onCloseCopilot}
+                    />
+                  ))}
                 </div>
               </div>
             );
@@ -211,7 +181,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                 icon: <LightbulbOutline />,
                 htmlProps: {
                   onClick: () => {
-                    submit(suggestion);
+                    void sendMessage(suggestion);
                   },
                 },
               }))}
@@ -251,7 +221,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            submit(input);
+            void sendMessage(input);
           }}
         >
           <Field>
@@ -276,7 +246,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                         textarea.selectionStart = textarea.selectionEnd = cursorPosition + 1;
                       }, 0);
                     } else if (input.length !== 0) {
-                      void submit(input);
+                      void sendMessage(input);
                     }
                   }
                 },

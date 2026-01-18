@@ -11,6 +11,7 @@ import { ToastContext } from '~/content/toast/Context';
 import { type ButtonProps } from '~/shared/components/button/Button';
 import { CodeEditor } from '~/shared/components/codeEditor/CodeEditor';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
+import { CopilotContext } from '../../../Context';
 import { QueryResults } from './queryResults/QueryResults';
 
 export type CodeSnippetProps = {
@@ -29,6 +30,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
   const { track } = useDefinedContext(AnalyticsContext);
   const toast = useDefinedContext(ToastContext);
   const { addQuery } = useDefinedContext(QueriesContext);
+  const { isLoading } = useDefinedContext(CopilotContext);
 
   const match = /language-(.+)/.exec(className || '');
   const language = query ? 'sql' : match?.[1];
@@ -114,7 +116,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
         title={query?.name}
         value={code}
       />
-      {query && (
+      {query && !isLoading && (
         <div className="mt-1 border-t border-border">
           <QueryResults messageIndex={messageIndex} contentIndex={contentIndex} query={query} />
         </div>

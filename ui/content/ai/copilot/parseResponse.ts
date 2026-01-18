@@ -28,14 +28,18 @@ export const parseResponse = (response: string): ThreadMessage[] => {
 
     if (char === '"') {
       const extractedString = extractString(cleanResponse, i) ?? '';
-      const [stringItem] = JSON.parse(`["${extractedString}"]`) as string[];
-      if (stringItem) {
-        result.push(stringItem);
-        i += extractedString.length + 2; // +2 for the quotes
-      } else {
-        i++;
+      try {
+        const [stringItem] = JSON.parse(`["${extractedString}"]`) as string[];
+        if (stringItem) {
+          result.push(stringItem);
+          i += extractedString.length + 2; // +2 for the quotes
+        } else {
+          i++;
+        }
+        continue;
+      } catch {
+        return result;
       }
-      continue;
     }
 
     if (char === '{') {
@@ -53,13 +57,19 @@ export const parseResponse = (response: string): ThreadMessage[] => {
           );
           if (matchResult) {
             const [, name, sql] = matchResult;
-            // Unescape the strings by parsing them as JSON string values
-            const unescapedName = name ? JSON.parse(`"${name}"`) : '';
-            const unescapedSql = sql ? JSON.parse(`"${sql}"`) : '';
-            result.push({
-              name: unescapedName,
-              sql: unescapedSql,
-            });
+
+            try {
+              // Unescape the strings by parsing them as JSON string values
+              const unescapedName = name ? JSON.parse(`"${name}"`) : '';
+              const unescapedSql = sql ? JSON.parse(`"${sql}"`) : '';
+
+              result.push({
+                name: unescapedName,
+                sql: unescapedSql,
+              });
+            } catch {
+              return result;
+            }
           }
         }
         i += objectResult.length;

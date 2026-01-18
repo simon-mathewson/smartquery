@@ -3,7 +3,7 @@ import type { GenerateChatResponseInput } from '../types';
 import { responseSchema } from './responseSchema';
 import { zodTextFormat } from 'openai/helpers/zod';
 import assert from 'assert';
-import { CHAT_RESPONSE_BASE_INSTRUCTIONS, generatePromptCacheKey } from '../cacheKey';
+import { CHAT_RESPONSE_BASE_INSTRUCTIONS, generatePromptCacheKey } from '../instructions';
 
 export type GenerateChatResponseProps = GenerateChatResponseInput & {
   abortSignal: AbortSignal | undefined;

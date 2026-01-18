@@ -1,7 +1,7 @@
 import type OpenAI from 'openai';
 import type { GenerateInlineCompletionsInput } from './types';
 import assert from 'assert';
-import { INLINE_COMPLETION_BASE_INSTRUCTIONS, generatePromptCacheKey } from './cacheKey';
+import { INLINE_COMPLETION_BASE_INSTRUCTIONS, generatePromptCacheKey } from './instructions';
 
 export type GenerateInlineCompletionsProps = GenerateInlineCompletionsInput & {
   abortSignal: AbortSignal | undefined;

@@ -10,10 +10,11 @@ import { getNewQuery } from '~/content/tabs/queries/utils/getNewQuery';
 import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { Query } from '~/shared/types';
-import type { CopilotQuery } from '../../../types';
-import { useQueryResults } from './useQueryResults';
+import type { CopilotQuery } from '../../../../types';
 import { Tooltip } from '~/shared/components/tooltip/Tooltip';
 import { CircularProgress } from '@mui/material';
+import { QueryError } from '~/content/queries/QueryError';
+import { useQueryResults } from './useQueryResults';
 
 export type QueryResultsProps = {
   messageIndex: number;
@@ -104,25 +105,31 @@ export const QueryResults: React.FC<QueryResultsProps> = (props) => {
             )}
           </div>
         </div>
-        <div className="pl-2 pr-2 sm:pl-4">
-          <Chart />
-        </div>
-        <Table
-          canAdd={false}
-          scrollOnlyOnFocus
-          backgroundColor="control"
-          disableSorting
-          handleRowCreationRef={handleRowCreationRef}
-          isEditable={false}
-        />
-        <div className="shrink-0 p-2 pl-2 sm:pl-4">
-          <BottomToolbar
-            canAdd={false}
-            compact
-            disablePagination
-            handleRowCreationRef={handleRowCreationRef}
-          />
-        </div>
+        {'error' in result ? (
+          <QueryError error={result.error} />
+        ) : (
+          <>
+            <div className="pl-2 pr-2 sm:pl-4">
+              <Chart />
+            </div>
+            <Table
+              canAdd={false}
+              scrollOnlyOnFocus
+              backgroundColor="control"
+              disableSorting
+              handleRowCreationRef={handleRowCreationRef}
+              isEditable={false}
+            />
+            <div className="shrink-0 p-2 pl-2 sm:pl-4">
+              <BottomToolbar
+                canAdd={false}
+                compact
+                disablePagination
+                handleRowCreationRef={handleRowCreationRef}
+              />
+            </div>
+          </>
+        )}
       </QueryProvider>
     </div>
   );

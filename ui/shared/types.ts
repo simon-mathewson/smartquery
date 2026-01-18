@@ -49,7 +49,7 @@ export type Query = {
 
 export type TableType = 'BASE TABLE' | 'SYSTEM_VIEW' | 'VIEW';
 
-export type QueryResult = {
+export type QueryResultSuccess = {
   columns: Column[] | null;
   rows: DbValue[][];
   tables: {
@@ -60,6 +60,12 @@ export type QueryResult = {
   }[];
   totalRows?: number;
 };
+
+export type QueryResultError = {
+  error: string;
+};
+
+export type QueryResult = QueryResultSuccess | QueryResultError;
 
 export type Tab = {
   id: string;

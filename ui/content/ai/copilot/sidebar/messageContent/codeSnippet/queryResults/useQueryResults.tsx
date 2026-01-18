@@ -4,8 +4,8 @@ import { ActiveConnectionContext } from '~/content/connections/activeConnection/
 import { getNewQuery } from '~/content/tabs/queries/utils/getNewQuery';
 import { ToastContext } from '~/content/toast/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { CopilotContext } from '../../../Context';
-import type { CopilotQuery } from '../../../types';
+import { CopilotContext } from '../../../../Context';
+import type { CopilotQuery } from '../../../../types';
 
 export type UseQueryResultsProps = {
   copilotQuery: CopilotQuery;
@@ -47,11 +47,8 @@ export const useQueryResults = (props: UseQueryResultsProps) => {
 
       setQueryResult(messageIndex, contentIndex, result);
     } catch (error) {
-      console.error(error);
-      toast.add({
-        color: 'danger',
-        description: error instanceof Error ? error.message : String(error),
-        title: 'Query failed',
+      setQueryResult(messageIndex, contentIndex, {
+        error: error instanceof Error ? error.message : String(error),
       });
     } finally {
       setIsLoading(false);
