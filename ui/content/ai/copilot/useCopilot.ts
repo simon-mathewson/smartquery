@@ -19,7 +19,29 @@ export const useCopilot = () => {
   const { cloudApiStream } = useDefinedContext(CloudApiContext);
   const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
 
-  const [rawThread, setRawThread] = useStoredState<AiTextContent[]>('useCopilot.thread', []);
+  const [rawThread, setRawThread] = useStoredState<AiTextContent[]>(
+    'useCopilot.thread',
+    [],
+    undefined,
+    [
+      (maybeGoogleAiThread) => {
+        const updatedThread = cloneDeep(maybeGoogleAiThread);
+        updatedThread.forEach((item) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if ((item as any).role === 'model') {
+            item.role = 'assistant';
+          }
+          if ('parts' in item) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            item.content = (item as any).parts.map((part: any) => part.text).join('');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            delete (item as any).parts;
+          }
+        });
+        return updatedThread;
+      },
+    ],
+  );
   const [thread, setThread] = useState<Awaited<ReturnType<typeof processThread>>>([]);
   const [queryResults, setQueryResults] = useStoredState<Record<string, QueryResult | null>>(
     'useCopilot.queryResults',
