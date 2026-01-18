@@ -118,8 +118,8 @@ Resources:
           OptionName: SMARTQUERY_CLOUD_DB_SECRET
           Value: !ImportValue CloudDbSecretArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
-          OptionName: GOOGLE_AI_API_KEY
-          Value: !ImportValue CloudGoogleAiApiKeyArn
+          OptionName: OPENAI_API_KEY
+          Value: !ImportValue CloudOpenaiApiKeyArn
         - Namespace: aws:elasticbeanstalk:application:environmentsecrets
           OptionName: JWT_SECRET
           Value: !ImportValue CloudJwtSecretArn

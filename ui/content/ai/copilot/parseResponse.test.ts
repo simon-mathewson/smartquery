@@ -127,9 +127,9 @@ describe('parseResponse', () => {
     ]);
   });
 
-  it('should handle Gemini example chunks', () => {
+  it('should handle example chunks', () => {
     const exampleChunks = [
-      `[\n  "Here are a few example queries to demonstrate different functionalities:",\n  {\n    "name": "Select all artists",\n    "sql": "SELECT *\\nFROM artists;",\n`,
+      `{"parts":[\n  "Here are a few example queries to demonstrate different functionalities:",\n  {\n    "name": "Select all artists",\n    "sql": "SELECT *\\nFROM artists;",\n`,
       `    "chart": {\n      "type": "bar",\n      "xColumn": "ArtistId",\n      "xTable": "artists",\n      "yColumn": "Name",\n      "yTable":\n`,
       `"artists"\n    }\n  },\n  "This query retrieves all columns and all rows from the \\"artists\\" table, showing a complete list of artists in the database.",\n  {\n    "name": "Find all",\n`,
       `    "sql": "SELECT T1.Title FROM albums AS T1 INNER JOIN artists AS T2 ON T1.ArtistId = T2.ArtistId WHERE T2`,
@@ -138,7 +138,7 @@ describe('parseResponse', () => {
       ` how to combine information from related tables.",\n  {\n    "name": "Count of tracks per genre",\n    "sql": "SELECT T2.Name AS Genre, COUNT(T1.TrackId) AS NumberOfTracks FROM tracks `,
       `AS T1 INNER JOIN genres AS T2 ON T1.GenreId = T2.GenreId GROUP BY T2.Name ORDER BY NumberOfTracks DESC;",\n    "chart": {\n      "type": "bar",\n`,
       `      "xColumn": "Genre",\n      "xTable": "genres",\n      "yColumn": "NumberOfTracks",\n      "yTable": null\n    }\n  },\n  "This query calculates the total number of `,
-      `tracks for each music genre. It uses a JOIN, an aggregate function (COUNT), and a GROUP BY clause to summarize data, then orders the results by the number of tracks in descending order."\n]`,
+      `tracks for each music genre. It uses a JOIN, an aggregate function (COUNT), and a GROUP BY clause to summarize data, then orders the results by the number of tracks in descending order."\n]}`,
     ];
 
     const finalResult = parseResponse(exampleChunks.join(''));

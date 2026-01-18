@@ -90,10 +90,7 @@ const TermsOfUse: React.FC = () => {
             </p>
             <ul>
               <li>
-                <strong>AI Credits:</strong> 900,000
-              </li>
-              <li>
-                <strong>Database Queries:</strong> Unlimited
+                <strong>AI Credits:</strong> 500,000
               </li>
             </ul>
 
@@ -141,30 +138,38 @@ const TermsOfUse: React.FC = () => {
           <section>
             <h3>4. Use of AI Features</h3>
             <p>
-              SmartQuery integrates AI features powered by Google&apos;s Gemini
-              models to assist with database queries. Your use of these features
-              is governed by an &quot;AI Credits&quot; system, available only to
-              users with an account.
+              SmartQuery integrates AI features powered by OpenAI to assist with
+              database queries. Your use of these features is governed by an
+              &quot;AI Credits&quot; system, available only to users with an
+              account.
             </p>
             <ul>
               <li>
                 <strong>AI Credits:</strong> Your account is allocated a
                 specific number of AI Credits based on your service tier, as
                 outlined in Section 3. Credits are consumed for each request
-                made to the AI model. For the Gemini 2.5 Flash model, credits
-                are consumed at a rate of $0.03$ credits per input token and
-                $0.25$ credits per output token.
+                made to the AI model.
+                <ul>
+                  <li>
+                    Inline Completions (GPT-5-Nano): 5 credits per input token,
+                    40 credits per output token
+                  </li>
+                  <li>
+                    Chat Responses (GPT-5-Mini): 25 credits per input token, 200
+                    credits per output token
+                  </li>
+                </ul>
               </li>
               <li>
                 <strong>Data Sent to API:</strong> When you use the AI feature,
                 your prompt and the schema definitions (e.g., table names,
                 column names, and data types) of your currently connected
-                database are sent to the Gemini API to provide context.
+                database are sent to the OpenAI API to provide context.
               </li>
               <li>
                 <strong>Important:</strong>{" "}
                 <strong>
-                  No database content or records are ever sent to the Gemini
+                  No database content or records are ever sent to the OpenAI
                   API.
                 </strong>{" "}
                 The data is limited strictly to the structural schema.

@@ -13,7 +13,7 @@ export const aiRouter = trpc.router({
     .input(generateChatResponseInputSchema)
     .mutation(async function* (props) {
       const {
-        ctx: { googleAi, ip, user },
+        ctx: { openai, ip, user },
         input,
         signal,
       } = props;
@@ -25,15 +25,15 @@ export const aiRouter = trpc.router({
         user,
       });
 
-      const response = generateChatResponse({ ...input, abortSignal: signal, googleAi });
+      const response = generateChatResponse({ ...input, abortSignal: signal, openai });
 
       let outputTokens = 0;
       let inputTokens: number | null = null;
 
       for await (const chunk of response) {
-        outputTokens += chunk.usageMetadata?.candidatesTokenCount ?? 0;
-        if (inputTokens === null) {
-          inputTokens = chunk.usageMetadata?.promptTokenCount ?? 0;
+        if (chunk.usage) {
+          outputTokens = chunk.usage.inputTokens;
+          inputTokens = chunk.usage.outputTokens;
         }
         yield chunk.text ?? null;
       }
@@ -44,7 +44,7 @@ export const aiRouter = trpc.router({
         ip,
         items: [
           {
-            amount: getAiCreditsForTokens({ inputTokens, outputTokens }),
+            amount: getAiCreditsForTokens({ model: 'gpt-5-mini', inputTokens, outputTokens }),
             type: 'aiCredits',
           },
         ],
@@ -58,7 +58,7 @@ export const aiRouter = trpc.router({
     .input(generateInlineCompletionsInputSchema)
     .mutation(async (props) => {
       const {
-        ctx: { googleAi, ip, user },
+        ctx: { openai, ip, user },
         input,
         signal,
       } = props;
@@ -70,7 +70,7 @@ export const aiRouter = trpc.router({
         user,
       });
 
-      const response = await generateInlineCompletions({ ...input, abortSignal: signal, googleAi });
+      const response = await generateInlineCompletions({ ...input, abortSignal: signal, openai });
 
       if (response) {
         void trackUsage({
@@ -78,8 +78,9 @@ export const aiRouter = trpc.router({
           items: [
             {
               amount: getAiCreditsForTokens({
-                inputTokens: response.usageMetadata?.promptTokenCount ?? 0,
-                outputTokens: response.usageMetadata?.candidatesTokenCount ?? 0,
+                model: 'gpt-5-nano',
+                inputTokens: response.usage.inputTokens,
+                outputTokens: response.usage.outputTokens,
               }),
               type: 'aiCredits',
             },

@@ -1,15 +1,14 @@
+import superjson from '@/superjson/superjson';
+import type { inferRouterInputs } from '@trpc/server';
+import { omit } from 'lodash';
 import * as monaco from 'monaco-editor';
 import { useCallback, useMemo, useRef } from 'react';
-import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { CodeEditorProps } from '../CodeEditor';
-import { AnalyticsContext } from '~/content/analytics/Context';
 import type { SchemaDefinitions } from '~/content/ai/schemaDefinitions/types';
-import superjson from '@/superjson/superjson';
+import { AnalyticsContext } from '~/content/analytics/Context';
 import { CloudApiContext } from '~/content/cloud/api/Context';
-import { omit } from 'lodash';
-import { AuthContext } from '~/content/auth/Context';
-import type { inferRouterInputs } from '@trpc/server';
+import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import type { CloudRouter } from '../../../../../cloud/router';
+import type { CodeEditorProps } from '../CodeEditor';
 
 export const useAiInlineCompletions = (props: {
   getSchemaDefinitions?: () => Promise<SchemaDefinitions | null>;
@@ -18,7 +17,6 @@ export const useAiInlineCompletions = (props: {
 
   const { track } = useDefinedContext(AnalyticsContext);
   const { cloudApi } = useDefinedContext(CloudApiContext);
-  const { user } = useDefinedContext(AuthContext);
 
   const timeoutRef = useRef<number | undefined>(undefined);
   const abortControllerRef = useRef<AbortController | undefined>(undefined);
@@ -59,10 +57,6 @@ export const useAiInlineCompletions = (props: {
           const emptyResult: monaco.languages.InlineCompletions = {
             items: [],
           };
-
-          if (!user) {
-            return emptyResult;
-          }
 
           const lines = model.getLinesContent();
           const codeBeforeCursor = [
@@ -109,7 +103,7 @@ export const useAiInlineCompletions = (props: {
 
           const codeToInsert =
             responseText
-              // Gemini will return escaped newline characters even when telling it not to. Therefore, we are
+              // OpenAI may return escaped newline characters even when telling it not to. Therefore, we are
               // replacing them here.
               .replace(/\\n/g, '\n')
               // Remove unwanted markdown formatting
@@ -140,7 +134,7 @@ export const useAiInlineCompletions = (props: {
 
       return [disposable];
     },
-    [generateInlineCompletions, getSchemaDefinitions, track, user],
+    [generateInlineCompletions, getSchemaDefinitions, track],
   );
 
   return useMemo(() => ({ setUpAiInlineCompletions }), [setUpAiInlineCompletions]);

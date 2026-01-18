@@ -21,8 +21,8 @@ importers:
         specifier: 9.4.1
         version: 9.4.1(typescript@5.8.3)
       zod:
-        specifier: 3.24.1
-        version: 3.24.1
+        specifier: 4.3.5
+        version: 4.3.5
     devDependencies:
       '@eslint/js':
         specifier: ^9.0.0
@@ -686,6 +686,9 @@ packages:
   zod@3.24.1:
     resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
+  zod@4.3.5:
+    resolution: {integrity: sha512-k7Nwx6vuWx1IJ9Bjuf4Zt1PEllcwe7cls3VNzm4CQ1/hgtFUK2bRNG3rvnpPUhFjmqJKAKtjV576KnUkHocg/g==}
+
 snapshots:
 
   '@eslint-community/eslint-utils@4.9.0(eslint@9.36.0(jiti@2.4.2))':
@@ -1342,3 +1345,5 @@ snapshots:
       zod: 3.24.1
 
   zod@3.24.1: {}
+
+  zod@4.3.5: {}

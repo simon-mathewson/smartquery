@@ -12,7 +12,7 @@ export const plans = {
   anonymous: {
     price: null,
     limits: {
-      aiCredits: 10_000,
+      aiCredits: 10_000_000, // $0.10
       concurrentConnections: 0,
       totalQueryDurationMilliseconds: 0,
       totalQueryResponseBytes: 0,
@@ -21,7 +21,7 @@ export const plans = {
   free: {
     price: null,
     limits: {
-      aiCredits: 100_000,
+      aiCredits: 100_000_000, // $1.00
       concurrentConnections: 1,
       totalQueryDurationMilliseconds: 10 * 60 * 1000,
       totalQueryResponseBytes: 100 * 1024 * 1024,
@@ -30,7 +30,7 @@ export const plans = {
   plus: {
     price: 8,
     limits: {
-      aiCredits: 900_000,
+      aiCredits: 500_000_000, // $5.00
       concurrentConnections: 3,
       totalQueryDurationMilliseconds: 60 * 60 * 1000,
       totalQueryResponseBytes: 1 * 1024 * 1024 * 1024,
@@ -39,7 +39,7 @@ export const plans = {
   pro: {
     price: 18,
     limits: {
-      aiCredits: 1_900_000,
+      aiCredits: 1_200_000_000, // $12.00
       concurrentConnections: 8,
       totalQueryDurationMilliseconds: 6 * 60 * 60 * 1000,
       totalQueryResponseBytes: 12 * 1024 * 1024 * 1024,

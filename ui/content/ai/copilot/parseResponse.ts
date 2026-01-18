@@ -6,18 +6,15 @@ export const parseResponse = (response: string): ThreadMessage[] => {
   try {
     // Try to parse the complete response as JSON first
     const parsed = JSON.parse(response);
-    if (Array.isArray(parsed)) {
-      return parsed;
+    if ('parts' in parsed && Array.isArray(parsed.parts)) {
+      return parsed.parts;
     }
   } catch {
     // If parsing fails, try to extract partial items
   }
 
-  // Strip leading square bracket since response is always an array
-  let cleanResponse = response;
-  if (cleanResponse.startsWith('[')) {
-    cleanResponse = cleanResponse.slice(1);
-  }
+  // Strip leading boilerplate
+  const cleanResponse = response.replace(/^{"parts":\[/, '');
 
   let i = 0;
   while (i < cleanResponse.length) {
@@ -56,9 +53,12 @@ export const parseResponse = (response: string): ThreadMessage[] => {
           );
           if (matchResult) {
             const [, name, sql] = matchResult;
+            // Unescape the strings by parsing them as JSON string values
+            const unescapedName = name ? JSON.parse(`"${name}"`) : '';
+            const unescapedSql = sql ? JSON.parse(`"${sql}"`) : '';
             result.push({
-              name: name ?? '',
-              sql: sql ?? '',
+              name: unescapedName,
+              sql: unescapedSql,
             });
           }
         }

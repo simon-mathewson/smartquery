@@ -31,7 +31,7 @@ This monorepo contains four main components:
   - RESTful API with tRPC for type-safe communication
   - User authentication and authorization
   - Database connection management
-  - AI integration (Google Gemini)
+  - AI integration (OpenAI API)
   - Stripe payment processing
   - Email services (AWS SES)
   - PostgreSQL database with Prisma ORM

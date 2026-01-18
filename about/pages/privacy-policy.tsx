@@ -122,17 +122,16 @@ const PrivacyPolicy: React.FC = () => {
                 </p>
               </div>
               <div>
-                <h4>e) When You Use the AI Feature</h4>
+                <h4>e) When You Use AI Features</h4>
                 <p>
                   When you use the integrated AI assistant, we act as an
-                  intermediary to send data to the Google Gemini API on your
-                  behalf.
+                  intermediary to send data to the OpenAI API on your behalf.
                 </p>
                 <ul>
                   <li>
                     <strong>Data Sent:</strong> We send your prompt and the{" "}
                     <strong>database schema definitions</strong> (table
-                    structures, column names, types) to the Google Gemini API.
+                    structures, column names, types) to the OpenAI API.
                   </li>
                   <li>
                     <strong>Important:</strong> We <strong>never</strong> send
@@ -179,10 +178,10 @@ const PrivacyPolicy: React.FC = () => {
                 appropriate legal safeguards.
               </li>
               <li>
-                <strong>Google LLC:</strong> We use Google&apos;s Gemini API for
-                our AI feature and Google Analytics (with your consent). This
-                involves sending data (as described above) to Google, which may
-                process it in the U.S. under appropriate legal safeguards.
+                <strong>OpenAI:</strong> We use OpenAI&apos;s API for our AI
+                features and Google Analytics (with your consent). This involves
+                sending data (as described above) to OpenAI, which may process
+                it in the U.S. under appropriate legal safeguards.
               </li>
             </ul>
           </section>

@@ -8,7 +8,6 @@ import { CloudApiContext } from '~/content/cloud/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { QueryResult } from '~/shared/types';
-import { formatSql } from '~/shared/utils/sql/sql';
 import type { CloudRouter } from '../../../../cloud/router';
 import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
 import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
@@ -37,24 +36,17 @@ export const useCopilot = () => {
         rawThread.map(async (item, messageIndex) =>
           item.role === 'user'
             ? ({
-                content: [item.parts[0].text] satisfies ThreadMessage[],
+                content: [item.content] satisfies ThreadMessage[],
                 role: 'user',
               } as const)
             : ({
                 content: await Promise.all(
-                  parseResponse(item.parts[0].text).map(async (message, contentIndex) => {
+                  parseResponse(item.content).map(async (message, contentIndex) => {
                     const key = `${messageIndex}-${contentIndex}`;
                     const result = queryResults[key];
-                    const baseContent =
-                      typeof message === 'string'
-                        ? message
-                        : {
-                            ...message,
-                            sql: await formatSql(message.sql, activeConnection.engine),
-                          };
-                    return typeof baseContent === 'string'
-                      ? baseContent
-                      : { ...baseContent, ...(result != null && { result }) };
+                    return typeof message === 'string'
+                      ? message
+                      : { ...message, ...(result != null && { result }) };
                   }),
                 ),
                 role: 'model',
@@ -134,7 +126,7 @@ export const useCopilot = () => {
         ...rawThread,
         {
           role: 'user',
-          parts: [{ text: message }],
+          content: message,
         },
       ] satisfies AiTextContent[];
 
@@ -158,14 +150,14 @@ export const useCopilot = () => {
         if (!response) return;
 
         const responseContent = {
-          role: 'model',
-          parts: [{ text: '' }],
+          role: 'assistant',
+          content: '',
         } satisfies AiTextContent;
 
         setRawThread((contents) => [...contents, responseContent]);
 
         for await (const chunk of response) {
-          responseContent.parts[0].text += chunk ?? '';
+          responseContent.content += chunk ?? '';
 
           setRawThread((contents) => [...contents.slice(0, -1), cloneDeep(responseContent)]);
         }
