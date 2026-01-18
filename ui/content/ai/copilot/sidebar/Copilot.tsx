@@ -78,11 +78,13 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
   const isInitialized = useRef(false);
 
   const initialize = useCallback(() => {
-    if (!threadContainerRef.current || isInitialized.current) return;
-    isInitialized.current = true;
-    [...threadContainerRef.current.querySelectorAll('.user-message')].at(-1)?.scrollIntoView({
-      behavior: 'instant',
-      block: 'start',
+    setTimeout(() => {
+      if (!threadContainerRef.current || isInitialized.current) return;
+      isInitialized.current = true;
+      [...threadContainerRef.current.querySelectorAll('.user-message')].at(-1)?.scrollIntoView({
+        behavior: 'instant',
+        block: 'start',
+      });
     });
   }, []);
 

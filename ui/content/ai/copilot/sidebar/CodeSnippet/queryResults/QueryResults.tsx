@@ -54,20 +54,18 @@ export const QueryResults: React.FC<QueryResultsProps> = (props) => {
 
   if (!query.result) {
     return (
-      <div className="p-1">
-        <Button
-          htmlProps={{
-            disabled: isLoading,
-            className: 'pointer-events-auto w-full',
-            onClick: () => {
-              track('copilot_run_query');
-              void runQuery();
-            },
-          }}
-          icon={<PlayArrowOutlined />}
-          label="Run query"
-        />
-      </div>
+      <Button
+        htmlProps={{
+          disabled: isLoading,
+          className: 'pointer-events-auto w-full rounded-none',
+          onClick: () => {
+            track('copilot_run_query');
+            void runQuery();
+          },
+        }}
+        icon={<PlayArrowOutlined />}
+        label="Run query"
+      />
     );
   }
 
