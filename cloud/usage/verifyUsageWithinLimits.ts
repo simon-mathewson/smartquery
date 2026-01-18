@@ -8,8 +8,6 @@ const getLimitForType = (type: UsageType, user: CurrentUser | null) => {
   const limits = getLimitsForUser(user);
   return {
     aiCredits: limits.aiCredits,
-    queryDurationMilliseconds: limits.totalQueryDurationMilliseconds,
-    queryResponseBytes: limits.totalQueryResponseBytes,
   }[type];
 };
 

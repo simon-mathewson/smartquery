@@ -168,6 +168,4 @@ enum SubscriptionType {
 
 enum UsageType {
   aiCredits
-  queryDurationMilliseconds
-  queryResponseBytes
 }

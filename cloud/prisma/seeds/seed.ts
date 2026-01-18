@@ -19,16 +19,8 @@ void (async () => {
         createMany: {
           data: [
             {
-              amount: 2_834,
+              amount: 0.2834,
               type: 'aiCredits',
-            },
-            {
-              amount: 548_328,
-              type: 'queryDurationMilliseconds',
-            },
-            {
-              amount: 54_438_347,
-              type: 'queryResponseBytes',
             },
           ],
         },
@@ -56,16 +48,8 @@ void (async () => {
         createMany: {
           data: [
             {
-              amount: 332_328,
+              amount: 0.3323,
               type: 'aiCredits',
-            },
-            {
-              amount: 1_843_000,
-              type: 'queryDurationMilliseconds',
-            },
-            {
-              amount: 847_484_438,
-              type: 'queryResponseBytes',
             },
           ],
         },
@@ -105,16 +89,8 @@ void (async () => {
         createMany: {
           data: [
             {
-              amount: 332_328,
+              amount: 0.3323,
               type: 'aiCredits',
-            },
-            {
-              amount: 20_438_000,
-              type: 'queryDurationMilliseconds',
-            },
-            {
-              amount: 147_483_648,
-              type: 'queryResponseBytes',
             },
           ],
         },
