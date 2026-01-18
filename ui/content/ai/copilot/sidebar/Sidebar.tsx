@@ -12,7 +12,7 @@ export const CopilotSidebar: React.FC = () => {
   const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
   const { isOpen } = useDefinedContext(CopilotSidebarContext);
 
-  const [desktopWidth, setDesktopWidth] = useStoredState('CopilotSidebar.width', 328);
+  const [desktopWidth, setDesktopWidth] = useStoredState('CopilotSidebar.width', 400);
 
   if (!activeConnection) return null;
 
