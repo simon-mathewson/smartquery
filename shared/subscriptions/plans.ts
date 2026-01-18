@@ -2,9 +2,6 @@ export type Plan = {
   price: number | null;
   limits: {
     aiCredits: number;
-    concurrentConnections: number;
-    totalQueryDurationMilliseconds: number;
-    totalQueryResponseBytes: number;
   };
 };
 
@@ -12,37 +9,25 @@ export const plans = {
   anonymous: {
     price: null,
     limits: {
-      aiCredits: 10_000_000, // $0.10
-      concurrentConnections: 0,
-      totalQueryDurationMilliseconds: 0,
-      totalQueryResponseBytes: 0,
+      aiCredits: 10, // $0.10
     },
   },
   free: {
     price: null,
     limits: {
-      aiCredits: 100_000_000, // $1.00
-      concurrentConnections: 1,
-      totalQueryDurationMilliseconds: 10 * 60 * 1000,
-      totalQueryResponseBytes: 100 * 1024 * 1024,
+      aiCredits: 100, // $1.00
     },
   },
   plus: {
     price: 8,
     limits: {
-      aiCredits: 500_000_000, // $5.00
-      concurrentConnections: 3,
-      totalQueryDurationMilliseconds: 60 * 60 * 1000,
-      totalQueryResponseBytes: 1 * 1024 * 1024 * 1024,
+      aiCredits: 500, // $5.00
     },
   },
   pro: {
     price: 18,
     limits: {
-      aiCredits: 1_200_000_000, // $12.00
-      concurrentConnections: 8,
-      totalQueryDurationMilliseconds: 6 * 60 * 60 * 1000,
-      totalQueryResponseBytes: 12 * 1024 * 1024 * 1024,
+      aiCredits: 1200, // $12.00
     },
   },
 } satisfies Record<string, Plan>;

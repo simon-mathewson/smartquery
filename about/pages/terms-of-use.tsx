@@ -78,7 +78,7 @@ const TermsOfUse: React.FC = () => {
             </p>
             <ul>
               <li>
-                <strong>AI Credits:</strong> 100,000
+                <strong>AI Credits:</strong> 100
               </li>
             </ul>
 
@@ -90,7 +90,7 @@ const TermsOfUse: React.FC = () => {
             </p>
             <ul>
               <li>
-                <strong>AI Credits:</strong> 500,000
+                <strong>AI Credits:</strong> 500
               </li>
             </ul>
 
@@ -151,12 +151,7 @@ const TermsOfUse: React.FC = () => {
                 made to the AI model.
                 <ul>
                   <li>
-                    Inline Completions (GPT-5-Nano): 5 credits per input token,
-                    40 credits per output token
-                  </li>
-                  <li>
-                    Chat Responses (GPT-5-Mini): 25 credits per input token, 200
-                    credits per output token
+                    25 credits per input token, 200 credits per output token
                   </li>
                 </ul>
               </li>

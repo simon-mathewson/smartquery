@@ -1,6 +1,7 @@
 import type OpenAI from 'openai';
 import type { GenerateInlineCompletionsInput } from './types';
 import assert from 'assert';
+import { INLINE_COMPLETION_BASE_INSTRUCTIONS, generatePromptCacheKey } from './cacheKey';
 
 export type GenerateInlineCompletionsProps = GenerateInlineCompletionsInput & {
   abortSignal: AbortSignal | undefined;
@@ -22,26 +23,19 @@ export const generateInlineCompletions = async (
     props;
 
   const systemMessage = [
-    `You are an AI assistant in a code editor that provides valid and unformatted ${
-      language ? `${language} ` : ''
-    }inline code completions. Given a code snippet, return only the exact code to insert at <CURSOR>.`,
-    'Do not include markdown, explanations, comments, or any additional text.',
-    'Do not wrap the response in triple backticks or any formatting.',
-    'Do not escape slashes if a special character should be rendered.',
-    'If the insertion should start on a new line, begin your response with a newline character.',
-    'If the code is already complete, return nothing.',
-    'Use quotes where appropriate if the Database engine requires them.',
-    'Match the case of the input code',
-    'If cursor is in middle of word, return the remaining characters. Example: "SEL<CURSOR>" -> "SELECT"',
+    INLINE_COMPLETION_BASE_INSTRUCTIONS,
+    ...(language ? [`The language is ${language}.`] : []),
     ...(schemaDefinitions
       ? [`\n\nThe schema definitions are as follows:\n\n${schemaDefinitions}`]
       : []),
   ].join('\n');
 
+  const promptCacheKey = generatePromptCacheKey(systemMessage);
+
   try {
     const response = await openai.responses.create(
       {
-        model: 'gpt-5-nano',
+        model: 'gpt-5.1-codex-mini',
         instructions: systemMessage,
         input: [
           {
@@ -49,6 +43,7 @@ export const generateInlineCompletions = async (
             content: `${codeBeforeCursor}<CURSOR>${codeAfterCursor}`,
           },
         ],
+        prompt_cache_key: promptCacheKey,
       },
       {
         signal: abortSignal,

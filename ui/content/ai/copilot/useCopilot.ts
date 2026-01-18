@@ -206,7 +206,8 @@ export const useCopilot = () => {
   const clearThread = useCallback(() => {
     stopGenerating();
     setRawThread([]);
-  }, [setRawThread, stopGenerating]);
+    setQueryResults({});
+  }, [setRawThread, stopGenerating, setQueryResults]);
 
   const setQueryResult = useCallback(
     (messageIndex: number, contentIndex: number, result: QueryResult | null) => {

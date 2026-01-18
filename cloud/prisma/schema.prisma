@@ -109,7 +109,7 @@ model Usage {
   user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
   type      UsageType
-  amount    Int
+  amount    Float
   ip        String?
 
   @@index([userId, type, createdAt])

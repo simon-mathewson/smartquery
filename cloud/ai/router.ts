@@ -44,7 +44,11 @@ export const aiRouter = trpc.router({
         ip,
         items: [
           {
-            amount: getAiCreditsForTokens({ model: 'gpt-5-mini', inputTokens, outputTokens }),
+            amount: getAiCreditsForTokens({
+              model: 'gpt-5.1-codex-mini',
+              inputTokens,
+              outputTokens,
+            }),
             type: 'aiCredits',
           },
         ],
@@ -78,7 +82,7 @@ export const aiRouter = trpc.router({
           items: [
             {
               amount: getAiCreditsForTokens({
-                model: 'gpt-5-nano',
+                model: 'gpt-5.1-codex-mini',
                 inputTokens: response.usage.inputTokens,
                 outputTokens: response.usage.outputTokens,
               }),

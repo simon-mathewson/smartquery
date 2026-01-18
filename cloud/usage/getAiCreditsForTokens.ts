@@ -1,12 +1,8 @@
-// 1 Credit = $0.00000001 USD (one millionth of a cent) https://platform.openai.com/docs/pricing
+// 1 Credit = $0.01 USD https://platform.openai.com/docs/pricing
 export const pricing = {
-  'gpt-5-nano': {
-    creditsPerInputToken: 5,
-    creditsPerOutputToken: 40,
-  },
-  'gpt-5-mini': {
-    creditsPerInputToken: 25,
-    creditsPerOutputToken: 200,
+  'gpt-5.1-codex-mini': {
+    creditsPerInputToken: 25 / 1_000_000,
+    creditsPerOutputToken: 200 / 1_000_000,
   },
 };
 
@@ -18,5 +14,5 @@ export const getAiCreditsForTokens = (props: {
   const { model, inputTokens, outputTokens } = props;
   const { creditsPerInputToken, creditsPerOutputToken } = pricing[model];
 
-  return Math.floor(inputTokens * creditsPerInputToken + outputTokens * creditsPerOutputToken);
+  return inputTokens * creditsPerInputToken + outputTokens * creditsPerOutputToken;
 };

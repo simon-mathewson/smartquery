@@ -1,7 +1,5 @@
 import { getLimitsForUser } from '@/subscriptions/getLimitsForUser';
 import type { CurrentUser } from '@/user/types';
-import { formatBytes, getBytesUnit, getBytesValue } from '@/utils/formatBytes';
-import { formatDuration, getDurationUnit, getDurationValue } from '@/utils/formatDuration';
 import { formatNumber, getNumberUnit, getNumberValue } from '@/utils/formatNumber';
 import React from 'react';
 import { assert } from 'ts-essentials';
@@ -20,18 +18,6 @@ const getUsages = (currentUser: CurrentUser) => {
       max: limits.aiCredits,
       type: 'aiCredits',
       valueType: 'number',
-    },
-    {
-      label: 'Cloud Query Duration',
-      max: limits.totalQueryDurationMilliseconds,
-      type: 'queryDurationMilliseconds',
-      valueType: 'duration',
-    },
-    {
-      label: 'Cloud Query Response Size',
-      max: limits.totalQueryResponseBytes,
-      type: 'queryResponseBytes',
-      valueType: 'bytes',
     },
   ] as const;
 };
@@ -71,14 +57,6 @@ export const Usage: React.FC = () => {
                 case 'number': {
                   const unit = getNumberUnit(usage.max);
                   return [getNumberValue(usageValue, unit), formatNumber(usage.max, unit)];
-                }
-                case 'duration': {
-                  const unit = getDurationUnit(usage.max);
-                  return [getDurationValue(usageValue, unit), formatDuration(usage.max, unit)];
-                }
-                case 'bytes': {
-                  const unit = getBytesUnit(usage.max);
-                  return [getBytesValue(usageValue, unit), formatBytes(usage.max, unit)];
                 }
               }
             })();

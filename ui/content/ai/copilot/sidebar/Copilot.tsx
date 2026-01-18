@@ -140,7 +140,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
               >
                 <div
                   className={classNames(
-                    'prose prose-sm max-w-none space-y-3 overflow-hidden break-words leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_strong]:font-[500]',
+                    'prose prose-sm max-w-none space-y-3 overflow-hidden break-words leading-normal dark:prose-invert prose-code:font-[500] prose-code:before:content-none prose-code:after:content-none prose-pre:bg-transparent prose-pre:p-0 [&:has(.monaco-editor)]:w-full [&_h1]:text-2xl [&_strong]:font-[500]',
                     {
                       'user-message prose-invert rounded-xl bg-primary px-2 py-1.5 text-white':
                         message.role === 'user',

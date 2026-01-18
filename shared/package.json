@@ -8,7 +8,6 @@
     "lint": "eslint . --ext .ts,.js,.mjs,.cjs"
   },
   "peerDependencies": {
-    "@google/genai": "0.12.0",
     "lodash-es": "4.17.21",
     "superjson": "1.12.4",
     "ts-essentials": "9.4.1",
