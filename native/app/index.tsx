@@ -4,6 +4,7 @@ import assert from "assert";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
 import { File } from "expo-file-system";
+import { useNetworkState } from "expo-network";
 import * as SplashScreen from "expo-splash-screen";
 import { Orientation } from "expo-screen-orientation";
 import { castArray } from "lodash";
@@ -32,6 +33,7 @@ const keychainServiceNameBase = process.env.EXPO_PUBLIC_KEYCHAIN_SERVICE_NAME;
 export default function Index() {
   const colorScheme = useColorScheme();
   const orientation = useOrientation();
+  const networkState = useNetworkState();
 
   const webviewRef = useRef<WebView>(null);
 
@@ -279,6 +281,10 @@ export default function Index() {
       hideKeyboardAccessoryView={isIosOnMac}
       onLoadEnd={SplashScreen.hideAsync}
       onError={SplashScreen.hideAsync}
+      cacheMode={
+        networkState.isInternetReachable ? "LOAD_DEFAULT" : "LOAD_CACHE_ONLY"
+      }
+      limitsNavigationsToAppBoundDomains
     />
   );
 }

@@ -2,7 +2,7 @@
   "expo": {
     "name": "SmartQuery",
     "slug": "smartquery",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "icon": "./assets/images/icon.png",
     "scheme": "smartquery",
     "userInterfaceStyle": "automatic",
@@ -14,7 +14,10 @@
       "bundleIdentifier": "dev.smartquery",
       "icon": "./assets/images/icon.icon",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "We use Face ID to secure your credentials."
+        "NSFaceIDUsageDescription": "We use Face ID to secure your credentials.",
+        "WKAppBoundDomains": [
+          "smartquery.dev"
+        ]
       },
       "supportsTablet": true
     },
