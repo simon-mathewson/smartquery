@@ -9,11 +9,14 @@ export const isDateTimeType = (dataType: DataType) =>
 
 export const isEnumType = (dataType: DataType) => includes(['enum', 'user-defined'], dataType);
 
+export const isFloatType = (dataType: DataType) =>
+  includes(['double precision', 'decimal', 'real'], dataType) || dataType.startsWith('numeric');
+
 export const isIntegerType = (dataType: DataType) =>
   includes(['int', 'integer', 'tinyint', 'bigint'], dataType);
 
 export const isNumberType = (dataType: DataType) =>
-  isIntegerType(dataType) || dataType === 'decimal' || dataType.startsWith('numeric');
+  isIntegerType(dataType) || isFloatType(dataType);
 
 export const isTextType = (dataType: DataType) =>
   includes(['char', 'character varying', 'varchar', 'text'], dataType);
