@@ -12,7 +12,7 @@ export const getSelectFromStatement = async (props: {
   const { connection, statement } = props;
   const { engine, database } = connection;
 
-  const parsed = await getAstForSql({ engine, statement });
+  const parsed = await getAstForSql({ engine, statement, skipLogging: true });
 
   if (!parsed || parsed.type !== 'select' || !Array.isArray(parsed.from)) {
     return null;

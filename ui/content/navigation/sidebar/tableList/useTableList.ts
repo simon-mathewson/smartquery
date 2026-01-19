@@ -49,11 +49,13 @@ export const useTableList = () => {
       query
         .map((q) => {
           const result = q.id in queryResults ? queryResults[q.id] : null;
-          return !q.savedQueryId && result?.tables.length === 1
+          return !q.savedQueryId && result?.tables?.length === 1
             ? tables.find(
                 (t) =>
-                  t.name === result.tables[0].name &&
-                  (!result.tables[0].schema || !t.schema || t.schema === result.tables[0].schema),
+                  t.name === result.tables?.[0]?.name &&
+                  (!result.tables?.[0]?.schema ||
+                    !t.schema ||
+                    t.schema === result.tables?.[0]?.schema),
               )
             : undefined;
         })

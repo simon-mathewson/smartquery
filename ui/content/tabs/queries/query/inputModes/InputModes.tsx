@@ -20,7 +20,7 @@ export const InputModes: React.FC<InputModesProps> = (props) => {
     return <Sql />;
   }
 
-  if (!result) return null;
+  if (!result || 'error' in result) return null;
 
   if (inputMode === 'search') {
     return <Search />;

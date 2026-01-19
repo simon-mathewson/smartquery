@@ -7,14 +7,16 @@ import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { CopilotSidebarContext } from './Context';
 import { Copilot } from './Copilot';
 import { useContext } from 'react';
+import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 
 export const CopilotSidebar: React.FC = () => {
+  const isMobile = useIsMobile();
   const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
   const { isOpen } = useDefinedContext(CopilotSidebarContext);
 
   const [desktopWidth, setDesktopWidth] = useStoredState('CopilotSidebar.width', 400);
 
-  if (!activeConnection) return null;
+  if (!activeConnection || isMobile) return null;
 
   return (
     <div

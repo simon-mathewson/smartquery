@@ -8,6 +8,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { ResultContext } from '../Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { formatNumber } from '@/utils/formatNumber';
+import { assert } from 'ts-essentials';
 
 export type BottomToolbarProps = {
   canAdd: boolean;
@@ -20,7 +21,10 @@ export const BottomToolbar: React.FC<BottomToolbarProps> = (props) => {
   const { handleRowCreationRef, canAdd, disablePagination, compact } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
-  const { rows } = useDefinedContext(ResultContext);
+
+  const result = useDefinedContext(ResultContext);
+  assert(!('error' in result), 'Result is an error');
+  const { rows } = result;
 
   const { limit, next, offset, previous, totalRows } = usePagination();
 

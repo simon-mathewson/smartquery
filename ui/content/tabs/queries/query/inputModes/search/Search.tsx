@@ -6,10 +6,14 @@ import { useSearch } from './useSearch';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { assert } from 'ts-essentials';
 
 export const Search: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
-  const { tables } = useDefinedContext(ResultContext);
+
+  const result = useDefinedContext(ResultContext);
+  assert(!('error' in result), 'Result is an error');
+  const { tables } = result;
 
   const { search, searchValue } = useSearch();
 

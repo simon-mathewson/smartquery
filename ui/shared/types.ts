@@ -5,6 +5,7 @@ import type { InputMode } from '~/content/tabs/queries/query/types';
 import type { Select } from '~/content/tabs/queries/types';
 import type { DataType } from './dataTypes/types';
 import type { DbValue } from '@/native/types';
+import type { XOR } from 'ts-essentials';
 
 export { SqliteDatabase };
 
@@ -65,7 +66,7 @@ export type QueryResultError = {
   error: string;
 };
 
-export type QueryResult = QueryResultSuccess | QueryResultError;
+export type QueryResult = XOR<QueryResultSuccess, QueryResultError>;
 
 export type Tab = {
   id: string;

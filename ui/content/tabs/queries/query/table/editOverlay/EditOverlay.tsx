@@ -8,6 +8,7 @@ import { getUniqueValues } from '../../../utils/getUniqueValues';
 import { ResultContext } from '../../Context';
 import type { EditOverlayFieldProps } from './field/Field';
 import { EditOverlayField } from './field/Field';
+import { assert } from 'ts-essentials';
 
 export type EditModalProps = {
   columnCount: number;
@@ -19,7 +20,9 @@ export type EditModalProps = {
 export const EditOverlay: React.FC<EditModalProps> = (props) => {
   const { columnCount, overlay, selection } = props;
 
-  const { columns, rows, tables } = useDefinedContext(ResultContext);
+  const result = useDefinedContext(ResultContext);
+  assert(!('error' in result), 'Result is an error');
+  const { columns, rows, tables } = result;
 
   const columnFields = useMemo(() => {
     return selection.reduce<Array<Pick<EditOverlayFieldProps, 'column' | 'locations'>>>(

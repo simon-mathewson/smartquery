@@ -3,7 +3,6 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'r
 import { assert } from 'ts-essentials';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
 import { ToastContext } from '~/content/toast/Context';
-import { getErrorMessage } from '~/shared/components/sqlEditor/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { type Query, type QueryResult } from '~/shared/types';
 import { TabsContext } from '../Context';
@@ -94,17 +93,10 @@ export const useQueries = () => {
           });
         }
       } catch (error) {
-        console.error(error);
-
-        if (error instanceof Error) {
-          toast.add({
-            color: 'danger',
-            description: getErrorMessage(error),
-            title: 'Query failed',
-          });
-        }
-
-        throw error;
+        setQueryResults((currentQueryResults) => ({
+          ...currentQueryResults,
+          [query.id]: { error: error instanceof Error ? error.message : String(error) },
+        }));
       } finally {
         onFinishLoading(id);
       }

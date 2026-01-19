@@ -23,6 +23,7 @@ import { getQueryTitle } from './utils';
 import { ViewColumnsButton } from './viewColumnsButton/ViewColumnsButton';
 import { getUniqueValues } from '../utils/getUniqueValues';
 import { getUniqueColumns } from '../utils/getUniqueColumns';
+import { QueryError } from '~/content/queries/QueryError';
 
 export const Query: React.FC = () => {
   const { track } = useDefinedContext(AnalyticsContext);
@@ -43,7 +44,7 @@ export const Query: React.FC = () => {
   const handleRowCreationRef = React.useRef<(() => void) | null>(null);
 
   const isEditableBase = Boolean(
-    result && result.tables.length === 1 && result.tables[0].type === 'BASE TABLE',
+    result && result.tables?.length === 1 && result.tables?.[0].type === 'BASE TABLE',
   );
 
   const isEditable = Boolean(
@@ -119,7 +120,10 @@ export const Query: React.FC = () => {
         />
         <InputModes inputMode={inputMode} />
       </div>
-      {result && (
+      {result?.error && (
+        <QueryError error={result.error} htmlProps={{ className: 'ml-4 mr-3 pl-4 pr-1' }} />
+      )}
+      {result && !('error' in result) && (
         <div className="flex h-full flex-col gap-2 overflow-y-auto">
           <div className="sticky top-0 z-30 flex gap-2 pb-2 pl-2 pr-2">
             <ChartEditOverlay />

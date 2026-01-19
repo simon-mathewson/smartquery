@@ -13,12 +13,6 @@ export const useCopilotSidebar = () => {
   );
 
   useEffect(() => {
-    if (isMobile) {
-      setIsOpen(false);
-    }
-  }, [isMobile, setIsOpen]);
-
-  useEffect(() => {
     if (isOpen) {
       setHasEverBeenOpen(true);
     }

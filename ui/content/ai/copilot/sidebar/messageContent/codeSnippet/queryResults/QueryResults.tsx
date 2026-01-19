@@ -105,8 +105,11 @@ export const QueryResults: React.FC<QueryResultsProps> = (props) => {
             )}
           </div>
         </div>
-        {'error' in result ? (
-          <QueryError error={result.error} />
+        {result.error ? (
+          <QueryError
+            error={result.error}
+            htmlProps={{ className: '!rounded-none pl-3 pr-1 py-1' }}
+          />
         ) : (
           <>
             <div className="pl-2 pr-2 sm:pl-4">

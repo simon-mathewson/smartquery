@@ -6,7 +6,10 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { CopilotContext } from '../ai/copilot/Context';
 import { QueryContext } from '../tabs/queries/query/Context';
 
-export const QueryError: React.FC<{ error: string }> = ({ error }) => {
+export const QueryError: React.FC<{
+  error: string;
+  htmlProps?: React.HTMLProps<HTMLDivElement>;
+}> = ({ error, htmlProps }) => {
   const { query } = useDefinedContext(QueryContext);
   const { sendMessage } = useDefinedContext(CopilotContext);
 
@@ -15,7 +18,7 @@ export const QueryError: React.FC<{ error: string }> = ({ error }) => {
   }, [error, query.sql, sendMessage]);
 
   return (
-    <ErrorMessage htmlProps={{ className: '!rounded-none pl-3 pr-1 py-1' }}>
+    <ErrorMessage htmlProps={htmlProps}>
       <div className="flex items-center justify-between">
         <div className="flex items-center justify-between">{error}</div>
         <Button

@@ -2,7 +2,7 @@ import { EditOutlined, Undo } from '@mui/icons-material';
 import { range } from 'lodash';
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { mergeRefs } from 'react-merge-refs';
-import type { XOR } from 'ts-essentials';
+import { assert, type XOR } from 'ts-essentials';
 import { useDebouncedCallback } from 'use-debounce';
 import { EditContext } from '~/content/edit/Context';
 import type { UniqueValue } from '~/content/edit/types';
@@ -34,7 +34,9 @@ export const SelectionActions = forwardRef<HTMLDivElement, SelectionActionsProps
   const { track } = useDefinedContext(AnalyticsContext);
   const { allChanges, removeChange } = useDefinedContext(EditContext);
 
-  const { columns, rows, tables } = useDefinedContext(ResultContext);
+  const result = useDefinedContext(ResultContext);
+  assert(!('error' in result), 'Result is an error');
+  const { columns, rows, tables } = result;
 
   const [tableWidth, setTableWidth] = useState<number>();
 

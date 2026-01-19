@@ -15,11 +15,13 @@ import { isQuotaExceededError } from './isQuotaExceededError';
 import { parseResponse } from './parseResponse';
 import type { ThreadMessage } from './types';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { CopilotSidebarContext } from './sidebar/Context';
 
 export const useCopilot = () => {
   const { cloudApiStream } = useDefinedContext(CloudApiContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
+  const { setIsOpen } = useDefinedContext(CopilotSidebarContext);
 
   const [rawThread, setRawThread] = useStoredState<AiTextContent[]>(
     'useCopilot.thread',
@@ -73,7 +75,7 @@ export const useCopilot = () => {
                       : { ...message, ...(result != null && { result }) };
                   }),
                 ),
-                role: 'model',
+                role: 'assistant',
               } as const),
         ),
       );
@@ -143,6 +145,8 @@ export const useCopilot = () => {
 
       track('copilot_send_message');
 
+      setIsOpen(true);
+
       setIsLoading(true);
 
       abortControllerRef.current.abort();
@@ -196,6 +200,7 @@ export const useCopilot = () => {
     [
       activeConnection,
       track,
+      setIsOpen,
       rawThread,
       setRawThread,
       getAndRefreshSchemaDefinitions,

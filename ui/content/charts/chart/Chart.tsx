@@ -1,3 +1,4 @@
+import type { DbValue } from '@/native/types';
 import { useContext, useMemo } from 'react';
 import tailwindColors from 'tailwindcss/colors';
 import { QueryContext, ResultContext } from '~/content/tabs/queries/query/Context';
@@ -6,7 +7,6 @@ import { ThemeContext } from '~/content/theme/Context';
 import { primaryColors } from '~/content/theme/primaryColors';
 import { isDateTimeType } from '~/shared/dataTypes/utils';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { DbValue } from '@/native/types';
 import { BarChart } from './BarChart';
 import { LineChart } from './LineChart';
 import { PieChart } from './PieChart';
@@ -50,7 +50,7 @@ export const Chart = () => {
       return null;
     }
 
-    return result.rows.map<{
+    return result.rows?.map<{
       x: Date | DbValue;
       y: number;
     }>((row) => {

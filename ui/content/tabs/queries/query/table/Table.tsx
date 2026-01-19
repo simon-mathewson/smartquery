@@ -16,6 +16,7 @@ import { useVirtualization } from './useVirtualization';
 import { CELL_HEIGHT } from './cell/constants';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
+import { assert } from 'ts-essentials';
 
 export type TableProps = {
   backgroundColor?: 'control' | 'background';
@@ -39,8 +40,11 @@ export const Table: React.FC<TableProps> = (props) => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useDefinedContext(ActiveConnectionContext);
   const { query } = useDefinedContext(QueryContext);
-  const { columns, rows, tables } = useDefinedContext(ResultContext);
+  const result = useDefinedContext(ResultContext);
   const { createChanges, getChangeAtLocation } = useDefinedContext(EditContext);
+
+  assert(!('error' in result), 'Result is an error');
+  const { columns, rows, tables } = result;
 
   const [isEditing, setIsEditing] = useState(false);
 

@@ -84,7 +84,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
         behavior: 'smooth',
         block: 'start',
       });
-    }, 100);
+    }, 200);
   }, [thread]);
 
   if (!activeConnection) return null;

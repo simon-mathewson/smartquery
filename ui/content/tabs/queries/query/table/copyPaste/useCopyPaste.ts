@@ -6,6 +6,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { ResultContext } from '../../Context';
 import { getTsvFromSelection } from '../utils/getTsvFromSelection';
 import { isReactNative } from '~/content/native/useNative';
+import { assert } from 'ts-essentials';
 
 export const useCopyPaste = (
   selection: number[][],
@@ -14,7 +15,10 @@ export const useCopyPaste = (
 ) => {
   const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
-  const { rows } = useDefinedContext(ResultContext);
+
+  const result = useDefinedContext(ResultContext);
+  assert(!('error' in result), 'Result is an error');
+  const { rows } = result;
 
   const onKeydown = useCallback(
     (event: KeyboardEvent) => {

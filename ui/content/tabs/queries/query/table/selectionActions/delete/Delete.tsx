@@ -6,6 +6,7 @@ import { Button } from '~/shared/components/button/Button';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { ResultContext } from '../../../Context';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { assert } from 'ts-essentials';
 
 export type DeleteProps = {
   selection: number[][];
@@ -17,7 +18,9 @@ export const Delete: React.FC<DeleteProps> = (props) => {
   const { track } = useDefinedContext(AnalyticsContext);
   const { handleDeleteChange } = useDefinedContext(EditContext);
 
-  const { columns, rows, tables } = useDefinedContext(ResultContext);
+  const result = useDefinedContext(ResultContext);
+  assert(!('error' in result), 'Result is an error');
+  const { columns, rows, tables } = result;
 
   return (
     <Button
