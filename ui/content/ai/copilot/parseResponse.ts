@@ -60,8 +60,14 @@ export const parseResponse = (response: string): ThreadMessage[] => {
 
             try {
               // Unescape the strings by parsing them as JSON string values
-              const unescapedName = name ? JSON.parse(`"${name}"`) : '';
-              const unescapedSql = sql ? JSON.parse(`"${sql}"`) : '';
+              const unescapePartialString = (str: string) => {
+                // Remove trailing backslashes (incomplete control characters)
+                const cleanStr = str.replace(/\\+$/, '');
+                return JSON.parse(`"${cleanStr}"`);
+              };
+
+              const unescapedName = unescapePartialString(name);
+              const unescapedSql = unescapePartialString(sql);
 
               result.push({
                 name: unescapedName,
