@@ -305,8 +305,8 @@ public class ConnectorModule: Module {
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SCRAM-SHA-256 authentication is required"])
       } catch PostgresClientKit.PostgresError.serverError(let description) {
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: description])
-      } catch PostgresClientKit.PostgresError.socketError(let cause) {
-        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "Network error: \(cause.localizedDescription)"])
+      } catch PostgresClientKit.PostgresError.socketError {
+        throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "NO_LONGER_CONNECTED"])
       } catch PostgresClientKit.PostgresError.sslError(let cause) {
         throw NSError(domain: "ConnectorModule", code: 1, userInfo: [NSLocalizedDescriptionKey: "SSL/TLS error: \(cause.localizedDescription)"])
       } catch PostgresClientKit.PostgresError.statementClosed {
