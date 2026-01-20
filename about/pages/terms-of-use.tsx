@@ -78,19 +78,19 @@ const TermsOfUse: React.FC = () => {
             </p>
             <ul>
               <li>
-                <strong>AI Credits:</strong> 100
+                <strong>AI Credits:</strong> 15
               </li>
             </ul>
 
             <h4>3.2. SmartQuery Plus Subscription</h4>
             <p>
               For users requiring higher limits, we offer the SmartQuery Plus
-              subscription for $8 per month. The monthly usage limits are as
+              subscription for $4 per month. The monthly usage limits are as
               follows:
             </p>
             <ul>
               <li>
-                <strong>AI Credits:</strong> 500
+                <strong>AI Credits:</strong> 75
               </li>
             </ul>
 
@@ -148,12 +148,7 @@ const TermsOfUse: React.FC = () => {
                 <strong>AI Credits:</strong> Your account is allocated a
                 specific number of AI Credits based on your service tier, as
                 outlined in Section 3. Credits are consumed for each request
-                made to the AI model.
-                <ul>
-                  <li>
-                    25 credits per input token, 200 credits per output token
-                  </li>
-                </ul>
+                made to the AI model. Credits are based on the compute required.
               </li>
               <li>
                 <strong>Data Sent to API:</strong> When you use the AI feature,

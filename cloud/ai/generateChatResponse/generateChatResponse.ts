@@ -15,6 +15,7 @@ type StreamChunk = {
   text?: string;
   usage?: {
     inputTokens: number;
+    cachedInputTokens: number;
     outputTokens: number;
   };
 };
@@ -61,6 +62,7 @@ export const generateChatResponse = async function* (
         yield {
           usage: {
             inputTokens: event.response.usage.input_tokens,
+            cachedInputTokens: event.response.usage.input_tokens_details.cached_tokens,
             outputTokens: event.response.usage.output_tokens,
           },
         };

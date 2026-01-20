@@ -28,17 +28,19 @@ export const aiRouter = trpc.router({
       const response = generateChatResponse({ ...input, abortSignal: signal, openai });
 
       let outputTokens = 0;
-      let inputTokens: number | null = null;
+      let inputTokens = 0;
+      let cachedInputTokens = 0;
 
       for await (const chunk of response) {
         if (chunk.usage) {
-          outputTokens = chunk.usage.inputTokens;
-          inputTokens = chunk.usage.outputTokens;
+          inputTokens = chunk.usage.inputTokens;
+          cachedInputTokens = chunk.usage.cachedInputTokens;
+          outputTokens = chunk.usage.outputTokens;
         }
         yield chunk.text ?? null;
       }
 
-      assert(inputTokens !== null, 'Input tokens should be tracked');
+      assert(inputTokens > 0, 'Input tokens should be tracked');
 
       void trackUsage({
         ip,
@@ -47,6 +49,7 @@ export const aiRouter = trpc.router({
             amount: getAiCreditsForTokens({
               model: 'gpt-5.1-codex-mini',
               inputTokens,
+              cachedInputTokens,
               outputTokens,
             }),
             type: 'aiCredits',
@@ -84,6 +87,7 @@ export const aiRouter = trpc.router({
               amount: getAiCreditsForTokens({
                 model: 'gpt-5.1-codex-mini',
                 inputTokens: response.usage.inputTokens,
+                cachedInputTokens: response.usage.cachedInputTokens,
                 outputTokens: response.usage.outputTokens,
               }),
               type: 'aiCredits',

@@ -12,6 +12,7 @@ type InlineCompletionResponse = {
   text: string;
   usage: {
     inputTokens: number;
+    cachedInputTokens: number;
     outputTokens: number;
   };
 };
@@ -56,6 +57,7 @@ export const generateInlineCompletions = async (
       text: response.output_text,
       usage: {
         inputTokens: response.usage.input_tokens,
+        cachedInputTokens: response.usage.input_tokens_details.cached_tokens,
         outputTokens: response.usage.output_tokens,
       },
     };

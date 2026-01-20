@@ -63,7 +63,7 @@ export const Plans: React.FC<PlansProps> = (props) => {
         <div className="col-span-full mx-2 my-1 h-px border-b border-border" />
         <Cell feature>
           <div>
-            <div>AI Credits</div>
+            <div>AI Credits (per month)</div>
             <div className="mt-1 font-normal text-textTertiary">Chat & inline completions</div>
           </div>
         </Cell>

@@ -9,25 +9,25 @@ export const plans = {
   anonymous: {
     price: null,
     limits: {
-      aiCredits: 10, // $0.10
+      aiCredits: 5, // $0.05
     },
   },
   free: {
     price: null,
     limits: {
-      aiCredits: 100, // $1.00
+      aiCredits: 15, // $0.15
     },
   },
   plus: {
-    price: 8,
+    price: 4,
     limits: {
-      aiCredits: 500, // $5.00
+      aiCredits: 75, // $0.75
     },
   },
   pro: {
-    price: 18,
+    price: 16,
     limits: {
-      aiCredits: 1200, // $12.00
+      aiCredits: 300, // $3.00
     },
   },
 } satisfies Record<string, Plan>;
