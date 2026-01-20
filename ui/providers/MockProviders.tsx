@@ -44,8 +44,8 @@ const mockProviders = {
   SavedQueriesProvider: SavedQueriesMockProvider,
   DragAndDropProvider,
   AddToDesktopProvider,
-  CopilotProvider,
   CopilotSidebarProvider,
+  CopilotProvider,
 } as const;
 
 export type ProviderOverrides = DeepPartial<ContextTypes>;
