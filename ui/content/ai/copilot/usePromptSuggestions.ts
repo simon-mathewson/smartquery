@@ -27,6 +27,17 @@ const createSchemaKey = (schemaDefinitions: SchemaDefinitions | null): string | 
   return simpleHash(schemaString);
 };
 
+const getStorageKey = (
+  activeConnection: { id: string; engine: string; database: string; schema?: string } | undefined,
+) => {
+  if (!activeConnection) return null;
+
+  const { id, engine, database, schema } = activeConnection;
+  return `usePromptSuggestions.suggestions.${id}.${database}${
+    engine === 'postgres' ? `.${schema}` : ''
+  }`;
+};
+
 export const usePromptSuggestions = () => {
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
@@ -36,10 +47,8 @@ export const usePromptSuggestions = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [schemaKey, setSchemaKey] = useState<string | null>(null);
 
-  // Store suggestions keyed by schema key
-  const storageKey = activeConnection
-    ? `usePromptSuggestions.suggestions.${activeConnection.id}`
-    : null;
+  // Store suggestions keyed by schema key, scoped to connection/database/schema
+  const storageKey = useMemo(() => getStorageKey(activeConnection), [activeConnection]);
 
   const [storedSuggestions, setStoredSuggestions] = useStoredState<Record<string, string[]>>(
     storageKey,

@@ -69,7 +69,8 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
         behavior: 'instant',
         block: 'start',
       });
-    });
+      // Wait for messages of current database to load
+    }, 10);
   }, []);
 
   const previousThread = useRef<AiTextContent[]>([]);
@@ -169,36 +170,35 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
         {isLoading && (
           <LinearProgress className="mt-4 !h-1 rounded-full !bg-primaryHighlightHover [&_.MuiLinearProgress-bar]:!bg-primary" />
         )}
-        {!isLoading &&
-          (suggestions.length > 0 || isLoadingSuggestions) &&
-          (isLoadingSuggestions ? (
+        {!isLoading && isLoadingSuggestions && !suggestions.length && (
+          <div className="mt-4 h-[100px]">
             <Loading />
-          ) : (
-            <ActionList
-              actions={suggestions
-                .filter(
-                  (suggestion) =>
-                    !thread.some((message) =>
-                      message.content.some(
-                        (item) => typeof item === 'string' && item === suggestion,
-                      ),
-                    ),
-                )
-                .map((suggestion) => ({
-                  disabled: isQuotaExceeded,
-                  label: suggestion,
-                  icon: <LightbulbOutline />,
-                  htmlProps: {
-                    onClick: () => {
-                      void sendMessage(suggestion);
-                    },
+          </div>
+        )}
+        {!isLoading && suggestions.length > 0 && (
+          <ActionList
+            actions={suggestions
+              .filter(
+                (suggestion) =>
+                  !thread.some((message) =>
+                    message.content.some((item) => typeof item === 'string' && item === suggestion),
+                  ),
+              )
+              .map((suggestion) => ({
+                disabled: isQuotaExceeded,
+                label: suggestion,
+                icon: <LightbulbOutline />,
+                htmlProps: {
+                  onClick: () => {
+                    void sendMessage(suggestion);
                   },
-                }))}
-              compact
-              htmlProps={{ className: 'mt-4' }}
-              truncate={false}
-            />
-          ))}
+                },
+              }))}
+            compact
+            htmlProps={{ className: 'mt-4' }}
+            truncate={false}
+          />
+        )}
         <div className="h-[100dvh] w-full" />
       </div>
       <div>

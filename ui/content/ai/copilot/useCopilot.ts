@@ -18,15 +18,35 @@ import { AnalyticsContext } from '~/content/analytics/Context';
 import { CopilotSidebarContext } from './sidebar/Context';
 import { MobileNavigationContext } from '~/content/navigation/mobile/Context';
 
+const getStorageKey = (
+  activeConnection: { id: string; engine: string; database: string; schema?: string } | undefined,
+  suffix: string,
+) => {
+  if (!activeConnection) return null;
+
+  const { id, engine, database, schema } = activeConnection;
+  return `useCopilot.${suffix}.${id}.${database}${engine === 'postgres' ? `.${schema}` : ''}`;
+};
+
 export const useCopilot = () => {
   const { cloudApiStream } = useDefinedContext(CloudApiContext);
   const { track } = useDefinedContext(AnalyticsContext);
-  const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
+  const activeConnectionContext = useContext(ActiveConnectionContext);
+  const { activeConnection } = activeConnectionContext ?? {};
   const { setIsOpen } = useDefinedContext(CopilotSidebarContext);
   const { setOverlayPage } = useDefinedContext(MobileNavigationContext);
 
+  const threadStorageKey = useMemo(
+    () => getStorageKey(activeConnection, 'thread'),
+    [activeConnection],
+  );
+  const queryResultsStorageKey = useMemo(
+    () => getStorageKey(activeConnection, 'queryResults'),
+    [activeConnection],
+  );
+
   const [rawThread, setRawThread] = useStoredState<AiTextContent[]>(
-    'useCopilot.thread',
+    threadStorageKey,
     [],
     undefined,
     [
@@ -50,7 +70,7 @@ export const useCopilot = () => {
   );
   const [thread, setThread] = useState<Awaited<ReturnType<typeof processThread>>>([]);
   const [queryResults, setQueryResults] = useStoredState<Record<string, QueryResult | null>>(
-    'useCopilot.queryResults',
+    queryResultsStorageKey,
     {},
   );
 
