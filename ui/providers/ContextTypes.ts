@@ -19,6 +19,7 @@ import type { ThemeContextType } from '~/content/theme/Context';
 import type { ToastContextType } from '~/content/toast/Context';
 import type { UpdateAvailableContextType } from '~/content/updateAvailable/Context';
 import type { EscapeStackContextType } from '~/shared/hooks/useEscape/useStack/Context';
+import type { MobileNavigationContextType } from '~/content/navigation/mobile/Context';
 
 export type ContextTypes = {
   ActiveConnectionProvider: ActiveConnectionContextType;
@@ -34,6 +35,7 @@ export type ContextTypes = {
   EditProvider: EditContextType;
   ErrorTrackingProvider: ErrorTrackingContextType;
   EscapeStackProvider: EscapeStackContextType;
+  MobileNavigationProvider: MobileNavigationContextType;
   NativeProvider: NativeContextType;
   QueriesProvider: QueriesContextType;
   SavedQueriesProvider: SavedQueriesContextType;

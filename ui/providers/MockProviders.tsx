@@ -23,6 +23,7 @@ import { CopilotSidebarProvider } from '~/content/ai/copilot/sidebar/Provider';
 import { CopilotProvider } from '~/content/ai/copilot/Provider';
 import { NativeProvider } from '~/content/native/Provider';
 import { CredentialsProvider } from '~/content/credentials/Provider';
+import { MobileNavigationProvider } from '~/content/navigation/mobile/Provider';
 
 const mockProviders = {
   ThemeProvider,
@@ -37,6 +38,7 @@ const mockProviders = {
   CredentialsProvider,
   SqliteProvider,
   ConnectionsProvider: ConnectionsMockProvider,
+  MobileNavigationProvider,
   ActiveConnectionProvider: ActiveConnectionMockProvider,
   EditProvider,
   TabsProvider,

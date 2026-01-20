@@ -23,6 +23,7 @@ import { SavedQueriesProvider } from '~/content/savedQueries/Provider';
 import { CopilotSidebarProvider } from '~/content/ai/copilot/sidebar/Provider';
 import { CopilotProvider } from '~/content/ai/copilot/Provider';
 import { NativeProvider } from '~/content/native/Provider';
+import { MobileNavigationProvider } from '~/content/navigation/mobile/Provider';
 
 const providers = {
   ThemeProvider,
@@ -37,6 +38,7 @@ const providers = {
   UpdateAvailableProvider,
   SqliteProvider,
   ConnectionsProvider,
+  MobileNavigationProvider,
   ActiveConnectionProvider,
   EditProvider,
   TabsProvider,

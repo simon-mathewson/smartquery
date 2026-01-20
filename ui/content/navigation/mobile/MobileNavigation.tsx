@@ -7,7 +7,6 @@ import {
   TableChartOutlined,
 } from '@mui/icons-material';
 import classNames from 'classnames';
-import { useState } from 'react';
 import { useRoute } from 'wouter';
 import { Copilot } from '~/content/ai/copilot/sidebar/Copilot';
 import { Connections } from '~/content/connections/Connections';
@@ -19,6 +18,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { MOBILE_NAVIGATION_HEIGHT } from './constants';
 import { QueriesPage } from './QueriesPage/QueriesPage';
+import { MobileNavigationContext } from './Context';
 
 export const MobileNavigation: React.FC = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -30,9 +30,7 @@ export const MobileNavigation: React.FC = () => {
 
   const isMobile = useIsMobile();
 
-  const [overlayPage, setOverlayPage] = useState<
-    'connections' | 'queries' | 'settings' | 'copilot' | null
-  >(null);
+  const { overlayPage, setOverlayPage } = useDefinedContext(MobileNavigationContext);
 
   if (!isMobile) return null;
 

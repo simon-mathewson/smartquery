@@ -16,12 +16,14 @@ import { parseResponse } from './parseResponse';
 import type { ThreadMessage } from './types';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { CopilotSidebarContext } from './sidebar/Context';
+import { MobileNavigationContext } from '~/content/navigation/mobile/Context';
 
 export const useCopilot = () => {
   const { cloudApiStream } = useDefinedContext(CloudApiContext);
   const { track } = useDefinedContext(AnalyticsContext);
   const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
   const { setIsOpen } = useDefinedContext(CopilotSidebarContext);
+  const { setOverlayPage } = useDefinedContext(MobileNavigationContext);
 
   const [rawThread, setRawThread] = useStoredState<AiTextContent[]>(
     'useCopilot.thread',
@@ -146,6 +148,7 @@ export const useCopilot = () => {
       track('copilot_send_message');
 
       setIsOpen(true);
+      setOverlayPage('copilot');
 
       setIsLoading(true);
 
@@ -201,6 +204,7 @@ export const useCopilot = () => {
       activeConnection,
       track,
       setIsOpen,
+      setOverlayPage,
       rawThread,
       setRawThread,
       getAndRefreshSchemaDefinitions,
