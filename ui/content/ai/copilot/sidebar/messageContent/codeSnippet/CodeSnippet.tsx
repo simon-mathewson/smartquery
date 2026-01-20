@@ -47,13 +47,7 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
             onClick: () => {
               track('copilot_open_query');
 
-              void addQuery(
-                {
-                  initialInputMode: 'editor',
-                  ...(query ?? { sql: code }),
-                },
-                { afterActiveTab: true },
-              );
+              void addQuery(query ?? { sql: code }, { afterActiveTab: true });
 
               onCloseCopilot?.();
             },
