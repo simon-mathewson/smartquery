@@ -18,3 +18,10 @@ export const generateInlineCompletionsInputSchema = z.object({
 });
 
 export type GenerateInlineCompletionsInput = z.infer<typeof generateInlineCompletionsInputSchema>;
+
+export const generatePromptSuggestionsInputSchema = z.object({
+  engine: engineSchema,
+  schemaDefinitions: z.string().min(1),
+});
+
+export type GeneratePromptSuggestionsInput = z.infer<typeof generatePromptSuggestionsInputSchema>;

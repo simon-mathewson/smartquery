@@ -1,6 +1,11 @@
 import { generateChatResponse } from './generateChatResponse/generateChatResponse';
 import { generateInlineCompletions } from './generateInlineCompletions';
-import { generateChatResponseInputSchema, generateInlineCompletionsInputSchema } from './types';
+import { generatePromptSuggestions } from './generatePromptSuggestions';
+import {
+  generateChatResponseInputSchema,
+  generateInlineCompletionsInputSchema,
+  generatePromptSuggestionsInputSchema,
+} from './types';
 import { trackUsage } from '~/usage/trackUsage';
 import { verifyUsageWithinLimits } from '~/usage/verifyUsageWithinLimits';
 import { trpc } from '~/trpc';
@@ -99,5 +104,52 @@ export const aiRouter = trpc.router({
       }
 
       return response?.text ?? null;
+    }),
+  generatePromptSuggestions: trpc.procedure
+    .input(generatePromptSuggestionsInputSchema)
+    .mutation(async (props) => {
+      const {
+        ctx: { openai, ip, user },
+        input,
+        signal,
+      } = props;
+
+      await verifyUsageWithinLimits({
+        ip,
+        prisma,
+        types: ['aiCredits'],
+        user,
+      });
+
+      const response = await generatePromptSuggestions({
+        ...input,
+        abortSignal: signal,
+        openai,
+      });
+
+      if (!response) {
+        return [];
+      }
+
+      assert(response.usage.inputTokens > 0, 'Input tokens should be tracked');
+
+      void trackUsage({
+        ip,
+        items: [
+          {
+            amount: getAiCreditsForTokens({
+              model: 'gpt-5.1-codex-mini',
+              inputTokens: response.usage.inputTokens,
+              cachedInputTokens: response.usage.cachedInputTokens,
+              outputTokens: response.usage.outputTokens,
+            }),
+            type: 'aiCredits',
+          },
+        ],
+        prisma,
+        user,
+      });
+
+      return response.suggestions;
     }),
 });

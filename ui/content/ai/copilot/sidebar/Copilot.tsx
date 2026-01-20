@@ -13,7 +13,6 @@ import { useCallback, useContext, useEffect, useRef } from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { AuthContext } from '~/content/auth/Context';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
-import { copilotChatSuggestions } from '~/content/connections/demo/copilotChatSuggestions';
 import { isReactNative } from '~/content/native/useNative';
 import { routes } from '~/router/routes';
 import { ActionList } from '~/shared/components/actionList/ActionList';
@@ -27,7 +26,9 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { CopilotContext } from '../Context';
 import { CopilotSidebarContext } from './Context';
 import { MessageContentItem } from './messageContent/MessageContent';
+import { usePromptSuggestions } from '../usePromptSuggestions';
 import type { AiTextContent } from '@/ai/types';
+import { Loading } from '~/shared/components/loading/Loading';
 
 export type CopilotProps = {
   onCloseCopilot?: () => void;
@@ -53,6 +54,8 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
     stopGenerating,
     thread,
   } = useDefinedContext(CopilotContext);
+
+  const { suggestions, isLoading: isLoadingSuggestions } = usePromptSuggestions();
 
   const threadContainerRef = useRef<HTMLDivElement>(null);
 
@@ -166,30 +169,36 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
         {isLoading && (
           <LinearProgress className="mt-4 !h-1 rounded-full !bg-primaryHighlightHover [&_.MuiLinearProgress-bar]:!bg-primary" />
         )}
-        {activeConnection?.id === 'demo' && !isLoading && (
-          <ActionList
-            actions={copilotChatSuggestions
-              .filter(
-                (suggestion) =>
-                  !thread.some((message) =>
-                    message.content.some((item) => typeof item === 'string' && item === suggestion),
-                  ),
-              )
-              .map((suggestion) => ({
-                disabled: isQuotaExceeded,
-                label: suggestion,
-                icon: <LightbulbOutline />,
-                htmlProps: {
-                  onClick: () => {
-                    void sendMessage(suggestion);
+        {!isLoading &&
+          (suggestions.length > 0 || isLoadingSuggestions) &&
+          (isLoadingSuggestions ? (
+            <Loading />
+          ) : (
+            <ActionList
+              actions={suggestions
+                .filter(
+                  (suggestion) =>
+                    !thread.some((message) =>
+                      message.content.some(
+                        (item) => typeof item === 'string' && item === suggestion,
+                      ),
+                    ),
+                )
+                .map((suggestion) => ({
+                  disabled: isQuotaExceeded,
+                  label: suggestion,
+                  icon: <LightbulbOutline />,
+                  htmlProps: {
+                    onClick: () => {
+                      void sendMessage(suggestion);
+                    },
                   },
-                },
-              }))}
-            compact
-            htmlProps={{ className: 'mt-4' }}
-            truncate={false}
-          />
-        )}
+                }))}
+              compact
+              htmlProps={{ className: 'mt-4' }}
+              truncate={false}
+            />
+          ))}
         <div className="h-[100dvh] w-full" />
       </div>
       <div>
