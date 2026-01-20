@@ -66,14 +66,15 @@ export const parseResponse = (response: string): ThreadMessage[] => {
                 return JSON.parse(`"${cleanStr}"`);
               };
 
-              const unescapedName = unescapePartialString(name);
-              const unescapedSql = unescapePartialString(sql);
+              const unescapedName = unescapePartialString(name ?? '');
+              const unescapedSql = unescapePartialString(sql ?? '');
 
               result.push({
                 name: unescapedName,
                 sql: unescapedSql,
               });
-            } catch {
+            } catch (error) {
+              console.error(error);
               return result;
             }
           }

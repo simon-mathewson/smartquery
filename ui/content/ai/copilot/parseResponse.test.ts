@@ -48,6 +48,19 @@ describe('parseResponse', () => {
     ]);
   });
 
+  it('should handle trailing partial control characters', () => {
+    const response = `[\n  "Here are a few example queries:",\n  {\n    "name": "Select all artists",\n    "sql": "SELECT * FROM artists;\\`;
+    const result = parseResponse(response);
+
+    expect(result).toEqual([
+      'Here are a few example queries:',
+      {
+        name: 'Select all artists',
+        sql: 'SELECT * FROM artists;',
+      },
+    ]);
+  });
+
   it('should parse partial chart', () => {
     const response = `[\n  "Here are a few example queries:",\n  {\n    "name": "Select all artists",\n    "sql": "SELECT * FROM artists;",\n    "chart": {\n      "type": "bar",\n      "xColumn": "ArtistId",\n      "xTable": "artists",\n      "yColumn": "Name",\n      "yTable":\n`;
     const result = parseResponse(response);
