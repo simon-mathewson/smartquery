@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { isAuthenticated } from '~/middlewares/isAuthenticated';
 import { trpc } from '~/trpc';
 import { getOrCreateStripeCustomer } from './getOrCreateStripeCustomer';
-import { getPriceIdForSubscriptionType } from './getPriceIdForSubscriptionType';
+import { getStripePriceIdForSubscriptionType } from './getStripePriceIdForSubscriptionType';
 import { prisma } from '~/prisma/client';
 
 export const subscriptionsRouter = trpc.router({
@@ -40,7 +40,7 @@ export const subscriptionsRouter = trpc.router({
         billing_address_collection: 'required',
         customer_update: { address: 'auto' },
         customer: stripeCustomerId,
-        line_items: [{ price: getPriceIdForSubscriptionType(subscriptionType), quantity: 1 }],
+        line_items: [{ price: getStripePriceIdForSubscriptionType(subscriptionType), quantity: 1 }],
         mode: 'subscription',
         return_url: `${process.env.UI_URL}/subscribe/confirm?type=${subscriptionType}`,
         ui_mode: 'custom',
@@ -77,7 +77,7 @@ export const subscriptionsRouter = trpc.router({
       });
       const existingSubscription = existingSubscriptions.data.at(0) ?? null;
 
-      const newSubscriptionPriceId = getPriceIdForSubscriptionType(subscriptionType);
+      const newSubscriptionPriceId = getStripePriceIdForSubscriptionType(subscriptionType);
 
       if (existingSubscription) {
         assert(

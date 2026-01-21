@@ -1,4 +1,4 @@
-export const getSubscriptionTypeForProductId = (productId: string) => {
+export const getSubscriptionTypeForStripeProductId = (productId: string) => {
   switch (productId) {
     case process.env.STRIPE_PLUS_PRODUCT_ID:
       return 'plus';

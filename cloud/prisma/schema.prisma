@@ -88,17 +88,19 @@ model SavedQueryChart {
 }
 
 model Subscription {
-  id                   String           @id @default(uuid()) @db.Uuid
-  createdAt            DateTime         @default(now())
-  startDate            DateTime
-  endDate              DateTime?
-  type                 SubscriptionType
-  userId               String           @db.Uuid
-  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activeForUser        User?            @relation("activeSubscription")
-  stripeSubscriptionId String?          @unique
-  stripeProductId      String?
-  stripePriceId        String?
+  id                         String           @id @default(uuid()) @db.Uuid
+  createdAt                  DateTime         @default(now())
+  startDate                  DateTime
+  endDate                    DateTime?
+  type                       SubscriptionType
+  userId                     String           @db.Uuid
+  user                       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activeForUser              User?            @relation("activeSubscription")
+  stripeSubscriptionId       String?          @unique
+  stripeProductId            String?
+  stripePriceId              String?
+  appleOriginalTransactionId String?          @unique
+  appleTransactionId         String?
 
   @@index([userId])
 }

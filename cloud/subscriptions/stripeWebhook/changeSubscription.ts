@@ -1,7 +1,7 @@
 import assert from 'assert';
 import type Stripe from 'stripe';
 import type { PrismaClient } from '~/prisma/generated';
-import { getSubscriptionTypeForProductId } from '../getSubscriptionTypeForProductId';
+import { getSubscriptionTypeForStripeProductId } from './getSubscriptionTypeForStripeProductId';
 
 export const changeSubscription = async (props: {
   prisma: PrismaClient;
@@ -24,7 +24,7 @@ export const changeSubscription = async (props: {
       include: { activeSubscription: true },
     });
 
-    const newSubscriptionType = getSubscriptionTypeForProductId(productId);
+    const newSubscriptionType = getSubscriptionTypeForStripeProductId(productId);
 
     // If is active and type unchanged...
     if (

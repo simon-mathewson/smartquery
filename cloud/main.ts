@@ -4,6 +4,7 @@ import cors from 'cors';
 import { appRouter } from './router';
 import { createContext } from './context';
 import { stripeWebhook } from './subscriptions/stripeWebhook/stripeWebhook';
+import { appleAppStoreWebhook } from './subscriptions/appleAppStoreWebhook/appleAppStoreWebhook';
 import AwsXRay from 'aws-xray-sdk';
 import http from 'http';
 import https from 'https';
@@ -61,6 +62,8 @@ app.use(
 );
 
 app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebhook);
+
+app.post('/apple-app-store', express.json({ type: 'application/json' }), appleAppStoreWebhook);
 
 app.use(AwsXRay.express.closeSegment());
 

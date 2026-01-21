@@ -28,6 +28,10 @@ export default {
           src: '../shared/connector/prisma/client/postgres/*.node',
           dest: 'dist',
         },
+        {
+          src: './subscriptions/appleAppStoreWebhook/AppleRootCA-G3.cer',
+          dest: 'dist',
+        },
       ],
     }),
   ],

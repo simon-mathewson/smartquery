@@ -1,5 +1,8 @@
 declare namespace NodeJS {
   interface ProcessEnv {
+    APPLE_IOS_APP_ID: string;
+    APPLE_IOS_BUNDLE_ID: string;
+    APPLE_IOS_PLUS_PRODUCT_ID: string;
     AWS_REGION?: string;
     DATABASE_URL: string;
     JWT_SECRET: string;

@@ -1,6 +1,6 @@
 import assert from 'assert';
 import type { PrismaClient } from '~/prisma/generated';
-import { getSubscriptionTypeForProductId } from '../getSubscriptionTypeForProductId';
+import { getSubscriptionTypeForStripeProductId } from './getSubscriptionTypeForStripeProductId';
 import type Stripe from 'stripe';
 
 export const grantSubscription = async (props: {
@@ -34,23 +34,9 @@ export const grantSubscription = async (props: {
       return;
     }
 
-    assert(
-      !user.activeSubscription?.stripeSubscriptionId,
-      'User already has different active Stripe subscription',
-    );
+    assert(!user.activeSubscription, 'User already has different active subscription');
 
-    const newSubscriptionType = getSubscriptionTypeForProductId(productId);
-
-    // Disable active non-Stripe subscription
-    if (user.activeSubscription) {
-      await tx.subscription.update({
-        where: { id: user.activeSubscription.id },
-        data: {
-          activeForUser: { disconnect: true },
-          endDate: new Date(),
-        },
-      });
-    }
+    const newSubscriptionType = getSubscriptionTypeForStripeProductId(productId);
 
     // Create new subscription
     await tx.subscription.create({
