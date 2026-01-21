@@ -39,6 +39,10 @@ test.describe('SqlEditor', () => {
     const editor = $.getByRole('textbox');
 
     const newValue = 'SELECT * FROM "table" WHERE column = 2';
+
+    // Attempt to make test less flaky on CI
+    await editor.selectText();
+
     await editor.clear();
     await editor.fill(newValue);
 

@@ -17,6 +17,9 @@ test.describe('useEscape', () => {
 
     await $.page().keyboard.press('Escape');
 
+    // Attempt to make test less flaky on CI
+    await $.page().waitForTimeout(100);
+
     expect(handler1.calls).toEqual([]);
     expect(handler2.calls).toEqual([[]]);
 
