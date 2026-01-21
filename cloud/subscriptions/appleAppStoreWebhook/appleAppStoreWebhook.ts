@@ -4,6 +4,7 @@ import {
   NotificationTypeV2,
   type ResponseBodyV2DecodedPayload,
   Environment,
+  VerificationException,
 } from '@apple/app-store-server-library';
 import { readFileSync } from 'fs';
 import { revokeAppleSubscription } from './revokeAppleSubscription';
@@ -17,6 +18,7 @@ const getVerifier = () => {
   const enableOnlineChecks = true;
   const environment = Environment.SANDBOX;
   // const environment = Environment.PRODUCTION;
+  console.log(cert);
 
   return new SignedDataVerifier(
     appleRootCertificates,
@@ -41,7 +43,13 @@ export const appleAppStoreWebhook: RequestHandler = async (request, response) =>
     const verifier = getVerifier();
     decodedPayload = await verifier.verifyAndDecodeNotification(signedPayload);
   } catch (error) {
-    console.log(`⚠️ Apple App Store notification verification failed.`, error);
+    const message =
+      error instanceof VerificationException
+        ? error.cause
+        : error instanceof Error
+        ? error.message
+        : String(error);
+    console.log(`⚠️ Apple App Store notification verification failed.`, message);
     response.sendStatus(400);
     return;
   }

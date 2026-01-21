@@ -6,3 +6,4 @@ dist
 .eslintcache
 .rollup.cache
 application.zip
+scripts/appleSigningKey.p8

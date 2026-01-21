@@ -9,6 +9,7 @@
     "prisma": "NODE_ENV=development pnpm dotenv-flow -- prisma",
     "setup-production": "chmod +x ./scripts/setup-production.sh && ./scripts/setup-production.sh",
     "stripe-webhook": "NODE_ENV=development pnpm dotenv-flow -- stripe listen --forward-to http://localhost:4444/stripe --events customer.subscription.deleted,customer.subscription.updated,invoice.paid,invoice.payment_succeeded",
+    "test-apple-notification": "NODE_ENV=development pnpm dotenv-flow -- tsx scripts/requestAppleTestNotification.ts",
     "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
