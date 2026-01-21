@@ -18,7 +18,6 @@ const getVerifier = () => {
   const enableOnlineChecks = true;
   const environment = Environment.SANDBOX;
   // const environment = Environment.PRODUCTION;
-  console.log(cert);
 
   return new SignedDataVerifier(
     appleRootCertificates,
@@ -43,9 +42,10 @@ export const appleAppStoreWebhook: RequestHandler = async (request, response) =>
     const verifier = getVerifier();
     decodedPayload = await verifier.verifyAndDecodeNotification(signedPayload);
   } catch (error) {
+    console.dir(error);
     const message =
       error instanceof VerificationException
-        ? error.cause
+        ? error.cause?.message
         : error instanceof Error
         ? error.message
         : String(error);
