@@ -245,7 +245,7 @@ phases:
           fi
 
           cd ../ui
-          export VITE_UI_VERSION=$(echo -n $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
+          export VITE_UI_VERSION=$(find . -type f -exec sha256sum {} \; | sort | sha256sum | cut -c1-7)
           echo VITE_UI_VERSION=$VITE_UI_VERSION >> .env
           echo -n $VITE_UI_VERSION > public/version
           pnpm typecheck
@@ -322,10 +322,21 @@ phases:
           echo "UI package is unchanged. Skipping deployment."
         else
           cd ../ui
-          aws s3 sync dist s3://smartquery-ui
-          aws s3 cp s3://smartquery-ui/.well-known/apple-app-site-association s3://smartquery-ui/.well-known/apple-app-site-association --content-type application/json
-          aws s3 cp s3://smartquery-ui/version s3://smartquery-ui/version --content-type text/plain
-          aws cloudfront create-invalidation --distribution-id $SMARTQUERY_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+          export DEPLOYED_UI_VERSION=""
+          if aws s3 ls s3://smartquery-ui/version >/dev/null 2>&1; then
+            export DEPLOYED_UI_VERSION=$(aws s3 cp s3://smartquery-ui/version - 2>/dev/null | tr -d '\n' || echo "")
+          fi
+          echo "DEPLOYED_UI_VERSION: $DEPLOYED_UI_VERSION"
+          echo "VITE_UI_VERSION: $VITE_UI_VERSION"
+          if [ "$VITE_UI_VERSION" = "$DEPLOYED_UI_VERSION" ]; then
+            echo "UI version $VITE_UI_VERSION is already deployed. Skipping deployment."
+          else
+            echo "Deploying UI version $VITE_UI_VERSION"
+            aws s3 sync dist s3://smartquery-ui
+            aws s3 cp s3://smartquery-ui/.well-known/apple-app-site-association s3://smartquery-ui/.well-known/apple-app-site-association --content-type application/json
+            aws s3 cp s3://smartquery-ui/version s3://smartquery-ui/version --content-type text/plain
+            aws cloudfront create-invalidation --distribution-id $SMARTQUERY_UI_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
+          fi
         fi
 
 reports:
