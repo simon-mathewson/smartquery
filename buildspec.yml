@@ -245,7 +245,7 @@ phases:
           fi
 
           cd ../ui
-          export VITE_UI_VERSION=$(cd .. && git ls-files ui/ | xargs sha256sum | sort | sha256sum | cut -c1-7)
+          export VITE_UI_VERSION=$(find . -type f ! -path "*/node_modules/*" ! -path "*/dist/*" ! -path "*/.git/*" ! -path "*/test-results/*" ! -path "*/coverage/*" ! -path "*/.next/*" | xargs sha256sum 2>/dev/null | sort | sha256sum | cut -c1-7)
           echo VITE_UI_VERSION=$VITE_UI_VERSION >> .env
           echo -n $VITE_UI_VERSION > public/version
           pnpm typecheck
@@ -269,7 +269,7 @@ phases:
         fi
   post_build:
     commands:
-      # Skip deployment if previous phase failed, continue to next phase to upload test artifacts 
+      # Skip deployment if previous phase failed, continue to next phase to upload test artifacts
       - |
         set -e  # Exit immediately if any command fails
         if [ $CODEBUILD_BUILD_SUCCEEDING -eq 0 ]; then
