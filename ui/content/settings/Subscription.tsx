@@ -23,7 +23,7 @@ export const Subscription: React.FC<SubscriptionProps> = () => {
   const { startDate, stripeSubscriptionId, type, endDate } = user.activeSubscription;
   const subscriptionName = `${type[0].toUpperCase()}${type.slice(1)}`;
 
-  const price = stripeSubscriptionId ? plans[type].price : null;
+  const price = stripeSubscriptionId ? plans[type].webPrice : null;
 
   const items = [
     { label: 'Plan', value: subscriptionName },
