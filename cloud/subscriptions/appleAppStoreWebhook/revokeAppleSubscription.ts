@@ -8,7 +8,7 @@ export const revokeAppleSubscription = async (props: {
 }) => {
   const {
     prisma,
-    transactionInfo: { originalTransactionId, revocationDate },
+    transactionInfo: { expiresDate, originalTransactionId, revocationDate },
   } = props;
 
   await prisma.$transaction(async (tx) => {
@@ -26,13 +26,14 @@ export const revokeAppleSubscription = async (props: {
       return;
     }
 
-    assert(revocationDate, 'Revocation date is required');
+    const endDate = revocationDate || expiresDate;
+    assert(endDate, 'Revocation date or expires date is required');
 
     await tx.subscription.update({
       where: { id: subscription.id },
       data: {
         activeForUser: { disconnect: true },
-        endDate: new Date(revocationDate),
+        endDate: new Date(endDate),
       },
     });
   });
