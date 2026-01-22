@@ -160,6 +160,15 @@ export default function Index() {
     },
   });
 
+  useEffect(() => {
+    if (iap.connected) {
+      void iap.fetchProducts({
+        skus: [process.env.EXPO_PUBLIC_APPLE_IOS_PLUS_PRODUCT_ID],
+        type: "subs",
+      });
+    }
+  }, [iap.connected]);
+
   const getSubscriptionPrice = useCallback<GetSubscriptionPrice>(
     (type) => {
       assert(iap.connected, "Not connected to App Store");
