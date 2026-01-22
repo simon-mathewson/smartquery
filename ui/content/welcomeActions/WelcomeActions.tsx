@@ -12,7 +12,6 @@ import Add from '~/shared/icons/Add.svg?react';
 import { AnalyticsContext } from '../analytics/Context';
 import { AuthContext } from '../auth/Context';
 import { ConnectionsContext } from '../connections/Context';
-import { isReactNative } from '../native/useNative';
 
 export type WelcomeActionsProps = {
   hideAddConnection?: boolean;
@@ -76,7 +75,7 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
             },
           ]
         : []),
-      ...(user && !user.activeSubscription && !isReactNative
+      ...(user && !user.activeSubscription
         ? [
             {
               element: 'link' as const,

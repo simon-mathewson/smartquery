@@ -5,7 +5,6 @@ import {
   VpnKeyOutlined,
 } from '@mui/icons-material';
 import classNames from 'classnames';
-import { isReactNative } from '~/content/native/useNative';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
@@ -72,7 +71,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
             label="Log in"
           />
         )}
-        {!user?.activeSubscription && !isReactNative && (
+        {!user?.activeSubscription && (
           <Button
             align="left"
             htmlProps={{

@@ -75,20 +75,6 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
       });
   }, [native, navigate, subscriptionType, toast, user.id]);
 
-  if (isReactNative) {
-    return (
-      <Button
-        icon={<ArrowForward />}
-        htmlProps={{
-          className: 'w-full',
-          onClick: purchaseNativeSubscription,
-        }}
-        label="Pay now"
-        variant="filled"
-      />
-    );
-  }
-
   return (
     <Card htmlProps={{ className: 'container max-w-[400px]' }}>
       <Header
@@ -99,41 +85,53 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
           </div>
         }
       />
-      <div className="relative min-h-[200px] p-2">
-        {(isLoadingAddress || isLoadingPayment || isLoadingTotal) && <Loading />}
-        <div className="z-10 flex flex-col gap-4 bg-card">
-          <CheckoutProvider
-            stripe={stripe}
-            options={{
-              elementsOptions: {
-                appearance: { theme: theme.mode === 'dark' ? 'night' : 'stripe' },
-              },
-              fetchClientSecret: createSession,
-            }}
-          >
-            <AddressElement
-              onChange={(event) => setIsAddressComplete(event.complete)}
-              onReady={() => setIsLoadingAddress(false)}
-              options={{ mode: 'billing' }}
-            />
-            <PaymentElement
-              onChange={(event) => setIsPaymentComplete(event.complete)}
-              onReady={() => setIsLoadingPayment(false)}
-              options={{ layout: 'auto' }}
-            />
-            <Toggle
-              label="I agree to the immediate execution of the contract and acknowledge that I will lose my
+      {isReactNative ? (
+        <Button
+          icon={<ArrowForward />}
+          htmlProps={{
+            className: 'w-full mt-4',
+            onClick: purchaseNativeSubscription,
+          }}
+          label="Pay now"
+          variant="filled"
+        />
+      ) : (
+        <div className="relative min-h-[200px] p-2">
+          {(isLoadingAddress || isLoadingPayment || isLoadingTotal) && <Loading />}
+          <div className="z-10 flex flex-col gap-4 bg-card">
+            <CheckoutProvider
+              stripe={stripe}
+              options={{
+                elementsOptions: {
+                  appearance: { theme: theme.mode === 'dark' ? 'night' : 'stripe' },
+                },
+                fetchClientSecret: createSession,
+              }}
+            >
+              <AddressElement
+                onChange={(event) => setIsAddressComplete(event.complete)}
+                onReady={() => setIsLoadingAddress(false)}
+                options={{ mode: 'billing' }}
+              />
+              <PaymentElement
+                onChange={(event) => setIsPaymentComplete(event.complete)}
+                onReady={() => setIsLoadingPayment(false)}
+                options={{ layout: 'auto' }}
+              />
+              <Toggle
+                label="I agree to the immediate execution of the contract and acknowledge that I will lose my
               right of withdrawal upon the complete fulfillment of the contract."
-              value={isAgreementAccepted}
-              onChange={() => setIsAgreementAccepted(!isAgreementAccepted)}
-            />
-            <Total subscriptionType={subscriptionType} onReady={() => setIsLoadingTotal(false)} />
-            <PayButton
-              disabled={!isAddressComplete || !isPaymentComplete || !isAgreementAccepted}
-            />
-          </CheckoutProvider>
+                value={isAgreementAccepted}
+                onChange={() => setIsAgreementAccepted(!isAgreementAccepted)}
+              />
+              <Total subscriptionType={subscriptionType} onReady={() => setIsLoadingTotal(false)} />
+              <PayButton
+                disabled={!isAddressComplete || !isPaymentComplete || !isAgreementAccepted}
+              />
+            </CheckoutProvider>
+          </div>
         </div>
-      </div>
+      )}
     </Card>
   );
 };

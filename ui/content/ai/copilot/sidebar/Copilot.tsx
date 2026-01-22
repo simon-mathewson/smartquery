@@ -13,7 +13,6 @@ import { useCallback, useContext, useEffect, useRef } from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
 import { AuthContext } from '~/content/auth/Context';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
-import { isReactNative } from '~/content/native/useNative';
 import { routes } from '~/router/routes';
 import { ActionList } from '~/shared/components/actionList/ActionList';
 import { Button } from '~/shared/components/button/Button';
@@ -320,18 +319,16 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                   <div>
                     You've exceeded your quota for this month. Upgrade to continue using Copilot.
                   </div>
-                  {!isReactNative && (
-                    <Button
-                      element="link"
-                      htmlProps={{
-                        className: 'w-full mt-2',
-                        href: routes.subscribePlans(),
-                      }}
-                      icon={<ArrowForward />}
-                      label="Upgrade"
-                      variant="filled"
-                    />
-                  )}
+                  <Button
+                    element="link"
+                    htmlProps={{
+                      className: 'w-full mt-2',
+                      href: routes.subscribePlans(),
+                    }}
+                    icon={<ArrowForward />}
+                    label="Upgrade"
+                    variant="filled"
+                  />
                 </>
               )}
               {user !== null && user.activeSubscription && (
