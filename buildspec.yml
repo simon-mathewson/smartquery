@@ -269,7 +269,7 @@ phases:
         fi
   post_build:
     commands:
-      # Skip deployment if previous phase failed, continue to next phase to upload test artifacts
+      # Skip deployment if previous phase failed, continue to next phase to upload test artifacts 
       - |
         set -e  # Exit immediately if any command fails
         if [ $CODEBUILD_BUILD_SUCCEEDING -eq 0 ]; then
