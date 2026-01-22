@@ -54,6 +54,7 @@ export const grantAppleSubscription = async (props: {
         where: { id: existingSubscription.id },
         data: {
           activeForUser: { connect: { id: user.id } },
+          endDate: null,
         },
       });
       return;
