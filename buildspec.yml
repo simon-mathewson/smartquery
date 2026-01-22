@@ -19,7 +19,7 @@ phases:
 
       # Get commit message from CodePipeline source action
       - |
-        export EXECUTION_ID=$(aws codepipeline list-pipeline-executions --pipeline-name smartquery --max-items 1 --query 'pipelineExecutionSummaries[0].pipelineExecutionId' --output text | tr -d '\n')
+        export EXECUTION_ID=$(aws codepipeline list-pipeline-executions --pipeline-name smartquery --max-items 1 --query 'pipelineExecutionSummaries[0].pipelineExecutionId' --output text | tr -d '\n' | sed 's/None$//')
         export CODEBUILD_COMMIT_MESSAGE=$(aws codepipeline list-action-executions --pipeline-name smartquery --filter "{\"pipelineExecutionId\":\"$EXECUTION_ID\"}" --query 'actionExecutionDetails[?actionName==`Source`].output.outputVariables.CommitMessage' --output text)
         echo "Commit message: $CODEBUILD_COMMIT_MESSAGE"
         if echo "$CODEBUILD_COMMIT_MESSAGE" | grep -q "\[sc\]"; then
