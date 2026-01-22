@@ -61,19 +61,6 @@ export const appleAppStoreWebhook: RequestHandler = async (request, response) =>
     console.log(`⚠️ Apple App Store notification verification failed:`, message || 'Unknown error');
     console.log('Error details:', JSON.stringify(errorDetails, null, 2));
 
-    // Log environment configuration (without sensitive values)
-    console.log('Verifier configuration:', {
-      environment: Environment.SANDBOX,
-      bundleId: process.env.APPLE_IOS_BUNDLE_ID ? '✓' : '✗',
-      appId: process.env.APPLE_IOS_APP_ID ? '✓' : '✗',
-      signedPayloadLength: signedPayload?.length || 0,
-      certificate: readFileSync(path.join(__dirname, 'AppleRootCA-G3.cer'), 'utf-8').length,
-    });
-
-    if (error && typeof error === 'object' && 'statusCode' in error) {
-      console.log('Status code:', (error as { statusCode?: number }).statusCode);
-    }
-
     response.sendStatus(400);
     return;
   }
