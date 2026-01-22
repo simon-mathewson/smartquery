@@ -357,4 +357,5 @@ artifacts:
   files:
     # Playwright screenshots
     - 'ui/test-results/**/*'
+    - 'ui/test-results/*'
   name: $CODEBUILD_BUILD_NUMBER/test-results
