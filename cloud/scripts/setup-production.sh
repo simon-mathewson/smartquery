@@ -12,7 +12,13 @@ if ls dist/*.node 1> /dev/null 2>&1; then
 fi
 
 set -a
-source .env.production
+# Load .env first, then .env.production (which can override .env values)
+if [ -f .env ]; then
+  source .env
+fi
+if [ -f .env.production ]; then
+  source .env.production
+fi
 set +a
 
 node dist/bundle.js
