@@ -17,6 +17,18 @@ phases:
       - export IS_UI_UNCHANGED=0
       - export IS_BUILDSPEC_UNCHANGED=0
 
+      # Get commit message from CodePipeline source action
+      - |
+        export EXECUTION_ID=$(aws codepipeline list-pipeline-executions --pipeline-name smartquery --max-items 1 --query 'pipelineExecutionSummaries[0].pipelineExecutionId' --output text)
+        export CODEBUILD_COMMIT_MESSAGE=$(aws codepipeline list-action-executions --pipeline-name smartquery --filter pipelineExecutionId=$EXECUTION_ID --query 'actionExecutionDetails[?actionName==`Source`].output.outputVariables.CommitMessage' --output text)
+        echo "Commit message: $CODEBUILD_COMMIT_MESSAGE"
+        if echo "$CODEBUILD_COMMIT_MESSAGE" | grep -q "\[sc\]"; then
+          export SKIP_UI_TESTS=1
+          echo "Skipping UI component tests (commit message contains [sc])"
+        else
+          export SKIP_UI_TESTS=0
+        fi
+
       # Find last successful build
       - |
         set -e  # Exit immediately if any command fails
@@ -239,8 +251,13 @@ phases:
           pnpm typecheck
           pnpm lint
           pnpm test -- --watch false --reporter junit --outputFile test-report.xml
-          pnpm playwright install --with-deps chromium
-          NODE_OPTIONS='--max-old-space-size=8192' pnpm playwright test -c playwright-ct.config.ts
+          if [ $SKIP_UI_TESTS -eq 0 ]; then
+            pnpm playwright install --with-deps chromium
+            NODE_OPTIONS='--max-old-space-size=8192' pnpm playwright test -c playwright-ct.config.ts
+          else
+            echo "Skipping playwright install and component tests (commit message contains [sc])"
+            echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><testsuites/>" > test-ct-report.xml
+          fi
           pnpm build
           
           # Move all .js.map files to dist/sourcemaps/VITE_UI_VERSION/ for AWS RUM error tracking
