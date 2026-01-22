@@ -22,6 +22,7 @@ import type {
   NativeBridgeMessage,
   RemoveFromKeychain,
   PurchaseSubscription,
+  FinishPurchase,
 } from "../../shared/native/types";
 import {
   Credential,
@@ -29,7 +30,7 @@ import {
   parseCredentialUsername,
 } from "~/utils/credentials";
 import { buildCredentialUsername } from "~/utils/credentials";
-import { useIAP } from "expo-iap";
+import { Purchase, useIAP } from "expo-iap";
 import { getSubscriptionTypeForAppleProductId } from "~/utils/getSubscriptionTypeForAppleProductId";
 
 const keychainServiceNameBase = process.env.EXPO_PUBLIC_KEYCHAIN_SERVICE_NAME;
@@ -149,14 +150,19 @@ export default function Index() {
     [getOrPickSqliteFile]
   );
 
+  const resolvePurchaseSubscription = useRef<(() => void) | null>(null);
+  const rejectPurchaseSubscription = useRef<((error: Error) => void) | null>(
+    null
+  );
+  const purchaseToFinish = useRef<Purchase | null>(null);
+
   const iap = useIAP({
-    onPurchaseSuccess: () => {
+    onPurchaseSuccess: (purchase) => {
       resolvePurchaseSubscription.current?.();
-      console.log("purchase success");
+      purchaseToFinish.current = purchase;
     },
     onPurchaseError: (error) => {
       rejectPurchaseSubscription.current?.(error);
-      console.log("purchase error", error);
     },
   });
 
@@ -181,11 +187,6 @@ export default function Index() {
       return Promise.resolve(subscription.displayPrice);
     },
     [iap]
-  );
-
-  const resolvePurchaseSubscription = useRef<(() => void) | null>(null);
-  const rejectPurchaseSubscription = useRef<((error: Error) => void) | null>(
-    null
   );
 
   const purchaseSubscription = useCallback<PurchaseSubscription>(
@@ -217,6 +218,15 @@ export default function Index() {
     },
     [iap]
   );
+
+  const finishPurchase = useCallback<FinishPurchase>(async () => {
+    assert(purchaseToFinish.current, "No purchase to finish");
+    await iap.finishTransaction({
+      purchase: purchaseToFinish.current,
+      isConsumable: false,
+    });
+    purchaseToFinish.current = null;
+  }, [iap, purchaseToFinish]);
 
   const onMessage = async (payload: WebViewMessageEvent) => {
     let parsed;
@@ -252,8 +262,10 @@ export default function Index() {
               return getSubscriptionPrice(...args);
             case "purchaseSubscription":
               return purchaseSubscription(...args);
+            case "finishPurchase":
+              return finishPurchase(...args);
             case "getUserCredential":
-              return getUserCredential();
+              return getUserCredential(...args);
             case "connectDb":
               return ConnectorModule.connectDb(...args);
             case "switchCatalogOrSchema":

@@ -13,6 +13,7 @@ import type {
   RunQuery,
   SwitchCatalogOrSchema,
   WriteToClipboard,
+  FinishPurchase,
 } from '@/native/types';
 import { useCallback, useMemo } from 'react';
 import { assert } from 'ts-essentials';
@@ -142,11 +143,18 @@ export const useNative = () => {
     (type, userId) => request<PurchaseSubscription>('purchaseSubscription', [type, userId]),
     [request],
   );
+
+  const finishPurchase = useCallback<FinishPurchase>(
+    () => request<FinishPurchase>('finishPurchase', []),
+    [request],
+  );
+
   return useMemo(
     () => ({
       addToKeychain,
       connectDb,
       disconnectDb,
+      finishPurchase,
       getFromKeychain,
       getSqliteFile,
       getSubscriptionPrice,
@@ -161,6 +169,7 @@ export const useNative = () => {
       addToKeychain,
       connectDb,
       disconnectDb,
+      finishPurchase,
       getFromKeychain,
       getSqliteFile,
       getSubscriptionPrice,

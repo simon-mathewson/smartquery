@@ -10,6 +10,7 @@ import { Header } from '~/shared/components/header/Header';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../auth/Context';
 import { AnalyticsContext } from '../analytics/Context';
+import { isReactNative, useNative } from '../native/useNative';
 
 export type ConfirmProps = {
   goBack: () => void;
@@ -21,6 +22,7 @@ export const Confirm: React.FC<ConfirmProps> = (props) => {
 
   assert(subscriptionType, 'Subscription type is required');
 
+  const native = useNative();
   const { track } = useDefinedContext(AnalyticsContext);
   const { getCurrentUser, user } = useDefinedContext(AuthContext);
 
@@ -31,6 +33,11 @@ export const Confirm: React.FC<ConfirmProps> = (props) => {
   useEffect(() => {
     if (subscriptionConfirmed) {
       track(`subscription_${subscriptionType}_confirmed`);
+
+      if (isReactNative) {
+        void native.finishPurchase();
+      }
+
       return;
     }
 

@@ -42,6 +42,7 @@ export type WriteToClipboard = (text: string) => void;
 
 export type GetSubscriptionPrice = (type: SubscriptionType) => Promise<string>;
 export type PurchaseSubscription = (type: SubscriptionType, userId: string) => Promise<void>;
+export type FinishPurchase = () => Promise<void>;
 
 export type NativeBridgeMessage =
   | { type: 'electron-ready' }
@@ -57,6 +58,7 @@ export type NativeBridgeMessage =
       | { method: 'addToKeychain'; args: Parameters<AddToKeychain> }
       | { method: 'connectDb'; args: Parameters<ConnectDb> }
       | { method: 'disconnectDb'; args: Parameters<DisconnectDb> }
+      | { method: 'finishPurchase'; args: Parameters<FinishPurchase> }
       | { method: 'getFromKeychain'; args: Parameters<GetFromKeychain> }
       | { method: 'getSqliteFile'; args: Parameters<GetSqliteFile> }
       | { method: 'getSubscriptionPrice'; args: Parameters<GetSubscriptionPrice> }

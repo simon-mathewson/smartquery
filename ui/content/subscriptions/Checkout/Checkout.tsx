@@ -61,11 +61,15 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
       .then(() => {
         navigate(routes.subscribeConfirm(subscriptionType));
       })
-      .catch((error) => {
+      .catch((error: unknown) => {
+        if (error instanceof Error && error.message.includes('User cancelled')) {
+          return;
+        }
+
         console.error(error);
         toast.add({
           color: 'danger',
-          description: error.message,
+          description: error instanceof Error ? error.message : 'Unknown error',
           title: 'Payment failed',
         });
       });
