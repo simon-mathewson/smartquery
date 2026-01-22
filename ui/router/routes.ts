@@ -16,7 +16,7 @@ export const routes = {
   subscribeAuth: (type?: SubscriptionType) => `/subscribe/auth${type ? `?type=${type}` : ''}`,
   subscribeCheckout: (type?: SubscriptionType) =>
     `/subscribe/checkout${type ? `?type=${type}` : ''}`,
-  subscribeConfirm: () => '/subscribe/confirm',
+  subscribeConfirm: (type?: SubscriptionType) => `/subscribe/confirm${type ? `?type=${type}` : ''}`,
   verifyEmail: () => '/verify-email',
   requestResetPassword: (email?: string) =>
     `/request-reset-password${email ? `?email=${email}` : ''}`,

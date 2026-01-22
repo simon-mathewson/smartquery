@@ -5,9 +5,11 @@ import type {
   DisconnectDb,
   GetFromKeychain,
   GetSqliteFile,
+  GetSubscriptionPrice,
   GetUserCredential,
   NativeBridgeMessage,
   RemoveFromKeychain,
+  PurchaseSubscription,
   RunQuery,
   SwitchCatalogOrSchema,
   WriteToClipboard,
@@ -131,29 +133,42 @@ export const useNative = () => {
     [request],
   );
 
+  const getSubscriptionPrice = useCallback<GetSubscriptionPrice>(
+    (type) => request<GetSubscriptionPrice>('getSubscriptionPrice', [type]),
+    [request],
+  );
+
+  const purchaseSubscription = useCallback<PurchaseSubscription>(
+    (type, userId) => request<PurchaseSubscription>('purchaseSubscription', [type, userId]),
+    [request],
+  );
   return useMemo(
     () => ({
       addToKeychain,
-      getFromKeychain,
-      removeFromKeychain,
-      getUserCredential,
       connectDb,
-      switchCatalogOrSchema,
       disconnectDb,
+      getFromKeychain,
       getSqliteFile,
+      getSubscriptionPrice,
+      getUserCredential,
+      purchaseSubscription,
+      removeFromKeychain,
       runQuery,
+      switchCatalogOrSchema,
       writeToClipboard,
     }),
     [
       addToKeychain,
-      getFromKeychain,
-      removeFromKeychain,
-      getUserCredential,
       connectDb,
-      switchCatalogOrSchema,
       disconnectDb,
+      getFromKeychain,
       getSqliteFile,
+      getSubscriptionPrice,
+      getUserCredential,
+      purchaseSubscription,
+      removeFromKeychain,
       runQuery,
+      switchCatalogOrSchema,
       writeToClipboard,
     ],
   );

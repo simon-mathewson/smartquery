@@ -27,6 +27,7 @@
     "expo-file-system": "~19.0.19",
     "expo-font": "14.0.9",
     "expo-haptics": "15.0.7",
+    "expo-iap": "3.4.6",
     "expo-image": "3.0.10",
     "expo-linking": "8.0.8",
     "expo-network": "8.0.8",

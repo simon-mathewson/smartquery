@@ -1,4 +1,5 @@
 import type { RemoteConnection } from '@/connections/types';
+import type { SubscriptionType } from '@/subscriptions/types';
 import type { Credential, CredentialType } from '@/utils/credentials';
 
 export type DbValue = string | null;
@@ -39,6 +40,9 @@ export type GetUserCredential = (username?: string) => Promise<Credential | null
 
 export type WriteToClipboard = (text: string) => void;
 
+export type GetSubscriptionPrice = (type: SubscriptionType) => Promise<string>;
+export type PurchaseSubscription = (type: SubscriptionType, userId: string) => Promise<void>;
+
 export type NativeBridgeMessage =
   | { type: 'electron-ready' }
   | {
@@ -50,16 +54,18 @@ export type NativeBridgeMessage =
       type: 'request';
       id: string;
     } & (
-      | { method: 'addToKeychain'; args: [string, string, CredentialType] }
-      | { method: 'getFromKeychain'; args: [string, CredentialType] }
-      | { method: 'removeFromKeychain'; args: [string, CredentialType] }
-      | { method: 'getUserCredential'; args: [] }
-      | { method: 'connectDb'; args: [RemoteConnection] }
-      | { method: 'switchCatalogOrSchema'; args: [string, string?, string?] }
-      | { method: 'disconnectDb'; args: [string] }
-      | { method: 'runQuery'; args: [{ connectorId: string; statements: string[] }] }
-      | { method: 'getSqliteFile'; args: [string] }
-      | { method: 'writeToClipboard'; args: [string] }
+      | { method: 'addToKeychain'; args: Parameters<AddToKeychain> }
+      | { method: 'connectDb'; args: Parameters<ConnectDb> }
+      | { method: 'disconnectDb'; args: Parameters<DisconnectDb> }
+      | { method: 'getFromKeychain'; args: Parameters<GetFromKeychain> }
+      | { method: 'getSqliteFile'; args: Parameters<GetSqliteFile> }
+      | { method: 'getSubscriptionPrice'; args: Parameters<GetSubscriptionPrice> }
+      | { method: 'getUserCredential'; args: Parameters<GetUserCredential> }
+      | { method: 'purchaseSubscription'; args: Parameters<PurchaseSubscription> }
+      | { method: 'removeFromKeychain'; args: Parameters<RemoveFromKeychain> }
+      | { method: 'runQuery'; args: Parameters<RunQuery> }
+      | { method: 'switchCatalogOrSchema'; args: Parameters<SwitchCatalogOrSchema> }
+      | { method: 'writeToClipboard'; args: Parameters<WriteToClipboard> }
     ))
   | ({
       type: 'response';

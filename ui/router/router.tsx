@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'wouter';
-import { isReactNative } from '~/content/native/useNative';
+// import { isReactNative } from '~/content/native/useNative';
 import { Loading } from '~/shared/components/loading/Loading';
 import { routes } from './routes';
 
@@ -106,7 +106,7 @@ export const Router: React.FC = () => {
         <Route path={routes.subscribe()}>
           <Redirect to={routes.subscribePlans()} />
         </Route>
-        {isReactNative && (
+        {/* {isReactNative && (
           <>
             <Route path={routes.subscribePlans()}>
               <Redirect to={routes.signup()} replace />
@@ -115,7 +115,7 @@ export const Router: React.FC = () => {
               <Redirect to={routes.root()} replace />
             </Route>
           </>
-        )}
+        )} */}
         <Route path={routes.subscribePlans()} component={SubscribePlans} />
         <Route path={routes.subscribeAuth()} component={SubscribeAuth} />
         <Route path={routes.subscribeCheckout()} component={SubscribeCheckout} />

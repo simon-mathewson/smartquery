@@ -2,9 +2,10 @@ import { plans as allPlans } from '@/subscriptions/plans';
 import { formatNumber } from '@/utils/formatNumber';
 import { ArrowBack, ArrowForward, Close, Done } from '@mui/icons-material';
 import { omit } from 'lodash';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { AnalyticsContext } from '~/content/analytics/Context';
+import { isReactNative, useNative } from '~/content/native/useNative';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { Header } from '~/shared/components/header/Header';
@@ -25,8 +26,26 @@ export const Plans: React.FC<PlansProps> = (props) => {
   const [, navigate] = useLocation();
   const { user } = useDefinedContext(AuthContext);
   const { track } = useDefinedContext(AnalyticsContext);
+  const native = useNative();
 
   const planNames = Object.keys(plans) as (keyof typeof plans)[];
+
+  const [planPrices, setPlanPrices] = useState<(string | null)[] | null>(null);
+
+  useEffect(() => {
+    void Promise.all(
+      planNames.map((plan) => {
+        if (plan === 'free') return null;
+
+        if (isReactNative) {
+          return native.getSubscriptionPrice(plan);
+        }
+
+        return `$${plans[plan].webPrice}`;
+      }),
+    ).then(setPlanPrices);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -47,14 +66,14 @@ export const Plans: React.FC<PlansProps> = (props) => {
         }}
       >
         <Cell feature />
-        {planNames.map((plan) => (
+        {planNames.map((plan, index) => (
           <Cell className="text-md" key={plan}>
             <div className="font-medium text-textPrimary">
               {plan.charAt(0).toUpperCase() + plan.slice(1)}
             </div>
-            {plans[plan].price && (
+            {planPrices?.[index] && (
               <div>
-                <span className="text-textTertiary">${plans[plan].price}</span>
+                <span className="text-textTertiary">{planPrices[index]}</span>
                 <span className="text-textTertiary">/mo</span>
               </div>
             )}

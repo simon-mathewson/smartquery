@@ -17,9 +17,11 @@ import type {
   AddToKeychain,
   GetFromKeychain,
   GetSqliteFile,
+  GetSubscriptionPrice,
   GetUserCredential,
   NativeBridgeMessage,
   RemoveFromKeychain,
+  PurchaseSubscription,
 } from "../../shared/native/types";
 import {
   Credential,
@@ -27,6 +29,8 @@ import {
   parseCredentialUsername,
 } from "~/utils/credentials";
 import { buildCredentialUsername } from "~/utils/credentials";
+import { useIAP } from "expo-iap";
+import { getSubscriptionTypeForAppleProductId } from "~/utils/getSubscriptionTypeForAppleProductId";
 
 const keychainServiceNameBase = process.env.EXPO_PUBLIC_KEYCHAIN_SERVICE_NAME;
 
@@ -145,6 +149,66 @@ export default function Index() {
     [getOrPickSqliteFile]
   );
 
+  const iap = useIAP({
+    onPurchaseSuccess: () => {
+      resolvePurchaseSubscription.current?.();
+      console.log("purchase success");
+    },
+    onPurchaseError: (error) => {
+      rejectPurchaseSubscription.current?.(error);
+      console.log("purchase error", error);
+    },
+  });
+
+  const getSubscriptionPrice = useCallback<GetSubscriptionPrice>(
+    (type) => {
+      assert(iap.connected, "Not connected to App Store");
+
+      const subscription = iap.subscriptions.find(
+        (subscription) =>
+          getSubscriptionTypeForAppleProductId(subscription.id) === type
+      );
+      assert(subscription, `Subscription not found for type: ${type}`);
+      return Promise.resolve(subscription.displayPrice);
+    },
+    [iap]
+  );
+
+  const resolvePurchaseSubscription = useRef<(() => void) | null>(null);
+  const rejectPurchaseSubscription = useRef<((error: Error) => void) | null>(
+    null
+  );
+
+  const purchaseSubscription = useCallback<PurchaseSubscription>(
+    async (type, userId) => {
+      assert(iap.connected, "Not connected to App Store");
+
+      const subscription = iap.subscriptions.find(
+        (subscription) =>
+          getSubscriptionTypeForAppleProductId(subscription.id) === type
+      );
+      assert(subscription, `Subscription not found for type: ${type}`);
+
+      const promise = new Promise<void>((resolve, reject) => {
+        resolvePurchaseSubscription.current = resolve;
+        rejectPurchaseSubscription.current = reject;
+      });
+
+      await iap.requestPurchase({
+        request: {
+          apple: {
+            sku: subscription.id,
+            appAccountToken: userId,
+          },
+        },
+        type: "subs",
+      });
+
+      return promise;
+    },
+    [iap]
+  );
+
   const onMessage = async (payload: WebViewMessageEvent) => {
     let parsed;
     try {
@@ -175,6 +239,10 @@ export default function Index() {
               return getFromKeychain(...args);
             case "removeFromKeychain":
               return removeFromKeychain(...args);
+            case "getSubscriptionPrice":
+              return getSubscriptionPrice(...args);
+            case "purchaseSubscription":
+              return purchaseSubscription(...args);
             case "getUserCredential":
               return getUserCredential();
             case "connectDb":

@@ -1,6 +1,6 @@
 import assert from 'assert';
 import type { PrismaClient } from '~/prisma/generated';
-import { getSubscriptionTypeForAppleProductId } from './getSubscriptionTypeForAppleProductId';
+import { getSubscriptionTypeForAppleProductId } from '@/subscriptions/getSubscriptionTypeForAppleProductId';
 import type { JWSTransactionDecodedPayload } from '@apple/app-store-server-library';
 
 export const grantAppleSubscription = async (props: {

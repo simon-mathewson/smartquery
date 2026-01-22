@@ -1,5 +1,5 @@
 import type { SubscriptionType } from '@/subscriptions/types';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { AddressElement, CheckoutProvider, PaymentElement } from '@stripe/react-stripe-js';
 import { useCallback, useState } from 'react';
 import { assert } from 'ts-essentials';
@@ -14,6 +14,11 @@ import PayButton from '../PayButton';
 import { stripe } from '../stripe';
 import { Total } from './Total';
 import { Toggle } from '~/shared/components/toggle/Toggle';
+import { isReactNative, useNative } from '~/content/native/useNative';
+import { AuthContext } from '~/content/auth/Context';
+import { useLocation } from 'wouter';
+import { ToastContext } from '~/content/toast/Context';
+import { routes } from '~/router/routes';
 
 export type CheckoutProps = {
   goBack: () => void;
@@ -25,9 +30,14 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
 
   assert(subscriptionType, 'Subscription type is required');
 
-  const { cloudApi } = useDefinedContext(CloudApiContext);
+  const { user } = useDefinedContext(AuthContext);
+  assert(user, 'User is required');
 
+  const [, navigate] = useLocation();
+  const toast = useDefinedContext(ToastContext);
+  const { cloudApi } = useDefinedContext(CloudApiContext);
   const theme = useDefinedContext(ThemeContext);
+  const native = useNative();
 
   const [isLoadingAddress, setIsLoadingAddress] = useState(true);
   const [isLoadingPayment, setIsLoadingPayment] = useState(true);
@@ -44,6 +54,36 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
 
     return clientSecret;
   }, [cloudApi, subscriptionType]);
+
+  const purchaseNativeSubscription = useCallback(async () => {
+    void native
+      .purchaseSubscription(subscriptionType, user.id)
+      .then(() => {
+        navigate(routes.subscribeConfirm(subscriptionType));
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.add({
+          color: 'danger',
+          description: error.message,
+          title: 'Payment failed',
+        });
+      });
+  }, [native, navigate, subscriptionType, toast, user.id]);
+
+  if (isReactNative) {
+    return (
+      <Button
+        icon={<ArrowForward />}
+        htmlProps={{
+          className: 'w-full',
+          onClick: purchaseNativeSubscription,
+        }}
+        label="Pay now"
+        variant="filled"
+      />
+    );
+  }
 
   return (
     <Card htmlProps={{ className: 'container max-w-[400px]' }}>
