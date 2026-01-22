@@ -23,10 +23,10 @@ phases:
         export CODEBUILD_COMMIT_MESSAGE=$(aws codepipeline list-action-executions --pipeline-name smartquery --filter "{\"pipelineExecutionId\":\"$EXECUTION_ID\"}" --query 'actionExecutionDetails[?actionName==`Source`].output.outputVariables.CommitMessage' --output text)
         echo "Commit message: $CODEBUILD_COMMIT_MESSAGE"
         if echo "$CODEBUILD_COMMIT_MESSAGE" | grep -q "\[sc\]"; then
-          export SKIP_UI_TESTS=1
+          export SKIP_UI_COMPONENT_TESTS=1
           echo "Skipping UI component tests (commit message contains [sc])"
         else
-          export SKIP_UI_TESTS=0
+          export SKIP_UI_COMPONENT_TESTS=0
         fi
 
       # Find last successful build
@@ -251,7 +251,7 @@ phases:
           pnpm typecheck
           pnpm lint
           pnpm test -- --watch false --reporter junit --outputFile test-report.xml
-          if [ $SKIP_UI_TESTS -eq 0 ]; then
+          if [ $SKIP_UI_COMPONENT_TESTS -eq 0 ]; then
             pnpm playwright install --with-deps chromium
             NODE_OPTIONS='--max-old-space-size=8192' pnpm playwright test -c playwright-ct.config.ts
           else
