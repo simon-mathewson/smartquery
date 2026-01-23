@@ -24,7 +24,7 @@ import { Tooltip } from '~/shared/components/tooltip/Tooltip';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { CopilotContext } from '../Context';
 import { CopilotSidebarContext } from './Context';
-import { MessageContentItem } from './messageContent/MessageContent';
+import { MessageContentItem } from './messageContent/MessageContentItem';
 import { usePromptSuggestions } from '../usePromptSuggestions';
 import type { AiTextContent } from '@/ai/types';
 import { Loading } from '~/shared/components/loading/Loading';
@@ -69,7 +69,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
         block: 'start',
       });
       // Wait for messages of current database to load
-    }, 10);
+    }, 500);
   }, []);
 
   const previousThread = useRef<AiTextContent[]>([]);
@@ -155,6 +155,9 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                   {message.content.map((item, itemIndex) => (
                     <MessageContentItem
                       key={itemIndex}
+                      isLastItem={
+                        index === thread.length - 1 && itemIndex === message.content.length - 1
+                      }
                       item={item}
                       itemIndex={itemIndex}
                       messageIndex={index}

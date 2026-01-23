@@ -20,11 +20,13 @@ export type CodeSnippetProps = {
   query?: Omit<SavedQuery, 'id'>;
   onCloseCopilot?: () => void;
   messageIndex: number;
-  contentIndex: number;
+  itemIndex: number;
+  isLastItem: boolean;
 } & ExtraProps;
 
 export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
-  const { children, className, node, query, onCloseCopilot, messageIndex, contentIndex } = props;
+  const { children, className, node, query, onCloseCopilot, messageIndex, itemIndex, isLastItem } =
+    props;
 
   const native = useDefinedContext(NativeContext);
   const { track } = useDefinedContext(AnalyticsContext);
@@ -110,9 +112,9 @@ export const CodeSnippet = React.memo((props: CodeSnippetProps) => {
         title={query?.name}
         value={code}
       />
-      {query && !isLoading && (
+      {query && (!isLastItem || !isLoading) && (
         <div className="mt-1 border-t border-border">
-          <QueryResults messageIndex={messageIndex} contentIndex={contentIndex} query={query} />
+          <QueryResults messageIndex={messageIndex} contentIndex={itemIndex} query={query} />
         </div>
       )}
     </div>

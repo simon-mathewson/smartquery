@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 type MessageContentItemProps = {
+  isLastItem: boolean;
   item: string | Omit<SavedQuery, 'id'>;
   itemIndex: number;
   messageIndex: number;
@@ -12,7 +13,7 @@ type MessageContentItemProps = {
 };
 
 export const MessageContentItem = memo<MessageContentItemProps>(
-  ({ item, itemIndex, messageIndex, onCloseCopilot }) => {
+  ({ isLastItem, item, itemIndex, messageIndex, onCloseCopilot }) => {
     const markdownComponents = useMemo(
       () => ({
         a: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
@@ -28,11 +29,12 @@ export const MessageContentItem = memo<MessageContentItemProps>(
             {...props}
             onCloseCopilot={onCloseCopilot}
             messageIndex={messageIndex}
-            contentIndex={itemIndex}
+            itemIndex={itemIndex}
+            isLastItem={isLastItem}
           />
         ),
       }),
-      [messageIndex, itemIndex, onCloseCopilot],
+      [onCloseCopilot, messageIndex, itemIndex, isLastItem],
     );
 
     if (typeof item === 'string') {
@@ -48,7 +50,8 @@ export const MessageContentItem = memo<MessageContentItemProps>(
         query={item}
         onCloseCopilot={onCloseCopilot}
         messageIndex={messageIndex}
-        contentIndex={itemIndex}
+        isLastItem={isLastItem}
+        itemIndex={itemIndex}
       >
         {item.sql}
       </CodeSnippet>
