@@ -60,7 +60,9 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
                   htmlProps={{ onClick: () => setStage('connections') }}
                 />
               ) : (
-                <div id={databasesLabelId}>Databases</div>
+                <div className="pl-2" id={databasesLabelId}>
+                  Databases
+                </div>
               )
             }
             middle={isMobile ? <div id={databasesLabelId}>Databases</div> : undefined}
@@ -109,7 +111,9 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
                     htmlProps={{ onClick: () => setStage('databases') }}
                   />
                 ) : (
-                  <div id={schemasLabelId}>Schemas</div>
+                  <div className="pl-2" id={schemasLabelId}>
+                    Schemas
+                  </div>
                 )
               }
               middle={isMobile ? <div id={schemasLabelId}>Schemas</div> : undefined}
