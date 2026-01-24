@@ -85,7 +85,8 @@ const TermsOfUse: React.FC = () => {
             <h4>3.2. SmartQuery Plus Subscription</h4>
             <p>
               For users requiring higher limits, we offer the SmartQuery Plus
-              subscription for $4 per month. The monthly usage limits are as
+              subscription for $4 per month. Please note that pricing on iOS may
+              differ and will vary by region. The monthly usage limits are as
               follows:
             </p>
             <ul>
