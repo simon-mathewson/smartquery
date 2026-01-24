@@ -9,7 +9,7 @@ const PrivacyPolicy: React.FC = () => {
         <header className="border-b border-gray-200 pb-4 mb-6">
           <h1>Privacy Policy</h1>
           <p className="text-sm text-gray-500 mt-2">
-            <strong>Last Updated:</strong> August 28, 2025
+            <strong>Last Updated:</strong> January 25, 2026
           </p>
         </header>
         <main>
