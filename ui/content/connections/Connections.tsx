@@ -152,7 +152,7 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
           {!hideDatabases &&
             activeConnection &&
             (!isMobile || stage === 'databases' || stage === 'schemas') && (
-              <DatabaseList stage={stage} setStage={setStage} />
+              <DatabaseList stage={stage} setStage={setStage} variant={variant} />
             )}
         </div>
       )}

@@ -5,6 +5,7 @@ import { AnalyticsContext } from '~/content/analytics/Context';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { Header } from '~/shared/components/header/Header';
+import type { ListProps } from '~/shared/components/list/List';
 import { List } from '~/shared/components/list/List';
 import { Loading } from '~/shared/components/loading/Loading';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -15,10 +16,11 @@ import { v4 as uuid } from 'uuid';
 export type DatabaseListProps = {
   stage: 'databases' | 'schemas' | 'connections';
   setStage: (stage: 'databases' | 'schemas' | 'connections') => void;
+  variant?: ListProps<unknown>['variant'];
 };
 
 export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
-  const { stage, setStage } = props;
+  const { stage, setStage, variant } = props;
 
   const isMobile = useIsMobile();
 
@@ -93,7 +95,7 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
               }
             }}
             selectedValue={activeConnection.database}
-            variant="select"
+            variant={variant}
           />
         </div>
       )}
@@ -140,7 +142,7 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
                 track('database_list_select_schema');
               }}
               selectedValue={activeConnection.schema}
-              variant="select"
+              variant={variant}
             />
           </div>
         </>
