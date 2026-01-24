@@ -5,7 +5,6 @@ import { useEffect, useRef } from 'react';
 import { assert } from 'ts-essentials';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
-import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../auth/Context';
@@ -53,7 +52,7 @@ export const Confirm: React.FC<ConfirmProps> = (props) => {
   });
 
   return (
-    <Card htmlProps={{ className: 'container max-w-[400px]' }}>
+    <>
       <Header
         left={<Button htmlProps={{ onClick: goBack }} icon={<ArrowBack />} />}
         middle={
@@ -87,6 +86,6 @@ export const Confirm: React.FC<ConfirmProps> = (props) => {
           />
         )}
       </div>
-    </Card>
+    </>
   );
 };

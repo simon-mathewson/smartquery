@@ -22,7 +22,7 @@ export const CopilotSidebar: React.FC = () => {
     <div
       tabIndex={isOpen ? undefined : -1}
       className={classNames(
-        'absolute right-0 z-50 h-[100dvh] bg-background p-2 pl-0 sm:relative sm:right-0',
+        'absolute right-0 z-50 h-[100dvh] bg-card p-2 pl-0 dark:bg-background sm:relative sm:right-0',
         {
           hidden: !isOpen,
         },

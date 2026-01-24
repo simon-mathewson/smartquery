@@ -164,79 +164,83 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
           }}
         />
       )}
-      {section === 'general' && (
-        <>
-          <Field>
-            <Toggle
-              hint="Help improve SmartQuery"
-              label="Share anonymous usage data"
-              onChange={(value) => {
-                if (value) {
-                  void grantConsent();
-                } else {
-                  revokeConsent();
-                }
-              }}
-              value={isConsentGranted ?? false}
-            />
-          </Field>
-          <div>
-            <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
-              <Button
-                align="left"
-                color="secondary"
-                element="a"
-                htmlProps={{
-                  className: 'w-full',
-                  href: import.meta.env.VITE_DISCORD_INVITE_URL,
-                  target: '_blank',
-                }}
-                icon={<QuestionAnswerOutlined />}
-                label="Discord"
-              />
-            </Field>
-          </div>
-          <DeleteAccount />
-        </>
-      )}
-      {section === 'install' && (
-        <>
-          <NativeSetup />
-          <AddToDesktop />
-        </>
-      )}
-      {section === 'appearance' && (
-        <>
-          <Field label="Theme">
-            <ButtonSelect<ThemeModePreference>
-              fullWidth
-              onChange={(value) => {
-                setModePreference(value);
-                track('settings_theme', { value });
-              }}
-              options={[
-                { button: { label: 'System' }, value: 'system' },
-                { button: { label: 'Light' }, value: 'light' },
-                { button: { label: 'Dark' }, value: 'dark' },
-              ]}
-              required
-              value={modePreference}
-            />
-          </Field>
-          {user?.activeSubscription && (
-            <Field label="Theme color">
-              <ThemeColorSelect
-                onChange={(value) => {
-                  setPrimaryColor(value);
-                }}
-                value={primaryColor}
-              />
-            </Field>
+      {section !== 'home' && (
+        <div className="flex grow flex-col gap-2 p-2">
+          {section === 'general' && (
+            <>
+              <Field>
+                <Toggle
+                  hint="Help improve SmartQuery"
+                  label="Share anonymous usage data"
+                  onChange={(value) => {
+                    if (value) {
+                      void grantConsent();
+                    } else {
+                      revokeConsent();
+                    }
+                  }}
+                  value={isConsentGranted ?? false}
+                />
+              </Field>
+              <div>
+                <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
+                  <Button
+                    align="left"
+                    color="secondary"
+                    element="a"
+                    htmlProps={{
+                      className: 'w-full',
+                      href: import.meta.env.VITE_DISCORD_INVITE_URL,
+                      target: '_blank',
+                    }}
+                    icon={<QuestionAnswerOutlined />}
+                    label="Discord"
+                  />
+                </Field>
+              </div>
+              <DeleteAccount />
+            </>
           )}
-        </>
+          {section === 'install' && (
+            <>
+              <NativeSetup />
+              <AddToDesktop />
+            </>
+          )}
+          {section === 'appearance' && (
+            <>
+              <Field label="Theme">
+                <ButtonSelect<ThemeModePreference>
+                  fullWidth
+                  onChange={(value) => {
+                    setModePreference(value);
+                    track('settings_theme', { value });
+                  }}
+                  options={[
+                    { button: { label: 'System' }, value: 'system' },
+                    { button: { label: 'Light' }, value: 'light' },
+                    { button: { label: 'Dark' }, value: 'dark' },
+                  ]}
+                  required
+                  value={modePreference}
+                />
+              </Field>
+              {user?.activeSubscription && (
+                <Field label="Theme color">
+                  <ThemeColorSelect
+                    onChange={(value) => {
+                      setPrimaryColor(value);
+                    }}
+                    value={primaryColor}
+                  />
+                </Field>
+              )}
+            </>
+          )}
+          {section === 'subscription' && <Subscription close={close} />}
+          {section === 'usage' && <Usage />}
+        </div>
       )}
-      {section === 'subscription' && <Subscription close={close} />}
-      {section === 'usage' && <Usage />}
       {isMobile && <AboutLinks />}
     </div>
   );

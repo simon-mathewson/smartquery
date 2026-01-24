@@ -40,6 +40,8 @@ export type GetUserCredential = (username?: string) => Promise<Credential | null
 
 export type WriteToClipboard = (text: string) => void;
 
+export type ShareFile = (content: string, filename: string, mimeType: string) => Promise<void>;
+
 export type GetSubscriptionPrice = (type: SubscriptionType) => Promise<string>;
 export type PurchaseSubscription = (type: SubscriptionType, userId: string) => Promise<void>;
 export type FinishPurchase = () => Promise<void>;
@@ -66,6 +68,7 @@ export type NativeBridgeMessage =
       | { method: 'purchaseSubscription'; args: Parameters<PurchaseSubscription> }
       | { method: 'removeFromKeychain'; args: Parameters<RemoveFromKeychain> }
       | { method: 'runQuery'; args: Parameters<RunQuery> }
+      | { method: 'shareFile'; args: Parameters<ShareFile> }
       | { method: 'switchCatalogOrSchema'; args: Parameters<SwitchCatalogOrSchema> }
       | { method: 'writeToClipboard'; args: Parameters<WriteToClipboard> }
     ))

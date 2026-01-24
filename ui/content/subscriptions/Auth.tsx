@@ -13,7 +13,7 @@ export const Auth = (props: AuthProps) => {
   const [authStage, setAuthStage] = useState<'signup' | 'login'>('signup');
 
   return (
-    <div className="w-full max-w-[356px] space-y-4">
+    <div className="w-full space-y-4">
       {authStage === 'signup' ? (
         <Signup onBack={onBack} onSuccess={onSuccess} onShowLogin={() => setAuthStage('login')} />
       ) : (

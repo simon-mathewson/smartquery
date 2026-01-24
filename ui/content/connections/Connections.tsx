@@ -1,10 +1,11 @@
 import { Add, EditOutlined } from '@mui/icons-material';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { Header } from '~/shared/components/header/Header';
+import type { ListProps } from '~/shared/components/list/List';
 import { List } from '~/shared/components/list/List';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
@@ -18,10 +19,11 @@ export type ConnectionsProps = {
   hideDatabases?: boolean;
   htmlProps?: React.HTMLAttributes<HTMLDivElement>;
   shouldNavigate?: boolean;
+  variant?: ListProps<unknown>['variant'];
 };
 
 export const Connections: React.FC<ConnectionsProps> = (props) => {
-  const { hideDatabases, htmlProps, shouldNavigate } = props;
+  const { hideDatabases, htmlProps, shouldNavigate, variant } = props;
 
   const isMobile = useIsMobile();
 
@@ -36,19 +38,17 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
     'connections',
   );
 
-  useEffect(() => {
-    if (!activeConnection && isMobile && (stage === 'databases' || stage === 'schemas')) {
-      setStage('connections');
-    }
-  }, [activeConnection, connections, isMobile, stage]);
-
   return (
     <>
       {stage === 'form' ? (
         <ConnectionForm
           htmlProps={{
             ...htmlProps,
-            className: classNames(htmlProps?.className, { 'w-full sm:w-[328px]': !hideDatabases }),
+            className: classNames(
+              'w-full',
+              { 'sm:w-[400px]': !hideDatabases },
+              htmlProps?.className,
+            ),
           }}
           connectionToEditId={connectionToEditId}
           hideBackButton={connections.length === 0}
@@ -59,17 +59,27 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
         />
       ) : (
         <div
-          className={classNames('gap-3 sm:grid', {
-            'grid-cols-[280px_auto]': !hideDatabases,
-            'grid-cols-[280px]': hideDatabases,
-          })}
           {...htmlProps}
+          className={classNames(
+            'w-full gap-3 sm:grid',
+            {
+              'grid-cols-[320px_auto]': !hideDatabases,
+              'grid-cols-[320px]': hideDatabases,
+            },
+            htmlProps?.className,
+          )}
         >
           <div className="space-y-2">
             {stage === 'connections' && (
               <Header
                 evenColumns={isMobile}
-                left={isMobile ? undefined : <div id={connectionsLabelId}>Connections</div>}
+                left={
+                  isMobile ? undefined : (
+                    <div className="pl-2" id={connectionsLabelId}>
+                      Connections
+                    </div>
+                  )
+                }
                 middle={isMobile ? <div id={connectionsLabelId}>Connections</div> : undefined}
                 right={
                   <div className="flex items-center gap-0">
@@ -125,16 +135,17 @@ export const Connections: React.FC<ConnectionsProps> = (props) => {
                         : undefined,
                   },
                   label: connection.name,
+                  onSelect: () => {
+                    track('connections_select');
+                    if (isMobile && activeConnection?.id === connection.id) {
+                      setStage('databases');
+                    }
+                  },
                   selectedVariant: 'primary',
                   value: connection,
                 }))}
-                onSelect={() => {
-                  track('connections_select');
-                  if (isMobile) {
-                    setStage('databases');
-                  }
-                }}
                 selectedValue={connections.find((c) => c.id === activeConnection?.id) ?? null}
+                variant={variant}
               />
             )}
           </div>

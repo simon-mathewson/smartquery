@@ -31,7 +31,7 @@ export const ActionList: React.FC<ActionListProps> = (props) => {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               ...(action.htmlProps as any),
               className: classNames(
-                'flex cursor-pointer items-center overflow-hidden focus:!bg-card hover:!bg-card focus:!bg-background !text-textPrimary !justify-start !rounded-2xl border border-border bg-card py-2 text-left shadow-2xl hover:border-borderHover',
+                'flex cursor-pointer hover:bg-secondaryHighlight hover:bg-secondaryHighlight items-center overflow-hidden !text-textPrimary !justify-start !rounded-xl py-2 text-left',
                 {
                   '!min-h-[56px] !gap-4 !pl-4 pr-2': !compact,
                   '!min-h-[32px] !gap-2 !px-2 !text-xs': compact,

@@ -185,48 +185,48 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
   return (
     <>
+      <Header
+        left={
+          !hideBackButton && (
+            <Button
+              htmlProps={{ 'aria-label': 'Cancel', onClick: exit }}
+              icon={<ArrowBack />}
+              tooltip="Cancel"
+            />
+          )
+        }
+        middle={
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
+            {mode === 'add' ? 'Add' : 'Edit'} Connection
+          </div>
+        }
+        right={
+          connectionToEdit && (
+            <ConfirmDeletePopover
+              onConfirm={() => {
+                void removeConnection(connectionToEdit.id);
+                track('connection_form_delete');
+                exit();
+              }}
+              renderTrigger={(htmlProps) => (
+                <Button
+                  color="danger"
+                  htmlProps={htmlProps}
+                  icon={<DeleteOutline />}
+                  tooltip="Delete"
+                />
+              )}
+              text="Delete connection"
+            />
+          )
+        }
+      />
       <form
         {...htmlProps}
-        className={classNames('grid gap-2', htmlProps?.className)}
+        className={classNames('grid gap-2 p-2', htmlProps?.className)}
         onSubmit={onSubmit}
         ref={formRef}
       >
-        <Header
-          left={
-            !hideBackButton && (
-              <Button
-                htmlProps={{ 'aria-label': 'Cancel', onClick: exit }}
-                icon={<ArrowBack />}
-                tooltip="Cancel"
-              />
-            )
-          }
-          middle={
-            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-              {mode === 'add' ? 'Add' : 'Edit'} Connection
-            </div>
-          }
-          right={
-            connectionToEdit && (
-              <ConfirmDeletePopover
-                onConfirm={() => {
-                  void removeConnection(connectionToEdit.id);
-                  track('connection_form_delete');
-                  exit();
-                }}
-                renderTrigger={(htmlProps) => (
-                  <Button
-                    color="danger"
-                    htmlProps={htmlProps}
-                    icon={<DeleteOutline />}
-                    tooltip="Delete"
-                  />
-                )}
-                text="Delete connection"
-              />
-            )
-          }
-        />
         <Field label="Engine">
           <ButtonSelect<FormValues['engine'] | null>
             fullWidth

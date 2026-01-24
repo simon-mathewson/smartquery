@@ -15,7 +15,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
   return (
     <div
       className={classNames(
-        'grid h-9 shrink-0 grid-cols-[minmax(36px,_max-content)_1fr_minmax(36px,_max-content)] gap-2 text-sm font-medium text-textPrimary',
+        'grid h-9 w-full shrink-0 grid-cols-[minmax(36px,_max-content)_1fr_minmax(36px,_max-content)] gap-2 text-sm font-medium text-textPrimary',
         {
           '!grid-cols-[1fr,1fr,1fr]': evenColumns,
           '!h-6': compact,

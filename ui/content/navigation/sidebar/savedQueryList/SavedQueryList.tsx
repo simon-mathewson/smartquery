@@ -2,6 +2,7 @@ import type { SavedQuery } from '@/savedQueries/types';
 import classNames from 'classnames';
 import React from 'react';
 import { Button } from '~/shared/components/button/Button';
+import type { ListProps } from '~/shared/components/list/List';
 import { List } from '~/shared/components/list/List';
 import { Loading } from '~/shared/components/loading/Loading';
 import SearchIcon from '~/shared/icons/Search.svg?react';
@@ -9,10 +10,13 @@ import { useSavedQueryList } from './useSavedQueryList';
 import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 
 export type SavedQueryListProps = {
+  listVariant?: ListProps<unknown>['variant'];
   onSelect?: (savedQuery: SavedQuery) => void;
 };
 
 export const SavedQueryList: React.FC<SavedQueryListProps> = (props) => {
+  const { listVariant } = props;
+
   const isMobile = useIsMobile();
 
   const {
@@ -42,7 +46,7 @@ export const SavedQueryList: React.FC<SavedQueryListProps> = (props) => {
   return (
     <div className="relative flex w-full flex-col gap-1 py-2">
       <div className="flex items-center justify-between gap-2 pl-2">
-        <div className="truncate text-sm font-medium text-textTertiary sm:text-xs">Queries</div>
+        <div className="truncate text-sm font-medium text-textSecondary sm:text-xs">Queries</div>
         <div className="flex items-center gap-2">
           <Button
             color="secondary"
@@ -73,6 +77,7 @@ export const SavedQueryList: React.FC<SavedQueryListProps> = (props) => {
         searchPlaceholder="Search queries"
         setSearch={setSearch}
         searchAutofocus
+        variant={listVariant}
       />
     </div>
   );

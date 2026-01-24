@@ -19,6 +19,7 @@ import { useIsMobile } from '~/shared/hooks/useIsMobile/useIsMobile';
 import { MOBILE_NAVIGATION_HEIGHT } from './constants';
 import { QueriesPage } from './QueriesPage/QueriesPage';
 import { MobileNavigationContext } from './Context';
+import { useEffect } from 'react';
 
 export const MobileNavigation: React.FC = () => {
   const { activeConnection } = useDefinedContext(ConnectionsContext);
@@ -31,6 +32,20 @@ export const MobileNavigation: React.FC = () => {
   const isMobile = useIsMobile();
 
   const { overlayPage, setOverlayPage } = useDefinedContext(MobileNavigationContext);
+
+  useEffect(() => {
+    if (activeConnection && isMobile) {
+      setOverlayPage('queries');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeConnection, isMobile]);
+
+  useEffect(() => {
+    if (!activeConnection && overlayPage !== 'settings' && overlayPage !== null) {
+      setOverlayPage(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeConnection, isMobile]);
 
   if (!isMobile) return null;
 
@@ -79,7 +94,7 @@ export const MobileNavigation: React.FC = () => {
         className={classNames(
           'pointer-events-none fixed left-0 right-0 top-0 z-40 h-[100dvh] w-full',
           {
-            '!pointer-events-auto bg-card/80 backdrop-blur-xl': overlayPage,
+            '!pointer-events-auto bg-background/80 backdrop-blur-xl': overlayPage,
           },
         )}
       >
@@ -101,7 +116,7 @@ export const MobileNavigation: React.FC = () => {
           )}
         >
           {activeConnection && (
-            <div className="flex h-[56px] min-w-[33%] grow items-center rounded-full border border-border bg-background/60 shadow-2xl backdrop-blur-xl focus-within:outline focus-within:outline-primary">
+            <div className="flex h-[56px] min-w-[33%] grow items-center rounded-full border border-border bg-card/80 shadow-2xl backdrop-blur-xl focus-within:outline focus-within:outline-primary">
               <button
                 className="flex w-full cursor-pointer select-none items-center gap-[2px] overflow-hidden py-2 pl-4 pr-2 text-left text-sm focus:!outline-none"
                 onClick={() => setOverlayPage('connections')}
@@ -120,7 +135,7 @@ export const MobileNavigation: React.FC = () => {
             </div>
           )}
           <div
-            className="grid w-max max-w-full grid-rows-1 items-center rounded-full border border-border bg-background/60 p-1 shadow-2xl backdrop-blur-xl"
+            className="grid w-max max-w-full grid-rows-1 items-center rounded-full border border-border bg-card/80 p-1 shadow-2xl backdrop-blur-xl"
             style={{ gridTemplateColumns: `repeat(${menuItems.length}, minmax(50px, 80px))` }}
           >
             {menuItems.map(({ active, icon, label, onClick }) => (

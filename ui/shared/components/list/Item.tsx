@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import type { ButtonProps } from '../button/Button';
 import { Button } from '../button/Button';
+import type { ListProps } from './List';
 
 export type ListItemProps<T> = ButtonProps & {
   actions?: Array<{
@@ -10,13 +11,22 @@ export type ListItemProps<T> = ButtonProps & {
     onClick: () => void;
     tooltip?: string;
   }>;
+  listVariant?: ListProps<unknown>['variant'];
   onSelect: () => void;
   selected?: boolean;
   value: T;
 };
 
 export function ListItem<T>(props: ListItemProps<T>) {
-  const { actions, color = 'secondary', htmlProps, onSelect, selected, ...otherProps } = props;
+  const {
+    actions,
+    color = 'secondary',
+    htmlProps,
+    listVariant,
+    onSelect,
+    selected,
+    ...otherProps
+  } = props;
 
   return (
     <Button
@@ -27,9 +37,11 @@ export function ListItem<T>(props: ListItemProps<T>) {
         ...(htmlProps as any),
         'aria-selected': selected,
         className: classNames(
-          'w-full px-2 py-2 sm:py-1.5 sm:px-2 h-auto text-sm sm:!text-xs rounded-lg',
+          'sm:min-h-[32px] min-h-[44px] gap-3 w-full !px-2 !py-2 sm:py-1.5 sm:px-2 h-auto text-sm last:border-b-0 sm:!text-xs last:rounded-b-xl rounded-none first:rounded-t-xl border-b border-borderLight',
           {
             '[&_svg]:text-textTertiary': otherProps.icon,
+            'border-b-0 rounded-xl': listVariant === 'select',
+            'rounded-xl border-b-0': selected,
           },
           htmlProps?.className,
         ),

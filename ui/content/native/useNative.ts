@@ -11,6 +11,7 @@ import type {
   RemoveFromKeychain,
   PurchaseSubscription,
   RunQuery,
+  ShareFile,
   SwitchCatalogOrSchema,
   WriteToClipboard,
   FinishPurchase,
@@ -124,6 +125,11 @@ export const useNative = () => {
     [request],
   );
 
+  const shareFile = useCallback<ShareFile>(
+    (content, filename, mimeType) => request<ShareFile>('shareFile', [content, filename, mimeType]),
+    [request],
+  );
+
   const getSqliteFile = useCallback<GetSqliteFile>(
     (connectionId) => request<GetSqliteFile>('getSqliteFile', [connectionId]),
     [request],
@@ -162,6 +168,7 @@ export const useNative = () => {
       purchaseSubscription,
       removeFromKeychain,
       runQuery,
+      shareFile,
       switchCatalogOrSchema,
       writeToClipboard,
     }),
@@ -177,6 +184,7 @@ export const useNative = () => {
       purchaseSubscription,
       removeFromKeychain,
       runQuery,
+      shareFile,
       switchCatalogOrSchema,
       writeToClipboard,
     ],

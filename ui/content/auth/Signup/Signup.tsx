@@ -11,7 +11,6 @@ import { isNative } from '~/content/native/useNative';
 import { CredentialsContext } from '~/content/credentials/Context';
 import { AuthContext } from '../Context';
 import { PasswordFields } from '../PasswordFields';
-import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { Toggle } from '~/shared/components/toggle/Toggle';
 import { ActionList } from '~/shared/components/actionList/ActionList';
@@ -60,76 +59,71 @@ export const Signup: React.FC<SignupProps> = ({ onBack, onSuccess, onShowLogin }
   return (
     <>
       <CaptchaModal modalControl={captchaModal} />
-      <Card htmlProps={{ className: 'flex flex-col w-full max-w-[356px]' }}>
-        <Header
-          left={<Button element="link" htmlProps={{ onClick: onBack }} icon={<ArrowBack />} />}
-          middle={
-            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-              Sign up
-            </div>
-          }
+      <Header
+        left={<Button element="link" htmlProps={{ onClick: onBack }} icon={<ArrowBack />} />}
+        middle={
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
+            Sign up
+          </div>
+        }
+      />
+      <form className="flex flex-col gap-2 p-1" onSubmit={handleSubmit}>
+        <Field label="Email">
+          <Input htmlProps={{ autoFocus: true, type: 'email', value: email }} onChange={setEmail} />
+        </Field>
+        <PasswordFields
+          password={password}
+          repeatPassword={repeatPassword}
+          setPassword={setPassword}
+          setRepeatPassword={setRepeatPassword}
         />
-        <form className="flex flex-col gap-2 p-1" onSubmit={handleSubmit}>
-          <Field label="Email">
-            <Input
-              htmlProps={{ autoFocus: true, type: 'email', value: email }}
-              onChange={setEmail}
+        {isNative && (
+          <Field htmlProps={{ className: 'mt-2' }}>
+            <Toggle
+              label="Store in keychain"
+              value={storeInKeychain}
+              onChange={setStoreInKeychain}
             />
           </Field>
-          <PasswordFields
-            password={password}
-            repeatPassword={repeatPassword}
-            setPassword={setPassword}
-            setRepeatPassword={setRepeatPassword}
-          />
-          {isNative && (
-            <Field htmlProps={{ className: 'mt-2' }}>
-              <Toggle
-                label="Store in keychain"
-                value={storeInKeychain}
-                onChange={setStoreInKeychain}
-              />
-            </Field>
-          )}
-          <Toggle
-            label={
-              <>
-                I agree to the{' '}
-                <a
-                  className="underline"
-                  href={import.meta.env.VITE_TERMS_URL}
-                  target="_blank"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Terms of Use
-                </a>{' '}
-                and acknowledge the{' '}
-                <a
-                  className="underline"
-                  href={import.meta.env.VITE_PRIVACY_URL}
-                  target="_blank"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Privacy Policy
-                </a>
-                .
-              </>
-            }
-            value={isAgreementAccepted}
-            onChange={() => setIsAgreementAccepted(!isAgreementAccepted)}
-          />
-          <Button
-            htmlProps={{
-              disabled: repeatPassword !== password || !email || !password || !isAgreementAccepted,
-              className: 'mt-4',
-              type: 'submit',
-            }}
-            icon={<Done />}
-            label="Sign up"
-            variant="filled"
-          />
-        </form>
-      </Card>
+        )}
+        <Toggle
+          label={
+            <>
+              I agree to the{' '}
+              <a
+                className="underline"
+                href={import.meta.env.VITE_TERMS_URL}
+                target="_blank"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Terms of Use
+              </a>{' '}
+              and acknowledge the{' '}
+              <a
+                className="underline"
+                href={import.meta.env.VITE_PRIVACY_URL}
+                target="_blank"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Privacy Policy
+              </a>
+              .
+            </>
+          }
+          value={isAgreementAccepted}
+          onChange={() => setIsAgreementAccepted(!isAgreementAccepted)}
+        />
+        <Button
+          htmlProps={{
+            disabled: repeatPassword !== password || !email || !password || !isAgreementAccepted,
+            className: 'mt-4',
+            type: 'submit',
+          }}
+          icon={<Done />}
+          label="Sign up"
+          variant="filled"
+        />
+      </form>
       <ActionList
         actions={[
           {

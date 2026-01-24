@@ -36,7 +36,7 @@ export const Connection: React.FC = () => {
         </Helmet>
       )}
       <div className="relative flex h-[100dvh] flex-col justify-between">
-        <div className="relative grid h-full grid-cols-1 overflow-hidden bg-background sm:grid-cols-[max-content_1fr_max-content]">
+        <div className="relative grid h-full grid-cols-1 overflow-hidden bg-card dark:bg-background sm:grid-cols-[max-content_1fr_max-content]">
           {!activeConnection && <Loading size="large" />}
           {!isMobile && <NavigationSidebar />}
           <div className="flex h-full flex-col overflow-hidden">

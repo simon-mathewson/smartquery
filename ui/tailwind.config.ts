@@ -35,7 +35,7 @@ export const themes = primaryColors.reduce((acc, primaryColor) => {
     [`${primaryColor ? `${primaryColor}-` : ''}dark`]: {
       background: colors.neutral[950],
       border: colors.neutral[700],
-      borderHover: colors.neutral[600],
+      borderLight: colors.neutral[800],
       card: colors.neutral[900],
       control: '#0E0E0E',
       controlBorder: '#303030',
@@ -54,13 +54,13 @@ export const themes = primaryColors.reduce((acc, primaryColor) => {
       dangerHover: `${colors.red[500]}D9`,
 
       primary: primaryColorDark,
-      primaryHighlight: `${primaryColorDark}1A`,
-      primaryHighlightHover: `${primaryColorDark}2B`,
+      primaryHighlight: `${primaryColorDark}10`,
+      primaryHighlightHover: `${primaryColorDark}20`,
       primaryHover: `${primaryColorDark}D9`,
 
       secondary: colors.neutral[400],
-      secondaryHighlight: '#FFFFFF1A',
-      secondaryHighlightHover: '#FFFFFF2B',
+      secondaryHighlight: '#FFFFFF08',
+      secondaryHighlightHover: '#FFFFFF10',
       secondaryHover: `${colors.neutral[700]}D9`,
 
       success: colors.green[600],
@@ -73,9 +73,9 @@ export const themes = primaryColors.reduce((acc, primaryColor) => {
       whiteHover: `#FFFFFFD9`,
     },
     [`${primaryColor ? `${primaryColor}-` : ''}light`]: {
-      background: colors.white,
+      background: '#F4F4F4',
       border: colors.neutral[200],
-      borderHover: colors.neutral[300],
+      borderLight: colors.neutral[100],
       card: colors.white,
       control: colors.neutral[50],
       controlBorder: '#ECECEC',
@@ -94,13 +94,13 @@ export const themes = primaryColors.reduce((acc, primaryColor) => {
       dangerHover: `${colors.red[500]}D9`,
 
       primary: primaryColorLight,
-      primaryHighlight: `${primaryColorLight}1A`,
-      primaryHighlightHover: `${primaryColorLight}2B`,
+      primaryHighlight: `${primaryColorLight}10`,
+      primaryHighlightHover: `${primaryColorLight}20`,
       primaryHover: `${primaryColorLight}D9`,
 
       secondary: colors.neutral[500],
-      secondaryHighlight: '#0000000A',
-      secondaryHighlightHover: '#0000001B',
+      secondaryHighlight: '#00000008',
+      secondaryHighlightHover: '#00000010',
       secondaryHover: `${colors.neutral[700]}D9`,
 
       success: colors.green[600],

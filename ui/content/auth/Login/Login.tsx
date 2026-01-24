@@ -8,7 +8,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { routes } from '~/router/routes';
 import { ActionList } from '~/shared/components/actionList/ActionList';
 import { Button } from '~/shared/components/button/Button';
-import { Card } from '~/shared/components/card/Card';
 import { Field } from '~/shared/components/field/Field';
 import { Header } from '~/shared/components/header/Header';
 import { Input } from '~/shared/components/input/Input';
@@ -80,99 +79,92 @@ export const Login: React.FC<LoginProps> = (props) => {
 
   return (
     <>
-      {suggestedUser && (
-        <ActionList
-          actions={[
-            {
-              element: 'div',
-              hint: 'Stored in keychain',
-              label: `Continue as ${suggestedUser.email}`,
-              icon: <ArrowForwardOutlined />,
-              htmlProps: {
-                onClick: () => {
-                  void login(suggestedUser.email, suggestedUser.credential.password);
-                },
-              },
-              suffix: (
-                <DropdownMenu
-                  items={[
-                    {
-                      color: 'danger',
-                      label: 'Remove from keychain',
-                      value: 'remove',
-                      onSelect: async () => {
-                        await credentials.removeUserCredentialFromKeychain(suggestedUser.email);
-                        setSuggestedUser(null);
-                      },
-                    },
-                  ]}
-                  trigger={{
-                    element: 'button',
-                    icon: <MoreVertOutlined />,
-                  }}
-                />
-              ),
-            },
-          ]}
-        />
-      )}
-      <Card htmlProps={{ className: 'flex flex-col w-full' }}>
-        <Header
-          left={<Button htmlProps={{ onClick: onBack }} icon={<ArrowBack />} />}
-          middle={
-            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-              Log in
-            </div>
-          }
-        />
-        <form className="flex flex-col gap-2 p-1" onSubmit={handleSubmit}>
-          <Field label="Email">
-            <Input
-              htmlProps={{ autoFocus: true, type: 'email', value: email }}
-              onChange={setEmail}
+      <Header
+        left={<Button htmlProps={{ onClick: onBack }} icon={<ArrowBack />} />}
+        middle={
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
+            Log in
+          </div>
+        }
+      />
+      <form className="flex w-full flex-col gap-2 p-1" onSubmit={handleSubmit}>
+        <Field label="Email">
+          <Input htmlProps={{ autoFocus: true, type: 'email', value: email }} onChange={setEmail} />
+        </Field>
+        <Field label="Password">
+          <Input
+            htmlProps={{
+              autoComplete: 'current-passord',
+              minLength: 12,
+              type: 'password',
+              value: password,
+            }}
+            onChange={setPassword}
+          />
+        </Field>
+        {isNative && (
+          <Field htmlProps={{ className: 'mt-2' }}>
+            <Toggle
+              label="Store in keychain"
+              value={storeInKeychain}
+              onChange={setStoreInKeychain}
             />
           </Field>
-          <Field label="Password">
-            <Input
-              htmlProps={{
-                autoComplete: 'current-passord',
-                minLength: 12,
-                type: 'password',
-                value: password,
-              }}
-              onChange={setPassword}
-            />
-          </Field>
-          {isNative && (
-            <Field htmlProps={{ className: 'mt-2' }}>
-              <Toggle
-                label="Store in keychain"
-                value={storeInKeychain}
-                onChange={setStoreInKeychain}
-              />
-            </Field>
-          )}
-          <Button
-            element="link"
-            htmlProps={{
-              className: 'mt-2',
-              href: routes.requestResetPassword(email),
-            }}
-            label="Reset password"
-          />
-          <Button
-            htmlProps={{
-              disabled: !email || !password,
-              type: 'submit',
-            }}
-            icon={<ArrowForwardOutlined />}
-            label="Log in"
-            variant="filled"
-          />
-        </form>
-      </Card>
+        )}
+        <Button
+          element="link"
+          htmlProps={{
+            className: 'mt-2',
+            href: routes.requestResetPassword(email),
+          }}
+          label="Reset password"
+        />
+        <Button
+          htmlProps={{
+            disabled: !email || !password,
+            type: 'submit',
+          }}
+          icon={<ArrowForwardOutlined />}
+          label="Log in"
+          variant="filled"
+        />
+      </form>
       <ActionList
         actions={[
+          ...(suggestedUser
+            ? [
+                {
+                  element: 'div' as const,
+                  hint: 'Stored in keychain',
+                  label: `Continue as ${suggestedUser.email}`,
+                  icon: <ArrowForwardOutlined />,
+                  htmlProps: {
+                    onClick: () => {
+                      void login(suggestedUser.email, suggestedUser.credential.password);
+                    },
+                  },
+                  suffix: (
+                    <DropdownMenu
+                      items={[
+                        {
+                          color: 'danger',
+                          label: 'Remove from keychain',
+                          value: 'remove',
+                          onSelect: async () => {
+                            await credentials.removeUserCredentialFromKeychain(suggestedUser.email);
+                            setSuggestedUser(null);
+                          },
+                        },
+                      ]}
+                      trigger={{
+                        element: 'button',
+                        icon: <MoreVertOutlined />,
+                      }}
+                    />
+                  ),
+                },
+              ]
+            : []),
           {
             hint: 'Sign up',
             label: "Don't have an account yet?",

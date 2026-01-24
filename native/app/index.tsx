@@ -3,13 +3,13 @@ import ConnectorModule from "~/modules/connector/src/ConnectorModule";
 import assert from "assert";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
-import { File } from "expo-file-system";
+import { File, Paths } from "expo-file-system";
 import { useNetworkState } from "expo-network";
 import * as SplashScreen from "expo-splash-screen";
 import { Orientation } from "expo-screen-orientation";
 import { castArray } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useColorScheme, Dimensions } from "react-native";
+import { useColorScheme, Dimensions, Linking, Share } from "react-native";
 import * as Keychain from "react-native-keychain";
 import type { WebViewMessageEvent } from "react-native-webview";
 import { WebView } from "react-native-webview";
@@ -23,6 +23,7 @@ import type {
   RemoveFromKeychain,
   PurchaseSubscription,
   FinishPurchase,
+  ShareFile,
 } from "../../shared/native/types";
 import {
   Credential,
@@ -228,6 +229,22 @@ export default function Index() {
     purchaseToFinish.current = null;
   }, [iap, purchaseToFinish]);
 
+  const shareFile = useCallback<ShareFile>(async (content, filename) => {
+    const file = new File(Paths.cache, filename);
+
+    try {
+      file.delete();
+    } catch {}
+
+    file.create();
+    file.write(content);
+
+    await Share.share({
+      url: file.uri,
+      title: filename,
+    });
+  }, []);
+
   const onMessage = async (payload: WebViewMessageEvent) => {
     let parsed;
     try {
@@ -276,6 +293,8 @@ export default function Index() {
               return ConnectorModule.runQuery(...args);
             case "getSqliteFile":
               return getSqliteFile(...args);
+            case "shareFile":
+              return shareFile(...args);
             case "writeToClipboard":
               return ConnectorModule.writeToClipboard(...args);
           }
@@ -348,6 +367,46 @@ export default function Index() {
   const webviewLeft = (screenWidth - webviewWidth) / 2;
   const webviewTop = (screenHeight - webviewHeight) / 2;
 
+  const baseUrl = new URL(process.env.EXPO_PUBLIC_UI_URL);
+  const baseUrlHost = baseUrl.port
+    ? `${baseUrl.hostname}:${baseUrl.port}`
+    : baseUrl.hostname;
+
+  // Open external links in browser
+  const onShouldStartLoadWithRequest = useCallback(
+    (request: {
+      url: string;
+      navigationType?: string;
+      isTopFrame?: boolean;
+    }) => {
+      // Only intercept top-level page navigations, not resource loads (JS, CSS, images, etc.)
+      // Resource loads typically have:
+      // - isTopFrame === false (sub-resources)
+      // - navigationType === 'other' (non-user-initiated)
+      if (request.isTopFrame === false || request.navigationType === "other") {
+        return true;
+      }
+
+      // For actual page navigations, check if it's external
+      try {
+        const requestUrl = new URL(request.url);
+        const requestHost = requestUrl.port
+          ? `${requestUrl.hostname}:${requestUrl.port}`
+          : requestUrl.hostname;
+        if (requestHost === baseUrlHost) {
+          return true;
+        }
+      } catch {
+        return true;
+      }
+
+      // External page navigation - open in browser
+      void Linking.openURL(request.url);
+      return false;
+    },
+    [baseUrlHost]
+  );
+
   return (
     <WebView
       ref={webviewRef}
@@ -361,7 +420,7 @@ export default function Index() {
         paddingTop,
         paddingLeft,
         paddingRight,
-        backgroundColor: colorScheme === "dark" ? "#0a0a0a" : "#ffffff",
+        backgroundColor: colorScheme === "dark" ? "#0a0a0a" : "#f4f4f4",
         transform: [{ scale }],
       }}
       // Required for the injectedJavaScript to work
@@ -374,6 +433,7 @@ export default function Index() {
         networkState.isInternetReachable ? "LOAD_DEFAULT" : "LOAD_CACHE_ONLY"
       }
       limitsNavigationsToAppBoundDomains
+      onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
     />
   );
 }

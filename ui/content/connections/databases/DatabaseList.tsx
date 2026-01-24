@@ -91,6 +91,7 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
               }
             }}
             selectedValue={activeConnection.database}
+            variant="select"
           />
         </div>
       )}
@@ -135,6 +136,7 @@ export const DatabaseList: React.FC<DatabaseListProps> = (props) => {
                 track('database_list_select_schema');
               }}
               selectedValue={activeConnection.schema}
+              variant="select"
             />
           </div>
         </>

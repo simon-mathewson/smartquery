@@ -9,7 +9,7 @@ export const LoginPage: React.FC = () => {
   return (
     <Page title="Login">
       <Login
-        onBack={() => history.back()}
+        onBack={() => navigate(routes.root())}
         onSuccess={() => navigate(routes.root())}
         onShowSignup={() => navigate(routes.subscribePlans())}
       />

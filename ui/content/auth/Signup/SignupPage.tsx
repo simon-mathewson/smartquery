@@ -1,7 +1,7 @@
-import { Page } from '~/shared/components/page/Page';
-import { Signup } from './Signup';
 import { useLocation } from 'wouter';
 import { routes } from '~/router/routes';
+import { Page } from '~/shared/components/page/Page';
+import { Signup } from './Signup';
 
 export const SignupPage: React.FC = () => {
   const [, navigate] = useLocation();

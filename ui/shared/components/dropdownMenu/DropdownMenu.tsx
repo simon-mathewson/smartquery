@@ -39,6 +39,7 @@ export const DropdownMenu = <T,>(props: DropdownMenuProps<T>) => {
       />
       <OverlayCard
         htmlProps={{
+          className: '!p-0',
           id: menuId,
           role: 'menu',
         }}

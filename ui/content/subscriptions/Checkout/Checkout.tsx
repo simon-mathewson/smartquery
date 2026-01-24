@@ -5,7 +5,6 @@ import { useCallback, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { ThemeContext } from '~/content/theme/Context';
 import { Button } from '~/shared/components/button/Button';
-import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { Loading } from '~/shared/components/loading/Loading';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -76,7 +75,7 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
   }, [native, navigate, subscriptionType, toast, user.id]);
 
   return (
-    <Card htmlProps={{ className: 'container max-w-[400px]' }}>
+    <>
       <Header
         left={<Button htmlProps={{ onClick: goBack }} icon={<ArrowBack />} />}
         middle={
@@ -98,7 +97,7 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
       ) : (
         <div className="relative min-h-[200px] p-2">
           {(isLoadingAddress || isLoadingPayment || isLoadingTotal) && <Loading />}
-          <div className="z-10 flex flex-col gap-4 bg-card">
+          <div className="z-10 flex flex-col gap-4">
             <CheckoutProvider
               stripe={stripe}
               options={{
@@ -132,6 +131,6 @@ export const Checkout: React.FC<CheckoutProps> = (props) => {
           </div>
         </div>
       )}
-    </Card>
+    </>
   );
 };

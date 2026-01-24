@@ -34,7 +34,7 @@ export const NavigationSidebar: React.FC = () => {
 
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  const [desktopWidth, setDesktopWidth] = useStoredState('NavigationSidebar.width', 236);
+  const [desktopWidth, setDesktopWidth] = useStoredState('NavigationSidebar.width', 256);
 
   return (
     <div className="relative z-50 h-[100dvh] p-2 pr-0">
@@ -81,13 +81,13 @@ export const NavigationSidebar: React.FC = () => {
             htmlProps={{ className: 'w-max p-2 shadow-2xl' }}
             overlay={connectionsOverlay}
           >
-            {() => <Connections />}
+            {() => <Connections variant="select" />}
           </OverlayCard>
         </div>
         {activeConnection && (
           <div className="flex w-full grow flex-col overflow-auto">
-            <SavedQueryList />
-            <TableList />
+            <SavedQueryList listVariant="select" />
+            <TableList listVariant="select" />
           </div>
         )}
         <Footer htmlProps={{ className: 'shrink-0' }} />

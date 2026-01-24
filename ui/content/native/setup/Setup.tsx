@@ -22,7 +22,7 @@ export const NativeSetup: React.FC = () => {
     ) ?? distributables.find(({ os }) => os === 'macos')!;
 
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-border bg-background px-3 py-2">
+    <div className="flex flex-col gap-2 rounded-xl border border-border bg-card px-3 py-2">
       <div className="flex items-center justify-between gap-2">
         <div className="text-xs font-medium text-textSecondary">Install SmartQuery</div>
       </div>
@@ -32,7 +32,7 @@ export const NativeSetup: React.FC = () => {
         </div>
         <DistributableLink distributable={currentDistributable} highlight />
         <button
-          className="flex cursor-pointer items-center justify-center gap-0.5 text-sm font-medium text-slate-500"
+          className="text-testSecondary flex cursor-pointer items-center justify-center gap-0.5 text-sm font-medium"
           onClick={() => setShowOtherPlatforms(!showOtherPlatforms)}
           type="button"
         >

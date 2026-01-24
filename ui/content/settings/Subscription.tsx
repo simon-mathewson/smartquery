@@ -8,6 +8,7 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { AuthContext } from '../auth/Context';
 import { CloudApiContext } from '../cloud/api/Context';
 import { ToastContext } from '../toast/Context';
+import { isReactNative } from '../native/useNative';
 
 export type SubscriptionProps = {
   close: () => void;
@@ -20,7 +21,8 @@ export const Subscription: React.FC<SubscriptionProps> = () => {
 
   assert(user?.activeSubscription, 'User must have an active subscription');
 
-  const { startDate, stripeSubscriptionId, type, endDate } = user.activeSubscription;
+  const { appleOriginalTransactionId, startDate, stripeSubscriptionId, type, endDate } =
+    user.activeSubscription;
   const subscriptionName = `${type[0].toUpperCase()}${type.slice(1)}`;
 
   const price = stripeSubscriptionId ? plans[type].webPrice : null;
@@ -37,7 +39,7 @@ export const Subscription: React.FC<SubscriptionProps> = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-col gap-2 p-2">
+      <div className="flex flex-col gap-2">
         {items.map((item) => (
           <div key={item.label} className="flex justify-between">
             <div className="text-sm font-medium text-textPrimary">{item.label}</div>
@@ -45,20 +47,18 @@ export const Subscription: React.FC<SubscriptionProps> = () => {
           </div>
         ))}
       </div>
-      {stripeSubscriptionId && (
+      {appleOriginalTransactionId && (
+        <div className="mt-2 text-sm text-textSecondary">
+          Use Apple App Store to manage your subscription.
+        </div>
+      )}
+      {stripeSubscriptionId && isReactNative && (
+        <div className="mt-2 text-sm text-textSecondary">
+          Use the web or desktop app to manage your subscription.
+        </div>
+      )}
+      {stripeSubscriptionId && !isReactNative && (
         <>
-          {/* <Button
-            align="left"
-            element="link"
-            htmlProps={{
-              href: routes.subscribePlans(),
-              onClick: () => {
-                close();
-              },
-            }}
-            icon={<EditOutlined />}
-            label="Change plan"
-          /> */}
           {!endDate ? (
             <ConfirmDeletePopover
               onConfirm={async () => {

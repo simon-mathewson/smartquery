@@ -11,7 +11,6 @@ import { Button } from '~/shared/components/button/Button';
 import { Header } from '~/shared/components/header/Header';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AuthContext } from '../../auth/Context';
-import { Cell } from './Cell';
 
 const plans = omit(allPlans, 'pro', 'anonymous');
 
@@ -59,67 +58,49 @@ export const Plans: React.FC<PlansProps> = (props) => {
           </div>
         }
       />
-      <div
-        className="relative grid w-full overflow-x-auto pt-2 text-sm"
-        style={{
-          gridTemplateColumns: `200px repeat(${planNames.length}, 150px)`,
-        }}
-      >
-        <Cell feature />
+      <div className="flex w-full flex-col gap-1 p-2">
         {planNames.map((plan, index) => (
-          <Cell className="text-md" key={plan}>
-            <div className="font-medium text-textPrimary">
-              {plan.charAt(0).toUpperCase() + plan.slice(1)}
+          <div className="flex flex-col gap-3" key={plan}>
+            <div className="mb-1 flex items-baseline gap-2">
+              <h1 className="text-xl font-medium text-textPrimary">
+                {plan.charAt(0).toUpperCase() + plan.slice(1)}
+              </h1>
+              {planPrices?.[index] && (
+                <div>
+                  <span className="text-textTertiary">{planPrices[index]}</span>
+                  <span className="text-textTertiary">/mo</span>
+                </div>
+              )}
             </div>
-            {planPrices?.[index] && (
-              <div>
-                <span className="text-textTertiary">{planPrices[index]}</span>
-                <span className="text-textTertiary">/mo</span>
+            <div className="grid grid-cols-[max-content_1fr] items-center gap-3">
+              <div className="self-start text-center text-sm font-medium text-textPrimary">
+                {formatNumber(plans[plan].limits.aiCredits)}
               </div>
-            )}
-          </Cell>
-        ))}
-        <div className="col-span-full mx-2 my-1 h-px border-b border-border" />
-        <Cell feature>
-          <div>
-            <div>AI Credits (per month)</div>
-            <div className="mt-1 font-normal text-textTertiary">Chat & inline completions</div>
-          </div>
-        </Cell>
-        {planNames.map((plan) => (
-          <Cell className="text-textSecondary" key={plan}>
-            {formatNumber(plans[plan].limits.aiCredits)}
-          </Cell>
-        ))}
-        <Cell feature>Change theme color</Cell>
-        {planNames.map((plan) => (
-          <Cell className="pl-1" key={plan}>
-            {plan === 'free' ? (
-              <Close className="text-danger" />
-            ) : (
-              <Done className="text-success" />
-            )}
-          </Cell>
-        ))}
-        <Cell feature>Support the development of SmartQuery</Cell>
-        {planNames.map((plan) => (
-          <Cell className="pl-1" key={plan}>
-            {plan === 'free' ? (
-              <Close className="text-danger" />
-            ) : (
-              <Done className="text-success" />
-            )}
-          </Cell>
-        ))}
-        <Cell feature />
-        {planNames.map((plan) => (
-          <Cell className="!p-0" key={plan}>
+              <div>
+                <div className="text-sm">AI Credits (per month)</div>
+                <div className="mt-1 text-xs font-normal text-textTertiary">
+                  Chat & inline completions
+                </div>
+              </div>
+              {plan === 'free' ? (
+                <Close className="!h-5 !w-5 text-danger" />
+              ) : (
+                <Done className="!h-4 !w-4 text-success" />
+              )}
+              <div className="text-sm">Change theme color</div>
+              {plan === 'free' ? (
+                <Close className="!h-5 !w-5 text-danger" />
+              ) : (
+                <Done className="!h-4 !w-4 text-success" />
+              )}
+              <div className="text-sm">Support the development of SmartQuery</div>
+            </div>
             <Button
               htmlProps={{
                 disabled:
                   user?.activeSubscription?.type === plan ||
                   (user !== null && !user.activeSubscription && plan === 'free'),
-                className: 'w-full',
+                className: 'ml-auto',
                 onClick: () => {
                   track('subscribe_plans_continue', { plan });
 
@@ -143,7 +124,7 @@ export const Plans: React.FC<PlansProps> = (props) => {
                 user?.activeSubscription?.type === plan ? 'You are already on this plan' : undefined
               }
             />
-          </Cell>
+          </div>
         ))}
       </div>
     </>

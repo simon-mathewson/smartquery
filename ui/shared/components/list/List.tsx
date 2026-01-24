@@ -18,6 +18,7 @@ export type ListProps<T> = {
   searchAutofocus?: boolean;
   searchPlaceholder?: string;
   setSearch?: (value: string) => void;
+  variant?: 'select' | 'default';
 } & ({ multiple?: false; selectedValue?: T | null } | { multiple: true; selectedValues: T[] });
 
 export function List<T>(props: ListProps<T>) {
@@ -33,6 +34,7 @@ export function List<T>(props: ListProps<T>) {
     searchAutofocus,
     searchPlaceholder,
     setSearch,
+    variant = 'default',
   } = props;
 
   const isMobile = useIsMobile();
@@ -60,7 +62,7 @@ export function List<T>(props: ListProps<T>) {
           htmlProps={{
             'aria-label': searchPlaceholder,
             autoFocus: searchAutofocus,
-            className: 'mb-1',
+            className: 'mb-2',
             placeholder: searchPlaceholder,
             type: 'search',
             value: search,
@@ -76,7 +78,11 @@ export function List<T>(props: ListProps<T>) {
         <div
           {...htmlProps}
           aria-multiselectable={multiple}
-          className={classNames('flex w-full flex-col gap-1 overflow-y-auto', htmlProps?.className)}
+          className={classNames(
+            'focus-invisible flex w-full flex-col overflow-y-auto',
+            { 'rounded-2xl bg-card p-2': variant === 'default' },
+            htmlProps?.className,
+          )}
           onKeyDown={onKeyDown}
           role="listbox"
           tabIndex={0}
@@ -85,6 +91,7 @@ export function List<T>(props: ListProps<T>) {
             <ListItem<T>
               key={index}
               onSelect={() => onSelect?.(item.value)}
+              listVariant={variant}
               {...item}
               htmlProps={{
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any

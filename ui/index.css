@@ -34,13 +34,13 @@
 
 @layer components {
   /* Keep in sync with selectors in `getFocusableElements.ts` */
-  a:not([aria-disabled='true']):not(.hidden),
-  button:not(:disabled):not(.hidden),
-  input:not(:disabled):not([readonly]):not(.hidden),
-  textarea:not(:disabled):not([readonly]):not(.hidden),
-  select:not(:disabled):not(.hidden),
-  details:not(:disabled):not(.hidden),
-  [tabindex]:not(:disabled):not([tabindex='-1']):not(.hidden) {
+  a:not([aria-disabled='true']):not(.hidden):not(.focus-invisible),
+  button:not(:disabled):not(.hidden):not(.focus-invisible),
+  input:not(:disabled):not([readonly]):not(.hidden):not(.focus-invisible),
+  textarea:not(:disabled):not([readonly]):not(.hidden):not(.focus-invisible),
+  select:not(:disabled):not(.hidden):not(.focus-invisible),
+  details:not(:disabled):not(.hidden):not(.focus-invisible),
+  [tabindex]:not(:disabled):not([tabindex='-1']):not(.hidden):not(.focus-invisible) {
     @apply focus-visible:outline focus-visible:outline-[1.5px] focus-visible:-outline-offset-2 focus-visible:outline-primaryHover;
   }
 }

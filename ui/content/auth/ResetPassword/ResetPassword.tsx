@@ -6,7 +6,6 @@ import { CloudApiContext } from '~/content/cloud/api/Context';
 import { ToastContext } from '~/content/toast/Context';
 import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
-import { Card } from '~/shared/components/card/Card';
 import { Header } from '~/shared/components/header/Header';
 import { Page } from '~/shared/components/page/Page';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
@@ -57,34 +56,32 @@ export const ResetPassword: React.FC = () => {
 
   return (
     <Page title="Reset password">
-      <Card htmlProps={{ className: 'w-full max-w-[356px]' }}>
-        <Header
-          left={<Button element="link" htmlProps={{ href: routes.login() }} icon={<ArrowBack />} />}
-          middle={
-            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
-              Reset password
-            </div>
-          }
+      <Header
+        left={<Button element="link" htmlProps={{ href: routes.login() }} icon={<ArrowBack />} />}
+        middle={
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-medium text-textPrimary">
+            Reset password
+          </div>
+        }
+      />
+      <form className="flex w-full flex-col gap-2 py-2" onSubmit={handleSubmit}>
+        <PasswordFields
+          password={password}
+          repeatPassword={repeatPassword}
+          setPassword={setPassword}
+          setRepeatPassword={setRepeatPassword}
         />
-        <form className="flex flex-col gap-2 py-2" onSubmit={handleSubmit}>
-          <PasswordFields
-            password={password}
-            repeatPassword={repeatPassword}
-            setPassword={setPassword}
-            setRepeatPassword={setRepeatPassword}
-          />
-          <Button
-            htmlProps={{
-              className: 'mt-2',
-              disabled: repeatPassword !== password || !password,
-              type: 'submit',
-            }}
-            icon={<Done />}
-            label="Reset password"
-            variant="filled"
-          />
-        </form>
-      </Card>
+        <Button
+          htmlProps={{
+            className: 'mt-2',
+            disabled: repeatPassword !== password || !password,
+            type: 'submit',
+          }}
+          icon={<Done />}
+          label="Reset password"
+          variant="filled"
+        />
+      </form>
     </Page>
   );
 };

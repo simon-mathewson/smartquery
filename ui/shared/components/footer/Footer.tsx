@@ -40,7 +40,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
 
   return (
     <>
-      <OverlayCard htmlProps={{ className: 'w-[340px]' }} overlay={settingsOverlay}>
+      <OverlayCard htmlProps={{ className: 'w-[340px] !px-0 !pb-0' }} overlay={settingsOverlay}>
         {({ close }) => <Settings close={close} />}
       </OverlayCard>
       <OverlayCard overlay={plansOverlay}>
