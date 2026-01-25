@@ -41,7 +41,13 @@ export const TableList: React.FC<TableListProps> = (props) => {
   return (
     <div className="flex w-full flex-col gap-1 py-2">
       <div className="flex items-center justify-between gap-2 pl-2">
-        <div className="truncate text-sm font-medium text-textSecondary sm:text-xs">Tables</div>
+        <div
+          className={classNames('truncate text-sm font-medium text-textSecondary sm:text-xs', {
+            'text-textTertiary': listVariant === 'select',
+          })}
+        >
+          Tables
+        </div>
         <div className="flex items-center gap-1">
           <Button
             color="secondary"

@@ -46,7 +46,13 @@ export const SavedQueryList: React.FC<SavedQueryListProps> = (props) => {
   return (
     <div className="relative flex w-full flex-col gap-1 py-2">
       <div className="flex items-center justify-between gap-2 pl-2">
-        <div className="truncate text-sm font-medium text-textSecondary sm:text-xs">Queries</div>
+        <div
+          className={classNames('truncate text-sm font-medium text-textSecondary sm:text-xs', {
+            'text-textTertiary': listVariant === 'select',
+          })}
+        >
+          Queries
+        </div>
         <div className="flex items-center gap-2">
           <Button
             color="secondary"
