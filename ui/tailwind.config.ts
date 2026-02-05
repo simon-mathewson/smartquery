@@ -118,6 +118,9 @@ export const themes = primaryColors.reduce((acc, primaryColor) => {
 export default {
   content: ['./index.html', './**/*.{ts,tsx,test.ts,test.tsx}'],
   darkMode: 'class',
+  safelist: primaryColors
+    .filter((c) => c !== null)
+    .flatMap((c) => [`${c}-light`, `dark:${c}-dark`]),
   theme: {
     extend: {
       fontFamily: {
