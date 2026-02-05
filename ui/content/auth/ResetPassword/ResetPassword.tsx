@@ -9,14 +9,12 @@ import { Button } from '~/shared/components/button/Button';
 import { Header } from '~/shared/components/header/Header';
 import { Page } from '~/shared/components/page/Page';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { AuthContext } from '../Context';
 import { PasswordFields } from '../PasswordFields';
 
 export const ResetPassword: React.FC = () => {
   const [, navigate] = useLocation();
   const { cloudApi } = useDefinedContext(CloudApiContext);
   const toast = useDefinedContext(ToastContext);
-  const auth = useDefinedContext(AuthContext);
 
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
@@ -40,8 +38,6 @@ export const ResetPassword: React.FC = () => {
           title: 'Password reset successful',
         });
 
-        await auth.logIn(auth.user!.email, password);
-
         navigate(routes.root());
       } catch (error) {
         toast.add({
@@ -51,7 +47,7 @@ export const ResetPassword: React.FC = () => {
         });
       }
     },
-    [auth, cloudApi.auth.resetPassword, navigate, password, toast, token],
+    [cloudApi, navigate, password, toast, token],
   );
 
   return (

@@ -184,7 +184,10 @@ export const authRouter = trpc.router({
 
       await prisma.user.update({
         where: { id: user.id },
-        data: await setUpUserPassword(password),
+        data: {
+          ...(await setUpUserPassword(password)),
+          resetPasswordToken: null,
+        },
       });
     }),
   signUp: trpc.procedure
