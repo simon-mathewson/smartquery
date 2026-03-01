@@ -11,7 +11,7 @@ const Imprint: React.FC = () => {
           <p className="text-sm text-gray-500 mt-2">
             Information provided according to Sec. 5 German Telemedia Act (TMG).
             <br />
-            <strong>Last Updated:</strong> January 25, 2026
+            <strong>Last Updated:</strong> March 1, 2026
           </p>
         </header>
         <main>

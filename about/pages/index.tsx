@@ -253,27 +253,25 @@ export default function Home() {
           <div className="gap-3 flex flex-col items-center max-w-xl">
             <LockOutline className="text-white !h-10 !w-10" />
             <h1 className="text-3xl sm:text-4xl text-center text-white">
-              Security is our top priority
+              Security and transparency
             </h1>
             <p className="text-lg font-medium text-white/70 text-center">
-              When handling credentials and table data, there is no room for
-              compromise. That&apos;s why we&apos;ve taken the following steps
-              to make SmartQuery as secure as possible:
+              SmartQuery is open source and 100% local—no accounts, no subscriptions, no cloud. When handling credentials and table data, there is no room for compromise. Here&apos;s how we keep things secure and private:
             </p>
           </div>
           <ul className="text-lg font-medium text-white/70 gap-y-4 gap-x-5 grid grid-cols-1 sm:grid-cols-2 items-start">
             {[
               {
                 icon: RoomOutlined,
-                title: "Local-first",
+                title: "100% local",
                 description:
-                  "Storing credentials, connecting to databases, saving queries, and more always works locally by default. Data is only sent to our servers if you enable optional cloud features.",
+                  "SmartQuery runs entirely on your device. Credentials, connections, queries, and all data stay local. There is no cloud—no accounts, no syncing—so your database access never leaves your machine.",
               },
               {
                 icon: VpnKeyOutlined,
-                title: "Encrypted credentials",
+                title: "Your credentials, your device",
                 description:
-                  "When storing credentials in the cloud, you can encrypt them with your account password. This way, your credentials can only be read by you, even in the unlikely event of a data breach.",
+                  "Connection details and credentials are stored only on your device. Nothing is uploaded to our servers because we don't store user data—everything stays under your control.",
               },
               {
                 icon: EnhancedEncryptionOutlined,
@@ -285,13 +283,13 @@ export default function Home() {
                 icon: LightbulbOutlined,
                 title: "Need-to-know basis",
                 description:
-                  "Your data is never stored or logged. We always use the minimum amount of data necessary to make a feature work. For instance, row data is never sent to our AI as context, only schema information.",
+                  "Your data is never stored or logged by us. When you use AI features, only the minimum necessary data (e.g. schema information) is sent to the AI provider—row data is never sent.",
               },
               {
                 icon: FilterDramaOutlined,
                 title: "Web best practices",
                 description:
-                  "Data is always transferred via HTTPS and protected from man-in-the-middle attacks. Our cloud uses state-of-the-art protection against DDoS attacks and other threats. The web app is protected against XSS and XSRF attacks and other web vulnerabilities.",
+                  "Data is always transferred via HTTPS and protected from man-in-the-middle attacks. The web app is protected against XSS and XSRF attacks and other web vulnerabilities.",
               },
             ].map((item) => (
               <li key={item.title} className="flex items-center gap-4">

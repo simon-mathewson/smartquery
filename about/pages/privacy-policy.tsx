@@ -9,7 +9,7 @@ const PrivacyPolicy: React.FC = () => {
         <header className="border-b border-gray-200 pb-4 mb-6">
           <h1>Privacy Policy</h1>
           <p className="text-sm text-gray-500 mt-2">
-            <strong>Last Updated:</strong> January 25, 2026
+            <strong>Last Updated:</strong> March 1, 2026
           </p>
         </header>
         <main>
@@ -46,13 +46,13 @@ const PrivacyPolicy: React.FC = () => {
           <section>
             <h3>2. General Principles of Data Processing</h3>
             <p>
-              SmartQuery is designed with a &quot;local-first&quot; approach.
-              Core functions run directly on your device without sending
-              sensitive data to our servers. Database connections are made
-              natively from your device. For enhanced functionality, such as
-              account syncing and AI assistance, we offer optional services that
-              involve processing data on our secure infrastructure, as detailed
-              in this policy.
+              SmartQuery is 100% local. The application does not use user
+              accounts or cloud sync—all connection data and credentials stay on
+              your device. This privacy policy applies to your use of our
+              website (about.smartquery.dev) and, where applicable, to data
+              processed when you use AI features within the application (e.g.
+              when schema information is sent to third-party AI providers). We
+              do not collect or store your database connections or credentials.
             </p>
           </section>
           <section>
@@ -69,90 +69,25 @@ const PrivacyPolicy: React.FC = () => {
                 </p>
               </div>
               <div>
-                <h4>b) When You Create an Account</h4>
+                <h4>b) When You Use AI Features in the Application</h4>
                 <p>
-                  To use features like connection syncing or the AI assistant,
-                  you must create an account. We collect:
-                </p>
-                <ul>
-                  <li>
-                    <strong>Email Address</strong>
-                  </li>
-                  <li>
-                    <strong>Password (hashed securely)</strong>
-                  </li>
-                </ul>
-                <p>
-                  This data is processed to provide you with the account
-                  services you requested, based on the performance of a contract
-                  with you (Art. 6(1)(b) GDPR).
+                  When you use integrated AI features (e.g. powered by
+                  third-party APIs such as OpenAI), your prompt and database
+                  schema definitions (table structures, column names, types) may
+                  be sent to the relevant provider. We <strong>never</strong>{" "}
+                  send your actual database content or records. This processing
+                  is necessary to provide the AI feature (Art. 6(1)(b) GDPR).
                 </p>
               </div>
               <div>
-                <h4>c) When You Subscribe to SmartQuery Plus</h4>
+                <h4>c) Analytics and Performance Monitoring</h4>
                 <p>
-                  If you subscribe to SmartQuery Plus, we process payment
-                  information through our payment provider, Stripe. We do not
-                  directly collect or store your full credit card information.
-                  We collect:
-                </p>
-                <ul>
-                  <li>
-                    <strong>Billing Information:</strong> Such as your name and
-                    billing address, as required for invoicing.
-                  </li>
-                  <li>
-                    <strong>Subscription Status:</strong> We receive data from
-                    Stripe regarding the status of your subscription (e.g.,
-                    active, canceled).
-                  </li>
-                </ul>
-                <p>
-                  This processing is necessary for the performance of the
-                  subscription contract (Art. 6(1)(b) GDPR).
-                </p>
-              </div>
-              <div>
-                <h4>d) When You Save Connections to Your Account</h4>
-                <p>
-                  You can save database connection configurations to your
-                  account. You can choose whether to save passwords and, if so,
-                  to store them in an encrypted format. This data is processed
-                  to perform the service you requested (Art. 6(1)(b) GDPR).
-                </p>
-              </div>
-              <div>
-                <h4>e) When You Use AI Features</h4>
-                <p>
-                  When you use the integrated AI assistant, we act as an
-                  intermediary to send data to the OpenAI API on your behalf.
-                </p>
-                <ul>
-                  <li>
-                    <strong>Data Sent:</strong> We send your prompt and the{" "}
-                    <strong>database schema definitions</strong> (table
-                    structures, column names, types) to the OpenAI API.
-                  </li>
-                  <li>
-                    <strong>Important:</strong> We <strong>never</strong> send
-                    any of your actual database content or records.
-                  </li>
-                </ul>
-                <p>
-                  This processing is necessary to provide the AI feature as part
-                  of the Service, based on the performance of our contract with
-                  you (Art. 6(1)(b) GDPR).
-                </p>
-              </div>
-              <div>
-                <h4>f) Analytics and Performance Monitoring</h4>
-                <p>
-                  We use Google Analytics and AWS CloudWatch RUM to understand
-                  service usage and monitor performance. These tools are only
-                  activated if you provide your explicit prior consent (Art.
-                  6(1)(a) GDPR) via our cookie/consent banner. You can withdraw
-                  your consent at any time. We have enabled IP anonymization for
-                  Google Analytics.
+                  We may use tools such as Google Analytics and AWS CloudWatch
+                  RUM to understand website usage and monitor performance. These
+                  tools are only activated if you provide your explicit prior
+                  consent (Art. 6(1)(a) GDPR) via our cookie/consent banner. You
+                  can withdraw your consent at any time. We have enabled IP
+                  anonymization for Google Analytics where applicable.
                 </p>
               </div>
             </div>
@@ -162,37 +97,34 @@ const PrivacyPolicy: React.FC = () => {
             <p>
               We do not sell your personal data. We only share data with trusted
               third-party service providers (data processors) who help us
-              operate our Service, under strict data processing agreements.
+              operate our website and, where you use them, AI features—under
+              strict data processing agreements where required.
             </p>
             <ul>
               <li>
-                <strong>Amazon Web Services (AWS):</strong> Our application and
-                database are hosted on AWS servers located in Frankfurt,
-                Germany.
+                <strong>Hosting:</strong> Our website may be hosted on
+                infrastructure such as Amazon Web Services (AWS), with servers
+                in regions such as Frankfurt, Germany.
               </li>
               <li>
-                <strong>Stripe, Inc.:</strong> We use Stripe for payment
-                processing for SmartQuery Plus subscriptions. Your payment data
-                is sent directly to Stripe; we do not store your full payment
-                card details. Stripe may process data in the U.S. under
-                appropriate legal safeguards.
+                <strong>AI providers:</strong> When you use AI features, data
+                (prompt and schema only, as described above) may be sent to
+                providers such as OpenAI, which may process it in the U.S.
+                under appropriate legal safeguards.
               </li>
               <li>
-                <strong>OpenAI:</strong> We use OpenAI&apos;s API for our AI
-                features and Google Analytics (with your consent). This involves
-                sending data (as described above) to OpenAI, which may process
-                it in the U.S. under appropriate legal safeguards.
+                <strong>Analytics:</strong> With your consent, we may use
+                services such as Google Analytics for website analytics.
               </li>
             </ul>
           </section>
           <section>
             <h3>5. Data Storage Location</h3>
             <p>
-              All of your primary account data (email, hashed password,
-              connection settings) is stored on Amazon Web Services (AWS)
-              servers located in <strong>Frankfurt am Main, Germany</strong>. By
-              hosting within Germany, your data benefits from the high data
-              protection standards of the GDPR and German law.
+              We do not store user account data (there are no user accounts).
+              Website and server log data may be processed and stored on
+              infrastructure such as AWS in Germany. Your database connections
+              and credentials remain only on your device.
             </p>
           </section>
           <section>

@@ -9,7 +9,7 @@ const TermsOfUse: React.FC = () => {
         <header className="border-b border-gray-200 pb-4 mb-6">
           <h1>Terms of Use</h1>
           <p className="text-sm text-gray-500 mt-2">
-            <strong>Last Updated:</strong> January 25, 2026
+            <strong>Last Updated:</strong> March 1, 2026
           </p>
         </header>
         <main>
@@ -30,138 +30,38 @@ const TermsOfUse: React.FC = () => {
           <section>
             <h3>1. Description of the Service</h3>
             <p>
-              SmartQuery is a database viewer that allows users to connect to
-              and interact with open-source databases such as PostgreSQL, MySQL,
-              and SQLite. Users can connect to their databases natively from
-              their device through our native applications for iOS, macOS,
-              Windows, and Debian-based distributions. Web support is available
-              for SQLite databases.
+              SmartQuery is an open-source database viewer that allows users to
+              connect to and interact with open-source databases such as
+              PostgreSQL, MySQL, and SQLite. Everything runs 100% locally on
+              your device—there are no user accounts, no cloud sync, and no
+              subscriptions. Users connect to their databases natively through
+              the applications for iOS, macOS, Windows, and Debian-based
+              distributions. Web support is available for SQLite databases.
             </p>
           </section>
           <section>
-            <h3>2. Accounts</h3>
+            <h3>2. No Accounts or Subscriptions</h3>
             <p>
-              Using the core functionality of SmartQuery for direct database
-              connections does not require an account. However, to save and sync
-              your connections, and to access the features provided under our
-              Free Tier (such as AI Credits), you must create a free account.
-              Upon signing up, you are automatically enrolled in the Free Tier.
-            </p>
-            <ul>
-              <li>
-                <strong>Account Creation:</strong> You must provide a valid
-                email address and create a password. You are responsible for
-                maintaining the confidentiality of your account credentials and
-                for all activities that occur under your account.
-              </li>
-              <li>
-                <strong>Connection Data:</strong> When you save a database
-                connection to your account, you can choose whether to store
-                associated passwords. If you choose to store them, you can store
-                them encrypted or as plain text. You also have the option not to
-                store passwords at all.
-              </li>
-            </ul>
-          </section>
-          <section>
-            <h3>3. Service Tiers and Subscriptions</h3>
-            <p>
-              SmartQuery is offered with service tiers for users with an
-              account. Usage limits are applied on a monthly basis, resetting on
-              your billing anchor date (the date you signed up or subscribed).
-            </p>
-
-            <h4>3.1. Free Tier</h4>
-            <p>
-              By default, creating an account enrolls you in the Free Tier. The
-              monthly usage limits are as follows:
-            </p>
-            <ul>
-              <li>
-                <strong>AI Credits:</strong> 15
-              </li>
-            </ul>
-
-            <h4>3.2. SmartQuery Plus Subscription</h4>
-            <p>
-              For users requiring higher limits, we offer the SmartQuery Plus
-              subscription for $4 per month. Please note that pricing on iOS may
-              differ and will vary by region. The monthly usage limits are as
-              follows:
-            </p>
-            <ul>
-              <li>
-                <strong>AI Credits:</strong> 75
-              </li>
-            </ul>
-
-            <h4>3.3. Billing and Cancellation</h4>
-            <ul>
-              <li>
-                <strong>Payments:</strong> We use Stripe as our third-party
-                payment processor. All payments are subject to Stripe&apos;s
-                terms of service and privacy policy.
-              </li>
-              <li>
-                <strong>Billing Cycle:</strong> SmartQuery Plus subscriptions
-                are billed in advance on a monthly basis. Your billing cycle
-                begins on the date you subscribe.
-              </li>
-              <li>
-                <strong>Cancellation:</strong> You may cancel your SmartQuery
-                Plus subscription at any time. Your subscription will remain
-                active, and you will have access to paid features until the end
-                of your current paid billing period.
-              </li>
-              <li>
-                <strong>Refunds:</strong> Payments are non-refundable, and we do
-                not provide refunds or credits for any partial subscription
-                periods, except as required by law.
-              </li>
-            </ul>
-
-            <h4>
-              <strong>3.4. EU/EEA Consumer Right of Withdrawal</strong>
-            </h4>
-            <p>
-              If you are a consumer based in the European Union or European
-              Economic Area (EEA), you have a statutory right to withdraw from a
-              contract for the purchase of services within 14 days without
-              giving any reason. However, when purchasing a SmartQuery Plus
-              subscription, which provides immediate access to a digital
-              service, you will be asked to provide your prior express consent
-              to the immediate execution of the contract. By providing this
-              consent, you acknowledge that you will lose your right of
-              withdrawal upon the complete fulfillment of the service contract.
+              SmartQuery does not require an account. All data—including
+              connection details and credentials—is stored locally on your
+              device. There are no subscriptions, no payments, and no Stripe or
+              other payment processing. The software is free and open source.
             </p>
           </section>
-
           <section>
-            <h3>4. Use of AI Features</h3>
+            <h3>3. Use of AI Features</h3>
             <p>
-              SmartQuery integrates AI features powered by OpenAI to assist with
-              database queries. Your use of these features is governed by an
-              &quot;AI Credits&quot; system, available only to users with an
-              account.
+              SmartQuery may integrate AI features (e.g. powered by third-party
+              APIs such as OpenAI) to assist with database queries. When you use
+              such features, your prompt and the schema definitions (e.g., table
+              names, column names, and data types) of your currently connected
+              database may be sent to the relevant API to provide context.
             </p>
             <ul>
-              <li>
-                <strong>AI Credits:</strong> Your account is allocated a
-                specific number of AI Credits based on your service tier, as
-                outlined in Section 3. Credits are consumed for each request
-                made to the AI model. Credits are based on the compute required.
-              </li>
-              <li>
-                <strong>Data Sent to API:</strong> When you use the AI feature,
-                your prompt and the schema definitions (e.g., table names,
-                column names, and data types) of your currently connected
-                database are sent to the OpenAI API to provide context.
-              </li>
               <li>
                 <strong>Important:</strong>{" "}
                 <strong>
-                  No database content or records are ever sent to the OpenAI
-                  API.
+                  No database content or records are ever sent to AI APIs.
                 </strong>{" "}
                 The data is limited strictly to the structural schema.
               </li>
@@ -174,7 +74,7 @@ const TermsOfUse: React.FC = () => {
             </ul>
           </section>
           <section>
-            <h3>5. User Responsibilities</h3>
+            <h3>4. User Responsibilities</h3>
             <p>
               You agree to use the Service in compliance with all applicable
               laws. You are solely responsible for the database connections you
@@ -182,29 +82,20 @@ const TermsOfUse: React.FC = () => {
             </p>
           </section>
           <section>
-            <h3>6. Intellectual Property Rights</h3>
+            <h3>5. Intellectual Property Rights and Open Source</h3>
             <p>
-              The Service and its original content, features, and functionality,
-              including but not limited to the SmartQuery application, the
-              native applications for iOS, macOS, Windows, and Debian-based
-              distributions, the website design, logos, and all underlying
-              source code, are and will remain the exclusive property of Simon
-              Mathewson. The Service is protected by copyright, trademark, and
-              other laws of both Germany and foreign countries.
-            </p>
-            <p>
-              You are granted a limited, non-exclusive, non-transferable,
-              revocable license to use the Service strictly in accordance with
-              these Terms. You agree not to copy, modify, create derivative
-              works of, publicly display, publicly perform, republish, or
-              distribute the Service or any part thereof. You further agree not
-              to reverse-engineer, decompile, or otherwise attempt to discover
-              the source code of the SmartQuery application or its related
-              software.
+              SmartQuery is open source. The application, including the native
+              applications for iOS, macOS, Windows, and Debian-based
+              distributions, the website design, logos, and underlying source
+              code, may be subject to copyright and other intellectual property
+              rights. The project is made available under its applicable open
+              source license(s). You may use, modify, and distribute the
+              software in accordance with those licenses. The SmartQuery name
+              and branding remain the property of Simon Mathewson.
             </p>
           </section>
           <section>
-            <h3>7. Service Availability and Disclaimer of Warranties</h3>
+            <h3>6. Service Availability and Disclaimer of Warranties</h3>
             <p>
               SmartQuery is a new application and is provided in an early stage
               of development.
@@ -228,7 +119,7 @@ const TermsOfUse: React.FC = () => {
             </ul>
           </section>
           <section>
-            <h3>8. Limitation of Liability</h3>
+            <h3>7. Limitation of Liability</h3>
             <p>
               To the fullest extent permitted by applicable law, Simon Mathewson
               shall not be liable for any indirect, incidental, special,
@@ -252,7 +143,7 @@ const TermsOfUse: React.FC = () => {
             </ol>
           </section>
           <section>
-            <h3>9. Changes to the Terms</h3>
+            <h3>8. Changes to the Terms</h3>
             <p>
               We reserve the right to modify these Terms at any time. We will
               notify you of any changes by posting the new Terms on our website.
@@ -262,14 +153,14 @@ const TermsOfUse: React.FC = () => {
             </p>
           </section>
           <section>
-            <h3>10. Governing Law</h3>
+            <h3>9. Governing Law</h3>
             <p>
               These Terms shall be governed and construed in accordance with the
               laws of Germany, without regard to its conflict of law provisions.
             </p>
           </section>
           <section>
-            <h3>11. Contact Us</h3>
+            <h3>10. Contact Us</h3>
             <p>
               If you have any questions about these Terms, please contact us at:{" "}
               <a href={`mailto:${emailAddress}`}>
