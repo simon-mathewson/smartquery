@@ -45,7 +45,7 @@ const errorHandler = (reason: unknown): void => {
     })
     .then((result) => {
       if (result.response === 1) {
-        void shell.openExternal(import.meta.env.VITE_DISCORD_INVITE_URL);
+        void shell.openExternal('https://github.com/simon-mathewson/smartquery');
       }
     });
 };
