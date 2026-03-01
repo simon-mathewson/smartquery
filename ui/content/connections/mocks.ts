@@ -57,10 +57,8 @@ export const getConnectionsMock = () =>
     addConnection: spy(),
     connect: spy(),
     connectRemote: spy(),
-    connectViaCloud: false,
     connections: [mysqlConnectionMock, postgresConnectionMock, sqliteConnectionMock] as const,
     disconnectRemote: spy(),
     removeConnection: spy(),
-    setConnectViaCloud: spy(),
     updateConnection: spy(),
   }) satisfies Connections;

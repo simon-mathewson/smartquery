@@ -10,7 +10,6 @@ phases:
       nodejs: 20
     commands:
       - export IS_ABOUT_UNCHANGED=0
-      - export IS_CLOUD_UNCHANGED=0
       - export IS_CLOUD_FORMATION_UNCHANGED=0
       - export IS_DESKTOP_UNCHANGED=0
       - export IS_SHARED_UNCHANGED=0
@@ -75,10 +74,6 @@ phases:
             export IS_ABOUT_UNCHANGED=1
           fi
           
-          if diff -r last_source/cloud cloud >/dev/null 2>&1; then
-            export IS_CLOUD_UNCHANGED=1
-          fi
-          
           if diff -r last_source/cloudFormation cloudFormation >/dev/null 2>&1; then
             export IS_CLOUD_FORMATION_UNCHANGED=1
           fi
@@ -98,7 +93,6 @@ phases:
 
       - |
         echo "IS_ABOUT_UNCHANGED: $IS_ABOUT_UNCHANGED"
-        echo "IS_CLOUD_UNCHANGED: $IS_CLOUD_UNCHANGED"
         echo "IS_CLOUD_FORMATION_UNCHANGED: $IS_CLOUD_FORMATION_UNCHANGED"
         echo "IS_DESKTOP_UNCHANGED: $IS_DESKTOP_UNCHANGED"
         echo "IS_SHARED_UNCHANGED: $IS_SHARED_UNCHANGED"
@@ -107,15 +101,13 @@ phases:
 
       - |
         export SKIP_ABOUT=$(($IS_ABOUT_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_SHARED_UNCHANGED * $IS_BUILDSPEC_UNCHANGED))
-        export SKIP_CLOUD=$(($IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_SHARED_UNCHANGED * $IS_BUILDSPEC_UNCHANGED))
         export SKIP_CLOUD_FORMATION=$(($IS_CLOUD_FORMATION_UNCHANGED * $IS_BUILDSPEC_UNCHANGED))
         export SKIP_DESKTOP=$(($IS_DESKTOP_UNCHANGED * $IS_SHARED_UNCHANGED * $IS_BUILDSPEC_UNCHANGED))
-        export SKIP_SHARED=$(($IS_SHARED_UNCHANGED * $IS_ABOUT_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_DESKTOP_UNCHANGED * $IS_UI_UNCHANGED * $IS_BUILDSPEC_UNCHANGED))
-        export SKIP_UI=$(($IS_UI_UNCHANGED * $IS_CLOUD_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_DESKTOP_UNCHANGED * $IS_SHARED_UNCHANGED * $IS_BUILDSPEC_UNCHANGED))
+        export SKIP_SHARED=$(($IS_SHARED_UNCHANGED * $IS_ABOUT_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_DESKTOP_UNCHANGED * $IS_UI_UNCHANGED * $IS_BUILDSPEC_UNCHANGED))
+        export SKIP_UI=$(($IS_UI_UNCHANGED * $IS_CLOUD_FORMATION_UNCHANGED * $IS_DESKTOP_UNCHANGED * $IS_SHARED_UNCHANGED * $IS_BUILDSPEC_UNCHANGED))
 
       - |
         echo "SKIP_ABOUT: $SKIP_ABOUT"
-        echo "SKIP_CLOUD: $SKIP_CLOUD"
         echo "SKIP_CLOUD_FORMATION: $SKIP_CLOUD_FORMATION"
         echo "SKIP_DESKTOP: $SKIP_DESKTOP"
         echo "SKIP_SHARED: $SKIP_SHARED"
@@ -125,7 +117,6 @@ phases:
 
       - npm i -g corepack@latest
       - corepack enable pnpm
-      - pip install awsebcli
 
       - cd shared # Always navigate to shared to enable upcoming cd ../
       - |
@@ -142,15 +133,6 @@ phases:
           echo "About package is unchanged. Skipping install."
         else
           cd ../about
-          pnpm install
-        fi
-
-      - |
-        set -e  # Exit immediately if any command fails
-        if [ $SKIP_CLOUD -eq 1 ]; then
-          echo "Cloud package is unchanged. Skipping install."
-        else
-          cd ../cloud
           pnpm install
         fi
 
@@ -197,22 +179,6 @@ phases:
 
       - |
         set -e  # Exit immediately if any command fails
-        if [ $SKIP_CLOUD -eq 1 ]; then
-          echo "Cloud package is unchanged. Skipping build."
-        else
-          cd ../cloud
-          pnpm typecheck
-          pnpm lint
-          pnpm build
-          mv node_modules node_modules_backup
-          mkdir node_modules # Keep empty node_modules to prevent EB from installing deps
-          zip -r application.zip .ebextensions .env .env.production dist node_modules package.json prisma/generated prisma/schema.prisma Procfile scripts
-          rm -rf node_modules
-          mv node_modules_backup node_modules
-        fi
-
-      - |
-        set -e  # Exit immediately if any command fails
         if [ $SKIP_DESKTOP -eq 1 ]; then
           echo "Desktop package is unchanged. Skipping build."
 
@@ -237,13 +203,6 @@ phases:
           echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><testsuites/>" > ../ui/test-ct-report.xml
           echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><testsuites/>" > ../ui/test-report.xml
         else
-          # Initialize cloud types, they are needed for UI build because of the tRPC router import
-          if [ $SKIP_CLOUD -eq 1 ]; then
-            cd ../cloud
-            pnpm install
-            pnpm prisma generate
-          fi
-
           cd ../ui
           export VITE_UI_VERSION=$(find . -type f ! -path "*/node_modules/*" ! -path "*/dist/*" ! -path "*/.git/*" ! -path "*/test-results/*" ! -path "*/coverage/*" ! -path "*/.next/*" | xargs sha256sum 2>/dev/null | sort | sha256sum | cut -c1-7)
           echo VITE_UI_VERSION=$VITE_UI_VERSION >> .env
@@ -294,30 +253,6 @@ phases:
         else
           cd ../cloudFormation
           ./deploy.sh
-        fi
-
-      - |
-        set -e  # Exit immediately if any command fails
-        if [ $SKIP_CLOUD -eq 1 ]; then
-          echo "Cloud package is unchanged. Skipping deployment."
-        else
-          cd ../cloud
-
-          # Run migrations
-          export SMARTQUERY_CLOUD_DB_SECRET=$(aws secretsmanager get-secret-value --secret-id $SMARTQUERY_CLOUD_DB_SECRET_ARN --query SecretString --output text)
-          chmod +x ./scripts/build-database-url.sh
-          export DATABASE_URL=$(./scripts/build-database-url.sh)
-          pnpm prisma migrate deploy
-
-          # Deploy server
-          aws s3 cp application.zip s3://smartquery-cloud-source/$CODEBUILD_BUILD_NUMBER.zip
-          aws elasticbeanstalk create-application-version \
-            --application-name smartquery-cloud \
-            --version-label $CODEBUILD_BUILD_NUMBER \
-            --source-bundle S3Bucket=smartquery-cloud-source,S3Key=$CODEBUILD_BUILD_NUMBER.zip
-          
-          # Use EB CLI to deploy (automatically waits for success and preserves environment config)
-          eb deploy smartquery-cloud --version $CODEBUILD_BUILD_NUMBER
         fi
 
       - |

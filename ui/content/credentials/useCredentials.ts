@@ -3,16 +3,8 @@ import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedCo
 import { NativeContext } from '../native/Context';
 import { isNative } from '../native/useNative';
 import { type Credential, type CredentialType } from '@/utils/credentials';
-import type { ModalControl } from '~/shared/components/modal/types';
-import type { UserPasswordModalInput } from '../connections/userPasswordModal/types';
-import { AuthContext } from '../auth/Context';
 
-export const useCredentials = (props: {
-  userPasswordModal: ModalControl<UserPasswordModalInput>;
-}) => {
-  const { userPasswordModal } = props;
-
-  const { user } = useDefinedContext(AuthContext);
+export const useCredentials = () => {
   const native = useDefinedContext(NativeContext);
 
   const storeCredentialInKeychain = useCallback(
@@ -68,43 +60,18 @@ export const useCredentials = (props: {
     [native],
   );
 
-  const requestUserPassword = useCallback(
-    async (title?: string): Promise<string> => {
-      const fromKeychain = await getUserCredentialFromKeychain(user?.email);
-      if (fromKeychain) {
-        return fromKeychain.password;
-      }
-
-      return new Promise<string>((resolve, reject) =>
-        userPasswordModal.open(
-          {
-            title,
-            onSubmit: (password) => {
-              resolve(password);
-              return Promise.resolve();
-            },
-          },
-          { onClose: reject },
-        ),
-      );
-    },
-    [getUserCredentialFromKeychain, user?.email, userPasswordModal],
-  );
-
   return useMemo(
     () => ({
       getCredentialFromKeychain,
       getUserCredentialFromKeychain,
       storeCredentialInKeychain,
       removeUserCredentialFromKeychain,
-      requestUserPassword,
     }),
     [
       getCredentialFromKeychain,
       getUserCredentialFromKeychain,
       storeCredentialInKeychain,
       removeUserCredentialFromKeychain,
-      requestUserPassword,
     ],
   );
 };

@@ -1,19 +1,11 @@
-import {
-  LightbulbOutlined,
-  PersonAddAlt1Outlined,
-  SettingsOutlined,
-  VpnKeyOutlined,
-} from '@mui/icons-material';
+import { SettingsOutlined } from '@mui/icons-material';
 import classNames from 'classnames';
-import { routes } from '~/router/routes';
 import { Button } from '~/shared/components/button/Button';
 import { useOverlay } from '~/shared/components/overlay/useOverlay';
 import { OverlayCard } from '~/shared/components/overlayCard/OverlayCard';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { AnalyticsContext } from '../../../content/analytics/Context';
-import { AuthContext } from '../../../content/auth/Context';
 import { Settings } from '../../../content/settings/Settings';
-import { Plans } from '../../../content/subscriptions/plans/Plans';
 import { AboutLinks } from '../aboutLinks/AboutLinks';
 
 export type FooterProps = {
@@ -24,7 +16,6 @@ export const Footer: React.FC<FooterProps> = (props) => {
   const { htmlProps } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
-  const { user } = useDefinedContext(AuthContext);
 
   const settingsOverlay = useOverlay({
     align: 'center',
@@ -32,25 +23,10 @@ export const Footer: React.FC<FooterProps> = (props) => {
     onOpen: () => track('footer_open_settings'),
   });
 
-  const plansOverlay = useOverlay({
-    align: 'center',
-    darkenBackground: true,
-    onOpen: () => (user ? track('footer_open_plans') : track('footer_sign_up')),
-  });
-
   return (
     <>
       <OverlayCard htmlProps={{ className: 'w-[340px] !px-0 !pb-0' }} overlay={settingsOverlay}>
         {({ close }) => <Settings close={close} />}
-      </OverlayCard>
-      <OverlayCard overlay={plansOverlay}>
-        {({ close }) => (
-          <Plans
-            afterContinue={() => {
-              void close();
-            }}
-          />
-        )}
       </OverlayCard>
       <div
         className={classNames(
@@ -58,30 +34,6 @@ export const Footer: React.FC<FooterProps> = (props) => {
           htmlProps?.className,
         )}
       >
-        {!user && (
-          <Button
-            align="left"
-            element="link"
-            htmlProps={{
-              className: 'w-full',
-              href: routes.login(),
-              onClick: () => track('footer_log_in'),
-            }}
-            icon={<VpnKeyOutlined />}
-            label="Log in"
-          />
-        )}
-        {!user?.activeSubscription && (
-          <Button
-            align="left"
-            htmlProps={{
-              className: 'w-full',
-              ...plansOverlay.triggerProps,
-            }}
-            icon={user ? <LightbulbOutlined /> : <PersonAddAlt1Outlined />}
-            label={user ? 'Get access to all features' : 'Sign up to use AI for free'}
-          />
-        )}
         <Button
           align="left"
           color="secondary"
@@ -90,7 +42,7 @@ export const Footer: React.FC<FooterProps> = (props) => {
             ...settingsOverlay.triggerProps,
           }}
           icon={<SettingsOutlined />}
-          label={user?.email ?? 'Settings'}
+          label="Settings"
         />
         <AboutLinks compact />
       </div>

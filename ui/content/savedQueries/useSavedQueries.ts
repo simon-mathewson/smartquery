@@ -1,6 +1,4 @@
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import { CloudApiContext } from '../cloud/api/Context';
-import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { ActiveConnectionContext } from '../connections/activeConnection/Context';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { assert } from 'ts-essentials';
@@ -16,7 +14,6 @@ import { TabsContext } from '../tabs/Context';
 import { getNewQuery } from '../tabs/queries/utils/getNewQuery';
 
 export const useSavedQueries = () => {
-  const { cloudApi } = useDefinedContext(CloudApiContext);
   const activeConnectionContext = useContext(ActiveConnectionContext);
   const activeConnection = activeConnectionContext?.activeConnection;
   const { track } = useDefinedContext(AnalyticsContext);
@@ -60,45 +57,17 @@ export const useSavedQueries = () => {
     setLocalSavedQueries,
   ]);
 
-  const {
-    isLoading,
-    results: cloudSavedQueries,
-    run: refetchSavedQueries,
-  } = useCloudQuery(
-    () => {
-      assert(activeConnectionContext);
-      const { activeConnection } = activeConnectionContext;
+  const savedQueries = localSavedQueries;
 
-      if (activeConnection.storageLocation === 'local') {
-        return Promise.resolve([]);
-      }
-
-      return cloudApi.savedQueries.list.query({
-        connectionId: activeConnection.id,
-        database: activeConnection.engine === 'postgres' ? activeConnection.database : null,
-      });
-    },
-    { disabled: !activeConnectionContext },
-  );
-
-  const savedQueries = useMemo(
-    () => [...localSavedQueries, ...(cloudSavedQueries ?? [])],
-    [localSavedQueries, cloudSavedQueries],
-  );
+  const refetchSavedQueries = useCallback(async () => {}, []);
 
   const deleteSavedQuery = useCallback(
     async (savedQuery: SavedQuery, queryId: string, onSuccess?: () => void) => {
       assert(activeConnectionContext);
-      const { activeConnection } = activeConnectionContext;
 
       track('saved_query_delete');
 
-      if (activeConnection.storageLocation === 'cloud') {
-        await cloudApi.savedQueries.delete.mutate(savedQuery.id);
-        await refetchSavedQueries();
-      } else {
-        setLocalSavedQueries((sqs) => sqs.filter((sq) => sq.id !== savedQuery.id));
-      }
+      setLocalSavedQueries((sqs) => sqs.filter((sq) => sq.id !== savedQuery.id));
 
       await updateQuery({ id: queryId, savedQueryId: null });
 
@@ -109,15 +78,7 @@ export const useSavedQueries = () => {
 
       void onSuccess?.();
     },
-    [
-      activeConnectionContext,
-      track,
-      updateQuery,
-      toast,
-      cloudApi,
-      refetchSavedQueries,
-      setLocalSavedQueries,
-    ],
+    [activeConnectionContext, track, updateQuery, toast, setLocalSavedQueries],
   );
 
   const createSavedQuery = useCallback(
@@ -127,30 +88,16 @@ export const useSavedQueries = () => {
       onSuccess?: () => void,
     ) => {
       assert(activeConnectionContext);
-      const { activeConnection } = activeConnectionContext;
 
       const { name, sql, chart } = data;
 
       track('saved_query_create');
 
       try {
-        if (activeConnection.storageLocation === 'cloud') {
-          const id = await cloudApi.savedQueries.create.mutate({
-            chart,
-            connectionId: activeConnection.id,
-            database: activeConnection.engine === 'postgres' ? activeConnection.database : null,
-            name,
-            sql,
-          });
+        const id = uuid();
+        setLocalSavedQueries((sqs) => [...sqs, { id, name, sql, chart }]);
 
-          await refetchSavedQueries();
-          await updateQuery({ id: queryId, savedQueryId: id });
-        } else {
-          const id = uuid();
-          setLocalSavedQueries((sqs) => [...sqs, { id, name, sql, chart }]);
-
-          await updateQuery({ id: queryId, savedQueryId: id });
-        }
+        await updateQuery({ id: queryId, savedQueryId: id });
 
         toast.add({
           color: 'success',
@@ -167,15 +114,7 @@ export const useSavedQueries = () => {
         });
       }
     },
-    [
-      activeConnectionContext,
-      track,
-      toast,
-      cloudApi,
-      refetchSavedQueries,
-      updateQuery,
-      setLocalSavedQueries,
-    ],
+    [activeConnectionContext, track, toast, updateQuery, setLocalSavedQueries],
   );
 
   const updateSavedQuery = useCallback(
@@ -186,38 +125,26 @@ export const useSavedQueries = () => {
       onSuccess?: () => void,
     ) => {
       assert(activeConnectionContext);
-      const { activeConnection } = activeConnectionContext;
 
       track('saved_query_update');
 
       const { name, sql, chart } = data;
 
       try {
-        if (activeConnection.storageLocation === 'cloud') {
-          await cloudApi.savedQueries.update.mutate({ id, name, sql, chart });
-        } else {
-          setLocalSavedQueries((currentSavedQueries) =>
-            currentSavedQueries.map((sq) => {
-              if (sq.id !== id) return sq;
-              if (name !== undefined) {
-                Object.assign(sq, { name });
-              }
-              if (sql !== undefined) {
-                Object.assign(sq, { sql });
-              }
-              if (chart !== undefined) {
-                Object.assign(sq, { chart });
-              }
-              return sq;
-            }),
-          );
-        }
+        setLocalSavedQueries((currentSavedQueries) =>
+          currentSavedQueries.map((sq) => {
+            if (sq.id !== id) return sq;
+            const updated = { ...sq };
+            if (name !== undefined) updated.name = name;
+            if (sql !== undefined) updated.sql = sql;
+            if (chart !== undefined) updated.chart = chart;
+            return updated;
+          }),
+        );
 
         if (sql !== undefined || chart !== undefined) {
           await updateQuery({ id: queryId, savedQueryId: id, sql, chart });
         }
-
-        await refetchSavedQueries();
 
         toast.add({
           color: 'success',
@@ -234,22 +161,14 @@ export const useSavedQueries = () => {
         });
       }
     },
-    [
-      activeConnectionContext,
-      track,
-      refetchSavedQueries,
-      toast,
-      cloudApi,
-      setLocalSavedQueries,
-      updateQuery,
-    ],
+    [activeConnectionContext, track, toast, setLocalSavedQueries, updateQuery],
   );
 
   return useMemo(
     () => ({
       createSavedQuery,
       deleteSavedQuery,
-      isLoading,
+      isLoading: false,
       refetchSavedQueries,
       savedQueries,
       updateSavedQuery,
@@ -257,7 +176,6 @@ export const useSavedQueries = () => {
     [
       createSavedQuery,
       deleteSavedQuery,
-      isLoading,
       refetchSavedQueries,
       savedQueries,
       updateSavedQuery,

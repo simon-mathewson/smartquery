@@ -136,7 +136,8 @@ void app.whenReady().then(() => {
         };
       }
       case 'connectDb': {
-        return connectDb(...(args as Parameters<ConnectDb>));
+        const [connection] = args as [Parameters<ConnectDb>[0]];
+        return connectDb(connection);
       }
       case 'switchCatalogOrSchema': {
         return switchCatalogOrSchema(...(args as Parameters<SwitchCatalogOrSchema>));

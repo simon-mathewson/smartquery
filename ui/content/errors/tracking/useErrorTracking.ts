@@ -1,7 +1,6 @@
 import type { AwsRumConfig } from 'aws-rum-web';
 import { AwsRum } from 'aws-rum-web';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { isUserUnauthorizedError } from '~/content/auth/isUserUnauthorizedError';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 
 export const useErrorTracking = () => {
@@ -27,7 +26,7 @@ export const useErrorTracking = () => {
       identityPoolId: 'eu-central-1:67e78910-d6cf-4ffd-90c6-b704bb711791',
       signing: false,
       telemetries: [
-        ['errors', { ignore: (error: unknown) => isUserUnauthorizedError(error) }],
+        'errors',
         'performance',
         'http',
       ],

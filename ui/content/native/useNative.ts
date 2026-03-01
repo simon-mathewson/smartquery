@@ -90,7 +90,7 @@ export const useNative = () => {
   );
 
   const getFromKeychain = useCallback<GetFromKeychain>(
-    (username) => request<GetFromKeychain>('getFromKeychain', [username]),
+    (username, type) => request<GetFromKeychain>('getFromKeychain', [username, type]),
     [request],
   );
 

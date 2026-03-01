@@ -1,7 +1,6 @@
 import { cloneDeep } from 'lodash';
 import { assert } from 'ts-essentials';
 import { z } from 'zod';
-import type { User } from '~/content/auth/types';
 import type { Connection, Engine } from '@/connections/types';
 import {
   connectionSchema,
@@ -42,9 +41,8 @@ export type FormValues = z.infer<typeof formSchema>;
 export const getInitialFormValues = async (props: {
   connectionToEdit: Connection | null;
   getSqliteFile: (id: string) => Promise<SqliteFile>;
-  user: User | null;
 }): Promise<FormValues> => {
-  const { connectionToEdit, getSqliteFile, user } = props;
+  const { connectionToEdit, getSqliteFile } = props;
 
   if (connectionToEdit) {
     if (connectionToEdit.type === 'file') {
@@ -76,7 +74,7 @@ export const getInitialFormValues = async (props: {
   }
 
   return {
-    credentialStorage: user ? 'encrypted' : 'keychain',
+    credentialStorage: 'keychain',
     database: '',
     engine: 'postgres',
     host: '',
@@ -86,7 +84,7 @@ export const getInitialFormValues = async (props: {
     port: null,
     schema: '',
     ssh: null,
-    storageLocation: user ? 'cloud' : 'local',
+    storageLocation: 'local',
     type: 'remote',
     user: '',
   } satisfies FormValues;

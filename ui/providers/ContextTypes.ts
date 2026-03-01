@@ -1,8 +1,6 @@
 import type { CopilotContextType } from '~/content/ai/copilot/Context';
 import type { CopilotSidebarContextType } from '~/content/ai/copilot/sidebar/Context';
 import type { AnalyticsContextType } from '~/content/analytics/Context';
-import type { AuthContextType } from '~/content/auth/Context';
-import type { CloudApiContextType } from '~/content/cloud/api/Context';
 import type { ActiveConnectionContextType } from '~/content/connections/activeConnection/Context';
 import type { ConnectionsContextType } from '~/content/connections/Context';
 import type { CredentialsContextType } from '~/content/credentials/Context';
@@ -25,8 +23,6 @@ export type ContextTypes = {
   ActiveConnectionProvider: ActiveConnectionContextType;
   AddToDesktopProvider: AddToDesktopContextType;
   AnalyticsProvider: AnalyticsContextType;
-  AuthProvider: AuthContextType;
-  CloudApiProvider: CloudApiContextType;
   ConnectionsProvider: ConnectionsContextType;
   CopilotProvider: CopilotContextType;
   CopilotSidebarProvider: CopilotSidebarContextType;

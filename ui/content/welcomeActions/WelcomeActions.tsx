@@ -1,16 +1,10 @@
-import {
-  LightbulbOutlined,
-  PersonAddAlt1Outlined,
-  ScienceOutlined,
-  VpnKeyOutlined,
-} from '@mui/icons-material';
+import { ScienceOutlined } from '@mui/icons-material';
 import React, { useMemo } from 'react';
 import { routes } from '~/router/routes';
 import { ActionList } from '~/shared/components/actionList/ActionList';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import Add from '~/shared/icons/Add.svg?react';
 import { AnalyticsContext } from '../analytics/Context';
-import { AuthContext } from '../auth/Context';
 import { ConnectionsContext } from '../connections/Context';
 
 export type WelcomeActionsProps = {
@@ -21,7 +15,6 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
   const { hideAddConnection } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
-  const { user } = useDefinedContext(AuthContext);
   const { connections } = useDefinedContext(ConnectionsContext);
 
   const actions = useMemo(
@@ -52,45 +45,8 @@ export const WelcomeActions: React.FC<WelcomeActionsProps> = (props) => {
             },
           ]
         : []),
-      ...(!user
-        ? [
-            {
-              element: 'link' as const,
-              hint: 'Get free AI and cloud features',
-              label: 'Sign up',
-              icon: <PersonAddAlt1Outlined />,
-              htmlProps: {
-                href: routes.subscribePlans(),
-                onClick: () => track('home_sign_up'),
-              },
-            },
-            {
-              element: 'link' as const,
-              label: 'Log in',
-              icon: <VpnKeyOutlined />,
-              htmlProps: {
-                href: routes.login(),
-                onClick: () => track('home_log_in'),
-              },
-            },
-          ]
-        : []),
-      ...(user && !user.activeSubscription
-        ? [
-            {
-              element: 'link' as const,
-              hint: 'Get access to all features',
-              label: 'Subscribe',
-              icon: <LightbulbOutlined />,
-              htmlProps: {
-                href: routes.subscribePlans(),
-                onClick: () => track('home_subscribe'),
-              },
-            },
-          ]
-        : []),
     ],
-    [connections.length, hideAddConnection, track, user],
+    [connections.length, hideAddConnection, track],
   );
 
   return <ActionList actions={actions} />;

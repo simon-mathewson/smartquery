@@ -1,7 +1,5 @@
 import { AddToDesktopProvider } from '~/content/settings/addToDesktop/Provider';
 import { AnalyticsProvider } from '~/content/analytics/Provider';
-import { AuthProvider } from '~/content/auth/Provider';
-import { CloudApiProvider } from '~/content/cloud/api/Provider';
 import { ConnectionsProvider } from '~/content/connections/Provider';
 import { CredentialsProvider } from '~/content/credentials/Provider';
 import { DragAndDropProvider } from '~/content/dragAndDrop/Provider';
@@ -29,10 +27,8 @@ const providers = {
   ThemeProvider,
   ErrorTrackingProvider,
   NativeProvider,
-  CloudApiProvider,
   AnalyticsProvider,
   ToastProvider,
-  AuthProvider,
   CredentialsProvider,
   EscapeStackProvider,
   UpdateAvailableProvider,

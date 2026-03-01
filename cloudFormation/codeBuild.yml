@@ -11,8 +11,6 @@ Resources:
             Value: !ImportValue CloudFrontDistributionUi
           - Name: "SMARTQUERY_ABOUT_CLOUDFRONT_DISTRIBUTION_ID"
             Value: !ImportValue CloudFrontDistributionAbout
-          - Name: "SMARTQUERY_CLOUD_DB_SECRET_ARN"
-            Value: !ImportValue CloudDbSecretArn
         Image: "aws/codebuild/standard:7.0"
         PrivilegedMode: true
         Type: "LINUX_CONTAINER"
@@ -23,11 +21,6 @@ Resources:
       ServiceRole: !ImportValue IamRoleCodeBuildArn
       Source:
         Type: "CODEPIPELINE"
-      VpcConfig:
-        VpcId: !ImportValue CloudVpcId
-        Subnets: !Split [',', !ImportValue CloudPrivateSubnets]
-        SecurityGroupIds:
-          - !ImportValue CloudCodeBuildSecurityGroup
 
 Outputs:
   CodeBuild:

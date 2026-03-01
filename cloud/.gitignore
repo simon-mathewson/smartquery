@@ -1,9 +1,0 @@
-node_modules
-prisma/generated
-.env.local
-.env.*.local
-dist
-.eslintcache
-.rollup.cache
-application.zip
-scripts/appleSigningKey.p8

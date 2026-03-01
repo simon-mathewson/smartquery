@@ -10,7 +10,6 @@ import React, { useRef, useState } from 'react';
 import { assert } from 'ts-essentials';
 import { useLocation } from 'wouter';
 import { AnalyticsContext } from '~/content/analytics/Context';
-import { AuthContext } from '~/content/auth/Context';
 import { ConnectionsContext } from '~/content/connections/Context';
 import { demoConnectionId } from '~/content/connections/demo/constants';
 import { getCredentialId } from '~/content/connections/utils';
@@ -57,7 +56,6 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
   const [, navigate] = useLocation();
 
   const { track } = useDefinedContext(AnalyticsContext);
-  const { user } = useDefinedContext(AuthContext);
   const { getSqliteFile, writeSqliteFile } = useDefinedContext(SqliteContext);
 
   const mode = connectionToEditId ? 'edit' : 'add';
@@ -71,21 +69,14 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
 
   const [formValues, setFormValues] = useState<FormValues>();
 
-  const [isCloudConnection, setIsCloudConnection] = useState<boolean>();
-
   useEffectOnce(() => {
-    void getInitialFormValues({ connectionToEdit, getSqliteFile, user }).then(
-      (initialFormValues) => {
-        const finalInitialFormValues = {
-          ...initialFormValues,
-          ...overrideInitialValues,
-        } as FormValues;
-        setFormValues(finalInitialFormValues);
-        setIsCloudConnection(
-          finalInitialFormValues.storageLocation === 'cloud' && connectionToEdit !== null,
-        );
-      },
-    );
+    void getInitialFormValues({ connectionToEdit, getSqliteFile }).then((initialFormValues) => {
+      const finalInitialFormValues = {
+        ...initialFormValues,
+        ...overrideInitialValues,
+      } as FormValues;
+      setFormValues(finalInitialFormValues);
+    });
   });
 
   const setFormValue = (key: string, value: unknown) => {
@@ -255,75 +246,14 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
           />
         </Field>
         {formValues.type === 'remote' && !isNative && <NativeSetup />}
-        <Field label="Storage location">
-          <ButtonSelect<FormValues['storageLocation'] | null>
-            fullWidth
-            onChange={(value) => {
-              setFormValue('storageLocation', value);
-              if (
-                value === 'local' &&
-                formValues.type === 'remote' &&
-                formValues.credentialStorage === 'encrypted'
-              ) {
-                setFormValue('credentialStorage', 'keychain');
-              }
-            }}
-            options={[
-              {
-                button: {
-                  label: 'Cloud',
-                  htmlProps: {
-                    autoFocus: true,
-                    disabled: formValues.type === 'file' || !user,
-                  },
-                  tooltip: (() => {
-                    if (formValues.type === 'file') {
-                      return 'Storing SQLite in cloud is not supported';
-                    } else if (!user) {
-                      return 'Log in to store in your account and sync across devices';
-                    } else {
-                      return 'Store in your account to sync across devices';
-                    }
-                  })(),
-                },
-                value: 'cloud',
-              },
-              {
-                button: {
-                  label: 'Local',
-                  htmlProps: {
-                    disabled: isCloudConnection,
-                  },
-                  tooltip: isCloudConnection
-                    ? 'Switching to local storage not supported for cloud connections'
-                    : 'Store on this device only',
-                },
-                value: 'local',
-              },
-            ]}
-            required
-            value={formValues.storageLocation}
-          />
-        </Field>
         {formValues.type === 'remote' && (
           <>
             <Field label="Password storage">
-              <ButtonSelect<'alwaysAsk' | 'encrypted' | 'keychain' | 'plain'>
-                columns={2}
+              <ButtonSelect<'alwaysAsk' | 'keychain' | 'plain'>
+                columns={3}
                 fullWidth
                 onChange={(value) => setFormValue('credentialStorage', value)}
                 options={[
-                  {
-                    button: {
-                      htmlProps: { disabled: formValues.storageLocation !== 'cloud' },
-                      label: 'Cloud',
-                      tooltip:
-                        formValues.storageLocation !== 'cloud'
-                          ? 'Only supported when storing in cloud'
-                          : 'Stores credentials in your account and encrypts them based on your main password.',
-                    },
-                    value: 'encrypted',
-                  },
                   {
                     button: {
                       label: 'Keychain',
@@ -352,7 +282,11 @@ export const ConnectionForm: React.FC<ConnectionFormProps> = (props) => {
                 ]}
                 required
                 rows={2}
-                value={formValues.credentialStorage}
+                value={
+                  formValues.credentialStorage === 'encrypted'
+                    ? 'keychain'
+                    : formValues.credentialStorage
+                }
               />
             </Field>
           </>

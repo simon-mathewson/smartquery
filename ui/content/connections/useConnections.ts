@@ -5,13 +5,10 @@ import { assert } from 'ts-essentials';
 import { useLocation, useRoute } from 'wouter';
 import { routes } from '~/router/routes';
 import type { ModalControl } from '~/shared/components/modal/types';
-import { useCloudQuery } from '~/shared/hooks/useCloudQuery/useCloudQuery';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { ActiveConnection } from '~/shared/types';
 import { AnalyticsContext } from '../analytics/Context';
-import { AuthContext } from '../auth/Context';
-import { CloudApiContext } from '../cloud/api/Context';
 import { NativeContext } from '../native/Context';
 import { SqliteContext } from '../sqlite/Context';
 import { ToastContext } from '../toast/Context';
@@ -37,9 +34,7 @@ export const useConnections = (props: UseConnectionsProps) => {
 
   const native = useDefinedContext(NativeContext);
   const credentials = useDefinedContext(CredentialsContext);
-  const { cloudApi } = useDefinedContext(CloudApiContext);
   const { track } = useDefinedContext(AnalyticsContext);
-  const { user, isInitializing: isInitializingAuth } = useDefinedContext(AuthContext);
   const toast = useDefinedContext(ToastContext);
   const { getSqliteDb, writeSqliteFile } = useDefinedContext(SqliteContext);
 
@@ -67,21 +62,9 @@ export const useConnections = (props: UseConnectionsProps) => {
     ],
   );
 
-  const cloudConnectionsQuery = useCloudQuery(() => cloudApi.connections.list.query(), {
-    disabled: !user || isInitializingAuth,
-  });
-
   const connections = useMemo(
-    () =>
-      sortBy([...localConnections, ...(cloudConnectionsQuery.results ?? [])], (c) =>
-        c.name.toLowerCase(),
-      ),
-    [localConnections, cloudConnectionsQuery],
-  );
-
-  const [connectViaCloud, setConnectViaCloud] = useStoredState<boolean | null>(
-    'useConnections.connectViaCloud',
-    false,
+    () => sortBy([...localConnections], (c) => c.name.toLowerCase()),
+    [localConnections],
   );
 
   const [, dbRouteParamsWithoutSchema] = useRoute<{
@@ -111,24 +94,7 @@ export const useConnections = (props: UseConnectionsProps) => {
   const addConnection = useCallback(
     async (connection: Connection, options?: { onSuccess?: () => void; skipToast?: boolean }) => {
       try {
-        if (connection.storageLocation === 'local') {
-          setLocalConnections([...localConnections, connection]);
-        } else {
-          assert(connection.type === 'remote');
-
-          if (connection.credentialStorage === 'encrypted') {
-            const userPassword = await credentials.requestUserPassword('Encrypt credentials');
-
-            await cloudApi.connections.create.mutate({
-              connection,
-              userPassword,
-            });
-          } else {
-            await cloudApi.connections.create.mutate({ connection });
-          }
-
-          await cloudConnectionsQuery.run();
-        }
+        setLocalConnections([...localConnections, connection]);
 
         if (!options?.skipToast) {
           toast.add({
@@ -147,7 +113,7 @@ export const useConnections = (props: UseConnectionsProps) => {
         });
       }
     },
-    [setLocalConnections, localConnections, cloudConnectionsQuery, credentials, cloudApi, toast],
+    [setLocalConnections, localConnections, toast],
   );
 
   const updateConnection = useCallback(
@@ -156,32 +122,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       assert(existingConnection);
 
       try {
-        if (connection.storageLocation === 'local') {
-          setLocalConnections(localConnections.map((c) => (c.id === id ? connection : c)));
-        } else {
-          assert(connection.type === 'remote');
-
-          if (
-            connection.credentialStorage === 'encrypted' ||
-            (existingConnection.type === 'remote' &&
-              existingConnection.credentialStorage === 'encrypted')
-          ) {
-            const userPassword = await credentials.requestUserPassword(
-              connection.credentialStorage === 'encrypted'
-                ? 'Encrypt credentials'
-                : 'Decrypt credentials',
-            );
-            await cloudApi.connections.update.mutate({ connection, userPassword });
-          } else {
-            await cloudApi.connections.update.mutate({ connection });
-          }
-
-          if (existingConnection.storageLocation === 'local') {
-            setLocalConnections(localConnections.filter((c) => c.id !== existingConnection.id));
-          }
-
-          await cloudConnectionsQuery.run();
-        }
+        setLocalConnections(localConnections.map((c) => (c.id === id ? connection : c)));
 
         toast.add({
           color: 'success',
@@ -198,15 +139,7 @@ export const useConnections = (props: UseConnectionsProps) => {
         });
       }
     },
-    [
-      connections,
-      toast,
-      setLocalConnections,
-      localConnections,
-      cloudConnectionsQuery,
-      credentials,
-      cloudApi,
-    ],
+    [connections, toast, setLocalConnections, localConnections],
   );
 
   const disconnectRemote = useCallback(
@@ -236,12 +169,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       assert(connection);
 
       try {
-        if (connection.storageLocation === 'local') {
-          setLocalConnections(localConnections.filter((c) => c.id !== id));
-        } else {
-          await cloudApi.connections.delete.mutate({ id });
-          await cloudConnectionsQuery.run();
-        }
+        setLocalConnections(localConnections.filter((c) => c.id !== id));
 
         toast.add({
           color: 'success',
@@ -261,21 +189,10 @@ export const useConnections = (props: UseConnectionsProps) => {
         });
       }
     },
-    [
-      connections,
-      toast,
-      activeConnection?.id,
-      setLocalConnections,
-      localConnections,
-      cloudApi,
-      cloudConnectionsQuery,
-      disconnect,
-      navigate,
-    ],
+    [connections, toast, activeConnection?.id, setLocalConnections, localConnections, disconnect, navigate],
   );
 
-  const getCredentials = useCallback(
-    async (connection: RemoteConnection, skipDecryption: { password: boolean; ssh: boolean }) => {
+  const getCredentials = useCallback(async (connection: RemoteConnection) => {
       const storedCredentials = {
         password: connection.password ?? '',
         sshPassword: connection.ssh?.password ?? undefined,
@@ -414,80 +331,9 @@ export const useConnections = (props: UseConnectionsProps) => {
         });
       }
 
-      if (
-        connection.credentialStorage === 'encrypted' &&
-        !(skipDecryption.password && skipDecryption.ssh)
-      ) {
-        // On native/desktop, try to get user password from keychain first
-        if (isNative && user) {
-          const userPassword = await credentials.getCredentialFromKeychain({
-            username: user.email,
-            type: 'user',
-          });
-          if (userPassword) {
-            try {
-              const decryptedConnection = await cloudApi.connections.decryptCredentials.mutate({
-                id: connection.id,
-                userPassword,
-              });
-
-              assert(decryptedConnection.type === 'remote');
-
-              return {
-                password: skipDecryption.password
-                  ? storedCredentials.password
-                  : decryptedConnection.password ?? '',
-                sshPassword: skipDecryption.ssh
-                  ? storedCredentials.sshPassword
-                  : decryptedConnection.ssh?.password ?? undefined,
-                sshPrivateKey: skipDecryption.ssh
-                  ? storedCredentials.sshPrivateKey
-                  : decryptedConnection.ssh?.privateKey ?? undefined,
-                sshPrivateKeyPassphrase: skipDecryption.ssh
-                  ? storedCredentials.sshPrivateKeyPassphrase
-                  : decryptedConnection.ssh?.privateKeyPassphrase ?? undefined,
-              };
-            } catch (error) {
-              console.error(error);
-              // If decryption fails, fall through to show modal
-            }
-          }
-        }
-
-        let userPassword: string;
-
-        try {
-          userPassword = await credentials.requestUserPassword('Decrypt credentials');
-        } catch {
-          throw new ConnectCanceledError();
-        }
-
-        const decryptedConnection = await cloudApi.connections.decryptCredentials.mutate({
-          id: connection.id,
-          userPassword,
-        });
-
-        assert(decryptedConnection.type === 'remote');
-
-        return {
-          password: skipDecryption.password
-            ? storedCredentials.password
-            : decryptedConnection.password ?? '',
-          sshPassword: skipDecryption.ssh
-            ? storedCredentials.sshPassword
-            : decryptedConnection.ssh?.password ?? undefined,
-          sshPrivateKey: skipDecryption.ssh
-            ? storedCredentials.sshPrivateKey
-            : decryptedConnection.ssh?.privateKey ?? undefined,
-          sshPrivateKeyPassphrase: skipDecryption.ssh
-            ? storedCredentials.sshPrivateKeyPassphrase
-            : decryptedConnection.ssh?.privateKeyPassphrase ?? undefined,
-        };
-      }
-
       return storedCredentials;
     },
-    [credentials, signInModal, user, cloudApi],
+    [credentials, signInModal],
   );
 
   const switchCatalogOrSchema = useCallback(
@@ -507,15 +353,7 @@ export const useConnections = (props: UseConnectionsProps) => {
     [native],
   );
 
-  const connectRemote = useCallback(
-    async (
-      connection: RemoteConnection,
-      options?: {
-        skipDecryption?: { password: boolean; ssh: boolean };
-      },
-    ) => {
-      const skipDecryption = options?.skipDecryption ?? { password: false, ssh: false };
-
+  const connectRemote = useCallback(async (connection: RemoteConnection) => {
       if (activeConnection?.type === 'remote' && activeConnection.id === connection.id) {
         const catalogToSwitchTo = (() => {
           switch (activeConnection.engine) {
@@ -551,7 +389,7 @@ export const useConnections = (props: UseConnectionsProps) => {
       await disconnect();
 
       const { password, sshPassword, sshPrivateKey, sshPrivateKeyPassphrase } =
-        await getCredentials(connection, skipDecryption);
+        await getCredentials(connection);
 
       const connectorId = await native.connectDb({
         ...connection,
@@ -674,7 +512,7 @@ export const useConnections = (props: UseConnectionsProps) => {
     ],
   );
 
-  const isReady = !isInitializingAuth && (!user || cloudConnectionsQuery.hasRun);
+  const isReady = true;
 
   // Connect based on URL params
   useEffect(() => {
@@ -725,23 +563,19 @@ export const useConnections = (props: UseConnectionsProps) => {
       addConnection,
       connect,
       connections,
-      connectViaCloud,
       connectRemote,
       disconnectRemote,
       removeConnection,
-      setConnectViaCloud,
       updateConnection,
     }),
     [
       activeConnection,
       addConnection,
       connect,
-      connectViaCloud,
       connectRemote,
       connections,
       disconnectRemote,
       removeConnection,
-      setConnectViaCloud,
       updateConnection,
     ],
   );

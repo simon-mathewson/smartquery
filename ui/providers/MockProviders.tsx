@@ -1,7 +1,5 @@
 import { AddToDesktopProvider } from '~/content/settings/addToDesktop/Provider';
 import { AnalyticsMockProvider } from '~/content/analytics/MockProvider';
-import { AuthMockProvider } from '~/content/auth/MockProvider';
-import { CloudApiMockProvider } from '~/content/cloud/api/MockProvider';
 import { ConnectionsMockProvider } from '~/content/connections/MockProvider';
 import { DragAndDropProvider } from '~/content/dragAndDrop/Provider';
 import { EditProvider } from '~/content/edit/Provider';
@@ -33,8 +31,6 @@ const mockProviders = {
   EscapeStackProvider,
   ToastProvider,
   UpdateAvailableProvider: UpdateAvailableMockProvider,
-  CloudApiProvider: CloudApiMockProvider,
-  AuthProvider: AuthMockProvider,
   CredentialsProvider,
   SqliteProvider,
   ConnectionsProvider: ConnectionsMockProvider,

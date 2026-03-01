@@ -54,26 +54,6 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
       assert(!isNewConnection);
     }
 
-    const skipDecryptPassword = existingConnection
-      ? existingConnection.password !== connection.password ||
-        existingConnection.credentialStorage !== 'encrypted'
-      : true;
-    const skipDecryptSsh = (() => {
-      if (!connection.ssh) {
-        return true;
-      }
-
-      if (!existingConnection) {
-        return true;
-      }
-
-      return (
-        existingConnection.ssh?.password !== connection.ssh.password ||
-        existingConnection.ssh?.privateKey !== connection.ssh.privateKey ||
-        existingConnection.credentialStorage !== 'encrypted'
-      );
-    })();
-
     track('connection_form_test_connection', {
       is_new: isNewConnection,
       engine: connection.engine,
@@ -84,9 +64,7 @@ export const TestConnection: React.FC<TestConnectionProps> = (props) => {
     setHasSucceeded(false);
 
     try {
-      const { connectorId } = await connectRemote(connection, {
-        skipDecryption: { password: skipDecryptPassword, ssh: skipDecryptSsh },
-      });
+      const { connectorId } = await connectRemote(connection);
       await disconnectRemote({ connectorId });
       setHasSucceeded(true);
 

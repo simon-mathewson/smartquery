@@ -1,21 +1,10 @@
 Resources:
-  BastionNatStack:
-    Type: "AWS::CloudFormation::Stack"
-    DeletionPolicy: "Delete"
-    UpdateReplacePolicy: "Delete"
-    Properties:
-      TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/bastionNat.yml"
-    DependsOn:
-      - VPCStack
-
   CloudFrontStack:
     Type: "AWS::CloudFormation::Stack"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
       TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/cloudFront.yml"
-    DependsOn:
-      - VPCStack
 
   CodeBuildStack:
     Type: "AWS::CloudFormation::Stack"
@@ -26,9 +15,6 @@ Resources:
     DependsOn:
       - CloudFrontStack
       - IamStack
-      - RDSStack
-      - SecretsManagerStack
-      - VPCStack
 
   CodePipelineStack:
     Type: "AWS::CloudFormation::Stack"
@@ -56,40 +42,6 @@ Resources:
     Properties:
       TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/cognito.yml"
 
-  ElasticBeanstalkStack:
-    Type: "AWS::CloudFormation::Stack"
-    DeletionPolicy: "Delete"
-    UpdateReplacePolicy: "Delete"
-    Properties:
-      TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/elasticBeanstalk.yml"
-    DependsOn:
-      - RDSStack
-      - SecretsManagerStack
-      - SESStack
-      - VPCStack
-
-  IamStack:
-    Type: "AWS::CloudFormation::Stack"
-    DeletionPolicy: "Delete"
-    UpdateReplacePolicy: "Delete"
-    Properties:
-      TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/iam.yml"
-    DependsOn:
-      - CloudFrontStack
-      - S3Stack
-
-  RDSStack:
-    Type: "AWS::CloudFormation::Stack"
-    DeletionPolicy: "Delete"
-    UpdateReplacePolicy: "Delete"
-    Properties:
-      TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/rds.yml"
-      Parameters:
-        CloudDbSecretArn: !ImportValue CloudDbSecretArn
-    DependsOn:
-      - SecretsManagerStack
-      - VPCStack
-
   Route53Stack:
     Type: "AWS::CloudFormation::Stack"
     DeletionPolicy: "Delete"
@@ -97,10 +49,7 @@ Resources:
     Properties:
       TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/route53.yml"
     DependsOn:
-      - BastionNatStack
       - CloudFrontStack
-      - ElasticBeanstalkStack
-      - SESStack
 
   RUMStack:
     Type: "AWS::CloudFormation::Stack"
@@ -125,25 +74,12 @@ Resources:
     Properties:
       TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/ses.yml"
 
-  SecretsManagerStack:
+  IamStack:
     Type: "AWS::CloudFormation::Stack"
     DeletionPolicy: "Delete"
     UpdateReplacePolicy: "Delete"
     Properties:
-      TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/secretsManager.yml"
-
-  VPCStack:
-    Type: "AWS::CloudFormation::Stack"
-    DeletionPolicy: "Delete"
-    UpdateReplacePolicy: "Delete"
-    Properties:
-      TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/vpc.yml"
-
-  WAFStack:
-    Type: "AWS::CloudFormation::Stack"
-    DeletionPolicy: "Delete"
-    UpdateReplacePolicy: "Delete"
-    Properties:
-      TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/waf.yml"
+      TemplateURL: "https://smartquery-cloudformation.s3.eu-central-1.amazonaws.com/iam.yml"
     DependsOn:
-      - ElasticBeanstalkStack
+      - CloudFrontStack
+      - S3Stack

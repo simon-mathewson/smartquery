@@ -26,6 +26,5 @@
     }
   },
   "include": ["./**/*.ts", "./**/*.tsx", "../shared/**/*.ts"],
-  "exclude": ["../cloud", "node_modules", "dist"],
-  "references": [{ "path": "../cloud" }]
+  "exclude": ["node_modules", "dist"]
 }
