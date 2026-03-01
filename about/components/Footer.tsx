@@ -6,7 +6,15 @@ export const Footer: React.FC = () => {
       <div className="text-xs text-gray-500 text-center pt-2 mt-10">
         © 2025 Simon Mathewson
       </div>
-      <div className="flex gap-3 pb-6 justify-center px-4 pt-2">
+      <div className="flex gap-3 pb-6 justify-center px-4 pt-2 flex-wrap">
+        <a
+          href="https://github.com/simon-mathewson/smartquery"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-gray-500 hover:underline"
+        >
+          GitHub
+        </a>
         <Link href="/imprint" className="text-xs text-gray-500 hover:underline">
           Imprint
         </Link>

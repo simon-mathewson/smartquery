@@ -22,15 +22,6 @@ export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = (prop
           label="Reload"
           variant="filled"
         />
-        <Button
-          element="a"
-          htmlProps={{
-            className: 'w-[96px]',
-            href: import.meta.env.VITE_DISCORD_INVITE_URL,
-            target: '_blank',
-          }}
-          label="Report"
-        />
       </div>
       <code className="max-w-2xl overflow-x-auto rounded-xl border border-border bg-card p-3 text-sm">
         {error.stack || ''}

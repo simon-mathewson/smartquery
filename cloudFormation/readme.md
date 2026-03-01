@@ -1,4 +1,8 @@
-# Setup from scratch
+# Cloud infrastructure
+
+This folder contains AWS CloudFormation templates for deploying SmartQuery.
+
+## Setup from scratch
 
 ### 1. Create S3 buckets
 
@@ -31,11 +35,7 @@ Go to https://eu-central-1.console.aws.amazon.com/codesuite/settings/connections
 
 Go to https://us-east-1.console.aws.amazon.com/route53/v2/hostedzones?region=eu-central-1, get the name servers from the hosted zone, and add them to the domain registrar: https://www.spaceship.com/application/advanced-dns-application/manage/smartquery.dev/
 
-### 5. Set up Stripe custom email domain
-
-In Stripe settings -> Business -> Customer emails -> Your custom email domains set up smartquery.dev. Add value to Stripe records in cloudFormation/route53.yml.
-
-### 6. Build and publish desktop:
+### 5. Build and publish desktop:
 
 ```
 cd desktop
@@ -53,59 +53,23 @@ To build for macOS and sign, ensure Apple Developer certificate is available in 
    1. Locate team ID here https://developer.apple.com/account#MembershipDetailsCard
    2. Generate app-specific password here https://account.apple.com/account/manage
 
-### 7. Create ACM certificates
+### 6. Create ACM certificates
 
-In the AWS console, go to Certificate Manager, Request a certificate, and request a certificate for the following domains in both us-east-1 and eu-central-1 regions:
+In the AWS console, go to Certificate Manager, Request a certificate, and request a certificate for the following domains in us-east-1:
 
 - `smartquery.dev`
 - `*.smartquery.dev`
 
 Replace `AcmCertificateArn` value in CloudFormation files with the ARN from us-east-1.
 
-Replace the certificate ARN in the Elastic Beanstalk Stack with the ARN from eu-central-1.
-
-### 8. Setup production DB access
-
-1. Get key pair ID
-
-```sh
-aws ec2 describe-key-pairs
-```
-
-2. Get and store private key
-
-```sh
-aws ssm get-parameter --name /ec2/keypair/<KEY ID> --with-decryption --query Parameter.Value --output text > ~/.ssh/smartquery-bastion-key.pem
-
-chmod 400 ~/.ssh/smartquery-bastion-key.pem
-```
-
-Production DB info:
-
-SSH User: ec2-user
-SSH Host: bastion.smartquery.dev
-SSH Port: 22
-SSH Key: ~/.ssh/smartquery-bastion-key.pem
-
-DB Password, username, host, port, and name are stored in the secret manager:
-https://eu-central-1.console.aws.amazon.com/secretsmanager/secret?name=smartquery-cloud-db-secret&region=eu-central-1
-
-### 9. Update RUM script
+### 7. Update RUM script
 
 Update `ui/src/content/errors/tracking/useErrorTracking.ts` according to JS snippet displayed in https://eu-central-1.console.aws.amazon.com/cloudwatch/home?region=eu-central-1#rum:dashboard/smartquery?tab=configuration (Identity Pool ID, Application ID)
 
 Replace `APPLICATION_VERSION` with `import.meta.env.VITE_UI_VERSION`.
 
-### 10. Update WAF script
+### 8. Update WAF script
 
 Update `VITE_AWS_WAF_CAPTCHA_SCRIPT_URL` according to JS script URL displayed in https://us-east-1.console.aws.amazon.com/wafv2/homev2/application-integ-sdks?region=eu-central-1 -> CAPTCHA integration.
 
 Create an API key with domain `smartquery.dev` in the console and update `VITE_AWS_WAF_CAPTCHA_API_KEY` accordingly.
-
-### 11. Populate secrets
-
-https://eu-central-1.console.aws.amazon.com/secretsmanager/listsecrets?region=eu-central-1
-
-- smartquery-cloud-google-ai-api-key: https://aistudio.google.com/apikey
-- smartquery-cloud-stripe-api-key: https://dashboard.stripe.com/apikeys
-- smartquery-cloud-stripe-webhook-secret: https://dashboard.stripe.com/workbench/webhooks

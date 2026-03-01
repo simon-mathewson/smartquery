@@ -1,6 +1,8 @@
-import { QuestionAnswerOutlined } from '@mui/icons-material';
+import { GitHub } from '@mui/icons-material';
 import { Button } from '../button/Button';
 import classNames from 'classnames';
+
+const GITHUB_URL = 'https://github.com/simon-mathewson/smartquery';
 
 export type AboutLinksProps = {
   compact?: boolean;
@@ -20,11 +22,11 @@ export const AboutLinks: React.FC<AboutLinksProps> = (props) => {
         element="a"
         htmlProps={{
           className: '[&>svg]:text-textTertiary',
-          href: import.meta.env.VITE_DISCORD_INVITE_URL,
+          href: GITHUB_URL,
           target: '_blank',
         }}
-        icon={<QuestionAnswerOutlined />}
-        tooltip="Discord"
+        icon={<GitHub />}
+        tooltip="GitHub"
       />
       <div className="flex flex-col gap-[2px] overflow-hidden pr-1">
         <div className="truncate text-xs text-textTertiary">© 2025 Simon Mathewson</div>

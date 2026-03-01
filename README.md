@@ -1,82 +1,46 @@
 # SmartQuery
 
-> **⚠️ PROPRIETARY SOFTWARE - NOT OPEN SOURCE**  
-> This repository contains proprietary source code. Copying, modifying, or distributing this code is not allowed. See [LICENSE](LICENSE) for full terms.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+**SmartQuery** is an AI-powered database management tool. Connect to PostgreSQL, MySQL, SQLite, and more—run queries, explore data, and use AI to help write and optimize SQL. It runs locally: your credentials and data stay on your device.
+
+- **GitHub**: [github.com/simon-mathewson/smartquery](https://github.com/simon-mathewson/smartquery)
+- **Website**: [about.smartquery.dev](https://about.smartquery.dev)
 
 ## Overview
 
-SmartQuery is an AI-powered database management tool that enables users to connect to various database systems, execute queries, and leverage artificial intelligence for enhanced database interactions right from the browser.
-
-## Architecture
-
-This monorepo contains four main components:
+This monorepo contains the main pieces of SmartQuery:
 
 ### 🌐 **UI** (`/ui`)
 
-- **Technology**: React 18 + TypeScript + Vite
-- **Purpose**: Web-based user interface for SmartQuery
-- **Features**:
-  - Modern React-based dashboard
-  - SQL query editor with Monaco Editor
-  - Real-time query execution
-  - AI-powered query assistance
-  - Responsive design with Tailwind CSS
-  - PWA support for offline functionality
+- **Stack**: React 18 + TypeScript + Vite
+- Web UI: SQL editor (Monaco), query execution, AI assistance, charts
+- Tailwind CSS, PWA support
 
-### ☁️ **Cloud** (`/cloud`)
+### 🖥️ **Desktop** (`/desktop`)
 
-- **Technology**: Node.js + Express + tRPC + Prisma
-- **Purpose**: Backend API and cloud services
-- **Features**:
-  - RESTful API with tRPC for type-safe communication
-  - User authentication and authorization
-  - Database connection management
-  - AI integration (OpenAI API)
-  - Stripe payment processing
-  - Email services (AWS SES)
-  - PostgreSQL database with Prisma ORM
+- **Stack**: Electron + TypeScript
+- Cross-platform app (Windows, macOS, Linux) for local database connections
+- SSH tunneling, auto-updates
 
-### 🔗 **Link** (`/link`)
+### 📱 **Native** (`/native`)
 
-- **Technology**: Electron + TypeScript
-- **Purpose**: Desktop application for local database connections
-- **Features**:
-  - Cross-platform desktop app (Windows, macOS, Linux)
-  - Local database connectivity
-  - SSH tunneling support
-  - Background service capabilities
-  - Auto-updater functionality
+- **Stack**: React Native + Expo
+- iOS (and Android) app for on-the-go database access
 
-### 🤝 **Shared** (`/shared`)
+### 📦 **Shared** (`/shared`)
 
-- **Technology**: TypeScript
-- **Purpose**: Shared utilities and types across all components
-- **Features**:
-  - Common TypeScript definitions
-  - Database schema definitions
-  - Shared utility functions
-  - Type-safe API contracts
+- Shared TypeScript types and utilities used across UI, desktop, and native
 
-### ☁️ **Infrastructure** (`/cloudFormation`)
+## Key features
 
-- **Technology**: AWS CloudFormation + YAML
-- **Purpose**: Infrastructure as Code for AWS deployment
-- **Features**:
-  - Complete AWS infrastructure definitions
-  - VPC, RDS, Elastic Beanstalk, and S3 configurations
-  - Security groups and IAM roles
+- **Multi-database**: PostgreSQL, MySQL, SQLite, and more
+- **AI-assisted SQL**: Generate and refine queries with AI (bring your own API key)
+- **Local-first**: No account required; credentials and data stay on your machine
+- **Cross-platform**: Web, desktop app, and mobile
 
-## Key Features
+## License
 
-- **Database Management**: View and edit your data in a user-friendly interface
-- **Multi-Database Support**: Connect to PostgreSQL, MySQL, SQLite, and more
-- **AI-Powered Queries**: Generate and optimize SQL queries using AI
-- **Advanced Security**: Encrypted credential storage and secure connections
-- **Cross-Platform**: Web app, desktop PWA app, and mobile-responsive design
+This project is open source under the [MIT License](LICENSE).
 
-## Contact
-
-For questions about this software or licensing, please contact:
-
-- **Email**: support@smartquery.dev
-- **Website**: https://about.smartquery.dev
+Copyright (c) 2025 Simon Mathewson

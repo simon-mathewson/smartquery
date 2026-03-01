@@ -2,7 +2,6 @@ import {
   ArrowBackOutlined,
   BrushOutlined,
   InstallDesktopOutlined,
-  QuestionAnswerOutlined,
   SettingsOutlined,
 } from '@mui/icons-material';
 import React, { useState } from 'react';
@@ -127,22 +126,6 @@ export const Settings: React.FC<SettingsProps> = () => {
                   value={isConsentGranted ?? false}
                 />
               </Field>
-              <div>
-                <Field label="Ask questions and share your feedback, feature requests, and bug reports:">
-                  <Button
-                    align="left"
-                    color="secondary"
-                    element="a"
-                    htmlProps={{
-                      className: 'w-full',
-                      href: import.meta.env.VITE_DISCORD_INVITE_URL,
-                      target: '_blank',
-                    }}
-                    icon={<QuestionAnswerOutlined />}
-                    label="Discord"
-                  />
-                </Field>
-              </div>
             </>
           )}
           {section === 'install' && (
