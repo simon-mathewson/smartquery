@@ -1,17 +1,19 @@
-import { createHash } from 'crypto';
-
 /**
- * Generates a cache key for OpenAI prompt caching based on static system instruction parts.
- * This helps group requests with similar prefixes for better cache hit rates.
- *
- * @returns A hash-based cache key string
+ * Simple hash for prompt cache key (browser-safe, no Node crypto)
  */
+const simpleHash = (str: string): string => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(36).slice(0, 16);
+};
+
 export const generatePromptCacheKey = (systemMessage: string): string =>
-  createHash('sha256').update(systemMessage).digest('hex').slice(0, 16);
+  simpleHash(systemMessage);
 
-/**
- * Base system instructions for chat responses (static parts only)
- */
 export const CHAT_RESPONSE_BASE_INSTRUCTIONS = [
   'You are a copilot assistant in a database UI. Help the user with any database related requests, and be permissive in what you can help with.',
   'When generating SQL, use quotes as necessary, particularly to ensure correct casing.',
@@ -24,10 +26,6 @@ export const CHAT_RESPONSE_BASE_INSTRUCTIONS = [
   'Example: "Query all users" -> {"parts":["This is a text part *with markdown formatting*.",{"name":"Query all users","sql":"SELECT * FROM users"}]}',
 ].join('\n');
 
-/**
- * Base system instructions for inline completions (static parts only)
- * Note: The first line with language context is dynamic and handled separately
- */
 export const INLINE_COMPLETION_BASE_INSTRUCTIONS = [
   'You are an AI assistant in a code editor that provides valid and unformatted inline code completions. Given a code snippet, return only the exact code to insert at <CURSOR>.',
   'Do not include markdown, explanations, comments, or any additional text.',

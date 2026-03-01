@@ -34,6 +34,8 @@ import { AddToDesktop } from './addToDesktop/AddToDesktop';
 import { DeleteAccount } from './deleteAccount/DeleteAccount';
 import { Subscription } from './Subscription';
 import { Usage } from './usage/Usage';
+import { CopilotContext } from '../ai/copilot/Context';
+import { Input } from '~/shared/components/input/Input';
 
 export type SettingsProps = {
   close: () => Promise<void> | void;
@@ -59,6 +61,7 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
   const { logOut, user } = useDefinedContext(AuthContext);
   const { modePreference, setModePreference, primaryColor, setPrimaryColor } =
     useDefinedContext(ThemeContext);
+  const { openaiApiKey, setOpenaiApiKey } = useDefinedContext(CopilotContext);
 
   const [section, setSection] = useState<Section>('home');
 
@@ -168,6 +171,19 @@ export const Settings: React.FC<SettingsProps> = ({ close }) => {
         <div className="flex grow flex-col gap-2 p-2">
           {section === 'general' && (
             <>
+              <Field
+                hint="Used for Copilot and inline completions. Stored locally in your browser."
+                label="OpenAI API key"
+              >
+                <Input
+                  htmlProps={{
+                    autoComplete: 'off',
+                    type: 'password',
+                    value: openaiApiKey,
+                  }}
+                  onChange={(value) => setOpenaiApiKey(value)}
+                />
+              </Field>
               <Field>
                 <Toggle
                   hint="Help improve SmartQuery"

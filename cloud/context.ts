@@ -2,7 +2,6 @@ import type { CreateExpressContextOptions } from '@trpc/server/adapters/express'
 import * as cookie from 'cookie';
 import type { Subscription, User } from '~/prisma/generated/client';
 import { verifyAccessToken } from './auth/accessToken';
-import OpenAI from 'openai';
 import Stripe from 'stripe';
 import { prisma } from '~/prisma/client';
 import { castArray } from 'lodash';
@@ -11,7 +10,6 @@ export type CurrentUser = User & { activeSubscription: Subscription | null };
 
 export type Context = {
   getCookie: ReturnType<typeof createGetCookie>;
-  openai: OpenAI;
   ip: string | undefined;
   req: CreateExpressContextOptions['req'];
   res: CreateExpressContextOptions['res'];
@@ -24,8 +22,6 @@ export const createContext = async ({
   req,
   res,
 }: CreateExpressContextOptions): Promise<Context> => {
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
   const stripe = new Stripe(process.env.STRIPE_API_KEY, { apiVersion: '2025-07-30.basil' });
 
   const getCookie = createGetCookie(req);
@@ -47,7 +43,6 @@ export const createContext = async ({
   const ip = castArray(req.headers['x-forwarded-for']).at(0) ?? req.socket.remoteAddress;
 
   return {
-    openai,
     ip,
     getCookie,
     setCookie,

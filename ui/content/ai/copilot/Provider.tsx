@@ -3,7 +3,7 @@ import { CopilotContext } from './Context';
 import { useCopilot } from './useCopilot';
 
 export const CopilotProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const context = useCopilot();
+  const value = useCopilot();
 
-  return <CopilotContext.Provider value={context}>{children}</CopilotContext.Provider>;
+  return <CopilotContext.Provider value={value}>{children}</CopilotContext.Provider>;
 };

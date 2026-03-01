@@ -1,13 +1,11 @@
 import superjson from '@/superjson/superjson';
-import type { inferRouterInputs } from '@trpc/server';
-import { omit } from 'lodash';
 import * as monaco from 'monaco-editor';
 import { useCallback, useMemo, useRef } from 'react';
 import type { SchemaDefinitions } from '~/content/ai/schemaDefinitions/types';
 import { AnalyticsContext } from '~/content/analytics/Context';
-import { CloudApiContext } from '~/content/cloud/api/Context';
+import { CopilotContext } from '~/content/ai/copilot/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
-import type { CloudRouter } from '../../../../../cloud/router';
+import { generateInlineCompletions as generateInlineCompletionsOpenAi } from '~/content/ai/openai/client';
 import type { CodeEditorProps } from '../CodeEditor';
 
 export const useAiInlineCompletions = (props: {
@@ -16,20 +14,27 @@ export const useAiInlineCompletions = (props: {
   const { getSchemaDefinitions } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
-  const { cloudApi } = useDefinedContext(CloudApiContext);
+  const { openaiApiKey } = useDefinedContext(CopilotContext);
 
   const timeoutRef = useRef<number | undefined>(undefined);
   const abortControllerRef = useRef<AbortController | undefined>(undefined);
 
   const generateInlineCompletions = useCallback(
-    async (
-      props: inferRouterInputs<CloudRouter>['ai']['generateInlineCompletions'] & {
-        abortSignal: AbortSignal;
-      },
-    ) => {
+    async (props: {
+      codeBeforeCursor: string;
+      codeAfterCursor: string;
+      language: string | null;
+      schemaDefinitions: string | null;
+      abortSignal: AbortSignal;
+    }) => {
+      if (openaiApiKey.length === 0) return null;
       try {
-        return cloudApi.ai.generateInlineCompletions.mutate(omit(props, 'abortSignal'), {
-          signal: props.abortSignal,
+        return generateInlineCompletionsOpenAi(openaiApiKey, {
+          codeBeforeCursor: props.codeBeforeCursor,
+          codeAfterCursor: props.codeAfterCursor,
+          language: props.language,
+          schemaDefinitions: props.schemaDefinitions,
+          abortSignal: props.abortSignal,
         });
       } catch (error) {
         if (
@@ -40,9 +45,10 @@ export const useAiInlineCompletions = (props: {
         ) {
           return null;
         }
+        return null;
       }
     },
-    [cloudApi],
+    [openaiApiKey],
   );
 
   const setUpAiInlineCompletions = useCallback(

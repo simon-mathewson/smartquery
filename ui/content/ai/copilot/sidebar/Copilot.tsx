@@ -1,5 +1,4 @@
 import {
-  ArrowForward,
   AutoAwesome,
   Close,
   DeleteOutline,
@@ -11,9 +10,7 @@ import { CircularProgress, LinearProgress } from '@mui/material';
 import classNames from 'classnames';
 import { useCallback, useContext, useEffect, useRef } from 'react';
 import { AnalyticsContext } from '~/content/analytics/Context';
-import { AuthContext } from '~/content/auth/Context';
 import { ActiveConnectionContext } from '~/content/connections/activeConnection/Context';
-import { routes } from '~/router/routes';
 import { ActionList } from '~/shared/components/actionList/ActionList';
 import { Button } from '~/shared/components/button/Button';
 import { ErrorMessage } from '~/shared/components/errorMessage/ErrorMessage';
@@ -38,15 +35,14 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
   const { onCloseCopilot, showClose } = props;
 
   const { track } = useDefinedContext(AnalyticsContext);
-  const { user } = useDefinedContext(AuthContext);
   const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
   const { setIsOpen } = useDefinedContext(CopilotSidebarContext);
   const {
     clearThread,
+    hasApiKey,
     input,
     isLoading,
     isLoadingSchemaDefinitions,
-    isQuotaExceeded,
     hasSchemaDefinitions,
     sendMessage,
     setInput,
@@ -187,7 +183,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
                   ),
               )
               .map((suggestion) => ({
-                disabled: isQuotaExceeded,
+                disabled: !hasApiKey,
                 label: suggestion,
                 icon: <LightbulbOutline />,
                 htmlProps: {
@@ -239,7 +235,7 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
             <Input
               element="textarea"
               htmlProps={{
-                disabled: isLoading || isQuotaExceeded,
+                disabled: isLoading || !hasApiKey,
                 placeholder: 'Ask anything about your database',
                 onKeyDown: (e) => {
                   if (e.key === 'Enter') {
@@ -296,51 +292,11 @@ export const Copilot: React.FC<CopilotProps> = (props) => {
             )}
           </Field>
         </form>
-        {isQuotaExceeded && (
-          <>
-            <ErrorMessage htmlProps={{ className: 'mt-2' }}>
-              {user === null && (
-                <>
-                  <div>
-                    You've exceeded your quota for this month. Sign up to continue using Copilot for
-                    free.
-                  </div>
-                  <Button
-                    element="link"
-                    htmlProps={{
-                      className: 'w-full mt-2',
-                      href: routes.subscribePlans(),
-                    }}
-                    icon={<ArrowForward />}
-                    label="Sign up for free"
-                    variant="filled"
-                  />
-                </>
-              )}
-              {user !== null && !user.activeSubscription && (
-                <>
-                  <div>
-                    You've exceeded your quota for this month. Upgrade to continue using Copilot.
-                  </div>
-                  <Button
-                    element="link"
-                    htmlProps={{
-                      className: 'w-full mt-2',
-                      href: routes.subscribePlans(),
-                    }}
-                    icon={<ArrowForward />}
-                    label="Upgrade"
-                    variant="filled"
-                  />
-                </>
-              )}
-              {user !== null && user.activeSubscription && (
-                <>
-                  <div>You've exceeded your quota for this month.</div>
-                </>
-              )}
-            </ErrorMessage>
-          </>
+        {!hasApiKey && (
+          <ErrorMessage htmlProps={{ className: 'mt-2' }}>
+            Add your OpenAI API key in Settings to use Copilot. Your key is stored locally and never
+            sent to our servers.
+          </ErrorMessage>
         )}
       </div>
     </div>

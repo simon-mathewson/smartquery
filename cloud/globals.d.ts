@@ -7,7 +7,6 @@ declare namespace NodeJS {
     DATABASE_URL: string;
     JWT_SECRET: string;
     NODE_ENV: 'development' | 'production' | 'test';
-    OPENAI_API_KEY: string;
     PORT?: string;
     SES_EMAIL_IDENTITY_ARN?: string;
     STRIPE_API_KEY: string;

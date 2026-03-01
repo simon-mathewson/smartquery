@@ -1,9 +1,10 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import superjson from 'superjson';
-import { CloudApiContext } from '~/content/cloud/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
+import { CopilotContext } from './Context';
+import { generatePromptSuggestions as generatePromptSuggestionsOpenAi } from '../openai/client';
 import { copilotChatSuggestions } from '../../connections/demo/copilotChatSuggestions';
 import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
 import type { SchemaDefinitions } from '../schemaDefinitions/types';
@@ -39,7 +40,7 @@ const getStorageKey = (
 };
 
 export const usePromptSuggestions = () => {
-  const { cloudApi } = useDefinedContext(CloudApiContext);
+  const { openaiApiKey } = useDefinedContext(CopilotContext);
   const { activeConnection } = useContext(ActiveConnectionContext) ?? {};
   const { getAndRefreshSchemaDefinitions, hasSchemaDefinitions } = useSchemaDefinitions();
 
@@ -74,10 +75,13 @@ export const usePromptSuggestions = () => {
       try {
         const schemaDefinitionsText = superjson.stringify(currentSchemaDefinitions.definitions);
 
-        const response = await cloudApi.ai.generatePromptSuggestions.mutate({
-          engine: activeConnection.engine,
-          schemaDefinitions: schemaDefinitionsText,
-        });
+        const response =
+          openaiApiKey.length > 0
+            ? await generatePromptSuggestionsOpenAi(openaiApiKey, {
+                engine: activeConnection.engine,
+                schemaDefinitions: schemaDefinitionsText,
+              })
+            : [];
 
         setSuggestions(response);
         setStoredSuggestions((prev) => ({
@@ -91,7 +95,7 @@ export const usePromptSuggestions = () => {
         setIsLoading(false);
       }
     },
-    [activeConnection, cloudApi, storedSuggestions, setStoredSuggestions],
+    [activeConnection, openaiApiKey, storedSuggestions, setStoredSuggestions],
   );
 
   useEffect(() => {

@@ -1,17 +1,15 @@
 import type { AiTextContent } from '@/ai/types';
-import type { inferRouterInputs } from '@trpc/server';
-import { cloneDeep, omit } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import superjson from 'superjson';
 import { assert } from 'ts-essentials';
-import { CloudApiContext } from '~/content/cloud/api/Context';
 import { useDefinedContext } from '~/shared/hooks/useDefinedContext/useDefinedContext';
 import { useStoredState } from '~/shared/hooks/useStoredState/useStoredState';
 import type { QueryResult } from '~/shared/types';
-import type { CloudRouter } from '../../../../cloud/router';
 import { ActiveConnectionContext } from '../../connections/activeConnection/Context';
 import { useSchemaDefinitions } from '../schemaDefinitions/useSchemaDefinitions';
-import { isQuotaExceededError } from './isQuotaExceededError';
+import { generateChatResponse as generateChatResponseOpenAi } from '../openai/client';
+import { OPENAI_API_KEY_STORAGE_KEY } from '../openai/storageKey';
 import { parseResponse } from './parseResponse';
 import type { ThreadMessage } from './types';
 import { AnalyticsContext } from '~/content/analytics/Context';
@@ -29,12 +27,13 @@ const getStorageKey = (
 };
 
 export const useCopilot = () => {
-  const { cloudApiStream } = useDefinedContext(CloudApiContext);
+  const [openaiApiKey, setOpenaiApiKey] = useStoredState<string>(OPENAI_API_KEY_STORAGE_KEY, '');
   const { track } = useDefinedContext(AnalyticsContext);
   const activeConnectionContext = useContext(ActiveConnectionContext);
   const { activeConnection } = activeConnectionContext ?? {};
   const { setIsOpen } = useDefinedContext(CopilotSidebarContext);
   const { setOverlayPage } = useDefinedContext(MobileNavigationContext);
+  const hasApiKey = openaiApiKey.length > 0;
 
   const threadStorageKey = useMemo(
     () => getStorageKey(activeConnection, 'thread'),
@@ -73,8 +72,6 @@ export const useCopilot = () => {
     queryResultsStorageKey,
     {},
   );
-
-  const [isQuotaExceeded, setIsQuotaExceeded] = useState(false);
 
   const processThread = useCallback(
     (rawThread: AiTextContent[], queryResults: Record<string, QueryResult | null>) => {
@@ -124,21 +121,23 @@ export const useCopilot = () => {
   } = useSchemaDefinitions();
 
   const generateChatResponse = useCallback(
-    async function* (
-      props: inferRouterInputs<CloudRouter>['ai']['generateChatResponse'] & {
-        abortSignal: AbortSignal;
-      },
-    ) {
+    async function* (props: {
+      contents: AiTextContent[];
+      engine: string;
+      schemaDefinitions: string | null;
+      abortSignal: AbortSignal;
+    }) {
+      if (!hasApiKey) return null;
       try {
-        const chatResponse = await cloudApiStream.ai.generateChatResponse.mutate(
-          omit(props, 'abortSignal'),
-          { signal: props.abortSignal },
-        );
-
-        for await (const item of chatResponse) {
-          yield item;
+        const stream = generateChatResponseOpenAi(openaiApiKey, {
+          contents: props.contents,
+          engine: props.engine,
+          schemaDefinitions: props.schemaDefinitions,
+          abortSignal: props.abortSignal,
+        });
+        for await (const chunk of stream) {
+          yield chunk;
         }
-
         return null;
       } catch (error) {
         if (
@@ -149,16 +148,10 @@ export const useCopilot = () => {
         ) {
           return null;
         }
-
-        if (isQuotaExceededError(error)) {
-          setIsQuotaExceeded(true);
-          return null;
-        }
-
         throw error;
       }
     },
-    [cloudApiStream],
+    [hasApiKey, openaiApiKey],
   );
 
   const sendMessage = useCallback(
@@ -257,25 +250,29 @@ export const useCopilot = () => {
   return useMemo(
     () => ({
       clearThread,
+      hasApiKey,
       hasSchemaDefinitions,
       input,
       isLoading,
       isLoadingSchemaDefinitions,
-      isQuotaExceeded,
+      openaiApiKey,
       sendMessage,
       setInput,
+      setOpenaiApiKey,
       setQueryResult,
       stopGenerating,
       thread,
     }),
     [
       clearThread,
+      hasApiKey,
       hasSchemaDefinitions,
       input,
       isLoading,
       isLoadingSchemaDefinitions,
-      isQuotaExceeded,
+      openaiApiKey,
       sendMessage,
+      setOpenaiApiKey,
       setQueryResult,
       stopGenerating,
       thread,

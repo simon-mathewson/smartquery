@@ -20,3 +20,9 @@ export const responseSchema = z.object({
     ]),
   ),
 });
+
+const promptSuggestionsSchema = z.object({
+  suggestions: z.array(z.string()).length(5),
+});
+
+export { promptSuggestionsSchema };
