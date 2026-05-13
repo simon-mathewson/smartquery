@@ -19,14 +19,6 @@ const Imprint: React.FC = () => {
             <h3>Service Provider</h3>
             <p>
               Simon Mathewson
-              <br />
-              c/o Postflex #9085
-              <br />
-              Emsdettener Str. 10
-              <br />
-              48268 Greven
-              <br />
-              Germany
             </p>
             <p>
               This is a postal address provided by a mail forwarding service.
