@@ -17,12 +17,7 @@ const Imprint: React.FC = () => {
         <main>
           <section>
             <h3>Service Provider</h3>
-            <p>
-              Simon Mathewson
-            </p>
-            <p>
-              This is a postal address provided by a mail forwarding service.
-            </p>
+            <p>Simon Mathewson</p>
           </section>
           <section>
             <h3>Contact</h3>
