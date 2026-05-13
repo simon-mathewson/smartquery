@@ -32,12 +32,6 @@ const PrivacyPolicy: React.FC = () => {
             <address className="not-italic">
               Simon Mathewson
               <br />
-              c/o Postflex #9085
-              <br />
-              Emsdettener Str. 10
-              <br />
-              48268 Greven
-              <br />
               Germany
               <br />
               Email: <a href={`mailto:${emailAddress}`}>{emailAddress}</a>
